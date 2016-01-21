@@ -15,6 +15,15 @@ This yields an excellent control over your testbench and VVCs.
 For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete testbench.
 This post on LinkedIn will give you some more info on why you should use this library.
 
+# Prerequisites
+UVVM is tool and library independent, but must be compiled with VHDL 2008.
+UVVM has been tested with the following simulators:
+- Modelsim version 10.3d
+- Riviera-PRO version: 2015.10.85
+
+Python is required *if* you want to execute the VVC generation scripts
+
+
 # License
 
 The MIT License (MIT) 

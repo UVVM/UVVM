@@ -1,0 +1,96 @@
+UVVM Utility Library - Overview on Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+
+
+v1.1.2
+----------
+Released: 2016-01-20
+
+All changes should be backwards compatible within 1.x.x
+- License conditions have changed. UVVM Utility Library is now released 
+  under the MIT license, see LICENSE.txt
+- Added ability to set duty cycle in clock_generator() procedures,
+  either by percentage or time.
+- Clock generators: Variable v_first_half_clk_period is now constant
+  C_FIRST_HALF_CLK_PERIOD since it shall not change in the procedures.
+- Removed redundant to_string() overloads that are provided by the VHDL-2008
+  standard. These overloads were not listed in the Quick Reference as they
+  were only meant to be used by UVVM-Util itself. The behaviour of UVVM-Util
+  after this change is the same.
+- QuickRef:
+  - Added examples to all methods.
+  - Changed bracket style of optional parameters.
+- Added a demo directory that contains a list of demo testbenches that can
+  be run to demonstrate the UVVM Utility Library.
+
+v1.1.1
+----------
+Released: 2015-12-08
+
+All changes should be backwards compatible within 1.x.x
+- Added new optional parameter for check_value and await_value for SL/SLV to set if 
+  match is exact match (MATCH_EXACT) or std_match (MATCH_STD)
+- C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME is not default false
+- Compile order in the QuickRef has been updated
+- Description of how BVUL users can start using UVVM-Util has been added to the
+  README.txt file
+- Added chapter in QuickRef for Hierarchical Alerts
+
+v1.1.0
+----------
+Released: 2015-11-18
+
+All changes should be backwards compatible within 1.x.x
+- Renamed C_CMD_QUEUE_COUNT_ALERT_LEVEL to C_CMD_QUEUE_COUNT_THRESHOLD
+- Renamed C_CMD_QUEUE_COUNT_ALERT_LEVEL_SEVERITY to C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
+- Added t_inter_bfm_delay_type for time delay and clock cycle delay in VVCs
+- Added wait_num_rising_edge and wait_num_rising_edge_plus_margin procedures
+- Added ALL_CHANNELS to the t_channel type
+- Updated QuickRef with new style
+- Fixed typo in get_string_between_delimiters function
+- It is now possible to set new log/alert output file at runtime
+- Added new justify function. Old version will be deprecated in next major release
+- Added new to_string for int and bool. Old version will be deprecated in next major release
+- Added function pad_string
+- Added on/off switch (C_USE_BACKSLASH_R_AS_LF) for \r
+
+
+v1.0.2
+----------
+Released: 2015-10-20
+
+All changes should be backwards compatible within 1.x.x
+- Updated license printout
+
+
+v1.0.1
+----------
+Released: 2015-10-12
+
+All changes should be backwards compatible within 1.x.x
+- Renamed constant in adaptations pkg from C_NUMBER_OF_BITS_PER_DATA_BUFFER
+  to C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER.
+
+v1.0.0
+----------
+Released: 2015-10-09
+
+All changes should be backwards compatible within 1.x.x
+- First version. Hence no change history for the UVVM Utility Library.
+  This library is a continuation and expansion of the Bitvis Utility Library.
+  The Bitvis Utility Library is discontinued as of version 2.6.0 (except for bug fixes).
+  See the Bitvis Utility Library v2.6.0 for full change history prior to the release of
+  UVVM.
+  -Important changes since release of the Bitvis Utility Library v2.6.0:
+    - Removed support for VHDL93 and VHDL2002
+    - Included support for hierarchical alert reporting. Hierarchical alert reporting
+      allows for a hierarchy tree to be defined during run-time. The alert summary will
+      then be shown as a tree of defined scopes. Alert counters will propagate up the tree 
+      to the top level, and stop limits can be set at each level in the hierarchy.
+      See the PowerPoint presentation 'UVVM_Utility_Library_Concepts_and_Usage.pps' for 
+      more information.
+
+
+

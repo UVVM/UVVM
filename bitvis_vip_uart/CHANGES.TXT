@@ -1,0 +1,117 @@
+Bitvis VIP UART - Overview on Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+
+v1.0.1
+--------------------
+Released: 2016-01-20
+
+General changes
+----------
+
+- License conditions have changed. Bitvis VIP UART is now released 
+  under the MIT license, see LICENSE.txt
+- UVVM VVC Framework is now open source. Updated compile script with new file names.
+
+BFM changes
+----------
+- Type t_uart_bfm_config:
+  - Changed the following record members' type from integer to natural:
+    - clocks_per_bit
+    - num_data_bits
+    - max_wait_cycles
+  - Added new members for verbosity control:
+    - id_for_bfm
+    - id_for_bfm_wait (NOT CURRENTLY IN USE)
+    - id_for_bfm_poll (NOT CURRENTLY IN USE)
+- Procedure uart_expect(): Changed type of max_receptions parameter from integer to natural.
+
+VVC changes
+----------
+- Changed type of generic constant GC_DATA_WIDTH from integer to natural
+- vvc_methods_pkg - uart_expect(): Changed type of max_receptions parameter from integer to natural.
+- Removed unused reset port from VVC.
+
+v1.0.0
+--------------------
+Released: 2015-12-08
+
+General changes
+----------
+- Added example of how to use config records to QuickRef
+- Improved documentation of how to use the signal interface 
+- Applied changes caused by UVVM VVC Framework package renaming
+    - work.vvc_support_pkg => work.td_vvc_entity_support_pkg
+    - work.uvvm_vvc_dedicated_support => work.td_target_support_pkg
+    - uvvm_vvc_framework.uvvm_support_pkg => uvvm_vvc_framework.ti_vvc_framework_support_pkg
+    - work.uvvm_methods_pkg => work.td_vvc_framework_common_methods_pkg
+    - work.queue_pkg => work.td_queue_pkg
+
+BFM changes
+----------
+- Added log message providing information about received data prior to expected data in uart_expect
+
+VVC changes
+----------
+- Added check for if BFM access exceeds the specified start-to-start inter-bfm delay
+
+
+v0.5.0
+--------------------
+Released: 2015-11-18
+
+General changes
+----------
+- General renaming:
+  - GC_CMD_QUEUE_COUNT_ALERT_LEVEL -> GC_CMD_QUEUE_COUNT_THRESHOLD
+  - GC_CMD_QUEUE_COUNT_ALERT_LEVEL_SEVERITY -> GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
+  - THIS_VVC -> THIS_VVCT
+- New QuickRefs added for both BFM and VVC
+
+BFM changes  
+----------
+- BFM now uses UVVM Util wait_num_rising_edge instead of local wait_num_clocks
+- Removed redundant timeout check in receive procedure
+
+VVC changes
+----------  
+- Added inter-BFM delay to vvc_config for inserting delay between BFM accesses
+- Removed unused packet declarations in the VHDL files
+- Set msg parameter to mandatory in VVC methods
+- Set VVC index to default 1
+- Removed version number from VVC code
+
+
+v0.4.0
+----------
+Released: 2015-10-20
+
+- General renaming:
+  - Renamed VVC architecture to behave
+- BFM config is now set from VVC by accessing vvc_config.bfm_config.
+- Default VVC message ID panel is now C_VVC_MSG_ID_PANEL_DEFAULT
+- Removed clock period from VVC config, since this is also set from BFM config.
+
+v0.3.0
+----------
+Released: 2015-10-12
+
+- General VVC renaming:
+  - VVC_ACK => global_vvc_ack
+  - VVC_CMD => shared_vvc_cmd
+  - VVC_RESPONSE => shared_vvc_response
+  - <name>_VVC => <name>_VVCT
+  - <name>_vvc_status => shared_<name>_vvc_status
+  - <name>_vvc_config => shared_<name>_vvc_config
+- Added insert_delay with delay in time
+- Added VVC_BROADCAST to VVC interpreter await_cmd_from_sequencer
+- Added transaction info record for waveview
+- Removed alert_level from uart_transmit vvc method
+  
+
+v0.2.0
+----------
+Released: 2015-10-07
+
+Initial version of UART VIP

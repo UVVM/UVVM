@@ -1,0 +1,7 @@
+-----------------------------------------------------------
+-- List of demo testbenches                              -- 
+-----------------------------------------------------------
+
+ - /bitvis_irqc/tb
+    - Navigate to /bitvis_irqc/sim
+    - Open "bitvis_irqc.mpf" or run "vsim -c -do ../script/compile_and_sim_all.do"

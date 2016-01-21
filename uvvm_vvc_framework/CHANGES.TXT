@@ -1,0 +1,88 @@
+UVVM VVC Framework - Overview on Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+
+v1.0.1
+----------
+Released: 2016-01-20
+
+All changes should be backwards compatible within 1.x.x
+- UVVM VVC Framework is now open source.
+  - Be aware that file endings have changed from "*.vhdp" to "*.vhd"
+  - License conditions have changed. UVVM VVC Framework is now released 
+    under the MIT license, see LICENSE.txt
+  - Removed ti_license_pkg.vhd since UVVM VVC Framework will have the
+    same license as UVVM Utility Library.
+- Added a demo directory that contains a list of demo testbenches that can
+  be run to demonstrate the UVVM VVC Framework.
+
+v1.0.0 Beta
+----------
+Released: 2015-12-08
+
+This is the first public release of the UVVM VVC Framework.
+Please keep in mind that this is a beta release.
+
+- Renamed packages
+  - work.vvc_support_pkg => work.td_vvc_entity_support_pkg
+  - work.uvvm_vvc_dedicated_support => work.td_target_support_pkg
+  - uvvm_vvc_framework.uvvm_support_pkg => uvvm_vvc_framework.ti_vvc_framework_support_pkg
+  - work.uvvm_methods_pkg => work.td_vvc_framework_common_methods_pkg
+  - work.queue_pkg => work.td_queue_pkg
+- Moved td_queue_pkg into a separate file.
+- Documentation
+  - Major updates to UVVM Manual.
+  - Several improvements to VVC_Framework_common_methods_QuickRef.
+  - Added VVC Implementation Guide.
+- Scripts
+  - Improvements to VVC Generator script.
+  - Added VVC Name Modifier script for easy renaming of Bitvis VIPs.
+    See uvvm_vvc_framework/script/vvc_name_modifier/README.txt for more info.
+- Methods
+  - Added overload to fetch_result() that does not require v_is_ok and v_is_new as parameters.
+    Alert is triggered in this overload if any of them are false.
+  
+v0.3.0
+----------
+Released: 2015-11-18
+
+- Renamed wait_for_uvvm_initialization to await_uvvm_initialization
+- Updated UVVM Manual and UVVM Methods QuickRef
+- Added inter-BFM delay support
+- Added possibility of sending command to all channels of a VVC instance by using 
+  dedicated channel 'ALL_CHANNELS'.
+- Added VVC Generator python script to script/ directory
+- Added check for correct VVC channel in await_cmd_from_sequencer
+- Minor fixes in comments and checks
+
+v0.2.1
+----------
+Released: 2015-10-20
+
+- Updated license to be printed during simulation
+
+v0.2.0
+----------
+Released: 2015-10-12
+
+- General VVC renaming:
+  - VVC_ACK => global_vvc_ack
+  - VVC_CMD => shared_vvc_cmd
+  - VVC_RESPONSE => shared_vvc_response
+  - <name>_VVC => <name>_VVCT
+  - <name>_vvc_status => shared_<name>_vvc_status
+  - <name>_vvc_config => shared_<name>_vvc_config
+- Added insert_delay with delay in time
+- Added VVC_BROADCAST parameter to await_cmd_from_sequencer
+- Fixed typo in C_MAX_VVC_RESPONSE_DATA_WIDTH
+- Changed UVVM functions to view instance index as integers
+- Added wait_for_uvvm_initialization procedure
+
+
+v0.1.0
+----------
+Released: 2015-10-07
+
+All changes should be backwards compatible within 0.x.x
+- First version. Hence no change history.

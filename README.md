@@ -13,7 +13,7 @@ VVC Framework is unique as an open source VHDL approach to building a structured
 The really great benefit here is that these commands may be issued at the same time from the test sequencer - thus allowing full control of when an access is to be performed, and the commands are understandable "even" for a software developer ;-)   The commands may be queued, skewed, delayed, synchronised, etc - and a super-set for applying constrained random or other sequences of data may of of course also be applied.
 This yields an excellent control over your testbench and VVCs.
 For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete testbench.
-[This post on LinkedIn](https://www.linkedin.com/pulse/free-library-good-testbench-checking-functionality-espen-tallaksen) will give you some more info on why you should use this library.
+[This post on LinkedIn](https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen) will give you some more info on why you should use this library.
 
 ## Prerequisites
 UVVM is tool and library independent, but must be compiled with VHDL 2008.

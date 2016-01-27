@@ -54,33 +54,32 @@ if { [string equal -nocase $simulator "modelsim"] } {
   do fix_vmap.tcl 
   ##########
 }
-
-# Set up uvvm_vvc_framework_part_path and lib_name
+# Set up vip_axilite_part_path and lib_name
 #------------------------------------------------------
-quietly set lib_name "uvvm_vvc_framework"
-quietly set part_name "uvvm_vvc_framework"
+quietly set lib_name "bitvis_vip_axilite"
+quietly set part_name "bitvis_vip_axilite"
 # path from mpf-file in sim
-quietly set uvvm_vvc_framework_part_path "../..//$part_name"
+quietly set vip_axilite_part_path "../..//$part_name"
 
-# argument number 1
 if { [info exists 1] } {
   # path from this part to target part
-  quietly set uvvm_vvc_framework_part_path "$1/..//$part_name"
+  quietly set vip_axilite_part_path "$1/..//$part_name"
   unset 1
 }
+
 
 # (Re-)Generate library and Compile source files
 #--------------------------------------------------
 echo "\n\nRe-gen lib and compile $lib_name source\n"
-if {[file exists $uvvm_vvc_framework_part_path/sim/$lib_name]} {
-  file delete -force  $uvvm_vvc_framework_part_path/sim/$lib_name
+if {[file exists $vip_axilite_part_path/sim/$lib_name]} {
+  file delete -force $vip_axilite_part_path/sim/$lib_name
 }
-if {![file exists $uvvm_vvc_framework_part_path/sim]} {
-  file mkdir $uvvm_vvc_framework_part_path/sim
+if {![file exists $vip_axilite_part_path/sim]} {
+  file mkdir $vip_axilite_part_path/sim
 }
 
-vlib $uvvm_vvc_framework_part_path/sim/$lib_name
-vmap $lib_name $uvvm_vvc_framework_part_path/sim/$lib_name
+vlib $vip_axilite_part_path/sim/$lib_name
+vmap $lib_name $vip_axilite_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -work $lib_name"
@@ -88,9 +87,11 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -dbg -work $lib_name"
 }
 
-echo "\n\n\n=== Compiling $lib_name source\n"
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_vvc_framework_support_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_generic_queue_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_queue_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_fifo_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_stack_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/src/axilite_bfm_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/src/vvc_cmd_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/src/vvc_methods_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
+eval vcom  $compdirectives  $vip_axilite_part_path/src/axilite_vvc.vhd

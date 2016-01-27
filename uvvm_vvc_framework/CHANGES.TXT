@@ -3,6 +3,18 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.1.0
+----------
+Released: 2016-01-27
+
+All changes should be backwards compatible within 1.x.x
+- This release contains two new verification IPs:
+  - bitvis_vip_axilite: Allows normal access towards an AXI4-Lite
+    interface.
+  - bitvis_vip_avalon_mm__simple_access: Allows simplified access 
+    towards an Avalon MM interface. This VIP does NOT support burst mode,
+    pipeline or debugaccess features.
+
 v1.0.1
 ----------
 Released: 2016-01-20

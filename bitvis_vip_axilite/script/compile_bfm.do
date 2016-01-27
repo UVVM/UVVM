@@ -55,32 +55,32 @@ if { [string equal -nocase $simulator "modelsim"] } {
   ##########
 }
 
-# Set up uvvm_vvc_framework_part_path and lib_name
+# Set up bitvis_vip_axilite_part_path and lib_name
 #------------------------------------------------------
-quietly set lib_name "uvvm_vvc_framework"
-quietly set part_name "uvvm_vvc_framework"
+quietly set lib_name "bitvis_vip_axilite"
+quietly set part_name "bitvis_vip_axilite"
 # path from mpf-file in sim
-quietly set uvvm_vvc_framework_part_path "../..//$part_name"
+quietly set bitvis_vip_axilite_part_path "../..//$part_name"
 
-# argument number 1
 if { [info exists 1] } {
   # path from this part to target part
-  quietly set uvvm_vvc_framework_part_path "$1/..//$part_name"
+  quietly set bitvis_vip_axilite_part_path "$1/..//$part_name"
   unset 1
 }
+
 
 # (Re-)Generate library and Compile source files
 #--------------------------------------------------
 echo "\n\nRe-gen lib and compile $lib_name source\n"
-if {[file exists $uvvm_vvc_framework_part_path/sim/$lib_name]} {
-  file delete -force  $uvvm_vvc_framework_part_path/sim/$lib_name
+if {[file exists $bitvis_vip_axilite_part_path/sim/$lib_name]} {
+  file delete -force $bitvis_vip_axilite_part_path/sim/$lib_name
 }
-if {![file exists $uvvm_vvc_framework_part_path/sim]} {
-  file mkdir $uvvm_vvc_framework_part_path/sim
+if {![file exists $bitvis_vip_axilite_part_path/sim]} {
+  file mkdir $bitvis_vip_axilite_part_path/sim
 }
 
-vlib $uvvm_vvc_framework_part_path/sim/$lib_name
-vmap $lib_name $uvvm_vvc_framework_part_path/sim/$lib_name
+vlib $bitvis_vip_axilite_part_path/sim/$lib_name
+vmap $lib_name $bitvis_vip_axilite_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -work $lib_name"
@@ -88,9 +88,4 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -dbg -work $lib_name"
 }
 
-echo "\n\n\n=== Compiling $lib_name source\n"
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_vvc_framework_support_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_generic_queue_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_queue_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_fifo_pkg.vhd
-eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_stack_pkg.vhd
+eval vcom  $compdirectives  $bitvis_vip_axilite_part_path/src/axilite_bfm_pkg.vhd

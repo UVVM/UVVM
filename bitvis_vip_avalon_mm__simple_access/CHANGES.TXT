@@ -1,0 +1,81 @@
+Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+
+v1.0.0
+----------
+Released: 2016-01-26
+
+General changes
+----------
+- License conditions have changed. Bitvis VIP Avalon MM Simple Access is now released 
+  under the MIT license, see LICENSE.txt
+- UVVM VVC Framework is now open source. Updated compile script with new file names.
+- Renamed the VIP bitvis_vip_avalon_mm__simple_access to differentiate between VIPs
+- Added example of how to use config records to QuickRef
+- Applied changes caused by UVVM VVC Framework package renaming
+    - work.vvc_support_pkg => work.td_vvc_entity_support_pkg
+    - work.uvvm_vvc_dedicated_support => work.td_target_support_pkg
+    - uvvm_vvc_framework.uvvm_support_pkg => uvvm_vvc_framework.ti_vvc_framework_support_pkg
+    - work.uvvm_methods_pkg => work.td_vvc_framework_common_methods_pkg
+    
+BFM changes
+----------
+- Removed 'lock' signal from BFM since it was not implemented in this version.
+- Removed negative polarity versions of signals.
+- Added boolean use_response_signal to config
+- Renamed num_pipe_stages to num_wait_states, since pipeline read is not part of this VIP.
+- Removed unused begintransfer signal, since this is a part of burst (not supported in simple vip)
+- Type t_avalon_mm_bfm_config:
+  - Changed the following record members' type from integer to natural:
+    - max_wait_cycles
+  - Added new members for verbosity control:
+    - id_for_bfm
+    - id_for_bfm_wait (NOT CURRENTLY IN USE)
+    - id_for_bfm_poll (NOT CURRENTLY IN USE)
+    
+    
+VVC changes
+----------
+- Added check for if BFM access exceeds the specified start-to-start inter-bfm delay
+- Removed unused reset port
+
+
+v0.2.4
+----------
+Released: 2015-11-20
+
+- read[_n] signals are now set inactive on the following rising edge of clock when waitrequest[_n] is 
+  set inactive, not the first falling edge of the clock. 
+
+
+v0.2.3
+----------
+Released: 2015-11-20
+
+- Now setting the read-signal low when waiting for readdatavalid if waitrequest is set inactive (low).
+
+
+v0.2.2
+----------
+Released: 2015-11-20
+
+- Improved documentation of Avalon-MM signal interface 
+- Bugfix in BFM Avalon-MM read with readdatavalid
+
+
+v0.2.1
+----------
+Released: 2015-11-19
+
+- Improved documentation of Avalon-MM signal interface 
+- Fixed bug in BFM read procedure where read data was not accepted if waitrequest and 
+  readdatavalid are both active when using both waitrequest and readdatavalid.
+
+
+v0.2.0
+----------
+Released: 2015-11-18
+
+Initial version of Avalon Memory Mapped (MM) VIP

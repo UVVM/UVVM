@@ -7,3 +7,4 @@ This project uses the following versions:
   bitvis_irqc, version v0.2.3
   bitvis_vip_axilite, version v1.0.0
   bitvis_vip_avalon_mm__simple_access, version v1.0.0
+  bitvis_vip_i2c, version v1.0.0

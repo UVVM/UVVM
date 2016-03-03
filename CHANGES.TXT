@@ -1,0 +1,18 @@
+UVVM - Overview on Versions and Changes
+==============================================================
+
+This is the changes made in the UVVM release zip-file.
+The purpose is to indicate which of the modules that have been 
+updated for this version of the zip file. For details about the 
+changes made for each individual module, please see the 
+CHANGES.TXT in each module's sub-directory.
+
+----------------------------------------------------------------------
+
+v1.2.0
+----------
+Released: 2016-03-03
+
+- This release contains a new verification IP:
+  - bitvis_vip_i2c: Allows normal access towards an I2C
+    interface.

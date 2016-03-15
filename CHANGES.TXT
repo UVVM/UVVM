@@ -9,6 +9,15 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v1.3.0
+----------
+Released: 2016-03-14
+
+- This release contains UVVM OSVVM, a modified version
+  of OSVVM 2016.1 that uses UVVM Utility Library for logs
+  and alerts.
+
+
 v1.2.0
 ----------
 Released: 2016-03-03

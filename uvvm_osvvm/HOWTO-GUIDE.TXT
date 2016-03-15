@@ -1,0 +1,101 @@
+UVVM_OSVVM - Howto guide
+==============================================================
+
+
+-----------------------------------------------------------
+-- Implementation description                            -- 
+-----------------------------------------------------------
+
+Most of the OSVVM release is unchanged from the original distribution. Changes have only been 
+applied to CoveragePkg.vhd and AlertLogPkg.vhd, and these changes only apply to the logging 
+part of OSVVM. Note that alerts and logs are treated separately in OSVVM, like they are in UVVM 
+Utility Library. In OSVVM 2015.1 all alerts in the CoveragePkg were routed through the AlertLogPkg.
+
+The logging mechanism in the AlertLogPkg was not in use in this version of OSVVM. In order to make 
+minimum changes to the original OSVVM code, and since the original author of OSVVM obviously knows 
+his own code best, the original Alert-calls in the CoveragePkg were kept as is. However, the Alert 
+procedure in the AlertLogPkg called by the alerts in the CoveragePkg was altered to forward the 
+alert calls to the alert procedure in UVVM Utility Library.
+
+Since no logging was used in the OSVVM 2015.6 distribution logging to UVVM Utility Library was 
+added directly in the CoveragePkg where it seemed necessary or helpful. Message panels have been 
+added to the log calls in order to control the logging of each Coverage Bin individually, in 
+addition to the shared_osvvm_msg_id_panel ID panel which is used for logging that is not directly 
+used in a CovPType object (e.g. for MakeBin).
+
+-------------------------------------------------------------------------------
+-- Using the Bitvis OSVVM CoveragePkg with UVVM Utility Library logging      --
+-------------------------------------------------------------------------------
+First of all, the OSVVM CoveragePkg needs to be added to the testbench as normal. 
+For information about how to do this, see the OSVVM documentation.
+
+Controlling the CoveragePkg default ID panel
+-------------------------------------------------------------------------------
+In the UVVM Utility Library adaptations_pkg.vhd, enable or disable message IDs in the constant 
+C_OSVVM_DEFAULT_MSG_ID_PANEL.
+
+
+Select if CovPType objects are to use individual message panels
+-------------------------------------------------------------------------------
+In the UVVM Utility Library adaptations_pkg.vhd, set the constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS 
+to TRUE in order to make each CovPType object use a individual message ID panel. Each CovPType object 
+will be set to the default value defined in C_OSVVM_DEFAULT_MSG_ID_PANEL, but they can be altered 
+at runtime. 
+
+
+Controlling message ID panel of CovPType objects
+-------------------------------------------------------------------------------
+When C_USE_LOCAL_OSVVM_MSG_ID_PANELS is TRUE, the individual CovPType objects use their own message 
+ID panels. The verbosity of these ID panels can be controlled by using the enable_log_msg and 
+disable_log_msg functions.
+
+Example 1: For enabling the message ID ID_COVERAGE_CONFIG in CovPType object "test_object", 
+           use: test_object.enable_log_msg(ID_COVERAGE_CONFIG);
+           
+Example 2: For disabling the message ID ID_COVERAGE_HOLES in CovPType object "test_object", 
+           use: test_object.disable_log_msg(ID_COVERAGE_HOLES);
+
+When C_USE_LOCAL_OSVVM_MSG_ID_PANELS is set to FALSE, the CovPType objects will use the shared_message_id_panel, 
+which is used as default for all logging.
+
+
+Controlling message ID panel of other OSVVM Coverage logs
+-------------------------------------------------------------------------------
+When C_USE_LOCAL_OSVVM_MSG_ID_PANELS is TRUE, all CoveragePkg logs which are not called from within a 
+CovPType object is logged with message ID panel shared_osvvm_msg_id_panel. Enabling and disabling message 
+IDs in this message ID panel can be used as with all other UVVM Utility Library message ID panels, 
+with enable_log_msg/disable_log_msg.
+
+Example 1: Enabling the message ID ID_COVERAGE_CONFIG in the OSVVM message ID panel, 
+           use: enable_log_msg(ID_COVERAGE_CONFIG, shared_osvvm_msg_id_panel);
+Example 2: Disabling the message ID ID_COVERAGE_CONFIG in the OSVVM message ID panel, 
+           use: disable_log_msg(ID_COVERAGE_CONFIG, shared_osvvm_msg_id_panel);
+
+When C_USE_LOCAL_OSVVM_MSG_ID_PANELS is set to FALSE, the CoveragePkg logging will use the shared_message_id_panel, 
+which is used as default for all logging.
+
+
+Setting up coverage and logging of coverage and holes to file
+-------------------------------------------------------------------------------
+Before running the coverage, the WriteBin output file needs to be specified. This is done with the 
+function FileOpenWriteBin, which is a part of the CovPType object.
+
+Example: Set the WriteBin output file to "test_object.txt" for the CovPType object 
+         "test_object": test_object.FileOpenWriteBin("test_object.txt", WRITE_MODE);
+
+When the file name has been set, the coverage settings can be applied to the CovPType object.
+
+- Coverage bin can be added as normal in OSVVM, e.g. test_object.AddBins(GenBin(0, to_integer(C_MAX_DATA_VECTOR)));
+- The name of the coverage bin can be set as normal using test_object.SetName("test_name")
+- Etc.
+
+After the CovPType configuration has been applied, the simulation can be run. After the simulation has 
+been completed, the coverage and holes can be reported to file using the following commands.
+- For writing the coverage of test_object to file: test_object.WriteBin
+- For writing the coverage holes of test_object to file: test_object.WriteCovHoles
+
+When the simulation is finished and the coverage has been written to file, close the coverage files by 
+calling FileCloseWriteBin.
+- For closing the write file of test_object: test_object.FileCloseWriteFile
+
+ 

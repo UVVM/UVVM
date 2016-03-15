@@ -1,0 +1,1 @@
+Please see ./doc/Artistic_License_2.0.md

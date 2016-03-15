@@ -1,0 +1,37 @@
+UVVM OSVVM - Overview on Versions and Changes
+==============================================================
+
+v1.0.0
+----------
+Released: 2016-03-14
+
+Initial version of UVVM OSVVM.
+UVVM OSVVM is based on OSVVM 2016.1.
+
+Changes in OsvvmContext.vhd:
+  - Changed library from OSVVM to uvvm_osvvm.
+
+Changes in AlertLogPkg.vhd:
+  - UVVM Utility Library context clause has been added
+  - AlertType and AlertIndexType have been extended to match the alert levels in UVVM Utility Library. A translation function from AlertType to t_alert_level has also been added.
+    - Alert levels: FAILURE,  ERROR,  WARNING,  TB_FAILURE, TB_ERROR, TB_WARNING, MANUAL_CHECK, NOTE and TB_NOTE
+  - A constant (C_UVVM_ALERT_LOGGING) has been added to switch between original OSVVM logging and logging through UVVM Utility Library.
+  - The AlertLogPkg alert procedure has been altered to pipe alerts to UVVM Utility Library if C_UVVM_ALERT_LOGGING is set to true.
+  - A message ID panel for OSVVM logging (shared_osvvm_msg_id_panel) has been added. 
+
+Changes in CoveragePkg.vhd:
+  - UVVM Utility Library context clause has been added
+  - Logging has been added to multiple existing coverage methods in order to increase runtime insight of the CoveragePkg.
+  - to_string methods have been added for Action type.
+  - Methods for getting and setting coverage file names have been added
+  - Methods for controlling logging have been added
+  - AlertTypes have been adjusted to suit UVVM Utility Library alert type
+  
+Changes in demo/AlertLog_Demo_Global.vhd:
+  - Changed library from OSVVM to uvvm_osvvm.
+
+Changes in demo/AlertLog_Demo_Hierarchy.vhd:
+  - Changed library from OSVVM to uvvm_osvvm.
+
+Changes in demo/Demo_Rand.vhd:
+  - Changed library from Synthworks to uvvm_osvvm.

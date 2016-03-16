@@ -1,10 +1,12 @@
+--========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
 
 ------------------------------------------------------------------------------------------
@@ -221,6 +223,13 @@ package string_methods_pkg is
 
   function to_string(
     val     : signed;
+    radix   : t_radix;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string;
+    
+  function to_string(
+    val     : t_byte_array;
     radix   : t_radix;
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
@@ -1060,6 +1069,50 @@ package body string_methods_pkg is
 
     else -- No decimal convertion: May be treated as slv, so use the slv overload
       return to_string(std_logic_vector(val), radix, format, prefix);
+    end if;
+  end;
+  
+  function to_string(
+    val     : t_byte_array;
+    radix   : t_radix;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string is
+    variable v_line         : line;
+    variable v_result       : string(1 to 2 +              -- parentheses
+                                     2*(val'length - 1) +  -- commas
+                                     26 * val'length);     -- 26 is max length of returned value from slv to_string()
+    variable v_width        : natural;
+  begin
+    if val'length = 0 then
+      -- Value length is zero,
+      -- return empty string.
+      return "";
+    elsif val'length = 1 then
+      -- Value length is 1
+      -- Return the single value it contains
+      return to_string(val(val'low), radix, format, prefix);
+    else
+      -- Value length more than 1
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));
+    
+      for i in val'range loop
+        write(v_line, to_string(val(i), radix, format, prefix));
+      
+        if i < val'right and val'ascending then
+          write(v_line, string'(", "));
+        elsif i > val'right and not val'ascending then
+          write(v_line, string'(", "));
+        end if;
+      end loop;
+      
+      write(v_line, string'(")"));
+      
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
     end if;
   end;
 

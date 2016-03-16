@@ -9,6 +9,12 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v1.3.1
+----------
+Released: 2016-03-16
+
+- This release contains an updated version of UVVM-Util
+
 v1.3.0
 ----------
 Released: 2016-03-14

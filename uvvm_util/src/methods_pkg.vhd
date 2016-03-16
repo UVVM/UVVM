@@ -1,10 +1,12 @@
+--========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
 
 ------------------------------------------------------------------------------------------
@@ -76,7 +78,7 @@ package methods_pkg is
     msg            : string;
     scope          : string         := C_TB_SCOPE_DEFAULT;
     msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
-    log_destination : t_log_destination  := CONSOLE_AND_LOG;
+    log_destination : t_log_destination  := shared_default_log_destination;
     log_file_name   : string             := C_LOG_FILE_NAME;
     open_mode       : file_open_kind     := append_mode
     );
@@ -89,7 +91,7 @@ package methods_pkg is
     scope                 : string                := C_TB_SCOPE_DEFAULT;
     msg_id_panel          : t_msg_id_panel        := shared_msg_id_panel;
     log_if_block_empty    : t_log_if_block_empty := WRITE_HDR_IF_BLOCK_EMPTY;
-    log_destination       : t_log_destination     := CONSOLE_AND_LOG;
+    log_destination       : t_log_destination     := shared_default_log_destination;
     log_file_name         : string                := C_LOG_FILE_NAME;
     open_mode             : file_open_kind        := append_mode
     );
@@ -105,13 +107,21 @@ package methods_pkg is
     constant msg_id         : t_msg_id;
     variable msg_id_panel   : inout t_msg_id_panel;
     constant msg            : string := "";
-    constant scope          : string := C_TB_SCOPE_DEFAULT
+    constant scope          : string := C_TB_SCOPE_DEFAULT;
+    constant quietness      : t_quietness := NON_QUIET
     );
 
   procedure enable_log_msg(
     msg_id         : t_msg_id;
-    msg            : string  := ""
+    msg            : string;
+    quietness      : t_quietness := NON_QUIET
     ) ;
+  
+  procedure enable_log_msg(
+    msg_id         : t_msg_id;
+    quietness      : t_quietness := NON_QUIET
+    ) ;
+    
   procedure disable_log_msg(
     constant msg_id         : t_msg_id;
     variable msg_id_panel   : inout t_msg_id_panel;
@@ -122,7 +132,12 @@ package methods_pkg is
 
   procedure disable_log_msg(
     msg_id         : t_msg_id;
-    msg            : string  := "";
+    msg            : string;
+    quietness      : t_quietness := NON_QUIET
+    );
+    
+  procedure disable_log_msg(
+    msg_id         : t_msg_id;
     quietness      : t_quietness := NON_QUIET
     );
 
@@ -130,6 +145,11 @@ package methods_pkg is
     msg_id        : t_msg_id;
     msg_id_panel  : t_msg_id_panel :=  shared_msg_id_panel
     ) return boolean;
+    
+  procedure set_log_destination(
+    constant log_destination      : t_log_destination;
+    constant quietness            : t_quietness := NON_QUIET
+  );
 
 
 -- ============================================================================
@@ -1217,11 +1237,35 @@ package methods_pkg is
   );
 
   procedure clock_generator(
-    signal   clock_signal  : inout std_logic;
-    constant clock_period  : in    time
+    signal   clock_signal          : inout std_logic;
+    constant clock_period          : in    time;
+    constant clock_high_percentage : in    natural range 1 to 99 := 50
   );
 
-  -- Overloaded version with additional arguments
+  -- Overloaded version with duty cycle in time
+  procedure clock_generator(
+    signal   clock_signal    : inout std_logic;
+    constant clock_period    : in    time;
+    constant clock_high_time : in    time
+  );
+  
+  -- Overloaded version with clock count
+  procedure clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_high_percentage : in    natural range 1 to 99 := 50
+  );
+  
+  -- Overloaded version with clock count and duty cycle in time
+  procedure clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_high_time       : in    time
+  );
+
+  -- Overloaded version with clock enable and clock name
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
     signal   clock_ena             : in    boolean;
@@ -1230,10 +1274,33 @@ package methods_pkg is
     constant clock_high_percentage : in    natural range 1 to 99 := 50
   );
   
-  -- Overloaded version with duty cycle in time
+  -- Overloaded version with clock enable, clock name
+  -- and duty cycle in time.
   procedure clock_generator(
     signal   clock_signal    : inout std_logic;
     signal   clock_ena       : in    boolean;
+    constant clock_period    : in    time;
+    constant clock_name      : in    string;
+    constant clock_high_time : in    time
+  );
+  
+  -- Overloaded version with clock enable, clock name
+  -- and clock count
+  procedure clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_name            : in    string;
+    constant clock_high_percentage : in    natural range 1 to 99 := 50
+  );
+  
+  -- Overloaded version with clock enable, clock name,
+  -- clock count and duty cycle in time.
+  procedure clock_generator(
+    signal   clock_signal    : inout std_logic;
+    signal   clock_ena       : in    boolean;
+    signal   clock_count     : out   natural;
     constant clock_period    : in    time;
     constant clock_name      : in    string;
     constant clock_high_time : in    time
@@ -1498,7 +1565,7 @@ package body methods_pkg is
     msg            : string;
     scope          : string         := C_TB_SCOPE_DEFAULT;
     msg_id_panel   : t_msg_id_panel := shared_msg_id_panel; -- compatible with old code
-    log_destination : t_log_destination  := CONSOLE_AND_LOG;
+    log_destination : t_log_destination  := shared_default_log_destination;
     log_file_name   : string             := C_LOG_FILE_NAME;
     open_mode       : file_open_kind     := append_mode
     ) is
@@ -1633,7 +1700,7 @@ package body methods_pkg is
     scope                 : string         := C_TB_SCOPE_DEFAULT;
     msg_id_panel          : t_msg_id_panel        := shared_msg_id_panel;
     log_if_block_empty    : t_log_if_block_empty := WRITE_HDR_IF_BLOCK_EMPTY;
-    log_destination       : t_log_destination     := CONSOLE_AND_LOG;
+    log_destination       : t_log_destination     := shared_default_log_destination;
     log_file_name         : string                := C_LOG_FILE_NAME;
     open_mode             : file_open_kind        := append_mode
   ) is
@@ -1745,7 +1812,8 @@ package body methods_pkg is
     constant msg_id         : t_msg_id;
     variable msg_id_panel   : inout t_msg_id_panel;
     constant msg            : string := "";
-    constant scope          : string          := C_TB_SCOPE_DEFAULT
+    constant scope          : string      := C_TB_SCOPE_DEFAULT;
+    constant quietness      : t_quietness := NON_QUIET
     ) is
   begin
     case msg_id is
@@ -1758,19 +1826,32 @@ package body methods_pkg is
         end loop;
         msg_id_panel(ID_NEVER) := DISABLED;
         msg_id_panel(ID_BITVIS_DEBUG) := DISABLED;
-        log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & "). " & msg, scope);
+        if quietness = NON_QUIET then
+          log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & "). " & msg, scope);
+        end if;
       when others =>
         msg_id_panel(msg_id) := ENABLED;
-        log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & "). " & msg, scope);
+        if quietness = NON_QUIET then
+          log(ID_LOG_MSG_CTRL, "enable_log_msg(" & to_upper(to_string(msg_id)) & "). " & msg, scope);
+        end if;
     end case;
   end;
 
   procedure enable_log_msg(
     msg_id         : t_msg_id;
-    msg            : string  := ""
+    msg            : string;
+    quietness      : t_quietness := NON_QUIET
     ) is
   begin
-    enable_log_msg(msg_id, shared_msg_id_panel, msg);
+    enable_log_msg(msg_id, shared_msg_id_panel, msg, C_TB_SCOPE_DEFAULT, quietness);
+  end;
+  
+  procedure enable_log_msg(
+    msg_id         : t_msg_id;
+    quietness      : t_quietness := NON_QUIET
+    ) is
+  begin
+    enable_log_msg(msg_id, shared_msg_id_panel, "", C_TB_SCOPE_DEFAULT, quietness);
   end;
 
   procedure disable_log_msg(
@@ -1799,11 +1880,19 @@ package body methods_pkg is
 
   procedure disable_log_msg(
     msg_id         : t_msg_id;
-    msg            : string  := "";
+    msg            : string;
     quietness      : t_quietness := NON_QUIET
     ) is
   begin
     disable_log_msg(msg_id, shared_msg_id_panel, msg, C_TB_SCOPE_DEFAULT, quietness);
+  end;
+  
+  procedure disable_log_msg(
+    msg_id         : t_msg_id;
+    quietness      : t_quietness := NON_QUIET
+    ) is
+  begin
+    disable_log_msg(msg_id, shared_msg_id_panel, "", C_TB_SCOPE_DEFAULT, quietness);
   end;
 
   impure function is_log_msg_enabled(
@@ -1816,6 +1905,17 @@ package body methods_pkg is
     else
       return false;
     end if;
+  end;
+  
+  procedure set_log_destination(
+    constant log_destination    : t_log_destination;
+    constant quietness          : t_quietness := NON_QUIET
+  ) is
+  begin
+    if quietness = NON_QUIET then
+      log(ID_LOG_MSG_CTRL, "Changing log destination to " & to_string(log_destination) & ". Was " & to_string(shared_default_log_destination) & ". ", C_TB_SCOPE_DEFAULT);
+    end if;
+    shared_default_log_destination := log_destination;
   end;
 
 
@@ -4538,13 +4638,15 @@ package body methods_pkg is
   -- Include this as a concurrent procedure from your test bench.
   -- ( Including this procedure call as a concurrent statement directly in your architecture
   --   is in fact identical to a process, where the procedure parameters is the sensitivity list )
+  --   Set duty cycle by setting clock_high_percentage from 1 to 99. Beware of rounding errors.
   --------------------------------------------
   procedure clock_generator(
-    signal   clock_signal  : inout std_logic;
-    constant clock_period  : in time
+    signal   clock_signal          : inout std_logic;
+    constant clock_period          : in    time;
+    constant clock_high_percentage : in    natural range 1 to 99 := 50
   ) is
     -- Making sure any rounding error after calculating period/2 is not accumulated.
-    constant C_FIRST_HALF_CLK_PERIOD : time := clock_period / 2;
+    constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
   begin
     loop
       clock_signal <= '1';
@@ -4553,7 +4655,92 @@ package body methods_pkg is
       wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
     end loop;
   end;
-
+  
+  --------------------------------------------
+  -- Clock generator overload:
+  -- Include this as a concurrent procedure from your test bench.
+  -- ( Including this procedure call as a concurrent statement directly in your architecture
+  --   is in fact identical to a process, where the procedure parameters is the sensitivity list )
+  --   Set duty cycle by setting clock_high_time.
+  --------------------------------------------
+  procedure clock_generator(
+    signal   clock_signal    : inout std_logic;
+    constant clock_period    : in    time;
+    constant clock_high_time : in    time
+  ) is
+  begin
+    check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+    loop
+      clock_signal <= '1';
+      wait for clock_high_time;
+      clock_signal <= '0';
+      wait for (clock_period - clock_high_time);
+    end loop;
+  end;
+  
+  --------------------------------------------
+  -- Clock generator overload:
+  -- - Count variable (clock_count) is added as an output. Wraps when reaching max value of
+  --   natural type.
+  -- - Set duty cycle by setting clock_high_percentage from 1 to 99. Beware of rounding errors.
+  --------------------------------------------
+  procedure clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_high_percentage : in    natural range 1 to 99 := 50
+  ) is
+    -- Making sure any rounding error after calculating period/2 is not accumulated.
+    constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
+  begin
+    clock_count <= 0;
+    
+    loop
+      clock_signal <= '1';
+      wait for C_FIRST_HALF_CLK_PERIOD;
+      clock_signal <= '0';
+      wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
+      
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+      
+    end loop;
+  end;
+  
+  --------------------------------------------
+  -- Clock generator overload:
+  -- - Count variable (clock_count) is added as an output. Wraps when reaching max value of
+  --   natural type.
+  -- - Set duty cycle by setting clock_high_time.
+  --------------------------------------------
+  procedure clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_high_time       : in    time
+  ) is
+  begin
+    clock_count <= 0;
+    
+    check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+    
+    loop
+      clock_signal <= '1';
+      wait for clock_high_time;
+      clock_signal <= '0';
+      wait for (clock_period - clock_high_time);
+      
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+    end loop;
+  end;
+  
   --------------------------------------------
   -- Clock generator overload:
   -- - Enable signal (clock_ena) is added as a parameter
@@ -4569,7 +4756,7 @@ package body methods_pkg is
     constant clock_high_percentage : in    natural range 1 to 99 := 50
   ) is
     -- Making sure any rounding error after calculating period/2 is not accumulated.
-    variable C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
+    constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
   begin
     loop
       if not clock_ena then
@@ -4591,7 +4778,7 @@ package body methods_pkg is
   -- - The clock goes to '1' immediately when the clock is enabled (clock_ena = true)
   -- - Log when the clock_ena changes. clock_name is used in the log message.
   --   inferred to be low time.
-  -- - Set duty cycle by setting clock_high_time. The remainder of clock_period is
+  -- - Set duty cycle by setting clock_high_time.
   --------------------------------------------
   procedure clock_generator(
     signal   clock_signal    : inout std_logic;
@@ -4615,6 +4802,91 @@ package body methods_pkg is
       wait for (clock_period - clock_high_time);
     end loop;
   end;
-
+  
+  --------------------------------------------
+  -- Clock generator overload:
+  -- - Enable signal (clock_ena) is added as a parameter
+  -- - The clock goes to '1' immediately when the clock is enabled (clock_ena = true)
+  -- - Log when the clock_ena changes. clock_name is used in the log message.
+  -- - Count variable (clock_count) is added as an output. Wraps when reaching max value of
+  --   natural type.
+  -- - Set duty cycle by setting clock_high_percentage from 1 to 99. Beware of rounding errors.
+  --------------------------------------------
+  procedure clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_name            : in    string;
+    constant clock_high_percentage : in    natural range 1 to 99 := 50
+  ) is   
+    -- Making sure any rounding error after calculating period/2 is not accumulated.
+    constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
+  begin
+    clock_count <= 0;
+  
+    loop
+      if not clock_ena then
+        log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        clock_signal <= '0';
+        wait until clock_ena;
+        log(ID_CLOCK_GEN, "Starting clock " & clock_name);
+      end if;
+      clock_signal <= '1';
+      wait for C_FIRST_HALF_CLK_PERIOD;
+      clock_signal <= '0';
+      wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
+      
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+    end loop;
+  end;
+  
+  --------------------------------------------
+  -- Clock generator overload:
+  -- - Enable signal (clock_ena) is added as a parameter
+  -- - The clock goes to '1' immediately when the clock is enabled (clock_ena = true)
+  -- - Log when the clock_ena changes. clock_name is used in the log message.
+  --   inferred to be low time.
+  -- - Count variable (clock_count) is added as an output. Wraps when reaching max value of
+  --   natural type.
+  -- - Set duty cycle by setting clock_high_time.
+  --------------------------------------------
+  procedure clock_generator(
+    signal   clock_signal    : inout std_logic;
+    signal   clock_ena       : in    boolean;
+    signal   clock_count     : out   natural;
+    constant clock_period    : in    time;
+    constant clock_name      : in    string;
+    constant clock_high_time : in    time
+  ) is
+  begin
+    clock_count <= 0;
+    
+    check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+    
+    loop
+      if not clock_ena then
+        log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        clock_signal <= '0';
+        wait until clock_ena;
+        log(ID_CLOCK_GEN, "Starting clock " & clock_name);
+      end if;
+      clock_signal <= '1';
+      wait for clock_high_time;
+      clock_signal <= '0';
+      wait for (clock_period - clock_high_time);
+      
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+    end loop;
+  end;
+  
 end package body methods_pkg;
 

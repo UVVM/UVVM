@@ -3,6 +3,21 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.2.0
+----------
+Released: 2016-03-16
+
+All changes should be backwards compatible within 1.x.x
+- Added uvvm_osvvm
+- Added optional output signal clock_count to clock generators.
+- Added new type t_byte_array and a to_string overload for this type.
+- Added new overload of disable_log_msg that does not require a msg parameter
+- Added quietness parameter to enable_log_msg.
+- Added a new shared variable to adaptations_pkg, shared_default_log_destination,
+  that sets the default log destination. Procedure set_log_destination() can be
+  used to set this parameter in run-time.
+- QuickRef:
+  - Added more information on how to use Message IDs in section 1.9
 
 v1.1.2
 ----------

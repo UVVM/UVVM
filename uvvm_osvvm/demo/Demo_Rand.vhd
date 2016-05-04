@@ -1,3 +1,12 @@
+-- This copy of OSVVM (UVVM OSVVM) has been modified in order to use the UVVM Utility Library.
+--
+-- Please see CHANGES.TXT for more information on the changes to the original OSVVM implementation.
+-- Please see HOWTO-GUIDE.TXT for more information on how to use this copy of UVVM OSVVM.
+--
+--  Maintainer:        Bitvis AS     email:  support@bitvis.no
+-- 
+
+-- Original File header:
 --
 --  File Name:         Demo_Rand.vhd
 --  Design Unit Name:  Demo_Rand

@@ -25,52 +25,172 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_data_queue_pkg.all;
 
 package ti_data_fifo_pkg is
-  
+
+  shared variable shared_data_fifo : t_data_queue;
+
+  ------------------------------------------
+  -- fifo_init
+  ------------------------------------------
+  -- This function allocates space in the buffer and returns an index that 
+  -- must be used to access the FIFO.
+  --   
+  --  - Parameters: 
+  --        - buffer_size_in_bits (natural) - The size of the FIFO
+  --        - scope                         - Log scope for all alerts/logs
+  --
+  --  - Returns: The index of the initiated FIFO (natural). 
+  --             Returns 0 on error.
+  --
   impure function fifo_init(
     buffer_size_in_bits   : natural;
     scope                 : string := "data_fifo"
   ) return natural;
   
+  ------------------------------------------
+  -- fifo_init
+  ------------------------------------------
+  -- This procedure allocates space in the buffer at the given buffer_idx.
+  --
+  --  - Parameters: 
+  --        - buffer_idx                    - The index of the FIFO (natural)
+  --                                          that shall be initialized.  
+  --        - buffer_size_in_bits (natural) - The size of the FIFO
+  --        - scope                         - Log scope for all alerts/logs
+  --
   procedure fifo_init(
     buffer_idx            : natural;
     buffer_size_in_bits   : natural;
     scope                 : string := "data_fifo"
   );
 
+  ------------------------------------------
+  -- fifo_put
+  ------------------------------------------
+  -- This procedure puts data into a FIFO with index buffer_idx.
+  -- The size of the data is unconstrained, meaning that 
+  -- it can be any size. Pushing data with a size that is
+  -- larger than the FIFO size results in wrapping, i.e.,
+  -- that when reaching the end the data remaining will over-
+  -- write the data that was written first.
+  -- 
+  --  - Parameters: 
+  --        - buffer_idx - The index of the FIFO (natural) 
+  --                       that shall be pushed to.  
+  --        - data       - The data that shall be pushed (slv)
+  --        - scope      - Log scope for all alerts/logs
+  --
   procedure fifo_put(
     buffer_idx        : natural;
     data              : std_logic_vector;
     scope             : string := "data_fifo"
   );
 
+  ------------------------------------------
+  -- fifo_get
+  ------------------------------------------
+  -- This function returns the data from the FIFO
+  -- and removes the returned data from the FIFO.
+  -- 
+  --  - Parameters: 
+  --        - buffer_idx          - The index of the FIFO (natural) 
+  --                                that shall be read.  
+  --        - entry_size_in_bits  - The size of the returned slv (natural)
+  --        - scope               - Log scope for all alerts/logs
+  --
+  --  - Returns: Data from the FIFO (slv). The size of the 
+  --             return data is given by the entry_size_in_bits parameter.
+  --             Attempting to get() from an empty FIFO is allowed but triggers a 
+  --             TB_WARNING and returns garbage.
+  --             Attempting to get() a larger value than the FIFO size is allowed
+  --             but triggers a TB_WARNING.
+  --             
+  --
   impure function fifo_get(
     buffer_idx            : natural;
     entry_size_in_bits    : natural;
     scope                 : string := "data_fifo"
   ) return std_logic_vector;
 
+  ------------------------------------------
+  -- fifo_flush
+  ------------------------------------------
+  -- This procedure empties the FIFO given
+  -- by buffer_idx.
+  --
+  --  - Parameters: 
+  --        - buffer_idx - The index of the FIFO (natural)
+  --                       that shall be flushed.  
+  --        - scope      - Log scope for all alerts/logs
+  --
   procedure fifo_flush(
     buffer_idx            : natural;
     scope                 : string := "data_fifo"
   );
 
+  ------------------------------------------
+  -- fifo_peek
+  ------------------------------------------
+  -- This function returns the data from the FIFO
+  -- without removing it.
+  -- 
+  --  - Parameters: 
+  --        - buffer_idx          - The index of the FIFO (natural) 
+  --                                that shall be read.  
+  --        - entry_size_in_bits  - The size of the returned slv (natural)
+  --        - scope               - Log scope for all alerts/logs
+  --
+  --  - Returns: Data from the FIFO. The size of the 
+  --             return data is given by the entry_size_in_bits parameter.
+  --             Attempting to peek from an empty FIFO is allowed but triggers a 
+  --             TB_WARNING and returns garbage.
+  --             Attempting to peek a larger value than the FIFO size is allowed
+  --             but triggers a TB_WARNING. Will wrap.
+  --             
+  --
   impure function fifo_peek(
     buffer_idx            : natural;
     entry_size_in_bits    : natural;
     scope                 : string := "data_fifo"
   ) return std_logic_vector;
   
+  ------------------------------------------
+  -- fifo_get_count
+  ------------------------------------------
+  -- This function returns a natural indicating the number of elements
+  -- currently occupying the FIFO given by buffer_idx.
+  -- 
+  --  - Parameters: 
+  --        - buffer_idx          - The index of the FIFO (natural)  
+  --        - scope               - Log scope for all alerts/logs
+  --
+  --  - Returns: The number of elements occupying the FIFO (natural).
+  --             
+  --
   impure function fifo_get_count(
     buffer_idx            : natural;
     scope                 : string := "data_fifo"
   ) return natural;
-
+  
+  ------------------------------------------
+  -- fifo_get_max_count
+  ------------------------------------------
+  -- This function returns a natural indicating the maximum number 
+  -- of elements that can occupy the FIFO given by buffer_idx.
+  --
+  --  - Parameters: 
+  --        - buffer_idx          - The index of the FIFO (natural)  
+  --        - scope               - Log scope for all alerts/logs
+  --
+  --  - Returns: The maximum number of elements that can be placed
+  --             in the FIFO (natural).
+  --             
+  --
   impure function fifo_get_max_count(
     buffer_idx            : natural;
     scope                 : string := "data_fifo"
   ) return natural;
   
-  shared variable shared_data_fifo : t_data_queue;
+
 
 end package ti_data_fifo_pkg;
 

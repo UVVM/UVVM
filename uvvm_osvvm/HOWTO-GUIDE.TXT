@@ -32,14 +32,14 @@ For information about how to do this, see the OSVVM documentation.
 Controlling the CoveragePkg default ID panel
 -------------------------------------------------------------------------------
 In the UVVM Utility Library adaptations_pkg.vhd, enable or disable message IDs in the constant 
-C_OSVVM_DEFAULT_MSG_ID_PANEL.
+C_MSG_ID_PANEL_DEFAULT. The OSVVM IDs are listed in the type t_msg_id.
 
 
 Select if CovPType objects are to use individual message panels
 -------------------------------------------------------------------------------
 In the UVVM Utility Library adaptations_pkg.vhd, set the constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS 
 to TRUE in order to make each CovPType object use a individual message ID panel. Each CovPType object 
-will be set to the default value defined in C_OSVVM_DEFAULT_MSG_ID_PANEL, but they can be altered 
+will be set to the default value defined in C_MSG_ID_PANEL_DEFAULT, but they can be altered 
 at runtime. 
 
 
@@ -62,7 +62,7 @@ which is used as default for all logging.
 Controlling message ID panel of other OSVVM Coverage logs
 -------------------------------------------------------------------------------
 When C_USE_LOCAL_OSVVM_MSG_ID_PANELS is TRUE, all CoveragePkg logs which are not called from within a 
-CovPType object is logged with message ID panel shared_osvvm_msg_id_panel. Enabling and disabling message 
+CovPType object is logged with message ID panel shared_msg_id_panel. Enabling and disabling message 
 IDs in this message ID panel can be used as with all other UVVM Utility Library message ID panels, 
 with enable_log_msg/disable_log_msg.
 

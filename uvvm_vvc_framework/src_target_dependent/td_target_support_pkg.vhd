@@ -226,7 +226,7 @@ package body td_target_support_pkg is
     if not (global_vvc_ack'event) then            -- Indicates timeout
       tb_error("Time out for " & C_CMD_INFO & " '" & to_string(shared_vvc_cmd.proc_call) & "' while waiting for acknowledge from VVC", C_SCOPE);
     else
-      log(ID_UVVM_CMD_ACK, "ACK received on  " & format_command_idx(shared_cmd_idx), C_SCOPE);
+      log(ID_UVVM_CMD_ACK, "ACK received.  " & format_command_idx(shared_cmd_idx), C_SCOPE);
     end if;
 
     -- clean up and prepare for next

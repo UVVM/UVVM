@@ -1227,7 +1227,7 @@ package body CoveragePkg is
     -- Name Data Structure
     variable CovNameVar    : NamePType ;
     variable CovMessageVar : MessagePType ;
-    variable local_msg_id_panel   : t_msg_id_panel := C_OSVVM_DEFAULT_MSG_ID_PANEL;
+    variable local_msg_id_panel   : t_msg_id_panel := C_MSG_ID_PANEL_DEFAULT;
     
     -- CoverageBin Data Structures
     type RangeArrayPtrType is access RangeArrayType ;
@@ -2949,7 +2949,7 @@ package body CoveragePkg is
         end if ;
       end loop ;
       if(C_UVVM_ALERT_LOGGING) then
-        log_text_block(ID_COVERAGE_SUMMARY, buf, FORMATTED, "Name: " & GetName & ", Coverage: " & to_string(VALUE => GetCov, format => "%.2f") & "%", GetName, get_coverage_msg_id_panel(VOID), WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, get_file_name(VOID));
+        log_text_block(ID_COVERAGE_SUMMARY, buf, FORMATTED, "Name: " & GetName & ", Coverage: " & to_string(GetCov) & "%", GetName, get_coverage_msg_id_panel(VOID), WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, get_file_name(VOID));
       else
         swrite(buf, "") ;
         writeline(f, buf) ;
@@ -3194,7 +3194,7 @@ package body CoveragePkg is
     ------------------------------------------------------------
       variable buf : line ;
     begin
-      log(ID_COVERAGE_HOLES, "Called WriteCovHoles for " & GetName & ". Argument: PercentCov=" & to_string(VALUE=>PercentCov, format=>"%.2f") & ".", GetName, get_coverage_msg_id_panel(VOID));
+      log(ID_COVERAGE_HOLES, "Called WriteCovHoles for " & GetName & ". Argument: PercentCov=" & to_string(PercentCov) & ".", GetName, get_coverage_msg_id_panel(VOID));
       if NumBins < 1 then
         if not C_UVVM_ALERT_LOGGING then
           if WriteBinFileInit or UsingLocalFile then
@@ -3237,7 +3237,7 @@ package body CoveragePkg is
       end loop CovLoop ;
       
       if(C_UVVM_ALERT_LOGGING) then
-        log_text_block(ID_COVERAGE_HOLES, buf, FORMATTED, "Name: " & GetName & ", Coverage: " & to_string(VALUE => GetCov, format => "%.2f") & "%", GetName, get_coverage_msg_id_panel(VOID), WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, get_file_name(VOID));
+        log_text_block(ID_COVERAGE_HOLES, buf, FORMATTED, "Name: " & GetName & ", Coverage: " & to_string(GetCov) & "%", GetName, get_coverage_msg_id_panel(VOID), WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, get_file_name(VOID));
       else
         swrite(buf, "") ;
         writeline(f, buf) ;
@@ -4404,7 +4404,7 @@ package body CoveragePkg is
     AtLeast       : integer ;
     Weight        : integer ;
     Action        : integer ;
-    msg_id_panel  : t_msg_id_panel := get_msg_id_panel(VOID)
+    msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
   ) return CovBinType is
     variable iCovBin : CovBinType(1 to NumBin) ;
     variable TotalBins : integer ; -- either real or integer
@@ -4477,7 +4477,7 @@ package body CoveragePkg is
     AtLeast       : integer ;
     Weight        : integer ;
     Action        : integer;
-    msg_id_panel  : t_msg_id_panel := get_msg_id_panel(VOID)
+    msg_id_panel  : t_msg_id_panel := shared_msg_id_panel
   ) return CovBinType is
     alias    NewA      : integer_vector(1 to A'length) is A ;
     variable iCovBin   : CovBinType(1 to A'length) ;

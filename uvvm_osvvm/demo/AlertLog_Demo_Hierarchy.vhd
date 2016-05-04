@@ -1,3 +1,12 @@
+-- This copy of OSVVM (UVVM OSVVM) has been modified in order to use the UVVM Utility Library.
+--
+-- Please see CHANGES.TXT for more information on the changes to the original OSVVM implementation.
+-- Please see HOWTO-GUIDE.TXT for more information on how to use this copy of UVVM OSVVM.
+--
+--  Maintainer:        Bitvis AS     email:  support@bitvis.no
+-- 
+
+-- Original File header:
 --
 --  File Name:         AlertLog_Demo_Hierarchy.vhd
 --  Design Unit Name:  AlertLog_Demo_Hierarchy
@@ -117,7 +126,7 @@ begin
       ReportAlerts ;   
       print("") ; 
       -- Report Alerts with expected errors expressed as a negative ExternalErrors value
-      ReportAlerts(Name => "AlertLog_Demo_Hierarchy with expected errors", ExternalErrors => -(FAILURE => 0, ERROR => 20, WARNING => 15)) ; 
+      ReportAlerts(Name => "AlertLog_Demo_Hierarchy with expected errors", ExternalErrors => -(FAILURE => 0, ERROR => 20, WARNING => 15, others => 0)) ; 
       TranscriptClose ; 
       print(LF & "The following is brought to you by std.env.stop:") ; 
       std.env.stop ; 

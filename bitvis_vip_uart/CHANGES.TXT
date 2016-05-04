@@ -3,6 +3,23 @@ Bitvis VIP UART - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.1.0
+----------
+Released: 2016-04-28
+
+BFM changes
+----------
+
+- First log msg in uart_expect() BFM is now msg id config.id_for_bfm_wait (ID_BFM_WAIT by default). 
+  Summary of received data when waiting for expected is now printed with new msg id 
+  config.id_for_bfm_poll_summary (ID_BFM_POLL_SUMMARY by default) and will only occur when there is 
+  more than 1 max_receptions.
+
+VVC changes
+----------
+- Added quietness parameter to enable/disable log msg
+- Added scope parameter to VVC insert bfm delay procedure
+
 v1.0.1
 --------------------
 Released: 2016-01-20

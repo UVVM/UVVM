@@ -3,6 +3,15 @@ Bitvis VIP I2C - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.1.0
+----------
+Released: 2016-04-28
+
+VVC changes
+----------
+- Added quietness parameter to enable/disable log msg
+- Added scope parameter to VVC insert bfm delay procedure
+
 v1.0.0
 ----------
 Released: 2016-03-03

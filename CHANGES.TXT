@@ -9,6 +9,22 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v1.4.0
+----------
+Released: 2016-05-02
+
+- This release contains an updated version of:
+  - UVVM-Util
+  - UVVM VVC Framework
+  - UVVM OSVVM
+  - bitvis_vip_sbi
+  - bitvis_vip_uart
+  - bitvis_vip_axilite
+  - bitvis_vip_avalon_mm__simple_access
+  - bitvis_vip_i2c
+  - bitvis_uart
+  - bitvis_irqc
+  
 v1.3.1
 ----------
 Released: 2016-03-16

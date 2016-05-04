@@ -55,8 +55,8 @@ package adaptations_pkg is
   constant C_TB_SCOPE_DEFAULT : string := "TB seq."; -- Default scope in test sequencer
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
-  signal global_show_log_id         : boolean := true;
-  signal global_show_log_scope      : boolean := true;
+  constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id 
+  constant C_SHOW_LOG_SCOPE         : boolean := true; -- This constant has replaced the global_show_log_scope
   
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
   
@@ -94,6 +94,7 @@ package adaptations_pkg is
     ID_BFM,               -- Used inside a BFM (to log BFM access)
     ID_BFM_WAIT,          -- Used inside a BFM to indicate that it is waiting for something (e.g. for ready)
     ID_BFM_POLL,          -- Used inside a BFM when polling until reading a given value. I.e. to show all reads until expected value found (e.g. for sbi_poll_until())
+    ID_BFM_POLL_SUMMARY,  -- Used inside a BFM when showing the summary of data that has been received while waiting for expected data.
     ID_TERMINATE_CMD,     -- Typically used inside a loop in a procedure to end the loop (e.g. for sbi_poll_until() or any looped generation of random stimuli
     -- Packet related data Ids with three levels of granularity, for differentiating between frames, packets and segments.
     -- Segment Ids, finest granularity of packet data
@@ -128,6 +129,8 @@ package adaptations_pkg is
     ID_IMMEDIATE_CMD_WAIT,    -- Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
+    -- Distributed data
+    ID_UVVM_DATA_QUEUE,       -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
@@ -137,23 +140,14 @@ package adaptations_pkg is
   type  t_msg_id_panel is array (t_msg_id'left to t_msg_id'right) of t_enabled;
 
   -- Default message Id panel to be used for all message Id panels, except:
-  --  - OSVVM local message Id panels, see constant C_OSVVM_DEFAULT_MSG_ID_PANEL
   --  - VVC message Id panels, see constant C_VVC_MSG_ID_PANEL_DEFAULT
   constant C_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
-    ID_NEVER         => DISABLED,
-    ID_UTIL_BURIED   => DISABLED,
-    ID_BITVIS_DEBUG  => DISABLED,
-    others           => ENABLED
-  );
-  
-  -- Default message Id panel intended for the UVVM OSVVM version
-  constant C_OSVVM_DEFAULT_MSG_ID_PANEL : t_msg_id_panel := (
     ID_NEVER            => DISABLED,
     ID_UTIL_BURIED      => DISABLED,
+    ID_BITVIS_DEBUG     => DISABLED,
     ID_COVERAGE_MAKEBIN => DISABLED,
     ID_COVERAGE_ADDBIN  => DISABLED,
     ID_COVERAGE_ICOVER  => DISABLED,
-    ID_POS_ACK          => DISABLED,
     others              => ENABLED
   );
   

@@ -29,6 +29,9 @@ def is_input_vhdl_legal(requested_vvc_name):
     if requested_vvc_name.__len__() < 1:
         print("Input too short. Please try again.")
         return False
+    if requested_vvc_name.__len__() > 14:
+        print("WARNING: Name exceeds default maximum name length, defined in UVVM Utility Library constant C_LOG_SCOPE_WIDTH")
+        print("         - Please increase C_LOG_SCOPE_WIDTH in the adaptations_pkg.vhd")
     if (requested_vvc_name[0] == '_') or (requested_vvc_name[0].isdigit()):
         print("Input must start with a letter")
         return False
@@ -81,7 +84,7 @@ def get_channel_name():
 
 # Get the VVC name and check if it is valid
 def get_vvc_name():
-    requested_vvc_name = input("\rPlease enter the VVC Name: ")
+    requested_vvc_name = input("\rPlease enter the VVC Name (e.g. SBI, UART, axilite): ")
     if is_input_vhdl_legal(requested_vvc_name.lower()) is False:
         return get_vvc_name()
     return requested_vvc_name
@@ -165,8 +168,8 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
                           ": inout t_"+vvc_name.lower()+"_"+vvc_channel.lower()+"_if := init_"+vvc_name.lower()+
                           "_"+vvc_channel.lower()+"_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH); \n")
     file_handle.write("    -- VVC control signals: \n")
-    file_handle.write("    clk                         : in std_logic;\n")
-    file_handle.write("    rst                         : in std_logic\n")
+    file_handle.write("    -- rst                         : in std_logic; -- Optional VVC Reset\n")
+    file_handle.write("    clk                         : in std_logic\n")
     file_handle.write("  );\n")
     if vvc_channel != "NA":
         file_handle.write("end entity "+vvc_name.lower()+"_"+vvc_channel.lower()+"_vvc;\n")
@@ -366,7 +369,9 @@ def add_vvc_executor(file_handle):
     file_handle.write("                                                                         "
                       "timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,\n")
     file_handle.write("                                                                         "
-                      "timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access);\n")
+                      "timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,\n")
+    file_handle.write("                                                                         "
+                      "scope                              => C_SCOPE);\n")                      
     print_linefeed(file_handle)
     file_handle.write("      if v_command_is_bfm_access then\n")
     file_handle.write("        v_timestamp_start_of_current_bfm_access := now;\n")
@@ -502,10 +507,10 @@ def add_leaf_vvc_entity(file_handle, vvc_name, channel):
     file_handle.write("  port map(\n")
     file_handle.write("  --<USER_INPUT> Please insert the proper interface needed for this leaf VVC\n")
     file_handle.write("  -- Example:\n")
-    file_handle.write("  -- " + vvc_name.lower() + "_vvc_" + channel.lower() + "         => " +
+    file_handle.write("    -- " + vvc_name.lower() + "_vvc_" + channel.lower() + "         => " +
                       vvc_name.lower()+"_vvc_if." + vvc_name.lower()+"_vvc_"+ channel.lower()+",\n")
-    file_handle.write("    clk                 => clk,\n")
-    file_handle.write("    rst                 => rst\n")
+    file_handle.write("    -- rst                 => rst,  -- Optional VVC Reset\n")
+    file_handle.write("    clk                 => clk\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
 
@@ -802,7 +807,8 @@ def add_methods_pkg_body(file_handle, vvc_name):
     file_handle.write("  --   constant data               : in std_logic_vector;\n")
     file_handle.write("  --   constant msg                : in string\n")
     file_handle.write("  -- ) is\n")
-    file_handle.write("  --   constant proc_call : string := "+vvc_name.lower()+"_write & \"(\" & to_string(VVCT, "
+    file_handle.write("  --   constant proc_name : string := \""+vvc_name.lower()+"_write\";\n")
+    file_handle.write("  --   constant proc_call : string := proc_name & \"(\" & to_string(VVCT, "
                       "vvc_instance_idx)  -- First part common for all\n")
     file_handle.write("  --            & \", \" & to_string(addr, HEX, AS_IS, INCL_RADIX) & \", \" & "
                       "to_string(data, HEX, AS_IS, INCL_RADIX) & \")\";\n")
@@ -823,7 +829,8 @@ def add_methods_pkg_body(file_handle, vvc_name):
     file_handle.write("  --   constant msg                : in string;\n")
     file_handle.write("  --   constant alert_level        : in t_alert_level := ERROR\n")
     file_handle.write("  -- ) is\n")
-    file_handle.write("  --   constant proc_call : string := "+vvc_name.lower()+"_receive & \"(\" & "
+    file_handle.write("  --   constant proc_name : string := \""+vvc_name.lower()+"_receive\";\n")
+    file_handle.write("  --   constant proc_call : string := proc_name & \"(\" & "
                       "to_string(VVCT, vvc_instance_idx, channel) & \")\";\n")
     file_handle.write("  -- begin\n")
     file_handle.write("  --   shared_vvc_cmd               := C_VVC_CMD_DEFAULT;\n")

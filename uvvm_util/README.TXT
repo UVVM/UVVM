@@ -22,6 +22,6 @@ by replacing all the library includes with:
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-All procedures and functions in the current UVVM-Util version 1.2.0 is backwards compatible with 
+All procedures and functions in the current UVVM-Util version 1.3.0 is backwards compatible with 
 BVUL VHDL 2008 source version 2.6.0.
 

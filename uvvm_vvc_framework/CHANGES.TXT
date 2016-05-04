@@ -3,6 +3,27 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.2.0
+----------
+Released: 2016-05-02
+
+All changes should be backwards compatible within 1.x.x
+
+- Minor change in log message for command acknowledge
+- Added optional parameters to interpreter_await_completion to manually set log IDs
+- Added proper scope to VVC support functions. Updated VVC generator script accordingly.
+- Removed log printout from reset_flag procedure.
+- Added quietness parameter to enable/disable log msg
+- Minor fixes to Common Methods QR.
+- ti_data_queue_pkg now using ID_UVVM_DATA_QUEUE as msg id for all operations
+- VVC Generator script and VVC Name Modifier script: Added a warning when entering a VIP name that
+  is too long.
+- VVC Generator script:
+  - Signal 'rst' is now optional for VVCs and is inserted as a comment by vvc_generator.py
+  - Fixed bug where generated VVC method examples were missing quotes around
+    procedure name in proc_call variable.
+  - Added name suggestions at name prompt.
+
 v1.1.0
 ----------
 Released: 2016-01-27

@@ -1,10 +1,12 @@
+--========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
 
 ------------------------------------------------------------------------------------------
@@ -337,6 +339,10 @@ package body sbi_bfm_pkg is
     rd    <= '0';
     addr  <= v_normalised_addr;
     wdata <= v_normalised_data;
+    
+    if config.use_ready_signal then
+      check_value(ready = '1' or ready = '0', failure, "Verifying that ready signal is set to either '1' or '0' when in use", scope, ID_NEVER, msg_id_panel);
+    end if;
 
     wait for config.clock_period;
     while (config.use_ready_signal and ready = '0') loop
@@ -402,6 +408,11 @@ package body sbi_bfm_pkg is
     wr   <= '0';
     rd   <= '1';
     addr <= v_normalised_addr;
+    
+    if config.use_ready_signal then
+      check_value(ready = '1' or ready = '0', failure, "Verifying that ready signal is set to either '1' or '0' when in use", scope, ID_NEVER, msg_id_panel);
+    end if;
+    
     wait for config.clock_period;
     while (config.use_ready_signal and ready = '0') loop
       if v_clk_cycles_waited = 0 then

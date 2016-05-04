@@ -230,7 +230,7 @@ package string_methods_pkg is
     
   function to_string(
     val     : t_byte_array;
-    radix   : t_radix;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string;
@@ -255,7 +255,7 @@ package string_methods_pkg is
     width     : natural;
     justified : side    := right
       ) return string;
-
+      
   procedure to_string(
     val   : t_alert_attention_counters;
     order : t_order := FINAL
@@ -275,6 +275,7 @@ package string_methods_pkg is
   function to_string(
     val : string
     ) return string;
+    
 
 end package string_methods_pkg;
 
@@ -1074,7 +1075,7 @@ package body string_methods_pkg is
   
   function to_string(
     val     : t_byte_array;
-    radix   : t_radix;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
@@ -1148,8 +1149,14 @@ package body string_methods_pkg is
     begin
       return to_upper(justify(t_attention'image(val), justified, width));
     end;
-
-
+    
+  -- function to_string(
+    -- dummy : t_void
+  -- ) return string is
+  -- begin
+    -- return "VOID";
+  -- end function;
+    
   procedure to_string(
     val   : t_alert_attention_counters;
     order : t_order := FINAL
@@ -1259,7 +1266,7 @@ package body string_methods_pkg is
   begin
     for i in val'range loop
       v_ascii_pos := character'pos(val(i));
-        if v_ascii_pos < 32 or -- NUL, SOH, STX etc
+        if (v_ascii_pos < 32 and v_ascii_pos /= 10) or -- NUL, SOH, STX etc, LF(10) is not removed.
           (v_ascii_pos >= 128 and v_ascii_pos < 160) then -- C128 to C159
           -- illegal char
           null;

@@ -1,10 +1,12 @@
+--========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
 
 ------------------------------------------------------------------------------------------
@@ -69,6 +71,7 @@ package uart_bfm_pkg is
     id_for_bfm                                 : t_msg_id;
     id_for_bfm_wait                            : t_msg_id;
     id_for_bfm_poll                            : t_msg_id;
+    id_for_bfm_poll_summary                    : t_msg_id;
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
@@ -84,7 +87,8 @@ package uart_bfm_pkg is
     received_data_to_log_before_expected_data    => 10,
     id_for_bfm               => ID_BFM,
     id_for_bfm_wait          => ID_BFM_WAIT,
-    id_for_bfm_poll          => ID_BFM_POLL
+    id_for_bfm_poll          => ID_BFM_POLL,
+    id_for_bfm_poll_summary  => ID_BFM_POLL_SUMMARY
     );
 
   ----------------------------------------------------
@@ -359,7 +363,7 @@ package body uart_bfm_pkg is
       alert(ERROR, proc_name & " called with timeout=0 and max_receptions=0. This can result in an infinite loop.");
     end if;
 
-    log(config.id_for_bfm, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(timeout,ns) & ".", scope, msg_id_panel);
+    log(config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(timeout,ns) & ".", scope, msg_id_panel);
 
     -- Initial status of check variables
     v_check_ok    := false;
@@ -428,8 +432,10 @@ package body uart_bfm_pkg is
       end if;
     end loop;
     
-    -- Print the received string of bytes
-    log(config.id_for_bfm, "Last "& to_string(v_received_data_fifo_pos) & " received data bytes while waiting for expected data: " & v_received_output_line.all, scope, msg_id_panel);
+    if max_receptions > 1 then
+      -- Print the received string of bytes
+      log(config.id_for_bfm_poll_summary, "Last "& to_string(v_received_data_fifo_pos) & " received data bytes while waiting for expected data: " & v_received_output_line.all, scope, msg_id_panel);
+    end if;
     
     if v_check_ok then
       log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time),ns) & ". " & msg, scope, msg_id_panel);

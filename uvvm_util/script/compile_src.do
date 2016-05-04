@@ -40,7 +40,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
   } elseif {[regexp -nocase {aldec} $version]} {
     quietly set simulator "rivierapro"
   } else {
-    puts "Unknown simulator. Attempting use use Modelsim commands."
+    puts "Unknown simulator. Attempting to use Modelsim commands."
     quietly set simulator "modelsim"
   }  
 } else { 

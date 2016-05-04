@@ -23,6 +23,9 @@ def is_input_vhdl_legal(requested_vvc_name):
     if requested_vvc_name.__len__() < 1:
         print("Input too short. Please try again.")
         return False
+    if requested_vvc_name.__len__() > 14:
+        print("WARNING: Name exceeds default maximum name length, defined in UVVM Utility Library constant C_LOG_SCOPE_WIDTH")
+        print("         - Please increase C_LOG_SCOPE_WIDTH in the adaptations_pkg.vhd")
     if (requested_vvc_name[0] == '_') or (requested_vvc_name[0].isdigit()):
         print("Input must start with a letter")
         return False

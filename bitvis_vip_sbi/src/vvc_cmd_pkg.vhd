@@ -1,10 +1,12 @@
+--========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
 
 ------------------------------------------------------------------------------------------
@@ -63,6 +65,7 @@ package vvc_cmd_pkg is
     gen_integer           : integer;
     alert_level           : t_alert_level;
     delay                 : time;
+    quietness             : t_quietness;
     -- VVC dedicated fields
     addr                  : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
@@ -84,7 +87,8 @@ package vvc_cmd_pkg is
     command_type        => NO_command_type,
     msg_id              => NO_ID,
     gen_integer         => -1,
-    delay               => 0 ns
+    delay               => 0 ns,
+    quietness           => NON_QUIET
     );
     
   --===============================================================================================

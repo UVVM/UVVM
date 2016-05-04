@@ -58,15 +58,25 @@ package methods_pkg is
     constant status      : in file_open_status;
     constant file_name   : in string
     );
-
+    
   procedure set_alert_file_name(
-    constant file_name   : string := C_ALERT_FILE_NAME;
-    constant msg_id      : t_msg_id  := ID_UTIL_SETUP
+    constant file_name   : string := C_ALERT_FILE_NAME
     );
 
+  -- msg_id is unused. This is a deprecated overload
+  procedure set_alert_file_name(
+    constant file_name   : string := C_ALERT_FILE_NAME;
+    constant msg_id      : t_msg_id
+    );
+    
+  procedure set_log_file_name(
+    constant file_name   : string := C_LOG_FILE_NAME
+    );
+    
+  -- msg_id is unused. This is a deprecated overload
   procedure set_log_file_name(
     constant file_name   : string := C_LOG_FILE_NAME;
-    constant msg_id      : t_msg_id  := ID_UTIL_SETUP
+    constant msg_id      : t_msg_id
     );
 
 
@@ -1356,18 +1366,35 @@ package body methods_pkg is
   procedure pot_initialise_util(
     constant dummy  : in t_void
     ) is
+    variable v_minimum_log_line_width : natural := 0;
   begin
     if not shared_initialised_util then
       shared_initialised_util := true;
       if not shared_log_file_name_is_set then
-        set_log_file_name(C_LOG_FILE_NAME, ID_NEVER);
+        set_log_file_name(C_LOG_FILE_NAME);
       end if;
       if not shared_alert_file_name_is_set then
-        set_alert_file_name(C_ALERT_FILE_NAME, ID_NEVER);
+        set_alert_file_name(C_ALERT_FILE_NAME);
       end if;
       if C_ENABLE_HIERARCHICAL_ALERTS then
         initialize_hierarchy;
       end if;
+      
+      -- Check that all log widths are valid 
+      v_minimum_log_line_width := v_minimum_log_line_width + C_LOG_PREFIX_WIDTH + C_LOG_TIME_WIDTH + 5; -- Add 5 for spaces
+      if not (C_SHOW_LOG_ID or C_SHOW_LOG_SCOPE) then
+        v_minimum_log_line_width := v_minimum_log_line_width + 10; -- Minimum length in order to wrap lines properly
+      else
+        if C_SHOW_LOG_ID then
+          v_minimum_log_line_width := v_minimum_log_line_width + C_LOG_MSG_ID_WIDTH;
+        end if;
+        if C_SHOW_LOG_SCOPE then
+          v_minimum_log_line_width := v_minimum_log_line_width + C_LOG_SCOPE_WIDTH;
+        end if;
+      end if;
+      
+      bitvis_assert(C_LOG_LINE_WIDTH >= v_minimum_log_line_width, failure, "C_LOG_LINE_WIDTH is too low. Needs to higher than " & to_string(v_minimum_log_line_width) & ". ", C_SCOPE);
+        
       --show_license(VOID);
 --       if C_SHOW_uvvm_utilITY_LIBRARY_INFO then
 --         show_uvvm_utility_library_info(VOID);
@@ -1410,8 +1437,7 @@ package body methods_pkg is
   end;
 
   procedure set_alert_file_name(
-    constant file_name   : string := C_ALERT_FILE_NAME;
-    constant msg_id      : t_msg_id  := ID_UTIL_SETUP
+    constant file_name   : string := C_ALERT_FILE_NAME
     ) is
     variable v_file_open_status: file_open_status;
   begin
@@ -1430,10 +1456,19 @@ package body methods_pkg is
       report "alert file name set: " & file_name;
     end if;
   end;
+  
+  procedure set_alert_file_name(
+    constant file_name   : string := C_ALERT_FILE_NAME;
+    constant msg_id      : t_msg_id
+    ) is
+    variable v_file_open_status: file_open_status;
+  begin
+    deprecate(get_procedure_name_from_instance_name(file_name'instance_name), "msg_id parameter is no longer in use. Please call this procedure without the msg_id parameter.");
+    set_alert_file_name(file_name);
+  end;
 
   procedure set_log_file_name(
-    constant file_name   : string := C_LOG_FILE_NAME;
-    constant msg_id      : t_msg_id  := ID_UTIL_SETUP
+    constant file_name   : string := C_LOG_FILE_NAME
     ) is
     variable v_file_open_status: file_open_status;
   begin
@@ -1451,6 +1486,17 @@ package body methods_pkg is
       --       the alert file and therefore blocking subsequent set_alert_file_name().
       report "log file name set: " & file_name;
     end if;
+  end;
+  
+  procedure set_log_file_name(
+    constant file_name   : string := C_LOG_FILE_NAME;
+    constant msg_id      : t_msg_id
+    ) is
+  begin
+    -- msg_id is no longer in use. However, can not call deprecate() since Util may not
+    -- have opened a log file yet. Attempting to call deprecate() when there is no open
+    -- log file will cause a fatal error. Leaving this alone with no message.
+    set_log_file_name(file_name);
   end;
 
 
@@ -1587,16 +1633,16 @@ package body methods_pkg is
       if (scope = "") then
         v_log_scope  := justify("(non scoped)", LEFT, C_LOG_SCOPE_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE);
       else
-        v_log_scope  := justify(scope, LEFT, C_LOG_SCOPE_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE);
+        v_log_scope  := justify(to_string(scope), LEFT, C_LOG_SCOPE_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE);
       end if;
 
       -- Handle actual log info line
       -- First write all fields preceeding the actual message - in order to measure their width
       -- (Prefix is taken care of later)
       write(v_info,
-          return_string_if_true(v_log_msg_id, global_show_log_id) &           -- Optional
+          return_string_if_true(v_log_msg_id, C_SHOW_LOG_ID) &           -- Optional
           " " & align_log_time(now) & "  " &
-          return_string_if_true(v_log_scope, global_show_log_scope) & " ");   -- Optional
+          return_string_if_true(v_log_scope, C_SHOW_LOG_SCOPE) & " ");   -- Optional
       v_log_pre_msg_width := v_info'length;      -- Width of string preceeding the actual message
       -- Handle \r as potential initial open line
       if msg'length > 1 then
@@ -1616,7 +1662,7 @@ package body methods_pkg is
 
       -- Then add the message it self (after replacing \n with LF
       if msg'length > 1 then
-        write(v_info, replace_backslash_n_with_lf(v_msg.all));
+        write(v_info, to_string(replace_backslash_n_with_lf(v_msg.all)));
       end if;
       deallocate_line_if_exists(v_msg);
 
@@ -1819,7 +1865,7 @@ package body methods_pkg is
     case msg_id is
       when ID_NEVER =>
         null;  -- Shall not be possible to enable
-        log(ID_LOG_MSG_CTRL, "enable_log_msg() ignored for " & to_upper(to_string(msg_id)) & ". (Not allowed)" & msg, scope);
+        tb_warning("enable_log_msg() ignored for " & to_upper(to_string(msg_id)) & " (not allowed). " & msg, scope);
       when ALL_MESSAGES =>
         for i in t_msg_id'left to t_msg_id'right loop
           msg_id_panel(i)        := ENABLED;
@@ -1942,10 +1988,10 @@ package body methods_pkg is
         
       if C_ENABLE_HIERARCHICAL_ALERTS then         
         -- Call the hierarchical alert function
-        hierarchical_alert(alert_level, msg, scope, C_ATTENTION);
+        hierarchical_alert(alert_level, to_string(msg), to_string(scope), C_ATTENTION);
       else
         -- Perform the non-hierarchical alert function
-        write(v_msg, replace_backslash_n_with_lf(msg));
+        write(v_msg, replace_backslash_n_with_lf(to_string(msg)));
 
         -- 1. Increase relevant alert counter. Exit if ignore is set for this alert type.
         if get_alert_attention(alert_level) = IGNORE then
@@ -1967,12 +2013,12 @@ package body methods_pkg is
           --    if single line alert enabled.
           if not C_SINGLE_LINE_ALERT then
             write(v_info, to_upper(to_string(alert_level)) & " #" & to_string(get_alert_counter(alert_level)) & "  ***" & LF &
-                  justify( to_string(now, C_LOG_TIME_BASE), RIGHT, C_LOG_TIME_WIDTH) & "   " & scope & LF &
+                  justify( to_string(now, C_LOG_TIME_BASE), RIGHT, C_LOG_TIME_WIDTH) & "   " & to_string(scope) & LF &
                   wrap_lines(v_msg.all, C_LOG_TIME_WIDTH + 4, C_LOG_TIME_WIDTH + 4, C_LOG_INFO_WIDTH));
           else
             replace(v_msg, LF, ' ');
             write(v_info, to_upper(to_string(alert_level)) & " #" & to_string(get_alert_counter(alert_level)) & "  ***" &
-                  justify( to_string(now, C_LOG_TIME_BASE), RIGHT, C_LOG_TIME_WIDTH) & "   " & scope &
+                  justify( to_string(now, C_LOG_TIME_BASE), RIGHT, C_LOG_TIME_WIDTH) & "   " & to_string(scope) &
                   "        " & v_msg.all);
           end if;
           deallocate_line_if_exists(v_msg);
@@ -2303,7 +2349,7 @@ package body methods_pkg is
       if v_found then
         -- Has already been printed.
         if C_DEPRECATE_SETTING = ALWAYS_DEPRECATE then
-          log(ID_SEQUENCER, "Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
+          log(ID_UTIL_SETUP, "Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
         else -- C_DEPRECATE_SETTING = DEPRECATE_ONCE
           null;
         end if;
@@ -2317,7 +2363,7 @@ package body methods_pkg is
           end if;
         end loop;
 
-        log(ID_SEQUENCER, "Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
+        log(ID_UTIL_SETUP, "Sub-program " & caller_name & " is outdated and has been replaced by another sub-program." & LF & msg);
       end if;
     end if;
   end;
@@ -4692,8 +4738,9 @@ package body methods_pkg is
   ) is
     -- Making sure any rounding error after calculating period/2 is not accumulated.
     constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
+    variable v_clock_count : natural := 0;
   begin
-    clock_count <= 0;
+    clock_count <= v_clock_count;
     
     loop
       clock_signal <= '1';
@@ -4701,12 +4748,13 @@ package body methods_pkg is
       clock_signal <= '0';
       wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
       
-      if clock_count < natural'right then
-        clock_count <= clock_count + 1;
+      if v_clock_count < natural'right then
+        v_clock_count := v_clock_count + 1;
       else -- Wrap when reached max value of natural
-        clock_count <= 0;
+        v_clock_count := 0;
       end if;
       
+      clock_count <= v_clock_count;
     end loop;
   end;
   
@@ -4722,8 +4770,9 @@ package body methods_pkg is
     constant clock_period          : in    time;
     constant clock_high_time       : in    time
   ) is
+    variable v_clock_count : natural := 0;
   begin
-    clock_count <= 0;
+    clock_count <= v_clock_count;
     
     check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
     
@@ -4733,11 +4782,13 @@ package body methods_pkg is
       clock_signal <= '0';
       wait for (clock_period - clock_high_time);
       
-      if clock_count < natural'right then
-        clock_count <= clock_count + 1;
+      if v_clock_count < natural'right then
+        v_clock_count := v_clock_count + 1;
       else -- Wrap when reached max value of natural
-        clock_count <= 0;
+        v_clock_count := 0;
       end if;
+      
+      clock_count <= v_clock_count;
     end loop;
   end;
   
@@ -4760,7 +4811,9 @@ package body methods_pkg is
   begin
     loop
       if not clock_ena then
-        log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        if now /= 0 ps then
+          log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        end if;
         clock_signal <= '0';
         wait until clock_ena;
         log(ID_CLOCK_GEN, "Starting clock " & clock_name);
@@ -4791,7 +4844,9 @@ package body methods_pkg is
     check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
     loop
       if not clock_ena then
-        log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        if now /= 0 ps then
+          log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        end if;
         clock_signal <= '0';
         wait until clock_ena;
         log(ID_CLOCK_GEN, "Starting clock " & clock_name);
@@ -4822,12 +4877,15 @@ package body methods_pkg is
   ) is   
     -- Making sure any rounding error after calculating period/2 is not accumulated.
     constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
+    variable v_clock_count : natural := 0;
   begin
-    clock_count <= 0;
+    clock_count <= v_clock_count;
   
     loop
       if not clock_ena then
-        log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        if now /= 0 ps then
+          log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        end if;
         clock_signal <= '0';
         wait until clock_ena;
         log(ID_CLOCK_GEN, "Starting clock " & clock_name);
@@ -4837,11 +4895,13 @@ package body methods_pkg is
       clock_signal <= '0';
       wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
       
-      if clock_count < natural'right then
-        clock_count <= clock_count + 1;
+      if v_clock_count < natural'right then
+        v_clock_count := v_clock_count + 1;
       else -- Wrap when reached max value of natural
-        clock_count <= 0;
+        v_clock_count := 0;
       end if;
+      
+      clock_count <= v_clock_count;
     end loop;
   end;
   
@@ -4863,14 +4923,17 @@ package body methods_pkg is
     constant clock_name      : in    string;
     constant clock_high_time : in    time
   ) is
+    variable v_clock_count : natural := 0;
   begin
-    clock_count <= 0;
+    clock_count <= v_clock_count;
     
     check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
     
     loop
       if not clock_ena then
-        log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        if now /= 0 ps then
+          log(ID_CLOCK_GEN, "Stopping clock " & clock_name);
+        end if;
         clock_signal <= '0';
         wait until clock_ena;
         log(ID_CLOCK_GEN, "Starting clock " & clock_name);
@@ -4880,11 +4943,13 @@ package body methods_pkg is
       clock_signal <= '0';
       wait for (clock_period - clock_high_time);
       
-      if clock_count < natural'right then
-        clock_count <= clock_count + 1;
+      if v_clock_count < natural'right then
+        v_clock_count := v_clock_count + 1;
       else -- Wrap when reached max value of natural
-        clock_count <= 0;
+        v_clock_count := 0;
       end if;
+      
+      clock_count <= v_clock_count;
     end loop;
   end;
   

@@ -1,4 +1,12 @@
 -----------------------------------------------------------
+-- Description
+-----------------------------------------------------------
+
+Modelsim compile scripts are part of this release, see
+the script folder. For other simulators, see compile order
+in sim/compile_order.txt.
+
+-----------------------------------------------------------
 -- Directory structure                                   -- 
 -----------------------------------------------------------
 

@@ -3,6 +3,21 @@ Bitvis VIP SBI - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.1.0
+----------
+Released: 2016-04-28
+
+BFM changes
+----------
+
+- sbi_write() and sbi_read(): Now verifying that ready signal is either '0'
+  or '1' if config.use_ready_signal is true.
+
+VVC changes
+----------
+- Added quietness parameter to enable/disable log msg
+- Added scope parameter to VVC insert bfm delay procedure
+
 v1.0.1
 --------------------
 Released: 2016-01-20

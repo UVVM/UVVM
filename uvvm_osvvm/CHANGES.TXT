@@ -1,6 +1,20 @@
 UVVM OSVVM - Overview on Versions and Changes
 ==============================================================
 
+v1.1.1
+----------
+Released 2016-05-02
+
+Changes in CoveragePkg.vhd
+  - Fixed bug related to to_string() that occured in Riviera-PRO.
+  
+Changes in AlertLogPkg.vhd
+  - Removed the shared_osvvm_msg_id_panel. Now using the UVVM Util shared_msg_id_panel instead.
+  
+Demos:
+  - Fixed bug in demo/AlertLog_Demo_Global.vhd and 
+    demo/AlertLog_Demo_Hierarchy.vhd that caused them to fail compilation.
+
 v1.0.0
 ----------
 Released: 2016-03-14

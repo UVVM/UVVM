@@ -103,7 +103,8 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant vvc_channel        : in t_channel;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   );
 
   -------------------------------------------
@@ -114,7 +115,8 @@ package td_vvc_framework_common_methods_pkg is
     signal   vvc_target         : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   );
 
 
@@ -128,7 +130,8 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant vvc_channel        : in t_channel;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   );
 
   -------------------------------------------
@@ -139,7 +142,8 @@ package td_vvc_framework_common_methods_pkg is
     signal   vvc_target         : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   );
 
 
@@ -390,7 +394,8 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant vvc_channel        : in t_channel;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   ) is
     constant proc_name : string := "disable_log_msg";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -398,6 +403,7 @@ package body td_vvc_framework_common_methods_pkg is
   begin
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, DISABLE_LOG_MSG);
     shared_vvc_cmd.msg_id  := msg_id;
+    shared_vvc_cmd.quietness := quietness;
     send_command_to_vvc(vvc_target);
   end procedure;
 
@@ -405,10 +411,11 @@ package body td_vvc_framework_common_methods_pkg is
     signal   vvc_target         : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   ) is
   begin
-    disable_log_msg(vvc_target, vvc_instance_idx, NA, msg_id, msg);
+    disable_log_msg(vvc_target, vvc_instance_idx, NA, msg_id, msg, quietness);
   end procedure;
 
   procedure enable_log_msg(
@@ -416,7 +423,8 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant vvc_channel        : in t_channel;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   ) is
     constant proc_name : string := "enable_log_msg";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -424,6 +432,7 @@ package body td_vvc_framework_common_methods_pkg is
   begin
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, ENABLE_LOG_MSG);
     shared_vvc_cmd.msg_id  := msg_id;
+    shared_vvc_cmd.quietness := quietness;
     send_command_to_vvc(vvc_target);
   end procedure;
 
@@ -431,10 +440,11 @@ package body td_vvc_framework_common_methods_pkg is
     signal   vvc_target         : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg_id             : in t_msg_id;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant quietness          : t_quietness := NON_QUIET
   ) is
   begin
-    enable_log_msg(vvc_target, vvc_instance_idx, NA, msg_id, msg);
+    enable_log_msg(vvc_target, vvc_instance_idx, NA, msg_id, msg, quietness);
   end procedure;
 
   procedure flush_command_queue(

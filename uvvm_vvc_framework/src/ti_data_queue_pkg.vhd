@@ -343,7 +343,7 @@ package body ti_data_queue_pkg is
 
      v_next_available_idx := v_max_idx(vr_queue_idx) + 1;
 
-     log(ID_CONSTRUCTOR_SUB, "Queue " & to_string(vr_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(vr_queue_idx)) & ".", scope);
+     log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(vr_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(vr_queue_idx)) & ".", scope);
 
      -- Clear the buffer just to be sure
      flush(vr_queue_idx);
@@ -382,7 +382,7 @@ package body ti_data_queue_pkg is
       -- Tag this buffer as initialized
       v_queue_initialized(queue_idx) := true;
 
-      log(ID_CONSTRUCTOR_SUB, "Queue " & to_string(queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(queue_idx)) & ".", scope);
+      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(queue_idx)) & ".", scope);
 
       -- Clear the buffer just to be sure
       flush(queue_idx);
@@ -416,7 +416,7 @@ package body ti_data_queue_pkg is
         v_count(queue_idx) := v_count(queue_idx) + 1;
       end loop;
 
-      log(ID_CONSTRUCTOR_SUB, "Data " & to_string(data, HEX) & " pushed to back of queue " & to_string(queue_idx) & " (index " & to_string(v_last_idx(queue_idx)) & "). Fill level is " & to_string(v_count(queue_idx)) & "/" & to_string(v_queue_size_in_bits(queue_idx)) & ".", scope);
+      log(ID_UVVM_DATA_QUEUE, "Data " & to_string(data, HEX) & " pushed to back of queue " & to_string(queue_idx) & " (index " & to_string(v_last_idx(queue_idx)) & "). Fill level is " & to_string(v_count(queue_idx)) & "/" & to_string(v_queue_size_in_bits(queue_idx)) & ".", scope);
     end if;
   end procedure;
 
@@ -642,7 +642,7 @@ package body ti_data_queue_pkg is
 
     v_next_available_idx := 0;
 
-    log(ID_CONSTRUCTOR_SUB, "Buffer has been deallocated, i.e., all queues removed.", C_SCOPE);
+    log(ID_UVVM_DATA_QUEUE, "Buffer has been deallocated, i.e., all queues removed.", C_SCOPE);
   end procedure;
 
 end protected body;

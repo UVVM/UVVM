@@ -78,6 +78,7 @@ package vvc_cmd_pkg is
     gen_integer  : integer;
     alert_level  : t_alert_level;
     delay        : time;
+    quietness    : t_quietness;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -94,7 +95,8 @@ package vvc_cmd_pkg is
     msg_id       => NO_ID,
     gen_integer  => -1,
     alert_level  => failure,
-    delay        => 0 ns
+    delay        => 0 ns,
+    quietness    => NON_QUIET
     );
 
   --===============================================================================================

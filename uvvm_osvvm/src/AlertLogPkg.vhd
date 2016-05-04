@@ -99,10 +99,7 @@ package AlertLogPkg is
   constant  MIN_NUM_AL_IDS                 : AlertLogIDType := 32 ; -- Number IDs initially allocated
 
   -- Use logging and alerts through UVVM Utility Library
-  constant C_UVVM_ALERT_LOGGING             : boolean         := TRUE;
-  shared variable shared_osvvm_msg_id_panel : t_msg_id_panel := C_OSVVM_DEFAULT_MSG_ID_PANEL;
-  
-  impure function get_msg_id_panel(dummy : t_void) return t_msg_id_panel;  
+  constant C_UVVM_ALERT_LOGGING             : boolean         := TRUE;  
   
   alias AlertLogOptionsType is work.OsvvmGlobalPkg.OsvvmOptionsType ; 
 
@@ -336,17 +333,6 @@ package body AlertLogPkg is
                                           MANUAL_CHECK => "MANUAL_CHECK", NOTE => "NOTE        ", TB_NOTE => "TB_NOTE     ") ;  -- , NEVER => "NEVER  "
   type     LogNameType is array(LogType) of string(1 to 7) ; 
   constant LOG_NAME : LogNameType := (DEBUG => "DEBUG  ", FINAL => "FINAL  ", INFO => "INFO   ", ALWAYS => "ALWAYS ", PASSED => "PASSED ") ; -- , NEVER => "NEVER  "
-
-  impure function get_msg_id_panel(
-    dummy     : t_void
-  ) return t_msg_id_panel is
-  begin
-    if C_USE_LOCAL_OSVVM_MSG_ID_PANELS then
-      return shared_osvvm_msg_id_panel;
-    else
-      return shared_msg_id_panel;
-    end if;
-  end function get_msg_id_panel;
   
   type AlertLogStructPType is protected
   

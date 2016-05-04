@@ -169,7 +169,7 @@ package body ti_vvc_framework_support_pkg is
   begin
     flag.set <= 'Z';
     flag.is_active <= 'Z';
-    gen_pulse(flag.reset, 0 ns, "reset flag");
+    gen_pulse(flag.reset, 0 ns, "reset flag", C_TB_SCOPE_DEFAULT, ID_NEVER);
   end procedure;
 
   procedure initialize_uvvm is

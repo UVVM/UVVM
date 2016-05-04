@@ -3,6 +3,32 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.3.0
+----------
+Released: 2016-05-02
+
+All changes should be backwards compatible within 1.x.x
+- Improved method of setting log line width by adding the subfield widths
+- Added new constant C_LOG_LINE_SPACINGS that clearly shows what part of the
+  message is used for spaces
+- Show log id/scope is now set by a constant (was global signal), and the
+  total log line width is checked during initialization.
+- Removed OSVVM default log msg id panel C_OSVVM_DEFAULT_MSG_ID_PANEL. 
+  Using C_MSG_ID_PANEL_DEFAULT instead.
+- clock_generator: Removed a printout that indicated that the clock was 
+  stopped at time 0. Clock was not started previous to the message.
+- Added new msg ids ID_BFM_POLL_SUMMARY and ID_UVVM_DATA_QUEUE
+- to_string for string type: Now ignores LF character. Log and alert procedures
+  call to_string on msg and scope inputs.
+- to_string for t_byte_array: radix parameter now optional
+- An alert with severity TB_WARNING is now triggered if attempting
+  to enable msg id ID_NEVER
+- set_alert_file_name/set_log_file name: msg id parameter was not
+  in use. Removed the parameter from Quick-reference and added an
+  overload that does not have msg id as a parameter
+- Quickref: gen_pulse was missing mandatory msg parameter on front page
+
+
 v1.2.0
 ----------
 Released: 2016-03-16

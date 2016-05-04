@@ -21,3 +21,14 @@ See HOWTO-GUIDE.TXT for usage information and information about why you should u
 UVVM OSVVM instead of regular OSVVM.
 
 For support please contact Bitvis AS at support@bitvis.no
+
+-----------------------------------------------------------
+-- KNOWN BUGS                                            -- 
+-----------------------------------------------------------
+
+Known bug when running uvvm_osvvm in Riviera-PRO:
+- Using the member procedures enable_log_msg() and disable_log_msg() of
+  a CovPType object without giving explicit value for the scope parameter 
+  will result in a fatal error. Solution is to always specify scope parameter.
+  Msg_id, msg and scope must be specified if implicit mapping of procedure 
+  parameters is used.

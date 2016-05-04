@@ -117,10 +117,10 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_await_completion(shared_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
 
           when DISABLE_LOG_MSG =>
-            uvvm_util.methods_pkg.disable_log_msg(shared_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE);
+            uvvm_util.methods_pkg.disable_log_msg(shared_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE, shared_vvc_cmd.quietness);
 
           when ENABLE_LOG_MSG =>
-            uvvm_util.methods_pkg.enable_log_msg(shared_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE);
+            uvvm_util.methods_pkg.enable_log_msg(shared_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE, shared_vvc_cmd.quietness);
 
           when FLUSH_COMMAND_QUEUE =>
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(shared_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
@@ -186,10 +186,11 @@ begin
       end if;
       
       -- Insert delay if needed
-      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
+      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config               => vvc_config,
                                                                command_is_bfm_access              => v_command_is_bfm_access,
                                                                timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
-                                                               timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access);  
+                                                               timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
+                                                               scope                              => C_SCOPE);  
       
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;

@@ -3,6 +3,16 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.0.1
+----------
+Released: 2016-09-13
+
+- Fixed error in compilation scripts
+- Changed type t_slv8_array so that it is now an 
+  alias of t_byte_array from UVVM-Util. 
+- Updated header information in some files.
+
+
 v1.0.0
 ----------
 Released: 2016-08-30

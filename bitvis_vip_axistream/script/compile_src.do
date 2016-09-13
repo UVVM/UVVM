@@ -1,10 +1,13 @@
 #========================================================================================================================
-# Copyright (c) 2015 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# contact Bitvis AS <support@bitvis.no>.
 #
-# BITVIS UTILITY LIBRARY AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 # INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 # IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH BITVIS UTILITY LIBRARY.
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR
+# OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
 # This file may be called with an argument
@@ -86,9 +89,9 @@ if { [string equal -nocase $simulator "modelsim"] } {
 
 eval vcom  $compdirectives  $vip_axistream_part_path/src/axistream_bfm_pkg.vhd
 eval vcom  $compdirectives  $vip_axistream_part_path/src/vvc_cmd_pkg.vhd
-eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhdp
-eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhdp
+eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
+eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
 eval vcom  $compdirectives  $vip_axistream_part_path/src/vvc_methods_pkg.vhd
 eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
-eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhdp
+eval vcom  $compdirectives  $vip_axistream_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
 eval vcom  $compdirectives  $vip_axistream_part_path/src/axistream_vvc.vhd

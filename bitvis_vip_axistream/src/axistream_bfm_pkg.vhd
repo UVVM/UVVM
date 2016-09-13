@@ -1,18 +1,12 @@
 --========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
--- A free license is hereby granted, free of charge, to any person obtaining
--- a copy of this VHDL code and associated documentation files (for 'Bitvis Utility Library'),
--- to use, copy, modify, merge, publish and/or distribute - subject to the following conditions:
---  - This copyright notice shall be included as is in all copies or substantial portions of the code and documentation
---  - The files included in Bitvis Utility Library may only be used as a part of this library as a whole
---  - The License file may not be modified
---  - The calls in the code to the license file ('show_license') may not be removed or modified.
---  - No other conditions whatsoever may be added to those of this License
-
--- BITVIS UTILITY LIBRARY AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH BITVIS UTILITY LIBRARY.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- contact Bitvis AS <support@bitvis.no>.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
 
 ------------------------------------------------------------------------------------------
@@ -39,7 +33,7 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   constant C_SCOPE : string := "AXISTREAM_BFM";
 
-  type t_slv8_array is array(natural range <>) of std_logic_vector(7 downto 0);
+  alias t_slv8_array is t_byte_array;
 
   -- c_max_tuser_bits : The BFM supports up to c_max_tuser_bits user bit per data word. The value may be increased as needed. 
   constant c_max_tuser_bits : positive := 8;

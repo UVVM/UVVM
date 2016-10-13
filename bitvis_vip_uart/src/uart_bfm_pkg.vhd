@@ -375,7 +375,7 @@ package body uart_bfm_pkg is
     end if;
 
     -- Setup of config with correct timeout
-    v_config := C_UART_BFM_CONFIG_DEFAULT;
+    v_config := config;
     if timeout > 0 ns then
       v_config.max_wait_cycles := timeout / config.clock_period;
     else

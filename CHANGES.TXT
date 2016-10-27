@@ -9,6 +9,25 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v1.5.1
+----------
+Released: 2016-09-13
+
+- This release contains an updated version of:
+  - bitvis_vip_axistream
+
+
+v1.5.0
+----------
+Released: 2016-08-30
+
+- This release contains a new verification IP:
+  - bitvis_vip_axistream: Allows normal access towards 
+    an AXI4-Stream interface.
+
+- This release contains an updated version of:
+  - UVVM-Util
+    
 v1.4.0
 ----------
 Released: 2016-05-02

@@ -2814,7 +2814,7 @@ package body methods_pkg is
     ) is
     variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, MATCH_EXACT, alert_level, msg, scope, msg_id, msg_id_panel, name);
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, msg_id, msg_id_panel, name);
   end;
 
   procedure check_value(

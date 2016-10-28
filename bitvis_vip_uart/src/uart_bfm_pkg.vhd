@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -12,7 +12,7 @@
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 --
--- NOTE: This BFM is only intended as a simplified UART BFM to be used as a test 
+-- NOTE: This BFM is only intended as a simplified UART BFM to be used as a test
 --       vehicle for presenting UVVM functionality.
 ------------------------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ use std.textio.all;
 package uart_bfm_pkg is
 
   --===============================================================================================
-  -- Types and constants for UART BFMs 
+  -- Types and constants for UART BFMs
   --===============================================================================================
 
   constant C_SCOPE : string := "UART BFM";
@@ -51,7 +51,7 @@ package uart_bfm_pkg is
     FLOW_XOFF_XON,
     FLOW_HW
   );
-  
+
   constant C_MAX_BITS_IN_RECEIVED_DATA              : natural := 16;
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR  : string := "; ";
   type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_MAX_BITS_IN_RECEIVED_DATA-1 downto 0);
@@ -75,7 +75,7 @@ package uart_bfm_pkg is
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
-    clock_period             => 10 ns, 
+    clock_period             => 10 ns,
     clocks_per_bit           => 16,
     num_data_bits            => 8,
     start_bit                => '0',
@@ -94,7 +94,7 @@ package uart_bfm_pkg is
   ----------------------------------------------------
   -- BFM procedures
   ----------------------------------------------------
-  
+
   ------------------------------------------
   -- uart_transmit
   ------------------------------------------
@@ -110,7 +110,7 @@ package uart_bfm_pkg is
     constant msg_id_panel  : in  t_msg_id_panel     := shared_msg_id_panel
     );
 
-    
+
   ------------------------------------------
   -- uart_receive
   ------------------------------------------
@@ -128,7 +128,7 @@ package uart_bfm_pkg is
     constant proc_name    : in  string            := "uart_receive"  -- overwrite if called from other procedure like uart_expect
     );
 
-    
+
   ------------------------------------------
   -- uart_expect
   ------------------------------------------
@@ -157,7 +157,7 @@ package uart_bfm_pkg is
     constant msg_id_panel    : in t_msg_id_panel    := shared_msg_id_panel
     );
 
-    
+
   ------------------------------------------
   -- odd_parity
   ------------------------------------------
@@ -190,7 +190,7 @@ package body uart_bfm_pkg is
     return odd;
   end odd_parity;
 
-  
+
   ---------------------------------------------------------------------------------
   -- uart_transmit
   ---------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ package body uart_bfm_pkg is
     log(config.id_for_bfm, proc_call & " completed. " & msg, scope, msg_id_panel);
   end procedure;
 
-  
+
   ---------------------------------------------------------------------------------
   -- uart_receive
   ---------------------------------------------------------------------------------
@@ -353,8 +353,8 @@ package body uart_bfm_pkg is
     variable v_check_ok               : boolean;
     variable v_num_of_occurrences_ok  : boolean;
     variable v_timeout_ok             : boolean;
-    variable v_config                 : t_uart_bfm_config;
-    variable v_received_data_fifo     : uart_expect_received_data_array(0 to config.received_data_to_log_before_expected_data-1) := (others => (others =>'0'));
+    variable v_config                 : t_uart_bfm_config := config;
+    variable v_received_data_fifo     : uart_expect_received_data_array(0 to v_config.received_data_to_log_before_expected_data-1) := (others => (others =>'0'));
     variable v_received_data_fifo_pos : natural := 0;
     variable v_received_output_line   : line;
   begin
@@ -363,7 +363,7 @@ package body uart_bfm_pkg is
       alert(ERROR, proc_name & " called with timeout=0 and max_receptions=0. This can result in an infinite loop.");
     end if;
 
-    log(config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(timeout,ns) & ".", scope, msg_id_panel);
+    log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(timeout,ns) & ".", scope, msg_id_panel);
 
     -- Initial status of check variables
     v_check_ok    := false;
@@ -374,10 +374,9 @@ package body uart_bfm_pkg is
       v_num_of_occurrences_ok := v_num_of_occurrences < max_receptions;
     end if;
 
-    -- Setup of config with correct timeout
-    v_config := C_UART_BFM_CONFIG_DEFAULT;
+    -- Setup of v_config with correct timeout
     if timeout > 0 ns then
-      v_config.max_wait_cycles := timeout / config.clock_period;
+      v_config.max_wait_cycles := timeout / v_config.clock_period;
     else
       v_config.max_wait_cycles := integer'high;
     end if;
@@ -387,7 +386,7 @@ package body uart_bfm_pkg is
 
       -- Receive and check data
       uart_receive(v_data_value, msg, clk, rx, terminate_loop, v_config, scope, msg_id_panel, proc_name);
-      for i in 0 to config.num_data_bits-1 loop
+      for i in 0 to v_config.num_data_bits-1 loop
         if (data_exp(i) = '-' or
             v_data_value(i) = data_exp(i)) then
           v_check_ok := true;
@@ -396,26 +395,26 @@ package body uart_bfm_pkg is
           exit;
         end if;
       end loop;
-      
+
       -- Place the received data in the received data buffer for debugging
       -- If the FIFO is not full, fill it up
-      if v_received_data_fifo_pos < config.received_data_to_log_before_expected_data then
+      if v_received_data_fifo_pos < v_config.received_data_to_log_before_expected_data then
         v_received_data_fifo(v_received_data_fifo_pos)(v_data_value'length-1 downto 0) := v_data_value;
         v_received_data_fifo_pos := v_received_data_fifo_pos + 1;
-      else 
+      else
         -- If the FIFO is full, left shift all input and append new data
-        for i in 1 to config.received_data_to_log_before_expected_data-1 loop
+        for i in 1 to v_config.received_data_to_log_before_expected_data-1 loop
           v_received_data_fifo(i-1) := v_received_data_fifo(i);
         end loop;
         v_received_data_fifo(v_received_data_fifo_pos-1)(v_data_value'length-1 downto 0) := v_data_value;
       end if;
-      
+
       -- Evaluate number of occurrences, if limited by user
       if max_receptions > 0 then
         v_num_of_occurrences := v_num_of_occurrences + 1;
         v_num_of_occurrences_ok := v_num_of_occurrences < max_receptions;
       end if;
-      
+
       -- Evaluate timeout if specified by user
       if timeout = 0 ns then
         v_timeout_ok := true;
@@ -431,19 +430,19 @@ package body uart_bfm_pkg is
         write(v_received_output_line, C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR);
       end if;
     end loop;
-    
+
     if max_receptions > 1 then
       -- Print the received string of bytes
-      log(config.id_for_bfm_poll_summary, "Last "& to_string(v_received_data_fifo_pos) & " received data bytes while waiting for expected data: " & v_received_output_line.all, scope, msg_id_panel);
+      log(v_config.id_for_bfm_poll_summary, "Last "& to_string(v_received_data_fifo_pos) & " received data bytes while waiting for expected data: " & v_received_output_line.all, scope, msg_id_panel);
     end if;
-    
+
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time),ns) & ". " & msg, scope, msg_id_panel);
+      log(v_config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time),ns) & ". " & msg, scope, msg_id_panel);
     elsif not v_timeout_ok then
       alert(alert_level, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(timeout,ns) & ". " & msg, scope);
     elsif not v_num_of_occurrences_ok then
       alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & msg, scope);
-    else 
+    else
       alert(warning, proc_call & "=> Failed. Terminated loop received. " & msg, scope);
     end if;
   end procedure;

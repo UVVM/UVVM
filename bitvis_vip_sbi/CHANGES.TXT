@@ -2,6 +2,13 @@ Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
 ----------------------------------------------------------------------
+v1.1.1 
+----------
+Released: 2016-10-28
+
+VVC changes
+----------
+- transaction_for_waveview now shows NO_OPERATION after a transaction has been completed
 
 v1.1.0
 ----------

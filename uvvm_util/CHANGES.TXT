@@ -3,6 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.3.2
+----------
+Released: 2016-10-28
+
+All changes should be backwards compatible within 1.x.x
+- Corrected radix logging in check_value method
+- Minor bugfixes
+
+
 v1.3.1
 ----------
 Released: 2016-08-30

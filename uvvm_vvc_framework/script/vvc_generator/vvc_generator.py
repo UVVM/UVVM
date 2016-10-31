@@ -1,6 +1,6 @@
 __author__ = 'Bitvis AS'
 __copyright__ = "Copyright 2016, Bitvis AS"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __email__ = "support@bitvis.no"
 
 import os
@@ -181,7 +181,10 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
 
 
 def add_architecture_declaration(file_handle, vvc_name, vvc_channel):
-    file_handle.write("architecture behave of "+vvc_name.lower()+"_vvc is\n")
+    if vvc_channel != "NA":
+        file_handle.write("architecture behave of "+vvc_name.lower()+"_"+vvc_channel.lower()+"_vvc is\n")
+    else:
+        file_handle.write("architecture behave of "+vvc_name.lower()+"_vvc is\n")
     print_linefeed(file_handle)
     file_handle.write("  constant C_SCOPE      : string        := C_VVC_NAME & \",\" & to_string(GC_INSTANCE_IDX);\n")
     file_handle.write("  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME,")
@@ -279,11 +282,11 @@ def add_vvc_interpreter(file_handle):
     print_linefeed(file_handle)
     file_handle.write("          when DISABLE_LOG_MSG =>\n")
     file_handle.write("            uvvm_util.methods_pkg.disable_log_msg(shared_vvc_cmd.msg_id, vvc_config.msg_id_panel"
-                      +", to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE);\n")
+                      +", to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE, shared_vvc_cmd.quietness);\n")
     print_linefeed(file_handle)
     file_handle.write("          when ENABLE_LOG_MSG =>\n")
     file_handle.write("            uvvm_util.methods_pkg.enable_log_msg(shared_vvc_cmd.msg_id, vvc_config.msg_id_panel"+
-                      ", to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE);\n")
+                      ", to_string(shared_vvc_cmd.msg) & format_command_idx(shared_vvc_cmd), C_SCOPE, shared_vvc_cmd.quietness);\n")
     print_linefeed(file_handle)
     file_handle.write("          when FLUSH_COMMAND_QUEUE =>\n")
     file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(shared_vvc_cmd, command_queue"+
@@ -460,6 +463,8 @@ def add_vvc_executor(file_handle):
     file_handle.write("      end if;\n")
     print_linefeed(file_handle)
     file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
+    file_handle.write("      -- Reset the transaction info for waveview\n")
+    file_handle.write("      transaction_info_for_waveview   := C_TRANSACTION_INFO_FOR_WAVEVIEW_DEFAULT;\n")
     print_linefeed(file_handle)
     file_handle.write("    end loop;\n")
     file_handle.write("  end process;\n")
@@ -585,6 +590,7 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("    gen_integer           : integer;\n")
     file_handle.write("    alert_level           : t_alert_level;\n")
     file_handle.write("    delay                 : time;\n")
+    file_handle.write("    quietness             : t_quietness;\n")
     file_handle.write("  end record;\n")
     print_linefeed(file_handle)
     file_handle.write("  constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (\n")
@@ -603,7 +609,8 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("    msg_id                => NO_ID,\n")
     file_handle.write("    gen_integer           => -1,\n")
     file_handle.write("    alert_level           => FAILURE,\n")
-    file_handle.write("    delay                 => 0 ns\n")
+    file_handle.write("    delay                 => 0 ns,\n")
+    file_handle.write("    quietness             => NON_QUIET\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")

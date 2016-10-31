@@ -9,6 +9,21 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v1.5.2
+----------
+Released: 2016-10-31
+
+- This release contains an updated version of:
+  - bitvis_vip_sbi
+  - bitvis_vip_uart
+  - bitvis_vip_axilite
+  - bitvis_vip_axistream
+  - bitvis_vip_i2c
+  - bitvis_vip_avalon_mm__simple_access
+  - uvvm_util
+  - UVVM Util
+
+
 v1.5.1
 ----------
 Released: 2016-09-13

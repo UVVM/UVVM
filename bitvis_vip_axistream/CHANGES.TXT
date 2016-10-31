@@ -2,6 +2,13 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
 ----------------------------------------------------------------------
+v1.0.2
+----------
+Released: 2016-10-28
+
+VVC changes
+----------
+- transaction_for_waveview now shows NO_OPERATION after a transaction has been completed
 
 v1.0.1
 ----------

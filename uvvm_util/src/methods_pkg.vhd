@@ -2163,13 +2163,13 @@ package body methods_pkg is
     constant order  : in t_order
   ) is
   begin
+    pot_initialise_util(VOID);  -- Only executed the first time called
     if not C_ENABLE_HIERARCHICAL_ALERTS then
       protected_alert_attention_counters.to_string(order);
     else
       print_hierarchical_log(order);
     end if;
     
-    pot_initialise_util(VOID);  -- Only executed the first time called
   end;
 
   -- This version (with the t_void argument) is kept for backwards compatibility
@@ -2178,7 +2178,6 @@ package body methods_pkg is
   ) is
   begin
     report_alert_counters(FINAL); -- Default when calling this old method is order=FINAL
-    pot_initialise_util(VOID);  -- Only executed the first time called
   end;
 
   procedure report_global_ctrl(
@@ -2217,6 +2216,7 @@ package body methods_pkg is
     constant prefix          : string := C_LOG_PREFIX & "     ";
     variable v_line          : line;
   begin
+    pot_initialise_util(VOID);  -- Only executed the first time called
       write(v_line,
           LF &
           fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
@@ -2225,7 +2225,7 @@ package body methods_pkg is
           "          " & justify("ID", LEFT, C_LOG_MSG_ID_WIDTH) & "       Status" &  LF &
           "          " & fill_string('-', C_LOG_MSG_ID_WIDTH)    & "       ------" & LF);
       for i in t_msg_id'left to t_msg_id'right loop
-        if (i /= ID_NEVER) then  -- report all but ID_NEVER
+        if ((i /= ALL_MESSAGES) and ((i /= NO_ID) and (i /= ID_NEVER))) then  -- report all but ID_NEVER, NO_ID and ALL_MESSAGES
         write(v_line, "          " & to_upper(to_string(i, C_LOG_MSG_ID_WIDTH+5, LEFT)) & ": ");  -- MSG_ID
         write(v_line,to_upper(to_string(shared_msg_id_panel(i))) & "    " & LF); -- Enabled/disabled
         end if;
@@ -2570,8 +2570,8 @@ package body methods_pkg is
     -- Normalise vectors to (N downto 0)
     alias    a_value     : std_logic_vector(value'length - 1 downto 0) is value;
     alias    a_exp       : std_logic_vector(exp'length - 1 downto 0) is exp;
-    constant v_value_str : string := to_string(a_value, radix, format);
-    constant v_exp_str   : string := to_string(a_exp, radix, format);
+    constant v_value_str : string := to_string(a_value, radix, format,INCL_RADIX);
+    constant v_exp_str   : string := to_string(a_exp, radix, format,INCL_RADIX);
     variable v_check_ok  : boolean := true;  -- as default prior to checking
   begin
     -- AS_IS format has been deprecated and will be removed in the near future
@@ -2583,18 +2583,18 @@ package body methods_pkg is
 
     if v_check_ok then
       if v_value_str = v_exp_str then
-        log(msg_id, name & " => OK, for " & value_type & " x'" & v_value_str & "'. " & msg, scope, msg_id_panel);
+        log(msg_id, name & " => OK, for " & value_type & " " & v_value_str & "'. " & msg, scope, msg_id_panel);
       else
         -- H,L or - is present in v_exp_str
         if match_strictness = MATCH_STD then
-          log(msg_id, name & " => OK, for " & value_type & " x'" & v_value_str & "' (exp: x'" & v_exp_str & "'). " & msg,
+          log(msg_id, name & " => OK, for " & value_type & " " & v_value_str & "' (exp: " & v_exp_str & "'). " & msg,
               scope, msg_id_panel);
         else
-          alert(alert_level, name & " => Failed. " & value_type & "  Was x'"  & v_value_str & "'. Expected x'" & v_exp_str & "'" & LF & msg, scope);
+          alert(alert_level, name & " => Failed. " & value_type & "  Was "  & v_value_str & "'. Expected " & v_exp_str & "'" & LF & msg, scope);
         end if;
       end if;
     else
-      alert(alert_level, name & " => Failed. " & value_type & "  Was x'"  & v_value_str & "'. Expected x'" & v_exp_str & "'" & LF & msg, scope);
+      alert(alert_level, name & " => Failed. " & value_type & "  Was "  & v_value_str & "'. Expected " & v_exp_str & "'" & LF & msg, scope);
     end if;
 
     return v_check_ok;

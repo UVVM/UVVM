@@ -3,6 +3,17 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v1.2.1
+----------
+Released: 2016-10-28
+
+All changes should be backwards compatible within 1.x.x
+
+- Updated vvc_generator script
+- Added README file to src_target_dependent directory
+- Updated QR
+
+
 v1.2.0
 ----------
 Released: 2016-05-02

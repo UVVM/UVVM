@@ -2,6 +2,18 @@ Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
 ----------------------------------------------------------------------
+v1.1.1
+----------
+Released: 2016-10-28
+
+VVC changes
+----------
+- transaction_for_waveview now shows NO_OPERATION after a transaction has been completed
+
+BFM changes
+----------
+-  Fixed bug that uart_receive() inside uart_expect() used C_UART_BFM_CONFIG_DEFAULT rather than input parameter config in its parameter list
+
 
 v1.1.0
 ----------

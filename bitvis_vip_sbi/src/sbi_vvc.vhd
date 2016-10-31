@@ -300,6 +300,8 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
+      -- Reset the transaction info for waveview
+      transaction_info_for_waveview   := C_TRANSACTION_INFO_FOR_WAVEVIEW_DEFAULT;
 
     end loop;
   end process;

@@ -286,7 +286,12 @@ package body sbi_bfm_pkg is
   ---------------------------------------------------------------------------------
   -- initialize sbi to dut signals
   ---------------------------------------------------------------------------------
-
+  -- WORKAROUND: for GHDL
+  --   Version:	 0.34dev (last tested pre-release version: 6235a6a)
+  --   Issue:		 'others' can't be used to initialize unconstrained arrays
+  --             in a record.
+  --   Ticket:   https://github.com/tgingold/ghdl/issues/191
+  --   Solution: prefix'range can be used as a workaround
   function init_sbi_if_signals(
     addr_width : natural;
     data_width : natural
@@ -298,10 +303,10 @@ package body sbi_bfm_pkg is
     result.cs     := '0';
     result.rd     := '0';
     result.wr     := '0';
-    result.addr   := (others => '0');
-    result.wdata  := (others => '0');
+    result.addr   := (result.addr'range => '0');
+    result.wdata  := (result.wdata'range => '0');
     result.ready  := 'Z';
-    result.rdata  := (others => 'Z');
+    result.rdata  := (result.rdata'range => 'Z');
     return result;
   end function;
 

@@ -186,7 +186,12 @@ end package axistream_bfm_pkg;
 --========================================================================================================================
 
 package body axistream_bfm_pkg is
-
+  -- WORKAROUND: for GHDL
+  --   Version:	 0.34dev (last tested pre-release version: 6235a6a)
+  --   Issue:		 'others' can't be used to initialize unconstrained arrays
+  --             in a record.
+  --   Ticket:   https://github.com/tgingold/ghdl/issues/191
+  --   Solution: prefix'range can be used as a workaround
   function init_axistream_if_signals(
     is_master  : boolean;  -- When true, this BFM drives data signals
     data_width : natural;
@@ -204,18 +209,18 @@ package body axistream_bfm_pkg is
 
       -- from master to slave
       init_if.tvalid := '0';
-      init_if.tdata  := (others => '0');
-      init_if.tkeep  := (others => '0');
-      init_if.tuser  := (others => '0');
+      init_if.tdata  := (init_if.tdata'range => '0');
+      init_if.tkeep  := (init_if.tkeep'range => '0');
+      init_if.tuser  := (init_if.tuser'range => '0');
       init_if.tlast  := '0';
     else
       -- from slave to master
       init_if.tready := '0';
       -- from master to slave
       init_if.tvalid := 'Z';
-      init_if.tdata  := (others => 'Z');
-      init_if.tkeep  := (others => 'Z');
-      init_if.tuser  := (others => 'Z');
+      init_if.tdata  := (init_if.tdata'range => 'Z');
+      init_if.tkeep  := (init_if.tkeep'range => 'Z');
+      init_if.tuser  := (init_if.tuser'range => 'Z');
       init_if.tlast  := 'Z';
     end if;
     return init_if;

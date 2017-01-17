@@ -1,0 +1,9 @@
+Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+v1.0.0
+----------
+Released: 2016-12-20
+
+Initial version of full access Avalon Memory Mapped (MM) VIP

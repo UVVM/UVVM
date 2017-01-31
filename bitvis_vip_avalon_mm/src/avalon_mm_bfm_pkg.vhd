@@ -580,9 +580,6 @@ package body avalon_mm_bfm_pkg is
       -- did we timeout?
       if timeout then
         alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for readdatavalid");
-      else
-        wait until rising_edge(clk);
-        wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
       end if;
 
     else  -- not waitrequest or readdatavalid - issue read, wait num_wait_states before finishing the read

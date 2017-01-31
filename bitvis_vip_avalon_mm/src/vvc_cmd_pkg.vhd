@@ -44,7 +44,7 @@ package vvc_cmd_pkg is
     INSERT_DELAY_IN_TIME,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE, READ, CHECK, RESET);
+    WRITE, READ, CHECK, RESET, LOCK, UNLOCK);
 
   constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := 1024;
   constant C_VVC_CMD_ADDR_MAX_LENGTH          : natural := 64;
@@ -73,7 +73,7 @@ package vvc_cmd_pkg is
     byte_enable           : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
     max_polls             : integer;
     timeout               : time;
-
+    
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (

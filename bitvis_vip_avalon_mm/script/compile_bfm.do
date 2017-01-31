@@ -13,7 +13,6 @@
 # This file may be called with an argument
 # arg 1: Part directory of this library/module
 
-
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
   if {[llength $args] == 0} {
@@ -59,7 +58,7 @@ if { [string equal -nocase $simulator "modelsim"] } {
 # Set up vip_avalon_mm_part_path and lib_name
 #------------------------------------------------------
 quietly set lib_name "bitvis_vip_avalon_mm"
-quietly set part_name "bitvis_vip_avalon_mm__simple_access"
+quietly set part_name "bitvis_vip_avalon_mm"
 # path from mpf-file in sim
 quietly set vip_avalon_mm_part_path "../..//$part_name"
 
@@ -73,8 +72,6 @@ if { [info exists 1] } {
 # (Re-)Generate library and Compile source files
 #--------------------------------------------------
 echo "\n\nRe-gen lib and compile $lib_name source\n"
-
-
 if {[file exists $vip_avalon_mm_part_path/sim/$lib_name]} {
   file delete -force $vip_avalon_mm_part_path/sim/$lib_name
 }
@@ -91,11 +88,4 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -dbg -work $lib_name"
 }
 
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_bfm_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/vvc_cmd_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/vvc_methods_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_vvc.vhd
+eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_bfm_pkg.vhdp

@@ -9,6 +9,9 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v1.5.2 - Christmas edition
+- This is a holiday special release of UVVM where a full version of the bitvis_vip_avalon_mm is included. Enjoy! 
+
 v1.5.2
 ----------
 Released: 2016-10-31

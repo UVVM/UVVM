@@ -56,6 +56,8 @@ package vvc_methods_pkg is
     cmd_queue_count_threshold_severity    : t_alert_level;
     cmd_queue_count_threshold             : natural;
     bfm_config                            : t_bfm_config;
+    use_read_pipeline                     : boolean;
+    num_pipeline_stages                   : natural;
     msg_id_panel                          : t_msg_id_panel;
   end record;
 
@@ -67,6 +69,8 @@ package vvc_methods_pkg is
     cmd_queue_count_threshold_severity    => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
     cmd_queue_count_threshold             => C_CMD_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_AVALON_MM_BFM_CONFIG_DEFAULT,
+    use_read_pipeline                     => TRUE,
+    num_pipeline_stages                   => 5,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
     );
     
@@ -160,6 +164,18 @@ package vvc_methods_pkg is
     constant num_rst_cycles     : in integer;
     constant msg                : in string
   );
+  
+  procedure avalon_mm_lock (
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string
+  );
+
+  procedure avalon_mm_unlock (
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string
+  );
 
 end package vvc_methods_pkg;
 
@@ -183,12 +199,16 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & msg);
+    variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
+        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & msg);
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                    := C_VVC_CMD_DEFAULT;
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
-    shared_vvc_cmd.addr(addr'length-1 downto 0)       := addr;
-    shared_vvc_cmd.data(data'length-1 downto 0)       := data;
+    shared_vvc_cmd.addr                               := v_normalised_addr;
+    shared_vvc_cmd.data                               := v_normalised_data;
     send_command_to_vvc(VVCT);
   end procedure;
   
@@ -205,13 +225,19 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) 
         & ", " & to_string(byte_enable, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & msg);
+    variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
+        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & msg);
+    variable v_normalised_byte_ena    : std_logic_vector(shared_vvc_cmd.byte_enable'length-1 downto 0) :=
+        normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with to wide byte_enable. " &  msg);
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                                := C_VVC_CMD_DEFAULT;
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
-    shared_vvc_cmd.addr(addr'length-1 downto 0)                   := addr;
-    shared_vvc_cmd.data(data'length-1 downto 0)                   := data;
-    shared_vvc_cmd.byte_enable(byte_enable'length-1 downto 0)     := byte_enable;
+    shared_vvc_cmd.addr                                           := v_normalised_addr;
+    shared_vvc_cmd.data                                           := v_normalised_data;
+    shared_vvc_cmd.byte_enable                                    := v_normalised_byte_ena;
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -225,12 +251,14 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_read";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr",proc_call & " called with to wide address. " &  msg);
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                    := C_VVC_CMD_DEFAULT;
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
     shared_vvc_cmd.operation                          := READ;
-    shared_vvc_cmd.addr(addr'length-1 downto 0)       := addr;
+    shared_vvc_cmd.addr                               := v_normalised_addr;
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -246,12 +274,16 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_check";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & msg);
+    variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
+        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & msg);
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                    := C_VVC_CMD_DEFAULT;
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
-    shared_vvc_cmd.addr(addr'length-1 downto 0)       := addr;
-    shared_vvc_cmd.data(data'length-1 downto 0)       := data;
+    shared_vvc_cmd.addr                               := v_normalised_addr;
+    shared_vvc_cmd.data                               := v_normalised_data;
     shared_vvc_cmd.alert_level                        := alert_level;
     send_command_to_vvc(VVCT);
   end procedure;
@@ -273,7 +305,37 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.gen_integer                       := num_rst_cycles;
     send_command_to_vvc(VVCT);
   end procedure;
+  
 
+  procedure avalon_mm_lock (
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string
+  ) is
+    constant proc_name : string := "avalon_mm_lock";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+        & ")";
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, LOCK);
+    send_command_to_vvc(VVCT);
+  end procedure;
+  
+  procedure avalon_mm_unlock (
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string
+  ) is
+    constant proc_name : string := "avalon_mm_unlock";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+        & ")";
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, UNLOCK);
+    send_command_to_vvc(VVCT);
+  end procedure;  
 
 end package body vvc_methods_pkg;
 

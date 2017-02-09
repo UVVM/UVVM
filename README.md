@@ -1,8 +1,14 @@
-# UVVM VVC Framework
-The Open Source 'UVVM (Universal VHDL Verification Methodology) - VVC (VHDL Verification Component) Framework' for making structured VHDL testbenches for verification of FPGA.
-UVVM consists currently of 
+# UVVM 
+UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making very structured VHDL-based testbenches.
+
+Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality. 
+UVVM VVC (VHDL Verification Component) Framework was released in 2016 as a to handle exactly these aspects.
+
+UVVM consists currently of the following elements 
 - Utility Library
-- VVC Framework
+- VVC (VHDL Verification Component) Framework  - Including Utility Library
+- BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
+- VVCs to be used with UVVM VVC Framework and may be combined with BFMs
 more to come...
 
 ## For what do I need this VVC Framework?

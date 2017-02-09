@@ -8,7 +8,7 @@ UVVM consists currently of the following elements
 - Utility Library
 - VVC (VHDL Verification Component) Framework  - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
-- VVCs to be used with UVVM VVC Framework and may be combined with BFMs
+- VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 more to come...
 
 ## For what do I need this VVC Framework?

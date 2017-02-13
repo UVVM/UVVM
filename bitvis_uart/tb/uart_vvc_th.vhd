@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -47,8 +47,8 @@ architecture struct of uart_vvc_th is
   signal ready          : std_logic;
 
   -- UART VVC signals
-  signal uart_vvc_rx    : std_logic;
-  signal uart_vvc_tx    : std_logic;
+  signal uart_vvc_rx    : std_logic := '1';
+  signal uart_vvc_tx    : std_logic := '1';
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
@@ -57,7 +57,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate the concurrent procedure that initializes UVVM
   -----------------------------------------------------------------------------
-  i_initialize_uvvm : initialize_uvvm;
+  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
   -----------------------------------------------------------------------------
   -- Instantiate DUT
@@ -92,8 +92,8 @@ begin
   port map(
     clk                         => clk,
     sbi_vvc_master_if.cs        => cs,
-    sbi_vvc_master_if.rd        => rd,
-    sbi_vvc_master_if.wr        => wr,
+    sbi_vvc_master_if.rena      => rd,
+    sbi_vvc_master_if.wena      => wr,
     sbi_vvc_master_if.addr      => addr,
     sbi_vvc_master_if.wdata     => wdata,
     sbi_vvc_master_if.ready     => ready,
@@ -110,7 +110,6 @@ begin
     GC_INSTANCE_IDX   => 1
   )
   port map(
-    clk                 => clk,
     uart_vvc_rx         => uart_vvc_rx,
     uart_vvc_tx         => uart_vvc_tx
   );

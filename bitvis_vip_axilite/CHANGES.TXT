@@ -1,6 +1,36 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+
+v2.0.3
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+
+
+v2.0.2
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing
+
+
+v2.0.1
+----------
+Released: 2017-01-27
+
+- Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
+- Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
+- Added AWAIT_ANY_COMPLETION. 
+- Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
+-  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
+-  - updated call to store_result()
+- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
+
+
+VVC changes
+----------
+- Renamed transaction_info_for_waveview to transaction_info
+
 ----------------------------------------------------------------------
 
 v1.1.1 

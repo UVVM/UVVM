@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -82,6 +82,7 @@ package adaptations_pkg is
     ID_FINISH_OR_STOP,            -- Used when terminating the complete simulation - independent of why
     ID_CLOCK_GEN,         -- Used for logging when clock generators are enabled or disabled
     ID_GEN_PULSE,         -- Used for logging when a gen_pulse procedure starts pulsing a signal
+    ID_BLOCKING,          -- Used for logging when using synchronisation flags
     -- General
     ID_POS_ACK,           -- To write a positive acknowledge on a check
     -- Directly inside test sequencers
@@ -129,6 +130,7 @@ package adaptations_pkg is
     ID_IMMEDIATE_CMD_WAIT,    -- Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
+    ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
     -- Distributed data
     ID_UVVM_DATA_QUEUE,       -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system
@@ -165,6 +167,8 @@ package adaptations_pkg is
     ID_UVVM_CMD_ACK       => "    ",
     others                => ""     & NUL & NUL & NUL & NUL
   );
+  
+  constant C_MSG_DELIMITER : character := ''';
 
   -------------------------------------------------------------------------
   -- Alert counters
@@ -203,10 +207,14 @@ package adaptations_pkg is
 
   signal global_show_msg_for_uvvm_cmd  : boolean := true;
 
-  constant C_CMD_QUEUE_COUNT_MAX                  : natural       := 20;  -- (VVC Command queue)  May be overwritten for dedicated VVC
-  constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level := WARNING;
-  constant C_CMD_QUEUE_COUNT_THRESHOLD            : natural       := 18;
-  constant C_MAX_VVC_INSTANCE_NUM                 : natural       := 8;
+  constant C_CMD_QUEUE_COUNT_MAX                     : natural       := 20;  -- (VVC Command queue)  May be overwritten for dedicated VVC
+  constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY      : t_alert_level := WARNING;
+  constant C_CMD_QUEUE_COUNT_THRESHOLD               : natural       := 18;
+  constant C_RESULT_QUEUE_COUNT_MAX                  : natural       := 20;  -- (VVC Result queue)  May be overwritten for dedicated VVC
+  constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level := WARNING;
+  constant C_RESULT_QUEUE_COUNT_THRESHOLD            : natural       := 18;
+  constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 8;
+  constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers 
   
   constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER   : natural := 2048;
   constant C_NUMBER_OF_DATA_BUFFERS                : natural := 10;
@@ -235,23 +243,15 @@ package adaptations_pkg is
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
-  constant C_MAX_VVC_RESPONSE_DATA_WIDTH    : natural := 256;
-  constant C_VVC_RESULT_DEFAULT_ARRAY_DEPTH : natural:= 20;
-
-  type t_vvc_response is record
-    -- Common VVC fields
-    fetch_is_accepted    : boolean;
-    value_is_new         : boolean;
-    transaction_result   : t_transaction_result;
-    data                 : std_logic_vector(C_MAX_VVC_RESPONSE_DATA_WIDTH-1 downto 0);
-  end record;
-
   type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
     NA,               -- When channel is not relevant
     ALL_CHANNELS,     -- When command shall be received by all channels
     RX,
     TX);
+    
+  constant C_VVCT_ALL_INSTANCES : integer := -2;
 
+  constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
 end package adaptations_pkg;
 
 package body adaptations_pkg is

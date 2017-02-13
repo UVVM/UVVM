@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -16,6 +16,9 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+
+library std;
+use std.textio.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -55,24 +58,26 @@ package avalon_mm_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_avalon_mm_bfm_config is
   record
-    max_wait_cycles          : integer;         -- when using waitrequest - max time to wait
-    max_wait_cycles_severity : t_alert_level;
-    clock_period             : time;
-    num_wait_states          : natural;         -- use_waitrequest = false -> this controls the (fixed) latency
+    max_wait_cycles          : integer;         -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
+    max_wait_cycles_severity : t_alert_level;   -- The above timeout will have this severity 
+    clock_period             : time;            -- Period of the clock signal. 
+    num_wait_states_read     : natural;         -- use_waitrequest = false -> this controls the (fixed) latency for read
+    num_wait_states_write    : natural;         -- use_waitrequest = false -> this controls the (fixed) latency for write
     use_waitrequest          : boolean;         -- slave uses waitrequest
     use_readdatavalid        : boolean;         -- slave uses readdatavalid (variable latency)
     use_response_signal      : boolean;         -- Whether or not to check the response signal on read
     use_begintransfer        : boolean;         -- Whether or not to assert begintransfer on start of transfer (Altera recommends not to use)
-    id_for_bfm               : t_msg_id;
-    id_for_bfm_wait          : t_msg_id;
-    id_for_bfm_poll          : t_msg_id;
+    id_for_bfm               : t_msg_id;        -- The message ID used as a general message ID in the Avalon BFM 
+    id_for_bfm_wait          : t_msg_id;        -- The message ID used for logging waits in the Avalon BFM 
+    id_for_bfm_poll          : t_msg_id;        -- The message ID used for logging polling in the Avalon BFM 
   end record;
 
   constant C_AVALON_MM_BFM_CONFIG_DEFAULT : t_avalon_mm_bfm_config := (
     max_wait_cycles          => 10,
     max_wait_cycles_severity => TB_FAILURE,
     clock_period             => 10 ns,
-    num_wait_states          => 0,
+    num_wait_states_read     => 0,
+    num_wait_states_write    => 0,
     use_waitrequest          => true,
     use_readdatavalid        => false,
     use_response_signal      => true,
@@ -141,10 +146,10 @@ package avalon_mm_bfm_pkg is
   procedure avalon_mm_check (
     constant addr_value       : in  unsigned;
     constant data_exp         : in  std_logic_vector;
-    constant alert_level      : in  t_alert_level             := error;
     constant msg              : in  string;
     signal clk                : in  std_logic;
     signal avalon_mm_if       : inout t_avalon_mm_if;
+    constant alert_level      : in  t_alert_level             := error;
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT
@@ -168,7 +173,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read_request"  -- overwrite if called from other procedure like avalon_mm_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like avalon_mm_check
   );
   
   procedure avalon_mm_read_response (
@@ -186,10 +191,10 @@ package avalon_mm_bfm_pkg is
   procedure avalon_mm_check_response (
     constant addr_value       : in  unsigned;
     constant data_exp         : in  std_logic_vector;
-    constant alert_level      : in  t_alert_level             := error;
     constant msg              : in  string;
     signal clk                : in  std_logic;
     signal avalon_mm_if       : in t_avalon_mm_if;
+    constant alert_level      : in  t_alert_level             := error;
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT
@@ -249,14 +254,6 @@ package body avalon_mm_bfm_pkg is
     result.irq              := 'Z';
 
     return result;
-  end function;
-  
-  
-  function to_string(
-    constant avalon_mm_response_status  : in t_avalon_mm_response_status
-  ) return string is 
-  begin 
-    return to_upper(t_avalon_mm_response_status'image(avalon_mm_response_status));
   end function;
   
   
@@ -330,7 +327,7 @@ package body avalon_mm_bfm_pkg is
     
     variable timeout : boolean := false;
   begin
-    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+    wait_until_given_time_before_rising_edge(clk, config.clock_period/4, config.clock_period);
 
     avalon_mm_if.writedata    <= v_normalized_data;
     avalon_mm_if.byte_enable  <= byte_enable;
@@ -342,48 +339,42 @@ package body avalon_mm_bfm_pkg is
       avalon_mm_if.begintransfer <= '1';
     end if;
 
+    wait until rising_edge(clk);     -- wait for DUT update of signal
+    
+    -- Release the begintransfer signal after one clock cycle, if waitrequest is in use
+    if config.use_begintransfer then
+      avalon_mm_if.begintransfer <= '0' after config.clock_period/4;
+    end if;
+    
     -- use wait request?
     if config.use_waitrequest then
-      wait until falling_edge(clk);     -- wait for DUT update of signal
       for cycle in 1 to config.max_wait_cycles loop
         if avalon_mm_if.waitrequest = '1' then
-          wait until falling_edge(clk);
+          wait until rising_edge(clk);
         else
           exit;
         end if;
         if cycle = config.max_wait_cycles then
           timeout := true;
         end if;
-        -- Release the begintransfer signal after one clock cycle, if waitrequest is in use
-        if config.use_begintransfer and avalon_mm_if.begintransfer = '1' then
-          wait until rising_edge(clk);
-          wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
-          avalon_mm_if.begintransfer <= '0';
-        end if;
       end loop;
 
       -- did we timeout?
       if timeout then
-        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for waitrequest", scope);
-      else
-        wait until rising_edge(clk);
-        wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
-        -- Release the begintransfer signal
-        avalon_mm_if.begintransfer <= '0';
+        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for waitrequest " & add_msg_delimiter(msg), scope);
       end if;
       
-    else  -- not waitrequest. num_wait_states will be used as number of wait cycles in fixed wait-states
-      for cycle in 0 to config.num_wait_states loop
+    else  -- not waitrequest. num_wait_states_write will be used as number of wait cycles in fixed wait-states
+      for cycle in 1 to config.num_wait_states_write loop
         wait until rising_edge(clk);
-        wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
-        avalon_mm_if.begintransfer <= '0';
       end loop;
     end if;
     
+    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock);
     
-    log(config.id_for_bfm, proc_call & " completed. " & msg, scope, msg_id_panel);
-    
+    log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+
   end procedure avalon_mm_write;
   
   
@@ -430,10 +421,10 @@ package body avalon_mm_bfm_pkg is
   procedure avalon_mm_check (
     constant addr_value       : in  unsigned;
     constant data_exp         : in  std_logic_vector;
-    constant alert_level      : in  t_alert_level             := error;
     constant msg              : in  string;
     signal clk                : in  std_logic;
     signal avalon_mm_if       : inout t_avalon_mm_if;
+    constant alert_level      : in  t_alert_level             := error;
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT
@@ -449,8 +440,8 @@ package body avalon_mm_bfm_pkg is
     variable v_data_value : std_logic_vector(avalon_mm_if.readdata'length-1 downto 0) := (others => '0');
     variable v_check_ok   : boolean;
   begin
-    avalon_mm_read_request(addr_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_name);
-    avalon_mm_check_response(addr_value, data_exp, alert_level, msg, clk, avalon_mm_if, scope, msg_id_panel, config);
+    avalon_mm_read_request(addr_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_call);
+    avalon_mm_check_response(addr_value, data_exp, msg, clk, avalon_mm_if, alert_level, scope, msg_id_panel, config);
   end procedure avalon_mm_check;
   
   
@@ -465,7 +456,7 @@ package body avalon_mm_bfm_pkg is
     ) is 
     constant proc_call : string := "avalon_mm_reset(num_rst_cycles=" & to_string(num_rst_cycles) & ")";
   begin
-    log(config.id_for_bfm, proc_call & ". " & msg, scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length);
     avalon_mm_if.reset <= '1';
     for i in 1 to num_rst_cycles loop
@@ -488,28 +479,38 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read_request"  -- overwrite if called from other procedure like avalon_mm_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like avalon_mm_check
   ) is  
-    constant proc_call : string := proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
-    variable timeout : boolean := false;
+    -- local_proc_* used if called from sequencer or VVC 
+    constant local_proc_name          : string := "avalon_mm_read_request";  
+    constant local_proc_call          : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")"; 
+    variable timeout                  : boolean := false;
+    variable v_proc_call              : line;                           -- Current proc_call, external or local 
     variable v_normalized_addr : std_logic_vector(avalon_mm_if.address'length-1 downto 0) :=
              normalize_and_check(std_logic_vector(addr_value), avalon_mm_if.address, ALLOW_NARROWER, "addr", "avalon_mm_if.address", msg);
   begin
-    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
-    
+    if ext_proc_call = "" then
+      -- called from sequencer/VVC, show 'avalon_mm_read_request...' in log
+      write(v_proc_call, local_proc_call);
+    else 
+      -- called from other BFM procedure like axistream_expect, log 'avalon_mm_check() while executing avalon_mm_read_request...' 
+      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+    end if;
+
+    wait_until_given_time_before_rising_edge(clk, config.clock_period/4, config.clock_period);
     -- start the read
     avalon_mm_if.address      <= v_normalized_addr;
     avalon_mm_if.read         <= '1';
     avalon_mm_if.byte_enable(avalon_mm_if.byte_enable'length - 1 downto 0) <= (others => '1');  -- always all bytes for reads
     avalon_mm_if.chipselect   <= '1';
 
-    wait until falling_edge(clk);       -- wait for DUT update of signal
+    wait until rising_edge(clk);       -- wait for DUT update of signal
     
     -- Handle read with waitrequests
     if config.use_waitrequest then
       for cycle in 1 to config.max_wait_cycles loop
         if is_waitrequest_active(avalon_mm_if, config) then
-          wait until falling_edge(clk);
+          wait until rising_edge(clk);
         else
           exit;
         end if;
@@ -520,22 +521,21 @@ package body avalon_mm_bfm_pkg is
 
       -- did we timeout?
       if timeout then
-        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for waitrequest");
-      else
-        wait until rising_edge(clk);
-        wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+        alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout waiting for waitrequest" & add_msg_delimiter(msg), scope);
       end if;
 
-    else -- waitrequest signal not in use
-      wait until rising_edge(clk);
-      wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+
+    else  -- not waitrequest - issue read, wait num_wait_states_read before finishing the read
+      for cycle in 1 to config.num_wait_states_read loop
+        wait until rising_edge(clk);
+      end loop;
     end if;
 
-    if proc_name = "avalon_mm_read_request" then
-      log(ID_BFM, proc_call & " completed. " & msg, scope, msg_id_panel);
+    if ext_proc_call = "" then -- proc_name = "avalon_mm_read_request" 
+      log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
-
-    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock);
+    
+    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after config.clock_period/4;
     
   end procedure avalon_mm_read_request;
 
@@ -569,7 +569,7 @@ package body avalon_mm_bfm_pkg is
           log(config.id_for_bfm, "readdatavalid was active after " & to_string(cycle) & " clock cycles", scope, msg_id_panel);
           exit;
         else
-          wait until falling_edge(clk);
+          wait until rising_edge(clk);
         end if;
         
         if cycle = config.max_wait_cycles then
@@ -579,14 +579,8 @@ package body avalon_mm_bfm_pkg is
 
       -- did we timeout?
       if timeout then
-        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for readdatavalid");
+        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for readdatavalid" & add_msg_delimiter(msg), scope);
       end if;
-
-    else  -- not waitrequest or readdatavalid - issue read, wait num_wait_states before finishing the read
-      for cycle in 1 to config.num_wait_states loop
-        wait until rising_edge(clk);
-        wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
-      end loop;
     end if;
     
     if config.use_response_signal = true and to_avalon_mm_response_status(avalon_mm_if.response) /= OKAY then
@@ -595,9 +589,11 @@ package body avalon_mm_bfm_pkg is
     
     v_normalized_data := avalon_mm_if.readdata;
     data_value        := v_normalized_data(data_value'length-1 downto 0);
+    
+    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
 
     if proc_name = "avalon_mm_read_response" then
-      log(config.id_for_bfm, proc_call & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure avalon_mm_read_response;
   
@@ -605,10 +601,10 @@ package body avalon_mm_bfm_pkg is
   procedure avalon_mm_check_response (
     constant addr_value       : in  unsigned;
     constant data_exp         : in  std_logic_vector;
-    constant alert_level      : in  t_alert_level             := error;
     constant msg              : in  string;
     signal clk                : in  std_logic;
     signal avalon_mm_if       : in t_avalon_mm_if;
+    constant alert_level      : in  t_alert_level             := error;
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT
@@ -638,9 +634,9 @@ package body avalon_mm_bfm_pkg is
     end loop;
 
     if not v_check_ok then
-      alert(alert_level, proc_call & "=> Failed. slv Was " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & "." & LF & msg, scope);
+      alert(alert_level, proc_call & "=> Failed. slv Was " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure avalon_mm_check_response;
   
@@ -654,7 +650,7 @@ package body avalon_mm_bfm_pkg is
   ) is
     constant proc_call : string := "avalon_mm_lock()"; 
   begin
-    log(config.id_for_bfm, proc_call & ". " & msg, scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     avalon_mm_if.lock <= '1';
   end procedure avalon_mm_lock;
   
@@ -668,7 +664,7 @@ package body avalon_mm_bfm_pkg is
   ) is
     constant proc_call : string := "avalon_mm_unlock()";
   begin
-    log(config.id_for_bfm, proc_call & ". " & msg, scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     avalon_mm_if.lock <= '0';  
   end procedure avalon_mm_unlock;
   

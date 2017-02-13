@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -28,7 +28,9 @@ package types_pkg is
   file LOG_FILE : text;
   
   constant C_LOG_HDR_FOR_WAVEVIEW_WIDTH : natural := 100; -- For string in waveview indicating last log header
-
+  constant C_NUM_SYNC_FLAGS     : positive := 10;
+  constant C_FLAG_NAME_LENGTH   : positive := 20;
+  
   type t_void is (VOID);
 
   type t_natural_array is array (natural range <>) of natural;
@@ -83,6 +85,21 @@ package types_pkg is
     large      : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);
     xl         : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);
   end record;
+
+
+  -- type for await_unblock_flag whether the method should set the flag back to blocked or not
+  type t_flag_returning is (KEEP_UNBLOCKED, RETURN_TO_BLOCK); -- value after unblock
+
+  type t_sync_flag_record is record
+    flag_name  : string(1 to C_FLAG_NAME_LENGTH);
+    is_active  : boolean;
+  end record;
+  
+  constant C_SYNC_FLAG_DEFAULT : t_sync_flag_record := (
+    flag_name  => (others => ' '),
+    is_active  => true
+  );
+  type t_sync_flag_record_array is array (1 to C_NUM_SYNC_FLAGS) of t_sync_flag_record;
 
   -------------------------------------
   -- BFMs and above

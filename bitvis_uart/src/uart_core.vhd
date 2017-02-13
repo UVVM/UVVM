@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -209,7 +209,9 @@ begin
     end if;
   end process uart_tx;
 
-
+  -- Data is set on the output when available on rx_data(0)
+  c2p_i.aro_rx_data <= rx_data(0);
+  
   ---------------------------------------------------------------------------
   -- Receive process
   ---------------------------------------------------------------------------
@@ -219,7 +221,6 @@ begin
     if arst = '1' then                  -- asynchronous reset (active high)
       rx_active         <= '0';
       rx_just_active    <= false;
-      c2p_i.aro_rx_data <= (others => '0');
       rx_data           <= (others => (others => '0'));
       rx_data_valid     <= '0';
       rx_bit_samples    <= (others => '1');
@@ -232,13 +233,11 @@ begin
       vr_rx_data_idx    := (others => '0');
       rx_data_full      <= '1';
     elsif rising_edge(clk) then         -- rising clock edge
-      c2p_i.aro_rx_data <= (others => '0');
 
       -- Perform read.
       -- When there is data available in rx_data,
       -- output the data when read enable detected.
       if p2c.aro_rx_data_re = '1' and rx_data_valid = '1' then
-        c2p_i.aro_rx_data <= rx_data(0);
         rx_data <= x"00" & rx_data(3 downto 1);
         rx_data_full <= '0';
         
@@ -348,7 +347,7 @@ begin
     severity error;
 
   assert transient_err /= '1'
-    report "Parity error detected!"
+    report "Transient error detected!"
     severity error;
   
 end architecture rtl;

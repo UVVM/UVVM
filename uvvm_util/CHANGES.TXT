@@ -3,6 +3,24 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.0.3
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+
+v2.0.2
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing
+
+
+v2.0.1
+----------
+Released: 2017-01-27
+- Add check in procedures gen_pulse() not pulsing to same value as before. Add some Overloaded procedures of gen_pulse().
+- Add ID_INSERTED_DELAY to adaptations_pkg.vhd
+
+
 v1.3.2
 ----------
 Released: 2016-10-28

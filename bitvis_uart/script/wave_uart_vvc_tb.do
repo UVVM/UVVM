@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -22,11 +22,11 @@ add wave -noupdate -expand -group {UART DUT} -radix hexadecimal /uart_vvc_tb/i_t
 add wave -noupdate -expand -group {UART DUT} -radix hexadecimal /uart_vvc_tb/i_test_harness/i_uart/rdata
 add wave -noupdate -expand -group {UART DUT} -radix hexadecimal /uart_vvc_tb/i_test_harness/i_uart/rx_a
 add wave -noupdate -expand -group {UART DUT} -radix hexadecimal /uart_vvc_tb/i_test_harness/i_uart/tx
-add wave -noupdate -expand -group {SBI VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_sbi_vvc/transaction_info_for_waveview
+add wave -noupdate -expand -group {SBI VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_sbi_vvc/transaction_info
 add wave -noupdate -expand -group {SBI VVC} -radix hexadecimal -expand /uart_vvc_tb/i_test_harness/i1_sbi_vvc/sbi_vvc_master_if 
-add wave -noupdate -expand -group {UART VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_uart_vvc/i1_uart_rx/transaction_info_for_waveview 
+add wave -noupdate -expand -group {UART VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_uart_vvc/i1_uart_rx/transaction_info 
 add wave -noupdate -expand -group {UART VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_uart_vvc/i1_uart_rx/uart_vvc_rx
-add wave -noupdate -expand -group {UART VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_uart_vvc/i1_uart_tx/transaction_info_for_waveview
+add wave -noupdate -expand -group {UART VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_uart_vvc/i1_uart_tx/transaction_info
 add wave -noupdate -expand -group {UART VVC} -radix hexadecimal /uart_vvc_tb/i_test_harness/i1_uart_vvc/i1_uart_tx/uart_vvc_tx 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {1411622 ps} 0}

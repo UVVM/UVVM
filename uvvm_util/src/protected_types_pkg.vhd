@@ -1,6 +1,6 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -45,6 +45,17 @@ package protected_types_pkg is
       );
   end protected t_protected_alert_attention_counters;
 
+  type t_protected_semaphore is protected
+    impure function get_semaphore return boolean;
+    procedure release_semaphore;
+  end protected t_protected_semaphore;
+
+  type t_protected_acknowledge_cmd_idx is protected
+
+    impure function set_index(index : integer) return boolean;
+    impure function get_index return integer;
+    procedure release_index;
+  end protected  t_protected_acknowledge_cmd_idx;
 
 end package protected_types_pkg;
 
@@ -84,5 +95,56 @@ package body protected_types_pkg is
     end;
 
   end protected body t_protected_alert_attention_counters;
+
+  type t_protected_semaphore is protected body
+
+    variable v_priv_semaphore_taken : boolean := false;
+
+    impure function get_semaphore return boolean is
+    begin
+      if v_priv_semaphore_taken = false then
+        -- semaphore was free
+        v_priv_semaphore_taken := true;
+        return true;
+      else
+        -- semaphore was not free
+        return false;
+      end if;
+    end;
+
+    procedure release_semaphore is
+    begin
+      v_priv_semaphore_taken := false;
+    end procedure;
+  end protected body t_protected_semaphore;
+
+
+  type t_protected_acknowledge_cmd_idx is protected body
+
+    variable v_priv_idx : integer := -1;
+
+    impure function set_index(index : integer) return boolean is
+    begin
+    -- for broadcast
+      if v_priv_idx = -1 or v_priv_idx = index then
+        -- index was now set
+        v_priv_idx := index;
+        return true;
+      else
+        -- index was set by another vvc
+        return false;
+      end if;
+    end;
+
+    impure function get_index return integer is
+    begin
+      return v_priv_idx;
+    end;
+
+    procedure release_index is
+    begin
+      v_priv_idx := -1;
+    end procedure;
+  end protected body t_protected_acknowledge_cmd_idx;
 
 end package body protected_types_pkg;

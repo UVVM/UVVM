@@ -1,29 +1,19 @@
-BITVIS UVVM LICENSE AGREEMENT
+UVVM LICENSE AGREEMENT
 IMPORTANT - READ BEFORE USING OR COPYING.
-The 'Software' is hereafter defined as all code delivered under this license.
+THIS IS THE MIT LICENSE, see https://opensource.org/licenses/MIT
+------------------------------------------------------------------
 
-LICENSE. 
-Bitvis grants to You a nonexclusive, nontransferable, worldwide, fully paid-up 
-license under Bitvis' copyrights to
-a) use, copy and modify the Software internally for Your own development and maintenance purposes.
-b) distribute your own extensions to the Software, including, but not limited to VVCs.
-c) copy and distribute the end-user documentation which may accompany the Software, but only in 
-   association with the Software, and without modifications to the documentation.
-Except as expressly stated in this Agreement, no license or right is granted to You directly or by implication, 
-inducement, estoppel or otherwise. You do not have any rights to use any Bitvis trademarks or logos.
+Copyright (c) 2017 by Bitvis AS
 
-OWNERSHIP OF SOFTWARE AND COPYRIGHTS. 
-Title to all copies of the Software remains with Bitvis. The Software is copyrighted and protected by law. 
-You may not remove any copyright notices from the Software. Bitvis may make changes to the Software, or to 
-items referenced therein, at any time and without notice, but is not obligated to support or update the Software. 
-Except as otherwise expressly provided, Bitvis grants no express or implied right under Bitvis' patents, 
-copyrights, trademarks, or other intellectual property rights.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
+and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE 
-AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT 
-OF OR IN CONNECTION WITH UVVM.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of 
+the Software.
 
-Bitvis may terminate this Agreement at any time if you violate its terms. 
-Upon termination, you will immediately destroy the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

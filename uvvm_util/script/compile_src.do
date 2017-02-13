@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -86,7 +86,7 @@ vmap $lib_name $util_part_path/sim/$lib_name
 if { [string equal -nocase $simulator "modelsim"] } {
   quietly set compdirectives "-suppress 1346,1236 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -dbg -work $lib_name" 
+  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name" 
 }
 
 echo "\n\n\n=== Compiling $lib_name source\n"

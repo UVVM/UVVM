@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -83,9 +83,9 @@ vlib $vip_avalon_mm_part_path/sim/$lib_name
 vmap $lib_name $vip_avalon_mm_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -work $lib_name"
+  set compdirectives "-2008 -suppress 1346,1236 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
   set compdirectives "-2008 -dbg -work $lib_name"
 }
 
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_bfm_pkg.vhdp
+eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_bfm_pkg.vhd

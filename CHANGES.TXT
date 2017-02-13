@@ -9,8 +9,51 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v1.5.2 - Christmas edition
-- This is a holiday special release of UVVM where a full version of the bitvis_vip_avalon_mm is included. Enjoy! 
+v2.0.3
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+
+
+v2.0.2
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing. This affects all components in the UVVM package.
+
+
+v2.0.1
+----------
+Released: 2017-01-27
+
+This release is not backwards compatible and may require some changes in your tesbench and custom VVCs.
+
+- Change required in your test bench / test harness : 
+     Replace for example
+        i_initialize_uvvm : initialize_uvvm;
+     with 
+        i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
+
+- Changes required in your custom VVCs (if any) are listed in the CHANGES.TXT file in the sub directory uvvm_vvc_framework. 
+- Changes required in your BFM calls : see CHANGES.TXT in the respective BFM folder. 
+  Some parameters have been reordered in order to minimize the difference between BFM and VVC calls.
+
+All VIPs have been altered for this release.
+
+- For VVC designers there are some changes as well. In order to function with the new UVVM it is recommended to apply these changes:
+1. For *_vvc.vhd
+  - add "variable local_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;" to variable list in cmd_interpreter process
+  - add parameter local_vvc_cmd to work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_ack, shared_vvc_cmd, local_vvc_cmd)
+  - exchange shared_vvc_cmd with local_vvc_cmd in the cmd_interpreter except for the line above as it is copied in that function
+  - add parameter local_vvc_cmd to uvvm_vvc_framework.ti_vvc_framework_support_pkg.acknowledge_cmd(global_vvc_ack,local_vvc_cmd.cmd_idx)
+You can take a look at all our VVCs.
+ 
+2. For vvc_methods_pkg.vhd
+  - delete shared_vvc_cmd := C_VVC_CMD_DEFAULT; line in each procedure before set_general_target_and_command_fields
+  - make sure that the ordering of commands in each function is:
+    1. set_general_target_and_command_fields. It must be executed before any access to shared_vvc_cmd
+    2. after the command send_command_to_vvc(VVCT); there must also be no access to shared_vvc_cmd
+
+ 
 
 v1.5.2
 ----------

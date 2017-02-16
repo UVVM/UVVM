@@ -492,7 +492,7 @@ package body td_vvc_entity_support_pkg is
                 ((VVCT.vvc_channel = ALL_CHANNELS) or (VVCT.vvc_channel = vvc_labels.channel)) and                                      -- Channel is correct or broadcast channel
                 VVCT.vvc_name(1 to valid_length(vvc_labels.vvc_name)) = vvc_labels.vvc_name(1 to valid_length(vvc_labels.vvc_name))));  -- Name is correct
     end loop;
-    if (VVCT.vvc_instance_idx = C_VVCT_ALL_INSTANCES) then
+    if ((VVCT.vvc_instance_idx = C_VVCT_ALL_INSTANCES) or (VVCT.vvc_channel = ALL_CHANNELS) ) then
       -- in case of a multicast block the global acknowledge until all vvc receiving the message processed it
       vvc_ack <= '0';
     end if;

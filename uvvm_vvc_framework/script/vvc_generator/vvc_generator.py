@@ -252,7 +252,7 @@ def add_vvc_constructor(file_handle, vvc_name):
     print_linefeed(file_handle)
 
 
-def add_vvc_interpreter(file_handle):
+def add_vvc_interpreter(file_handle, vvc_channel):
     file_handle.write(division_line+"\n")
     file_handle.write("-- Command interpreter\n")
     file_handle.write("-- - Interpret, decode and acknowledge commands from the central sequencer\n")
@@ -265,7 +265,10 @@ def add_vvc_interpreter(file_handle):
     file_handle.write("    -- 0. Initialize the process prior to first command\n")
     file_handle.write("    work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);\n")
     file_handle.write("    -- initialise shared_vvc_last_received_cmd_idx for channel and instance\n")
-    file_handle.write("    shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;\n")
+    if vvc_channel == "NA":
+      file_handle.write("    shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;\n")
+    else:
+      file_handle.write("    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;\n")
     print_linefeed(file_handle)
     file_handle.write("    -- Then for every single command from the sequencer\n")
     file_handle.write("    loop  -- basically as long as new commands are received\n")
@@ -278,7 +281,10 @@ def add_vvc_interpreter(file_handle):
                       "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);\n")
     file_handle.write("      v_cmd_has_been_acked := false; -- Clear flag\n")
     file_handle.write("      -- update shared_vvc_last_received_cmd_idx with received command index\n")
-    file_handle.write("      shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;\n")
+    if vvc_channel == "NA":
+      file_handle.write("      shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;\n")
+    else:
+      file_handle.write("      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
     file_handle.write("      -- 2a. Put command on the queue if intended for the executor\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
@@ -1074,7 +1080,7 @@ def generate_vvc_file(vvc_name, vvc_channels):
         add_vvc_entity(f,vvc_name,channel)
         add_architecture_declaration(f, vvc_name, channel)
         add_vvc_constructor(f, vvc_name)
-        add_vvc_interpreter(f)
+        add_vvc_interpreter(f, channel)
         add_vvc_executor(f)
         add_vvc_terminator(f)
         add_end_of_architecture(f)

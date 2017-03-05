@@ -7,6 +7,8 @@ v2.0.3
 ----------
 Released: 2017-02-13
 - Applied minor bugfixes and updated documentation for v2.0.x
+- The UVVM release of OSVVM has been removed from the repository due to the fact that it was a outdated 
+  version of OSVVM, and it was not used in any testbenches or examples.
 
 
 v2.0.2

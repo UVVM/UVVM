@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -51,10 +51,10 @@ architecture func of uart_vvc_tb is
   constant C_TIME_OF_ONE_UART_TX : time := 11*C_BIT_PERIOD; -- =1760 ns;
 
   -- Predefined SBI addresses
-  constant C_ADDR_RX_DATA       : unsigned(3 downto 0) := x"0";
-  constant C_ADDR_RX_DATA_VALID : unsigned(3 downto 0) := x"1";
-  constant C_ADDR_TX_DATA       : unsigned(3 downto 0) := x"2";
-  constant C_ADDR_TX_READY      : unsigned(3 downto 0) := x"3";
+  constant C_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
+  constant C_ADDR_RX_DATA_VALID : unsigned(2 downto 0) := "001";
+  constant C_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
+  constant C_ADDR_TX_READY      : unsigned(2 downto 0) := "011";
 
   
   -- Log overload procedure for simplification
@@ -106,6 +106,12 @@ architecture func of uart_vvc_tb is
 
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
+    
+    
+    log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE);
+    ------------------------------------------------------------
+    shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
 
     log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
@@ -203,7 +209,7 @@ architecture func of uart_vvc_tb is
     -- is done, the test case is complete.
     log("Setting up the UART VVC to transmit 102 samples to the DUT");
     for i in 1 to 102 loop
-      uart_transmit(UART_VVCT,1,TX,  std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i+2)));
+      uart_transmit(UART_VVCT,1,TX,  std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i)));
     end loop;
     
     log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
@@ -218,7 +224,7 @@ architecture func of uart_vvc_tb is
       sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
     end loop;
 
-    await_completion(UART_VVCT,1,TX,  102 * C_TIME_OF_ONE_UART_TX);
+    await_completion(UART_VVCT,1,TX,  103 * C_TIME_OF_ONE_UART_TX);
     wait for 50 ns; -- to assure UART RX complete internally
     -- Check the last two bytes in the DUT RX buffer.
     sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
@@ -232,7 +238,7 @@ architecture func of uart_vvc_tb is
     -- This test case will test the same as the test case above, but using the built in delay functionality in the SBI VVC
     log("Setting up the UART VVC to transmit 102 samples to the DUT");
     for i in 1 to 102 loop
-      uart_transmit(UART_VVCT,1,TX,  std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i+2)));
+      uart_transmit(UART_VVCT,1,TX,  std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i)));
     end loop;
     
     log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
@@ -248,7 +254,7 @@ architecture func of uart_vvc_tb is
       sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
     end loop;
 
-    await_completion(UART_VVCT,1,TX,  102 * C_TIME_OF_ONE_UART_TX);
+    await_completion(UART_VVCT,1,TX,  103 * C_TIME_OF_ONE_UART_TX);
     await_completion(SBI_VVCT,1, 2 * C_TIME_OF_ONE_UART_TX);
     
     wait for 50 ns; -- to assure UART RX complete internally

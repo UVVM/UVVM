@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -103,7 +103,7 @@ type t_generic_queue is protected body
   ) is
     variable v_previous_ptr : t_element_ptr;
   begin
-    check_value(vr_scope_is_defined, TB_WARNING, "Scope name must be defined for this generic queue", "???", ID_NEVER);
+    check_value(vr_scope_is_defined, TB_WARNING, "put: Scope name must be defined for this generic queue", vr_scope, ID_NEVER);
     
     if((vr_queue_count_threshold /= 0) and (vr_num_elements_in_queue >= vr_queue_count_threshold)) then
       if((C_ALERT_FREQUENCY = ALWAYS) or (C_ALERT_FREQUENCY = FIRST_TIME_ONLY and not vr_queue_count_threshold_triggered)) then
@@ -134,7 +134,7 @@ type t_generic_queue is protected body
     variable v_element                : t_generic_element;
     variable v_to_be_deallocated_ptr  : t_element_ptr; 
   begin
-    check_value(vr_scope_is_defined, TB_WARNING, "Scope name must be defined for this generic queue", "???", ID_NEVER);
+    check_value(vr_scope_is_defined, TB_WARNING, "get: Scope name must be defined for this generic queue", vr_scope, ID_NEVER);
     check_value(vr_num_elements_in_queue > 0, TB_ERROR, "get() out of generic queue when empty", vr_scope, ID_NEVER);
 
     if(vr_num_elements_in_queue < vr_queue_count_threshold) then

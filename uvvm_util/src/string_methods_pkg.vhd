@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -276,6 +276,9 @@ package string_methods_pkg is
     val : string
     ) return string;
     
+  function add_msg_delimiter(
+    msg : string
+  ) return string;
 
 end package string_methods_pkg;
 
@@ -294,7 +297,7 @@ package body string_methods_pkg is
   begin
     assert val
       report LF & C_LOG_PREFIX & " *** " & to_string(severeness) & "*** caused by Bitvis Util > string handling > "
-             & scope & LF & C_LOG_PREFIX & " " & msg & LF
+             & scope & LF & C_LOG_PREFIX & " " & add_msg_delimiter(msg) & LF
       severity severeness;
    end;
 
@@ -434,7 +437,7 @@ package body string_methods_pkg is
     alias a_vector : string(1 to vector'length) is vector;
   begin
     bitvis_assert(vector'length > 0, FAILURE, "String input is empty", "pos_of_leftmost()");
-    bitvis_assert(vector'ascending, FAILURE, "Only implemented for string(N to M)", "pos_of_rightmost()");
+    bitvis_assert(vector'ascending, FAILURE, "Only implemented for string(N to M)", "pos_of_leftmost()");
     for i in a_vector'left to a_vector'right loop
       if (a_vector(i) = target) then
         return i;
@@ -1283,4 +1286,19 @@ package body string_methods_pkg is
     end if;
   end;
 
+  function add_msg_delimiter(
+    msg : string
+  ) return string is
+  begin
+    if msg'length /= 0 then
+      if valid_length(msg) /= 1 then
+        if msg(1) = C_MSG_DELIMITER then
+          return msg;
+        else
+          return C_MSG_DELIMITER & msg & C_MSG_DELIMITER;
+        end if;
+      end if;
+    end if;
+    return "";
+  end;
 end package body string_methods_pkg;

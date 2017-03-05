@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -51,14 +51,17 @@ package vvc_methods_pkg is
   
   type t_vvc_config is
   record
-    inter_bfm_delay                       : t_inter_bfm_delay;
-    cmd_queue_count_max                   : natural;
-    cmd_queue_count_threshold_severity    : t_alert_level;
-    cmd_queue_count_threshold             : natural;
-    bfm_config                            : t_bfm_config;
-    use_read_pipeline                     : boolean;
-    num_pipeline_stages                   : natural;
-    msg_id_panel                          : t_msg_id_panel;
+    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural;           -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural;           -- An alert with severity “cmd_queue_count_threshold_severity” will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level;     -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
+    result_queue_count_max                : natural;        -- Maximum number of unfetched results before result_queue is full. 
+    result_queue_count_threshold_severity : t_alert_level;  -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
+    result_queue_count_threshold          : natural;        -- Severity of alert to be initiated if exceeding result_queue_count_threshold
+    bfm_config                            : t_bfm_config;      -- Configuration for Avalon-MM BFM. See quick reference for Avalon-MM BFM
+    use_read_pipeline                     : boolean;           -- When true, allows sending multiple read_requests before receiving a read_response
+    num_pipeline_stages                   : natural;           -- Max read_requests in pipeline
+    msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -68,6 +71,9 @@ package vvc_methods_pkg is
     cmd_queue_count_max                   => C_CMD_QUEUE_COUNT_MAX, --  from adaptation package
     cmd_queue_count_threshold_severity    => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
     cmd_queue_count_threshold             => C_CMD_QUEUE_COUNT_THRESHOLD,
+    result_queue_count_max                => C_RESULT_QUEUE_COUNT_MAX,
+    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
+    result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_AVALON_MM_BFM_CONFIG_DEFAULT,
     use_read_pipeline                     => TRUE,
     num_pipeline_stages                   => 5,
@@ -89,7 +95,8 @@ package vvc_methods_pkg is
     pending_cmd_cnt      => 0
   );
   
-  type t_transaction_info_for_waveview is
+  -- Transaction information to include in the wave view during simulation
+  type t_transaction_info is
   record
     operation       : t_operation;
     addr            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
@@ -98,9 +105,9 @@ package vvc_methods_pkg is
     msg             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
   end record;
 
-  type t_transaction_info_for_waveview_array is array (natural range <>) of t_transaction_info_for_waveview;
+  type t_transaction_info_array is array (natural range <>) of t_transaction_info;
 
-  constant C_TRANSACTION_INFO_FOR_WAVEVIEW_DEFAULT : t_transaction_info_for_waveview := (
+  constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
     operation           =>  NO_OPERATION,
     addr                => (others => '0'),
     data                => (others => '0'),
@@ -111,7 +118,7 @@ package vvc_methods_pkg is
     
   shared variable shared_avalon_mm_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_AVALON_MM_VVC_CONFIG_DEFAULT);
   shared variable shared_avalon_mm_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_avalon_mm_transaction_info_for_waveview : t_transaction_info_for_waveview_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_FOR_WAVEVIEW_DEFAULT);
+  shared variable shared_avalon_mm_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
 
 
   --==============================================================================
@@ -200,12 +207,13 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
-        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & msg);
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
     variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
-        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & msg);
+        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                    := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.addr                               := v_normalised_addr;
     shared_vvc_cmd.data                               := v_normalised_data;
@@ -226,14 +234,15 @@ package body vvc_methods_pkg is
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) 
         & ", " & to_string(byte_enable, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
-        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & msg);
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
     variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
-        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & msg);
+        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
     variable v_normalised_byte_ena    : std_logic_vector(shared_vvc_cmd.byte_enable'length-1 downto 0) :=
-        normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with to wide byte_enable. " &  msg);
+        normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with to wide byte_enable. " & add_msg_delimiter(msg));
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                                := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.addr                                           := v_normalised_addr;
     shared_vvc_cmd.data                                           := v_normalised_data;
@@ -252,10 +261,11 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
-        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr",proc_call & " called with to wide address. " &  msg);
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr",proc_call & " called with to wide address. " & add_msg_delimiter(msg));
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                    := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
     shared_vvc_cmd.operation                          := READ;
     shared_vvc_cmd.addr                               := v_normalised_addr;
@@ -275,12 +285,13 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
-        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & msg);
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
     variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
-        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & msg);
+        normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                    := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
     shared_vvc_cmd.addr                               := v_normalised_addr;
     shared_vvc_cmd.data                               := v_normalised_data;
@@ -300,9 +311,10 @@ package body vvc_methods_pkg is
         & ", " & to_string(num_rst_cycles) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, RESET);
-    shared_vvc_cmd.gen_integer                       := num_rst_cycles;
+    shared_vvc_cmd.gen_integer_array(0) := num_rst_cycles;
     send_command_to_vvc(VVCT);
   end procedure;
   
@@ -317,7 +329,8 @@ package body vvc_methods_pkg is
         & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, LOCK);
     send_command_to_vvc(VVCT);
   end procedure;
@@ -332,7 +345,8 @@ package body vvc_methods_pkg is
         & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, UNLOCK);
     send_command_to_vvc(VVCT);
   end procedure;  

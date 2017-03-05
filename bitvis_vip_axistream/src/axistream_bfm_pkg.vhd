@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -18,8 +18,10 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;
 
-use IEEE.math_real.all;
+library std;
+use std.textio.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -33,11 +35,9 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   constant C_SCOPE : string := "AXISTREAM_BFM";
 
-  alias t_slv8_array is t_byte_array;
-
-  -- c_max_tuser_bits : The BFM supports up to c_max_tuser_bits user bit per data word. The value may be increased as needed. 
-  constant c_max_tuser_bits : positive := 8;
-  type     t_user_array is array(natural range <>) of std_logic_vector(c_max_tuser_bits-1 downto 0);
+  -- C_MAX_TUSER_BITS : The BFM supports up to C_MAX_TUSER_BITS user bit per data word. The value may be increased as needed. 
+  constant C_MAX_TUSER_BITS : positive := 8;
+  type     t_user_array is array(natural range <>) of std_logic_vector(C_MAX_TUSER_BITS-1 downto 0);
 
   -- Interface record for BFM signals when data flows from BFM to DUT
   -- Interface record for BFM signals when data flows from DUT to BFM 
@@ -54,9 +54,9 @@ package axistream_bfm_pkg is
   type t_axistream_bfm_config is
   record
     -- Common
-    max_wait_cycles            : integer;
-    max_wait_cycles_severity   : t_alert_level;
-    clock_period               : time;
+    max_wait_cycles            : integer;       -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready or valid signals from the DUT.  
+    max_wait_cycles_severity   : t_alert_level; -- The above timeout will have this severity 
+    clock_period               : time;          -- Period of the clock signal. 
     -- config for axistream_receive()
     check_packet_length        : boolean;       -- When true, receive() will check that last is set at data_array'high
     protocol_error_severity    : t_alert_level; -- severity if protocol errors are detected by axistream_receive()
@@ -64,9 +64,9 @@ package axistream_bfm_pkg is
     ready_low_duration         : integer;       -- Number of clock cycles to deassert ready
     ready_default_value        : std_logic;     -- Which value the BFM shall set ready to between accesses.
     -- Common
-    id_for_bfm                 : t_msg_id;
-    id_for_bfm_wait            : t_msg_id;
-    id_for_bfm_poll            : t_msg_id;
+    id_for_bfm                 : t_msg_id;      -- The message ID used as a general message ID in the BFM 
+    id_for_bfm_wait            : t_msg_id;      -- The message ID used for logging waits in the BFM 
+    id_for_bfm_poll            : t_msg_id;      -- The message ID used for logging polling in the BFM 
   end record;
 
   -- Define the default value for the BFM config
@@ -103,7 +103,7 @@ package axistream_bfm_pkg is
   -- Sink:   DUT
   --
   procedure axistream_transmit (
-    constant data_array   : in    t_slv8_array;
+    constant data_array   : in    t_byte_array;
     constant user_array   : in    t_user_array;
     constant msg          : in    string                 := "";
     signal   clk          : in    std_logic;
@@ -115,15 +115,15 @@ package axistream_bfm_pkg is
 
   -- Overloaded version without records
   procedure axistream_transmit (
-    constant data_array          : in    t_slv8_array;
+    constant data_array          : in    t_byte_array;
     constant user_array          : in    t_user_array;
     constant msg                 : in    string                 := "";
     signal   clk                 : in    std_logic;
-    signal   axistream_if_tdata  : inout std_logic_vector;
-    signal   axistream_if_tkeep  : inout std_logic_vector;
-    signal   axistream_if_tuser  : inout std_logic_vector;
-    signal   axistream_if_tvalid : inout std_logic;
-    signal   axistream_if_tlast  : inout std_logic;
+    signal   axistream_if_tdata  : inout   std_logic_vector;
+    signal   axistream_if_tkeep  : inout   std_logic_vector;
+    signal   axistream_if_tuser  : inout   std_logic_vector;
+    signal   axistream_if_tvalid : inout   std_logic;
+    signal   axistream_if_tlast  : inout   std_logic;
     signal   axistream_if_tready : inout std_logic;
     constant scope               : in    string                 := C_SCOPE;
     constant msg_id_panel        : in    t_msg_id_panel         := shared_msg_id_panel;
@@ -131,7 +131,7 @@ package axistream_bfm_pkg is
     );
 
   procedure axistream_transmit (
-    constant data_array   : in    t_slv8_array;
+    constant data_array   : in    t_byte_array;
     constant msg          : in    string                 := "";
     signal   clk          : in    std_logic;
     signal   axistream_if : inout t_axistream_if;
@@ -145,36 +145,36 @@ package axistream_bfm_pkg is
   -- Sink:   BFM
   --
   procedure axistream_receive (
-    variable data_array   : inout t_slv8_array;
-    variable data_length  : inout natural;       -- Number of bytes received
-    variable user_array   : inout t_user_array;  -- Assuming c_max_tuser_bits user bit per data byte. 
+    variable data_array   : inout t_byte_array;
+    variable data_length  : inout natural;  -- Number of bytes received
+    variable user_array   : inout t_user_array;
     constant msg          : in    string;
     signal   clk          : in    std_logic;
     signal   axistream_if : inout t_axistream_if;
     constant scope        : in    string                 := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string                 := "axistream_receive"  -- overwrite if called from other procedure like axistream_expect
+    constant ext_proc_call: in    string                 := ""                   -- External proc_call; used if called from other BFM procedure like axistream_expect
     );
 
   procedure axistream_expect (
-    constant exp_data_array : in    t_slv8_array;
+    constant exp_data_array : in    t_byte_array;
     constant exp_user_array : in    t_user_array;
-    constant alert_level    : in    t_alert_level          := error;
-    constant msg            : in    string                 := "";
+    constant msg            : in    string;
     signal   clk            : in    std_logic;
     signal   axistream_if   : inout t_axistream_if;
+    constant alert_level    : in    t_alert_level          := error;
     constant scope          : in    string                 := C_SCOPE;
     constant msg_id_panel   : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
     );   
 
   procedure axistream_expect (
-    constant exp_data_array : in    t_slv8_array;
-    constant alert_level    : in    t_alert_level          := error;
-    constant msg            : in    string                 := "";
+    constant exp_data_array : in    t_byte_array;
+    constant msg            : in    string;
     signal   clk            : in    std_logic;
     signal   axistream_if   : inout t_axistream_if;
+    constant alert_level    : in    t_alert_level          := error;
     constant scope          : in    string                 := C_SCOPE;
     constant msg_id_panel   : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
@@ -186,12 +186,7 @@ end package axistream_bfm_pkg;
 --========================================================================================================================
 
 package body axistream_bfm_pkg is
-  -- WORKAROUND: for GHDL
-  --   Version:	 0.34dev (last tested pre-release version: 6235a6a)
-  --   Issue:		 'others' can't be used to initialize unconstrained arrays
-  --             in a record.
-  --   Ticket:   https://github.com/tgingold/ghdl/issues/191
-  --   Solution: prefix'range can be used as a workaround
+
   function init_axistream_if_signals(
     is_master  : boolean;  -- When true, this BFM drives data signals
     data_width : natural;
@@ -209,18 +204,18 @@ package body axistream_bfm_pkg is
 
       -- from master to slave
       init_if.tvalid := '0';
-      init_if.tdata  := (init_if.tdata'range => '0');
-      init_if.tkeep  := (init_if.tkeep'range => '0');
-      init_if.tuser  := (init_if.tuser'range => '0');
+      init_if.tdata  := (others => '0');
+      init_if.tkeep  := (others => '0');
+      init_if.tuser  := (others => '0');
       init_if.tlast  := '0';
     else
       -- from slave to master
       init_if.tready := '0';
       -- from master to slave
       init_if.tvalid := 'Z';
-      init_if.tdata  := (init_if.tdata'range => 'Z');
-      init_if.tkeep  := (init_if.tkeep'range => 'Z');
-      init_if.tuser  := (init_if.tuser'range => 'Z');
+      init_if.tdata  := (others => 'Z');
+      init_if.tkeep  := (others => 'Z');
+      init_if.tuser  := (others => 'Z');
       init_if.tlast  := 'Z';
     end if;
     return init_if;
@@ -230,7 +225,7 @@ package body axistream_bfm_pkg is
   -- Packet length and data is defined by data_array
   -- tuser is set based on user_array
   procedure axistream_transmit (
-    constant data_array   : in    t_slv8_array;  -- Byte in index 0 is transmitted first
+    constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
     constant msg          : in    string                 := "";
     signal   clk          : in    std_logic;
@@ -250,12 +245,15 @@ package body axistream_bfm_pkg is
     variable v_byte_in_word                 : integer range 0 to c_num_bytes_per_word-1 := 0;  -- current byte within the data word
     variable v_byte_cnt                     : natural := 0;
     variable v_clk_cycles_waited            : natural := 0;
-    variable v_wait_for_next_transfer_cycle : boolean := false;  -- When set, the BFM shall wait for at least one clock cycle, until tready='1' before continuing
+    variable v_wait_for_next_transfer_cycle : boolean;  -- When set, the BFM shall wait for at least one clock cycle, until tready='1' before continuing
+
+    -- Sampled tready for the current clock cycle 
+    variable v_tready : std_logic;
 
   begin
     check_value(axistream_if.tdata'length >= 8,      TB_ERROR, "Sanity check: Check that tdata is at least one byte wide. Narrower tdata is not supported.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(axistream_if.tdata'length mod 8 = 0, TB_ERROR, "Sanity check: Check that tdata is an integer number of bytes wide.",                         scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(axistream_if.tuser'length <= c_max_tuser_bits, TB_ERROR, "Sanity check: Check that c_max_tuser_bits is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, proc_call); 
+    check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, proc_call); 
     check_value(data_array'ascending,                TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(user_array'ascending,                TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.clock_period /= 0 ns,         TB_ERROR, "Sanity check: Check that bfm_config.clock_period is set",                                    scope, ID_NEVER, msg_id_panel, proc_call);
@@ -264,17 +262,16 @@ package body axistream_bfm_pkg is
                                               data_width => axistream_if.tdata'length,
                                               user_width => axistream_if.tuser'length);
 
-    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+    wait_until_given_time_before_rising_edge(clk, config.clock_period/4, config.clock_period);
 
 
-    log(ID_PACKET_INITIATE, proc_call & "=> " & msg, scope, msg_id_panel);
+    log(ID_PACKET_INITIATE, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     for byte in 0 to data_array'high loop
       log(ID_PACKET_DATA, proc_call & "=> Tx " & to_string(data_array(byte), HEX, AS_IS, INCL_RADIX) &
           ", tuser=" & to_string(user_array(byte/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
-          ", byte=" & to_string(byte) &
-          ", v_byte_in_word=" & to_string(v_byte_in_word) &
-          ". " & msg,
+          ", byte# " & to_string(byte) &
+          ". " & add_msg_delimiter(msg),
           scope, msg_id_panel);
       axistream_if.tvalid <= '1';
 
@@ -289,33 +286,43 @@ package body axistream_bfm_pkg is
       -- TKEEP[x] is associated with TDATA[(7+8*v_byte_in_word) : 8*v_byte_in_word]. 
       axistream_if.tkeep(v_byte_in_word) <= '1';
 
-      v_wait_for_next_transfer_cycle := false;  -- default
+      -- Default: Go to next 'byte' iteration in zero time (when tdata is not completely fillled with bytes).
+      v_wait_for_next_transfer_cycle := false;  
 
       if byte = data_array'high then
-        -- Packet done
+        -- Packet done. 
         axistream_if.tlast     <= '1';
-        v_wait_for_next_transfer_cycle := true;
+        v_wait_for_next_transfer_cycle := true; -- No more bytes to fill in tdata 
       else
         axistream_if.tlast <= '0';
       end if;
 
       if v_byte_in_word = c_num_bytes_per_word-1 then
         -- Next byte is in the next clk cycle
-        v_byte_in_word := 0;
-
-        v_wait_for_next_transfer_cycle := true;
+        v_byte_in_word                 := 0;
+        v_wait_for_next_transfer_cycle := true; -- No more bytes to fill in tdata 
       else
         -- Next byte is in the same clk cycle
         v_byte_in_word := v_byte_in_word + 1;
       end if;
 
+      --
+      -- If no more bytes to fill in tdata, wait until the transfer takes place (tvalid=1 and tready=1)
+      --
       if v_wait_for_next_transfer_cycle then
-        wait for config.clock_period;
-        while axistream_if.tready = '0' loop
-          wait for config.clock_period;
+
+        wait until rising_edge(clk); 
+        v_tready := axistream_if.tready;    -- Will this cycle be a transfer? (tvalid=1 and tready=1)
+        wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+
+        while v_tready = '0' loop
+          wait until rising_edge(clk); 
+          v_tready := axistream_if.tready;  -- Will this cycle be a transfer? (tvalid=1 and tready=1)
+          wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+
           v_clk_cycles_waited := v_clk_cycles_waited + 1;
           check_value(v_clk_cycles_waited <= config.max_wait_cycles, config.max_wait_cycles_severity,
-                      ": Timeout while waiting for tready", scope, ID_NEVER, msg_id_panel, proc_call);
+                      ": Timeout while waiting for tready " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, proc_call);
         end loop;
 
         -- Default values for the next clk cycle
@@ -330,22 +337,22 @@ package body axistream_bfm_pkg is
     axistream_if.tvalid <= '0';
 
     log(ID_PACKET_COMPLETE, proc_call & "=> Tx DONE" &
-        ". " & msg,
+        ". " & add_msg_delimiter(msg),
         scope, msg_id_panel);
 
   end procedure axistream_transmit;
 
   -- Overload that doesn't use records for the AXI interface: 
   procedure axistream_transmit (
-    constant data_array          : in    t_slv8_array;
+    constant data_array          : in    t_byte_array;
     constant user_array          : in    t_user_array;
     constant msg                 : in    string                 := "";
     signal   clk                 : in    std_logic;
-    signal   axistream_if_tdata  : inout std_logic_vector;
-    signal   axistream_if_tkeep  : inout std_logic_vector;
-    signal   axistream_if_tuser  : inout std_logic_vector;
-    signal   axistream_if_tvalid : inout std_logic;
-    signal   axistream_if_tlast  : inout std_logic;
+    signal   axistream_if_tdata  : inout   std_logic_vector;
+    signal   axistream_if_tkeep  : inout   std_logic_vector;
+    signal   axistream_if_tuser  : inout   std_logic_vector;
+    signal   axistream_if_tvalid : inout   std_logic;
+    signal   axistream_if_tlast  : inout   std_logic;
     signal   axistream_if_tready : inout std_logic;
     constant scope               : in    string                 := C_SCOPE;
     constant msg_id_panel        : in    t_msg_id_panel         := shared_msg_id_panel;
@@ -371,7 +378,7 @@ package body axistream_bfm_pkg is
 
   -- Overload with default value for user_array
   procedure axistream_transmit (
-    constant data_array   : in    t_slv8_array;  -- Byte in index 0 is transmitted first
+    constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant msg          : in    string                 := "";
     signal   clk          : in    std_logic;
     signal   axistream_if : inout t_axistream_if;
@@ -396,7 +403,7 @@ package body axistream_bfm_pkg is
   -- Receive a packet, store it in data_array
   -- data_array'length can be longer than the actual packet, so that you can call receive() without knowing the length to be expected.
   procedure axistream_receive (
-    variable data_array   : inout t_slv8_array;
+    variable data_array   : inout t_byte_array;
     variable data_length  : inout natural;  -- Number of bytes received
     variable user_array   : inout t_user_array;
     constant msg          : in    string;
@@ -405,13 +412,15 @@ package body axistream_bfm_pkg is
     constant scope        : in    string                 := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string                 := "axistream_receive"  -- overwrite if called from other procedure like axistream_expect
+    constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
     ) is
-    constant proc_call                : string := proc_name;
     constant c_num_bytes_per_word     : natural := axistream_if.tdata'length/8;
     constant c_num_user_bits_per_word : natural := axistream_if.tuser'length;
+    constant local_proc_name          : string := "axistream_receive";  -- Internal proc_name; used if called from sequncer or VVC
+    constant local_proc_call          : string := local_proc_name & "()"; -- Internal proc_call; used if called from sequncer or VVC
 
     -- Helper variables
+    variable v_proc_call             : line;                           -- Current proc_call, external or local 
     variable v_byte_in_word          : integer range 0 to c_num_bytes_per_word-1 := 0;  -- current Byte within the data word
     variable v_byte_cnt              : integer                                   := 0;  -- # bytes received
     variable v_timeout               : boolean                                   := false;
@@ -423,9 +432,17 @@ package body axistream_bfm_pkg is
     variable v_word_idx              : integer;
 
   begin
-    check_value(axistream_if.tuser'length <= c_max_tuser_bits, TB_ERROR, "Sanity check: Check that c_max_tuser_bits is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, proc_call); 
-    check_value(data_array'ascending, TB_ERROR, "Sanity check: Check that data_array is defined with 'to' (not 'downto'), for knowing which byte is sent first", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(user_array'ascending, TB_ERROR, "Sanity check: Check that data_array is defined with 'to' (not 'downto'), for knowing which byte is sent first", scope, ID_NEVER, msg_id_panel, proc_call);
+    -- If called from sequencer/VVC, show 'axistream_receive()...' in log
+    if ext_proc_call = "" then
+      write(v_proc_call, local_proc_call);
+    else 
+      -- If called from other BFM procedure like axistream_expect, log 'axistream_expect() while executing axistream_receive()...' 
+      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+    end if;
+
+    check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
+    check_value(data_array'ascending, TB_ERROR, "Sanity check: Check that data_array is defined with 'to' (not 'downto'), for knowing which byte is sent first", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(user_array'ascending, TB_ERROR, "Sanity check: Check that data_array is defined with 'to' (not 'downto'), for knowing which byte is sent first", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     -- Avoid driving inputs
     axistream_if <= init_axistream_if_signals(
@@ -433,15 +450,12 @@ package body axistream_bfm_pkg is
       data_width => axistream_if.tdata'length,
       user_width => axistream_if.tuser'length); 
 
-    check_value(config.clock_period /= 0 ns, TB_ERROR, "Check that bfm_config.clock_period is set", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.clock_period /= 0 ns, TB_ERROR, "Check that bfm_config.clock_period is set" & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
-    -- wait until 1/4 clk period after rising edge 
-    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+    -- wait until 1/4 clk period before rising edge 
+    wait_until_given_time_before_rising_edge(clk, config.clock_period/4, config.clock_period);
 
-    log(ID_PACKET_INITIATE, proc_call & "=> Receive packet. " &
-        "ready_low_at_word_num=" & to_string(config.ready_low_at_word_num) &
-        "ready_low_duration=" & to_string(config.ready_low_duration) &
-        msg, scope, msg_id_panel);
+    log(ID_PACKET_INITIATE, v_proc_call.all & "=> Receive packet. " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     ------------------------------------------------------------------------------------------------------------
     -- Sample byte by byte. There may be multiple bytes per clock cycle, depending on axistream_if'tdata width.
@@ -468,13 +482,6 @@ package body axistream_bfm_pkg is
         wait for config.ready_low_duration * config.clock_period;
         v_ready_low_done := true;
 
-        log(ID_PACKET_DATA, proc_call & "=> ready low " &
-            ", v_byte_cnt=" & to_string(v_byte_cnt) &
-            ", v_byte_in_word=" & to_string(v_byte_in_word) &
-            ", c_num_bytes_per_word=" & to_string(c_num_bytes_per_word) &
-            ", div=" & to_string(v_byte_cnt/c_num_bytes_per_word) &
-            ". " & msg,
-            scope, msg_id_panel);
       end if;
 
       axistream_if.tready <= '1';       -- In case it was '0' 
@@ -495,15 +502,12 @@ package body axistream_bfm_pkg is
           end if;
         end if;
 
-        log(ID_PACKET_DATA, proc_call & "=> Rx " & to_string(data_array(v_byte_cnt), HEX, AS_IS, INCL_RADIX) &
-            ", v_byte_cnt=" & to_string(v_byte_cnt) &
-            ", v_byte_in_word=" & to_string(v_byte_in_word) &
-            ". " & msg,
-            scope, msg_id_panel);
+        log(ID_PACKET_DATA, v_proc_call.all & "=> Rx " & to_string(data_array(v_byte_cnt), HEX, AS_IS, INCL_RADIX) &
+            " (byte# " & to_string(v_byte_cnt) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
 
         -- Check tlast='1' at expected last byte
         if v_byte_cnt = data_array'high then
-          check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & msg, scope);
+          check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope);
 
           v_done := true;  -- Stop sampling data when we have filled the data_array
         end if;
@@ -523,7 +527,7 @@ package body axistream_bfm_pkg is
                 -- Check that tkeep for the remaining bytes in the last word are also '0'. (Only continous stream supported)
                 v_byte_idx := v_byte_in_word+1;
                 l_check_remaining_TKEEP: loop
-                  check_value(axistream_if.tkeep(v_byte_idx), '0', ERROR, "Check that tkeep doesn't go from '1' to '0' to '1' again within this last word. (The BFM supports only continuous stream)", scope, ID_NEVER, msg_id_panel, proc_call);
+                  check_value(axistream_if.tkeep(v_byte_idx), '0', ERROR, "Check that tkeep doesn't go from '1' to '0' to '1' again within this last word. (The BFM supports only continuous stream)", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
                   if v_byte_idx < c_num_bytes_per_word-1 then
                     v_byte_idx := v_byte_idx + 1; 
                   else
@@ -537,11 +541,11 @@ package body axistream_bfm_pkg is
         else
           -- tlast = 0
           if (v_byte_cnt = data_array'high) then
-            alert(config.protocol_error_severity, proc_call & "=> Failed. tlast not received, expected at or before byte#" & to_string(v_byte_cnt) & "." & msg, scope);
+            alert(config.protocol_error_severity, v_proc_call.all & "=> Failed. tlast not received, expected at or before byte#" & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope);
           end if;
 
           -- Check that all tkeep bits are '1'. (Only continous stream supported)
-          check_value(axistream_if.tkeep(v_byte_in_word), '1', ERROR, "When tlast='0', check that all tkeep bits are '1'. (The BFM supports only continuous stream)", scope, ID_NEVER, msg_id_panel, proc_call);
+          check_value(axistream_if.tkeep(v_byte_in_word), '1', ERROR, "When tlast='0', check that all tkeep bits are '1'. (The BFM supports only continuous stream)" & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
         end if;
 
         if v_byte_in_word = c_num_bytes_per_word-1 then
@@ -579,10 +583,10 @@ package body axistream_bfm_pkg is
 
     -- did we time out?
     if v_timeout then
-      alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout while waiting for valid data. " & msg);
+      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " & add_msg_delimiter(msg), scope);
     else
-      log(ID_PACKET_COMPLETE, proc_call & "=> Rx DONE (" & to_string(v_byte_cnt) & "B)" &
-          ". " & msg, scope, msg_id_panel);
+      log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(v_byte_cnt) & "B)" &
+          ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
     if not v_waited_this_iteration then
@@ -600,12 +604,12 @@ package body axistream_bfm_pkg is
   -- - If the received data is inconsistent with the expected data, an alert with 
   --   severity 'alert_level' is triggered.
   procedure axistream_expect (
-    constant exp_data_array : in    t_slv8_array;  -- Expected data
+    constant exp_data_array : in    t_byte_array;  -- Expected data
     constant exp_user_array : in    t_user_array;  -- Expected tuser
-    constant alert_level    : in    t_alert_level          := error;
-    constant msg            : in    string                 := "";
+    constant msg            : in    string;
     signal   clk            : in    std_logic;
     signal   axistream_if   : inout t_axistream_if;
+    constant alert_level    : in    t_alert_level          := error;
     constant scope          : in    string                 := C_SCOPE;
     constant msg_id_panel   : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
@@ -618,7 +622,7 @@ package body axistream_bfm_pkg is
 
     -- Helper variables
     variable v_config             : t_axistream_bfm_config := config;
-    variable v_rx_data_array      : t_slv8_array(exp_data_array'range);  -- received data
+    variable v_rx_data_array      : t_byte_array(exp_data_array'range);  -- received data
     variable v_rx_user_array      : t_user_array(exp_user_array'range);  -- received tuser 
     variable v_rx_data_length     : natural;
     variable v_data_error_cnt     : natural                := 0;
@@ -638,7 +642,7 @@ package body axistream_bfm_pkg is
                       scope        => scope,
                       msg_id_panel => msg_id_panel,
                       config       => v_config,
-                      proc_name    => proc_name);
+                      ext_proc_call => proc_call);
 
     -- Check if each received bit matches the expected
     -- Find and report the first errored byte
@@ -666,7 +670,7 @@ package body axistream_bfm_pkg is
           -- Check is OK
           -- log(ID_PACKET_COMPLETE, proc_call & "=> OK(word="&to_string(word)&"), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
         else
-          log(ID_PACKET_DATA, proc_call & "=> NOK(word="&to_string(word)&"), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
+          log(ID_PACKET_DATA, proc_call & "=> NOK(word="&to_string(word)&"), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
           -- Received tuser word does not match the expected word
           v_user_error_cnt     := v_user_error_cnt + 1;
           v_first_errored_byte := word;
@@ -675,22 +679,22 @@ package body axistream_bfm_pkg is
     end loop;
 
     if v_data_error_cnt /= 0 then
-      alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_errored_byte) & ". Was " & to_string(v_rx_data_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_data_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & msg, scope);
+      alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_errored_byte) & ". Was " & to_string(v_rx_data_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_data_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_user_error_cnt /= 0 then
-      alert(alert_level, proc_call & "=> Failed in "& to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_byte) & ". Was " & to_string(v_rx_user_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & msg, scope);
+      alert(alert_level, proc_call & "=> Failed in "& to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_byte) & ". Was " & to_string(v_rx_user_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "B. " & msg, scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "B. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure axistream_expect;
 
   -- Overload without 'exp_user_array' argument
   procedure axistream_expect (
-    constant exp_data_array : in    t_slv8_array;  -- Expected data
-    constant alert_level    : in    t_alert_level          := error;
-    constant msg            : in    string                 := "";
+    constant exp_data_array : in    t_byte_array;  -- Expected data
+    constant msg            : in    string;
     signal   clk            : in    std_logic;
     signal   axistream_if   : inout t_axistream_if;
+    constant alert_level    : in    t_alert_level          := error;
     constant scope          : in    string                 := C_SCOPE;
     constant msg_id_panel   : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
@@ -701,10 +705,10 @@ package body axistream_bfm_pkg is
 
     axistream_expect(exp_data_array,
                      v_exp_user_array,
-                     alert_level,
                      msg,
                      clk,
                      axistream_if,
+                     alert_level,
                      scope,
                      msg_id_panel,
                      config); 

@@ -1,5 +1,5 @@
 __author__ = 'Bitvis AS'
-__copyright__ = "Copyright 2016, Bitvis AS"
+__copyright__ = "Copyright 2017, Bitvis AS"
 __version__ = "1.0.0"
 __email__ = "support@bitvis.no"
 

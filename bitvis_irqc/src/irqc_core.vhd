@@ -1,6 +1,6 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -86,7 +86,7 @@ begin
     elsif rising_edge(clk) then
       if p2c.awt_irq2cpu_ena = '1' then
         c2p_i.aro_irq2cpu_allowed <= '1';
-      -- NOTE: No way to disallow irq2cpu without the following two lines
+      -- NOTE: No way to disallow irq2cpu without the following two lines  (However not included in the specification)
       elsif p2c.awt_irq2cpu_disable = '1' then
         c2p_i.aro_irq2cpu_allowed <= '0';
       elsif irq2cpu_ack = '1' then

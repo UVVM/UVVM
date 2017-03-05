@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -13,11 +13,29 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
+--===============================================================================================
+-- td_cmd_queue_pkg
+--  - Target dependent command queue package
+--===============================================================================================
+
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_generic_queue_pkg;
 
 use work.vvc_cmd_pkg.all;
 
-package td_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
+package td_cmd_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
   generic map (t_generic_element => t_vvc_cmd_record);
+    
+--===============================================================================================
+-- td_result_queue_pkg
+--  - Target dependent result queue package
+--===============================================================================================
+  
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_generic_queue_pkg;
+
+use work.vvc_cmd_pkg.all;
+
+package td_result_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
+  generic map (t_generic_element => t_vvc_result_queue_element);
   

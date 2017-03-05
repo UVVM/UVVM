@@ -17,36 +17,33 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-package uart_pif_pkg is
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
 
-  -- Notation for regs: (Included in constant name as info to SW)
-  -- - RW: Readable and writable reg.
-  -- - RO: Read only reg. (output from IP)
-  -- - WO: Write only reg. (typically single cycle strobe to IP)
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-  -- Notation for signals (or fields in record) going between PIF and core:
-  -- Same notations as for register-constants above, but
-  -- a preceeding 'a' (e.g. awo) means the register is auxiliary to the PIF.
-  -- This means no flop in the PIF, but in the core. (Or just a dummy-register with no flop)
+entity ti_uvvm_engine is
+end entity;
 
-  constant C_ADDR_RX_DATA    : integer := 0;
-  constant C_ADDR_RX_DATA_VALID : integer := 1;
-  constant C_ADDR_TX_DATA    : integer := 2;
-  constant C_ADDR_TX_READY   : integer := 3;
+architecture func of ti_uvvm_engine is
+begin
+  
+  --------------------------------------------------------
+  -- Initializes the UVVM VVC Framework
+  --------------------------------------------------------
+  p_initialize_uvvm : process
+  begin
+    -- shared_uvvm_state is initialized to IDLE. Hence it will stay in IDLE if this procedure is not included in the TB
+    shared_uvvm_state := PHASE_A;
+    wait for 0 ns;  -- A single delta cycle
+    if (shared_uvvm_state = PHASE_B) then
+      tb_failure("ti_uvvm_engine seems to have been instantiated more than once in this testbench system", C_SCOPE);
+    end if;
+    shared_uvvm_state := PHASE_B;
+    wait for 0 ns;  -- A single delta cycle
+    shared_uvvm_state := INIT_COMPLETED;
+    wait;
+  end process p_initialize_uvvm;
 
-  -- Signals from pif to core
-  type t_p2c is record
-    awo_tx_data     : std_logic_vector(7 downto 0);
-    awo_tx_data_we : std_logic;
-    aro_rx_data_re : std_logic;
-  end record t_p2c;
-
-  -- Signals from core to PIF
-  type t_c2p is record
-    aro_rx_data  : std_logic_vector(7 downto 0);
-    aro_rx_data_valid : std_logic;
-    aro_tx_ready : std_logic;
-  end record t_c2p;
-
-end package uart_pif_pkg;
-
+end func;

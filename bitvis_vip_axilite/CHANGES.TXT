@@ -1,6 +1,11 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v2.0.4
+----------
+Released: 2017-03-16
+- Updated documentation
+
 
 v2.0.3
 ----------

@@ -1,7 +1,24 @@
-UVVM VVC Framework - Overview on Versions and Changes
+UVVM - Overview on Versions and Changes
 ==============================================================
 
+This is the changes made in the UVVM release zip-file.
+The purpose is to indicate which of the modules that have been 
+updated for this version of the zip file. For details about the 
+changes made for each individual module, please see the 
+CHANGES.TXT in each module's sub-directory.
+
 ----------------------------------------------------------------------
+
+v2.1.0
+----------
+Released: 2017-03-16
+- Updated the AXI4-Stream VIP with extended functionality, including support for TDEST, TID, TSTRB. 
+  - The AXI4-Stream VIP version 3.0.0 is not directly backwards compatible with the previous version.
+  - Please see the CHANGES.TXT document within the VIP for a description of changes required to upgrade to version 3.0.0.
+- Updated the VVC Generator script with the option of creating VVCs with multiple execution queues
+- Added minor documentation updates for all VIPs, uvvm_util and uvvm_vvc_framework
+- For more details, see each VIP CHANGES.TXT document.
+
 
 v2.0.3
 ----------
@@ -10,227 +27,115 @@ Released: 2017-02-13
 - The UVVM release of OSVVM has been removed from the repository due to the fact that it was a outdated 
   version of OSVVM, and it was not used in any testbenches or examples.
 
-
 v2.0.2
 ----------
 Released: 2017-02-01
-- Applied minor bugfixes after beta testing
+- Applied minor bugfixes after beta testing. This affects all components in the UVVM package.
 
 
 v2.0.1
 ----------
 Released: 2017-01-27
 
-- Changed names of the FIFO and Stack procedures to uvvm_* (e.g. uvvm_fifo_init)
-- Replaced the procedure 'uvvm_initialize' with a new entity 'ti_uvvm_engine' 
-  --> Required action by users: in your test harness, replace for example
+This release is not backwards compatible and may require some changes in your tesbench and custom VVCs.
+
+- Change required in your test bench / test harness : 
+     Replace for example
         i_initialize_uvvm : initialize_uvvm;
-      with 
+     with 
         i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
-- Changed vvc_generator script to include range checks
-- Changed ID_CMD_EXECUTOR to ID_INSERTED_DELAY in insert_inter_bfm_delay_if_requested method
 
-- Added AWAIT_ANY_COMPLETION. 
-  --> Required action by users with custom VVCs: 
-      - in your VVC's vvc_cmd_pkg : - add AWAIT_ANY_COMPLETION to t_operation
-                                    - add the following to t_vvc_cmd_record: 
-                                        gen_integer_array     : t_integer_array(0 to 1); -- Increase array length if needed
-                                        gen_boolean           : boolean; -- Generic boolean
-                                        timeout               : time;
-                                    - add the following to C_VVC_CMD_DEFAULT: 
-                                        gen_integer_array     => (others => -1), 
-                                        gen_boolean           => false,
-                                        timeout               => 0 ns, 
-      - in your VVC's *_vvc.vhd : - To actually use the new AWAIT_ANY_COMPLETION feature, multiple changes are required in the cmd_interpreter process. 
-                                    Use the Bitvis VVCs as examples.
+- Changes required in your custom VVCs (if any) are listed in the CHANGES.TXT file in the sub directory uvvm_vvc_framework. 
+- Changes required in your BFM calls : see CHANGES.TXT in the respective BFM folder. 
+  Some parameters have been reordered in order to minimize the difference between BFM and VVC calls.
 
-- Added possibility for generic FETCH_RESULT (not just std_logic_vector): 
-  --> Required action by users with custom VVCs: 
-      - in your VVC's vvc_cmd_pkg : - add the following definitions: 
-                                      -- For simple VVCs, which previously only used SLVs the result container can be declared as a type/subtype, e.g. (from SBI):
-                                      subtype  t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-                                      
-                                      -- For more comprehensive return types the t_vvc_result can be declared as a record, e.g. (from AXI-Stream):
-                                      type t_vvc_result is record 
-                                        data_array   : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
-                                        data_length  : natural;
-                                        user_array   : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-                                      end record;
-                                      
-                                      type t_vvc_result_queue_element is record
-                                        cmd_idx       : natural;   -- from UVVM handshake mechanism
-                                        result        : t_vvc_result;
-                                      end record;
+All VIPs have been altered for this release.
 
-                                      type t_vvc_response is record
-                                        fetch_is_accepted    : boolean;
-                                        transaction_result   : t_transaction_result;
-                                        result               : t_vvc_result;
-                                      end record;
+- For VVC designers there are some changes as well. In order to function with the new UVVM it is recommended to apply these changes:
+1. For *_vvc.vhd
+  - add "variable local_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;" to variable list in cmd_interpreter process
+  - add parameter local_vvc_cmd to work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_ack, shared_vvc_cmd, local_vvc_cmd)
+  - exchange shared_vvc_cmd with local_vvc_cmd in the cmd_interpreter except for the line above as it is copied in that function
+  - add parameter local_vvc_cmd to uvvm_vvc_framework.ti_vvc_framework_support_pkg.acknowledge_cmd(global_vvc_ack,local_vvc_cmd.cmd_idx)
+You can take a look at all our VVCs.
+ 
+2. For vvc_methods_pkg.vhd
+  - delete shared_vvc_cmd := C_VVC_CMD_DEFAULT; line in each procedure before set_general_target_and_command_fields
+  - make sure that the ordering of commands in each function is:
+    1. set_general_target_and_command_fields. It must be executed before any access to shared_vvc_cmd
+    2. after the command send_command_to_vvc(VVCT); there must also be no access to shared_vvc_cmd
 
-                                      shared variable shared_vvc_response : t_vvc_response;
-      - in your VVC's *_vvc.vhd 
-        - update the call to store_result to the following : 
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_result ); -- variable v_result : t_vvc_result: 
-        - Test benches that uses the std_logic_vector version of fetch_result also requires changes, since the type returned is now t_vvc_result.
-            For an example where the VVC needs to be altered when the result type is a subtype of std_logic_vector, please see how the t_vvc_result is used in the sbi_vvc READ command.
-            For an example where of how the t_vvc_result is handled when using a more complex return type, please see how the t_vvc_result is used in the axistream_vvc RECEIVE command.
+ 
 
-- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
-  -- In your VVC's *_vvc.vhd : 
-     - Replace the following two 'when' statements : 
-            when INSERT_DELAY =>
-              if v_cmd.gen_integer = -1 then 
-              log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
-               wait for v_cmd.gen_integer * vvc_config.bfm_config.clock_period;
-
-            when INSERT_DELAY_IN_TIME =>
-              log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
-               wait for v_cmd.delay;
-            
-      with the following 'when' statement: 
-            when INSERT_DELAY =>
-              log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
-              if v_cmd.gen_integer_array(0) = -1 then
-                -- Delay specified using time
-                wait for v_cmd.delay;
-              else 
-                -- Delay specified using integer
-                wait for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
-              end if; 
-- Added Method get_last_received_cmd_idx.
-  --> Required action by users:
-        If you have for example sbi_read and want to fetch the result of the read method afterwards then you
-        must get the id of the read command with e.g. v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT,1);
-        
-
-
-v1.2.1
+v1.5.2
 ----------
-Released: 2016-10-28
+Released: 2016-10-31
 
-All changes should be backwards compatible within 1.x.x
+- This release contains an updated version of:
+  - bitvis_vip_sbi
+  - bitvis_vip_uart
+  - bitvis_vip_axilite
+  - bitvis_vip_axistream
+  - bitvis_vip_i2c
+  - bitvis_vip_avalon_mm__simple_access
+  - uvvm_util
+  - UVVM Util
 
-- Updated vvc_generator script
-- Added README file to src_target_dependent directory
-- Updated QR
+
+v1.5.1
+----------
+Released: 2016-09-13
+
+- This release contains an updated version of:
+  - bitvis_vip_axistream
+
+
+v1.5.0
+----------
+Released: 2016-08-30
+
+- This release contains a new verification IP:
+  - bitvis_vip_axistream: Allows normal access towards 
+    an AXI4-Stream interface.
+
+- This release contains an updated version of:
+  - UVVM-Util
+    
+v1.4.0
+----------
+Released: 2016-05-02
+
+- This release contains an updated version of:
+  - UVVM-Util
+  - UVVM VVC Framework
+  - UVVM OSVVM
+  - bitvis_vip_sbi
+  - bitvis_vip_uart
+  - bitvis_vip_axilite
+  - bitvis_vip_avalon_mm__simple_access
+  - bitvis_vip_i2c
+  - bitvis_uart
+  - bitvis_irqc
+  
+v1.3.1
+----------
+Released: 2016-03-16
+
+- This release contains an updated version of UVVM-Util
+
+v1.3.0
+----------
+Released: 2016-03-14
+
+- This release contains UVVM OSVVM, a modified version
+  of OSVVM 2016.1 that uses UVVM Utility Library for logs
+  and alerts.
 
 
 v1.2.0
 ----------
-Released: 2016-05-02
+Released: 2016-03-03
 
-All changes should be backwards compatible within 1.x.x
-
-- Minor change in log message for command acknowledge
-- Added optional parameters to interpreter_await_completion to manually set log IDs
-- Added proper scope to VVC support functions. Updated VVC generator script accordingly.
-- Removed log printout from reset_flag procedure.
-- Added quietness parameter to enable/disable log msg
-- Minor fixes to Common Methods QR.
-- ti_data_queue_pkg now using ID_UVVM_DATA_QUEUE as msg id for all operations
-- VVC Generator script and VVC Name Modifier script: Added a warning when entering a VIP name that
-  is too long.
-- VVC Generator script:
-  - Signal 'rst' is now optional for VVCs and is inserted as a comment by vvc_generator.py
-  - Fixed bug where generated VVC method examples were missing quotes around
-    procedure name in proc_call variable.
-  - Added name suggestions at name prompt.
-
-v1.1.0
-----------
-Released: 2016-01-27
-
-All changes should be backwards compatible within 1.x.x
-- This release contains two new verification IPs:
-  - bitvis_vip_axilite: Allows normal access towards an AXI4-Lite
+- This release contains a new verification IP:
+  - bitvis_vip_i2c: Allows normal access towards an I2C
     interface.
-  - bitvis_vip_avalon_mm__simple_access: Allows simplified access 
-    towards an Avalon MM interface. This VIP does NOT support burst mode,
-    pipeline or debugaccess features.
-
-v1.0.1
-----------
-Released: 2016-01-20
-
-All changes should be backwards compatible within 1.x.x
-- UVVM VVC Framework is now open source.
-  - Be aware that file endings have changed from "*.vhdp" to "*.vhd"
-  - License conditions have changed. UVVM VVC Framework is now released 
-    under the MIT license, see LICENSE.txt
-  - Removed ti_license_pkg.vhd since UVVM VVC Framework will have the
-    same license as UVVM Utility Library.
-- Added a demo directory that contains a list of demo testbenches that can
-  be run to demonstrate the UVVM VVC Framework.
-
-v1.0.0 Beta
-----------
-Released: 2015-12-08
-
-This is the first public release of the UVVM VVC Framework.
-Please keep in mind that this is a beta release.
-
-- Renamed packages
-  - work.vvc_support_pkg => work.td_vvc_entity_support_pkg
-  - work.uvvm_vvc_dedicated_support => work.td_target_support_pkg
-  - uvvm_vvc_framework.uvvm_support_pkg => uvvm_vvc_framework.ti_vvc_framework_support_pkg
-  - work.uvvm_methods_pkg => work.td_vvc_framework_common_methods_pkg
-  - work.queue_pkg => work.td_queue_pkg
-- Moved td_queue_pkg into a separate file.
-- Documentation
-  - Major updates to UVVM Manual.
-  - Several improvements to VVC_Framework_common_methods_QuickRef.
-  - Added VVC Implementation Guide.
-- Scripts
-  - Improvements to VVC Generator script.
-  - Added VVC Name Modifier script for easy renaming of Bitvis VIPs.
-    See uvvm_vvc_framework/script/vvc_name_modifier/README.txt for more info.
-- Methods
-  - Added overload to fetch_result() that does not require v_is_ok and v_is_new as parameters.
-    Alert is triggered in this overload if any of them are false.
-  
-v0.3.0
-----------
-Released: 2015-11-18
-
-- Renamed wait_for_uvvm_initialization to await_uvvm_initialization
-- Updated UVVM Manual and UVVM Methods QuickRef
-- Added inter-BFM delay support
-- Added possibility of sending command to all channels of a VVC instance by using 
-  dedicated channel 'ALL_CHANNELS'.
-- Added VVC Generator python script to script/ directory
-- Added check for correct VVC channel in await_cmd_from_sequencer
-- Minor fixes in comments and checks
-
-v0.2.1
-----------
-Released: 2015-10-20
-
-- Updated license to be printed during simulation
-
-v0.2.0
-----------
-Released: 2015-10-12
-
-- General VVC renaming:
-  - VVC_ACK => global_vvc_ack
-  - VVC_CMD => shared_vvc_cmd
-  - VVC_RESPONSE => shared_vvc_response
-  - <name>_VVC => <name>_VVCT
-  - <name>_vvc_status => shared_<name>_vvc_status
-  - <name>_vvc_config => shared_<name>_vvc_config
-- Added insert_delay with delay in time
-- Added VVC_BROADCAST parameter to await_cmd_from_sequencer
-- Fixed typo in C_MAX_VVC_RESPONSE_DATA_WIDTH
-- Changed UVVM functions to view instance index as integers
-- Added wait_for_uvvm_initialization procedure
-
-
-v0.1.0
-----------
-Released: 2015-10-07
-
-All changes should be backwards compatible within 0.x.x
-- First version. Hence no change history.

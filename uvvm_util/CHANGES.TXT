@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.0.4
+----------
+Released: 2017-03-16
+- Updated Modelsim .mpf file and documentation
+
 v2.0.3
 ----------
 Released: 2017-02-13

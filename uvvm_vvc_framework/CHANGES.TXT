@@ -3,6 +3,13 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.0.4
+----------
+Released: 2017-03-16
+- Added support for multiple execution queues in the VVC Generator script
+- Updated documentation
+- Updated modelsim .mpf file
+
 v2.0.3
 ----------
 Released: 2017-02-13
@@ -45,6 +52,10 @@ Released: 2017-01-27
 - Added possibility for generic FETCH_RESULT (not just std_logic_vector): 
   --> Required action by users with custom VVCs: 
       - in your VVC's vvc_cmd_pkg : - add the following definitions: 
+                                      -- For simple VVCs, which previously only used SLVs the result container can be declared as a type/subtype, e.g. (from SBI):
+                                      subtype  t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+                                      
+                                      -- For more comprehensive return types the t_vvc_result can be declared as a record, e.g. (from AXI-Stream):
                                       type t_vvc_result is record 
                                         data_array   : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
                                         data_length  : natural;
@@ -69,6 +80,9 @@ Released: 2017-01-27
                                                         cmd_idx      => v_cmd.cmd_idx,
                                                         result       => v_result ); -- variable v_result : t_vvc_result: 
         - Test benches that uses the std_logic_vector version of fetch_result also requires changes, since the type returned is now t_vvc_result.
+            For an example where the VVC needs to be altered when the result type is a subtype of std_logic_vector, please see how the t_vvc_result is used in the sbi_vvc READ command.
+            For an example where of how the t_vvc_result is handled when using a more complex return type, please see how the t_vvc_result is used in the axistream_vvc RECEIVE command.
+
 - Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
   -- In your VVC's *_vvc.vhd : 
      - Replace the following two 'when' statements : 

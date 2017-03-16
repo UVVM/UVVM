@@ -38,7 +38,10 @@ entity axistream_vvc is
       -- When false: This VVC is an AXI4 Stream slave. Data is input to BFM. 
       GC_VVC_IS_MASTER                      : boolean;
       GC_DATA_WIDTH                         : integer;
-      GC_USER_WIDTH                         : integer;
+      GC_USER_WIDTH                         : integer := 1;
+      -- (Note: STRB_WIDTH = DATA_WIDTH/8)
+      GC_ID_WIDTH                           : integer := 1;
+      GC_DEST_WIDTH                         : integer := 1;
       GC_INSTANCE_IDX                       : natural;
       GC_PACKETINFO_QUEUE_COUNT_MAX         : natural                := 1;  -- Number of PacketInfo Queues, normally one per source VVC
       GC_AXISTREAM_BFM_CONFIG               : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
@@ -51,7 +54,7 @@ entity axistream_vvc is
    );
    port (
       clk              : in    std_logic;
-      axistream_vvc_if : inout t_axistream_if := init_axistream_if_signals(GC_VVC_IS_MASTER, GC_DATA_WIDTH, GC_USER_WIDTH)
+      axistream_vvc_if : inout t_axistream_if := init_axistream_if_signals(GC_VVC_IS_MASTER, GC_DATA_WIDTH, GC_USER_WIDTH, GC_ID_WIDTH, GC_DEST_WIDTH)
       );
 begin
    -- Check the interface widths to assure that the interface was correctly set up
@@ -234,9 +237,21 @@ begin
                axistream_transmit(
                   data_array          => v_cmd.data_array(0 to v_cmd.data_array_length-1),
                   user_array          => v_cmd.user_array(0 to v_cmd.user_array_length-1),
+                  strb_array          => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
+                  id_array          => v_cmd.id_array(0 to v_cmd.id_array_length-1),
+                  dest_array          => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
                   msg                 => format_msg(v_cmd),
                   clk                 => clk,
-                  axistream_if        => axistream_vvc_if,
+                  -- Using the non-record version to avoid fata error in Modelsim: (SIGSEGV) Bad handle or reference
+                  axistream_if_tdata  => axistream_vvc_if.tdata,
+                  axistream_if_tkeep  => axistream_vvc_if.tkeep,
+                  axistream_if_tuser  => axistream_vvc_if.tuser,
+                  axistream_if_tstrb  => axistream_vvc_if.tstrb,
+                  axistream_if_tid    => axistream_vvc_if.tid,
+                  axistream_if_tdest  => axistream_vvc_if.tdest,
+                  axistream_if_tvalid => axistream_vvc_if.tvalid,
+                  axistream_if_tlast  => axistream_vvc_if.tlast,
+                  axistream_if_tready => axistream_vvc_if.tready,
                   scope               => C_SCOPE,
                   msg_id_panel        => vvc_config.msg_id_panel,
                   config              => vvc_config.bfm_config);
@@ -245,6 +260,9 @@ begin
                axistream_receive(data_array   => v_result.data_array,
                                  data_length  => v_result.data_length,
                                  user_array   => v_result.user_array,
+                                 strb_array   => v_result.strb_array,
+                                 id_array     => v_result.id_array,
+                                 dest_array   => v_result.dest_array,
                                  msg          => format_msg(v_cmd),
                                  clk          => clk,
                                  axistream_if => axistream_vvc_if,
@@ -261,6 +279,9 @@ begin
                axistream_expect(
                   exp_data_array => v_cmd.data_array(0 to v_cmd.data_array_length-1),
                   exp_user_array => v_cmd.user_array(0 to v_cmd.user_array_length-1),
+                  exp_strb_array => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
+                  exp_id_array => v_cmd.id_array(0 to v_cmd.id_array_length-1),
+                  exp_dest_array => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
                   msg            => format_msg(v_cmd),
                   clk            => clk,
                   axistream_if   => axistream_vvc_if,

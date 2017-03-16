@@ -1,6 +1,25 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v3.0.0
+----------
+Released: 2017-03-16
+- Updated documentation
+- Added support for TDEST, TID, TSTRB. 
+  - Required changes by user : 
+    - When declaring the axistream interface signal, these new signals must be contrained, for example:
+    
+        signal axistream_if_m : t_axistream_if(tdata(GC_DATA_WIDTH -1 downto 0),
+                                               tkeep((GC_DATA_WIDTH/8)-1 downto 0),
+                                               tuser(GC_USER_WIDTH -1 downto 0),
+                                               tstrb(GC_STRB_WIDTH-1 downto 0),   -- new!
+                                               tid  (GC_TID_WIDTH-1 downto 0),    -- new!
+                                               tdest(C_TDEST_WIDTH-1 downto 0)    -- new!
+                                              );
+
+    - Calls to init_axistream_if_signals() must be updated, if any.  
+
+
 v2.0.3
 ----------
 Released: 2017-02-13

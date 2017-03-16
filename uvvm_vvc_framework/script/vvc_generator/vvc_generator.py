@@ -8,6 +8,16 @@ import os
 division_line = "--========================================================================================================================"
 
 
+class Channel:
+    def __init__(self, name):
+        self.name = name
+        self.queue_names = ["cmd"]
+    def add_queue(self, name):
+        self.queue_names.append(name)
+    def len_of_queue(self):
+        return len(self.queue_names)
+
+
 def print_linefeed(file_handle):
     file_handle.write("\n")
 
@@ -58,16 +68,16 @@ def is_multi_channel_vvc():
 def get_number_of_channels():
     input_accepted = False
     while not input_accepted:
-        raw_input = input("\rSet the number of concurrent channels to use [1-99]: ")
+        raw_input = input("\rSet the number of concurrent channels to use [2-99]: ")
         try:
             number_selected = int(raw_input)
         except ValueError:
             print("Input was not an integer!")
             continue
-        if number_selected < 1:
-            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 1 and 99")
+        if number_selected < 2:
+            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 2 and 99")
         elif number_selected > 99:
-            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 1 and 99")
+            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 2 and 99")
         else:
             input_accepted = True
 
@@ -81,6 +91,47 @@ def get_channel_name():
         return get_channel_name()
     return requested_vvc_channel_name
 
+
+# Ask user if channel is multi-queue
+def is_multi_queue_channel():
+    input_accepted = False
+    choice = ''
+    while not input_accepted:
+        choice = input("\rUse multiple queues for this channel? [y/n]: ")
+        choice = choice.lower()
+        if choice == 'y':
+            input_accepted = True
+        elif choice == 'n':
+            input_accepted = True
+        else:
+            print("Input not accepted. Please use either y or n")
+    return choice
+
+# Get the number of queues in the channel, if multi-queue channel.
+def get_number_of_queues():
+    input_accepted = False
+    while not input_accepted:
+        raw_input = input("\rSet the number of concurrent queues to use [2-99], included cmd queue: ")
+        try:
+            number_selected = int(raw_input)
+        except ValueError:
+            print("Input was not an integer!")
+            continue
+        if number_selected < 2:
+            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 2 and 99")
+        elif number_selected > 99:
+            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 2 and 99")
+        else:
+            input_accepted = True
+
+    return number_selected
+
+# Get the channel name and check if it is valid
+def get_queue_name():
+    requested_queue_name = input("\rPlease enter a queue name (e.g. read): ")
+    if is_input_vhdl_legal(requested_queue_name.lower()) is False:
+        return get_queue_name()
+    return requested_queue_name
 
 # Get the VVC name and check if it is valid
 def get_vvc_name():
@@ -185,28 +236,44 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
 
 
 def add_architecture_declaration(file_handle, vvc_name, vvc_channel):
-    if vvc_channel != "NA":
-        file_handle.write("architecture behave of "+vvc_name.lower()+"_"+vvc_channel.lower()+"_vvc is\n")
+
+    len_of_queue = vvc_channel.len_of_queue()
+    
+    if vvc_channel.name != "NA":
+        file_handle.write("architecture behave of "+vvc_name.lower()+"_"+vvc_channel.name.lower()+"_vvc is\n")
     else:
         file_handle.write("architecture behave of "+vvc_name.lower()+"_vvc is\n")
     print_linefeed(file_handle)
     file_handle.write("  constant C_SCOPE      : string        := C_VVC_NAME & \",\" & to_string(GC_INSTANCE_IDX);\n")
     file_handle.write("  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME,")
-    if vvc_channel == "NA":
+    if vvc_channel.name == "NA":
         file_handle.write(" GC_INSTANCE_IDX, NA);\n")
     else:
         file_handle.write(" GC_INSTANCE_IDX, GC_CHANNEL);\n")
     print_linefeed(file_handle)
     file_handle.write("  signal executor_is_busy       : boolean := false;\n")
     file_handle.write("  signal queue_is_increasing    : boolean := false;\n")
-    file_handle.write("  signal last_cmd_idx_executed  : natural := 0;\n")
+    file_handle.write("  signal last_cmd_idx_executed  : natural := 0;\n") 
+
+    if len_of_queue > 1:
+        for i in range(1, len_of_queue):
+            file_handle.write("  signal "+vvc_channel.queue_names[i]+"_is_busy       : boolean := false;\n")
+            file_handle.write("  signal "+vvc_channel.queue_names[i]+"_queue_is_increasing    : boolean := false;\n")
+            file_handle.write("  signal last_"+vvc_channel.queue_names[i]+"_idx_executed  : natural := 0;\n")
+            
+
     file_handle.write("  signal terminate_current_cmd  : t_flag_record;\n")
     print_linefeed(file_handle)
     file_handle.write("  -- Instantiation of the element dedicated Queue\n")
     file_handle.write("  shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")
+    
+    if len_of_queue > 1:
+        for i in range(1, len_of_queue):
+            file_handle.write("  shared variable "+vvc_channel.queue_names[i]+"_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")  
+    
     file_handle.write("  shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;\n")
     print_linefeed(file_handle)
-    if vvc_channel == "NA":
+    if vvc_channel.name == "NA":
       file_handle.write("  alias vvc_config : t_vvc_config is shared_"+vvc_name.lower()+"_vvc_config(GC_INSTANCE_IDX);\n")
       file_handle.write("  alias vvc_status : t_vvc_status is shared_"+vvc_name.lower()+"_vvc_status(GC_INSTANCE_IDX);\n")
       file_handle.write("  alias transaction_info : t_transaction_info is "
@@ -253,6 +320,9 @@ def add_vvc_constructor(file_handle, vvc_name):
 
 
 def add_vvc_interpreter(file_handle, vvc_channel):
+    
+    len_of_queue = vvc_channel.len_of_queue()
+
     file_handle.write(division_line+"\n")
     file_handle.write("-- Command interpreter\n")
     file_handle.write("-- - Interpret, decode and acknowledge commands from the central sequencer\n")
@@ -265,7 +335,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     file_handle.write("    -- 0. Initialize the process prior to first command\n")
     file_handle.write("    work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);\n")
     file_handle.write("    -- initialise shared_vvc_last_received_cmd_idx for channel and instance\n")
-    if vvc_channel == "NA":
+    if vvc_channel.name == "NA":
       file_handle.write("    shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;\n")
     else:
       file_handle.write("    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;\n")
@@ -281,7 +351,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
                       "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);\n")
     file_handle.write("      v_cmd_has_been_acked := false; -- Clear flag\n")
     file_handle.write("      -- update shared_vvc_last_received_cmd_idx with received command index\n")
-    if vvc_channel == "NA":
+    if vvc_channel.name == "NA":
       file_handle.write("      shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;\n")
     else:
       file_handle.write("      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;\n")
@@ -298,8 +368,17 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     file_handle.write("        case v_local_vvc_cmd.operation is\n")
     print_linefeed(file_handle)
     file_handle.write("          when AWAIT_COMPLETION =>\n")
+    file_handle.write("            -- Await completion of all commands in the cmd_executor queue\n")
     file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, "
                       "vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);\n")
+
+    if len_of_queue > 1:
+        for i in range(1, len_of_queue):
+            queue_name = vvc_channel.queue_names[i]
+            file_handle.write("            -- Await completion of all commands in the "+queue_name+" queue\n")
+            file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, "+queue_name+"_queue, "
+                      "vvc_config, "+queue_name+"_is_busy, C_VVC_LABELS, last_"+queue_name+"_idx_executed);\n")
+
     print_linefeed(file_handle)
     file_handle.write("          when AWAIT_ANY_COMPLETION =>\n")
     file_handle.write("            if not v_local_vvc_cmd.gen_boolean then\n")
@@ -354,160 +433,275 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     print_linefeed(file_handle)
 
 
-def add_vvc_executor(file_handle):
-    file_handle.write(division_line+"\n")
-    file_handle.write("-- Command executor\n")
-    file_handle.write("-- - Fetch and execute the commands\n")
-    file_handle.write(division_line+"\n")
-    file_handle.write("  cmd_executor : process\n")
-    file_handle.write("    variable v_cmd                                    : t_vvc_cmd_record;\n")
-    file_handle.write("    -- variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg\n")
-    file_handle.write("    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;\n")
-    file_handle.write("    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;\n")
-    file_handle.write("    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;\n")
-    file_handle.write("    variable v_command_is_bfm_access                  : boolean;\n")
-    file_handle.write("    -- variable v_normalised_addr    : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');\n")
-    file_handle.write("    -- variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');\n")
-    file_handle.write("  begin\n")
-    print_linefeed(file_handle)
-    file_handle.write("    -- 0. Initialize the process prior to first command\n")
-    file_handle.write("    -------------------------------------------------------------------------\n")
-    file_handle.write("    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);\n")
-    file_handle.write("    loop\n")
-    print_linefeed(file_handle)
-    file_handle.write("      -- 1. Set defaults, fetch command and log\n")
-    file_handle.write("      -------------------------------------------------------------------------\n")
-    file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config"+
+def add_vvc_executor(file_handle, vvc_channel):
+
+	len_of_queue = vvc_channel.len_of_queue()
+
+	file_handle.write(division_line+"\n")
+	file_handle.write("-- Command executor\n")
+	file_handle.write("-- - Fetch and execute the commands\n")
+	file_handle.write(division_line+"\n")
+	file_handle.write("  cmd_executor : process\n")
+	file_handle.write("    variable v_cmd                                    : t_vvc_cmd_record;\n")
+	file_handle.write("    -- variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg\n")
+	file_handle.write("    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;\n")
+	file_handle.write("    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;\n")
+	file_handle.write("    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;\n")
+	file_handle.write("    variable v_command_is_bfm_access                  : boolean;\n")
+	file_handle.write("    -- variable v_normalised_addr    : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');\n")
+	file_handle.write("    -- variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');\n")
+	file_handle.write("  begin\n")
+	print_linefeed(file_handle)
+	file_handle.write("    -- 0. Initialize the process prior to first command\n")
+	file_handle.write("    -------------------------------------------------------------------------\n")
+	file_handle.write("    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);\n")
+	file_handle.write("    loop\n")
+	print_linefeed(file_handle)
+	file_handle.write("      -- 1. Set defaults, fetch command and log\n")
+	file_handle.write("      -------------------------------------------------------------------------\n")
+	file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config"+
                       ", vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);\n")
-    print_linefeed(file_handle)
-    file_handle.write("      -- Reset the transaction info for waveview\n")
-    file_handle.write("      transaction_info := C_TRANSACTION_INFO_DEFAULT;\n")
-    file_handle.write("      transaction_info.operation := v_cmd.operation;\n")
-    file_handle.write("      transaction_info.msg := pad_string(to_string(v_cmd.msg)"
+	print_linefeed(file_handle)
+	file_handle.write("      -- Reset the transaction info for waveview\n")
+	file_handle.write("      transaction_info := C_TRANSACTION_INFO_DEFAULT;\n")
+	file_handle.write("      transaction_info.operation := v_cmd.operation;\n")
+	file_handle.write("      transaction_info.msg := pad_string(to_string(v_cmd.msg)"
                       ", ' ', transaction_info.msg'length);\n")
-    print_linefeed(file_handle)
-    file_handle.write("      -- Check if command is a BFM access\n")
-    file_handle.write("      --<USER_INPUT> Replace this if statement with a check of the current v_cmd.operation, in "
+	print_linefeed(file_handle)
+	file_handle.write("      -- Check if command is a BFM access\n")
+	file_handle.write("      --<USER_INPUT> Replace this if statement with a check of the current v_cmd.operation, in "
                       "order to set v_cmd_is_bfm_access to true if this is a BFM access command\n")
-    file_handle.write("      -- Example:\n")
-    file_handle.write("      -- if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK or v_cmd.operation = POLL_UNTIL then \n")
-    file_handle.write("      if true then  -- Replace this line with actual check\n")
-    file_handle.write("        v_command_is_bfm_access := true;\n")
-    file_handle.write("      else\n")
-    file_handle.write("        v_command_is_bfm_access := false;\n")
-    file_handle.write("      end if;\n")
-    print_linefeed(file_handle)
-    file_handle.write("      -- Insert delay if needed\n")
-    file_handle.write("      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config"
-                      "                         => vvc_config,\n")
-    file_handle.write("                                                                         "
-                      "command_is_bfm_access              => v_command_is_bfm_access,\n")
-    file_handle.write("                                                                         "
+	file_handle.write("      -- Example:\n")
+	file_handle.write("      -- if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK or v_cmd.operation = POLL_UNTIL then \n")
+	file_handle.write("      if true then  -- Replace this line with actual check\n")
+	file_handle.write("        v_command_is_bfm_access := true;\n")
+	file_handle.write("      else\n")
+	file_handle.write("        v_command_is_bfm_access := false;\n")
+	file_handle.write("      end if;\n")
+	print_linefeed(file_handle)
+	file_handle.write("      -- Insert delay if needed\n")
+	file_handle.write("      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config"
+	                  "                         => vvc_config,\n")
+	file_handle.write("                                                                         "
+	                  "command_is_bfm_access              => v_command_is_bfm_access,\n")
+	file_handle.write("                                                                         "
                       "timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,\n")
-    file_handle.write("                                                                         "
+	file_handle.write("                                                                         "
                       "timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,\n")
-    file_handle.write("                                                                         "
+	file_handle.write("                                                                         "
                       "scope                              => C_SCOPE);\n")                      
-    print_linefeed(file_handle)
-    file_handle.write("      if v_command_is_bfm_access then\n")
-    file_handle.write("        v_timestamp_start_of_current_bfm_access := now;\n")
-    file_handle.write("      end if;\n")
-    print_linefeed(file_handle)
-    file_handle.write("      -- 2. Execute the fetched command\n")
-    file_handle.write("      -------------------------------------------------------------------------\n")
-    file_handle.write("      case v_cmd.operation is  -- Only operations in the dedicated record are relevant\n")
-    print_linefeed(file_handle)
-    file_handle.write("        -- VVC dedicated operations\n")
-    file_handle.write("        --===================================\n")
-    print_linefeed(file_handle)
-    file_handle.write("        --<USER_INPUT>: Insert BFM procedure calls here\n")
-    file_handle.write("        -- Example:\n")
-    file_handle.write("        --   when WRITE =>\n")
-    file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
-    file_handle.write("        --     v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", \""+vvc_name.lower()+"_write() called with to wide data. \" & v_cmd.msg);\n")
-    file_handle.write("        --  -- Add info to the transaction_for_waveview_struct if needed\n")
-    file_handle.write("        --     transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := "
+	print_linefeed(file_handle)
+	file_handle.write("      if v_command_is_bfm_access then\n")
+	file_handle.write("        v_timestamp_start_of_current_bfm_access := now;\n")
+	file_handle.write("      end if;\n")
+	print_linefeed(file_handle)
+	file_handle.write("      -- 2. Execute the fetched command\n")
+	file_handle.write("      -------------------------------------------------------------------------\n")
+	file_handle.write("      case v_cmd.operation is  -- Only operations in the dedicated record are relevant\n")
+	print_linefeed(file_handle)
+	file_handle.write("        -- VVC dedicated operations\n")
+	file_handle.write("        --===================================\n")
+	print_linefeed(file_handle)
+	file_handle.write("        --<USER_INPUT>: Insert BFM procedure calls here\n")
+	file_handle.write("        -- Example:\n")
+	file_handle.write("        --   when WRITE =>\n")
+	file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
+	file_handle.write("        --     v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", \""+vvc_name.lower()+"_write() called with to wide data. \" & v_cmd.msg);\n")
+	file_handle.write("        --  -- Add info to the transaction_for_waveview_struct if needed\n")
+	file_handle.write("        --     transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := "
                       "v_normalised_data;\n")
-    file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
+	file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
                       "v_normalised_addr;\n")
-    file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
-    file_handle.write("        --     "+vvc_name.lower()+"_write(addr_value    => v_normalised_addr,\n")
-    file_handle.write("        --               data_value    => v_normalised_data,\n")
-    file_handle.write("        --               msg           => format_msg(v_cmd),\n")
-    file_handle.write("        --               clk           => clk,\n")
-    file_handle.write("        --               "+vvc_name.lower()+"_if        => "+vvc_name.lower()+"_vvc_if,\n")
-    file_handle.write("        --               scope         => C_SCOPE,\n")
-    file_handle.write("        --               msg_id_panel  => vvc_config.msg_id_panel,\n")
-    file_handle.write("        --               config        => vvc_config.bfm_config);\n")
-    print_linefeed(file_handle)
-    file_handle.write("        --  -- If the result from the BFM call is to be stored, e.g. in a read call, "
-                      "use the additional procedure illustrated in this read example\n")
-    file_handle.write("        --   when READ =>\n")
-    file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
-    file_handle.write("        --  -- Add info to the transaction_for_waveview_struct if needed\n")
-    file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
-                      "v_cmd.addr(GC_ADDR_WIDTH - 1 downto 0);\n")
-    file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
-    file_handle.write("        --     "+vvc_name.lower()+"_read(addr_value    => v_normalised_addr,\n")
-    file_handle.write("        --              data_value    => v_read_data,\n")
-    file_handle.write("        --              msg           => format_msg(v_cmd),\n")
-    file_handle.write("        --              clk           => clk,\n")
-    file_handle.write("        --              "+vvc_name.lower()+"_if        => "+vvc_name.lower()+"_vvc_if,\n")
-    file_handle.write("        --              scope         => C_SCOPE,\n")
-    file_handle.write("        --              msg_id_panel  => vvc_config.msg_id_panel,\n")
-    file_handle.write("        --              config        => vvc_config.bfm_config);\n")
-    file_handle.write("        --  -- Store the result\n")
-    file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(instance_idx  => GC_INSTANCE_IDX,\n")
-    file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
-    file_handle.write("        --                                       data          => v_read_data);\n")
-    print_linefeed(file_handle)
-    print_linefeed(file_handle)
-    file_handle.write("        -- UVVM common operations\n")
-    file_handle.write("        --===================================\n")
-    file_handle.write("        when INSERT_DELAY =>\n")
-    file_handle.write("          log(ID_INSERTED_DELAY, \"Running: \" & to_string(v_cmd.proc_call) & \" \" & "
-                      "format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);\n")
-    file_handle.write("          if v_cmd.gen_integer_array(0) = -1 then\n")
-    file_handle.write("            -- Delay specified using time\n")
-    file_handle.write("            wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;\n")
-    file_handle.write("          else\n")
-    file_handle.write("            -- Delay specified using integer\n")
-    file_handle.write("            wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;\n")
-    file_handle.write("          end if;\n")
-    print_linefeed(file_handle)
-    file_handle.write("        when others =>\n")
-    file_handle.write("          tb_error(\"Unsupported local command received for execution: '\" & "
-                      "to_string(v_cmd.operation) & \"'\", C_SCOPE);\n")
-    file_handle.write("      end case;\n")
-    print_linefeed(file_handle)
-    file_handle.write("      if v_command_is_bfm_access then\n")
-    file_handle.write("        v_timestamp_end_of_last_bfm_access := now;\n")
-    file_handle.write("        v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;\n")
-    file_handle.write("        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and \n")
-    file_handle.write("           ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then\n")
-    file_handle.write("          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, \"BFM access exceeded specified "
-                                 "start-to-start inter-bfm delay, \" & \n")
-    file_handle.write("                to_string(vvc_config.inter_bfm_delay.delay_in_time) & \".\", C_SCOPE);\n")
-    file_handle.write("        end if;\n")
-    file_handle.write("      end if;\n")
-    print_linefeed(file_handle)
-    file_handle.write("      -- Reset terminate flag if any occurred\n")
-    file_handle.write("      if (terminate_current_cmd.is_active = '1') then\n")
-    file_handle.write("        log(ID_CMD_EXECUTOR, \"Termination request received\", C_SCOPE, "
-                      "vvc_config.msg_id_panel);\n")
-    file_handle.write("        uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);\n")
-    file_handle.write("      end if;\n")
-    print_linefeed(file_handle)
-    file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
-    file_handle.write("      -- Reset the transaction info for waveview\n")
-    file_handle.write("      transaction_info   := C_TRANSACTION_INFO_DEFAULT;\n")
-    print_linefeed(file_handle)
-    file_handle.write("    end loop;\n")
-    file_handle.write("  end process;\n")
-    file_handle.write(division_line+"\n")
-    print_linefeed(file_handle)
-    print_linefeed(file_handle)
-    print_linefeed(file_handle)
+	file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
+	file_handle.write("        --     "+vvc_name.lower()+"_write(addr_value    => v_normalised_addr,\n")
+	file_handle.write("        --               data_value    => v_normalised_data,\n")
+	file_handle.write("        --               msg           => format_msg(v_cmd),\n")
+	file_handle.write("        --               clk           => clk,\n")
+	file_handle.write("        --               "+vvc_name.lower()+"_if        => "+vvc_name.lower()+"_vvc_if,\n")
+	file_handle.write("        --               scope         => C_SCOPE,\n")
+	file_handle.write("        --               msg_id_panel  => vvc_config.msg_id_panel,\n")
+	file_handle.write("        --               config        => vvc_config.bfm_config);\n")
+	print_linefeed(file_handle)
+    
+	if len_of_queue > 1:
+		file_handle.write("        --  -- Eksample of pipelined read, eg. Avalon interface.\n")
+	else:
+		file_handle.write("        --  -- If the result from the BFM call is to be stored, e.g. in a read call, "
+	                  "use the additional procedure illustrated in this read example\n")        
+
+	file_handle.write("        --   when READ =>\n")
+	file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
+	file_handle.write("        --  -- Add info to the transaction_for_waveview_struct if needed\n")
+	file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
+					  "v_normalised_addr;\n")
+	file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
+
+	if len_of_queue > 1:
+		file_handle.write("        --     if vvc_config.use_read_pipeline then\n")
+		file_handle.write("        --       -- Stall until response command queue is no longer full\n")
+		file_handle.write("        --       while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop\n")
+		file_handle.write("        --         wait for vvc_config.bfm_config.clock_period;\n")
+		file_handle.write("        --       end loop;\n")
+		file_handle.write("        --       avalon_mm_read_request( addr_value          => v_normalised_addr,\n")
+		file_handle.write("        --                               msg                 => format_msg(v_cmd),\n")
+		file_handle.write("        --                               clk                 => clk,\n")
+		file_handle.write("        --                               avalon_mm_if        => avalon_mm_vvc_master_if,\n")
+		file_handle.write("        --                               scope               => C_SCOPE,\n")
+		file_handle.write("        --                               msg_id_panel        => vvc_config.msg_id_panel,\n")
+		file_handle.write("        --                               config              => vvc_config.bfm_config);\n")
+		file_handle.write("        --       work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);\n")
+		print_linefeed(file_handle)
+		file_handle.write("        --     else\n")
+		file_handle.write("        --       avalon_mm_read( addr_value          => v_normalised_addr,\n")
+		file_handle.write("        --                       data_value          => v_read_data(GC_DATA_WIDTH-1 downto 0),\n")
+		file_handle.write("        --                       msg                 => format_msg(v_cmd),\n")
+		file_handle.write("        --                       clk                 => clk,\n")
+		file_handle.write("        --                       avalon_mm_if        => avalon_mm_vvc_master_if,\n")
+		file_handle.write("        --                       scope               => C_SCOPE,\n")
+		file_handle.write("        --                       msg_id_panel        => vvc_config.msg_id_panel,\n")
+		file_handle.write("        --                       config              => vvc_config.bfm_config);\n")
+		file_handle.write("        --       -- Store the result\n")
+		file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,\n")
+		file_handle.write("        --                                                cmd_idx      => v_cmd.cmd_idx,\n")
+		file_handle.write("        --							                     result       => v_read_data );\n")
+		file_handle.write("        --  end if;\n")
+
+	else:
+		file_handle.write("        --     "+vvc_name.lower()+"_read(addr_value    => v_normalised_addr,\n")
+		file_handle.write("        --              data_value    => v_read_data,\n")
+		file_handle.write("        --              msg           => format_msg(v_cmd),\n")
+		file_handle.write("        --              clk           => clk,\n")
+		file_handle.write("        --              "+vvc_name.lower()+"_if        => "+vvc_name.lower()+"_vvc_if,\n")
+		file_handle.write("        --              scope         => C_SCOPE,\n")
+		file_handle.write("        --              msg_id_panel  => vvc_config.msg_id_panel,\n")
+		file_handle.write("        --              config        => vvc_config.bfm_config);\n")
+		file_handle.write("        --  -- Store the result\n")
+		file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(instance_idx  => GC_INSTANCE_IDX,\n")
+		file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
+		file_handle.write("        --                                       data          => v_read_data);\n")
+
+	print_linefeed(file_handle)
+	print_linefeed(file_handle)
+	file_handle.write("        -- UVVM common operations\n")
+	file_handle.write("        --===================================\n")
+	file_handle.write("        when INSERT_DELAY =>\n")
+	file_handle.write("          log(ID_INSERTED_DELAY, \"Running: \" & to_string(v_cmd.proc_call) & \" \" & "
+	                  "format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);\n")
+	file_handle.write("          if v_cmd.gen_integer_array(0) = -1 then\n")
+	file_handle.write("            -- Delay specified using time\n")
+	file_handle.write("            wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;\n")
+	file_handle.write("          else\n")
+	file_handle.write("            -- Delay specified using integer\n")
+	file_handle.write("            wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;\n")
+	file_handle.write("          end if;\n")
+	print_linefeed(file_handle)
+	file_handle.write("        when others =>\n")
+	file_handle.write("          tb_error(\"Unsupported local command received for execution: '\" & "
+	                  "to_string(v_cmd.operation) & \"'\", C_SCOPE);\n")
+	file_handle.write("      end case;\n")
+	print_linefeed(file_handle)
+	file_handle.write("      if v_command_is_bfm_access then\n")
+	file_handle.write("        v_timestamp_end_of_last_bfm_access := now;\n")
+	file_handle.write("        v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;\n")
+	file_handle.write("        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and \n")
+	file_handle.write("           ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then\n")
+	file_handle.write("          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, \"BFM access exceeded specified "
+	                             "start-to-start inter-bfm delay, \" & \n")
+	file_handle.write("                to_string(vvc_config.inter_bfm_delay.delay_in_time) & \".\", C_SCOPE);\n")
+	file_handle.write("        end if;\n")
+	file_handle.write("      end if;\n")
+	print_linefeed(file_handle)
+	file_handle.write("      -- Reset terminate flag if any occurred\n")
+	file_handle.write("      if (terminate_current_cmd.is_active = '1') then\n")
+	file_handle.write("        log(ID_CMD_EXECUTOR, \"Termination request received\", C_SCOPE, "
+	                  "vvc_config.msg_id_panel);\n")
+	file_handle.write("        uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);\n")
+	file_handle.write("      end if;\n")
+	print_linefeed(file_handle)
+	file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
+	file_handle.write("      -- Reset the transaction info for waveview\n")
+	file_handle.write("      transaction_info   := C_TRANSACTION_INFO_DEFAULT;\n")
+	print_linefeed(file_handle)
+	file_handle.write("    end loop;\n")
+	file_handle.write("  end process;\n")
+	file_handle.write(division_line+"\n")
+	print_linefeed(file_handle)
+	print_linefeed(file_handle)
+	print_linefeed(file_handle)
+
+
+def add_vvc_pipeline_step(file_handle, queue_name):
+	file_handle.write(division_line+"\n")
+	file_handle.write("-- Pipelined step\n")
+	file_handle.write("-- - Fetch and execute the commands in the "+queue_name+" queue\n")
+	file_handle.write(division_line+"\n")
+	file_handle.write("  "+queue_name+"_executor : process\n")
+	file_handle.write("    variable v_cmd                                    : t_vvc_cmd_record;\n")
+	file_handle.write("    -- variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg\n")
+	file_handle.write("    -- variable v_normalised_addr    : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');\n")
+	file_handle.write("    -- variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');\n")
+	file_handle.write("  begin\n")
+	file_handle.write("    -- Set the "+queue_name+" queue up with the same settings as the command queue\n")
+	file_handle.write("    "+queue_name+"_queue.set_scope(C_SCOPE & \":"+queue_name.upper()+"\");\n")
+	file_handle.write("    "+queue_name+"_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);\n")
+	file_handle.write("    "+queue_name+"_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);\n")
+	file_handle.write("    "+queue_name+"_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);\n")
+	file_handle.write("    wait for 0 ns;  -- Wait for "+queue_name+" queue to initialize completely\n")
+	print_linefeed(file_handle)
+	file_handle.write("    loop\n")
+	file_handle.write("      -- Fetch commands\n")
+	file_handle.write("      -------------------------------------------------------------------------\n")
+	file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, "+queue_name+"_queue, vvc_config"+
+	                  ", vvc_status, "+queue_name+"_queue_is_increasing, "+queue_name+"_is_busy, C_VVC_LABELS);\n")
+	print_linefeed(file_handle)   
+	print_linefeed(file_handle)
+	file_handle.write("      -- Execute the fetched command\n")
+	file_handle.write("      -------------------------------------------------------------------------\n")
+	file_handle.write("      case v_cmd.operation is  -- Only operations in the dedicated record are relevant\n")
+	file_handle.write("        --<USER_INPUT>: Insert BFM procedure calls here\n")
+	file_handle.write("        -- Example of pipelined step used for read operations on the Avalon interface:\n")
+	file_handle.write("        --   when READ =>\n")
+	file_handle.write("        --     -- Initiate read response\n")
+	file_handle.write("        --     avalon_mm_read_response(addr_value          => v_normalised_addr,\n")
+	file_handle.write("        --                             data_value          => v_read_data(GC_DATA_WIDTH-1 downto 0),\n")
+	file_handle.write("        --                             msg                 => format_msg(v_cmd),\n")
+	file_handle.write("        --                             clk                 => clk,\n")
+	file_handle.write("        --                             avalon_mm_if        => avalon_mm_vvc_master_if,\n")
+	file_handle.write("        --                             scope               => C_SCOPE,\n")
+	file_handle.write("        --                             msg_id_panel        => vvc_config.msg_id_panel,\n")
+	file_handle.write("        --                             config              => vvc_config.bfm_config);\n")
+	file_handle.write("        --     -- Store the result\n")
+	file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,\n")
+	file_handle.write("        --                                                 cmd_idx      => v_cmd.cmd_idx,\n")
+	file_handle.write("        --                                                 data         => v_read_data);\n")
+	print_linefeed(file_handle)
+	file_handle.write("        --   when CHECK =>\n")
+	file_handle.write("        --     -- Initiate check response\n")
+	file_handle.write("        --     avalon_mm_check_response(addr_value          => v_normalised_addr,\n")
+	file_handle.write("         --                             data_exp            => v_normalised_data,\n")
+	file_handle.write("        --                              msg                 => format_msg(v_cmd),\n")
+	file_handle.write("        --                              clk                 => clk,\n")
+	file_handle.write("        --                              avalon_mm_if        => avalon_mm_vvc_master_if,\n")
+	file_handle.write("        --                              alert_level         => v_cmd.alert_level,\n")
+	file_handle.write("        --                              scope               => C_SCOPE,\n")
+	file_handle.write("        --                              msg_id_panel        => vvc_config.msg_id_panel,\n")
+	file_handle.write("        --                              config              => vvc_config.bfm_config);\n")
+	print_linefeed(file_handle)
+	file_handle.write("          when others =>")
+	file_handle.write("            tb_error(\"Unsupported local command received for execution: '\" & to_string(v_cmd.operation) & \"'\", C_SCOPE);\n")
+	print_linefeed(file_handle)
+	file_handle.write("        end case;\n")
+	print_linefeed(file_handle)
+	file_handle.write("        last_read_response_idx_executed <= v_cmd.cmd_idx;\n")
+	print_linefeed(file_handle)
+	file_handle.write("      end loop;\n")
+	print_linefeed(file_handle)
+	file_handle.write("    end process;\n")
+	print_linefeed(file_handle)
+	file_handle.write(division_line+"\n")
+	print_linefeed(file_handle)
+	print_linefeed(file_handle)
+	print_linefeed(file_handle)
 
 
 def add_vvc_terminator(file_handle):
@@ -1069,19 +1263,26 @@ def generate_vvc_file(vvc_name, vvc_channels):
 
     # Create main VVC, or leaf VVCs if multiple channels
     for channel in vvc_channels:
-        if channel == "NA":
+
+        num_of_queues = channel.len_of_queue()
+
+        if channel.name == "NA":
             vvc_file_name = "output/"+vvc_name.lower()+"_vvc.vhd"
         else:
-            vvc_file_name = "output/"+vvc_name.lower()+"_"+channel.lower()+"_vvc.vhd"
+            vvc_file_name = "output/"+vvc_name.lower()+"_"+channel.name.lower()+"_vvc.vhd"
         f = open(vvc_file_name, 'w')
 
         add_vvc_header(f)
         add_leaf_includes(f,vvc_name)
-        add_vvc_entity(f,vvc_name,channel)
+        add_vvc_entity(f,vvc_name,channel.name)
         add_architecture_declaration(f, vvc_name, channel)
         add_vvc_constructor(f, vvc_name)
         add_vvc_interpreter(f, channel)
-        add_vvc_executor(f)
+        add_vvc_executor(f, channel)
+        if (num_of_queues > 1):
+            for i in range(1, num_of_queues):
+                add_vvc_pipeline_step(f, channel.queue_names[i])
+
         add_vvc_terminator(f)
         add_end_of_architecture(f)
 
@@ -1097,7 +1298,7 @@ def generate_vvc_file(vvc_name, vvc_channels):
         add_vvc_entity(f,vvc_name,"NA")
         add_wrapper_architecture_declaration(f, vvc_name)
         for channel in vvc_channels:
-            add_leaf_vvc_entity(f, vvc_name, channel)
+            add_leaf_vvc_entity(f, vvc_name, channel.name)
         add_wrapper_architecture_end(f)
 
         f.close()
@@ -1113,9 +1314,23 @@ if __name__ == '__main__':
     if is_multi_channel_vvc() == 'y':
         number_of_channels = get_number_of_channels()
         for i in range(number_of_channels):
-            vvc_channels.append(get_channel_name())
+            channel = Channel(get_channel_name())
+            if is_multi_queue_channel() == 'y':            
+                number_of_queues = get_number_of_queues()
+                if number_of_queues > 1:
+                    for i in range(1, number_of_queues):
+                        channel.add_queue(get_queue_name())
+            vvc_channels.append(channel)
     else:
-        vvc_channels.append("NA")
+        channel = Channel("NA")
+        if is_multi_queue_channel() == 'y':            
+            number_of_queues = get_number_of_queues()
+            if number_of_queues > 1:
+                for i in range(1, number_of_queues):
+                    channel.add_queue(get_queue_name())
+        vvc_channels.append(channel)
+        
+
 
     if not os.path.exists("output"):
         os.makedirs("output")

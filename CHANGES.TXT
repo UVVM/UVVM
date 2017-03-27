@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2.1.1
+----------
+Released: 2017-03-27
+- Fixed bug in the AXI4-Stream VIP which caused fatal error in Questa:
+  - When calling a BFM procedure, always use the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference.
+
+
 v2.1.0
 ----------
 Released: 2017-03-16

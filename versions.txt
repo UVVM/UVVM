@@ -6,6 +6,6 @@ This project uses the following versions:
   bitvis_uart, version v1.0.3
   bitvis_irqc, version v1.0.3
   bitvis_vip_axilite, version v2.0.4
-  bitvis_vip_axistream, version v3.0.0
+  bitvis_vip_axistream, version v3.0.1
   bitvis_vip_avalon_mm, version v2.0.4
   bitvis_vip_i2c, version v2.0.3

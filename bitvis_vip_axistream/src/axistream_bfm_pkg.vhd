@@ -116,6 +116,7 @@ package axistream_bfm_pkg is
   -- Source: BFM
   -- Sink:   DUT
   --
+ 
   procedure axistream_transmit (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
@@ -153,6 +154,7 @@ package axistream_bfm_pkg is
     constant config              : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
     );
 
+  -- Overload for default strb_array, id_array, dest_array
   procedure axistream_transmit (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
@@ -164,6 +166,7 @@ package axistream_bfm_pkg is
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
     ); 
   
+  -- Overload for default user_array, strb_array, id_array, dest_array
   procedure axistream_transmit (
     constant data_array   : in    t_byte_array;
     constant msg          : in    string                 := "";
@@ -194,6 +197,31 @@ package axistream_bfm_pkg is
     constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
   ); 
 
+  -- Overloaded version without records
+  procedure axistream_receive (
+    variable data_array          : inout t_byte_array;
+    variable data_length         : inout natural;  -- Number of bytes received
+    variable user_array          : inout t_user_array;
+    variable strb_array          : inout t_strb_array;
+    variable id_array            : inout t_id_array;
+    variable dest_array          : inout t_dest_array;
+    constant msg                 : in    string;
+    signal   clk                 : in    std_logic;
+    signal   axistream_if_tdata  : inout std_logic_vector;
+    signal   axistream_if_tkeep  : inout std_logic_vector;
+    signal   axistream_if_tuser  : inout std_logic_vector;
+    signal   axistream_if_tstrb  : inout std_logic_vector;
+    signal   axistream_if_tid    : inout std_logic_vector;
+    signal   axistream_if_tdest  : inout std_logic_vector;
+    signal   axistream_if_tvalid : inout std_logic;
+    signal   axistream_if_tlast  : inout std_logic;
+    signal   axistream_if_tready : inout std_logic;
+    constant scope               : in    string                   := C_SCOPE;
+    constant msg_id_panel        : in    t_msg_id_panel           := shared_msg_id_panel;
+    constant config              : in    t_axistream_bfm_config   := C_AXISTREAM_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call       : in    string                   := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+  ); 
+
   procedure axistream_expect (
     constant exp_data_array : in    t_byte_array;  -- Expected data
     constant exp_user_array : in    t_user_array;  -- Expected tuser
@@ -208,7 +236,32 @@ package axistream_bfm_pkg is
     constant msg_id_panel   : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
     ); 
+
+  -- Overloaded version without records
+  procedure axistream_expect (
+    constant exp_data_array      : in    t_byte_array;  -- Expected data
+    constant exp_user_array      : in    t_user_array;  -- Expected tuser
+    constant exp_strb_array      : in    t_strb_array;  -- Expected tstrb
+    constant exp_id_array        : in    t_id_array;    -- Expected tid
+    constant exp_dest_array      : in    t_dest_array;  -- Expected tdest
+    constant msg                 : in    string;
+    signal   clk                 : in    std_logic;
+    signal   axistream_if_tdata  : inout std_logic_vector;
+    signal   axistream_if_tkeep  : inout std_logic_vector;
+    signal   axistream_if_tuser  : inout std_logic_vector;
+    signal   axistream_if_tstrb  : inout std_logic_vector;
+    signal   axistream_if_tid    : inout std_logic_vector;
+    signal   axistream_if_tdest  : inout std_logic_vector;
+    signal   axistream_if_tvalid : inout std_logic;
+    signal   axistream_if_tlast  : inout std_logic;
+    signal   axistream_if_tready : inout std_logic;
+    constant alert_level         : in    t_alert_level           := error;
+    constant scope               : in    string                  := C_SCOPE;
+    constant msg_id_panel        : in    t_msg_id_panel          := shared_msg_id_panel;
+    constant config              : in    t_axistream_bfm_config  := C_AXISTREAM_BFM_CONFIG_DEFAULT
+    ); 
   
+  -- Overload for default strb_array, id_array, dest_array
   procedure axistream_expect (
     constant exp_data_array : in    t_byte_array;
     constant exp_user_array : in    t_user_array;
@@ -221,6 +274,7 @@ package axistream_bfm_pkg is
     constant config         : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
     );   
 
+  -- Overload for default user_array, strb_array, id_array, dest_array
   procedure axistream_expect (
     constant exp_data_array : in    t_byte_array;
     constant msg            : in    string;
@@ -428,6 +482,7 @@ package body axistream_bfm_pkg is
   end procedure axistream_transmit;
 
   -- Overload that doesn't use records for the AXI interface: 
+  -- (In turn calls the record version)
   procedure axistream_transmit (
     constant data_array          : in    t_byte_array;
     constant user_array          : in    t_user_array;
@@ -753,6 +808,57 @@ package body axistream_bfm_pkg is
 
   end procedure axistream_receive;
 
+  -- Overloaded version without records
+  procedure axistream_receive (
+    variable data_array          : inout t_byte_array;
+    variable data_length         : inout natural;  -- Number of bytes received
+    variable user_array          : inout t_user_array;
+    variable strb_array          : inout t_strb_array;
+    variable id_array            : inout t_id_array;
+    variable dest_array          : inout t_dest_array;
+    constant msg                 : in    string;
+    signal   clk                 : in    std_logic;
+    signal   axistream_if_tdata  : inout std_logic_vector;
+    signal   axistream_if_tkeep  : inout std_logic_vector;
+    signal   axistream_if_tuser  : inout std_logic_vector;
+    signal   axistream_if_tstrb  : inout std_logic_vector;
+    signal   axistream_if_tid    : inout std_logic_vector;
+    signal   axistream_if_tdest  : inout std_logic_vector;
+    signal   axistream_if_tvalid : inout std_logic;
+    signal   axistream_if_tlast  : inout std_logic;
+    signal   axistream_if_tready : inout std_logic;
+    constant scope               : in    string                   := C_SCOPE;
+    constant msg_id_panel        : in    t_msg_id_panel           := shared_msg_id_panel;
+    constant config              : in    t_axistream_bfm_config   := C_AXISTREAM_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call       : in    string                   := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+  ) is
+  begin
+    -- Simply call the record version 
+    axistream_receive(
+      data_array          => data_array,
+      data_length         => data_length,
+      user_array          => user_array,
+      strb_array          => strb_array,
+      id_array            => id_array,
+      dest_array          => dest_array,
+      msg                 => msg,
+      clk                 => clk,
+      axistream_if.tdata  => axistream_if_tdata,
+      axistream_if.tkeep  => axistream_if_tkeep,
+      axistream_if.tuser  => axistream_if_tuser,
+      axistream_if.tstrb  => axistream_if_tstrb,
+      axistream_if.tid    => axistream_if_tid,
+      axistream_if.tdest  => axistream_if_tdest,
+      axistream_if.tvalid => axistream_if_tvalid,
+      axistream_if.tlast  => axistream_if_tlast,
+      axistream_if.tready => axistream_if_tready,
+      scope               => scope,
+      msg_id_panel        => msg_id_panel,
+      config              => config, 
+      ext_proc_call       => ext_proc_call);
+
+  end procedure;
+
 
   -- Receive data, then compare the received data against exp_data_array
   -- - If the received data is inconsistent with the expected data, an alert with 
@@ -910,6 +1016,56 @@ package body axistream_bfm_pkg is
     end if;
 
   end procedure axistream_expect;
+
+  -- Overloaded version without records
+  procedure axistream_expect (
+    constant exp_data_array      : in    t_byte_array;  -- Expected data
+    constant exp_user_array      : in    t_user_array;  -- Expected tuser
+    constant exp_strb_array      : in    t_strb_array;  -- Expected tstrb
+    constant exp_id_array        : in    t_id_array;    -- Expected tid
+    constant exp_dest_array      : in    t_dest_array;  -- Expected tdest
+    constant msg                 : in    string;
+    signal   clk                 : in    std_logic;
+    signal   axistream_if_tdata  : inout std_logic_vector;
+    signal   axistream_if_tkeep  : inout std_logic_vector;
+    signal   axistream_if_tuser  : inout std_logic_vector;
+    signal   axistream_if_tstrb  : inout std_logic_vector;
+    signal   axistream_if_tid    : inout std_logic_vector;
+    signal   axistream_if_tdest  : inout std_logic_vector;
+    signal   axistream_if_tvalid : inout std_logic;
+    signal   axistream_if_tlast  : inout std_logic;
+    signal   axistream_if_tready : inout std_logic;
+    constant alert_level         : in    t_alert_level           := error;
+    constant scope               : in    string                  := C_SCOPE;
+    constant msg_id_panel        : in    t_msg_id_panel          := shared_msg_id_panel;
+    constant config              : in    t_axistream_bfm_config  := C_AXISTREAM_BFM_CONFIG_DEFAULT
+    ) is 
+  begin
+
+    -- Simply call the record version 
+    axistream_expect(
+      exp_data_array      => exp_data_array,
+      exp_user_array      => exp_user_array,
+      exp_strb_array      => exp_strb_array,
+      exp_id_array        => exp_id_array,
+      exp_dest_array      => exp_dest_array,
+      msg                 => msg,
+      clk                 => clk,
+      axistream_if.tdata  => axistream_if_tdata,
+      axistream_if.tkeep  => axistream_if_tkeep,
+      axistream_if.tuser  => axistream_if_tuser,
+      axistream_if.tstrb  => axistream_if_tstrb,
+      axistream_if.tid    => axistream_if_tid,
+      axistream_if.tdest  => axistream_if_tdest,
+      axistream_if.tvalid => axistream_if_tvalid,
+      axistream_if.tlast  => axistream_if_tlast,
+      axistream_if.tready => axistream_if_tready,
+      alert_level         => alert_level,
+      scope               => scope,
+      msg_id_panel        => msg_id_panel,
+      config              => config);
+
+  end procedure;
 
   -- Overload without exp_strb_array, exp_id_array, exp_dest_array arguments' argument
   procedure axistream_expect (

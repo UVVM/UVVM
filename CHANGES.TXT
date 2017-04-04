@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+
+v2.1.2
+----------
+Released: 2017-04-04
+- Updated the BFM init functions on VIPs with BFM bus interfaces to a fix compile error in GHDL, reported by Patrick Lehmann (Paebbels) on GitHub.
+
+
 v2.1.1
 ----------
 Released: 2017-03-27

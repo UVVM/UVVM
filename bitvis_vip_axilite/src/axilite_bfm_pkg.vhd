@@ -321,28 +321,28 @@ package body axilite_bfm_pkg is
                                       read_data_channel(     rdata(  data_width    -1 downto 0)));
   begin
     -- Write Address Channel    
-    init_if.write_address_channel.awaddr  := (others => '0');
+    init_if.write_address_channel.awaddr  := (init_if.write_address_channel.awaddr'range => '0');
     init_if.write_address_channel.awvalid := '0';
     init_if.write_address_channel.awprot  := to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
     init_if.write_address_channel.awready := 'Z';
     -- Write Data Channel
-    init_if.write_data_channel.wdata   := (others => '0');
-    init_if.write_data_channel.wstrb   := (others => '0');
+    init_if.write_data_channel.wdata   := (init_if.write_data_channel.wdata'range => '0');
+    init_if.write_data_channel.wstrb   := (init_if.write_data_channel.wstrb'range => '0');
     init_if.write_data_channel.wvalid  := '0';
     init_if.write_data_channel.wready  := 'Z';
     -- Write Response Channel
     init_if.write_response_channel.bready := '0';
-    init_if.write_response_channel.bresp  := (others=>'Z');
+    init_if.write_response_channel.bresp  := (init_if.write_response_channel.bresp'range => 'Z');
     init_if.write_response_channel.bvalid := 'Z';
     -- Read Address Channel
-    init_if.read_address_channel.araddr  := (others => '0');
+    init_if.read_address_channel.araddr  := (init_if.read_address_channel.araddr'range => '0');
     init_if.read_address_channel.arvalid := '0';
     init_if.read_address_channel.arprot  := to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
     init_if.read_address_channel.arready := 'Z';
     -- Read Data Channel
     init_if.read_data_channel.rready := '0';
-    init_if.read_data_channel.rdata  := (others=>'Z');
-    init_if.read_data_channel.rresp  := (others=>'Z');
+    init_if.read_data_channel.rdata  := (init_if.read_data_channel.rdata'range => 'Z');
+    init_if.read_data_channel.rresp  := (init_if.read_data_channel.rresp'range => 'Z');
     init_if.read_data_channel.rvalid := 'Z';
     return init_if;
   end function;

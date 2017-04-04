@@ -305,10 +305,10 @@ package body sbi_bfm_pkg is
     result.cs     := '0';
     result.rena   := '0';
     result.wena   := '0';
-    result.addr   := (others => '0');
-    result.wdata  := (others => '0');
+    result.addr   := (result.addr'range => '0');
+    result.wdata  := (result.wdata'range => '0');
     result.ready  := 'Z';
-    result.rdata  := (others => 'Z');
+    result.rdata  := (result.rdata'range => 'Z');
     return result;
   end function;
 

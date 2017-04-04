@@ -237,18 +237,18 @@ package body avalon_mm_bfm_pkg is
   begin
     -- BFM to DUT signals
     result.reset            := '0';
-    result.address          := (others => '0');
+    result.address          := (result.address'range => '0');
     result.begintransfer    := '0';
-    result.byte_enable      := (others => '1');
+    result.byte_enable      := (result.byte_enable'range => '1');
     result.chipselect       := '0';
     result.write            := '0';
-    result.writedata        := (others => '0');
+    result.writedata        := (result.writedata'range => '0');
     result.read             := '0';
     result.lock             := lock_value;
     
     -- DUT to BFM signals
-    result.readdata         := (others => 'Z');
-    result.response         := (others => 'Z');
+    result.readdata         := (result.readdata'range => 'Z');
+    result.response         := (result.response'range => 'Z');
     result.waitrequest      := 'Z';
     result.readdatavalid    := 'Z';
     result.irq              := 'Z';

@@ -315,24 +315,24 @@ package body axistream_bfm_pkg is
 
       -- from master to slave
       init_if.tvalid := '0';
-      init_if.tdata  := (others => '0');
-      init_if.tkeep  := (others => '0');
-      init_if.tuser  := (others => '0');
-      init_if.tstrb  := (others => '0');
-      init_if.tid    := (others => '0');
-      init_if.tdest  := (others => '0');
+      init_if.tdata  := (init_if.tdata'range => '0');
+      init_if.tkeep  := (init_if.tkeep'range => '0');
+      init_if.tuser  := (init_if.tuser'range => '0');
+      init_if.tstrb  := (init_if.tstrb'range => '0');
+      init_if.tid    := (init_if.tid'range => '0');
+      init_if.tdest  := (init_if.tdest'range => '0');
       init_if.tlast  := '0';
     else
       -- from slave to master
       init_if.tready := '0';
       -- from master to slave
       init_if.tvalid := 'Z';
-      init_if.tdata  := (others => 'Z');
-      init_if.tkeep  := (others => 'Z');
-      init_if.tuser  := (others => 'Z');
-      init_if.tstrb  := (others => 'Z');
-      init_if.tid    := (others => 'Z');
-      init_if.tdest  := (others => 'Z');
+      init_if.tdata  := (init_if.tdata'range => 'Z');
+      init_if.tkeep  := (init_if.tkeep'range => 'Z');
+      init_if.tuser  := (init_if.tuser'range => 'Z');
+      init_if.tstrb  := (init_if.tstrb'range => 'Z');
+      init_if.tid    := (init_if.tid'range => 'Z');
+      init_if.tdest  := (init_if.tdest'range => 'Z');
       init_if.tlast  := 'Z';
     end if;
     return init_if;

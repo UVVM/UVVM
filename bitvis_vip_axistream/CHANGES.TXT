@@ -1,6 +1,12 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v3.0.2
+----------
+Released: 2017-04-04
+- Updated the BFM init functions to fix compile error in GHDL
+
+
 v3.0.1
 ----------
 Released: 2017-03-27

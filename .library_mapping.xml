@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.sigasi.hdt.shared.librarymapping.model:LibraryMappings xmlns:com.sigasi.hdt.shared.librarymapping.model="com.sigasi.hdt.vhdl.scoping.librarymapping" Version="2">
+  <Mappings Location="bitvis_irqc" Library="bitvis_irqc"/>
+  <Mappings Location="bitvis_uart" Library="bitvis_uart"/>
+  <Mappings Location="bitvis_vip_avalon_mm" Library="bitvis_vip_avalon_mm"/>
+  <Mappings Location="bitvis_vip_axilite" Library="bitvis_vip_axilite"/>
+  <Mappings Location="bitvis_vip_axistream" Library="bitvis_vip_axistream"/>
+  <Mappings Location="bitvis_vip_gpio" Library="bitvis_vip_gpio"/>
+  <Mappings Location="bitvis_vip_i2c" Library="bitvis_vip_i2c"/>
+  <Mappings Location="bitvis_vip_sbi" Library="bitvis_vip_sbi"/>
+  <Mappings Location="bitvis_vip_spi" Library="bitvis_vip_spi"/>
+  <Mappings Location="bitvis_vip_uart" Library="bitvis_vip_uart"/>
+  <Mappings Location="Common Libraries/IEEE" Library="ieee"/>
+  <Mappings Location="Common Libraries/IEEE Synopsys" Library="ieee"/>
+  <Mappings Location="" Library="not mapped"/>
+  <Mappings Location="Common Libraries" Library="not mapped"/>
+  <Mappings Location="uvvm_vvc_framework/src_target_dependent" Library="not mapped"/>
+  <Mappings Location="Common Libraries/STD" Library="std"/>
+  <Mappings Location="uvvm_util" Library="uvvm_util"/>
+  <Mappings Location="uvvm_vvc_framework" Library="uvvm_vvc_framework"/>
+</com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>

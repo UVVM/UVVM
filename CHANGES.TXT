@@ -9,6 +9,11 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2.2.0
+----------
+Released: 2017-04-18
+- The SPI VIP has now been added to the UVVM release
+
 
 v2.1.2
 ----------

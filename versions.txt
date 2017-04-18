@@ -9,3 +9,4 @@ This project uses the following versions:
   bitvis_vip_axistream, version v3.0.2
   bitvis_vip_avalon_mm, version v2.0.5
   bitvis_vip_i2c, version v2.0.3
+  bitvis_vip_spi, version v2.0.1

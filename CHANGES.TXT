@@ -9,6 +9,14 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2.3.0
+----------
+Released: 2017-04-28
+- The GPIO VIP has now been added to the UVVM release
+- Improved the documentation formatting
+- For more information, please see the CHANGES.TXT in each VIP
+
+
 v2.2.0
 ----------
 Released: 2017-04-18

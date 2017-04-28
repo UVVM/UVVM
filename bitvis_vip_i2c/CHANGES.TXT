@@ -1,11 +1,16 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.0.4
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+- Replaced boolean continue parameter with enum
+
 v2.0.3
 ----------
 Released: 2017-03-16
 - Updated documentation
-
 
 v2.0.2
 ----------

@@ -887,6 +887,15 @@ package methods_pkg is
     constant scope : string         := C_TB_SCOPE_DEFAULT
   );
 
+  -- Warning! This function should NOT be used outside the UVVM library.
+  --          Function is only included to support internal functionality.
+  --          The function can be removed without notification.
+  function matching_values(
+    value1: std_logic_vector;
+    value2: std_logic_vector
+  ) return boolean;
+
+
 -- ============================================================================
 -- Time consuming checks
 -- ============================================================================
@@ -3159,8 +3168,21 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "unsigned"
     ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
   begin
-    return check_value_in_range(to_integer(value), to_integer(min_value), to_integer(max_value), alert_level, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
   end;
 
   impure function check_value_in_range (
@@ -3175,8 +3197,21 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "signed"
     ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
   begin
-    return check_value_in_range(to_integer(value), to_integer(min_value), to_integer(max_value), alert_level, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
   end;
 
   impure function check_value_in_range (
@@ -5105,29 +5140,28 @@ package body methods_pkg is
   ) is
     -- Making sure any rounding error after calculating period/2 is not accumulated.
     constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
-    variable v_clock_count : natural := 0;
   begin
-    clock_count <= v_clock_count;
+    clock_count <= 0;
 
     loop
-      clock_signal <= '1';
+      clock_signal <= '0'; -- Should start on 0
       wait for C_FIRST_HALF_CLK_PERIOD;
-      clock_signal <= '0';
+
+      -- Update clock_count when clock_signal is set to '1'
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+      clock_signal <= '1';
       wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
 
-      if v_clock_count < natural'right then
-        v_clock_count := v_clock_count + 1;
-      else -- Wrap when reached max value of natural
-        v_clock_count := 0;
-      end if;
-
-      clock_count <= v_clock_count;
     end loop;
   end;
 
   --------------------------------------------
   -- Clock generator overload:
-  -- - Count variable (clock_count) is added as an output. Wraps when reaching max value of
+  -- - Counter clock_count is given as an output. Wraps when reaching max value of
   --   natural type.
   -- - Set duty cycle by setting clock_high_time.
   --------------------------------------------
@@ -5137,25 +5171,22 @@ package body methods_pkg is
     constant clock_period          : in    time;
     constant clock_high_time       : in    time
   ) is
-    variable v_clock_count : natural := 0;
   begin
-    clock_count <= v_clock_count;
-
+    clock_count <= 0;
     check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
 
     loop
-      clock_signal <= '1';
-      wait for clock_high_time;
       clock_signal <= '0';
+      wait for clock_high_time;
+
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+      clock_signal <= '1';
       wait for (clock_period - clock_high_time);
 
-      if v_clock_count < natural'right then
-        v_clock_count := v_clock_count + 1;
-      else -- Wrap when reached max value of natural
-        v_clock_count := 0;
-      end if;
-
-      clock_count <= v_clock_count;
     end loop;
   end;
 

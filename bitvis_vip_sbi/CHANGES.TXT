@@ -1,6 +1,12 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.0.5
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+- Added mathcing_values to spi_poll_until()
+
 v2.0.4
 ----------
 Released: 2017-04-04

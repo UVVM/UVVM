@@ -1,0 +1,8 @@
+Bitvis VIP GPIO - Overview on Versions and Changes
+==============================================================
+
+v1.0.0
+----------
+Released: 2017-04-28
+
+Initial version of GPIO VIP

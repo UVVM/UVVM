@@ -3,6 +3,14 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.0.5
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+- Improved clock_generator procedure
+- Added dedicated functionality for signed/unsigned check_value_in_range()
+- Added function matching_values() to external calls
+
 v2.0.4
 ----------
 Released: 2017-03-16

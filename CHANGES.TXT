@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2.4.0
+----------
+Released: 2017-05-16
+- Fixed bug in the UVVM VVC Framework resolved function
+- Added status signal for determining simulation result success or failure
+- For more information, please see the CHANGES.TXT in each VIP
+
 v2.3.0
 ----------
 Released: 2017-04-28

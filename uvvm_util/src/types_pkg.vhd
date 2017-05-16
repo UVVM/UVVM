@@ -103,6 +103,13 @@ package types_pkg is
   );
   type t_sync_flag_record_array is array (1 to C_NUM_SYNC_FLAGS) of t_sync_flag_record;
 
+
+  type t_uvvm_status is record
+    no_unexpected_simulation_warnings_or_worse  : natural range 0 to 1;
+    no_unexpected_simulation_errors_or_worse    : natural range 0 to 1;
+  end record t_uvvm_status;
+
+
   -------------------------------------
   -- BFMs and above
   -------------------------------------

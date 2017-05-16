@@ -45,6 +45,8 @@ package methods_pkg is
   shared variable protected_semaphore            : t_protected_semaphore;
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
+  shared variable shared_uvvm_status             : t_uvvm_status;
+
 
   signal global_trigger : std_logic := 'L';
   signal global_barrier : std_logic := 'X';
@@ -277,7 +279,6 @@ package methods_pkg is
     attention    : t_attention := REGARD;  -- regard, expect, ignore
     number     : natural := 1
     );
-
 
 
 -- ============================================================================
@@ -1392,7 +1393,7 @@ package methods_pkg is
   -- Overloaded version with clock count
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_percentage : in    natural range 1 to 99 := 50
   );
@@ -1400,7 +1401,7 @@ package methods_pkg is
   -- Overloaded version with clock count and duty cycle in time
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_time       : in    time
   );
@@ -2491,13 +2492,39 @@ package body methods_pkg is
   end;
 
   procedure increment_alert_counter(
-    alert_level: t_alert_level;
+    alert_level  : t_alert_level;
     attention    : t_attention := REGARD;  -- regard, expect, ignore
     number       : natural := 1
       ) is
+    type alert_array is array (1 to 6) of t_alert_level;
+    constant alert_check_array : alert_array := (WARNING, TB_WARNING, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
+    alias warning_and_worse is shared_uvvm_status.no_unexpected_simulation_warnings_or_worse;
+    alias error_and_worse   is shared_uvvm_status.no_unexpected_simulation_errors_or_worse;
   begin
     protected_alert_attention_counters.increment(alert_level, attention, number);
+
+    -- Update simulation status
+    if (attention = REGARD) or (attention = EXPECT) then
+      if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
+        warning_and_worse := 1; -- default
+        error_and_worse   := 1; -- default
+    
+        -- Compare expected and current allerts
+        for i in 1 to alert_check_array'high loop 
+          if (get_alert_counter(alert_check_array(i), REGARD) > get_alert_counter(alert_check_array(i), EXPECT)) then
+            -- warning and worse
+            warning_and_worse := 0;
+            -- error and worse
+            if not(alert_check_array(i) = WARNING) and not(alert_check_array(i) = TB_WARNING) then
+              error_and_worse := 0;
+            end if;
+          end if;
+        end loop;
+      end if;
+
+    end if;
   end;
+
 
 -- ============================================================================
 -- Deprecation message
@@ -4974,12 +5001,20 @@ package body methods_pkg is
     constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
     ) is
     constant init_value     : std_logic_vector(target'range) := target;
+    variable v_target       : std_logic_vector(target'length-1 downto 0) := target;
+    variable v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;    
   begin
     log(msg_id, "Pulse to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) &
                 " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
 
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-    target <= pulse_value;  -- Start pulse
+    
+    for i in 0 to (v_target'length-1) loop
+      if pulse_value(i) /= '-' then
+          v_target(i) := v_pulse(i); -- Generate pulse
+      end if;
+    end loop;
+    target <= v_target;
 
     if (blocking_mode = BLOCKING) then
       wait for pulse_duration;
@@ -5047,22 +5082,40 @@ package body methods_pkg is
     constant msg_id         : t_msg_id       := ID_GEN_PULSE;
     constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant init_value     : std_logic_vector(target'range) := target;
+    constant init_value     : std_logic_vector(target'range)                  := target;
+    constant v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;
+    variable v_target       : std_logic_vector(target'length-1 downto 0)      := target;
   begin
     log(msg_id, "Pulse to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) &
                 " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+  
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+      
     if (num_periods > 0) then
       wait until falling_edge(clock_signal);
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
+
+      for i in 0 to (v_target'length-1) loop
+        if v_pulse(i) /= '-' then
+          v_target(i) := v_pulse(i); -- Generate pulse
+        end if;
+      end loop;
+
+      target <= v_target;
       for i in 1 to num_periods loop
         wait until falling_edge(clock_signal);
       end loop;
     else -- Pulse for one delta cycle only
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
+
+      for i in 0 to (v_target'length-1) loop
+        if v_pulse(i) /= '-' then
+          v_target(i) := v_pulse(i); -- Generate pulse
+        end if;
+      end loop;
+
+      target <= v_target;
       wait for 0 ns;
     end if;
+
     target  <= init_value;
   end;
 
@@ -5134,7 +5187,7 @@ package body methods_pkg is
   --------------------------------------------
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_percentage : in    natural range 1 to 99 := 50
   ) is
@@ -5167,7 +5220,7 @@ package body methods_pkg is
   --------------------------------------------
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_time       : in    time
   ) is

@@ -737,7 +737,7 @@ package body axistream_bfm_pkg is
                 v_byte_idx := v_byte_in_word+1;
                 l_check_remaining_TKEEP: loop
                   check_value(axistream_if.tkeep(v_byte_idx), '0', ERROR, "Check that tkeep doesn't go from '1' to '0' to '1' again within this last word. (The BFM supports only continuous stream)", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-                  if v_byte_idx < c_num_bytes_per_word-1 then
+                  if v_byte_idx < (axistream_if.tkeep'length-1) then
                     v_byte_idx := v_byte_idx + 1; 
                   else
                     exit l_check_remaining_TKEEP;

@@ -3,6 +3,12 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.0.6
+----------
+Released: 2017-05-16
+- Fixed bug in resolved() function
+- Improved log messages
+
 v2.0.5
 ----------
 Released: 2017-04-28

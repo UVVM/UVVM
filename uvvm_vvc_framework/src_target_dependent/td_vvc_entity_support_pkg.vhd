@@ -514,7 +514,7 @@ package body td_vvc_entity_support_pkg is
     signal   queue_is_increasing  : out   boolean
     ) is
   begin
-    command_queue.put(command);
+    command_queue.put(command); 
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     queue_is_increasing <= true;
     wait for 0 ns;
@@ -728,7 +728,7 @@ package body td_vvc_entity_support_pkg is
       -- Pop the element. Compare cmd idx. If it does not match, push to local result queue.
       -- If an index matches, set shared_vvc_response.result. (Don't push element back to result queue)
       while result_queue.get_count(VOID) > 0 loop
-        v_current_element := result_queue.get(VOID);
+        v_current_element := result_queue.get(VOID); 
         if v_current_element.cmd_idx = command.gen_integer_array(0) then
           shared_vvc_response.fetch_is_accepted := true;
           shared_vvc_response.result              := v_current_element.result;
@@ -736,7 +736,7 @@ package body td_vvc_entity_support_pkg is
           exit;
         else
           -- No match for element: put in local result queue
-          v_local_result_queue.put(v_current_element);
+          v_local_result_queue.put(v_current_element); 
         end if;
       end loop;
 
@@ -784,7 +784,7 @@ package body td_vvc_entity_support_pkg is
     executor_is_busy  <= true;
     wait until executor_is_busy;
     vvc_status.previous_cmd_idx := command.cmd_idx;
-    command := command_queue.get(VOID);
+    command := command_queue.get(VOID); 
     log(ID_CMD_EXECUTOR, to_string(command.proc_call) & " - Will be executed " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     vvc_status.current_cmd_idx := command.cmd_idx;
@@ -801,7 +801,7 @@ package body td_vvc_entity_support_pkg is
   begin
     v_result_queue_element.cmd_idx := cmd_idx;
     v_result_queue_element.result := result;
-    result_queue.put(v_result_queue_element);
+    result_queue.put(v_result_queue_element); 
   end procedure;
 
   procedure insert_inter_bfm_delay_if_requested(

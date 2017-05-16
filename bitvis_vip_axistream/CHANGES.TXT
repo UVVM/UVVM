@@ -1,6 +1,11 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v3.0.4
+----------
+Released: 2017-05-16
+- Updated handling of TKEEP in BFM
+
 v3.0.3
 ----------
 Released: 2017-04-28

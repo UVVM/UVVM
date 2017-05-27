@@ -1,0 +1,14 @@
+Bitvis VIP SPI - Overview on Versions and Changes
+==============================================================
+
+v2.0.2
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+
+v2.0.1
+----------
+Released: 2017-04-18
+Initial release to Github
+
+----------------------------------------------------------------------

@@ -17,6 +17,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use std.textio.all;
+
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -141,26 +143,42 @@ package body td_target_support_pkg is
 
   function resolved ( input_vector : t_vvc_target_record_drivers) return t_vvc_target_record_unresolved is
     -- if none of the drives want to drive the target return value of first driver (which we need to drive at least the target name)
-    variable v_result : t_vvc_target_record_unresolved := input_vector(input_vector'low);
-    variable v_cnt : integer := 0;
-    variable v_instance_string : string(1 to 100) := (others => NUL);
+    constant C_LINE_LENGTH_MAX  : natural := 100; -- VVC idx list string length
+    variable v_result           : t_vvc_target_record_unresolved := input_vector(input_vector'low);
+    variable v_cnt              : integer := 0;
+    variable v_instance_string  : string(1 to C_LINE_LENGTH_MAX) := (others => NUL);
+    variable v_line             : line;
+    variable v_width            : integer := 0;
   begin
-        if input_vector'length = 1 then
-          return input_vector(input_vector'low);
-        else
-          for i in input_vector'range loop
-            -- The VVC is used if instance_idx is not -1 (which is the default value)
-            if input_vector(i).vvc_instance_idx /= -1 then
-              -- count the number of sequencer trying to access the VVC
-              v_cnt := v_cnt + 1;
-              v_result := input_vector(i);
-              -- generating string with all instance_idx for report in case of failure
-              v_instance_string := " " & to_string(input_vector(i).vvc_instance_idx) & v_instance_string(1 to 100-to_string(input_vector(i).vvc_instance_idx)'high-1);
-            end if;
-          end loop;
-          check_value(v_cnt < 2, TB_FAILURE, "Arbitration mechanism failed. Check VVC " & to_string(v_result.vvc_name) & " implementation and semaphore handling. Crashing instances with numbers " & v_instance_string, C_SCOPE, ID_NEVER);
-          return v_result;
+    if input_vector'length = 1 then
+      return input_vector(input_vector'low);
+    else
+      for i in input_vector'range loop
+        -- The VVC is used if instance_idx is not -1 (which is the default value)
+        if input_vector(i).vvc_instance_idx /= -1 then
+          -- count the number of sequencer trying to access the VVC
+          v_cnt := v_cnt + 1;
+          v_result := input_vector(i);
+          -- generating string with all instance_idx for report in case of failure
+          write(v_line, string'(" "));
+          write(v_line, input_vector(i).vvc_instance_idx);
+
+          -- Ensure there is room for the last item and dots
+          v_width := v_line'length;
+          if v_width > (C_LINE_LENGTH_MAX-15) then
+            write(v_line, string'("..."));
+            exit;
+          end if;
         end if;
+      end loop;
+
+      if v_width > 0 then
+        v_instance_string(1 to v_width) := v_line.all;
+      end if;
+      deallocate(v_line);
+      check_value(v_cnt < 2, TB_FAILURE, "Arbitration mechanism failed. Check VVC " & to_string(v_result.vvc_name) & " implementation and semaphore handling. Crashing instances with numbers " & v_instance_string(1 to v_width), C_SCOPE, ID_NEVER);
+      return v_result;
+    end if;
   end resolved;
 
 

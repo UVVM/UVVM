@@ -1,6 +1,23 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.0.5
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+- Added mathcing_values to spi_poll_until()
+
+v2.0.4
+----------
+Released: 2017-04-04
+- Updated the BFM init functions to fix compile error in GHDL
+
+v2.0.3
+----------
+Released: 2017-03-16
+- Updated documentation
+
+
 v2.0.2
 ----------
 Released: 2017-02-13

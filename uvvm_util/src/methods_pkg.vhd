@@ -45,6 +45,8 @@ package methods_pkg is
   shared variable protected_semaphore            : t_protected_semaphore;
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
+  shared variable shared_uvvm_status             : t_uvvm_status;
+
 
   signal global_trigger : std_logic := 'L';
   signal global_barrier : std_logic := 'X';
@@ -277,7 +279,6 @@ package methods_pkg is
     attention    : t_attention := REGARD;  -- regard, expect, ignore
     number     : natural := 1
     );
-
 
 
 -- ============================================================================
@@ -887,6 +888,15 @@ package methods_pkg is
     constant scope : string         := C_TB_SCOPE_DEFAULT
   );
 
+  -- Warning! This function should NOT be used outside the UVVM library.
+  --          Function is only included to support internal functionality.
+  --          The function can be removed without notification.
+  function matching_values(
+    value1: std_logic_vector;
+    value2: std_logic_vector
+  ) return boolean;
+
+
 -- ============================================================================
 -- Time consuming checks
 -- ============================================================================
@@ -1383,7 +1393,7 @@ package methods_pkg is
   -- Overloaded version with clock count
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_percentage : in    natural range 1 to 99 := 50
   );
@@ -1391,7 +1401,7 @@ package methods_pkg is
   -- Overloaded version with clock count and duty cycle in time
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_time       : in    time
   );
@@ -2482,13 +2492,39 @@ package body methods_pkg is
   end;
 
   procedure increment_alert_counter(
-    alert_level: t_alert_level;
+    alert_level  : t_alert_level;
     attention    : t_attention := REGARD;  -- regard, expect, ignore
     number       : natural := 1
       ) is
+    type alert_array is array (1 to 6) of t_alert_level;
+    constant alert_check_array : alert_array := (WARNING, TB_WARNING, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
+    alias warning_and_worse is shared_uvvm_status.no_unexpected_simulation_warnings_or_worse;
+    alias error_and_worse   is shared_uvvm_status.no_unexpected_simulation_errors_or_worse;
   begin
     protected_alert_attention_counters.increment(alert_level, attention, number);
+
+    -- Update simulation status
+    if (attention = REGARD) or (attention = EXPECT) then
+      if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
+        warning_and_worse := 1; -- default
+        error_and_worse   := 1; -- default
+    
+        -- Compare expected and current allerts
+        for i in 1 to alert_check_array'high loop 
+          if (get_alert_counter(alert_check_array(i), REGARD) > get_alert_counter(alert_check_array(i), EXPECT)) then
+            -- warning and worse
+            warning_and_worse := 0;
+            -- error and worse
+            if not(alert_check_array(i) = WARNING) and not(alert_check_array(i) = TB_WARNING) then
+              error_and_worse := 0;
+            end if;
+          end if;
+        end loop;
+      end if;
+
+    end if;
   end;
+
 
 -- ============================================================================
 -- Deprecation message
@@ -3159,8 +3195,21 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "unsigned"
     ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
   begin
-    return check_value_in_range(to_integer(value), to_integer(min_value), to_integer(max_value), alert_level, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
   end;
 
   impure function check_value_in_range (
@@ -3175,8 +3224,21 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "signed"
     ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
   begin
-    return check_value_in_range(to_integer(value), to_integer(min_value), to_integer(max_value), alert_level, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
   end;
 
   impure function check_value_in_range (
@@ -4939,12 +5001,20 @@ package body methods_pkg is
     constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
     ) is
     constant init_value     : std_logic_vector(target'range) := target;
+    variable v_target       : std_logic_vector(target'length-1 downto 0) := target;
+    variable v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;    
   begin
     log(msg_id, "Pulse to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) &
                 " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
 
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-    target <= pulse_value;  -- Start pulse
+    
+    for i in 0 to (v_target'length-1) loop
+      if pulse_value(i) /= '-' then
+          v_target(i) := v_pulse(i); -- Generate pulse
+      end if;
+    end loop;
+    target <= v_target;
 
     if (blocking_mode = BLOCKING) then
       wait for pulse_duration;
@@ -5012,22 +5082,40 @@ package body methods_pkg is
     constant msg_id         : t_msg_id       := ID_GEN_PULSE;
     constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   ) is
-    constant init_value     : std_logic_vector(target'range) := target;
+    constant init_value     : std_logic_vector(target'range)                  := target;
+    constant v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;
+    variable v_target       : std_logic_vector(target'length-1 downto 0)      := target;
   begin
     log(msg_id, "Pulse to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) &
                 " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+  
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+      
     if (num_periods > 0) then
       wait until falling_edge(clock_signal);
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
+
+      for i in 0 to (v_target'length-1) loop
+        if v_pulse(i) /= '-' then
+          v_target(i) := v_pulse(i); -- Generate pulse
+        end if;
+      end loop;
+
+      target <= v_target;
       for i in 1 to num_periods loop
         wait until falling_edge(clock_signal);
       end loop;
     else -- Pulse for one delta cycle only
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
+
+      for i in 0 to (v_target'length-1) loop
+        if v_pulse(i) /= '-' then
+          v_target(i) := v_pulse(i); -- Generate pulse
+        end if;
+      end loop;
+
+      target <= v_target;
       wait for 0 ns;
     end if;
+
     target  <= init_value;
   end;
 
@@ -5099,63 +5187,59 @@ package body methods_pkg is
   --------------------------------------------
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_percentage : in    natural range 1 to 99 := 50
   ) is
     -- Making sure any rounding error after calculating period/2 is not accumulated.
     constant C_FIRST_HALF_CLK_PERIOD : time := clock_period * clock_high_percentage/100;
-    variable v_clock_count : natural := 0;
   begin
-    clock_count <= v_clock_count;
+    clock_count <= 0;
 
     loop
-      clock_signal <= '1';
+      clock_signal <= '0'; -- Should start on 0
       wait for C_FIRST_HALF_CLK_PERIOD;
-      clock_signal <= '0';
+
+      -- Update clock_count when clock_signal is set to '1'
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+      clock_signal <= '1';
       wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
 
-      if v_clock_count < natural'right then
-        v_clock_count := v_clock_count + 1;
-      else -- Wrap when reached max value of natural
-        v_clock_count := 0;
-      end if;
-
-      clock_count <= v_clock_count;
     end loop;
   end;
 
   --------------------------------------------
   -- Clock generator overload:
-  -- - Count variable (clock_count) is added as an output. Wraps when reaching max value of
+  -- - Counter clock_count is given as an output. Wraps when reaching max value of
   --   natural type.
   -- - Set duty cycle by setting clock_high_time.
   --------------------------------------------
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
-    signal   clock_count           : out   natural;
+    signal   clock_count           : inout natural;
     constant clock_period          : in    time;
     constant clock_high_time       : in    time
   ) is
-    variable v_clock_count : natural := 0;
   begin
-    clock_count <= v_clock_count;
-
+    clock_count <= 0;
     check_value(clock_high_time < clock_period, TB_ERROR, "clock_generator: parameter clock_high_time must be lower than parameter clock_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
 
     loop
-      clock_signal <= '1';
-      wait for clock_high_time;
       clock_signal <= '0';
+      wait for clock_high_time;
+
+      if clock_count < natural'right then
+        clock_count <= clock_count + 1;
+      else -- Wrap when reached max value of natural
+        clock_count <= 0;
+      end if;
+      clock_signal <= '1';
       wait for (clock_period - clock_high_time);
 
-      if v_clock_count < natural'right then
-        v_clock_count := v_clock_count + 1;
-      else -- Wrap when reached max value of natural
-        v_clock_count := 0;
-      end if;
-
-      clock_count <= v_clock_count;
     end loop;
   end;
 

@@ -74,6 +74,8 @@ package types_pkg is
   
   type t_deprecate_setting is (NO_DEPRECATE, DEPRECATE_ONCE, ALWAYS_DEPRECATE);
   type t_deprecate_list is array(0 to 9) of string(1 to 100);
+
+  type t_action_when_transfer_is_done is (RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_AFTER_TRANSFER);
   
   type t_global_ctrl is record
     attention  : t_alert_attention;
@@ -100,6 +102,13 @@ package types_pkg is
     is_active  => true
   );
   type t_sync_flag_record_array is array (1 to C_NUM_SYNC_FLAGS) of t_sync_flag_record;
+
+
+  type t_uvvm_status is record
+    no_unexpected_simulation_warnings_or_worse  : natural range 0 to 1;
+    no_unexpected_simulation_errors_or_worse    : natural range 0 to 1;
+  end record t_uvvm_status;
+
 
   -------------------------------------
   -- BFMs and above

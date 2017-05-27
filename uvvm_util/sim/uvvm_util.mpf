@@ -314,7 +314,7 @@ DatasetSeparator = :
 
 ; Control VHDL files opened for write.
 ;   0 = Buffered, 1 = Unbuffered
-UnbufferedOutput = 0
+UnbufferedOutput = 1
 
 ; Control the number of VHDL files open concurrently.
 ; This number should always be less than the current ulimit

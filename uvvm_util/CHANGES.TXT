@@ -3,6 +3,29 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.1.0
+----------
+Released: 2015-05-16
+- Fixed bug in clock_generator method
+- Added Status record to indicate the success or failure of a simulation
+- Updated QuickRefs
+- gen_pulse now supports don't care for SLVs
+
+
+
+v2.0.5
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+- Improved clock_generator procedure
+- Added dedicated functionality for signed/unsigned check_value_in_range()
+- Added function matching_values() to external calls
+
+v2.0.4
+----------
+Released: 2017-03-16
+- Updated Modelsim .mpf file and documentation
+
 v2.0.3
 ----------
 Released: 2017-02-13

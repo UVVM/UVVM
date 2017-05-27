@@ -68,6 +68,12 @@ package vvc_cmd_pkg is
     -- If you need support for more bits per data byte, replace this with a wider type:
     user_array              : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
     user_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One user_array entry per word (clock cycle)
+    strb_array              : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    strb_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One strb_array entry per word (clock cycle)
+    id_array              : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    id_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One id_array entry per word (clock cycle)
+    dest_array              : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    dest_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One dest_array entry per word (clock cycle)
 
     -- Common VVC fields
     operation             : t_operation;
@@ -89,6 +95,12 @@ package vvc_cmd_pkg is
     data_array_length       => 1,
     user_array             => (others => (others => '0')),
     user_array_length       => 1,
+    strb_array             => (others => (others => '0')),
+    strb_array_length       => 1,
+    id_array             => (others => (others => '0')),
+    id_array_length       => 1,
+    dest_array             => (others => (others => '0')),
+    dest_array_length       => 1,
     -- Common VVC fields
     operation             => NO_OPERATION,
     proc_call             => (others => NUL),
@@ -124,6 +136,9 @@ package vvc_cmd_pkg is
     data_array   : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
     data_length  : natural;
     user_array   : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    strb_array   : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    id_array     : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    dest_array   : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
   end record;
   
   type t_vvc_result_queue_element is record

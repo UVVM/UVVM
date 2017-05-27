@@ -1269,22 +1269,25 @@ package body string_methods_pkg is
   begin
     for i in val'range loop
       v_ascii_pos := character'pos(val(i));
-        if (v_ascii_pos < 32 and v_ascii_pos /= 10) or -- NUL, SOH, STX etc, LF(10) is not removed.
-          (v_ascii_pos >= 128 and v_ascii_pos < 160) then -- C128 to C159
-          -- illegal char
-          null;
-        else
-          -- legal char
-          v_char_idx := v_char_idx + 1;
-          v_new_string(v_char_idx) := val(i);
-        end if;
-      end loop;
+      if (v_ascii_pos < 32 and v_ascii_pos /= 10) or -- NUL, SOH, STX etc, LF(10) is not removed.
+        (v_ascii_pos >= 128 and v_ascii_pos < 160) then -- C128 to C159
+        -- illegal char
+        null;
+      else
+        -- legal char
+        v_char_idx := v_char_idx + 1;
+        v_new_string(v_char_idx) := val(i);
+      end if;
+    end loop;
+
     if v_char_idx = 0 then
       return "";
     else
       return v_new_string(1 to v_char_idx);
     end if;
   end;
+
+
 
   function add_msg_delimiter(
     msg : string

@@ -184,6 +184,7 @@ begin
     variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
     variable v_command_is_bfm_access      : boolean;
     variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    
   begin
 
     -- 0. Initialize the process prior to first command
@@ -237,7 +238,7 @@ begin
         --===================================
         when MASTER_TRANSMIT_AND_RECEIVE =>
           transaction_info.tx_data(GC_DATA_WIDTH-1 downto 0) := v_cmd.data(GC_DATA_WIDTH-1 downto 0);        
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "spi_master_transmit_and_receive() called with to wide data. " & v_cmd.msg);
           
           if GC_MASTER_MODE then
@@ -258,7 +259,7 @@ begin
 
         when MASTER_TRANSMIT_AND_CHECK =>
           transaction_info.tx_data(GC_DATA_WIDTH-1 downto 0) := v_cmd.data(GC_DATA_WIDTH-1 downto 0);
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "spi_master_transmit_and_check() called with to wide data. " & v_cmd.msg);
 
           if GC_MASTER_MODE then
@@ -275,7 +276,7 @@ begin
 
         when MASTER_TRANSMIT_ONLY =>
           transaction_info.tx_data(GC_DATA_WIDTH-1 downto 0) := v_cmd.data(GC_DATA_WIDTH-1 downto 0);
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "spi_master_transmit() called with to wide data. " & v_cmd.msg);
           
           if GC_MASTER_MODE then        -- master transmit
@@ -294,11 +295,11 @@ begin
           if GC_MASTER_MODE then        -- master receive
             -- Call the corresponding procedure in the BFM package.
             spi_master_receive(rx_data       => v_result(GC_DATA_WIDTH-1 downto 0),
-                               msg           => format_msg(v_cmd), 
-                               spi_if        => spi_vvc_if,
-                               scope         => C_SCOPE,
-                               msg_id_panel  => vvc_config.msg_id_panel,
-                               config        => vvc_config.bfm_config);
+                                msg           => format_msg(v_cmd), 
+                                spi_if        => spi_vvc_if,
+                                scope         => C_SCOPE,
+                                msg_id_panel  => vvc_config.msg_id_panel,
+                                config        => vvc_config.bfm_config);
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                         cmd_idx      => v_cmd.cmd_idx,
@@ -308,29 +309,29 @@ begin
           end if;
 
         when MASTER_CHECK_ONLY =>
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "spi_master_check() called with to wide data. " & v_cmd.msg);
           
           if GC_MASTER_MODE then        -- master check
             -- Call the corresponding procedure in the BFM package.
             spi_master_check(data_exp      => v_normalised_data,
-                             msg           => format_msg(v_cmd), 
-                             spi_if        => spi_vvc_if,
-                             alert_level   => v_cmd.alert_level,
-                             scope         => C_SCOPE,
-                             msg_id_panel  => vvc_config.msg_id_panel,
-                             config        => vvc_config.bfm_config);
+                              msg           => format_msg(v_cmd), 
+                              spi_if        => spi_vvc_if,
+                              alert_level   => v_cmd.alert_level,
+                              scope         => C_SCOPE,
+                              msg_id_panel  => vvc_config.msg_id_panel,
+                              config        => vvc_config.bfm_config);
           else  -- attempted master check when in slave mode
             alert(error, "Master check called when VVC is in slave mode.", C_SCOPE);
           end if;
 
         when SLAVE_TRANSMIT_AND_RECEIVE =>
           transaction_info.tx_data(GC_DATA_WIDTH-1 downto 0) := v_cmd.data(GC_DATA_WIDTH-1 downto 0);        
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "spi_slave_transmit_and_receive() called with to wide data. " & v_cmd.msg);         
           
           if not GC_MASTER_MODE then
-            spi_slave_transmit_and_receive(tx_data       => v_normalised_data, -- v_cmd.data(GC_DATA_WIDTH-1 downto 0),
+            spi_slave_transmit_and_receive(tx_data       => v_normalised_data,
                                            rx_data       => v_result,
                                            msg           => format_msg(v_cmd), 
                                            spi_if        => spi_vvc_if,
@@ -342,16 +343,16 @@ begin
                                                          cmd_idx      => v_cmd.cmd_idx,
                                                          result       => v_result );
           else  -- attempted slave transmit when in master mode
-            alert(error, "Slave transmit and receive called when VVC is in master mode.", C_SCOPE);
+            alert(note, "Slave transmit and receive called when VVC is in master mode.", C_SCOPE);
           end if;
 
         when SLAVE_TRANSMIT_AND_CHECK =>
           transaction_info.tx_data(GC_DATA_WIDTH-1 downto 0) := v_cmd.data(GC_DATA_WIDTH-1 downto 0);        
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "spi_slave_transmit_and_check() called with to wide data. " & v_cmd.msg);
 
           if not GC_MASTER_MODE then
-            spi_slave_transmit_and_check(tx_data       => v_normalised_data, -- v_cmd.data(GC_DATA_WIDTH-1 downto 0),
+            spi_slave_transmit_and_check(tx_data       => v_normalised_data,
                                          data_exp      => v_cmd.data_exp(GC_DATA_WIDTH-1 downto 0),
                                          msg           => format_msg(v_cmd), 
                                          spi_if        => spi_vvc_if,
@@ -365,17 +366,17 @@ begin
 
         when SLAVE_TRANSMIT_ONLY =>
           transaction_info.tx_data(GC_DATA_WIDTH-1 downto 0) := v_cmd.data(GC_DATA_WIDTH-1 downto 0);        
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "spi_slave_transmit() called with to wide data. " & v_cmd.msg);
            
           if not GC_MASTER_MODE then    -- slave transmit
             -- Call the corresponding procedure in the BFM package.
             spi_slave_transmit(tx_data       => v_normalised_data,
-                               msg           => format_msg(v_cmd), 
-                               spi_if        => spi_vvc_if,
-                               scope         => C_SCOPE,
-                               msg_id_panel  => vvc_config.msg_id_panel,
-                               config        => vvc_config.bfm_config);
+                                msg           => format_msg(v_cmd), 
+                                spi_if        => spi_vvc_if,
+                                scope         => C_SCOPE,
+                                msg_id_panel  => vvc_config.msg_id_panel,
+                                config        => vvc_config.bfm_config);
           else  -- attempted slave transmit when in master mode
             alert(error, "Slave transmit called when VVC is in master mode.", C_SCOPE);
           end if;
@@ -398,7 +399,7 @@ begin
           end if;   
           
         when SLAVE_CHECK_ONLY =>
-          -- Normalise address and data
+          -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "spi_slave_check() called with to wide data. " & v_cmd.msg);
           
           if not GC_MASTER_MODE then    -- slave check

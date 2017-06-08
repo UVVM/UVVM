@@ -1,0 +1,7 @@
+Bitvis UART - Overview on Versions and Changes
+==============================================================
+
+v1.0.4
+----------
+Released: 2017-06-08
+- Added compile order file to script folder

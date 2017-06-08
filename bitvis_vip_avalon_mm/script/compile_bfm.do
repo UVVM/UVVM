@@ -33,11 +33,11 @@ quietly quit -sim
 
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} { 
-  quietly set version [eval "vsim -version"]
-  # puts "Version is: $version"
-  if {[regexp -nocase {modelsim} $version]} {
+  quietly set simulator_version [eval "vsim -version"]
+  # puts "Version is: $simulator_version"
+  if {[regexp -nocase {modelsim} $simulator_version]} {
     quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $version]} {
+  } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
     puts "Unknown simulator. Attempting use use Modelsim commands."

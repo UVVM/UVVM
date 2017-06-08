@@ -381,6 +381,8 @@ package body axistream_bfm_pkg is
     check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, proc_call); 
     check_value(axistream_if.tid'length   <= C_MAX_TID_BITS, TB_ERROR,   "Sanity check: Check that C_MAX_TID_BITS is high enough for axistream_if.tid.", scope, ID_NEVER, msg_id_panel, proc_call); 
     check_value(axistream_if.tdest'length <= C_MAX_TDEST_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TDEST_BITS is high enough for axistream_if.tdest.", scope, ID_NEVER, msg_id_panel, proc_call); 
+    check_value(axistream_if.tkeep'length = (axistream_if.tdata'length/8), TB_ERROR, "Sanity check: Check that width of tkeep equals number of bytes in tdata.", scope, ID_NEVER, msg_id_panel, proc_call); 
+    check_value(axistream_if.tstrb'length = (axistream_if.tdata'length/8), TB_ERROR, "Sanity check: Check that width of tstrb equals number of bytes in tdata.", scope, ID_NEVER, msg_id_panel, proc_call); 
     check_value(data_array'ascending,                TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(user_array'ascending,                TB_ERROR, "Sanity check: Check that user_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(strb_array'ascending,                TB_ERROR, "Sanity check: Check that strb_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -631,7 +633,14 @@ package body axistream_bfm_pkg is
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
-    check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
+    check_value(config.clock_period /= 0 ns,                    TB_ERROR, "Sanity check: Check that bfm_config.clock_period is set", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS,  TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
+    check_value(axistream_if.tdata'length >= 8,                 TB_ERROR, "Sanity check: Check that tdata is at least one byte wide. Narrower tdata is not supported.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(axistream_if.tdata'length mod 8 = 0,            TB_ERROR, "Sanity check: Check that tdata is an integer number of bytes wide.",                         scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(axistream_if.tid'length   <= C_MAX_TID_BITS,    TB_ERROR, "Sanity check: Check that C_MAX_TID_BITS is high enough for axistream_if.tid.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
+    check_value(axistream_if.tdest'length <= C_MAX_TDEST_BITS,  TB_ERROR, "Sanity check: Check that C_MAX_TDEST_BITS is high enough for axistream_if.tdest.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
+    check_value(axistream_if.tkeep'length = (axistream_if.tdata'length/8), TB_ERROR, "Sanity check: Check that width of tkeep equals number of bytes in tdata.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
+    check_value(axistream_if.tstrb'length = (axistream_if.tdata'length/8), TB_ERROR, "Sanity check: Check that width of tstrb equals number of bytes in tdata.", scope, ID_NEVER, msg_id_panel, v_proc_call.all); 
     check_value(data_array'ascending, TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for knowing which byte is sent first", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(user_array'ascending, TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(strb_array'ascending, TB_ERROR, "Sanity check: Check that strb_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);

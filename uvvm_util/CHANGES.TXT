@@ -3,15 +3,20 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.1.1
+----------
+Released: 2017-06-08
+- Corrected year in v2.1.0 changes
+- Changed variable name in compile script to fix error with Aldex Active-HDL
+- Added compile order file to script folder
+
 v2.1.0
 ----------
-Released: 2015-05-16
+Released: 2017-05-16
 - Fixed bug in clock_generator method
 - Added Status record to indicate the success or failure of a simulation
 - Updated QuickRefs
 - gen_pulse now supports don't care for SLVs
-
-
 
 v2.0.5
 ----------

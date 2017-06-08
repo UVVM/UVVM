@@ -1,6 +1,13 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v3.0.5
+----------
+Released: 2017-06-08
+- Added more sanity checks
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
 v3.0.4
 ----------
 Released: 2017-05-16

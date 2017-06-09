@@ -1,6 +1,12 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.0.1
+----------
+Released: 2017-06-08
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
 v1.0.0
 ----------
 Released: 2017-04-28

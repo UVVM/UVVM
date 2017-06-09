@@ -1,6 +1,12 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.0.6
+----------
+Released: 2017-06-07
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
 v2.0.5
 ----------
 Released: 2017-04-28

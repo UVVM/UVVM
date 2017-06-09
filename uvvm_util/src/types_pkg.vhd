@@ -76,6 +76,8 @@ package types_pkg is
   type t_deprecate_list is array(0 to 9) of string(1 to 100);
 
   type t_action_when_transfer_is_done is (RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_AFTER_TRANSFER);
+
+  type t_active_level is (ACTIVE_HIGH, ACTIVE_LOW);
   
   type t_global_ctrl is record
     attention  : t_alert_attention;

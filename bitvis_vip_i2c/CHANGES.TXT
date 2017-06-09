@@ -1,6 +1,12 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.0.5
+----------
+Released: 2017-06-08
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
 v2.0.4
 ----------
 Released: 2017-04-28

@@ -104,11 +104,11 @@ package vvc_methods_pkg is
   type t_transaction_info_array is array (natural range <>) of t_transaction_info;
 
   constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    tx_data                => (others => '0'),
-    rx_data                => (others => '0'),
-    data_exp               => (others => '0'),
-    operation              =>  NO_OPERATION,
-    msg                    => (others => ' ')
+    tx_data         => (others => '0'),
+    rx_data         => (others => '0'),
+    data_exp        => (others => '0'),
+    operation       =>  NO_OPERATION,
+    msg             => (others => ' ')
   );
     
 
@@ -128,6 +128,7 @@ package vvc_methods_pkg is
   ----------------------------------------------------------
   -- SPI_MASTER
   ----------------------------------------------------------
+  -- Single-byte
   procedure spi_master_transmit_and_receive(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
@@ -277,7 +278,7 @@ package body vvc_methods_pkg is
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_ONLY);
-    shared_vvc_cmd.data         := v_normalised_data;   
+    shared_vvc_cmd.data         := v_normalised_data;  
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -417,10 +418,6 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.alert_level  := alert_level;
     send_command_to_vvc(VVCT);
   end procedure;
-
-
-
-  
 
 
 end package body vvc_methods_pkg;

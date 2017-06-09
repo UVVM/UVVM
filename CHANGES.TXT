@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2.4.1
+----------
+Released: 2017-06-08
+- Added compile order file in script folder for each VIP
+- Fixed Aldec Active-HDL bug in VIP compile scripts
+
+
 v2.4.0
 ----------
 Released: 2017-05-16

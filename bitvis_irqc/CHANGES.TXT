@@ -1,0 +1,9 @@
+Bitvis IRQC - Overview on Versions and Changes
+==============================================================
+
+v1.0.4
+----------
+Released: 2017-06-08
+- Renamed sim/compile_order.txt to compile_and_run.txt
+- Added compile order file to script folder
+

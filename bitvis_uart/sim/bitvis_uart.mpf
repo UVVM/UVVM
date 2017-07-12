@@ -321,7 +321,7 @@ DatasetSeparator = :
 
 ; Control VHDL files opened for write.
 ;   0 = Buffered, 1 = Unbuffered
-UnbufferedOutput = 0
+UnbufferedOutput = 1
 
 ; Control the number of VHDL files open concurrently.
 ; This number should always be less than the current ulimit
@@ -439,17 +439,17 @@ Project_DefaultLib = work
 Project_SortMethod = unused
 Project_Files_Count = 6
 Project_File_0 = ../script/1_compile_src.do
-Project_File_P_0 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
+Project_File_P_0 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
 Project_File_1 = ../script/compile_all_and_sim_uart_vvc_tb.do
-Project_File_P_1 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
+Project_File_P_1 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
 Project_File_2 = ../script/3_compile_tb_dep_ex_util.do
-Project_File_P_2 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
+Project_File_P_2 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
 Project_File_3 = ../script/5_simulate_uart_vvc_tb.do
-Project_File_P_3 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
+Project_File_P_3 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
 Project_File_4 = ../script/4_compile_uart_vvc_tb.do
-Project_File_P_4 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
+Project_File_P_4 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
 Project_File_5 = ../script/2_compile_util.do
-Project_File_P_5 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
+Project_File_P_5 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
 Project_Sim_Count = 0
 Project_Folder_Count = 0
 Echo_Compile_Output = 0
@@ -498,4 +498,4 @@ DEBUGDATABASE_CustomDoubleClick =
 DEBUGARCHIVE_DoubleClick = Edit
 DEBUGARCHIVE_CustomDoubleClick = 
 Project_Major_Version = 10
-Project_Minor_Version = 3
+Project_Minor_Version = 4

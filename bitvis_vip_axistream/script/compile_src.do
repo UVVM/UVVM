@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -33,11 +33,11 @@ quietly quit -sim
 
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} { 
-  quietly set version [eval "vsim -version"]
-  # puts "Version is: $version"
-  if {[regexp -nocase {modelsim} $version]} {
+  quietly set simulator_version [eval "vsim -version"]
+  # puts "Version is: $simulator_version"
+  if {[regexp -nocase {modelsim} $simulator_version]} {
     quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $version]} {
+  } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
     puts "Unknown simulator. Attempting use use Modelsim commands."
@@ -82,9 +82,9 @@ vlib $vip_axistream_part_path/sim/$lib_name
 vmap $lib_name $vip_axistream_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -work $lib_name"
+  set compdirectives "-2008 -suppress 1346,1236,1090 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -dbg -work $lib_name"
+  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn DAGGEN_0001 -dbg -work $lib_name"
 }
 
 eval vcom  $compdirectives  $vip_axistream_part_path/src/axistream_bfm_pkg.vhd

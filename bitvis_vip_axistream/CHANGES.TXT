@@ -1,7 +1,92 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v3.0.5
+----------
+Released: 2017-06-08
+- Added more sanity checks
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
+v3.0.4
+----------
+Released: 2017-05-16
+- Updated handling of TKEEP in BFM
+
+v3.0.3
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+
+v3.0.2
+----------
+Released: 2017-04-04
+- Updated the BFM init functions to fix compile error in GHDL
+
+
+v3.0.1
+----------
+Released: 2017-03-27
+- In axistream_vvc: When calling a BFM procedure, always use the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference
+
+
+v3.0.0
+----------
+Released: 2017-03-16
+- Updated documentation
+- Added support for TDEST, TID, TSTRB. 
+  - Required changes by user : 
+    - When declaring the axistream interface signal, these new signals must be contrained, for example:
+    
+        signal axistream_if_m : t_axistream_if(tdata(GC_DATA_WIDTH -1 downto 0),
+                                               tkeep((GC_DATA_WIDTH/8)-1 downto 0),
+                                               tuser(GC_USER_WIDTH -1 downto 0),
+                                               tstrb(GC_STRB_WIDTH-1 downto 0),   -- new!
+                                               tid  (GC_TID_WIDTH-1 downto 0),    -- new!
+                                               tdest(C_TDEST_WIDTH-1 downto 0)    -- new!
+                                              );
+
+    - Calls to init_axistream_if_signals() must be updated, if any.  
+
+
+v2.0.3
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+
+
+v2.0.2
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing
+
+
+v2.0.1
+----------
+Released: 2017-01-27
+
+- Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
+- Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
+- Added AWAIT_ANY_COMPLETION. 
+- Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
+-  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
+-  - updated call to store_result()
+- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
+- Bugfix in AxiStream BFM : The transmit procedure did not sample tready at the rising edge of clock.
+
+
+VVC changes
+----------
+- Renamed transaction_info_for_waveview to transaction_info
+
 ----------------------------------------------------------------------
+v1.0.2
+----------
+Released: 2016-10-28
+
+VVC changes
+----------
+- transaction_for_waveview now shows NO_OPERATION after a transaction has been completed
 
 v1.0.1
 ----------

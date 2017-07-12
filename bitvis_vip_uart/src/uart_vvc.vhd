@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -21,19 +21,19 @@ library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 use work.uart_bfm_pkg.all;
+use work.vvc_cmd_pkg.all;
 
 --=================================================================================================
 entity uart_vvc is
   generic (
-    GC_DATA_WIDTH                           : natural           := 8;
-    GC_INSTANCE_IDX                         : natural           := 1;
-    GC_UART_CONFIG                          : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                  : natural           := 1000; 
-    GC_CMD_QUEUE_COUNT_THRESHOLD            : natural           := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level     := WARNING
+    GC_DATA_WIDTH                           : natural range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 8;
+    GC_INSTANCE_IDX                         : natural                                      := 1;
+    GC_UART_CONFIG                          : t_uart_bfm_config                            := C_UART_BFM_CONFIG_DEFAULT;
+    GC_CMD_QUEUE_COUNT_MAX                  : natural                                      := 1000; 
+    GC_CMD_QUEUE_COUNT_THRESHOLD            : natural                                      := 950;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level                                := WARNING
   );
   port (
-    clk                 : in std_logic;
     uart_vvc_rx         : in std_logic;
     uart_vvc_tx         : inout std_logic
   );
@@ -60,7 +60,6 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY     => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
     )
     port map(
-      clk                 => clk,
       uart_vvc_rx         => uart_vvc_rx
     );
 
@@ -76,7 +75,6 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY     => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
     )
     port map(
-      clk                 => clk,
       uart_vvc_tx         => uart_vvc_tx
     );
 

@@ -1,0 +1,20 @@
+Bitvis VIP SPI - Overview on Versions and Changes
+==============================================================
+
+v2.0.3
+----------
+Released: 2017-06-08
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
+v2.0.2
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+
+v2.0.1
+----------
+Released: 2017-04-18
+Initial release to Github
+
+----------------------------------------------------------------------

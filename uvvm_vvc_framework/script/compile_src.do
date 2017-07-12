@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -33,11 +33,11 @@ quietly quit -sim
 
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} { 
-  quietly set version [eval "vsim -version"]
-  # puts "Version is: $version"
-  if {[regexp -nocase {modelsim} $version]} {
+  quietly set simulator_version [eval "vsim -version"]
+  # puts "Version is: $simulator_version"
+  if {[regexp -nocase {modelsim} $simulator_version]} {
     quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $version]} {
+  } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
     puts "Unknown simulator. Attempting use use Modelsim commands."
@@ -83,9 +83,9 @@ vlib $uvvm_vvc_framework_part_path/sim/$lib_name
 vmap $lib_name $uvvm_vvc_framework_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -work $lib_name"
+  set compdirectives "-2008 -suppress 1346 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -dbg -work $lib_name"
+  set compdirectives "-2008 -nowarn COMP96_0564 -dbg -work $lib_name"
 }
 
 echo "\n\n\n=== Compiling $lib_name source\n"
@@ -94,3 +94,4 @@ eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_generic_queue_
 eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_queue_pkg.vhd
 eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_fifo_pkg.vhd
 eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_data_stack_pkg.vhd
+eval vcom  $compdirectives   $uvvm_vvc_framework_part_path/src/ti_uvvm_engine.vhd

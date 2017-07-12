@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -74,11 +74,9 @@ package ti_data_queue_pkg is
     --  - Parameters: 
     --        - queue_idx - The index of the queue (natural)
     --                      that shall be flushed.  
-    --        - scope     - Log scope for all alerts/logs
     --
     procedure flush(
-      queue_idx : natural;
-      scope     : string := "data_queue"
+      queue_idx : natural
       );
 
     ------------------------------------------
@@ -95,12 +93,10 @@ package ti_data_queue_pkg is
     --        - queue_idx - The index of the queue (natural) 
     --                      that shall be pushed to.  
     --        - data      - The data that shall be pushed (slv)
-    --        - scope     - Log scope for all alerts/logs
     --
     procedure push_back(
       queue_idx : natural;
-      data      : std_logic_vector;
-      scope     : string := "data_queue"
+      data      : std_logic_vector
       );
 
     ------------------------------------------
@@ -113,7 +109,6 @@ package ti_data_queue_pkg is
     --        - queue_idx          - The index of the queue (natural) 
     --                               that shall be read.  
     --        - entry_size_in_bits - The size of the returned slv (natural)
-    --        - scope              - Log scope for all alerts/logs
     --
     --  - Returns: The data from the front of the queue (slv). The size of the 
     --             return data is given by the entry_size_in_bits parameter.
@@ -125,8 +120,7 @@ package ti_data_queue_pkg is
     --
     impure function peek_front(
       queue_idx          : natural;
-      entry_size_in_bits : natural;
-      scope              : string := "data_queue"
+      entry_size_in_bits : natural
       ) return std_logic_vector;
 
     ------------------------------------------
@@ -139,7 +133,6 @@ package ti_data_queue_pkg is
     --        - queue_idx          - The index of the queue (natural) 
     --                               that shall be read.  
     --        - entry_size_in_bits - The size of the returned slv (natural)
-    --        - scope              - Log scope for all alerts/logs
     --
     --  - Returns: The data from the back of the queue (slv). The size of the 
     --             return data is given by the entry_size_in_bits parameter.
@@ -151,8 +144,7 @@ package ti_data_queue_pkg is
     --
     impure function peek_back(
       queue_idx          : natural;
-      entry_size_in_bits : natural;
-      scope              : string := "data_queue"
+      entry_size_in_bits : natural
       ) return std_logic_vector;
 
     ------------------------------------------
@@ -165,7 +157,6 @@ package ti_data_queue_pkg is
     --        - queue_idx          - The index of the queue (natural) 
     --                               that shall be read.  
     --        - entry_size_in_bits - The size of the returned slv (natural)
-    --        - scope              - Log scope for all alerts/logs
     --
     --  - Returns: The data from the back of the queue (slv). The size of the 
     --             return data is given by the entry_size_in_bits parameter.
@@ -177,8 +168,7 @@ package ti_data_queue_pkg is
     --
     impure function pop_back(
       queue_idx          : natural;
-      entry_size_in_bits : natural;
-      scope              : string := "data_queue"
+      entry_size_in_bits : natural
       ) return std_logic_vector;
 
     ------------------------------------------
@@ -191,7 +181,6 @@ package ti_data_queue_pkg is
     --        - queue_idx          - The index of the queue (natural) 
     --                               that shall be read.  
     --        - entry_size_in_bits - The size of the returned slv (natural)
-    --        - scope              - Log scope for all alerts/logs
     --
     --  - Returns: The data from the front of the queue (slv). The size of the 
     --             return data is given by the entry_size_in_bits parameter.
@@ -203,8 +192,7 @@ package ti_data_queue_pkg is
     --
     impure function pop_front(
       queue_idx          : natural;
-      entry_size_in_bits : natural;
-      scope              : string := "data_queue"
+      entry_size_in_bits : natural
       ) return std_logic_vector;
 
     ------------------------------------------
@@ -214,15 +202,13 @@ package ti_data_queue_pkg is
     -- currently occupying the buffer given by queue_idx.
     -- 
     --  - Parameters: 
-    --        - queue_idx          - The index of the queue (natural)  
-    --        - scope              - Log scope for all alerts/logs
+    --        - queue_idx          - The index of the queue (natural)
     --
     --  - Returns: The number of elements occupying the queue (natural).
     --             
     --
     impure function get_count(
-      queue_idx : natural;
-      scope     : string := "data_queue"
+      queue_idx : natural
       ) return natural;
 
     ------------------------------------------
@@ -232,16 +218,14 @@ package ti_data_queue_pkg is
     -- of elements that can occupy the buffer given by queue_idx.
     --
     --  - Parameters: 
-    --        - queue_idx          - The index of the queue (natural)  
-    --        - scope              - Log scope for all alerts/logs
+    --        - queue_idx          - The index of the queue (natural)
     --
     --  - Returns: The maximum number of elements that can be placed
     --             in the queue (natural).
     --             
     --
     impure function get_queue_count_max(
-      queue_idx : natural;
-      scope     : string := "data_queue"
+      queue_idx : natural
       ) return natural;
 
     ------------------------------------------
@@ -290,6 +274,9 @@ package body ti_data_queue_pkg is
    --                     a given queue has data pushed or popped.
    variable v_first_idx : t_buffer_natural_array := (others => 0);
    variable v_last_idx  : t_buffer_natural_array := (others => 0);
+   
+   type t_string_pointer is access string;
+   variable v_scope : t_string_pointer := NULL;
 
    ------------------------------------------
    -- init_queue
@@ -301,8 +288,12 @@ package body ti_data_queue_pkg is
      variable vr_queue_idx       : natural;
      variable vr_queue_idx_found : boolean := false;
    begin
+     if v_scope = NULL then
+       v_scope := new string'(scope);
+     end if;
+     
      if not check_value(v_next_available_idx < C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER, TB_ERROR,
-                        "init_queue called, but no more space in buffer!", scope, ID_NEVER)
+                        "init_queue called, but no more space in buffer!", v_scope.all, ID_NEVER)
      then
        return 0;
      end if;
@@ -322,7 +313,7 @@ package body ti_data_queue_pkg is
 
      -- Verify that an available queue idx was found, else trigger alert and return 0
      if not check_value(vr_queue_idx_found, TB_ERROR,
-                        "init_queue called, but all queues have already been initialized!", scope, ID_NEVER)
+                        "init_queue called, but all queues have already been initialized!", v_scope.all, ID_NEVER)
      then
        return 0;
      end if;
@@ -331,7 +322,7 @@ package body ti_data_queue_pkg is
      if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (v_next_available_idx - 1) then  -- less than or equal to the remaining total buffer space available
        v_queue_size_in_bits(vr_queue_idx) := queue_size_in_bits;
      else
-       alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", scope);
+       alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", v_scope.all);
        v_queue_size_in_bits(vr_queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - v_next_available_idx;  -- Set to remaining available bits
      end if;
 
@@ -343,7 +334,7 @@ package body ti_data_queue_pkg is
 
      v_next_available_idx := v_max_idx(vr_queue_idx) + 1;
 
-     log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(vr_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(vr_queue_idx)) & ".", scope);
+     log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(vr_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(vr_queue_idx)) & ".", v_scope.all);
 
      -- Clear the buffer just to be sure
      flush(vr_queue_idx);
@@ -361,13 +352,16 @@ package body ti_data_queue_pkg is
     scope              : string := "data_queue"
     ) is
   begin
+     if v_scope = NULL then
+       v_scope := new string'(scope);
+     end if;
     if not v_queue_initialized(queue_idx) then
 
       -- Set buffer size for this buffer to queue_size_in_bits
       if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (v_next_available_idx - 1) then  -- less than or equal to the remaining total buffer space available
         v_queue_size_in_bits(queue_idx) := queue_size_in_bits;
       else
-        alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", scope);
+        alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", v_scope.all);
         v_queue_size_in_bits(queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - v_next_available_idx;  -- Set to remaining available bits
       end if;
 
@@ -382,12 +376,12 @@ package body ti_data_queue_pkg is
       -- Tag this buffer as initialized
       v_queue_initialized(queue_idx) := true;
 
-      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(queue_idx)) & ".", scope);
+      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(queue_idx)) & ".", v_scope.all);
 
       -- Clear the buffer just to be sure
       flush(queue_idx);
     else
-      alert(TB_ERROR, "init_queue called, but the desired buffer index is already in use! No action taken.", scope);
+      alert(TB_ERROR, "init_queue called, but the desired buffer index is already in use! No action taken.", v_scope.all);
       return;
     end if;
   end procedure;
@@ -397,13 +391,12 @@ package body ti_data_queue_pkg is
   ------------------------------------------
   procedure push_back(
     queue_idx : natural;
-    data      : std_logic_vector;
-    scope     : string := "data_queue"
+    data      : std_logic_vector
     ) is
     alias a_data : std_logic_vector(data'length - 1 downto 0) is data;
   begin
     if check_value(v_queue_initialized(queue_idx), TB_ERROR,
-                   "push_back called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER)
+                   "push_back called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER)
     then
       for i in a_data'right to a_data'left loop  -- From right to left since LSB shall be first in the queue. 
         shared_data_buffer(v_last_idx(queue_idx)) := a_data(i);
@@ -416,7 +409,7 @@ package body ti_data_queue_pkg is
         v_count(queue_idx) := v_count(queue_idx) + 1;
       end loop;
 
-      log(ID_UVVM_DATA_QUEUE, "Data " & to_string(data, HEX) & " pushed to back of queue " & to_string(queue_idx) & " (index " & to_string(v_last_idx(queue_idx)) & "). Fill level is " & to_string(v_count(queue_idx)) & "/" & to_string(v_queue_size_in_bits(queue_idx)) & ".", scope);
+      log(ID_UVVM_DATA_QUEUE, "Data " & to_string(data, HEX) & " pushed to back of queue " & to_string(queue_idx) & " (index " & to_string(v_last_idx(queue_idx)) & "). Fill level is " & to_string(v_count(queue_idx)) & "/" & to_string(v_queue_size_in_bits(queue_idx)) & ".", v_scope.all);
     end if;
   end procedure;
 
@@ -424,11 +417,10 @@ package body ti_data_queue_pkg is
   -- flush
   ------------------------------------------
   procedure flush(
-    queue_idx : natural;
-    scope     : string := "data_queue"
+    queue_idx : natural
     ) is
   begin
-    check_value(v_queue_initialized(queue_idx), TB_WARNING, "flush called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER);
+    check_value(v_queue_initialized(queue_idx), TB_WARNING, "flush called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
 
     shared_data_buffer(v_max_idx(queue_idx) downto v_min_idx(queue_idx)) := (others => '0');
     v_first_idx(queue_idx)                                               := v_min_idx(queue_idx);
@@ -442,15 +434,14 @@ package body ti_data_queue_pkg is
   ------------------------------------------
   impure function peek_front(
     queue_idx          : natural;
-    entry_size_in_bits : natural;
-    scope              : string := "data_queue"
+    entry_size_in_bits : natural
     ) return std_logic_vector is
     variable v_return_entry : std_logic_vector(entry_size_in_bits - 1 downto 0) := (others => '0');
     variable v_current_idx  : natural;
   begin
-    check_value(v_queue_initialized(queue_idx), TB_ERROR, "peek_front() called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER);
-    check_value(v_count(queue_idx) > 0, TB_WARNING, "peek_front() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", scope, ID_NEVER);
-    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "peek_front called, but entry size is larger than buffer size!", scope, ID_NEVER);
+    check_value(v_queue_initialized(queue_idx), TB_ERROR, "peek_front() called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
+    check_value(v_count(queue_idx) > 0, TB_WARNING, "peek_front() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", v_scope.all, ID_NEVER);
+    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "peek_front called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
 
     v_current_idx := v_first_idx(queue_idx);
 
@@ -473,15 +464,14 @@ package body ti_data_queue_pkg is
   ------------------------------------------
   impure function peek_back(
     queue_idx          : natural;
-    entry_size_in_bits : natural;
-    scope              : string := "data_queue"
+    entry_size_in_bits : natural
     ) return std_logic_vector is
     variable v_return_entry : std_logic_vector(entry_size_in_bits - 1 downto 0) := (others => '0');
     variable v_current_idx  : natural;
   begin
-    check_value(v_queue_initialized(queue_idx), TB_ERROR, "peek_back called, but queue not initialized.", scope, ID_NEVER);
-    check_value(v_count(queue_idx) > 0, TB_WARNING, "peek_back() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", scope, ID_NEVER);
-    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "peek_back called, but entry size is larger than buffer size!", scope, ID_NEVER);
+    check_value(v_queue_initialized(queue_idx), TB_ERROR, "peek_back called, but queue not initialized.", v_scope.all, ID_NEVER);
+    check_value(v_count(queue_idx) > 0, TB_WARNING, "peek_back() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", v_scope.all, ID_NEVER);
+    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "peek_back called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
 
     if v_last_idx(queue_idx) > 0 then
       v_current_idx := v_last_idx(queue_idx) - 1;
@@ -508,14 +498,13 @@ package body ti_data_queue_pkg is
   ------------------------------------------
   impure function pop_back(
     queue_idx          : natural;
-    entry_size_in_bits : natural;
-    scope              : string := "data_queue"
+    entry_size_in_bits : natural
     ) return std_logic_vector is
     variable v_return_entry : std_logic_vector(entry_size_in_bits-1 downto 0);
     variable v_current_idx  : natural;
   begin
-    check_value(v_queue_initialized(queue_idx), TB_ERROR, "pop_back called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER);
-    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "pop_back called, but entry size is larger than buffer size!", scope, ID_NEVER);
+    check_value(v_queue_initialized(queue_idx), TB_ERROR, "pop_back called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
+    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "pop_back called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
 
     if v_queue_initialized(queue_idx) then
       v_return_entry := peek_back(queue_idx, entry_size_in_bits);
@@ -557,16 +546,15 @@ package body ti_data_queue_pkg is
   ------------------------------------------
   impure function pop_front(
     queue_idx          : natural;
-    entry_size_in_bits : natural;
-    scope              : string := "data_queue"
+    entry_size_in_bits : natural
     ) return std_logic_vector is
     variable v_return_entry : std_logic_vector(entry_size_in_bits-1 downto 0);
     variable v_current_idx  : natural := v_first_idx(queue_idx);
   begin
-    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "pop_front called, but entry size is larger than buffer size!", scope, ID_NEVER);
+    check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "pop_front called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
 
     if check_value(v_queue_initialized(queue_idx), TB_ERROR,
-                   "pop_front called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER)
+                   "pop_front called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER)
     then
       v_return_entry := peek_front(queue_idx, entry_size_in_bits);
 
@@ -602,11 +590,10 @@ package body ti_data_queue_pkg is
   -- get_count
   ------------------------------------------
   impure function get_count(
-    queue_idx : natural;
-    scope     : string := "data_queue"
+    queue_idx : natural
     ) return natural is
   begin
-    check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_count called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER);
+    check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_count called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
     return v_count(queue_idx);
   end function;
 
@@ -614,11 +601,10 @@ package body ti_data_queue_pkg is
   -- get_queue_count_max
   ------------------------------------------
   impure function get_queue_count_max(
-    queue_idx : natural;
-    scope     : string := "data_queue"
+    queue_idx : natural
     ) return natural is
   begin
-    check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_count_max called, but queue " & to_string(queue_idx) & " not initialized.", scope, ID_NEVER);
+    check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_count_max called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
     return v_queue_size_in_bits(queue_idx);
   end function;
 
@@ -628,7 +614,6 @@ package body ti_data_queue_pkg is
   procedure deallocate_buffer(
     dummy : t_void
     ) is
-    constant C_SCOPE : string := "data_queue";
   begin
     shared_data_buffer := (others => '0');
 
@@ -642,7 +627,7 @@ package body ti_data_queue_pkg is
 
     v_next_available_idx := 0;
 
-    log(ID_UVVM_DATA_QUEUE, "Buffer has been deallocated, i.e., all queues removed.", C_SCOPE);
+    log(ID_UVVM_DATA_QUEUE, "Buffer has been deallocated, i.e., all queues removed.", v_scope.all);
   end procedure;
 
 end protected body;

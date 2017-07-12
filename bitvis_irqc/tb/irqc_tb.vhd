@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -114,8 +114,8 @@ begin
     -- CPU interface
         cs              => sbi_if.cs,
         addr            => sbi_if.addr,
-        wr              => sbi_if.wr,
-        rd              => sbi_if.rd,
+        wr              => sbi_if.wena,
+        rd              => sbi_if.rena,
         din             => sbi_if.wdata,
         dout            => sbi_if.rdata,
     -- Interrupt related signals
@@ -174,7 +174,7 @@ begin
         wait for 0 ns;  -- Delta cycle only
       end if;
       target(target'range) <= (others => '0');
-      log(ID_SEQUENCER_SUB, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & ". " & msg, C_SCOPE);
+      log(ID_SEQUENCER_SUB, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), C_SCOPE);
     end;
 
 
@@ -204,8 +204,8 @@ begin
       constant alert_level  : in t_alert_level;
       constant msg          : in string) is
     begin
-      sbi_check(to_unsigned(addr_value, sbi_if.addr'length), data_exp, alert_level, msg,
-            clk, sbi_if, C_SCOPE);
+      sbi_check(to_unsigned(addr_value, sbi_if.addr'length), data_exp, msg,
+            clk, sbi_if, alert_level, C_SCOPE);
     end;
 
     procedure set_inputs_passive(
@@ -213,8 +213,8 @@ begin
     begin
       sbi_if.cs           <= '0';
       sbi_if.addr         <= (others => '0');
-      sbi_if.wr           <= '0';
-      sbi_if.rd           <= '0';
+      sbi_if.wena           <= '0';
+      sbi_if.rena           <= '0';
       sbi_if.wdata          <= (others => '0');
       irq_source   <= (others => '0');
       irq2cpu_ack  <= '0';

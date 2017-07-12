@@ -3,6 +3,142 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.0.7
+----------
+Released: 2017-06-08
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+
+v2.0.6
+----------
+Released: 2017-05-16
+- Fixed bug in resolved() function
+- Improved log messages
+
+v2.0.5
+----------
+Released: 2017-04-28
+- Updated documentation formatting
+
+v2.0.4
+----------
+Released: 2017-03-16
+- Added support for multiple execution queues in the VVC Generator script
+- Updated documentation
+- Updated modelsim .mpf file
+
+v2.0.3
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+
+
+v2.0.2
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing
+
+
+v2.0.1
+----------
+Released: 2017-01-27
+
+- Changed names of the FIFO and Stack procedures to uvvm_* (e.g. uvvm_fifo_init)
+- Replaced the procedure 'uvvm_initialize' with a new entity 'ti_uvvm_engine' 
+  --> Required action by users: in your test harness, replace for example
+        i_initialize_uvvm : initialize_uvvm;
+      with 
+        i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
+- Changed vvc_generator script to include range checks
+- Changed ID_CMD_EXECUTOR to ID_INSERTED_DELAY in insert_inter_bfm_delay_if_requested method
+
+- Added AWAIT_ANY_COMPLETION. 
+  --> Required action by users with custom VVCs: 
+      - in your VVC's vvc_cmd_pkg : - add AWAIT_ANY_COMPLETION to t_operation
+                                    - add the following to t_vvc_cmd_record: 
+                                        gen_integer_array     : t_integer_array(0 to 1); -- Increase array length if needed
+                                        gen_boolean           : boolean; -- Generic boolean
+                                        timeout               : time;
+                                    - add the following to C_VVC_CMD_DEFAULT: 
+                                        gen_integer_array     => (others => -1), 
+                                        gen_boolean           => false,
+                                        timeout               => 0 ns, 
+      - in your VVC's *_vvc.vhd : - To actually use the new AWAIT_ANY_COMPLETION feature, multiple changes are required in the cmd_interpreter process. 
+                                    Use the Bitvis VVCs as examples.
+
+- Added possibility for generic FETCH_RESULT (not just std_logic_vector): 
+  --> Required action by users with custom VVCs: 
+      - in your VVC's vvc_cmd_pkg : - add the following definitions: 
+                                      -- For simple VVCs, which previously only used SLVs the result container can be declared as a type/subtype, e.g. (from SBI):
+                                      subtype  t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+                                      
+                                      -- For more comprehensive return types the t_vvc_result can be declared as a record, e.g. (from AXI-Stream):
+                                      type t_vvc_result is record 
+                                        data_array   : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+                                        data_length  : natural;
+                                        user_array   : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+                                      end record;
+                                      
+                                      type t_vvc_result_queue_element is record
+                                        cmd_idx       : natural;   -- from UVVM handshake mechanism
+                                        result        : t_vvc_result;
+                                      end record;
+
+                                      type t_vvc_response is record
+                                        fetch_is_accepted    : boolean;
+                                        transaction_result   : t_transaction_result;
+                                        result               : t_vvc_result;
+                                      end record;
+
+                                      shared variable shared_vvc_response : t_vvc_response;
+      - in your VVC's *_vvc.vhd 
+        - update the call to store_result to the following : 
+            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                        cmd_idx      => v_cmd.cmd_idx,
+                                                        result       => v_result ); -- variable v_result : t_vvc_result: 
+        - Test benches that uses the std_logic_vector version of fetch_result also requires changes, since the type returned is now t_vvc_result.
+            For an example where the VVC needs to be altered when the result type is a subtype of std_logic_vector, please see how the t_vvc_result is used in the sbi_vvc READ command.
+            For an example where of how the t_vvc_result is handled when using a more complex return type, please see how the t_vvc_result is used in the axistream_vvc RECEIVE command.
+
+- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
+  -- In your VVC's *_vvc.vhd : 
+     - Replace the following two 'when' statements : 
+            when INSERT_DELAY =>
+              if v_cmd.gen_integer = -1 then 
+              log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
+               wait for v_cmd.gen_integer * vvc_config.bfm_config.clock_period;
+
+            when INSERT_DELAY_IN_TIME =>
+              log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
+               wait for v_cmd.delay;
+            
+      with the following 'when' statement: 
+            when INSERT_DELAY =>
+              log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
+              if v_cmd.gen_integer_array(0) = -1 then
+                -- Delay specified using time
+                wait for v_cmd.delay;
+              else 
+                -- Delay specified using integer
+                wait for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
+              end if; 
+- Added Method get_last_received_cmd_idx.
+  --> Required action by users:
+        If you have for example sbi_read and want to fetch the result of the read method afterwards then you
+        must get the id of the read command with e.g. v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT,1);
+        
+
+
+v1.2.1
+----------
+Released: 2016-10-28
+
+All changes should be backwards compatible within 1.x.x
+
+- Updated vvc_generator script
+- Added README file to src_target_dependent directory
+- Updated QR
+
+
 v1.2.0
 ----------
 Released: 2016-05-02

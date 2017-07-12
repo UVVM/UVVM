@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -18,6 +18,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library std;
+use std.textio.all;
+
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -27,7 +30,10 @@ package i2c_bfm_pkg is
   --===============================================================================================
   -- Types and constants for I2C BFMs 
   --===============================================================================================
-  constant C_SCOPE : string := "I2C BFM";
+  constant C_SCOPE     : string    := "I2C BFM";
+  constant C_READ_BIT  : std_logic := '1';
+  constant C_WRITE_BIT : std_logic := '0';
+
 
   type t_i2c_if is record
     scl : std_logic;                    -- clock
@@ -37,24 +43,24 @@ package i2c_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_i2c_bfm_config is
   record
-    enable_10_bits_addressing       : boolean;  -- true: 10-bit addressing enabled, false: 7-bit addressing enabled
+    enable_10_bits_addressing       : boolean;  -- true: 10-bit addressing enabled, false : 7-bit addressing enabled
     master_sda_to_scl               : time;  -- Used in master mode, start condition. From sda active to scl active.
     master_scl_to_sda               : time;  -- Used in master mode, stop condition. From scl inactive to sda inactive.
-    master_stop_condition_hold_time : time;
+    master_stop_condition_hold_time : time;  -- Used in master methods for holding the stop condition. Ensures that the master holds the stop condition for a certain amount of time before the next operation is started.
     max_wait_scl_change             : time;  -- Used as timeout when checking the SCL active period.
-    max_wait_scl_change_severity    : t_alert_level;
-    max_wait_sda_change             : time;
-    max_wait_sda_change_severity    : t_alert_level;
-    i2c_bit_time                    : time;
-    i2c_bit_time_severity           : t_alert_level;
+    max_wait_scl_change_severity    : t_alert_level;  -- The above timeout will have this severity.
+    max_wait_sda_change             : time;  -- Used when receiving and in slave transmit.
+    max_wait_sda_change_severity    : t_alert_level;  -- The above timeout will have this severity.
+    i2c_bit_time                    : time;  -- The bit period.
+    i2c_bit_time_severity           : t_alert_level;  -- A master method will report an alert with this severity if a slave performs clock stretching for longer than i2c_bit_time.
     acknowledge_severity            : t_alert_level;  -- Severity if message not acknowledged
-    slave_mode_address              : unsigned(9 downto 0);
-    slave_mode_address_severity     : t_alert_level;
-    slave_rw_bit_severity           : t_alert_level;
-    reserved_address_severity       : t_alert_level;
-    id_for_bfm                      : t_msg_id;
-    id_for_bfm_wait                 : t_msg_id;
-    id_for_bfm_poll                 : t_msg_id;
+    slave_mode_address              : unsigned(9 downto 0);  -- The slave methods expect to receive this address from the I2C master DUT.
+    slave_mode_address_severity     : t_alert_level;  -- The methods will report an alert with this severity if the address format is wrong or the address is not as expected.
+    slave_rw_bit_severity           : t_alert_level;  -- The methods will report an alert with this severity if the Read/Write bit is not as expected.
+    reserved_address_severity       : t_alert_level;  -- The methods will trigger an alert with this severity if the slave address is equal to one of the reserved addresses from the NXP I2C Specification. For a list of reserved addresses, please see the document referred to in section 3.
+    id_for_bfm                      : t_msg_id;  -- The message ID used as a general message ID in the I2C BFM.
+    id_for_bfm_wait                 : t_msg_id;  -- The message ID used for logging waits in the I2C BFM.
+    id_for_bfm_poll                 : t_msg_id;  -- The message ID used for logging polling in the I2C BFM.
   end record;
 
   constant C_I2C_BFM_CONFIG_DEFAULT : t_i2c_bfm_config := (
@@ -66,7 +72,7 @@ package i2c_bfm_pkg is
     max_wait_scl_change_severity    => failure,
     max_wait_sda_change             => 10 ms,
     max_wait_sda_change_severity    => failure,
-    i2c_bit_time                    => 100 ns,
+    i2c_bit_time                    => -1 ns,
     i2c_bit_time_severity           => failure,
     acknowledge_severity            => failure,
     slave_mode_address              => "0000000000",
@@ -102,10 +108,10 @@ package i2c_bfm_pkg is
     constant msg          : in    string;
     signal scl            : inout std_logic;
     signal sda            : inout std_logic;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
   ------------------------------------------
@@ -119,10 +125,10 @@ package i2c_bfm_pkg is
     constant data         : in    t_byte_array;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
   ------------------------------------------
@@ -136,10 +142,10 @@ package i2c_bfm_pkg is
     constant data         : in    std_logic_vector;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
   ------------------------------------------
@@ -190,16 +196,16 @@ package i2c_bfm_pkg is
   -- This procedure receives data 'data' from an I2C slave DUT
   -- at address 'addr_value'.
   procedure i2c_master_receive (
-    constant addr_value   : in    unsigned;
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal scl            : inout std_logic;
-    signal sda            : inout std_logic;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_master_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    constant addr_value    : in    unsigned;
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal scl             : inout std_logic;
+    signal sda             : inout std_logic;
+    constant continue      : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope         : in    string                         := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     );
 
   ------------------------------------------
@@ -209,15 +215,15 @@ package i2c_bfm_pkg is
   -- at address 'addr_value'.
   -- The I2C interface in this procedure is given as a t_i2c_if signal record
   procedure i2c_master_receive (
-    constant addr_value   : in    unsigned;
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_master_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    constant addr_value    : in    unsigned;
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant continue      : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope         : in    string                         := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     );
 
   ------------------------------------------
@@ -227,15 +233,15 @@ package i2c_bfm_pkg is
   -- at address 'addr_value'.
   -- The I2C interface in this procedure is given as a t_i2c_if signal record
   procedure i2c_master_receive (
-    constant addr_value   : in    unsigned;
-    variable data         : out   std_logic_vector;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_master_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    constant addr_value    : in    unsigned;
+    variable data          : out   std_logic_vector;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant continue      : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope         : in    string                         := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     );
 
   ------------------------------------------
@@ -244,14 +250,15 @@ package i2c_bfm_pkg is
   -- This procedure receives data 'data' from an I2C master DUT.
   -- at address 'addr_value'.
   procedure i2c_slave_receive (
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal scl            : inout std_logic;
-    signal sda            : inout std_logic;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_slave_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal scl             : inout std_logic;
+    signal sda             : inout std_logic;
+    constant exp_rw_bit    : in    std_logic        := C_WRITE_BIT;
+    constant scope         : in    string           := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     );
 
   ------------------------------------------
@@ -260,13 +267,13 @@ package i2c_bfm_pkg is
   -- This procedure receives data 'data' from an I2C master DUT.
   -- The I2C interface in this procedure is given as a t_i2c_if signal record
   procedure i2c_slave_receive (
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_slave_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant scope         : in    string           := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     );
 
   ------------------------------------------
@@ -275,13 +282,13 @@ package i2c_bfm_pkg is
   -- This procedure receives data 'data' from an I2C master DUT.
   -- The I2C interface in this procedure is given as a t_i2c_if signal record
   procedure i2c_slave_receive (
-    variable data         : out   std_logic_vector;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_slave_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    variable data          : out   std_logic_vector;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant scope         : in    string           := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     );
 
   ------------------------------------------
@@ -295,14 +302,14 @@ package i2c_bfm_pkg is
   procedure i2c_master_check (
     constant addr_value   : in    unsigned;
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal scl            : inout std_logic;
     signal sda            : inout std_logic;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
   ------------------------------------------
@@ -316,13 +323,13 @@ package i2c_bfm_pkg is
   procedure i2c_master_check (
     constant addr_value   : in    unsigned;
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
   ------------------------------------------
@@ -336,13 +343,13 @@ package i2c_bfm_pkg is
   procedure i2c_master_check (
     constant addr_value   : in    unsigned;
     constant data_exp     : in    std_logic_vector;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
   ------------------------------------------
@@ -355,10 +362,11 @@ package i2c_bfm_pkg is
   -- The I2C interface in this procedure is given as individual signals
   procedure i2c_slave_check (
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal scl            : inout std_logic;
     signal sda            : inout std_logic;
+    constant exp_rw_bit   : in    std_logic        := C_WRITE_BIT;
+    constant alert_level  : in    t_alert_level    := error;
     constant scope        : in    string           := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
@@ -374,9 +382,10 @@ package i2c_bfm_pkg is
   -- The I2C interface in this procedure is given as a t_i2c_if signal record
   procedure i2c_slave_check (
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
+    constant exp_rw_bit   : in    std_logic        := C_WRITE_BIT;
+    constant alert_level  : in    t_alert_level    := error;
     constant scope        : in    string           := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
@@ -392,37 +401,27 @@ package i2c_bfm_pkg is
   -- The I2C interface in this procedure is given as a t_i2c_if signal record
   procedure i2c_slave_check (
     constant data_exp     : in    std_logic_vector;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
+    constant exp_rw_bit   : in    std_logic        := C_WRITE_BIT;
+    constant alert_level  : in    t_alert_level    := error;
     constant scope        : in    string           := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     );
 
-  -- support procedure not yet in uvvm_util
-  procedure check_value_X01 (
-    signal target         : std_logic;
-    constant exp          : std_logic;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant name         : string         := "check_value()"
-    );
 
-  -- support procedure not yet in uvvm_util
-  procedure await_value_X01 (
-    signal target         : std_logic;
-    constant exp          : std_logic;
-    constant min_time     : time;
-    constant max_time     : time;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
+  procedure i2c_master_quick_command (
+    constant addr_value   : in    unsigned;
+    constant msg          : in    string;
+    signal i2c_if         : inout t_i2c_if;
+    constant rw_bit       : in    std_logic                      := C_WRITE_BIT;
+    constant exp_ack      : in    boolean                        := true;
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     );
 
 end package i2c_bfm_pkg;
@@ -509,7 +508,6 @@ package body i2c_bfm_pkg is
 
   ---------------------------------------------------------------------------------
   -- check_time_window method here since it is local in uvvm_util.methods_pkg
-  -- just for the time being while having the local procedure await_value_X01()
   ---------------------------------------------------------------------------------
   -- check_time_window is used to check if a given condition occurred between
   -- min_time and max_time
@@ -531,90 +529,20 @@ package body i2c_bfm_pkg is
     ) is
   begin
     -- Sanity check
-    check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & LF & msg, scope, ID_NEVER, msg_id_panel, name);
+    check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & LF & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, name);
 
     if elapsed_time < min_time then
       alert(alert_level, name & " => Failed. Condition occurred too early, after " &
-            to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & msg, scope);
+            to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
     elsif success then
       log(msg_id, name & " => OK. Condition occurred after " &
-          to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & msg, scope, msg_id_panel);
+          to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else                                -- max_time reached with no success
       alert(alert_level, name & " => Failed. Timed out after " &
-            to_string(max_time, C_LOG_TIME_BASE) & ". " & msg, scope);
+            to_string(max_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
     end if;
   end;
 
-  -- support procedure not yet in uvvm_util
-  procedure check_value_X01 (
-    signal target         : std_logic;
-    constant exp          : std_logic;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant name         : string         := "check_value()"
-    ) is
-    constant value_type   : string := "std_logic";
-    constant v_target_str : string := to_string(target);
-    constant v_exp_str    : string := to_string(exp);
-
-    variable v_success : boolean := false;
-  begin
-    if ((exp = '1' or exp = 'H') and
-        (target = '1' or target = 'H')) then
-      v_success := true;
-    elsif ((exp = '0' or exp = 'L') and
-           (target = '0' or target = 'L')) then
-      v_success := true;
-    end if;
-
-    if v_success then
-      log(msg_id, name & " => OK, for " & value_type & " '" & v_target_str & "'. " & msg, scope, msg_id_panel);
-    else
-      alert(alert_level, name & " => Failed. " & value_type & "  Was '" & v_target_str & "'. Expected '" & v_exp_str & "'" & LF & msg, scope);
-    end if;
-  end procedure check_value_X01;
-
-  -- support procedure not yet in uvvm_util
-  procedure await_value_X01 (
-    signal target         : std_logic;
-    constant exp          : std_logic;
-    constant min_time     : time;
-    constant max_time     : time;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
-    ) is
-    constant value_type : string := "std_logic";
-    constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-                              to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-    variable success : boolean;
-  begin
-    if ((exp = '1' or exp = 'H') and
-        (target /= '1') and (target /= 'H')) then
-      wait until (target = '1' or target = 'H')
-        for max_time;
-    elsif ((exp = '0' or exp = 'L') and
-           (target /= '0') and (target /= 'L')) then
-      wait until (target = '0' or target = 'L')
-        for max_time;
-    end if;
-    success := false;
-    if ((exp = '1' or exp = 'H') and
-        (target = '1' or target = 'H')) then
-      success := true;
-    elsif ((exp = '0' or exp = 'L') and
-           (target = '0' or target = 'L')) then
-      success := true;
-    end if;
-    check_time_window(success, now-start_time, min_time, max_time, alert_level, name, msg, scope, msg_id, msg_id_panel);
-  end;
 
   procedure i2c_master_transmit_single_byte (
     constant byte         : in    std_logic_vector(7 downto 0);
@@ -626,6 +554,8 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     for i in 7 downto 0 loop
@@ -639,7 +569,7 @@ package body i2c_bfm_pkg is
       scl <= 'Z';                       -- release
       wait for config.i2c_bit_time/2;
       -- check for clock stretching
-      await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+      await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
       scl <= '0';
     end loop;
   end procedure;
@@ -654,13 +584,15 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     for i in 7 downto 0 loop
       wait for config.i2c_bit_time/2;
       scl     <= 'Z';                   -- release
       -- check for clock stretching
-      await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+      await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
       byte(i) := to_X01(sda);
       wait for config.i2c_bit_time/2;
       scl     <= '0';
@@ -677,6 +609,8 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     wait for config.i2c_bit_time/4;
@@ -689,7 +623,7 @@ package body i2c_bfm_pkg is
     scl <= 'Z';                         -- release
     wait for config.i2c_bit_time/2;
     -- check for clock stretching
-    await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
     scl <= '0';
     wait for config.i2c_bit_time/4;
     sda <= 'Z';                         -- release
@@ -705,6 +639,8 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     -- Check ACK
@@ -715,10 +651,42 @@ package body i2c_bfm_pkg is
     wait for config.i2c_bit_time/4;
     scl <= 'Z';
     wait for config.i2c_bit_time/4;
-    check_value_X01(sda, ack_exp, config.acknowledge_severity, msg, scope, ID_NEVER, msg_id_panel);
+    check_value(sda, ack_exp, MATCH_STD, config.acknowledge_severity, msg, scope, ID_NEVER, msg_id_panel);
     wait for config.i2c_bit_time/4;
     -- check for clock stretching
-    await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+    scl <= '0';
+  end procedure;
+
+  procedure i2c_master_check_ack (
+    variable v_ack_received : out   boolean;
+    constant ack_exp        : in    std_logic;
+    constant msg            : in    string;
+    signal scl              : inout std_logic;
+    signal sda              : inout std_logic;
+    constant scope          : in    string           := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config         : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    ) is
+  begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
+    -- Time shall be at the falling edge time of SCL.
+
+    -- Check ACK
+    -- The master shall drive scl during the acknowledge cycle
+    -- A valid ack is detected when sda is '0'.
+    wait for config.i2c_bit_time/4;
+    sda            <= 'Z';              -- release
+    wait for config.i2c_bit_time/4;
+    scl            <= 'Z';
+    wait for config.i2c_bit_time/4;
+    v_ack_received := check_value(sda, ack_exp, MATCH_STD, NO_ALERT, msg, scope, ID_NEVER, msg_id_panel);
+    wait for config.i2c_bit_time/4;
+    if v_ack_received then
+      -- check for clock stretching
+      await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+    end if;
     scl <= '0';
   end procedure;
 
@@ -732,6 +700,8 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     for i in 7 downto 0 loop
@@ -741,7 +711,7 @@ package body i2c_bfm_pkg is
       else
         sda <= '0';
       end if;
-      await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+      await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
       await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
     end loop;
   end procedure;
@@ -756,10 +726,12 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     for i in 7 downto 0 loop
-      await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+      await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
       wait for config.i2c_bit_time/4;  -- to sample in the middle of the high period
       byte(i) := to_X01(sda);
       await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
@@ -776,6 +748,8 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     wait for config.i2c_bit_time/4;
@@ -784,7 +758,7 @@ package body i2c_bfm_pkg is
     else
       sda <= '0';
     end if;
-    await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
     await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
     wait for config.i2c_bit_time/4;
     sda <= 'Z';
@@ -800,6 +774,8 @@ package body i2c_bfm_pkg is
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
     -- Time shall be at the falling edge time of SCL.
 
     -- Check ACK
@@ -807,8 +783,8 @@ package body i2c_bfm_pkg is
     -- A valid ack is detected when sda is '0'.
     wait for config.i2c_bit_time/4;
     sda <= 'Z';                         -- release
-    await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-    check_value_X01(sda, ack_exp, config.acknowledge_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    check_value(sda, ack_exp, MATCH_STD, config.acknowledge_severity, msg, scope, ID_NEVER, msg_id_panel);
     await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
   end procedure;
 
@@ -823,10 +799,10 @@ package body i2c_bfm_pkg is
     constant msg          : in    string;
     signal scl            : inout std_logic;
     signal sda            : inout std_logic;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     ) is
     constant proc_name : string := "i2c_master_transmit";
     constant proc_call : string := proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
@@ -855,6 +831,8 @@ package body i2c_bfm_pkg is
     end procedure;
 
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
     if not config.enable_10_bits_addressing then
       check_value(v_normalized_addr(9 downto 7), unsigned'("000"), config.slave_mode_address_severity,
@@ -867,8 +845,9 @@ package body i2c_bfm_pkg is
 
     check_value(data'ascending, failure, "Verifying that data is of ascending type.", scope, ID_NEVER, msg_id_panel);
 
-    await_value_X01(sda, '1', 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-    await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(sda, '1', MATCH_STD, 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+
 
     if to_X01(sda) = '1' and to_X01(scl) = '1' then
       -- do the start condition
@@ -913,32 +892,32 @@ package body i2c_bfm_pkg is
 
         wait for config.i2c_bit_time/4;
 
-        if not continue then
+        if continue = RELEASE_LINE_AFTER_TRANSFER then
           -- do the stop condition
           sda <= '0';
           wait for config.i2c_bit_time/4;
           scl <= 'Z';
           -- check for clock stretching
-          await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+          await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
           wait for config.master_scl_to_sda;
           sda <= 'Z';
-        else
+        else                            -- continue = HOLD_LINE_AFTER_TRANSFER
           -- Do not perform the stop condition. Instead release SDA when SCL is low.
           -- This will prepare for a repeated start condition.
           sda <= 'Z';
           wait for config.i2c_bit_time/4;
           scl <= 'Z';
           -- check for clock stretching
-          await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+          await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
         end if;
 
         wait for config.master_stop_condition_hold_time;
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start");
+      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
 
   end procedure;
 
@@ -947,10 +926,10 @@ package body i2c_bfm_pkg is
     constant data         : in    t_byte_array;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
     i2c_master_transmit(addr_value, data, msg,
@@ -967,10 +946,10 @@ package body i2c_bfm_pkg is
     constant data         : in    std_logic_vector;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     ) is
     variable v_bfm_tx_data : std_logic_vector(7 downto 0) := (others => '0');
 
@@ -1048,8 +1027,8 @@ package body i2c_bfm_pkg is
 
     check_value(data'ascending, failure, "Verifying that data is of ascending type.", scope, ID_NEVER, msg_id_panel);
 
-    await_value_X01(sda, '1', 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-    await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(sda, '1', MATCH_STD, 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
     if to_X01(sda) = '1' and to_X01(scl) = '1' then
       -- await the start condition
@@ -1074,7 +1053,7 @@ package body i2c_bfm_pkg is
             -- NACK
             alert(config.slave_mode_address_severity, proc_call & " wrong slave address!" &
                   " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) &
-                  ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0));
+                  ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
             return;
           end if;
         else                            -- 10 bit addressing
@@ -1092,7 +1071,7 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected!");
+            alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected! " & add_msg_delimiter(msg), scope);
             return;
           end if;
 
@@ -1110,14 +1089,15 @@ package body i2c_bfm_pkg is
             -- NACK
             alert(config.slave_mode_address_severity, proc_call & " wrong slave address!" &
                   " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) &
-                  ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0));
+                  ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
             return;
           end if;
 
           -- Expect repeated start condition
           sda <= 'Z';                   -- other side should drive now
-          await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-          await_value_X01(sda, '1', 0 ns, config.master_scl_to_sda + config.master_scl_to_sda/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+
+          await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+          await_value(sda, '1', MATCH_STD, 0 ns, config.master_scl_to_sda + config.master_scl_to_sda/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
           if to_X01(sda) = '1' and to_X01(scl) = '1' then
             -- await the start condition
@@ -1128,7 +1108,7 @@ package body i2c_bfm_pkg is
               -- receive the first 2 address bits again+ read bit, consisting of "11110<bit 9><bit 8><read>"
               i2c_slave_receive_single_byte(v_bfm_rx_data);
               -- Check R/W bit
-              check_value(v_bfm_rx_data(0), '1', config.slave_rw_bit_severity, msg & ": checking R/W bit after first address byte (10-bit addressing)", scope, ID_NEVER, msg_id_panel);
+              check_value(v_bfm_rx_data(0), '1', config.slave_rw_bit_severity, add_msg_delimiter(msg) & ": checking R/W bit after first address byte (10-bit addressing)", scope, ID_NEVER, msg_id_panel);
 
               -- Set ACK/NACK based on first received byte
               -- The master shall drive scl during the acknowledge cycle
@@ -1138,11 +1118,11 @@ package body i2c_bfm_pkg is
                 i2c_slave_set_ack('0');
               else
                 -- NACK
-                alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected!");
+                alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected! " & add_msg_delimiter(msg), scope);
                 return;
               end if;
             else
-              alert(error, proc_call & " sda and scl not inactive (high) when wishing to start after repeated start condition for 10 bit address");
+              alert(error, proc_call & " sda and scl not inactive (high) when wishing to start after repeated start condition for 10 bit address " & add_msg_delimiter(msg), scope);
             end if;
           end if;
         end if;
@@ -1166,15 +1146,15 @@ package body i2c_bfm_pkg is
         -- Wait for either the stop condition or preparation for
         -- repeated start condition.
         sda <= 'Z';                     -- other side should drive now
-        await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-        await_value_X01(sda, '1', 0 ns, config.master_scl_to_sda + config.master_scl_to_sda/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+        await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+        await_value(sda, '1', MATCH_STD, 0 ns, config.master_scl_to_sda + config.master_scl_to_sda/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start");
+      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+    log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
 
   end procedure;
 
@@ -1217,18 +1197,22 @@ package body i2c_bfm_pkg is
   -- i2c_master_receive
   ---------------------------------------------------------------------------------
   procedure i2c_master_receive (
-    constant addr_value   : in    unsigned;
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal scl            : inout std_logic;
-    signal sda            : inout std_logic;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_master_receive"  -- overwrite if called from other procedure like i2c_master_check
+    constant addr_value    : in    unsigned;
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal scl             : inout std_logic;
+    signal sda             : inout std_logic;
+    constant continue      : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope         : in    string                         := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
     ) is
-    constant proc_call : string := proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
+
+    -- Local proc_name; used if called from sequncer or VVC 
+    constant local_proc_name : string := "i2c_master_receive";
+    -- Local proc_call; used if called from sequncer or VVC
+    constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
 
     constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
 
@@ -1237,6 +1221,8 @@ package body i2c_bfm_pkg is
       normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
 
     constant C_FIRST_10_BIT_ADDRESS_BITS : std_logic_vector(6 downto 0) := C_10_BIT_ADDRESS_PATTERN & std_logic_vector(v_normalized_addr(9 downto 8));
+
+    variable v_proc_call : line;
 
     procedure i2c_master_transmit_single_byte (
       constant byte : in std_logic_vector(7 downto 0)
@@ -1266,6 +1252,16 @@ package body i2c_bfm_pkg is
       i2c_master_check_ack(ack_exp, msg, scl, sda, scope, msg_id_panel, config);
     end procedure;
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
+
+    -- If called from sequencer/VVC, show 'i2c_master_read...' in log
+    if ext_proc_call = "" then
+      write(v_proc_call, local_proc_call);
+    else
+      -- If called from other BFM procedure, log 'ext_proc_call while executing i2c_master_read..' 
+      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+    end if;
 
     if not config.enable_10_bits_addressing then
       check_value(v_normalized_addr(9 downto 7), unsigned'("000"), config.slave_mode_address_severity,
@@ -1276,11 +1272,11 @@ package body i2c_bfm_pkg is
       i2c_check_slave_addr(v_normalized_addr(9 downto 0), config.reserved_address_severity, scope);
     end if;
 
-    check_value(data'ascending, failure, "Verifying that data is of ascending type.", scope, ID_NEVER, msg_id_panel);
+    check_value(data'ascending, failure, "Verifying that data is of ascending type. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- start condition
-    await_value_X01(sda, '1', 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-    await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(sda, '1', MATCH_STD, 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
     if to_X01(sda) = '1' and to_X01(scl) = '1' then
       -- do the start condition
@@ -1319,7 +1315,7 @@ package body i2c_bfm_pkg is
           wait for config.i2c_bit_time/4;
           scl <= 'Z';
           -- check for clock stretching
-          await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+          await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
 
           wait for config.master_stop_condition_hold_time;
           -- do the start condition
@@ -1335,7 +1331,7 @@ package body i2c_bfm_pkg is
             -- A valid ack is detected when sda is '0'.
             i2c_master_check_ack('0');
           else
-            alert(error, proc_name & " sda not '0' when expected after repeated start condition for 10-bit addressing!");
+            alert(error, v_proc_call.all & " sda not '0' when expected after repeated start condition for 10-bit addressing! " & add_msg_delimiter(msg), scope);
           end if;
         end if;
 
@@ -1356,33 +1352,34 @@ package body i2c_bfm_pkg is
           end if;
         end loop;
 
-        if not continue then
+        if continue = RELEASE_LINE_AFTER_TRANSFER then
           -- do the stop condition
           sda <= '0';
           wait for config.i2c_bit_time/4;
           scl <= 'Z';
           -- check for clock stretching
-          await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+          await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+
           wait for config.master_scl_to_sda;
           sda <= 'Z';
-        else
+        else                            -- continue = HOLD_LINE_AFTER_TRANSFER
           -- Do not perform the stop condition. Instead release SDA when SCL is low.
           -- This will prepare for a repeated start condition.
           sda <= 'Z';
           wait for config.i2c_bit_time/4;
           scl <= 'Z';
           -- check for clock stretching
-          await_value_X01(scl, '1', 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+          await_value(scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
         end if;
 
         wait for config.master_stop_condition_hold_time;
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start");
+      alert(error, v_proc_call.all & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    if proc_name = "i2c_master_receive" then
-      log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+    if ext_proc_call = "" then          -- proc_name = "i2c_master_receive" 
+      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. i2c_master_check)
     end if;
@@ -1390,38 +1387,38 @@ package body i2c_bfm_pkg is
   end procedure;
 
   procedure i2c_master_receive(
-    constant addr_value   : in    unsigned;
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_master_receive"  -- overwrite if called from other procedure like i2c_master_check
+    constant addr_value    : in    unsigned;
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant continue      : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope         : in    string                         := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string                         := ""  -- overwrite if called from other procedure like .._check
     ) is
   begin
     i2c_master_receive(addr_value, data, msg,
                        i2c_if.scl, i2c_if.sda, continue,
-                       scope, msg_id_panel, config, proc_name);
+                       scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
   procedure i2c_master_receive(
-    constant addr_value   : in    unsigned;
-    variable data         : out   std_logic_vector;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_master_receive"  -- overwrite if called from other procedure like i2c_master_check
+    constant addr_value    : in    unsigned;
+    variable data          : out   std_logic_vector;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant continue      : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope         : in    string                         := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string                         := ""  -- overwrite if called from other procedure like .._check
     ) is
     variable v_byte_array : t_byte_array(0 to 0);
   begin
     i2c_master_receive(addr_value, v_byte_array, msg,
                        i2c_if.scl, i2c_if.sda, continue,
-                       scope, msg_id_panel, config, proc_name);
+                       scope, msg_id_panel, config, ext_proc_call);
 
     data := v_byte_array(0);
   end procedure;
@@ -1430,17 +1427,22 @@ package body i2c_bfm_pkg is
   -- i2c_slave_receive
   ---------------------------------------------------------------------------------
   procedure i2c_slave_receive (
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal scl            : inout std_logic;
-    signal sda            : inout std_logic;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_slave_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal scl             : inout std_logic;
+    signal sda             : inout std_logic;
+    constant exp_rw_bit    : in    std_logic        := C_WRITE_BIT;
+    constant scope         : in    string           := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like *_check
     ) is
-    constant proc_call : string := proc_name;
+    -- Local proc_name; used if called from sequncer or VVC 
+    constant local_proc_name : string := "i2c_slave_receive";
+    -- Local proc_call; used if called from sequncer or VVC
+    constant local_proc_call : string := local_proc_name & "()";
 
+    variable v_proc_call     : line;
     variable v_received_addr : unsigned(9 downto 0) := (others => '0');
     variable v_bfm_rx_data   : std_logic_vector(7 downto 0);
 
@@ -1461,6 +1463,15 @@ package body i2c_bfm_pkg is
       i2c_slave_set_ack(ack, msg, scl, sda, scope, msg_id_panel, config);
     end procedure;
   begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
+    -- If called from sequencer/VVC, show 'i2c_master_read...' in log
+    if ext_proc_call = "" then
+      write(v_proc_call, local_proc_call);
+    else
+      -- If called from other BFM procedure, log 'ext_proc_call while executing i2c_slave_read..' 
+      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+    end if;
 
     if not config.enable_10_bits_addressing then
       check_value(config.slave_mode_address(9 downto 7), unsigned'("000"), config.slave_mode_address_severity,
@@ -1471,10 +1482,14 @@ package body i2c_bfm_pkg is
       i2c_check_slave_addr(config.slave_mode_address, config.reserved_address_severity, scope);
     end if;
 
-    check_value(data'ascending, failure, "Verifying that data is of ascending type.", scope, ID_NEVER, msg_id_panel);
+    check_value(data'ascending, failure, "Verifying that data is of ascending type. " & add_msg_delimiter(msg) & ".", scope, ID_NEVER, msg_id_panel);
+    -- Check that expected data range is 0 when expected read/write bit is read.
+    if exp_rw_bit = C_READ_BIT then
+      check_value(data'length, 0, TB_ERROR, "Expected data range must be 0 when expected R/W# bit is Read. " & add_msg_delimiter(msg) & ".", scope, ID_NEVER, msg_id_panel);
+    end if;
 
-    await_value_X01(sda, '1', 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-    await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(sda, '1', MATCH_STD, 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
     if to_X01(sda) = '1' and to_X01(scl) = '1' then
       -- await the start condition
@@ -1486,7 +1501,7 @@ package body i2c_bfm_pkg is
           -- receive the address bits
           i2c_slave_receive_single_byte(v_bfm_rx_data);
 
-          check_value(v_bfm_rx_data(0), '0', config.slave_rw_bit_severity, msg, scope, ID_NEVER, msg_id_panel);  -- R/W bit
+          check_value(v_bfm_rx_data(0), exp_rw_bit, config.slave_rw_bit_severity, msg, scope, ID_NEVER, msg_id_panel);  -- R/W bit
 
           -- Set ACK/NACK based on address
           -- The master shall drive scl during the acknowledge cycle
@@ -1496,9 +1511,9 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " wrong slave address!" &
+            alert(config.slave_mode_address_severity, v_proc_call.all & " wrong slave address!" &
                   " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) &
-                  ", Got: " & to_string(unsigned(v_bfm_rx_data(7 downto 1)), BIN, KEEP_LEADING_0));
+                  ", Got: " & to_string(unsigned(v_bfm_rx_data(7 downto 1)), BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
             return;
           end if;
         else
@@ -1506,7 +1521,7 @@ package body i2c_bfm_pkg is
           i2c_slave_receive_single_byte(v_bfm_rx_data);
           v_received_addr(9 downto 8) := unsigned(v_bfm_rx_data(2 downto 1));
           -- Check R/W bit
-          check_value(v_bfm_rx_data(0), '0', config.slave_rw_bit_severity, msg & ": checking R/W bit after first address byte (10-bit addressing)", scope, ID_NEVER, msg_id_panel);
+          check_value(v_bfm_rx_data(0), exp_rw_bit, config.slave_rw_bit_severity, add_msg_delimiter(msg) & ": checking R/W bit after first address byte (10-bit addressing)", scope, ID_NEVER, msg_id_panel);
 
           -- Set ACK/NACK based on first received byte
           -- The master shall drive scl during the acknowledge cycle
@@ -1516,7 +1531,7 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " first byte was other than expected!");
+            alert(config.slave_mode_address_severity, v_proc_call.all & " first byte was other than expected! " & add_msg_delimiter(msg), scope);
             return;
           end if;
 
@@ -1531,9 +1546,9 @@ package body i2c_bfm_pkg is
             i2c_slave_set_ack('0');
           else
             -- NACK
-            alert(config.slave_mode_address_severity, proc_call & " wrong slave address!" &
+            alert(config.slave_mode_address_severity, v_proc_call.all & " wrong slave address!" &
                   " Expected: " & to_string(config.slave_mode_address, BIN, KEEP_LEADING_0) &
-                  ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0));
+                  ", Got: " & to_string(v_received_addr, BIN, KEEP_LEADING_0) & add_msg_delimiter(msg), scope);
             return;
           end if;
 
@@ -1551,15 +1566,16 @@ package body i2c_bfm_pkg is
 
         -- Wait for either the stop condition or preparation for
         -- repeated start condition.
-        await_value_X01(scl, '1', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-        await_value_X01(sda, '1', 0 ns, config.master_scl_to_sda + config.master_scl_to_sda/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+        await_value(scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+        await_value(sda, '1', MATCH_STD, 0 ns, config.master_scl_to_sda + config.master_scl_to_sda/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+
       end if;
     else
-      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start");
+      alert(error, v_proc_call.all & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    if proc_name = "i2c_slave_receive" then
-      log(config.id_for_bfm, proc_call & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+    if ext_proc_call = "" then          -- proc_name = "i2c_slave_receive" 
+      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. i2c_slave_check)
     end if;
@@ -1567,34 +1583,34 @@ package body i2c_bfm_pkg is
   end procedure;
 
   procedure i2c_slave_receive(
-    variable data         : out   t_byte_array;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_slave_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    variable data          : out   t_byte_array;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant scope         : in    string           := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like *_check
     ) is
   begin
     i2c_slave_receive(data, msg,
-                      i2c_if.scl, i2c_if.sda,
-                      scope, msg_id_panel, config, proc_name);
+                      i2c_if.scl, i2c_if.sda, C_WRITE_BIT,
+                      scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
   procedure i2c_slave_receive(
-    variable data         : out   std_logic_vector;
-    constant msg          : in    string;
-    signal i2c_if         : inout t_i2c_if;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant proc_name    : in    string           := "i2c_slave_receive"  -- overwrite if called from other procedure like i2c_slave_check
+    variable data          : out   std_logic_vector;
+    constant msg           : in    string;
+    signal i2c_if          : inout t_i2c_if;
+    constant scope         : in    string           := C_SCOPE;
+    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call : in    string           := ""  -- overwrite if called from other procedure like i2c_slave_check
     ) is
     variable v_byte_array : t_byte_array(0 to 0);
   begin
     i2c_slave_receive(v_byte_array, msg,
-                      i2c_if.scl, i2c_if.sda,
-                      scope, msg_id_panel, config, proc_name);
+                      i2c_if.scl, i2c_if.sda, C_WRITE_BIT,
+                      scope, msg_id_panel, config, ext_proc_call);
     data := v_byte_array(0);
   end procedure;
 
@@ -1605,14 +1621,14 @@ package body i2c_bfm_pkg is
   procedure i2c_master_check (
     constant addr_value   : in    unsigned;
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal scl            : inout std_logic;
     signal sda            : inout std_logic;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     ) is
     constant proc_name : string := "i2c_master_check";
     constant proc_call : string := proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
@@ -1622,7 +1638,10 @@ package body i2c_bfm_pkg is
     variable v_check_ok   : boolean := true;
     variable v_byte_ok    : boolean;
   begin
-    i2c_master_receive(addr_value, v_data_array, msg, scl, sda, continue, scope, msg_id_panel, config, proc_name);
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
+
+    i2c_master_receive(addr_value, v_data_array, msg, scl, sda, continue, scope, msg_id_panel, config, proc_call);
 
     -- Compare values, but ignore any leading zero's if widths are different.
     -- Use ID_NEVER so that check_value method does not log when check is OK,
@@ -1636,37 +1655,37 @@ package body i2c_bfm_pkg is
     end loop;
 
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
   procedure i2c_master_check (
     constant addr_value   : in    unsigned;
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
-    i2c_master_check(addr_value, data_exp, alert_level, msg,
+    i2c_master_check(addr_value, data_exp, msg,
                      i2c_if.scl, i2c_if.sda, continue,
-                     scope, msg_id_panel, config);
+                     alert_level, scope, msg_id_panel, config);
   end procedure;
 
   procedure i2c_master_check (
     constant addr_value   : in    unsigned;
     constant data_exp     : in    std_logic_vector;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
-    constant continue     : in    boolean          := false;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
     ) is
 
     variable v_bfm_rx_data : std_logic_vector(7 downto 0) := (others => '0');
@@ -1677,10 +1696,12 @@ package body i2c_bfm_pkg is
 
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data_exp);
   begin
-    i2c_master_check(addr_value, v_byte_array, alert_level, msg,
+    i2c_master_check(addr_value, v_byte_array, msg,
                      i2c_if.scl, i2c_if.sda, continue,
-                     scope, msg_id_panel, config);
+                     alert_level, scope, msg_id_panel, config);
   end procedure;
+
+
 
   ---------------------------------------------------------------------------------
   -- i2c_slave_check
@@ -1688,10 +1709,11 @@ package body i2c_bfm_pkg is
   -- Perform a read operation, then compare the read value to the data_exp.
   procedure i2c_slave_check (
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal scl            : inout std_logic;
     signal sda            : inout std_logic;
+    constant exp_rw_bit   : in    std_logic        := C_WRITE_BIT;
+    constant alert_level  : in    t_alert_level    := error;
     constant scope        : in    string           := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
@@ -1704,7 +1726,7 @@ package body i2c_bfm_pkg is
     variable v_check_ok   : boolean := true;
     variable v_byte_ok    : boolean;
   begin
-    i2c_slave_receive(v_data_array, msg, scl, sda, scope, msg_id_panel, config, proc_name);
+    i2c_slave_receive(v_data_array, msg, scl, sda, exp_rw_bit, scope, msg_id_panel, config, proc_call);
 
     -- Compare values, but ignore any leading zero's if widths are different.
     -- Use ID_NEVER so that check_value method does not log when check is OK,
@@ -1718,30 +1740,32 @@ package body i2c_bfm_pkg is
     end loop;
 
     if v_check_ok then
-      log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & msg, scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
   procedure i2c_slave_check (
     constant data_exp     : in    t_byte_array;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
+    constant exp_rw_bit   : in    std_logic        := C_WRITE_BIT;
+    constant alert_level  : in    t_alert_level    := error;
     constant scope        : in    string           := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
     ) is
   begin
-    i2c_slave_check(data_exp, alert_level, msg,
-                    i2c_if.scl, i2c_if.sda,
-                    scope, msg_id_panel, config);
+    i2c_slave_check(data_exp, msg,
+                    i2c_if.scl, i2c_if.sda, exp_rw_bit,
+                    alert_level, scope, msg_id_panel, config);
   end procedure;
 
   procedure i2c_slave_check (
     constant data_exp     : in    std_logic_vector;
-    constant alert_level  : in    t_alert_level    := error;
     constant msg          : in    string;
     signal i2c_if         : inout t_i2c_if;
+    constant exp_rw_bit   : in    std_logic        := C_WRITE_BIT;
+    constant alert_level  : in    t_alert_level    := error;
     constant scope        : in    string           := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config       : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT
@@ -1755,8 +1779,186 @@ package body i2c_bfm_pkg is
 
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data_exp);
   begin
-    i2c_slave_check(v_byte_array, alert_level, msg,
-                    i2c_if.scl, i2c_if.sda,
-                    scope, msg_id_panel, config);
+    i2c_slave_check(v_byte_array, msg,
+                    i2c_if.scl, i2c_if.sda, exp_rw_bit,
+                    alert_level, scope, msg_id_panel, config);
   end procedure;
+
+  ---------------------------------------------------------------------------------
+  -- i2c_master_quick_command
+  ---------------------------------------------------------------------------------  
+  procedure i2c_master_quick_command (
+    constant addr_value   : in    unsigned;
+    constant msg          : in    string;
+    signal i2c_if         : inout t_i2c_if;
+    constant rw_bit       : in    std_logic                      := C_WRITE_BIT;
+    constant exp_ack      : in    boolean                        := true;
+    constant continue     : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level  : in    t_alert_level                  := error;
+    constant scope        : in    string                         := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel                 := shared_msg_id_panel;
+    constant config       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT
+    ) is
+
+    constant proc_call : string := "i2c_master_quick_command (A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
+                                   ", rw_bit: " & to_string(rw_bit) & ")";
+
+    constant C_10_BIT_ADDRESS_PATTERN : std_logic_vector(4 downto 0) := "11110";
+
+    -- Normalize to the 7 bit addr and 8 bit data widths
+    variable v_normalized_addr : unsigned(9 downto 0) :=
+      normalize_and_check(addr_value, config.slave_mode_address, ALLOW_NARROWER, "addr", "config.slave_mode_address", msg);
+
+    constant C_FIRST_10_BIT_ADDRESS_BITS : std_logic_vector(6 downto 0) := C_10_BIT_ADDRESS_PATTERN & std_logic_vector(v_normalized_addr(9 downto 8));
+
+    variable v_ack_received : boolean := false;
+    variable v_ack_ok       : boolean;
+    variable v_check_ok     : boolean := true;
+
+    procedure i2c_master_transmit_single_byte (
+      constant byte : in std_logic_vector(7 downto 0)
+      ) is
+    begin
+      i2c_master_transmit_single_byte(byte, msg, i2c_if.scl, i2c_if.sda, scope, msg_id_panel, config);
+    end procedure;
+
+    procedure i2c_master_check_ack (
+      variable v_ack_received : out boolean;
+      constant ack_exp        : in  std_logic
+      ) is
+    begin
+      i2c_master_check_ack(v_ack_received, ack_exp, msg, i2c_if.scl, i2c_if.sda, scope, msg_id_panel, config);
+    end procedure;
+
+  begin
+    -- check whether config.i2c_bit_time was set probably 
+    check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
+
+    if not config.enable_10_bits_addressing then
+      check_value(v_normalized_addr(9 downto 7), unsigned'("000"), config.slave_mode_address_severity,
+                  "Verifying that top slave address bits (9-7) are not set in 7-bit addressing mode. " & add_msg_delimiter(msg),
+                  scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, msg_id_panel);
+      i2c_check_slave_addr(v_normalized_addr(6 downto 0), config.reserved_address_severity, scope);
+    else
+      i2c_check_slave_addr(v_normalized_addr(9 downto 0), config.reserved_address_severity, scope);
+    end if;
+
+    -- start condition
+    log(config.id_for_bfm, proc_call & "=> Awaiting start condition. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    await_value(i2c_if.sda, '1', MATCH_STD, 0 ns, config.max_wait_sda_change, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+    await_value(i2c_if.scl, '1', MATCH_STD, 0 ns, config.max_wait_scl_change, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+
+    if to_X01(i2c_if.sda) = '1' and to_X01(i2c_if.scl) = '1' then
+      -- do the start condition
+      i2c_if.sda <= '0';
+      wait for config.master_sda_to_scl;
+      i2c_if.scl <= '0';
+
+      if i2c_if.sda = '0' then
+        -- Transmit address
+        log(config.id_for_bfm, proc_call & "=> Transmitting address. " & add_msg_delimiter(msg), scope, msg_id_panel);
+        if not config.enable_10_bits_addressing then
+          i2c_master_transmit_single_byte(std_logic_vector(v_normalized_addr(6 downto 0)) & rw_bit);
+        else                            -- 10-bits addressing enabled
+          -- Transmit Slave Address first 7 bits 11110<addr bit 9><addr bit 8><Write>
+          i2c_master_transmit_single_byte(C_FIRST_10_BIT_ADDRESS_BITS & rw_bit);
+        end if;
+        log(config.id_for_bfm, proc_call & "=> Address transmitted. " & add_msg_delimiter(msg), scope, msg_id_panel);
+
+        -- Check ACK
+        -- The master shall drive scl during the acknowledge cycle
+        -- A valid ack is detected when sda is '0'.
+        log(config.id_for_bfm, proc_call & "=> Checking ACK. " & add_msg_delimiter(msg), scope, msg_id_panel);
+        i2c_master_check_ack(v_ack_received, '0');
+        log(config.id_for_bfm, proc_call & "=> ACK was " & to_string(v_ack_received) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+
+
+        -- If 10-bits addressing is enabled, transmit second address byte.
+        if config.enable_10_bits_addressing then
+          log(config.id_for_bfm, proc_call & "=> Transmitting second part of address. " & add_msg_delimiter(msg), scope, msg_id_panel);
+          i2c_master_transmit_single_byte(std_logic_vector(v_normalized_addr(7 downto 0)));
+
+          -- Check ACK
+          -- The master shall drive scl during the acknowledge cycle
+          -- A valid ack is detected when sda is '0'.
+          log(config.id_for_bfm, proc_call & "=> Checking ACK. " & add_msg_delimiter(msg), scope, msg_id_panel);
+          i2c_master_check_ack(v_ack_received, '0');
+          log(config.id_for_bfm, proc_call & "=> ACK was " & to_string(v_ack_received) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+
+          -- Now generate a repeated start condition, send the first byte again (only with read/write-bit set to read), check ack. Then receive data bytes.
+
+          -- Generate repeated start condition
+          log(config.id_for_bfm, proc_call & "=> Repeating start condition. " & add_msg_delimiter(msg), scope, msg_id_panel);
+          wait for config.i2c_bit_time/4;
+          i2c_if.sda <= 'Z';
+          wait for config.i2c_bit_time/4;
+          i2c_if.scl <= 'Z';
+          -- check for clock stretching
+          await_value(i2c_if.scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+
+          wait for config.master_stop_condition_hold_time;
+          -- do the start condition
+          i2c_if.sda <= '0';
+          wait for config.master_sda_to_scl;
+          i2c_if.scl <= '0';
+          if i2c_if.sda = '0' then
+            -- Transmit Slave Address first 7 bits 11110<addr bit 9><addr bit 8><Write>
+            log(config.id_for_bfm, proc_call & "=> Transmitting Slave Address first 7 bits. " & add_msg_delimiter(msg), scope, msg_id_panel);
+            i2c_master_transmit_single_byte(C_FIRST_10_BIT_ADDRESS_BITS & '1');
+
+            -- Check ACK
+            -- The master shall drive scl during the acknowledge cycle
+            -- A valid ack is detected when sda is '0'.
+            log(config.id_for_bfm, proc_call & "=> Checking ACK. " & add_msg_delimiter(msg), scope, msg_id_panel);
+            i2c_master_check_ack(v_ack_received, '0');
+            log(config.id_for_bfm, proc_call & "=> ACK was " & to_string(v_ack_received) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+          else
+            alert(error, "i2c_master_quick_command sda not '0' when expected after repeated start condition for 10-bit addressing! " & add_msg_delimiter(msg), scope);
+          end if;
+        end if;
+
+        -- Do the stop condition if continue is set to RELEASE_LINE_AFTER_TRANSFER
+        if continue = RELEASE_LINE_AFTER_TRANSFER then
+          -- do the stop condition
+          log(config.id_for_bfm, proc_call & "=> Setting stop condition.", scope, msg_id_panel);
+          i2c_if.sda <= '0';
+          wait for config.i2c_bit_time/4;
+          i2c_if.scl <= 'Z';
+          -- check for clock stretching
+          await_value(i2c_if.scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+          wait for config.master_scl_to_sda;
+          i2c_if.sda <= 'Z';
+        else                            -- continue = HOLD_LINE_AFTER_TRANSFER
+          -- Do not perform the stop condition. Instead release SDA when SCL is low.
+          -- This will prepare for a repeated start condition.
+          i2c_if.sda <= 'Z';
+          wait for config.i2c_bit_time/4;
+          i2c_if.scl <= 'Z';
+          -- check for clock stretching
+          await_value(i2c_if.scl, '1', MATCH_STD, 0 ns, config.i2c_bit_time, config.i2c_bit_time_severity, msg, scope, ID_NEVER, msg_id_panel);
+        end if;
+
+        wait for config.master_stop_condition_hold_time;
+      end if;
+    else
+      alert(error, proc_call & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
+    end if;
+
+    -- Compare values, but ignore any leading zero's if widths are different.
+    -- Use ID_NEVER so that check_value method does not log when check is OK,
+    -- log it here instead.
+    v_ack_ok := check_value(v_ack_received, exp_ack, alert_level, msg, scope, ID_NEVER, msg_id_panel);
+
+    if not v_ack_ok then
+      v_check_ok := false;
+    end if;
+
+    if v_check_ok then
+      log(config.id_for_bfm, proc_call & "=> OK, slave response was " & to_string(v_ack_received) & ", expected " & to_string(exp_ack) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      alert(alert_level, proc_call & "=> FAILED, slave response was " & to_string(v_ack_received) & ", expected " & to_string(exp_ack) & ". " & add_msg_delimiter(msg), scope);
+    end if;
+  end procedure;
+
+
 end package body i2c_bfm_pkg;

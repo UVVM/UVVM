@@ -9,6 +9,120 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2.4.1
+----------
+Released: 2017-06-08
+- Added compile order file in script folder for each VIP
+- Fixed Aldec Active-HDL bug in VIP compile scripts
+
+
+v2.4.0
+----------
+Released: 2017-05-16
+- Fixed bug in the UVVM VVC Framework resolved function
+- Added status signal for determining simulation result success or failure
+- For more information, please see the CHANGES.TXT in each VIP
+
+v2.3.0
+----------
+Released: 2017-04-28
+- The GPIO VIP has now been added to the UVVM release
+- Improved the documentation formatting
+- For more information, please see the CHANGES.TXT in each VIP
+
+
+v2.2.0
+----------
+Released: 2017-04-18
+- The SPI VIP has now been added to the UVVM release
+
+
+v2.1.2
+----------
+Released: 2017-04-04
+- Updated the BFM init functions on VIPs with BFM bus interfaces to a fix compile error in GHDL, reported by Patrick Lehmann (Paebbels) on GitHub.
+
+
+v2.1.1
+----------
+Released: 2017-03-27
+- Fixed bug in the AXI4-Stream VIP which caused fatal error in Questa:
+  - When calling a BFM procedure, always use the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference.
+
+
+v2.1.0
+----------
+Released: 2017-03-16
+- Updated the AXI4-Stream VIP with extended functionality, including support for TDEST, TID, TSTRB. 
+  - The AXI4-Stream VIP version 3.0.0 is not directly backwards compatible with the previous version.
+  - Please see the CHANGES.TXT document within the VIP for a description of changes required to upgrade to version 3.0.0.
+- Updated the VVC Generator script with the option of creating VVCs with multiple execution queues
+- Added minor documentation updates for all VIPs, uvvm_util and uvvm_vvc_framework
+- For more details, see each VIP CHANGES.TXT document.
+
+
+v2.0.3
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+- The UVVM release of OSVVM has been removed from the repository due to the fact that it was a outdated 
+  version of OSVVM, and it was not used in any testbenches or examples.
+
+v2.0.2
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing. This affects all components in the UVVM package.
+
+
+v2.0.1
+----------
+Released: 2017-01-27
+
+This release is not backwards compatible and may require some changes in your tesbench and custom VVCs.
+
+- Change required in your test bench / test harness : 
+     Replace for example
+        i_initialize_uvvm : initialize_uvvm;
+     with 
+        i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
+
+- Changes required in your custom VVCs (if any) are listed in the CHANGES.TXT file in the sub directory uvvm_vvc_framework. 
+- Changes required in your BFM calls : see CHANGES.TXT in the respective BFM folder. 
+  Some parameters have been reordered in order to minimize the difference between BFM and VVC calls.
+
+All VIPs have been altered for this release.
+
+- For VVC designers there are some changes as well. In order to function with the new UVVM it is recommended to apply these changes:
+1. For *_vvc.vhd
+  - add "variable local_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;" to variable list in cmd_interpreter process
+  - add parameter local_vvc_cmd to work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_ack, shared_vvc_cmd, local_vvc_cmd)
+  - exchange shared_vvc_cmd with local_vvc_cmd in the cmd_interpreter except for the line above as it is copied in that function
+  - add parameter local_vvc_cmd to uvvm_vvc_framework.ti_vvc_framework_support_pkg.acknowledge_cmd(global_vvc_ack,local_vvc_cmd.cmd_idx)
+You can take a look at all our VVCs.
+ 
+2. For vvc_methods_pkg.vhd
+  - delete shared_vvc_cmd := C_VVC_CMD_DEFAULT; line in each procedure before set_general_target_and_command_fields
+  - make sure that the ordering of commands in each function is:
+    1. set_general_target_and_command_fields. It must be executed before any access to shared_vvc_cmd
+    2. after the command send_command_to_vvc(VVCT); there must also be no access to shared_vvc_cmd
+
+ 
+
+v1.5.2
+----------
+Released: 2016-10-31
+
+- This release contains an updated version of:
+  - bitvis_vip_sbi
+  - bitvis_vip_uart
+  - bitvis_vip_axilite
+  - bitvis_vip_axistream
+  - bitvis_vip_i2c
+  - bitvis_vip_avalon_mm__simple_access
+  - uvvm_util
+  - UVVM Util
+
+
 v1.5.1
 ----------
 Released: 2016-09-13

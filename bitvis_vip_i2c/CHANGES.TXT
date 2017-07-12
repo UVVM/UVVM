@@ -1,7 +1,61 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.0.5
+----------
+Released: 2017-06-08
+- Changed variable name in compile script to fix error with Aldec Active-HDL
+- Added compile order file to script folder
+
+v2.0.4
+----------
+Released: 2017-04-28
+- Updated formatting in documentation
+- Replaced boolean continue parameter with enum
+
+v2.0.3
+----------
+Released: 2017-03-16
+- Updated documentation
+
+v2.0.2
+----------
+Released: 2017-02-13
+- Applied minor bugfixes and updated documentation for v2.0.x
+
+
+v2.0.1
+----------
+Released: 2017-02-01
+- Applied minor bugfixes after beta testing
+
+v2.0.0
+----------
+Released: 2017-01-25
+
+- Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
+- Deleted simple to_string method.
+- Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
+- Added AWAIT_ANY_COMPLETION. 
+- Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
+-  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
+-  - updated call to store_result()
+- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
+
+
+VVC changes
+----------
+- Renamed transaction_info_for_waveview to transaction_info
+
 ----------------------------------------------------------------------
+
+v1.1.1 
+----------
+Released: 2016-10-28
+
+VVC changes
+----------
+- transaction_for_waveview now shows NO_OPERATION after a transaction has been completed
 
 v1.1.0
 ----------

@@ -1,6 +1,25 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v3.1.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Changed compile_src.do script to use compile_order.txt for compilation.
+- Reduced terminal output from Modelsim when running compile script.
+- Added support for input argument number 2 to compile_src.do script for
+  specifying output directory.
+- Added clock_period_margin, clock_margin_severity, setup_time and hold_time
+  to BFM configuration record.
+- Added clock period checking and configurable setup and hold times for
+  BFM generated signals.
+- init_axistream_if_signals() function will now set tready to the default value
+  set in the BFM configuration record.
+- Added support for t_slv_array and slv in VVC and BFM calls.
+- Fixed bug that made insert_delay() override inter_bfm_delay in VVC executor.
+- Updated VVC and BFM quick reference PDFs.
+
 v3.0.5
 ----------
 Released: 2017-06-08
@@ -34,10 +53,10 @@ v3.0.0
 ----------
 Released: 2017-03-16
 - Updated documentation
-- Added support for TDEST, TID, TSTRB. 
-  - Required changes by user : 
+- Added support for TDEST, TID, TSTRB.
+  - Required changes by user :
     - When declaring the axistream interface signal, these new signals must be contrained, for example:
-    
+
         signal axistream_if_m : t_axistream_if(tdata(GC_DATA_WIDTH -1 downto 0),
                                                tkeep((GC_DATA_WIDTH/8)-1 downto 0),
                                                tuser(GC_USER_WIDTH -1 downto 0),
@@ -46,7 +65,7 @@ Released: 2017-03-16
                                                tdest(C_TDEST_WIDTH-1 downto 0)    -- new!
                                               );
 
-    - Calls to init_axistream_if_signals() must be updated, if any.  
+    - Calls to init_axistream_if_signals() must be updated, if any.
 
 
 v2.0.3
@@ -67,7 +86,7 @@ Released: 2017-01-27
 
 - Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
 - Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
-- Added AWAIT_ANY_COMPLETION. 
+- Added AWAIT_ANY_COMPLETION.
 - Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
 -  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
 -  - updated call to store_result()
@@ -93,8 +112,8 @@ v1.0.1
 Released: 2016-09-13
 
 - Fixed error in compilation scripts
-- Changed type t_slv8_array so that it is now an 
-  alias of t_byte_array from UVVM-Util. 
+- Changed type t_slv8_array so that it is now an
+  alias of t_byte_array from UVVM-Util.
 - Updated header information in some files.
 
 

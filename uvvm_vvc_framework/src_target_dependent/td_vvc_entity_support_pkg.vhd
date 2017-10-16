@@ -281,6 +281,7 @@ package td_vvc_entity_support_pkg is
     constant broadcast_cmd : t_broadcastable_cmd
   ) return t_immediate_or_queued;
 
+
   procedure populate_shared_vvc_cmd_with_broadcast (
     variable output_vvc_cmd   : out t_vvc_cmd_record
   );
@@ -329,7 +330,8 @@ package body td_vvc_entity_support_pkg is
     constant result_queue_count_threshold          : in natural;
     constant result_queue_count_threshold_severity : in t_alert_level
   ) is
-    variable v_delta_cycle_counter : natural := 0;
+    variable v_delta_cycle_counter  : natural := 0;
+    variable v_comma_number     : natural := 0;
   begin
     check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) &
                 " cannot exceed C_MAX_VVC_INSTANCE_NUM in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM), C_SCOPE, ID_NEVER);
@@ -341,18 +343,36 @@ package body td_vvc_entity_support_pkg is
     vvc_config.result_queue_count_threshold := result_queue_count_threshold;
     vvc_config.result_queue_count_threshold_severity := result_queue_count_threshold_severity;
 
-    log(ID_CONSTRUCTOR, "VVC instantiated.", scope, vvc_config.msg_id_panel);
-    command_queue.set_scope(scope & ":cmd_queue");
+    -- compose log message based on the number of channels in scope string
+    if pos_of_leftmost(',', scope, 1) = pos_of_rightmost(',', scope, 1) then
+      log(ID_CONSTRUCTOR, "VVC instantiated.", scope, vvc_config.msg_id_panel);
+    else
+      for idx in scope'range loop
+        if (scope(idx) = ',') and (v_comma_number < 2) then -- locate 2nd comma in string
+          v_comma_number := v_comma_number + 1;
+        end if;
+        if v_comma_number = 2 then -- rest of string is channel name
+          log(ID_CONSTRUCTOR, "VVC instantiated for channel " & scope((idx+1) to scope'length) , scope, vvc_config.msg_id_panel);
+          exit;
+        end if;
+      end loop;
+    end if;
+    command_queue.set_scope(scope);
+    command_queue.set_name("cmd_queue");
     command_queue.set_queue_count_max(cmd_queue_count_max);
     command_queue.set_queue_count_threshold(cmd_queue_count_threshold);
     command_queue.set_queue_count_threshold_severity(cmd_queue_count_threshold_severity);
-    log(ID_CONSTRUCTOR_SUB, "Command queue instantiated with size " & to_string(command_queue.get_queue_count_max(VOID)), command_queue.get_scope(VOID), vvc_config.msg_id_panel);
+    log(ID_CONSTRUCTOR_SUB, "Command queue instantiated and will give a warning when reaching " & to_string(command_queue.get_queue_count_max(VOID))
+                            & " elements in queue.", scope, vvc_config.msg_id_panel);
 
-    result_queue.set_scope(scope & ":result_queue");
+    result_queue.set_scope(scope);
+    result_queue.set_name("result_queue");
     result_queue.set_queue_count_max(result_queue_count_max);
     result_queue.set_queue_count_threshold(result_queue_count_threshold);
     result_queue.set_queue_count_threshold_severity(result_queue_count_threshold_severity);
-    log(ID_CONSTRUCTOR_SUB, "Result queue instantiated with size " & to_string(result_queue.get_queue_count_max(VOID)), result_queue.get_scope(VOID), vvc_config.msg_id_panel);
+    log(ID_CONSTRUCTOR_SUB, "Result queue instantiated and will give a warning when reaching " & to_string(result_queue.get_queue_count_max(VOID))
+                            & " elements in queue.", scope, vvc_config.msg_id_panel);
+
 
     if shared_uvvm_state /= PHASE_A then
       loop
@@ -407,7 +427,6 @@ package body td_vvc_entity_support_pkg is
       when others                     => return NO_command_type;
     end case;
   end function;
-
 
   procedure populate_shared_vvc_cmd_with_broadcast (
     variable output_vvc_cmd   : out t_vvc_cmd_record
@@ -488,11 +507,11 @@ package body td_vvc_entity_support_pkg is
       end if;
 
       exit when (v_was_broadcast or                                                                                                     -- Broadcast, or
-                (((VVCT.vvc_instance_idx = vvc_labels.instance_idx) or (VVCT.vvc_instance_idx = C_VVCT_ALL_INSTANCES)) and              -- Index is correct or broadcast index
+                (((VVCT.vvc_instance_idx = vvc_labels.instance_idx) or (VVCT.vvc_instance_idx = ALL_INSTANCES)) and              -- Index is correct or broadcast index
                 ((VVCT.vvc_channel = ALL_CHANNELS) or (VVCT.vvc_channel = vvc_labels.channel)) and                                      -- Channel is correct or broadcast channel
                 VVCT.vvc_name(1 to valid_length(vvc_labels.vvc_name)) = vvc_labels.vvc_name(1 to valid_length(vvc_labels.vvc_name))));  -- Name is correct
     end loop;
-    if ((VVCT.vvc_instance_idx = C_VVCT_ALL_INSTANCES) or (VVCT.vvc_channel = ALL_CHANNELS) ) then
+    if ((VVCT.vvc_instance_idx = ALL_INSTANCES) or (VVCT.vvc_channel = ALL_CHANNELS) ) then
       -- in case of a multicast block the global acknowledge until all vvc receiving the message processed it
       vvc_ack <= '0';
     end if;
@@ -514,7 +533,7 @@ package body td_vvc_entity_support_pkg is
     signal   queue_is_increasing  : out   boolean
     ) is
   begin
-    command_queue.put(command); 
+    command_queue.put(command);
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     queue_is_increasing <= true;
     wait for 0 ns;
@@ -646,8 +665,12 @@ package body td_vvc_entity_support_pkg is
       loop
         wait until ((executor_is_busy = false) or (global_awaiting_completion(awaiting_completion_idx) /= '1')) for command.timeout;
 
-        if this_vvc_completed(VOID) or                   -- This VVC is done
-           global_awaiting_completion(awaiting_completion_idx) = '0' or   -- All other involved VVCs are done
+        if this_vvc_completed(VOID) then                   -- This VVC is done
+          log(await_completion_finished_msg_id, "This VVC initiated completion of " & to_string(command.proc_call), to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+          exit;
+        end if;
+
+        if global_awaiting_completion(awaiting_completion_idx) = '0' or   -- All other involved VVCs are done
            global_awaiting_completion(awaiting_completion_idx) = 'X' then -- Some other involved VVCs are done
           exit;
         end if;
@@ -728,7 +751,7 @@ package body td_vvc_entity_support_pkg is
       -- Pop the element. Compare cmd idx. If it does not match, push to local result queue.
       -- If an index matches, set shared_vvc_response.result. (Don't push element back to result queue)
       while result_queue.get_count(VOID) > 0 loop
-        v_current_element := result_queue.get(VOID); 
+        v_current_element := result_queue.get(VOID);
         if v_current_element.cmd_idx = command.gen_integer_array(0) then
           shared_vvc_response.fetch_is_accepted := true;
           shared_vvc_response.result              := v_current_element.result;
@@ -736,7 +759,7 @@ package body td_vvc_entity_support_pkg is
           exit;
         else
           -- No match for element: put in local result queue
-          v_local_result_queue.put(v_current_element); 
+          v_local_result_queue.put(v_current_element);
         end if;
       end loop;
 
@@ -784,7 +807,7 @@ package body td_vvc_entity_support_pkg is
     executor_is_busy  <= true;
     wait until executor_is_busy;
     vvc_status.previous_cmd_idx := command.cmd_idx;
-    command := command_queue.get(VOID); 
+    command := command_queue.get(VOID);
     log(ID_CMD_EXECUTOR, to_string(command.proc_call) & " - Will be executed " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     vvc_status.current_cmd_idx := command.cmd_idx;
@@ -801,7 +824,7 @@ package body td_vvc_entity_support_pkg is
   begin
     v_result_queue_element.cmd_idx := cmd_idx;
     v_result_queue_element.result := result;
-    result_queue.put(v_result_queue_element); 
+    result_queue.put(v_result_queue_element);
   end procedure;
 
   procedure insert_inter_bfm_delay_if_requested(

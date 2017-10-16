@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -106,7 +106,7 @@ begin
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);
-      v_cmd_has_been_acked := false; -- Clear flag 
+      v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
 
@@ -123,7 +123,7 @@ begin
           when AWAIT_COMPLETION =>
             work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
 
-          when AWAIT_ANY_COMPLETION => 
+          when AWAIT_ANY_COMPLETION =>
             if not v_local_vvc_cmd.gen_boolean then
               -- Called with lastness = NOT LAST: Acknowledge immediately to let the sequencer continue
               work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
@@ -132,7 +132,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
           when DISABLE_LOG_MSG =>
-            uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness); 
+            uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
 
           when ENABLE_LOG_MSG =>
             uvvm_util.methods_pkg.enable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
@@ -173,13 +173,14 @@ begin
 -- - Fetch and execute the commands
 --========================================================================================================================
   cmd_executor : process
-    variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_read_data                             : t_vvc_result;  -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access : time                                       := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access    : time                                       := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access      : time                                       := 0 ns;
-    variable v_command_is_bfm_access                 : boolean;
-    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_cmd                                    : t_vvc_cmd_record;
+    variable v_read_data                              : t_vvc_result;  -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access  : time                                       := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access     : time                                       := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access       : time                                       := 0 ns;
+    variable v_command_is_bfm_access                  : boolean := false;
+    variable v_prev_command_was_bfm_access            : boolean := false;
+    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
   begin
 
     -- 0. Initialize the process prior to first command
@@ -197,6 +198,7 @@ begin
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Check if command is a BFM access
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
       if v_cmd.operation = SET or v_cmd.operation = GET or v_cmd.operation = CHECK or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
@@ -205,7 +207,7 @@ begin
 
       -- Insert delay if needed
       work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
-                                                                         command_is_bfm_access              => v_command_is_bfm_access,
+                                                                         command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                          timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                          timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
                                                                          scope                              => C_SCOPE);
@@ -213,8 +215,6 @@ begin
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
       end if;
-      
-      log(ID_BFM, "Running : " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd) & ".", C_SCOPE, vvc_config.msg_id_panel);
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------

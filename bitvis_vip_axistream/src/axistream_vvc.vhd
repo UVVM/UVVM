@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -34,8 +34,8 @@ use work.td_result_queue_pkg.all;
 --========================================================================================================================
 entity axistream_vvc is
    generic (
-      -- When true: This VVC is an AXI4 Stream master. Data is output from BFM. 
-      -- When false: This VVC is an AXI4 Stream slave. Data is input to BFM. 
+      -- When true: This VVC is an AXI4 Stream master. Data is output from BFM.
+      -- When false: This VVC is an AXI4 Stream slave. Data is input to BFM.
       GC_VVC_IS_MASTER                      : boolean;
       GC_DATA_WIDTH                         : integer;
       GC_USER_WIDTH                         : integer := 1;
@@ -133,11 +133,11 @@ begin
                   work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
 
                when AWAIT_ANY_COMPLETION =>
-                  if not v_local_vvc_cmd.gen_boolean then 
-                     -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue 
+                  if not v_local_vvc_cmd.gen_boolean then
+                     -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
                      work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
                      v_cmd_has_been_acked := true;
-                  end if; 
+                  end if;
                   work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
                when DISABLE_LOG_MSG =>
@@ -168,7 +168,7 @@ begin
          -------------------------------------------------------------------------
          if not v_cmd_has_been_acked then
            work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
-         end if; 
+         end if;
 
       end loop;
    end process;
@@ -180,12 +180,13 @@ begin
 -- - Fetch and execute the commands
 --========================================================================================================================
    cmd_executor : process
-      variable v_cmd                                   : t_vvc_cmd_record;
-      variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
-      variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
-      variable v_timestamp_start_of_last_bfm_access    : time := 0 ns;
-      variable v_timestamp_end_of_last_bfm_access      : time := 0 ns;
-      variable v_command_is_bfm_access                 : boolean;
+      variable v_cmd                                    : t_vvc_cmd_record;
+      variable v_result                                 : t_vvc_result; -- See vvc_cmd_pkg
+      variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
+      variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
+      variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
+      variable v_command_is_bfm_access                  : boolean := false;
+      variable v_prev_command_was_bfm_access            : boolean := false;
    begin
 
       -- 0. Initialize the process prior to first command
@@ -203,6 +204,7 @@ begin
          transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
          -- Check if command is a BFM access
+         v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
          if v_cmd.operation = TRANSMIT or v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
             v_command_is_bfm_access := true;
          else
@@ -211,7 +213,7 @@ begin
 
          -- Insert delay if needed
          work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
-                                                                            command_is_bfm_access              => v_command_is_bfm_access,
+                                                                            command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                             timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                             timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access);
 
@@ -219,7 +221,6 @@ begin
             v_timestamp_start_of_current_bfm_access := now;
          end if;
 
-         log(ID_BFM, "Running : " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd) & ".", C_SCOPE, vvc_config.msg_id_panel);
          -- 2. Execute the fetched command
          -------------------------------------------------------------------------
          case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -235,13 +236,13 @@ begin
 
                -- Call the corresponding procedure in the BFM package.
                axistream_transmit(
-                  data_array          => v_cmd.data_array(0 to v_cmd.data_array_length-1),
-                  user_array          => v_cmd.user_array(0 to v_cmd.user_array_length-1),
-                  strb_array          => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
-                  id_array          => v_cmd.id_array(0 to v_cmd.id_array_length-1),
-                  dest_array          => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
-                  msg                 => format_msg(v_cmd),
-                  clk                 => clk,
+                  data_array           => v_cmd.data_array(0 to v_cmd.data_array_length-1),
+                  user_array           => v_cmd.user_array(0 to v_cmd.user_array_length-1),
+                  strb_array           => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
+                  id_array             => v_cmd.id_array(0 to v_cmd.id_array_length-1),
+                  dest_array           => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
+                  msg                  => format_msg(v_cmd),
+                  clk                  => clk,
                   -- Using the non-record version to avoid fatal error in Modelsim: (SIGSEGV) Bad handle or reference
                   axistream_if_tdata  => axistream_vvc_if.tdata,
                   axistream_if_tkeep  => axistream_vvc_if.tkeep,
@@ -315,10 +316,10 @@ begin
               if v_cmd.gen_integer_array(0) = -1 then
                 -- Delay specified using time
                 wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
-              else 
+              else
                 -- Delay specified using integer
                 wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
-              end if; 
+              end if;
 
             when others =>
                tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);
@@ -343,7 +344,7 @@ begin
          last_cmd_idx_executed <= v_cmd.cmd_idx;
          -- Reset the transaction info for waveview
          transaction_info   := C_TRANSACTION_INFO_DEFAULT;
-         
+
       end loop;
    end process;
 --========================================================================================================================

@@ -3,6 +3,35 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.2.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Added support for input argument number 2 to compile_src.do script for
+  specifying output directory.
+- Reduced terminal output from Modelsim when running compile scripts.
+- Changed simulation stop command to std.env.stop if the expected alert
+  level is exceeded.
+- Log messages will now appear after command execution in time consuming
+  procedures.
+- Added constant ALL_INSTANCES for broadcast to all instances of a VVC,
+  fixing documentation and code mismatch.
+- Added unconstrained array types t_slv_array, t_signed_array and
+  t_unsigned_array.
+- Added function convert_slv_array_to_byte_array() and
+  convert_byte_array_to_slv_array() to ease type conversion.
+- Added t_byte_endianness(FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT) for use in
+  conversions between t_slv_array and t_byte_array.
+- Added t_pulse_continuation(ALLOW_PULSE_CONTINUATION,
+  NO_PULSE_CONTINUATION_ALLOWED).
+- Changed clocked version of gen_pulse() to synchronize to falling edge on
+  pulse setup, and falling edge on exit.
+- Added adjustable_clock_generator(), supporting adjustable clock periods
+  while running.
+- Fixed bug in SL and SLV versions of random() with seeds.
+- Updated util_quick_ref.pdf
+
 v2.1.1
 ----------
 Released: 2017-06-08
@@ -77,9 +106,9 @@ All changes should be backwards compatible within 1.x.x
   message is used for spaces
 - Show log id/scope is now set by a constant (was global signal), and the
   total log line width is checked during initialization.
-- Removed OSVVM default log msg id panel C_OSVVM_DEFAULT_MSG_ID_PANEL. 
+- Removed OSVVM default log msg id panel C_OSVVM_DEFAULT_MSG_ID_PANEL.
   Using C_MSG_ID_PANEL_DEFAULT instead.
-- clock_generator: Removed a printout that indicated that the clock was 
+- clock_generator: Removed a printout that indicated that the clock was
   stopped at time 0. Clock was not started previous to the message.
 - Added new msg ids ID_BFM_POLL_SUMMARY and ID_UVVM_DATA_QUEUE
 - to_string for string type: Now ignores LF character. Log and alert procedures
@@ -114,7 +143,7 @@ v1.1.2
 Released: 2016-01-20
 
 All changes should be backwards compatible within 1.x.x
-- License conditions have changed. UVVM Utility Library is now released 
+- License conditions have changed. UVVM Utility Library is now released
   under the MIT license, see LICENSE.txt
 - Added ability to set duty cycle in clock_generator() procedures,
   either by percentage or time.
@@ -135,7 +164,7 @@ v1.1.1
 Released: 2015-12-08
 
 All changes should be backwards compatible within 1.x.x
-- Added new optional parameter for check_value and await_value for SL/SLV to set if 
+- Added new optional parameter for check_value and await_value for SL/SLV to set if
   match is exact match (MATCH_EXACT) or std_match (MATCH_STD)
 - C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME is not default false
 - Compile order in the QuickRef has been updated
@@ -192,9 +221,9 @@ All changes should be backwards compatible within 1.x.x
     - Removed support for VHDL93 and VHDL2002
     - Included support for hierarchical alert reporting. Hierarchical alert reporting
       allows for a hierarchy tree to be defined during run-time. The alert summary will
-      then be shown as a tree of defined scopes. Alert counters will propagate up the tree 
+      then be shown as a tree of defined scopes. Alert counters will propagate up the tree
       to the top level, and stop limits can be set at each level in the hierarchy.
-      See the PowerPoint presentation 'UVVM_Utility_Library_Concepts_and_Usage.pps' for 
+      See the PowerPoint presentation 'UVVM_Utility_Library_Concepts_and_Usage.pps' for
       more information.
 
 

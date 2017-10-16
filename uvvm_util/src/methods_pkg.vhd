@@ -458,6 +458,48 @@ package methods_pkg is
     constant caller_name : string          := "check_value()"
     ) return boolean ;
 
+    impure function check_value(
+    constant value       : t_slv_array;
+    constant exp         : t_slv_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_slv_array"
+    ) return boolean ;
+
+  impure function check_value(
+    constant value       : t_signed_array;
+    constant exp         : t_signed_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_signed_array"
+    ) return boolean ;
+
+  impure function check_value(
+    constant value       : t_unsigned_array;
+    constant exp         : t_unsigned_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_unsigned_array"
+    ) return boolean ;
+
   -- procedure version of check_value (no return value)
   procedure check_value(
     constant value       : boolean;
@@ -603,6 +645,48 @@ package methods_pkg is
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
+    );
+
+  procedure check_value(
+    constant value       : t_slv_array;
+    constant exp         : t_slv_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_slv_array"
+    );
+
+  procedure check_value(
+    constant value       : t_signed_array;
+    constant exp         : t_signed_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_signed_array"
+    );
+
+  procedure check_value(
+    constant value       : t_unsigned_array;
+    constant exp         : t_unsigned_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_unsigned_array"
     );
 
   -- Check_value_in_range
@@ -887,6 +971,19 @@ package methods_pkg is
     constant msg   : string         := "randomising seeds";
     constant scope : string         := C_TB_SCOPE_DEFAULT
   );
+
+  function convert_byte_array_to_slv_array(
+    constant byte_array       : t_byte_array;
+    constant bytes_in_word    : natural;
+    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+  ) return t_slv_array;
+
+  function convert_slv_array_to_byte_array(
+    constant slv_array        : t_slv_array;
+    constant ascending        : boolean           := false;
+    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+  ) return t_byte_array;
+
 
   -- Warning! This function should NOT be used outside the UVVM library.
   --          Function is only included to support internal functionality.
@@ -1195,24 +1292,24 @@ package methods_pkg is
   );
 
   procedure gen_pulse(
-    signal   target         : inout std_logic;
-    constant pulse_value    : std_logic;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic;
+    constant pulse_value        : std_logic;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure gen_pulse(
-    signal   target         : inout std_logic;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure gen_pulse(
@@ -1446,6 +1543,34 @@ package methods_pkg is
     constant clock_name      : in    string;
     constant clock_high_time : in    time
   );
+
+  -- Adjustable clock generators
+  procedure adjustable_clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    constant clock_period          : in    time;
+    signal   clock_high_percentage : in    natural range 0 to 100
+  );
+
+  procedure adjustable_clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    constant clock_period          : in    time;
+    constant clock_name            : in    string;
+    signal   clock_high_percentage : in    natural range 0 to 100
+  );
+
+  -- Overloaded version with clock enable, clock name
+  -- and clock count
+  procedure adjustable_clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_name            : in    string;
+    signal   clock_high_percentage : in    natural range 0 to 100
+  );
+
 
   procedure deallocate_line_if_exists(
      variable line_to_be_deallocated      : inout line
@@ -2228,9 +2353,7 @@ package body methods_pkg is
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
             if (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
-              assert false
-               report "This single Failure line has been provoked to stop the simulation. See alert-message above"
-               severity failure;
+              std.env.stop;
             end if;
           end if;
         end if;
@@ -2508,9 +2631,9 @@ package body methods_pkg is
       if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
         warning_and_worse := 1; -- default
         error_and_worse   := 1; -- default
-    
+
         -- Compare expected and current allerts
-        for i in 1 to alert_check_array'high loop 
+        for i in 1 to alert_check_array'high loop
           if (get_alert_counter(alert_check_array(i), REGARD) > get_alert_counter(alert_check_array(i), EXPECT)) then
             -- warning and worse
             warning_and_worse := 0;
@@ -2953,6 +3076,72 @@ package body methods_pkg is
     end if;
   end;
 
+  impure function check_value(
+    constant value       : t_slv_array;
+    constant exp         : t_slv_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_slv_array"
+    ) return boolean is
+  begin
+    for idx in exp'range loop
+      if not(check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
+        return false;
+      end if;
+    end loop;
+    return true;
+  end;
+
+  impure function check_value(
+    constant value       : t_signed_array;
+    constant exp         : t_signed_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_signed_array"
+    ) return boolean is
+  begin
+    for idx in exp'range loop
+      if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
+        return false;
+      end if;
+    end loop;
+    return true;
+  end;
+
+  impure function check_value(
+    constant value       : t_unsigned_array;
+    constant exp         : t_unsigned_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_unsigned_array"
+    ) return boolean is
+  begin
+    for idx in exp'range loop
+      if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
+        return false;
+      end if;
+    end loop;
+    return true;
+  end;
+
   ----------------------------------------------------------------------
   -- Overloads for check_value functions,
   -- to allow for no return value
@@ -3148,6 +3337,66 @@ package body methods_pkg is
     variable v_check_ok  : boolean;
   begin
     v_check_ok := check_value(value, exp, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
+  end;
+
+  procedure check_value(
+    constant value       : t_slv_array;
+    constant exp         : t_slv_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_slv_array"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    for idx in exp'range loop
+      v_check_ok := check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    end loop;
+  end;
+
+  procedure check_value(
+    constant value       : t_signed_array;
+    constant exp         : t_signed_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_signed_array"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    for idx in exp'range loop
+      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    end loop;
+  end;
+
+  procedure check_value(
+    constant value       : t_unsigned_array;
+    constant exp         : t_unsigned_array;
+    constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant radix       : t_radix         := HEX_BIN_IF_INVALID;
+    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value()";
+    constant value_type  : string          := "t_unsigned_array"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    for idx in exp'range loop
+      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    end loop;
   end;
 
   ------------------------------------------------------------------------
@@ -3669,14 +3918,16 @@ package body methods_pkg is
     variable v_target      : inout std_logic_vector
   ) is
     variable v_length      : integer  := v_target'length;
+    variable v_rand        : integer;
   begin
     -- Iterate through each bit and randomly set to 0 or 1
     for i in 0 to v_length-1 loop
-      v_target(i downto i) := std_logic_vector(to_unsigned(random(0,1),1));
+      random(0,1, v_seed1, v_seed2, v_rand);
+      v_target(i downto i) := std_logic_vector(to_unsigned(v_rand,1));
     end loop;
   end;
 
-  -- Set target to a random SL, using overload for the integer version of random().
+  -- Set target to a random SL, using overload for the SLV version of random().
   procedure random (
     variable v_seed1       : inout positive;
     variable v_seed2       : inout positive;
@@ -3684,7 +3935,7 @@ package body methods_pkg is
   ) is
     variable v_random_slv      : std_logic_vector(0 downto 0);
   begin
-    v_random_slv := std_logic_vector(to_unsigned(random(0,1),1));
+    random(v_seed1, v_seed2, v_random_slv);
     v_target := v_random_slv(0);
   end;
 
@@ -3766,6 +4017,69 @@ package body methods_pkg is
       shared_seed1 := seed1;
       shared_seed2 := seed2;
   end;
+
+  function convert_byte_array_to_slv_array(
+    constant byte_array       : t_byte_array;
+    constant bytes_in_word    : natural;
+    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+  ) return t_slv_array is
+    variable v_slv_array   : t_slv_array(0 to (byte_array'length/bytes_in_word)-1)((8*bytes_in_word)-1 downto 0);
+    variable v_byte_idx       : integer := 0;
+    variable v_num_bytes      : integer := byte_array'length/bytes_in_word;
+  begin
+    for idx in 0 to v_num_bytes-1 loop
+      if byte_endianness = FIRST_BYTE_LEFT then
+        for byte_in_word in bytes_in_word downto 1 loop
+          v_slv_array(idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
+          v_byte_idx := v_byte_idx + 1;
+        end loop;
+      else -- FIRST_BYTE_RIGHT
+        for byte_in_word in 1 to bytes_in_word loop
+          v_slv_array(idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
+          v_byte_idx := v_byte_idx + 1;
+        end loop;
+      end if;
+    end loop;
+    return v_slv_array;
+  end function;
+
+  function convert_slv_array_to_byte_array(
+    constant slv_array        : t_slv_array;
+    constant ascending        : boolean           := false;
+    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+  ) return t_byte_array is
+    variable v_bytes_in_word      : integer := (slv_array(0)'length/8);
+    variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
+    variable v_ascending_array    : t_byte_array(0 to v_byte_array_length-1);
+    variable v_descending_array   : t_byte_array(v_byte_array_length-1 downto 0);
+    variable v_byte_number        : integer := 0;
+  begin
+    if byte_endianness = FIRST_BYTE_LEFT then
+      for slv_idx in 0 to slv_array'length-1 loop
+        for byte in v_bytes_in_word downto 1 loop
+          v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+          v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+          v_byte_number := v_byte_number + 1;
+        end loop;
+      end loop;
+    else -- FIRST_BYTE_RIGHT
+      for slv_idx in 0 to slv_array'length-1 loop
+        for byte in 1 to v_bytes_in_word loop
+          v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+          v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+          v_byte_number := v_byte_number + 1;
+        end loop;
+      end loop;
+    end if;
+
+    if ascending then
+      return v_ascending_array;
+    else -- descending
+      return v_descending_array;
+    end if;
+  end function;
+
+
 
 -- ============================================================================
 -- Time consuming checks
@@ -4753,22 +5067,19 @@ package body methods_pkg is
   -- If blocking_mode = NON_BLOCKING : Procedure starts the pulse, schedules the end of the pulse, then returns to the caller immediately.
   --
   procedure gen_pulse(
-    signal   target         : inout std_logic;
-    constant pulse_value    : std_logic;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic;
+    constant pulse_value        : std_logic;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string                := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id              := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel        := shared_msg_id_panel
     ) is
-    constant init_value    : std_logic := target;
+    constant init_value  : std_logic := target;
   begin
-    log(msg_id, "Pulse to " & to_string(pulse_value) &
-                " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
-
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-    target <= pulse_value;  -- Start pulse
+    target <= pulse_value;  -- Generate pulse
 
     if (blocking_mode = BLOCKING) then
       wait for pulse_duration;
@@ -4776,18 +5087,20 @@ package body methods_pkg is
     else
       target <= transport init_value after pulse_duration;
     end if;
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
+    wait for 0 ns; -- wait a delta cycle for signal to update
   end;
 
   -- Overload to allow excluding the pulse_value argument:
   -- Make pulse_value = '1' by default
   procedure gen_pulse(
-    signal   target         : inout std_logic;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string                := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id              := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel        := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, '1', pulse_duration, blocking_mode, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -4796,12 +5109,12 @@ package body methods_pkg is
   -- Overload to allow excluding the blocking_mode and pulse_value arguments:
   -- Make blocking_mode = BLOCKING and pulse_value = '1' by default
   procedure gen_pulse(
-    signal   target         : inout std_logic;
-    constant pulse_duration : time;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic;
+    constant pulse_duration     : time;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, '1', pulse_duration, BLOCKING, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -4810,13 +5123,13 @@ package body methods_pkg is
   -- Overload to allow excluding the blocking_mode argument:
   -- Make blocking_mode = BLOCKING by default
   procedure gen_pulse(
-    signal   target         : inout std_logic;
-    constant pulse_value    : std_logic;
-    constant pulse_duration : time;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic;
+    constant pulse_value        : std_logic;
+    constant pulse_duration     : time;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, pulse_value, pulse_duration, BLOCKING, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -4836,21 +5149,18 @@ package body methods_pkg is
   ) is
     constant init_value    : std_logic := target;
   begin
-    log(msg_id, "Pulse to " & to_string(pulse_value) &
-                " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+    wait until falling_edge(clock_signal);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
+
+    target  <= pulse_value; -- Generate pulse
     if (num_periods > 0) then
-      wait until falling_edge(clock_signal);
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
       for i in 1 to num_periods loop
         wait until falling_edge(clock_signal);
       end loop;
-    else -- Pulse for one delta cycle only
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
-      wait for 0 ns;
     end if;
+
     target  <= init_value;
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
   end;
 
   -- Overload to allow excluding the pulse_value argument:
@@ -4869,41 +5179,40 @@ package body methods_pkg is
   end;
 
   procedure gen_pulse(
-    signal   target         : inout boolean;
-    constant pulse_value    : boolean;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout boolean;
+    constant pulse_value        : boolean;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
     constant init_value    : boolean := target;
   begin
-    log(msg_id, "Pulse to " & to_string(pulse_value) &
-                " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
-
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-    target <= pulse_value;  -- Start pulse
 
+    target <= pulse_value;  -- Generate pulse
     if (blocking_mode = BLOCKING) then
       wait for pulse_duration;
       target <= init_value;
     else
       target <= transport init_value after pulse_duration;
     end if;
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
+    wait for 0 ns; -- wait a delta cycle for signal to update
   end;
 
   -- Overload to allow excluding the pulse_value argument:
   -- Make pulse_value = true by default
   procedure gen_pulse(
-    signal   target         : inout boolean;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout boolean;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, true, pulse_duration, blocking_mode, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -4912,12 +5221,12 @@ package body methods_pkg is
   -- Overload to allow excluding the blocking_mode and pulse_value arguments:
   -- Make blocking_mode = BLOCKING and pulse_value = true by default
   procedure gen_pulse(
-    signal   target         : inout boolean;
-    constant pulse_duration : time;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout boolean;
+    constant pulse_duration     : time;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, true, pulse_duration, BLOCKING, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -4926,13 +5235,13 @@ package body methods_pkg is
   -- Overload to allow excluding the blocking_mode argument:
   -- Make blocking_mode = BLOCKING by default
   procedure gen_pulse(
-    signal   target         : inout boolean;
-    constant pulse_value    : boolean;
-    constant pulse_duration : time;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout boolean;
+    constant pulse_value        : boolean;
+    constant pulse_duration     : time;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, pulse_value, pulse_duration, BLOCKING, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -4951,22 +5260,18 @@ package body methods_pkg is
   ) is
     constant init_value    : boolean := target;
   begin
-    log(msg_id, "Pulse to " & to_string(pulse_value) &
-                " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
-    if (num_periods > 0) then
-      wait until falling_edge(clock_signal);
+    wait until falling_edge(clock_signal);
+    check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
 
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
+    target  <= pulse_value; -- Generate pulse
+    if (num_periods > 0) then
       for i in 1 to num_periods loop
         wait until falling_edge(clock_signal);
       end loop;
-    else -- Pulse for one delta cycle only
-      check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      target  <= pulse_value;
-      wait for 0 ns;
     end if;
+
     target  <= init_value;
+    log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
   end;
 
   -- Overload to allow excluding the pulse_value argument:
@@ -4991,24 +5296,21 @@ package body methods_pkg is
   -- If blocking_mode = NON_BLOCKING : Procedure starts the pulse, schedules the end of the pulse, then returns to the caller immediately.
   --
   procedure gen_pulse(
-    signal   target         : inout std_logic_vector;
-    constant pulse_value    : std_logic_vector;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic_vector;
+    constant pulse_value        : std_logic_vector;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
     constant init_value     : std_logic_vector(target'range) := target;
     variable v_target       : std_logic_vector(target'length-1 downto 0) := target;
-    variable v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;    
+    variable v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;
   begin
-    log(msg_id, "Pulse to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) &
-                " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
-
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-    
+
     for i in 0 to (v_target'length-1) loop
       if pulse_value(i) /= '-' then
           v_target(i) := v_pulse(i); -- Generate pulse
@@ -5022,18 +5324,20 @@ package body methods_pkg is
     else
       target <= transport init_value after pulse_duration;
     end if;
+    log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
+    wait for 0 ns; -- wait a delta cycle for signal to update
   end;
 
   -- Overload to allow excluding the pulse_value argument:
   -- Make pulse_value = (others => '1') by default
   procedure gen_pulse(
-    signal   target         : inout std_logic_vector;
-    constant pulse_duration : time;
-    constant blocking_mode  : t_blocking_mode;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic_vector;
+    constant pulse_duration     : time;
+    constant blocking_mode      : t_blocking_mode;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
     constant pulse_value    : std_logic_vector(target'range) := (others => '1');
   begin
@@ -5043,12 +5347,12 @@ package body methods_pkg is
   -- Overload to allow excluding the blocking_mode and pulse_value arguments:
   -- Make blocking_mode = BLOCKING and pulse_value = (others => '1') by default
   procedure gen_pulse(
-    signal   target         : inout std_logic_vector;
-    constant pulse_duration : time;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic_vector;
+    constant pulse_duration     : time;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
     constant pulse_value    : std_logic_vector(target'range) := (others => '1');
   begin
@@ -5058,13 +5362,13 @@ package body methods_pkg is
   -- Overload to allow excluding the blocking_mode argument:
   -- Make blocking_mode = BLOCKING by default
   procedure gen_pulse(
-    signal   target         : inout std_logic_vector;
-    constant pulse_value    : std_logic_vector;
-    constant pulse_duration : time;
-    constant msg            : string;
-    constant scope          : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id         : t_msg_id       := ID_GEN_PULSE;
-    constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
+    signal   target             : inout std_logic_vector;
+    constant pulse_value        : std_logic_vector;
+    constant pulse_duration     : time;
+    constant msg                : string;
+    constant scope              : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id             : t_msg_id       := ID_GEN_PULSE;
+    constant msg_id_panel       : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
     gen_pulse(target, pulse_value, pulse_duration, BLOCKING, msg, scope, msg_id, msg_id_panel); -- Blocking mode by default
@@ -5086,37 +5390,25 @@ package body methods_pkg is
     constant v_pulse        : std_logic_vector(pulse_value'length-1 downto 0) := pulse_value;
     variable v_target       : std_logic_vector(target'length-1 downto 0)      := target;
   begin
-    log(msg_id, "Pulse to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) &
-                " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
-  
+    wait until falling_edge(clock_signal);
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
-      
+
+    for i in 0 to (v_target'length-1) loop
+      if v_pulse(i) /= '-' then
+        v_target(i) := v_pulse(i); -- Generate pulse
+      end if;
+    end loop;
+    target <= v_target;
+
     if (num_periods > 0) then
-      wait until falling_edge(clock_signal);
-
-      for i in 0 to (v_target'length-1) loop
-        if v_pulse(i) /= '-' then
-          v_target(i) := v_pulse(i); -- Generate pulse
-        end if;
-      end loop;
-
-      target <= v_target;
       for i in 1 to num_periods loop
         wait until falling_edge(clock_signal);
       end loop;
-    else -- Pulse for one delta cycle only
-
-      for i in 0 to (v_target'length-1) loop
-        if v_pulse(i) /= '-' then
-          v_target(i) := v_pulse(i); -- Generate pulse
-        end if;
-      end loop;
-
-      target <= v_target;
-      wait for 0 ns;
     end if;
 
     target  <= init_value;
+    log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & " for " & to_string(num_periods) & " clk cycles. " & add_msg_delimiter(msg), scope);
+    wait for 0 ns; -- wait a delta cycle for signal to update
   end;
 
   -- Overload to allow excluding the pulse_value argument:
@@ -5134,6 +5426,7 @@ package body methods_pkg is
   begin
     gen_pulse(target, pulse_value, clock_signal, num_periods, msg, scope, msg_id, msg_id_panel); -- pulse_value = (others => '1') by default
   end;
+
   --------------------------------------------
   -- Clock generators :
   -- Include this as a concurrent procedure from your test bench.
@@ -5230,7 +5523,7 @@ package body methods_pkg is
 
     loop
       clock_signal <= '0';
-      wait for clock_high_time;
+      wait for (clock_period - clock_high_time);
 
       if clock_count < natural'right then
         clock_count <= clock_count + 1;
@@ -5238,7 +5531,7 @@ package body methods_pkg is
         clock_count <= 0;
       end if;
       clock_signal <= '1';
-      wait for (clock_period - clock_high_time);
+      wait for clock_high_time;
 
     end loop;
   end;
@@ -5269,10 +5562,12 @@ package body methods_pkg is
         wait until clock_ena;
         log(ID_CLOCK_GEN, "Starting clock " & clock_name);
       end if;
+
       clock_signal <= '1';
       wait for C_FIRST_HALF_CLK_PERIOD;
       clock_signal <= '0';
       wait for (clock_period - C_FIRST_HALF_CLK_PERIOD);
+
     end loop;
   end;
 
@@ -5405,6 +5700,109 @@ package body methods_pkg is
   end;
 
 
+  --------------------------------------------
+  -- Adjustable clock generators :
+  -- Include this as a concurrent procedure from your test bench.
+  -- ( Including this procedure call as a concurrent statement directly in your architecture
+  --   is in fact identical to a process, where the procedure parameters is the sensitivity list )
+  --   Set duty cycle by setting clock_high_percentage from 1 to 99. Beware of rounding errors.
+  --------------------------------------------
+  procedure adjustable_clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    constant clock_period          : in    time;
+    constant clock_name            : in    string;
+    signal   clock_high_percentage : in    natural range 0 to 100
+  ) is
+    -- Making sure any rounding error after calculating period/2 is not accumulated.
+    variable v_first_half_clk_period : time := clock_period * clock_high_percentage/100;
+  begin
+    -- alert if init value is not set
+    check_value(clock_high_percentage /= 0, TB_ERROR, "clock_generator: parameter clock_high_percentage must be set!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+
+    loop
+      if not clock_ena then
+        if now /= 0 ps then
+          log(ID_CLOCK_GEN, "Stopping clock: " & clock_name);
+        end if;
+        clock_signal <= '0';
+        wait until clock_ena;
+        log(ID_CLOCK_GEN, "Starting clock: " & clock_name);
+        -- alert if unvalid value is set
+        check_value_in_range(clock_high_percentage, 1, 99, TB_ERROR, "adjustable_clock_generator: parameter clock_high_percentage must be in range 1 to 99!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      end if;
+
+      v_first_half_clk_period := clock_period * clock_high_percentage/100;
+
+      clock_signal <= '1';
+      wait for v_first_half_clk_period;
+      clock_signal <= '0';
+      wait for (clock_period - v_first_half_clk_period);
+
+    end loop;
+  end procedure;
+
+  procedure adjustable_clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    constant clock_period          : in    time;
+    signal   clock_high_percentage : in    natural range 0 to 100
+  ) is
+    constant v_clock_name           : string := "";
+  begin
+    adjustable_clock_generator(clock_signal, clock_ena, clock_period, v_clock_name, clock_high_percentage);
+  end procedure;
+
+  -- Overloaded version with clock enable, clock name
+  -- and clock count
+  procedure adjustable_clock_generator(
+    signal   clock_signal          : inout std_logic;
+    signal   clock_ena             : in    boolean;
+    signal   clock_count           : out   natural;
+    constant clock_period          : in    time;
+    constant clock_name            : in    string;
+    signal   clock_high_percentage : in    natural range 0 to 100
+  ) is
+    -- Making sure any rounding error after calculating period/2 is not accumulated.
+    variable v_first_half_clk_period : time := clock_period * clock_high_percentage/100;
+    variable v_clock_count : natural := 0;
+  begin
+    -- alert if init value is not set
+    check_value(clock_high_percentage /= 0, TB_ERROR, "clock_generator: parameter clock_high_percentage must be set!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+
+    clock_count <= v_clock_count;
+    loop
+      if not clock_ena then
+        if now /= 0 ps then
+          log(ID_CLOCK_GEN, "Stopping clock: " & clock_name);
+        end if;
+        clock_signal <= '0';
+        wait until clock_ena;
+        log(ID_CLOCK_GEN, "Starting clock: " & clock_name);
+        -- alert if unvalid value is set
+        check_value_in_range(clock_high_percentage, 1, 99, TB_ERROR, "adjustable_clock_generator: parameter clock_high_percentage must be in range 1 to 99!", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      end if;
+
+      v_first_half_clk_period := clock_period * clock_high_percentage/100;
+
+      clock_signal <= '1';
+      wait for v_first_half_clk_period;
+      clock_signal <= '0';
+      wait for (clock_period - v_first_half_clk_period);
+
+      if v_clock_count < natural'right then
+        v_clock_count := v_clock_count + 1;
+      else -- Wrap when reached max value of natural
+        v_clock_count := 0;
+      end if;
+
+      clock_count <= v_clock_count;
+    end loop;
+  end procedure;
+
+
+
+
 
 -- ============================================================================
 -- Synchronisation methods
@@ -5497,7 +5895,7 @@ package body methods_pkg is
 
       for i in shared_flag_array'range loop
         if shared_flag_array(i).flag_name(flag_name'range) = flag_name then
-        
+
           v_flag_is_active := shared_flag_array(i).is_active;
           if v_flag_is_active = false then
             log(ID_BLOCKING, flag_name & " was unblocked. " & add_msg_delimiter(msg), C_SCOPE);
@@ -5538,7 +5936,7 @@ package body methods_pkg is
     end if;
     barrier_signal <= '1';
   end procedure;
-  
+
   procedure await_semaphore_in_delta_cycles(
     variable semaphore : inout t_protected_semaphore
   ) is
@@ -5551,7 +5949,7 @@ package body methods_pkg is
     if v_cnt_lock_tries = C_NUM_SEMAPHORE_LOCK_TRIES then
       tb_error("Failed to acquire semaphore when sending command to VVC", C_SCOPE);
     end if;
-    
+
   end procedure;
 
   procedure release_semaphore(

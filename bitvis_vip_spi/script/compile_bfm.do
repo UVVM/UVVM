@@ -1,6 +1,6 @@
 #========================================================================================================================
 # Copyright (c) 2017 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -32,7 +32,7 @@ if {[batch_mode]} {
 
 
 # Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} { 
+if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
   # puts "Version is: $simulator_version"
   if {[regexp -nocase {modelsim} $simulator_version]} {
@@ -42,8 +42,8 @@ if {[catch {eval "vsim -version"} message] == 0} {
   } else {
     puts "Unknown simulator. Attempting use use Modelsim commands."
     quietly set simulator "modelsim"
-  }  
-} else { 
+  }
+} else {
     puts "vsim -version failed with the following message:\n $message"
     abort all
 }
@@ -51,7 +51,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
 if { [string equal -nocase $simulator "modelsim"] } {
   ###########
   # Fix possible vmap bug
-  do fix_vmap.tcl 
+  do fix_vmap.tcl
   ##########
 }
 
@@ -89,7 +89,7 @@ vmap $lib_name $vip_spi_part_path/sim/$lib_name
 if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -suppress 1346,1236 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -dbg -work $lib_name"
+  set compdirectives "-relaxe -2008 -dbg -work $lib_name"
 }
 
 eval vcom  $compdirectives  $vip_spi_part_path/src/spi_bfm_pkg.vhd

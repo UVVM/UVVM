@@ -1,6 +1,18 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.1.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Changed compile_src.do script to use compile_order.txt for compilation.
+- Reduced terminal output from Modelsim when running compile script.
+- Added support for input argument number 2 to compile_src.do script for
+  specifying output directory.
+- Fixed bug that made insert_delay() override inter_bfm_delay in VVC executor.
+- Updated VVC and BFM quick reference PDFs.
+
 v1.0.1
 ----------
 Released: 2017-06-08

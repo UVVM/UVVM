@@ -245,6 +245,7 @@ package body uart_bfm_pkg is
     constant local_proc_call    : string := local_proc_name & "()";
 
     -- Helper variables
+    variable v_transfer_time  : time;
     variable v_proc_call      : line;                           -- Current proc_call, external or internal
     variable v_remaining_time : time;  -- temp variable to calculate the remaining time before timeout
     variable v_data_value     : std_logic_vector(config.num_data_bits-1 downto 0);
@@ -257,6 +258,20 @@ package body uart_bfm_pkg is
     data_value := (data_value'range => 'X');
     check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
+    -- If timeout enabled, check that timeout is longer than transfer time
+    if config.timeout /= 0 ns then
+      v_transfer_time := (config.num_data_bits + 2) * config.bit_time;
+      if config.parity = PARITY_ODD or config.parity = PARITY_EVEN then
+        v_transfer_time := v_transfer_time + config.bit_time;
+      end if;
+      if config.num_stop_bits = STOP_BITS_ONE_AND_HALF then
+        v_transfer_time := v_transfer_time + config.bit_time/2;
+      elsif config.num_stop_bits = STOP_BITS_TWO then
+        v_transfer_time := v_transfer_time + config.bit_time;
+      end if;
+      check_value(v_transfer_time < config.timeout, TB_ERROR, "Length of timeout is shorter than or equal length of transfer time.", C_SCOPE, ID_NEVER, msg_id_panel);
+    end if;
+
     if ext_proc_call = "" then
       -- called from sequencer/VVC, show 'uart_receive()...' in log
       write(v_proc_call, local_proc_call);
@@ -267,7 +282,7 @@ package body uart_bfm_pkg is
 
     -- check if bus is in idle state
     check_value(rx, config.idle_state, FAILURE, v_proc_call.all & "Bus was active when trying to receive data. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
-    
+
     -- wait until the start bit is sent on the bus, configured timeout occures or procedure get terminate signal
     if config.timeout = 0 ns then
       wait until (rx /= config.idle_state) or (terminate_loop = '1');
@@ -338,21 +353,16 @@ package body uart_bfm_pkg is
         alert(error, v_proc_call.all & "=> Failed. Incorrect stop bit received. " & add_msg_delimiter(msg),scope);
       end if;
 
-      -- wait until transfer without STOP_BITS_ONE is finished
-      wait for config.bit_time/2;
-
       if config.num_stop_bits = STOP_BITS_ONE_AND_HALF then
-        wait for config.bit_time/4;  -- middle of the last half
+        wait for config.bit_time/2 + config.bit_time/4;  -- middle of the last half. Last half of previous stop bit + first half of current stop bit
         if rx /= config.idle_state then
           alert(error, v_proc_call.all & "=> Failed. Incorrect second half stop bit received. " & add_msg_delimiter(msg),scope);
         end if;
-        wait for config.bit_time/4;  -- transfer is finished
       elsif config.num_stop_bits = STOP_BITS_TWO then
-        wait for config.bit_time/2;  -- middle of the last bit
+        wait for config.bit_time;  -- middle of the last bit. Last half of previous stop bit + first half of current stop bit
         if rx /= config.idle_state then
           alert(error, v_proc_call.all & "=> Failed. Incorrect second stop bit received. " & add_msg_delimiter(msg),scope);
         end if;
-        wait for config.bit_time/2;  -- transfer is finished
       end if;
 
       -- return the received data
@@ -394,6 +404,7 @@ package body uart_bfm_pkg is
     variable v_received_data_fifo_write_idx : natural := 0;
     variable v_received_output_line         : line;
     variable v_internal_timeout             : time;
+
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
@@ -412,11 +423,11 @@ package body uart_bfm_pkg is
     end if;
 
     if v_internal_timeout = 0 ns then
-      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences.", scope, msg_id_panel);
+      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences. " & msg, scope, msg_id_panel);
     elsif max_receptions = 0 then
-      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(v_internal_timeout,ns) & ".", scope, msg_id_panel);
+      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(v_internal_timeout,ns) & ". " & msg, scope, msg_id_panel);
     else
-      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(v_internal_timeout,ns) & ".", scope, msg_id_panel);
+      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(v_internal_timeout,ns) & ". " & msg, scope, msg_id_panel);
     end if;
 
     -- Initial status of check variables
@@ -491,7 +502,11 @@ package body uart_bfm_pkg is
     elsif not v_timeout_ok then
       alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout,ns) & ". " & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
-      alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
+      if max_receptions = 1 then
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
+      else
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
+      end if;
     else
       alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
     end if;

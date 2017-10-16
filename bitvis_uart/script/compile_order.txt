@@ -1,3 +1,4 @@
+# library bitvis_uart
 ../src/uart_pkg.vhd
 ../src/uart_pif_pkg.vhd
 ../src/uart_pif.vhd

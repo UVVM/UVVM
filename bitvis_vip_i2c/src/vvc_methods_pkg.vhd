@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -35,7 +35,7 @@ use work.td_target_support_pkg.all;
 package vvc_methods_pkg is
 
   --===============================================================================================
-  -- Types and constants for the I2C VVC 
+  -- Types and constants for the I2C VVC
   --===============================================================================================
   constant C_VVC_NAME : string := "I2C_VVC";
 
@@ -53,12 +53,14 @@ package vvc_methods_pkg is
   record
     inter_bfm_delay                       : t_inter_bfm_delay;  -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural;  -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
-    cmd_queue_count_threshold             : natural;  -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold             : natural;  -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count.
+                                                      -- Used for early warning if command queue is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level;  -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural;  -- Maximum number of unfetched results before result_queue is full. 
-    result_queue_count_threshold_severity : t_alert_level;  -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
+    result_queue_count_max                : natural;  -- Maximum number of unfetched results before result_queue is full.
+    result_queue_count_threshold_severity : t_alert_level;  -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count.
+                                                            -- Used for early warning if result queue is almost full. Will be ignored if set to 0.
     result_queue_count_threshold          : natural;  -- Severity of alert to be initiated if exceeding result_queue_count_threshold
-    bfm_config                            : t_i2c_bfm_config;  -- Configuration for the BFM. See BFM quick reference 
+    bfm_config                            : t_i2c_bfm_config;  -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;  -- VVC dedicated message ID panel
   end record;
 
@@ -94,25 +96,25 @@ package vvc_methods_pkg is
   -- Transaction information for the wave view during simulation
   type t_transaction_info is
   record
-    operation : t_operation;
-    msg       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    addr      : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
-    data      : t_byte_array(0 to C_VVC_CMD_DATA_MAX_LENGTH-1);
-    num_bytes : natural;
-    continue : t_action_when_transfer_is_done;
-    exp_ack   : boolean;
+    operation                    : t_operation;
+    msg                          : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    addr                         : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
+    data                         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_LENGTH-1);
+    num_bytes                    : natural;
+    action_when_transfer_is_done : t_action_when_transfer_is_done;
+    exp_ack                      : boolean;
   end record;
 
   type t_transaction_info_array is array (natural range <>) of t_transaction_info;
 
   constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    addr      => (others => '0'),
-    data      => (others => (others => '0')),
-    num_bytes => 0,
-    operation => NO_OPERATION,
-    msg       => (others => ' '),
-    continue => RELEASE_LINE_AFTER_TRANSFER,
-    exp_ack   => true
+    addr                         => (others => '0'),
+    data                         => (others => (others => '0')),
+    num_bytes                    => 0,
+    operation                    => NO_OPERATION,
+    msg                          => (others => ' '),
+    action_when_transfer_is_done => RELEASE_LINE_AFTER_TRANSFER,
+    exp_ack                      => true
     );
 
 
@@ -122,41 +124,41 @@ package vvc_methods_pkg is
 
   --==============================================================================
   -- Methods dedicated to this VVC
-  -- - These procedures are called from the testbench in order to queue BFM calls 
-  --   in the VVC command queue. The VVC will store and forward these calls to the 
-  --   I2C BFM when the command is at the from of the VVC command queue. 
-  -- - For details on how the BFM procedures work, see i2c_bfm_pkg.vhd or the 
+  -- - These procedures are called from the testbench in order to queue BFM calls
+  --   in the VVC command queue. The VVC will store and forward these calls to the
+  --   I2C BFM when the command is at the from of the VVC command queue.
+  -- - For details on how the BFM procedures work, see i2c_bfm_pkg.vhd or the
   --   quickref.
   --==============================================================================
 
   -- *****************************************************************************
-  -- 
+  --
   -- master transmit
   --
   -- *****************************************************************************
 
   -- multi-byte
   procedure i2c_master_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    t_byte_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     );
 
   -- single byte
   procedure i2c_master_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    std_logic_vector;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     );
 
   -- *****************************************************************************
-  -- 
+  --
   -- slave transmit
   --
   -- *****************************************************************************
@@ -179,62 +181,62 @@ package vvc_methods_pkg is
 
 
   -- *****************************************************************************
-  -- 
+  --
   -- master receive
   --
   -- *****************************************************************************
 
   procedure i2c_master_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant num_bytes        : in    natural;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant num_bytes                    : in    natural;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     );
 
   -- *****************************************************************************
-  -- 
+  --
   -- master check
   --
   -- *****************************************************************************
 
   -- multi-byte
   procedure i2c_master_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level      : in    t_alert_level    := error
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    t_byte_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level                  : in    t_alert_level                  := error
     );
 
   -- single byte
   procedure i2c_master_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level      : in    t_alert_level    := error
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    std_logic_vector;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level                  : in    t_alert_level                  := error
     );
 
 
   procedure i2c_master_quick_command(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant msg              : in    string;
-    constant rw_bit           : in    std_logic        := C_WRITE_BIT;
-    constant exp_ack          : in    boolean          := true;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level      : in    t_alert_level    := error
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant msg                          : in    string;
+    constant rw_bit                       : in    std_logic                      := C_WRITE_BIT;
+    constant exp_ack                      : in    boolean                        := true;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level                  : in    t_alert_level                  := error
     );
 
   -- *****************************************************************************
-  -- 
+  --
   -- slave receive
   --
   -- *****************************************************************************
@@ -246,7 +248,7 @@ package vvc_methods_pkg is
     );
 
   -- *****************************************************************************
-  -- 
+  --
   -- slave check
   --
   -- *****************************************************************************
@@ -293,52 +295,47 @@ package body vvc_methods_pkg is
 
   -- master transmit
   procedure i2c_master_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    t_byte_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT);
-    shared_vvc_cmd.addr                       := v_normalized_addr;
-    shared_vvc_cmd.data(0 to data'length - 1) := data;
-    shared_vvc_cmd.num_bytes                  := data'length;
-    shared_vvc_cmd.continue                   := continue;
+    shared_vvc_cmd.addr                         := v_normalized_addr;
+    shared_vvc_cmd.data(0 to data'length - 1)   := data;
+    shared_vvc_cmd.num_bytes                    := data'length;
+    shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     send_command_to_vvc(VVCT);
   end procedure;
 
   procedure i2c_master_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    std_logic_vector;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     variable v_byte : std_logic_vector(7 downto 0) := (others => '0');
-
     -- Normalize to the 8 bit data width
     variable v_normalized_data : std_logic_vector(7 downto 0) :=
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
-
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_master_transmit(VVCT, vvc_instance_idx, addr, v_byte_array, msg, continue);
+    i2c_master_transmit(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done);
   end procedure;
 
   -- slave transmit
@@ -366,13 +363,10 @@ package body vvc_methods_pkg is
     constant data             : in    std_logic_vector;
     constant msg              : in    string
     ) is
-
     variable v_byte : std_logic_vector(7 downto 0) := (others => '0');
-
     -- Normalize to the 8 bit data width
     variable v_normalized_data : std_logic_vector(7 downto 0) :=
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
-
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
     i2c_slave_transmit(VVCT, vvc_instance_idx, v_byte_array, msg);
@@ -380,16 +374,15 @@ package body vvc_methods_pkg is
 
   -- master receive
   procedure i2c_master_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant num_bytes        : in    natural;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant num_bytes                    : in    natural;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_NARROWER, "addr", "shared_vvc_cmd.addr", msg);
@@ -398,9 +391,9 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_RECEIVE);
-    shared_vvc_cmd.addr      := v_normalized_addr;
-    shared_vvc_cmd.num_bytes := num_bytes;
-    shared_vvc_cmd.continue                   := continue;
+    shared_vvc_cmd.addr                         := v_normalized_addr;
+    shared_vvc_cmd.num_bytes                    := num_bytes;
+    shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -424,17 +417,16 @@ package body vvc_methods_pkg is
 
   -- master check
   procedure i2c_master_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level      : in    t_alert_level    := error
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    t_byte_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level                  : in    t_alert_level                  := error
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
@@ -443,46 +435,43 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_CHECK);
-    shared_vvc_cmd.addr                       := v_normalized_addr;
-    shared_vvc_cmd.data(0 to data'length - 1) := data;
-    shared_vvc_cmd.num_bytes                  := data'length;
-    shared_vvc_cmd.alert_level                := alert_level;
-    shared_vvc_cmd.continue                   := continue;
+    shared_vvc_cmd.addr                         := v_normalized_addr;
+    shared_vvc_cmd.data(0 to data'length - 1)   := data;
+    shared_vvc_cmd.num_bytes                    := data'length;
+    shared_vvc_cmd.alert_level                  := alert_level;
+    shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     send_command_to_vvc(VVCT);
   end procedure;
 
   procedure i2c_master_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level      : in    t_alert_level    := error
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant data                         : in    std_logic_vector;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level                  : in    t_alert_level                  := error
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     variable v_byte : std_logic_vector(7 downto 0) := (others => '0');
-
     -- Normalize to the 8 bit data width
     variable v_normalized_data : std_logic_vector(7 downto 0) :=
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
-
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_master_check(VVCT, vvc_instance_idx, addr, v_byte_array, msg, continue, alert_level);
+    i2c_master_check(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, alert_level);
   end procedure;
 
   procedure i2c_master_quick_command(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant msg              : in    string;
-    constant rw_bit           : in    std_logic        := C_WRITE_BIT;
-    constant exp_ack          : in    boolean          := true;
-    constant continue         : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level      : in    t_alert_level    := error
+    signal VVCT                           : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant addr                         : in    unsigned;
+    constant msg                          : in    string;
+    constant rw_bit                       : in    std_logic                      := C_WRITE_BIT;
+    constant exp_ack                      : in    boolean                        := true;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant alert_level                  : in    t_alert_level                  := error
     ) is
     constant proc_name         : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call         : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -494,11 +483,11 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_QUICK_CMD);
-    shared_vvc_cmd.addr        := v_normalized_addr;
-    shared_vvc_cmd.exp_ack     := exp_ack;
-    shared_vvc_cmd.alert_level := alert_level;
-    shared_vvc_cmd.rw_bit      := rw_bit;
-    shared_vvc_cmd.continue    := continue;
+    shared_vvc_cmd.addr                         := v_normalized_addr;
+    shared_vvc_cmd.exp_ack                      := exp_ack;
+    shared_vvc_cmd.alert_level                  := alert_level;
+    shared_vvc_cmd.rw_bit                       := rw_bit;
+    shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -531,17 +520,14 @@ package body vvc_methods_pkg is
     constant data             : in    std_logic_vector;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0'  -- Default write bit    
+    constant rw_bit           : in    std_logic     := '0'  -- Default write bit
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     variable v_byte : std_logic_vector(7 downto 0) := (others => '0');
-
     -- Normalize to the 8 bit data width
     variable v_normalized_data : std_logic_vector(7 downto 0) :=
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
-
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
     i2c_slave_check(VVCT, vvc_instance_idx, v_byte_array, msg, alert_level, rw_bit);
@@ -558,7 +544,6 @@ package body vvc_methods_pkg is
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
-
     variable v_dummy_byte_array : t_byte_array(0 to -1);  -- Empty byte array to indicate that data is not checked
   begin
     i2c_slave_check(VVCT, vvc_instance_idx, v_dummy_byte_array, msg, alert_level, rw_bit);

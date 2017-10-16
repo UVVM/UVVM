@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -26,9 +26,10 @@ use work.uart_pkg.all;
 
 entity uart_core is
   generic (
-    GC_START_BIT      : std_logic := '0';
-    GC_STOP_BIT       : std_logic := '1';
-    GC_CLOCKS_PER_BIT : integer   := 16);
+    GC_START_BIT                 : std_logic := '0';
+    GC_STOP_BIT                  : std_logic := '1';
+    GC_CLOCKS_PER_BIT            : integer   := 16;
+    GC_MIN_EQUAL_SAMPLES_PER_BIT : integer   := 15); -- Number of equal samples needed for valid bit, uart samples on every clock
   port(
     -- DSP interface and general control signals
     clk  : in  std_logic;
@@ -95,11 +96,11 @@ begin
 
   ---------------------------------------------------------------------------
   -- Transmit process; drives tx serial output.
-  --  
-  -- Stores 4 pending bytes in the tx_data array, and the byte currently 
+  --
+  -- Stores 4 pending bytes in the tx_data array, and the byte currently
   -- being output in the tx_buffer register.
   --
-  -- Tx_buffer is filled with data from tx_data(0) if there is valid data 
+  -- Tx_buffer is filled with data from tx_data(0) if there is valid data
   -- available (tx_data_valid is active), and no other byte is currently
   -- being output (tx_active is inactive).
   --
@@ -122,7 +123,7 @@ begin
       tx              <= '1';
       vr_tx_data_idx  := (others => '0');
     elsif rising_edge(clk) then         -- rising clock edge
-      
+
       -- There is valid data in tx_data.
       -- Load the tx_buffer and activate TX operation.
       -- Decrement vr_tx_data_idx.
@@ -130,14 +131,14 @@ begin
         tx_active    <= '1';
         tx_buffer <= tx_data(0);
         tx_data <= x"00" & tx_data(3 downto 1);
-        
+
         if vr_tx_data_idx > 0 then
           -- Decrement idx
           if vr_tx_data_idx < 3 then
             vr_tx_data_idx := vr_tx_data_idx - 1;
           else -- vr_tx_data_idx = 3
-            
-            -- Special case for idx=3 (max). 
+
+            -- Special case for idx=3 (max).
             -- When tx_data is full (tx_ready = '0'), we do not wish to
             -- decrement the idx. The reason is that the idx points
             -- to where the next incoming data byte shall be stored,
@@ -158,13 +159,13 @@ begin
         -- Tx is now ready to receive another byte.
         tx_ready <= '1';
       end if;
-      
+
       -- loading the tx_data shift reg
       if tx_ready = '1' then
-        if p2c.awo_tx_data_we = '1' then   
+        if p2c.awo_tx_data_we = '1' then
           tx_data(to_integer(vr_tx_data_idx)) <= p2c.awo_tx_data;
           tx_data_valid <= '1';
-          
+
           -- Increment idx if tx_data not full.
           if vr_tx_data_idx < 3 then
             vr_tx_data_idx := vr_tx_data_idx + 1;
@@ -186,7 +187,7 @@ begin
         else
           tx_clk_counter <= (others => '0');
         end if;
-        -- GC_CLOCKS_PER_BIT tx clocks per tx bit 
+        -- GC_CLOCKS_PER_BIT tx clocks per tx bit
         if tx_clk_counter >= GC_CLOCKS_PER_BIT - 1 then
           tx_bit_counter <= tx_bit_counter + 1;
         end if;
@@ -211,7 +212,7 @@ begin
 
   -- Data is set on the output when available on rx_data(0)
   c2p_i.aro_rx_data <= rx_data(0);
-  
+
   ---------------------------------------------------------------------------
   -- Receive process
   ---------------------------------------------------------------------------
@@ -240,7 +241,7 @@ begin
       if p2c.aro_rx_data_re = '1' and rx_data_valid = '1' then
         rx_data <= x"00" & rx_data(3 downto 1);
         rx_data_full <= '0';
-        
+
         if vr_rx_data_idx > 0 then
           vr_rx_data_idx := vr_rx_data_idx - 1;
           if vr_rx_data_idx = 0 then -- rx_data empty
@@ -289,7 +290,7 @@ begin
         if rx_clk_counter >= GC_CLOCKS_PER_BIT - 1 then
           rx_bit_counter <= rx_bit_counter + 1;
 
-          if transient_error(rx_bit_samples, GC_CLOCKS_PER_BIT - 2) then
+          if transient_error(rx_bit_samples, GC_MIN_EQUAL_SAMPLES_PER_BIT) then
             transient_err <= '1';
           end if;
 
@@ -314,7 +315,7 @@ begin
               end if;
               rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
               rx_data_valid <= '1';     -- ready for higher level protocol
-              
+
               if vr_rx_data_idx < 3 then
                 vr_rx_data_idx := vr_rx_data_idx + 1;
               else
@@ -322,7 +323,7 @@ begin
               end if;
             when others =>
               rx_active <= '0';
-              
+
           end case;
         end if;
       end if;
@@ -341,7 +342,7 @@ begin
   assert stop_err /= '1'
     report "Stop bit error detected!"
     severity error;
-  
+
   assert parity_err /= '1'
     report "Parity error detected!"
     severity error;
@@ -349,5 +350,5 @@ begin
   assert transient_err /= '1'
     report "Transient error detected!"
     severity error;
-  
+
 end architecture rtl;

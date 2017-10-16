@@ -1,6 +1,6 @@
 #========================================================================================================================
 # Copyright (c) 2017 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -28,11 +28,9 @@ if {[batch_mode]} {
 } else {
   onerror {abort all}
 }
-#Just in case...
-quietly quit -sim   
 
 # Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} { 
+if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
   # puts "Version is: $simulator_version"
   if {[regexp -nocase {modelsim} $simulator_version]} {
@@ -40,10 +38,10 @@ if {[catch {eval "vsim -version"} message] == 0} {
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
-    puts "Unknown simulator. Attempting use use Modelsim commands."
+    puts "Unknown simulator. Attempting to use Modelsim commands."
     quietly set simulator "modelsim"
-  }  
-} else { 
+  }
+} else {
     puts "vsim -version failed with the following message:\n $message"
     abort all
 }
@@ -51,51 +49,84 @@ if {[catch {eval "vsim -version"} message] == 0} {
 if { [string equal -nocase $simulator "modelsim"] } {
   ###########
   # Fix possible vmap bug
-  do fix_vmap.tcl 
+  do fix_vmap.tcl
   ##########
 }
 
-# Set up vip_i2c_part_path and lib_name
+
+#
+# Set up vip_i2c_part_path and default_library
 #------------------------------------------------------
-quietly set lib_name "bitvis_vip_i2c"
 quietly set part_name "bitvis_vip_i2c"
 # path from mpf-file in sim
 quietly set vip_i2c_part_path "../..//$part_name"
 
+# argument number 1 - user specified input directory
 if { [info exists 1] } {
   # path from this part to target part
   quietly set vip_i2c_part_path "$1/..//$part_name"
   unset 1
 }
+# argument number 2 - user speficied output directory
+if {$argc >= 2} {
+  echo "\nUser specified output directory"
+  quietly set destination_path "$2"
+  quietly set default_library 0
+} else {
+  echo "\nDefault output directory"
+  quietly set destination_path vip_i2c_part_path
+  quietly set default_library 1
+}
 
 
+#
+# Read compile_order.txt and set lib_name
+#--------------------------------------------------
+quietly set fp [open "$vip_i2c_part_path/script/compile_order.txt" r]
+quietly set file_data [read $fp]
+quietly set lib_name [lindex $file_data 2]
+close $fp
+
+#
 # (Re-)Generate library and Compile source files
 #--------------------------------------------------
-echo "\n\nRe-gen lib and compile $lib_name source\n"
-
-
-if {[file exists $vip_i2c_part_path/sim/$lib_name]} {
-  file delete -force $vip_i2c_part_path/sim/$lib_name
+echo "\n\nRe-gen lib and compile $lib_name source"
+if {$default_library} {
+  if {[file exists $vip_i2c_part_path/sim/$lib_name]} {
+    file delete -force $vip_i2c_part_path/sim/$lib_name
+  }
+  if {![file exists $vip_i2c_part_path/sim]} {
+    file mkdir $vip_i2c_part_path/sim
+  }
+} else {
+  if {![file exists $destination_path/$lib_name]} {
+    file mkdir $destination_path/$lib_name
+  }
 }
-if {![file exists $vip_i2c_part_path/sim]} {
-  file mkdir $vip_i2c_part_path/sim
-}
 
-vlib $vip_i2c_part_path/sim/$lib_name
-vmap $lib_name $vip_i2c_part_path/sim/$lib_name
+if {$default_library} {
+  vlib $vip_i2c_part_path/sim/$lib_name
+  vmap $lib_name $vip_i2c_part_path/sim/$lib_name
+} else {
+  vlib $destination_path/$lib_name
+  vmap $lib_name $destination_path/$lib_name
+}
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -suppress 1346,1236,1090 -work $lib_name"
+  quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn DAGGEN_0001 -dbg -work $lib_name"
+  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
 
-eval vcom  $compdirectives  $vip_i2c_part_path/src/i2c_bfm_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/src/vvc_cmd_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/src/vvc_methods_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
-eval vcom  $compdirectives  $vip_i2c_part_path/src/i2c_vvc.vhd
-
+#
+# Compile src files
+#--------------------------------------------------
+echo "\n\n\n=== Compiling $lib_name source\n"
+quietly set idx 0
+foreach item $file_data {
+  if {$idx > 2} {
+    echo "eval vcom  $compdirectives  $vip_i2c_part_path/sim/$item"
+    eval vcom  $compdirectives  $vip_i2c_part_path/sim/$item
+  }
+  incr idx 1
+}

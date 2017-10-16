@@ -106,7 +106,7 @@ begin
 
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
-    
+
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Then for every single command from the sequencer
@@ -185,10 +185,11 @@ begin
   cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result;  -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access : time                                       := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access    : time                                       := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access      : time                                       := 0 ns;
-    variable v_command_is_bfm_access                 : boolean;
+    variable v_timestamp_start_of_current_bfm_access : time     := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access    : time     := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access      : time     := 0 ns;
+    variable v_command_is_bfm_access                 : boolean  := false;
+    variable v_prev_command_was_bfm_access           : boolean  := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
   begin
@@ -209,6 +210,7 @@ begin
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Check if command is a BFM access
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
       if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK or v_cmd.operation = POLL_UNTIL then
         v_command_is_bfm_access := true;
       else
@@ -217,7 +219,7 @@ begin
 
       -- Insert delay if needed
       work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
-                                                                         command_is_bfm_access              => v_command_is_bfm_access,
+                                                                         command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                          timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                          timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
                                                                          scope                              => C_SCOPE);

@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -33,14 +33,14 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- init_queue
     ------------------------------------------
-    -- This function allocates space in the buffer and returns an index that 
+    -- This function allocates space in the buffer and returns an index that
     -- must be used to access the queue.
-    --   
-    --  - Parameters: 
+    --
+    --  - Parameters:
     --        - queue_size_in_bits (natural) - The size of the queue
     --        - scope                        - Log scope for all alerts/logs
     --
-    --  - Returns: The index of the initiated queue (natural). 
+    --  - Returns: The index of the initiated queue (natural).
     --             Returns 0 on error.
     --
     impure function init_queue(
@@ -53,9 +53,9 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- This procedure allocates space in the buffer at the given queue_idx.
     --
-    --  - Parameters: 
+    --  - Parameters:
     --        - queue_idx                    - The index of the queue (natural)
-    --                                         that shall be initialized.  
+    --                                         that shall be initialized.
     --        - queue_size_in_bits (natural) - The size of the queue
     --        - scope                        - Log scope for all alerts/logs
     --
@@ -71,9 +71,9 @@ package ti_data_queue_pkg is
     -- This procedure empties the queue given
     -- by queue_idx.
     --
-    --  - Parameters: 
+    --  - Parameters:
     --        - queue_idx - The index of the queue (natural)
-    --                      that shall be flushed.  
+    --                      that shall be flushed.
     --
     procedure flush(
       queue_idx : natural
@@ -83,15 +83,15 @@ package ti_data_queue_pkg is
     -- push_back
     ------------------------------------------
     -- This procedure pushes data to the end of a queue.
-    -- The size of the data is unconstrained, meaning that 
+    -- The size of the data is unconstrained, meaning that
     -- it can be any size. Pushing data with a size that is
     -- larger than the queue size results in wrapping, i.e.,
     -- that when reaching the end the data remaining will over-
     -- write the data that was written first.
-    -- 
-    --  - Parameters: 
-    --        - queue_idx - The index of the queue (natural) 
-    --                      that shall be pushed to.  
+    --
+    --  - Parameters:
+    --        - queue_idx - The index of the queue (natural)
+    --                      that shall be pushed to.
     --        - data      - The data that shall be pushed (slv)
     --
     procedure push_back(
@@ -104,19 +104,19 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- This function returns the data from the front
     -- of the queue without popping it.
-    -- 
-    --  - Parameters: 
-    --        - queue_idx          - The index of the queue (natural) 
-    --                               that shall be read.  
+    --
+    --  - Parameters:
+    --        - queue_idx          - The index of the queue (natural)
+    --                               that shall be read.
     --        - entry_size_in_bits - The size of the returned slv (natural)
     --
-    --  - Returns: The data from the front of the queue (slv). The size of the 
+    --  - Returns: The data from the front of the queue (slv). The size of the
     --             return data is given by the entry_size_in_bits parameter.
-    --             Attempting to peek from an empty queue is allowed but triggers a 
+    --             Attempting to peek from an empty queue is allowed but triggers a
     --             TB_WARNING and returns garbage.
     --             Attempting to peek a larger value than the queue size is allowed
     --             but triggers a TB_WARNING. Will wrap.
-    --             
+    --
     --
     impure function peek_front(
       queue_idx          : natural;
@@ -128,19 +128,19 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- This function returns the data from the back
     -- of the queue without popping it.
-    -- 
-    --  - Parameters: 
-    --        - queue_idx          - The index of the queue (natural) 
-    --                               that shall be read.  
+    --
+    --  - Parameters:
+    --        - queue_idx          - The index of the queue (natural)
+    --                               that shall be read.
     --        - entry_size_in_bits - The size of the returned slv (natural)
     --
-    --  - Returns: The data from the back of the queue (slv). The size of the 
+    --  - Returns: The data from the back of the queue (slv). The size of the
     --             return data is given by the entry_size_in_bits parameter.
-    --             Attempting to peek from an empty queue is allowed but triggers a 
+    --             Attempting to peek from an empty queue is allowed but triggers a
     --             TB_WARNING and returns garbage.
     --             Attempting to peek a larger value than the queue size is allowed
     --             but triggers a TB_WARNING. Will wrap.
-    --             
+    --
     --
     impure function peek_back(
       queue_idx          : natural;
@@ -152,19 +152,19 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- This function returns the data from the back
     -- and removes the returned data from the queue.
-    -- 
-    --  - Parameters: 
-    --        - queue_idx          - The index of the queue (natural) 
-    --                               that shall be read.  
+    --
+    --  - Parameters:
+    --        - queue_idx          - The index of the queue (natural)
+    --                               that shall be read.
     --        - entry_size_in_bits - The size of the returned slv (natural)
     --
-    --  - Returns: The data from the back of the queue (slv). The size of the 
+    --  - Returns: The data from the back of the queue (slv). The size of the
     --             return data is given by the entry_size_in_bits parameter.
-    --             Attempting to pop from an empty queue is allowed but triggers a 
+    --             Attempting to pop from an empty queue is allowed but triggers a
     --             TB_WARNING and returns garbage.
     --             Attempting to pop a larger value than the queue size is allowed
     --             but triggers a TB_WARNING.
-    --             
+    --
     --
     impure function pop_back(
       queue_idx          : natural;
@@ -176,19 +176,19 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- This function returns the data from the front
     -- and removes the returned data from the queue.
-    -- 
-    --  - Parameters: 
-    --        - queue_idx          - The index of the queue (natural) 
-    --                               that shall be read.  
+    --
+    --  - Parameters:
+    --        - queue_idx          - The index of the queue (natural)
+    --                               that shall be read.
     --        - entry_size_in_bits - The size of the returned slv (natural)
     --
-    --  - Returns: The data from the front of the queue (slv). The size of the 
+    --  - Returns: The data from the front of the queue (slv). The size of the
     --             return data is given by the entry_size_in_bits parameter.
-    --             Attempting to pop from an empty queue is allowed but triggers a 
+    --             Attempting to pop from an empty queue is allowed but triggers a
     --             TB_WARNING and returns garbage.
     --             Attempting to pop a larger value than the queue size is allowed
     --             but triggers a TB_WARNING.
-    --             
+    --
     --
     impure function pop_front(
       queue_idx          : natural;
@@ -200,12 +200,12 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- This function returns a natural indicating the number of elements
     -- currently occupying the buffer given by queue_idx.
-    -- 
-    --  - Parameters: 
+    --
+    --  - Parameters:
     --        - queue_idx          - The index of the queue (natural)
     --
     --  - Returns: The number of elements occupying the queue (natural).
-    --             
+    --
     --
     impure function get_count(
       queue_idx : natural
@@ -214,28 +214,45 @@ package ti_data_queue_pkg is
     ------------------------------------------
     -- get_queue_count_max
     ------------------------------------------
-    -- This function returns a natural indicating the maximum number 
+    -- This function returns a natural indicating the maximum number
     -- of elements that can occupy the buffer given by queue_idx.
     --
-    --  - Parameters: 
+    --  - Parameters:
     --        - queue_idx          - The index of the queue (natural)
     --
     --  - Returns: The maximum number of elements that can be placed
     --             in the queue (natural).
-    --             
+    --
     --
     impure function get_queue_count_max(
       queue_idx : natural
       ) return natural;
 
     ------------------------------------------
+    -- get_queue_is_full
+    ------------------------------------------
+    -- This function returns a boolean indicating if the
+    -- queue is full or not.
+    --
+    --  - Parameters:
+    --        - queue_idx          - The index of the queue (natural)
+    --
+    --  - Returns: TRUE if queue is full, FALSE if not.
+    --
+    --
+    impure function get_queue_is_full(
+      queue_idx : natural
+      ) return boolean;
+
+    ------------------------------------------
     -- deallocate_buffer
     ------------------------------------------
-    -- This procedure resets the entire std_logic_vector and all 
+    -- This procedure resets the entire std_logic_vector and all
     -- variable arrays related to the buffer, effectively removing all queues.
     --
-    --  - Parameters: 
+    --  - Parameters:
     --        - dummy - VOID
+    --
     --
     procedure deallocate_buffer(
       dummy : t_void
@@ -250,7 +267,7 @@ package body ti_data_queue_pkg is
 
   type t_data_queue is protected body
    -- Internal variables for the data queue
-   -- The buffer is one large std_logic_vector of size C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER. 
+   -- The buffer is one large std_logic_vector of size C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER.
    -- There are several queues that can be instantiated in the slv.
    -- There is one set of variables per queue.
 
@@ -260,7 +277,7 @@ package body ti_data_queue_pkg is
 
    -- min_idx/max idx: These variables set the upper and lower limit of each queue in the buffer.
    --                  This is how the large slv buffer is divided into several smaller queues.
-   --                  After a queue has been instantiated, all queue operations in the buffer 
+   --                  After a queue has been instantiated, all queue operations in the buffer
    --                  for a given idx will happen within the v_min_idx and v_max_idx boundary.
    --                  These variables will be set when a queue is instantiated, and will not
    --                  change afterwards.
@@ -274,7 +291,7 @@ package body ti_data_queue_pkg is
    --                     a given queue has data pushed or popped.
    variable v_first_idx : t_buffer_natural_array := (others => 0);
    variable v_last_idx  : t_buffer_natural_array := (others => 0);
-   
+
    type t_string_pointer is access string;
    variable v_scope : t_string_pointer := NULL;
 
@@ -291,7 +308,7 @@ package body ti_data_queue_pkg is
      if v_scope = NULL then
        v_scope := new string'(scope);
      end if;
-     
+
      if not check_value(v_next_available_idx < C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER, TB_ERROR,
                         "init_queue called, but no more space in buffer!", v_scope.all, ID_NEVER)
      then
@@ -398,7 +415,7 @@ package body ti_data_queue_pkg is
     if check_value(v_queue_initialized(queue_idx), TB_ERROR,
                    "push_back called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER)
     then
-      for i in a_data'right to a_data'left loop  -- From right to left since LSB shall be first in the queue. 
+      for i in a_data'right to a_data'left loop  -- From right to left since LSB shall be first in the queue.
         shared_data_buffer(v_last_idx(queue_idx)) := a_data(i);
 
         if v_last_idx(queue_idx) /= v_max_idx(queue_idx) then
@@ -516,7 +533,7 @@ package body ti_data_queue_pkg is
           v_current_idx := v_max_idx(queue_idx);
         end if;
 
-        -- Clear fields that belong to the return value 
+        -- Clear fields that belong to the return value
         for i in 0 to entry_size_in_bits - 1 loop
           shared_data_buffer(v_current_idx) := '0';
 
@@ -606,6 +623,21 @@ package body ti_data_queue_pkg is
   begin
     check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_count_max called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
     return v_queue_size_in_bits(queue_idx);
+  end function;
+
+  ------------------------------------------
+  -- get_queue_is_full
+  ------------------------------------------
+  impure function get_queue_is_full(
+    queue_idx : natural
+    ) return boolean is
+  begin
+    check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_is_full called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
+    if v_count(queue_idx) = v_queue_size_in_bits(queue_idx) then
+      return true;
+    else
+      return false;
+    end if;
   end function;
 
   ------------------------------------------

@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -35,14 +35,14 @@ package adaptations_pkg is
   --PPPPPPPPIIIIII TTTTTTTT  SSSSSSSSSSSSSS MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   constant C_LOG_PREFIX : string := "UVVM: "; -- Note: ': ' is recommended as final characters
 
-  constant C_LOG_PREFIX_WIDTH  : natural := C_LOG_PREFIX'length;
-  constant C_LOG_MSG_ID_WIDTH  : natural := 24;
-  constant C_LOG_TIME_WIDTH    : natural := 16; -- 3 chars used for unit eg. " ns"
-  constant C_LOG_TIME_BASE     : time    := ns; -- Unit in which time is shown in log (ns | ps)
-  constant C_LOG_TIME_DECIMALS : natural := 1; -- Decimals to show for given C_LOG_TIME_BASE
-  constant C_LOG_SCOPE_WIDTH   : natural := 20;
-  constant C_LOG_LINE_WIDTH    : natural := 175;
-  constant C_LOG_INFO_WIDTH    : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
+  constant C_LOG_PREFIX_WIDTH   : natural := C_LOG_PREFIX'length;
+  constant C_LOG_MSG_ID_WIDTH   : natural := 24;
+  constant C_LOG_TIME_WIDTH     : natural := 16; -- 3 chars used for unit eg. " ns"
+  constant C_LOG_TIME_BASE      : time    := ns; -- Unit in which time is shown in log (ns | ps)
+  constant C_LOG_TIME_DECIMALS  : natural := 1; -- Decimals to show for given C_LOG_TIME_BASE
+  constant C_LOG_SCOPE_WIDTH    : natural := 30;
+  constant C_LOG_LINE_WIDTH     : natural := 175;
+  constant C_LOG_INFO_WIDTH     : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
   constant C_USE_BACKSLASH_N_AS_LF : boolean := true; -- If true interprets '\n' as Line feed
   constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r'
@@ -55,11 +55,11 @@ package adaptations_pkg is
   constant C_TB_SCOPE_DEFAULT : string := "TB seq."; -- Default scope in test sequencer
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
-  constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id 
+  constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
   constant C_SHOW_LOG_SCOPE         : boolean := true; -- This constant has replaced the global_show_log_scope
-  
+
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
-  
+
   shared variable shared_default_log_destination        : t_log_destination  := CONSOLE_AND_LOG;
 
 
@@ -152,7 +152,7 @@ package adaptations_pkg is
     ID_COVERAGE_ICOVER  => DISABLED,
     others              => ENABLED
   );
-  
+
   -- If false, OSVVM uses the default message id panel. If true, it uses a separate message id panel.
   constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
 
@@ -167,7 +167,7 @@ package adaptations_pkg is
     ID_UVVM_CMD_ACK       => "    ",
     others                => ""     & NUL & NUL & NUL & NUL
   );
-  
+
   constant C_MSG_DELIMITER : character := ''';
 
   -------------------------------------------------------------------------
@@ -186,9 +186,9 @@ package adaptations_pkg is
   -------------------------------------------------------------------------
   constant C_ENABLE_HIERARCHICAL_ALERTS : boolean := false;
   constant C_BASE_HIERARCHY_LEVEL : string(1 to 5) := "Total";
-  
+
   constant C_EMPTY_NODE : t_hierarchy_node := ("                    ",
-                                                (others => (others => 0)), 
+                                                (others => (others => 0)),
                                                 (others => 0),
                                                 (others => true));
 
@@ -198,7 +198,7 @@ package adaptations_pkg is
   -- These values are used to indicate outdated sub-programs
   constant C_DEPRECATE_SETTING : t_deprecate_setting := DEPRECATE_ONCE;
   shared variable deprecated_subprogram_list : t_deprecate_list := (others=>(others => ' '));
-  
+
 
   ------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations
@@ -214,10 +214,18 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level := WARNING;
   constant C_RESULT_QUEUE_COUNT_THRESHOLD            : natural       := 18;
   constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 8;
-  constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers 
-  
-  constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER   : natural := 2048;
-  constant C_NUMBER_OF_DATA_BUFFERS                : natural := 10;
+  constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers
+
+  -- Maximum allowed length of VVC names
+  constant C_MAX_VVC_NAME_LENGTH                     : positive      := 20;
+
+  -- Minimum width of vvc name and channel displayed in scope.
+  -- These combined + the length of instance + 2 (commas), cannot exceed C_LOG_SCOPE_WIDTH.
+  constant C_MINIMUM_CHANNEL_SCOPE_WIDTH             : natural       := 10;
+  constant C_MINIMUM_VVC_NAME_SCOPE_WIDTH            : natural       := 10;
+
+  constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER     : natural := 2048;
+  constant C_NUMBER_OF_DATA_BUFFERS                  : natural := 10;
 
   -- Default message Id panel intended for use in the VVCs
   constant C_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
@@ -248,8 +256,8 @@ package adaptations_pkg is
     ALL_CHANNELS,     -- When command shall be received by all channels
     RX,
     TX);
-    
-  constant C_VVCT_ALL_INSTANCES : integer := -2;
+
+  constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
 
   constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
 end package adaptations_pkg;

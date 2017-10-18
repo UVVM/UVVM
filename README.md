@@ -57,8 +57,8 @@ These VVCs and BFMs could be used inside a typical UVVM testbench, but they coul
 ## Prerequisites
 UVVM is tool and library independent, but must be compiled with VHDL 2008.
 UVVM has been tested with the following simulators:
-- Modelsim version 10.3d
-- Riviera-PRO version: 2015.10.85
+- Modelsim version 10.4d
+- Riviera-PRO version: 2017.02.99.6498
 
 Python is required **if** you want to execute the VVC generation scripts
 

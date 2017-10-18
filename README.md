@@ -67,7 +67,7 @@ All documents including powerpoint presentations are available in the doc-direct
 This is just a [fast access link to some interesting info:](http://bitvis.no/resources/uvvm-vvc-framework-download/)
 - *'The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction
 - *'VVC Framework Manual'*  - The user manual
-Testing[Test](https://github.com/UVVM/UVVM_All/blob/master/CHANGES.TXT)
+
 
 ## License
 

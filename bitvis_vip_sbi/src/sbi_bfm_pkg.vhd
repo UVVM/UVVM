@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -30,7 +30,7 @@ context uvvm_util.uvvm_util_context;
 package sbi_bfm_pkg is
 
   --===============================================================================================
-  -- Types and constants for SBI BFMs 
+  -- Types and constants for SBI BFMs
   --===============================================================================================
   constant C_SCOPE : string := "SBI BFM";
 
@@ -47,27 +47,37 @@ package sbi_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_sbi_bfm_config is
   record
-    max_wait_cycles            : integer;  -- The maximum number of clock cycles to wait for the DUT ready signal before reporting a timeout alert.
-    max_wait_cycles_severity   : t_alert_level;  -- The above timeout will have this severity
-    use_fixed_wait_cycles_read : boolean;  -- When true, wait 'fixed_wait_cycles_read' after asserting rena, before sampling rdata
-    fixed_wait_cycles_read     : natural;  -- Number of clock cycles to wait after asserting ‘rd’ signal, before sampling ‘rdata’ from DUT.
-    clock_period               : time;  -- Period of the clock signal
-    id_for_bfm                 : t_msg_id;  -- The message ID used as a general message ID in the SBI BFM
-    id_for_bfm_wait            : t_msg_id;  -- The message ID used for logging waits in the SBI BFM
-    id_for_bfm_poll            : t_msg_id;  -- The message ID used for logging polling in the SBI BFM
-    use_ready_signal           : boolean;  -- Whether or not to use the interface ‘ready’ signal
+    max_wait_cycles             : integer;        -- The maximum number of clock cycles to wait for the DUT ready signal before reporting a timeout alert.
+    max_wait_cycles_severity    : t_alert_level;  -- The above timeout will have this severity
+    use_fixed_wait_cycles_read  : boolean;        -- When true, wait 'fixed_wait_cycles_read' after asserting rena, before sampling rdata
+    fixed_wait_cycles_read      : natural;        -- Number of clock cycles to wait after asserting rd signal, before sampling rdata from DUT.
+    clock_period                : time;           -- Period of the clock signal
+    clock_period_margin         : time;           -- Input clock period margin to specified clock_period.
+                                                  -- Checking low period of input clock if BFM is called while CLK is high.
+                                                  -- Checking clock_period of input clock if BFM is called while CLK is low.
+    clock_margin_severity       : t_alert_level;  -- The above margin will have this severity
+    setup_time                  : time;           -- Generated signals setup time, set to clock_period/4
+    hold_time                   : time;           -- Generated signals hold time, set to clock_period/4
+    id_for_bfm                  : t_msg_id;       -- The message ID used as a general message ID in the SBI BFM
+    id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
+    id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
+    use_ready_signal            : boolean;        -- Whether or not to use the interface ï¿½readyï¿½ signal
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (
-    max_wait_cycles            => 10,
-    max_wait_cycles_severity   => failure,
-    use_fixed_wait_cycles_read => false,
-    fixed_wait_cycles_read     => 0,
-    clock_period               => 10 ns,
-    id_for_bfm                 => ID_BFM,
-    id_for_bfm_wait            => ID_BFM_WAIT,
-    id_for_bfm_poll            => ID_BFM_POLL,
-    use_ready_signal           => true
+    max_wait_cycles             => 10,
+    max_wait_cycles_severity    => failure,
+    use_fixed_wait_cycles_read  => false,
+    fixed_wait_cycles_read      => 0,
+    clock_period                => 10 ns,
+    clock_period_margin         => 0 ns,
+    clock_margin_severity       => TB_ERROR,
+    setup_time                  => 2.5 ns,
+    hold_time                   => 2.5 ns,
+    id_for_bfm                  => ID_BFM,
+    id_for_bfm_wait             => ID_BFM_WAIT,
+    id_for_bfm_poll             => ID_BFM_POLL,
+    use_ready_signal            => true
     );
 
 
@@ -90,7 +100,7 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_write
   ------------------------------------------
-  -- - This procedure writes data to the SBI DUT 
+  -- - This procedure writes data to the SBI DUT
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_write (
     constant addr_value   : in    unsigned;
@@ -129,7 +139,7 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_read
   ------------------------------------------
-  -- - This procedure reads data from the SBI DUT address 'addr_value' and 
+  -- - This procedure reads data from the SBI DUT address 'addr_value' and
   --   returns the read data in the output 'data_value'
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_read (
@@ -153,7 +163,7 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_read
   ------------------------------------------
-  -- - This procedure reads data from the SBI DUT address 'addr_value' and returns 
+  -- - This procedure reads data from the SBI DUT address 'addr_value' and returns
   --   the read data in the output 'data_value'
   -- - The SBI interface in this procedure is given as a t_sbi_if signal record
   procedure sbi_read (
@@ -172,9 +182,9 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_check
   ------------------------------------------
-  -- - This procedure reads data from the SBI DUT address 'addr_value' and 
+  -- - This procedure reads data from the SBI DUT address 'addr_value' and
   --   compares the read data to the expected data in 'data_exp'.
-  -- - If the read data is inconsistent with the expected data, an alert with 
+  -- - If the read data is inconsistent with the expected data, an alert with
   --   severity 'alert_level' is triggered.
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_check (
@@ -198,9 +208,9 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_check
   ------------------------------------------
-  -- - This procedure reads data from the SBI DUT address 'addr_value' and 
+  -- - This procedure reads data from the SBI DUT address 'addr_value' and
   --   compares the read data to the expected data in 'data_exp'.
-  -- - If the read data is inconsistent with the expected data, an alert with 
+  -- - If the read data is inconsistent with the expected data, an alert with
   --   severity 'alert_level' is triggered.
   -- - The SBI interface in this procedure is given as a t_sbi_if signal record
   procedure sbi_check (
@@ -219,11 +229,11 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_poll_until
   ------------------------------------------
-  -- - This procedure reads data from the SBI DUT address 'addr_value' and 
+  -- - This procedure reads data from the SBI DUT address 'addr_value' and
   --   compares the read data to the expected data in 'data_exp'.
-  -- - If the read data is inconsistent with the expected data, a new read 
-  --   will be performed, and the new read data will be compared with the 
-  --   'data_exp'. This process will continue until one of the following 
+  -- - If the read data is inconsistent with the expected data, a new read
+  --   will be performed, and the new read data will be compared with the
+  --   'data_exp'. This process will continue until one of the following
   --   conditions are met:
   --     a) The read data is equal to the expected data
   --     b) The number of reads equal 'max_polls'
@@ -255,11 +265,11 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- sbi_poll_until
   ------------------------------------------
-  -- - This procedure reads data from the SBI DUT address 'addr_value' and 
+  -- - This procedure reads data from the SBI DUT address 'addr_value' and
   --   compares the read data to the expected data in 'data_exp'.
-  -- - If the read data is inconsistent with the expected data, a new read 
-  --   will be performed, and the new read data will be compared with the 
-  --   'data_exp'. This process will continue until one of the following 
+  -- - If the read data is inconsistent with the expected data, a new read
+  --   will be performed, and the new read data will be compared with the
+  --   'data_exp'. This process will continue until one of the following
   --   conditions are met:
   --     a) The read data is equal to the expected data
   --     b) The number of reads equal 'max_polls'
@@ -338,9 +348,34 @@ package body sbi_bfm_pkg is
       normalize_and_check(addr_value, addr, ALLOW_WIDER_NARROWER, "addr_value", "sbi_core_in.addr", msg);
     variable v_normalised_data : std_logic_vector(wdata'length-1 downto 0) :=
       normalize_and_check(data_value, wdata, ALLOW_NARROWER, "data_value", "sbi_core_in.wdata", msg);
-    variable v_clk_cycles_waited : natural := 0;
+
+    variable v_clk_cycles_waited  : natural := 0;
+    variable v_min_time           : time    := -1 ns;  -- min allowed clk low period
+    variable v_max_time           : time    := -1 ns;  -- max allowed clk low period
+    variable v_start_time         : time    := -1 ns;  -- time of previoud clock edge
+    variable c_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
+
   begin
-    wait_until_given_time_before_rising_edge(clk, config.clock_period/4, config.clock_period);
+    -- setup_time and hold_time checking
+    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
+
+    -- check if enough room for setup_time in low period
+    if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event))then
+      await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, proc_name & ": timeout waiting for clk low period for setup_time.");
+    end if;
+    -- check if clk was high when BFM was called
+    if clk = '1' then
+      c_clk_was_high := true;
+    end if;
+    -- get time stamp of previous clk edge
+    v_start_time := now - clk'last_event;
+
+    -- Wait setup_time specified in config record
+    wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
+
     cs    <= '1';
     wena  <= '1';
     rena  <= '0';
@@ -352,17 +387,30 @@ package body sbi_bfm_pkg is
     end if;
 
     wait until rising_edge(clk);
+    -- check if clk meet requirements
+    if c_clk_was_high then -- rising_edge to rising_edge
+      v_min_time := v_start_time + config.clock_period - config.clock_period_margin;
+      v_max_time := v_start_time + config.clock_period + config.clock_period_margin;
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": clk period not within requirement (rising_edge to rising_edge).");
+    else -- falling_edge to rising_edge
+      v_min_time := v_start_time + (config.clock_period/2) - config.clock_period_margin;
+      v_max_time := v_start_time + (config.clock_period/2) + config.clock_period_margin;
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": clk low period not within requirement (falling_edge to rising_edge).");
+    end if;
+
     while (config.use_ready_signal and ready = '0') loop
       if v_clk_cycles_waited = 0 then
         log(config.id_for_bfm_wait, proc_call & " waiting for response (sbi ready=0) " & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
       wait until rising_edge(clk);
+
       v_clk_cycles_waited := v_clk_cycles_waited + 1;
       check_value(v_clk_cycles_waited <= config.max_wait_cycles, config.max_wait_cycles_severity,
                   ": Timeout while waiting for sbi ready", scope, ID_NEVER, msg_id_panel, proc_call);
     end loop;
 
-    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+    -- Wait hold time specified in config record
+    wait_until_given_time_after_rising_edge(clk, config.hold_time);
 
     cs   <= '0';
     wena <= '0';
@@ -405,26 +453,49 @@ package body sbi_bfm_pkg is
     constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
     ) is
-    -- local_proc_* used if called from sequencer or VVC 
+    -- local_proc_* used if called from sequencer or VVC
     constant local_proc_name : string := "sbi_read";
     constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
 
     -- Normalize to the DUT addr/data widths
     variable v_normalised_addr : unsigned(addr'length-1 downto 0) :=
       normalize_and_check(addr_value, addr, ALLOW_WIDER_NARROWER, "addr_value", "sbi_core_in.addr", msg);
-    variable v_data_value        : std_logic_vector(data_value'range);
-    variable v_clk_cycles_waited : natural := 0;
-    variable v_proc_call         : line;
+    variable v_data_value         : std_logic_vector(data_value'range);
+    variable v_clk_cycles_waited  : natural := 0;
+    variable v_proc_call          : line;
+    variable v_min_time           : time  := -1 ns;   -- min allowed clk low period
+    variable v_max_time           : time  := -1 ns;   -- max allowed clk low period
+    variable v_start_time         : time := -1 ns;    -- time of previoud clock edge
+    variable c_clk_was_high       : boolean := false; -- clk high/low status on BFM call
+
   begin
+    -- setup_time and hold_time checking
+    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+
     if ext_proc_call = "" then
       -- called directly from sequencer/VVC, show 'sbi_read...' in log
       write(v_proc_call, local_proc_call);
     else
-      -- called from other BFM procedure like sbi_check, log 'sbi_check(..) while executing sbi_read..' 
+      -- called from other BFM procedure like sbi_check, log 'sbi_check(..) while executing sbi_read..'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
-    wait_until_given_time_before_rising_edge(clk, config.clock_period/4, config.clock_period);
+    -- check if enough room for setup_time in low period
+    if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event))then
+      await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, local_proc_name & ": timeout waiting for clk low period for setup_time.");
+    end if;
+    -- check if clk was high when BFM was called
+    if clk = '1' then
+      c_clk_was_high := true;
+    end if;
+    -- get time stamp of previous clk edge
+    v_start_time := now - clk'last_event;
+    -- Wait setup_time specified in config record
+    wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
+
     cs   <= '1';
     wena <= '0';
     rena <= '1';
@@ -435,6 +506,16 @@ package body sbi_bfm_pkg is
     end if;
 
     wait until rising_edge(clk);
+    -- check if clk meet requirements
+    if c_clk_was_high then -- rising_edge to rising_edge
+      v_min_time := v_start_time + config.clock_period - config.clock_period_margin;
+      v_max_time := v_start_time + config.clock_period + config.clock_period_margin;
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": clk period not within requirement (rising_edge to rising_edge).");
+    else -- falling_edge to rising_edge
+      v_min_time := v_start_time + (config.clock_period/2) - config.clock_period_margin;
+      v_max_time := v_start_time + (config.clock_period/2) + config.clock_period_margin;
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": clk low period not within requirement (falling_edge to rising_edge).");
+    end if;
 
     if config.use_fixed_wait_cycles_read then
       -- Wait for a fixed number of clk cycles
@@ -458,11 +539,12 @@ package body sbi_bfm_pkg is
     v_data_value := rdata;
     data_value   := v_data_value;
 
-    wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
+    -- Wait hold_time specified in config record
+    wait_until_given_time_after_rising_edge(clk, config.hold_time);
 
     cs   <= '0';
     rena <= '0';
-    if ext_proc_call = "" then          -- proc_name = "sbi_read" 
+    if ext_proc_call = "" then          -- proc_name = "sbi_read"
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
     -- Log will be handled by calling procedure (e.g. sbi_check)
@@ -606,7 +688,7 @@ package body sbi_bfm_pkg is
 
       -- Evaluate data
       v_check_ok := matching_values(v_data_value, data_exp);
-      
+
       -- Evaluate number of occurrences, if limited by user
       v_num_of_occurrences := v_num_of_occurrences + 1;
       if max_polls > 0 then

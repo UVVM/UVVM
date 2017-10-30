@@ -1,6 +1,20 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.1.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Changed compile_src.do script to use compile_order.txt for compilation.
+- Reduced terminal output from Modelsim when running compile script.
+- Fixed issue where command index number was missing in the logging when
+  calling uart_expect().
+- Fixed issue where uart_receive() would fail in a back-to-back transmission
+  with jitter.
+- Fixed bug that made insert_delay() override inter_bfm_delay in VVC executor.
+- Updated VVC and BFM quick reference PDFs.
+
 v2.0.5
 ----------
 Released: 2017-06-08
@@ -37,7 +51,7 @@ Released: 2017-01-25
 - Changed order of uart_expect method in BFM. "alert_level" moved to first optional parameter.
 - Deleted simple to_string method.
 - Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
-- Added AWAIT_ANY_COMPLETION. 
+- Added AWAIT_ANY_COMPLETION.
 - Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
 -  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
 -  - updated call to store_result()
@@ -69,9 +83,9 @@ Released: 2016-04-28
 BFM changes
 ----------
 
-- First log msg in uart_expect() BFM is now msg id config.id_for_bfm_wait (ID_BFM_WAIT by default). 
-  Summary of received data when waiting for expected is now printed with new msg id 
-  config.id_for_bfm_poll_summary (ID_BFM_POLL_SUMMARY by default) and will only occur when there is 
+- First log msg in uart_expect() BFM is now msg id config.id_for_bfm_wait (ID_BFM_WAIT by default).
+  Summary of received data when waiting for expected is now printed with new msg id
+  config.id_for_bfm_poll_summary (ID_BFM_POLL_SUMMARY by default) and will only occur when there is
   more than 1 max_receptions.
 
 VVC changes
@@ -86,7 +100,7 @@ Released: 2016-01-20
 General changes
 ----------
 
-- License conditions have changed. Bitvis VIP UART is now released 
+- License conditions have changed. Bitvis VIP UART is now released
   under the MIT license, see LICENSE.txt
 - UVVM VVC Framework is now open source. Updated compile script with new file names.
 
@@ -116,7 +130,7 @@ Released: 2015-12-08
 General changes
 ----------
 - Added example of how to use config records to QuickRef
-- Improved documentation of how to use the signal interface 
+- Improved documentation of how to use the signal interface
 - Applied changes caused by UVVM VVC Framework package renaming
     - work.vvc_support_pkg => work.td_vvc_entity_support_pkg
     - work.uvvm_vvc_dedicated_support => work.td_target_support_pkg
@@ -145,13 +159,13 @@ General changes
   - THIS_VVC -> THIS_VVCT
 - New QuickRefs added for both BFM and VVC
 
-BFM changes  
+BFM changes
 ----------
 - BFM now uses UVVM Util wait_num_rising_edge instead of local wait_num_clocks
 - Removed redundant timeout check in receive procedure
 
 VVC changes
-----------  
+----------
 - Added inter-BFM delay to vvc_config for inserting delay between BFM accesses
 - Removed unused packet declarations in the VHDL files
 - Set msg parameter to mandatory in VVC methods
@@ -184,7 +198,7 @@ Released: 2015-10-12
 - Added VVC_BROADCAST to VVC interpreter await_cmd_from_sequencer
 - Added transaction info record for waveview
 - Removed alert_level from uart_transmit vvc method
-  
+
 
 v0.2.0
 ----------

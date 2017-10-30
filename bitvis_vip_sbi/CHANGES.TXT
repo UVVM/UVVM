@@ -1,6 +1,23 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.1.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Changed compile_src.do script to use compile_order.txt for compilation.
+- Reduced terminal output from Modelsim when running compile script.
+- Added support for input argument number 2 to compile_src.do script for
+  specifying output directory.
+- Added clock_period_margin, clock_margin_severity, setup_time and hold_time
+  to BFM configuration record.
+- Added clock period checking and configurable setup and hold times for
+  BFM generated signals.
+- Fixed bug that made insert_delay() override inter_bfm_delay in VVC executor.
+- Added new BFM configuration record and timing diagram in quick reference PDFs.
+- Updated VVC and BFM quick reference PDFs.
+
 v2.0.6
 ----------
 Released: 2017-06-07
@@ -42,7 +59,7 @@ Released: 2017-01-25
 
 - Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
 - Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
-- Added AWAIT_ANY_COMPLETION. 
+- Added AWAIT_ANY_COMPLETION.
 - Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
 -  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
 -  - updated call to store_result()
@@ -53,10 +70,10 @@ VVC changes
 ----------
 - Added feature : When bfm_config.use_fixed_wait_cycles_read = true, wait 'fixed_wait_cycles_read' after asserting rd, before sampling rdata
 - Renamed transaction_info_for_waveview to transaction_info
- 
+
 
 ----------------------------------------------------------------------
-v1.1.1 
+v1.1.1
 ----------
 Released: 2016-10-28
 
@@ -85,7 +102,7 @@ Released: 2016-01-20
 
 General changes
 ----------
-- License conditions have changed. Bitvis VIP SBI is now released 
+- License conditions have changed. Bitvis VIP SBI is now released
   under the MIT license, see LICENSE.txt
 - UVVM VVC Framework is now open source. Updated compile script with new file names.
 - Removed unused reset port from VVC.
@@ -97,14 +114,14 @@ Released: 2015-12-08
 General changes
 ----------
 - Added example of how to use config records to QuickRef
-- Improved documentation of how to use the signal interface 
+- Improved documentation of how to use the signal interface
 - Applied changes caused by UVVM VVC Framework package renaming
     - work.vvc_support_pkg => work.td_vvc_entity_support_pkg
     - work.uvvm_vvc_dedicated_support => work.td_target_support_pkg
     - uvvm_vvc_framework.uvvm_support_pkg => uvvm_vvc_framework.ti_vvc_framework_support_pkg
     - work.uvvm_methods_pkg => work.td_vvc_framework_common_methods_pkg
     - work.queue_pkg => work.td_queue_pkg
-    
+
 BFM changes
 ----------
 - Added use_ready_signal to BFM config
@@ -161,7 +178,7 @@ Released: 2015-10-12
 - Added insert_delay with delay in time
 - Added VVC_BROADCAST to VVC interpreter await_cmd_from_sequencer
 - Added transaction info record for waveview
-  
+
 
 v0.3.0
 ----------

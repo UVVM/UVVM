@@ -38,7 +38,7 @@ package td_target_support_pkg is
 
   type t_vvc_target_record_unresolved is record  -- VVC dedicated to assure signature differences between equal common methods
     trigger              : std_logic;
-    vvc_name             : string(1 to C_LOG_SCOPE_WIDTH-2);  -- as scope is vvc_name & ',' and number
+    vvc_name             : string(1 to C_VVC_NAME_MAX_LENGTH);  -- as scope is vvc_name & ',' and number
     vvc_instance_idx     : integer;
     vvc_channel          : t_channel;
   end record;
@@ -201,9 +201,17 @@ package body td_target_support_pkg is
       v_channel := vvc_channel;
     end if;
     if v_channel = NA then
-      return to_string(value.vvc_name) & "," & to_string(v_instance);
+      if vvc_instance = -2 then
+        return to_string(value.vvc_name) & ",ALL_INSTANCES";
+      else
+        return to_string(value.vvc_name) & "," & to_string(v_instance);
+      end if;
     else
-      return to_string(value.vvc_name) & "," & to_string(v_instance) & "," & to_string(v_channel);
+      if vvc_instance = -2 then
+        return to_string(value.vvc_name) & ",ALL_INSTANCES" & "," & to_string(v_channel);
+      else
+        return to_string(value.vvc_name) & "," & to_string(v_instance) & "," & to_string(v_channel);
+      end if;
     end if;
   end;
 
@@ -214,6 +222,9 @@ package body td_target_support_pkg is
   ) return t_vvc_target_record is
     variable v_rec : t_vvc_target_record := C_VVC_TARGET_RECORD_DEFAULT;
   begin
+    if vvc_name'length > C_MAX_VVC_NAME_LENGTH then
+      alert(TB_FAILURE, "vvc_name is too long. Shorten name or set C_MAX_VVC_NAME_LENGTH in adaptation_pkg to desired length.", C_SCOPE);
+    end if;
     v_rec.vvc_name  := (others => NUL);
     v_rec.vvc_name(1 to vvc_name'length) := vvc_name;
     return v_rec;
@@ -277,7 +288,7 @@ package body td_target_support_pkg is
     check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", C_SCOPE, ID_NEVER);
 
     -- increment shared_cmd_inx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
-    shared_cmd_idx := shared_cmd_idx + 1; 
+    shared_cmd_idx := shared_cmd_idx + 1;
 
     shared_vvc_cmd.cmd_idx    := shared_cmd_idx;
 
@@ -289,7 +300,7 @@ package body td_target_support_pkg is
           & format_command_idx(shared_cmd_idx), C_SCOPE);
     end if;
     wait for 0 ns;
-    if (vvc_target.vvc_instance_idx = C_VVCT_ALL_INSTANCES) then
+    if (vvc_target.vvc_instance_idx = ALL_INSTANCES) then
       await_semaphore_in_delta_cycles(protected_multicast_semaphore);
       if global_vvc_busy /= 'L' then
         wait until global_vvc_busy = 'L';
@@ -325,11 +336,11 @@ package body td_target_support_pkg is
         return;
       end if;
     end loop;
-    
+
     if (v_was_multicast = true) then
       release_semaphore(protected_multicast_semaphore);
     end if;
-    
+
     log(ID_UVVM_CMD_ACK, "ACK received.  " & format_command_idx(v_local_cmd_idx), C_SCOPE);
 
     -- clean up and prepare for next

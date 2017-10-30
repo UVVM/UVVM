@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -28,7 +28,7 @@ end entity;
 
 architecture func of ti_uvvm_engine is
 begin
-  
+
   --------------------------------------------------------
   -- Initializes the UVVM VVC Framework
   --------------------------------------------------------
@@ -37,10 +37,12 @@ begin
     -- shared_uvvm_state is initialized to IDLE. Hence it will stay in IDLE if this procedure is not included in the TB
     shared_uvvm_state := PHASE_A;
     wait for 0 ns;  -- A single delta cycle
+    wait for 0 ns;  -- A single delta cycle
     if (shared_uvvm_state = PHASE_B) then
       tb_failure("ti_uvvm_engine seems to have been instantiated more than once in this testbench system", C_SCOPE);
     end if;
     shared_uvvm_state := PHASE_B;
+    wait for 0 ns;  -- A single delta cycle
     wait for 0 ns;  -- A single delta cycle
     shared_uvvm_state := INIT_COMPLETED;
     wait;

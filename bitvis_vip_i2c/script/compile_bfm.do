@@ -88,4 +88,4 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -dbg -work $lib_name"
 }
 
-eval vcom  $compdirectives  $vip_i2c_part_path/src/i2c_bfm_pkg.vhd
+eval vcom  $compdirectives  $vip_i2c_part_path/src/i2c_bfm_pkg.vhd -quiet

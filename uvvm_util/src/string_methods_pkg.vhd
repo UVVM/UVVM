@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -36,7 +36,7 @@ package string_methods_pkg is
     msg        : string;
     scope      : string
     );
-    
+
   function justify(
     val             : string;
     justified       : side;
@@ -44,8 +44,8 @@ package string_methods_pkg is
     format_spaces   : t_format_spaces;
     truncate        : t_truncate_string
   ) return string;
-  
-  
+
+
   -- DEPRECATED.
   -- Function will be removed in future versions of UVVM-Util
   function justify(
@@ -72,7 +72,7 @@ package string_methods_pkg is
     vector              : string;
     result_if_not_found : natural := 1
     ) return natural;
-    
+
   function pos_of_rightmost_non_whitespace(
     vector              : string;
     result_if_not_found : natural := 1
@@ -227,9 +227,30 @@ package string_methods_pkg is
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string;
-    
+
   function to_string(
     val     : t_byte_array;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string;
+
+  function to_string(
+    val     : t_slv_array;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string;
+
+  function to_string(
+    val     : t_signed_array;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string;
+
+  function to_string(
+    val     : t_unsigned_array;
     radix   : t_radix        := HEX_BIN_IF_INVALID;
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
@@ -255,7 +276,7 @@ package string_methods_pkg is
     width     : natural;
     justified : side    := right
       ) return string;
-      
+
   procedure to_string(
     val   : t_alert_attention_counters;
     order : t_order := FINAL
@@ -275,7 +296,7 @@ package string_methods_pkg is
   function to_string(
     val : string
     ) return string;
-    
+
   function add_msg_delimiter(
     msg : string
   ) return string;
@@ -384,7 +405,7 @@ package body string_methods_pkg is
     return result;
   end function;
 
-  
+
 
   function justify(
     val             : string;
@@ -407,10 +428,10 @@ package body string_methods_pkg is
       -- Remove leading space if any
       v_formatted_val := remove_initial_chars(val,v_num_leading_space);
       v_val_length := v_formatted_val'length;
-    else 
+    else
       v_formatted_val := val;
     end if;
-    
+
     -- Truncate and return if the string is wider that allowed
     if v_val_length >= width then
       if (truncate = ALLOW_TRUNCATE) then
@@ -419,7 +440,7 @@ package body string_methods_pkg is
         return v_formatted_val;
       end if;
     end if;
-    
+
     -- Justify if string is within the width specifications
     if justified = left then
       v_result(1 to v_val_length) := v_formatted_val;
@@ -477,7 +498,7 @@ package body string_methods_pkg is
     end loop;
     return result_if_not_found;
   end;
-  
+
   function pos_of_rightmost_non_whitespace(
     vector              : string;
     result_if_not_found : natural := 1
@@ -497,7 +518,7 @@ package body string_methods_pkg is
     vector              : string
     ) return natural is
   begin
-    return pos_of_leftmost(NUL, vector, vector'length);
+    return pos_of_leftmost(NUL, vector, vector'length) - 1;
   end;
 
   function string_contains_char(
@@ -907,7 +928,7 @@ package body string_methods_pkg is
   --========================================================
   -- Handle missing overloads from 'standard_additions' + advanced overloads
   --========================================================
-  
+
   function to_string(
     val             : boolean;
     width           : natural;
@@ -929,7 +950,7 @@ package body string_methods_pkg is
   begin
     return justify(to_string(val), justified, width, format_spaces, truncate);
   end;
-  
+
   -- This function has been deprecated and will be removed in the next major release
   function to_string(
     val       : boolean;
@@ -1075,7 +1096,7 @@ package body string_methods_pkg is
       return to_string(std_logic_vector(val), radix, format, prefix);
     end if;
   end;
-  
+
   function to_string(
     val     : t_byte_array;
     radix   : t_radix        := HEX_BIN_IF_INVALID;
@@ -1100,25 +1121,136 @@ package body string_methods_pkg is
       -- Value length more than 1
       -- Comma-separate all array members and return
       write(v_line, string'("("));
-    
+
       for i in val'range loop
         write(v_line, to_string(val(i), radix, format, prefix));
-      
+
         if i < val'right and val'ascending then
           write(v_line, string'(", "));
         elsif i > val'right and not val'ascending then
           write(v_line, string'(", "));
         end if;
       end loop;
-      
+
       write(v_line, string'(")"));
-      
+
       v_width := v_line'length;
       v_result(1 to v_width) := v_line.all;
       deallocate(v_line);
       return v_result(1 to v_width);
     end if;
   end;
+
+  function to_string(
+    val     : t_slv_array;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string is
+    variable v_line   : line;
+    variable v_result : string(1 to 2 +            -- parentheses
+                              2*(val'length - 1) + -- commas
+                              26*val'length);      -- 26 is max length of returned value from slv to_string()
+    variable v_width  : natural;
+  begin
+    if val'length = 0 then
+      return "";
+    else
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));      
+
+      for idx in val'range loop
+        write(v_line, to_string(val(idx), radix, format, prefix));
+
+        if (idx < val'right) and (val'ascending) then
+          write(v_line, string'(", "));
+        elsif (idx > val'right) and not(val'ascending) then
+          write(v_line, string'(", "));
+        end if;
+
+      end loop;
+      write(v_line, string'(")"));
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end if;
+  end function;
+
+  function to_string(
+    val     : t_signed_array;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string is
+    variable v_line   : line;
+    variable v_result : string(1 to 2 +             -- parentheses
+                               2*(val'length - 1) + -- commas
+                               26*val'length);      -- 26 is max length of returned value from slv to_string()
+    variable v_width  : natural;
+  begin
+    if val'length = 0 then
+      return "";
+    else
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));      
+
+      for idx in val'range loop
+        write(v_line, to_string(val(idx), radix, format, prefix));
+
+        if (idx < val'right) and (val'ascending) then
+          write(v_line, string'(", "));
+        elsif (idx > val'right) and not(val'ascending) then
+          write(v_line, string'(", "));
+        end if;
+        
+      end loop;
+      write(v_line, string'(")"));
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end if;
+  end function;
+
+  function to_string(
+    val     : t_unsigned_array;
+    radix   : t_radix        := HEX_BIN_IF_INVALID;
+    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string is
+    variable v_line   : line;
+    variable v_result : string(1 to 2 +             -- parentheses
+                               2*(val'length - 1) + -- commas
+                               26*val'length);      -- 26 is max length of returned value from slv to_string()
+    variable v_width  : natural;
+  begin
+    if val'length = 0 then
+      return "";
+    else
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));      
+
+      for idx in val'range loop
+        write(v_line, to_string(val(idx), radix, format, prefix));
+
+        if (idx < val'right) and (val'ascending) then
+          write(v_line, string'(", "));
+        elsif (idx > val'right) and not(val'ascending) then
+          write(v_line, string'(", "));
+        end if;
+        
+      end loop;
+      write(v_line, string'(")"));
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end if;
+  end function;  
 
   --========================================================
   -- Handle types defined at lower levels
@@ -1152,14 +1284,14 @@ package body string_methods_pkg is
     begin
       return to_upper(justify(t_attention'image(val), justified, width));
     end;
-    
+
   -- function to_string(
     -- dummy : t_void
   -- ) return string is
   -- begin
     -- return "VOID";
   -- end function;
-    
+
   procedure to_string(
     val   : t_alert_attention_counters;
     order : t_order := FINAL

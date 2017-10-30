@@ -42,9 +42,9 @@ entity uart_rx_vvc is
     GC_CMD_QUEUE_COUNT_MAX                  : natural           := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD            : natural           := 950;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level     := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := WARNING
+    GC_RESULT_QUEUE_COUNT_MAX                : natural          := 1000;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := 950;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := WARNING
   );
   port (
     uart_vvc_rx         : in  std_logic
@@ -57,7 +57,7 @@ end entity uart_rx_vvc;
 
 architecture behave of uart_rx_vvc is
 
-  constant C_SCOPE              : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX) & "," & to_upper(to_string(GC_CHANNEL));
+  constant C_SCOPE              : string        := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS         : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
   signal executor_is_busy       : boolean := false;
@@ -68,8 +68,8 @@ architecture behave of uart_rx_vvc is
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
-  
-  alias vvc_config : t_vvc_config is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);     
+
+  alias vvc_config : t_vvc_config is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
 
@@ -79,7 +79,7 @@ begin
 -- Constructor
 -- - Set up the defaults and show constructor if enabled
 --===============================================================================================
-  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_UART_CONFIG, 
+  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_UART_CONFIG,
                   GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                   GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
 --===============================================================================================
@@ -125,11 +125,11 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
 
           when AWAIT_ANY_COMPLETION =>
-            if not v_local_vvc_cmd.gen_boolean then 
-               -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue 
+            if not v_local_vvc_cmd.gen_boolean then
+               -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
                work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
                v_cmd_has_been_acked := true;
-            end if; 
+            end if;
             work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
           when DISABLE_LOG_MSG =>
@@ -160,7 +160,7 @@ begin
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
         work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
-      end if; 
+      end if;
 
     end loop;
   end process;
@@ -178,7 +178,8 @@ begin
     variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
     variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean;
+    variable v_command_is_bfm_access                  : boolean := false;
+    variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
   begin
 
@@ -198,6 +199,7 @@ begin
       transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Check if command is a BFM access
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
       if v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
@@ -206,7 +208,7 @@ begin
 
       -- Insert delay if needed
       work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config               => vvc_config,
-                                                               command_is_bfm_access              => v_command_is_bfm_access,
+                                                               command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
                                                                scope                              => C_SCOPE);
@@ -235,7 +237,7 @@ begin
 
         when EXPECT =>
           -- Normalise address and data
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg)); 
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           -- Call the corresponding procedure in the BFM package.
           uart_expect(data_exp        => v_normalised_data,
@@ -254,10 +256,10 @@ begin
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
-          else 
+          else
             -- Delay specified using integer
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.bit_time;
-          end if; 
+          end if;
 
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);

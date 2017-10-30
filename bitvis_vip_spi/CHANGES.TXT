@@ -1,6 +1,21 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.0.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Changed compile_src.do script to use compile_order.txt for compilation.
+- Reduced terminal output from Modelsim when running compile script.
+- Removed protocol checking from SPI slave BFM.
+- Added multi-word functionality to SPI master and slave.
+- Added support for selecting when to start transfer for SPI slave.
+- Added support for selecting SPI master action on SS signal bewteen words in
+  a multi-word transfer and when a transfer is done.
+- Fixed bug that made insert_delay() override inter_bfm_delay in VVC executor.
+- Updated VVC and BFM quick reference PDFs.
+
 v2.0.3
 ----------
 Released: 2017-06-08

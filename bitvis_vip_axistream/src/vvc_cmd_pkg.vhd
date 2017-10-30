@@ -53,9 +53,11 @@ package vvc_cmd_pkg is
   -- You can create VVCs with smaller sizes than these constants, but not larger.
   
   -- Create constants for the maximum sizes to use in this VVC.
-  constant C_VVC_CMD_DATA_MAX_BYTES          : natural := 16*1024;
-  constant C_VVC_CMD_DATA_MAX_WORDS          : natural := C_VVC_CMD_DATA_MAX_BYTES;
+  constant C_VVC_CMD_DATA_MAX_BYTES           : natural := 16*1024;
+  constant C_VVC_CMD_MAX_WORD_LENGTH          : natural := 32;      -- 4 bytes
+  constant C_VVC_CMD_DATA_MAX_WORDS           : natural := C_VVC_CMD_DATA_MAX_BYTES;
   constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := 300;
+
 
   --===============================================================================================
   -- t_vvc_cmd_record
@@ -63,17 +65,17 @@ package vvc_cmd_pkg is
   --===============================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    data_array              : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1); 
-    data_array_length       : integer range -10 to C_VVC_CMD_DATA_MAX_BYTES; -- Some negative numbers have special meaning in axistreamStartTransmits()
+    data_array            : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1); 
+    data_array_length     : integer range -10 to C_VVC_CMD_DATA_MAX_BYTES; -- Some negative numbers have special meaning in axistreamStartTransmits()
     -- If you need support for more bits per data byte, replace this with a wider type:
-    user_array              : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-    user_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One user_array entry per word (clock cycle)
-    strb_array              : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-    strb_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One strb_array entry per word (clock cycle)
+    user_array            : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    user_array_length     : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One user_array entry per word (clock cycle)
+    strb_array            : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    strb_array_length     : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One strb_array entry per word (clock cycle)
     id_array              : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
     id_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One id_array entry per word (clock cycle)
-    dest_array              : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-    dest_array_length       : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One dest_array entry per word (clock cycle)
+    dest_array            : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    dest_array_length     : natural range 1 to C_VVC_CMD_DATA_MAX_WORDS; -- One dest_array entry per word (clock cycle)
 
     -- Common VVC fields
     operation             : t_operation;
@@ -91,16 +93,16 @@ package vvc_cmd_pkg is
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
-    data_array             => (others => (others => '0')),
-    data_array_length       => 1,
-    user_array             => (others => (others => '0')),
-    user_array_length       => 1,
-    strb_array             => (others => (others => '0')),
-    strb_array_length       => 1,
-    id_array             => (others => (others => '0')),
+    data_array            => (others => (others => '0')),
+    data_array_length     => 1,
+    user_array            => (others => (others => '0')),
+    user_array_length     => 1,
+    strb_array            => (others => (others => '0')),
+    strb_array_length     => 1,
+    id_array              => (others => (others => '0')),
     id_array_length       => 1,
-    dest_array             => (others => (others => '0')),
-    dest_array_length       => 1,
+    dest_array            => (others => (others => '0')),
+    dest_array_length     => 1,
     -- Common VVC fields
     operation             => NO_OPERATION,
     proc_call             => (others => NUL),
@@ -133,12 +135,12 @@ package vvc_cmd_pkg is
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --===============================================================================================
   type t_vvc_result is record 
-    data_array   : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
-    data_length  : natural;
-    user_array   : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-    strb_array   : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-    id_array     : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
-    dest_array   : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    data_array    : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    data_length   : natural;
+    user_array    : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    strb_array    : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    id_array      : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
+    dest_array    : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1); 
   end record;
   
   type t_vvc_result_queue_element is record

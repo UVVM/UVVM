@@ -11,11 +11,16 @@ division_line = "--=============================================================
 class Channel:
     def __init__(self, name):
         self.name = name
-        self.queue_names = ["cmd"]
-    def add_queue(self, name):
-        self.queue_names.append(name)
-    def len_of_queue(self):
-        return len(self.queue_names)
+        self.executor_names = ["cmd"]
+    #def append_executor(self, name):
+     #   self.executor_names.append(name)
+    def append_executor(self, names):
+        for name in range(0, len(names)):
+            self.executor_names.append(names[name])
+    def number_of_executors(self):
+        return len(self.executor_names)
+    def get_name(self):
+        return str(self.name)
 
 
 def print_linefeed(file_handle):
@@ -39,45 +44,30 @@ def is_input_vhdl_legal(requested_vvc_name):
     if requested_vvc_name.__len__() < 1:
         print("Input too short. Please try again.")
         return False
-    if requested_vvc_name.__len__() > 14:
-        print("WARNING: Name exceeds default maximum name length, defined in UVVM Utility Library constant C_LOG_SCOPE_WIDTH")
-        print("         - Please increase C_LOG_SCOPE_WIDTH in the adaptations_pkg.vhd")
     if (requested_vvc_name[0] == '_') or (requested_vvc_name[0].isdigit()):
         print("Input must start with a letter")
         return False
     return True
 
-
-# Ask user if VVC is multi-channel
-def is_multi_channel_vvc():
-    input_accepted = False
-    choice = ''
-    while not input_accepted:
-        choice = input("\rUse multiple, concurrent channels for this VVC? [y/n]: ")
-        choice = choice.lower()
-        if choice == 'y':
-            input_accepted = True
-        elif choice == 'n':
-            input_accepted = True
-        else:
-            print("Input not accepted. Please use either y or n")
-    return choice
-
-
 # Get the number of channels in the VVC, if multi-channel VVC.
 def get_number_of_channels():
+    print("\n\rMultiple channels can be used to emulate concurrent channels in the VIP, e.g. concurrent RX and TX channels.")
     input_accepted = False
     while not input_accepted:
-        raw_input = input("\rSet the number of concurrent channels to use [2-99]: ")
-        try:
-            number_selected = int(raw_input)
-        except ValueError:
-            print("Input was not an integer!")
-            continue
-        if number_selected < 2:
-            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 2 and 99")
+        raw_input = input("\rSet the number of concurrent channels to use [1-99], press enter for default(1): ")
+        if raw_input == "":
+            number_selected = 1
+        else:
+            try:
+                number_selected = int(raw_input)
+            except ValueError:
+                print("Input was not an integer!")
+                continue
+
+        if number_selected < 1:
+            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 1 and 99")
         elif number_selected > 99:
-            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 2 and 99")
+            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 1 and 99")
         else:
             input_accepted = True
 
@@ -85,19 +75,77 @@ def get_number_of_channels():
 
 
 # Get the channel name and check if it is valid
-def get_channel_name():
-    requested_vvc_channel_name = input("\rPlease enter a channel name (e.g. tx or rx): ")
-    if is_input_vhdl_legal(requested_vvc_channel_name.lower()) is False:
-        return get_channel_name()
+def get_channel_name(idx):
+    raw_input = input("\rPlease enter a channel name (e.g. tx or rx), press enter for default (channel_" + str(idx) + "): ")
+    requested_vvc_channel_name = raw_input.lower()
+    if raw_input == "":
+        requested_vvc_channel_name = "channel_" + str(idx)
+    else:
+        if is_input_vhdl_legal(requested_vvc_channel_name) is False:
+            return get_channel_name(idx)
     return requested_vvc_channel_name
 
+# Sets up channels with name
+def set_channels(number_of_channels):
+    vvc_channels = []
+    if number_of_channels > 1:
+        for i in range(number_of_channels):
+            channel = Channel(get_channel_name(i))
+            vvc_channels.append(channel)
+    else:
+        channel = Channel("NA")
+        vvc_channels.append(channel)
+    return vvc_channels
 
-# Ask user if channel is multi-queue
+def print_multiple_executor_info():
+    print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon MM uses two executors because multiple read requests might be sent before receiving the responses.\nThus the first executor is sending out the commands, whereas the second executor is receiving the response.\nBoth are required because the first executor may be busy issuing a new command at the same time the second executor is receiving a response on a previous command.\n")
+
+def get_number_of_channels_with_multiple_executors(number_of_channels):
+    input_accepted = False
+    while not input_accepted:
+        raw_input = input("\rHow many channels shall have multiple executors? Press enter for default(0): ")
+        if raw_input == "":
+            number_selected = 0
+        else:
+            try:
+                number_selected = int(raw_input)
+            except ValueError:
+                print("Input was not an integer!")
+                continue
+
+        if number_selected < 0:
+            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 0 and " + str(number_of_channels))
+        elif number_selected > number_of_channels:
+            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 0 and " + str(number_of_channels))
+        else:
+            input_accepted = True
+
+    return number_selected
+
+def yes_no_question(question):
+    input_accepted = False
+    choice = ''
+    answer = False
+    while not input_accepted:
+        choice = input("\r" + str(question) +  " [y/n]: ")
+        choice = choice.lower()
+        if choice == 'y':
+            answer = True
+            input_accepted = True
+        elif choice == 'n':
+            answer = False
+            input_accepted = True
+        else:
+            print("Input not accepted. Please use either y or n")
+    return answer
+
+# Ask user if channel is multi-executor
 def is_multi_queue_channel():
     input_accepted = False
     choice = ''
     while not input_accepted:
-        choice = input("\rUse multiple queues for this channel? [y/n]: ")
+        print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon MM uses two executors because multiple read requests might be sent before receiving the responses.\nThus the first executor is sending out the commands, whereas the second executor is receiving the response.\nBoth are required because the first executor may be busy issuing a new command at the same time the second executor is receiving a response on a previous command.")
+        choice = input("\rUse multiple executors for this channel? [y/n]: ")
         choice = choice.lower()
         if choice == 'y':
             input_accepted = True
@@ -107,31 +155,39 @@ def is_multi_queue_channel():
             print("Input not accepted. Please use either y or n")
     return choice
 
-# Get the number of queues in the channel, if multi-queue channel.
-def get_number_of_queues():
+# Get the number of queues in the channel, if multi-executor channel.
+def get_number_of_executors():
     input_accepted = False
     while not input_accepted:
-        raw_input = input("\rSet the number of concurrent queues to use [2-99], included cmd queue: ")
+        raw_input = input("\rSet the number of concurrent executors to use [2-3], included cmd executor: ")
         try:
             number_selected = int(raw_input)
         except ValueError:
             print("Input was not an integer!")
             continue
         if number_selected < 2:
-            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 2 and 99")
-        elif number_selected > 99:
-            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 2 and 99")
+            print("Selected number "+ str(number_selected) + " is too small. Please use a number between 2 and 3")
+        elif number_selected > 3:
+            print("Selected number "+ str(number_selected) + " is too large. Please use a number between 2 and 3")
         else:
             input_accepted = True
 
     return number_selected
 
 # Get the channel name and check if it is valid
-def get_queue_name():
-    requested_queue_name = input("\rPlease enter a queue name (e.g. read): ")
+def get_executor_name():
+    requested_queue_name = input("\rPlease enter a executor name (e.g. read): ")
     if is_input_vhdl_legal(requested_queue_name.lower()) is False:
-        return get_queue_name()
+        return get_executor_name()
     return requested_queue_name
+
+def get_list_of_executors():
+    number_of_executors = get_number_of_executors()
+    executor_names = []
+    if number_of_executors > 1:
+        for i in range(1, number_of_executors):
+            executor_names.append(get_executor_name())
+    return executor_names
 
 # Get the VVC name and check if it is valid
 def get_vvc_name():
@@ -199,9 +255,9 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
     file_handle.write("    -- GC_DATA_WIDTH                            : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH;\n")
     file_handle.write("    GC_INSTANCE_IDX                          : natural;\n")
     if vvc_channel != "NA":
-        file_handle.write("    GC_CHANNEL                              : t_channel;\n")
+        file_handle.write("    GC_CHANNEL                               : t_channel;\n")
     file_handle.write("    GC_"+vvc_name.upper()+"_BFM_CONFIG"+fill_with_n_spaces(vvc_name.__len__(),26)+
-                      ": t_"+vvc_name.lower()+"_bfm_config"+fill_with_n_spaces(vvc_name.__len__(),13)+
+                      " : t_"+vvc_name.lower()+"_bfm_config"+fill_with_n_spaces(vvc_name.__len__(),13)+
                       ":= C_"+vvc_name.upper()+"_BFM_CONFIG_DEFAULT;\n")
     file_handle.write("    GC_CMD_QUEUE_COUNT_MAX                   : natural                   := 1000;\n")
     file_handle.write("    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                   := 950;\n")
@@ -237,8 +293,8 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
 
 def add_architecture_declaration(file_handle, vvc_name, vvc_channel):
 
-    len_of_queue = vvc_channel.len_of_queue()
-    
+    number_of_executors = vvc_channel.number_of_executors()
+
     if vvc_channel.name != "NA":
         file_handle.write("architecture behave of "+vvc_name.lower()+"_"+vvc_channel.name.lower()+"_vvc is\n")
     else:
@@ -253,24 +309,24 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel):
     print_linefeed(file_handle)
     file_handle.write("  signal executor_is_busy       : boolean := false;\n")
     file_handle.write("  signal queue_is_increasing    : boolean := false;\n")
-    file_handle.write("  signal last_cmd_idx_executed  : natural := 0;\n") 
+    file_handle.write("  signal last_cmd_idx_executed  : natural := 0;\n")
 
-    if len_of_queue > 1:
-        for i in range(1, len_of_queue):
-            file_handle.write("  signal "+vvc_channel.queue_names[i]+"_is_busy       : boolean := false;\n")
-            file_handle.write("  signal "+vvc_channel.queue_names[i]+"_queue_is_increasing    : boolean := false;\n")
-            file_handle.write("  signal last_"+vvc_channel.queue_names[i]+"_idx_executed  : natural := 0;\n")
-            
+    if number_of_executors > 1:
+        for i in range(1, number_of_executors):
+            file_handle.write("  signal "+vvc_channel.executor_names[i]+"_is_busy       : boolean := false;\n")
+            file_handle.write("  signal "+vvc_channel.executor_names[i]+"_queue_is_increasing    : boolean := false;\n")
+            file_handle.write("  signal last_"+vvc_channel.executor_names[i]+"_idx_executed  : natural := 0;\n")
+
 
     file_handle.write("  signal terminate_current_cmd  : t_flag_record;\n")
     print_linefeed(file_handle)
-    file_handle.write("  -- Instantiation of the element dedicated Queue\n")
+    file_handle.write("  -- Instantiation of the element dedicated executor\n")
     file_handle.write("  shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")
-    
-    if len_of_queue > 1:
-        for i in range(1, len_of_queue):
-            file_handle.write("  shared variable "+vvc_channel.queue_names[i]+"_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")  
-    
+
+    if number_of_executors > 1:
+        for i in range(1, number_of_executors):
+            file_handle.write("  shared variable "+vvc_channel.executor_names[i]+"_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")
+
     file_handle.write("  shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;\n")
     print_linefeed(file_handle)
     if vvc_channel.name == "NA":
@@ -314,14 +370,14 @@ def add_vvc_constructor(file_handle, vvc_name):
     file_handle.write("                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, "+
                       "GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);\n")
     file_handle.write(division_line+"\n")
-    
+
     print_linefeed(file_handle)
     print_linefeed(file_handle)
 
 
 def add_vvc_interpreter(file_handle, vvc_channel):
-    
-    len_of_queue = vvc_channel.len_of_queue()
+
+    number_of_executors = vvc_channel.number_of_executors()
 
     file_handle.write(division_line+"\n")
     file_handle.write("-- Command interpreter\n")
@@ -356,7 +412,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     else:
       file_handle.write("      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
-    file_handle.write("      -- 2a. Put command on the queue if intended for the executor\n")
+    file_handle.write("      -- 2a. Put command on the executor if intended for the executor\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      if v_local_vvc_cmd.command_type = QUEUED then\n")
     file_handle.write("        work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, "+
@@ -368,14 +424,14 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     file_handle.write("        case v_local_vvc_cmd.operation is\n")
     print_linefeed(file_handle)
     file_handle.write("          when AWAIT_COMPLETION =>\n")
-    file_handle.write("            -- Await completion of all commands in the cmd_executor queue\n")
+    file_handle.write("            -- Await completion of all commands in the cmd_executor executor\n")
     file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, "
                       "vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);\n")
 
-    if len_of_queue > 1:
-        for i in range(1, len_of_queue):
-            queue_name = vvc_channel.queue_names[i]
-            file_handle.write("            -- Await completion of all commands in the "+queue_name+" queue\n")
+    if number_of_executors > 1:
+        for i in range(1, number_of_executors):
+            queue_name = vvc_channel.executor_names[i]
+            file_handle.write("            -- Await completion of all commands in the "+queue_name+" executor\n")
             file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, "+queue_name+"_queue, "
                       "vvc_config, "+queue_name+"_is_busy, C_VVC_LABELS, last_"+queue_name+"_idx_executed);\n")
 
@@ -435,7 +491,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
 
 def add_vvc_executor(file_handle, vvc_channel):
 
-	len_of_queue = vvc_channel.len_of_queue()
+	number_of_executors = vvc_channel.number_of_executors()
 
 	file_handle.write(division_line+"\n")
 	file_handle.write("-- Command executor\n")
@@ -447,7 +503,8 @@ def add_vvc_executor(file_handle, vvc_channel):
 	file_handle.write("    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;\n")
 	file_handle.write("    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;\n")
 	file_handle.write("    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;\n")
-	file_handle.write("    variable v_command_is_bfm_access                  : boolean;\n")
+	file_handle.write("    variable v_command_is_bfm_access                  : boolean := false;\n")
+	file_handle.write("    variable v_prev_command_was_bfm_access            : boolean := false;\n")
 	file_handle.write("    -- variable v_normalised_addr    : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');\n")
 	file_handle.write("    -- variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');\n")
 	file_handle.write("  begin\n")
@@ -469,6 +526,7 @@ def add_vvc_executor(file_handle, vvc_channel):
                       ", ' ', transaction_info.msg'length);\n")
 	print_linefeed(file_handle)
 	file_handle.write("      -- Check if command is a BFM access\n")
+	file_handle.write("      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay \n")
 	file_handle.write("      --<USER_INPUT> Replace this if statement with a check of the current v_cmd.operation, in "
                       "order to set v_cmd_is_bfm_access to true if this is a BFM access command\n")
 	file_handle.write("      -- Example:\n")
@@ -483,13 +541,13 @@ def add_vvc_executor(file_handle, vvc_channel):
 	file_handle.write("      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config"
 	                  "                         => vvc_config,\n")
 	file_handle.write("                                                                         "
-	                  "command_is_bfm_access              => v_command_is_bfm_access,\n")
+	                  "command_is_bfm_access              => v_prev_command_was_bfm_access,\n")
 	file_handle.write("                                                                         "
                       "timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,\n")
 	file_handle.write("                                                                         "
                       "timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,\n")
 	file_handle.write("                                                                         "
-                      "scope                              => C_SCOPE);\n")                      
+                      "scope                              => C_SCOPE);\n")
 	print_linefeed(file_handle)
 	file_handle.write("      if v_command_is_bfm_access then\n")
 	file_handle.write("        v_timestamp_start_of_current_bfm_access := now;\n")
@@ -522,12 +580,12 @@ def add_vvc_executor(file_handle, vvc_channel):
 	file_handle.write("        --               msg_id_panel  => vvc_config.msg_id_panel,\n")
 	file_handle.write("        --               config        => vvc_config.bfm_config);\n")
 	print_linefeed(file_handle)
-    
-	if len_of_queue > 1:
+
+	if number_of_executors > 1:
 		file_handle.write("        --  -- Eksample of pipelined read, eg. Avalon interface.\n")
 	else:
 		file_handle.write("        --  -- If the result from the BFM call is to be stored, e.g. in a read call, "
-	                  "use the additional procedure illustrated in this read example\n")        
+	                  "use the additional procedure illustrated in this read example\n")
 
 	file_handle.write("        --   when READ =>\n")
 	file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
@@ -536,9 +594,9 @@ def add_vvc_executor(file_handle, vvc_channel):
 					  "v_normalised_addr;\n")
 	file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
 
-	if len_of_queue > 1:
+	if number_of_executors > 1:
 		file_handle.write("        --     if vvc_config.use_read_pipeline then\n")
-		file_handle.write("        --       -- Stall until response command queue is no longer full\n")
+		file_handle.write("        --       -- Stall until response command executor is no longer full\n")
 		file_handle.write("        --       while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop\n")
 		file_handle.write("        --         wait for vvc_config.bfm_config.clock_period;\n")
 		file_handle.write("        --       end loop;\n")
@@ -576,9 +634,9 @@ def add_vvc_executor(file_handle, vvc_channel):
 		file_handle.write("        --              msg_id_panel  => vvc_config.msg_id_panel,\n")
 		file_handle.write("        --              config        => vvc_config.bfm_config);\n")
 		file_handle.write("        --  -- Store the result\n")
-		file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(instance_idx  => GC_INSTANCE_IDX,\n")
+		file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(instance_idx  => result_queue,\n")
 		file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
-		file_handle.write("        --                                       data          => v_read_data);\n")
+		file_handle.write("        --                                       result          => v_read_data);\n")
 
 	print_linefeed(file_handle)
 	print_linefeed(file_handle)
@@ -633,7 +691,7 @@ def add_vvc_executor(file_handle, vvc_channel):
 def add_vvc_pipeline_step(file_handle, queue_name):
 	file_handle.write(division_line+"\n")
 	file_handle.write("-- Pipelined step\n")
-	file_handle.write("-- - Fetch and execute the commands in the "+queue_name+" queue\n")
+	file_handle.write("-- - Fetch and execute the commands in the "+queue_name+" executor\n")
 	file_handle.write(division_line+"\n")
 	file_handle.write("  "+queue_name+"_executor : process\n")
 	file_handle.write("    variable v_cmd                                    : t_vvc_cmd_record;\n")
@@ -641,19 +699,19 @@ def add_vvc_pipeline_step(file_handle, queue_name):
 	file_handle.write("    -- variable v_normalised_addr    : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');\n")
 	file_handle.write("    -- variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');\n")
 	file_handle.write("  begin\n")
-	file_handle.write("    -- Set the "+queue_name+" queue up with the same settings as the command queue\n")
+	file_handle.write("    -- Set the "+queue_name+" executor up with the same settings as the command executor\n")
 	file_handle.write("    "+queue_name+"_queue.set_scope(C_SCOPE & \":"+queue_name.upper()+"\");\n")
 	file_handle.write("    "+queue_name+"_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);\n")
 	file_handle.write("    "+queue_name+"_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);\n")
 	file_handle.write("    "+queue_name+"_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);\n")
-	file_handle.write("    wait for 0 ns;  -- Wait for "+queue_name+" queue to initialize completely\n")
+	file_handle.write("    wait for 0 ns;  -- Wait for "+queue_name+" executor to initialize completely\n")
 	print_linefeed(file_handle)
 	file_handle.write("    loop\n")
 	file_handle.write("      -- Fetch commands\n")
 	file_handle.write("      -------------------------------------------------------------------------\n")
 	file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, "+queue_name+"_queue, vvc_config"+
 	                  ", vvc_status, "+queue_name+"_queue_is_increasing, "+queue_name+"_is_busy, C_VVC_LABELS);\n")
-	print_linefeed(file_handle)   
+	print_linefeed(file_handle)
 	print_linefeed(file_handle)
 	file_handle.write("      -- Execute the fetched command\n")
 	file_handle.write("      -------------------------------------------------------------------------\n")
@@ -853,7 +911,7 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("  "+division_line+"\n")
     file_handle.write("  shared variable shared_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;\n")
     print_linefeed(file_handle)
-    file_handle.write("  "+division_line+"\n")    
+    file_handle.write("  "+division_line+"\n")
     file_handle.write("  -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response :\n")
     file_handle.write("  -- \n")
     file_handle.write("  -- - Used for storing the result of a BFM procedure called by the VVC,\n")
@@ -946,9 +1004,9 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels):
     file_handle.write("    inter_bfm_delay                       : t_inter_bfm_delay;-- Minimum delay between BFM "+
                       "accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.\n")
     file_handle.write("    cmd_queue_count_max                   : natural;          -- Maximum pending number in command "+
-                      "queue before queue is full. Adding additional commands will result in an ERROR.\n")
+                      "executor before executor is full. Adding additional commands will result in an ERROR.\n")
     file_handle.write("    cmd_queue_count_threshold             : natural;          -- An alert with severity 'cmd_queue_count_threshold_severity' "+
-                      "will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.\n")
+                      "will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.\n")
     file_handle.write("    cmd_queue_count_threshold_severity    : t_alert_level;    -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold\n")
     file_handle.write("    result_queue_count_max                : natural;\n")
     file_handle.write("    result_queue_count_threshold_severity : t_alert_level;\n")
@@ -1044,9 +1102,9 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels):
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")
     file_handle.write("  -- Methods dedicated to this VVC \n")
-    file_handle.write("  -- - These procedures are called from the testbench in order to queue BFM calls \n")
-    file_handle.write("  --   in the VVC command queue. The VVC will store and forward these calls to the\n")
-    file_handle.write("  --   "+vvc_name.upper()+" BFM when the command is at the from of the VVC command queue.\n")
+    file_handle.write("  -- - These procedures are called from the testbench in order to executor BFM calls \n")
+    file_handle.write("  --   in the VVC command executor. The VVC will store and forward these calls to the\n")
+    file_handle.write("  --   "+vvc_name.upper()+" BFM when the command is at the from of the VVC command executor.\n")
     file_handle.write("  "+division_line+"\n")
     print_linefeed(file_handle)
     print_linefeed(file_handle)
@@ -1264,7 +1322,7 @@ def generate_vvc_file(vvc_name, vvc_channels):
     # Create main VVC, or leaf VVCs if multiple channels
     for channel in vvc_channels:
 
-        num_of_queues = channel.len_of_queue()
+        num_of_queues = channel.number_of_executors()
 
         if channel.name == "NA":
             vvc_file_name = "output/"+vvc_name.lower()+"_vvc.vhd"
@@ -1281,7 +1339,7 @@ def generate_vvc_file(vvc_name, vvc_channels):
         add_vvc_executor(f, channel)
         if (num_of_queues > 1):
             for i in range(1, num_of_queues):
-                add_vvc_pipeline_step(f, channel.queue_names[i])
+                add_vvc_pipeline_step(f, channel.executor_names[i])
 
         add_vvc_terminator(f)
         add_end_of_architecture(f)
@@ -1311,26 +1369,61 @@ if __name__ == '__main__':
     vvc_channels = []
     vvc_name = get_vvc_name()
 
-    if is_multi_channel_vvc() == 'y':
-        number_of_channels = get_number_of_channels()
-        for i in range(number_of_channels):
-            channel = Channel(get_channel_name())
-            if is_multi_queue_channel() == 'y':            
-                number_of_queues = get_number_of_queues()
-                if number_of_queues > 1:
-                    for i in range(1, number_of_queues):
-                        channel.add_queue(get_queue_name())
-            vvc_channels.append(channel)
-    else:
-        channel = Channel("NA")
-        if is_multi_queue_channel() == 'y':            
-            number_of_queues = get_number_of_queues()
-            if number_of_queues > 1:
-                for i in range(1, number_of_queues):
-                    channel.add_queue(get_queue_name())
-        vvc_channels.append(channel)
-        
+    number_of_channels = get_number_of_channels()
+    vvc_channels = set_channels(number_of_channels)
+    number_of_channels_with_multiple_executors = 0
 
+    print_multiple_executor_info()
+
+    # Get number of channels with multiple executors
+    if number_of_channels == 1:
+        if yes_no_question("Shall the VVC have multiple executors?"):
+                vvc_channels[0].append_executor(get_list_of_executors())
+                number_of_channels_with_multiple_executors = 1
+    else:
+        number_of_channels_with_multiple_executors = get_number_of_channels_with_multiple_executors(number_of_channels)
+
+    # If channels have multiple executors
+    # One channel
+    if number_of_channels_with_multiple_executors == 1:
+        for channel in range(0, number_of_channels):
+            if yes_no_question("Shall channel " + vvc_channels[channel].get_name() + " have multiple executors?"):
+                vvc_channels[channel].append_executor(get_list_of_executors())
+                break
+
+
+    # Multiple channels
+    elif number_of_channels_with_multiple_executors > 1:
+
+        # If equal names and numbers of executors, only type in information once
+        if yes_no_question("Shall all channels with multiple executors have equal name and amount of executors?"):
+            executor_names = get_list_of_executors()
+
+            # If all channels
+            if number_of_channels_with_multiple_executors == number_of_channels:
+                for channel in range(0, number_of_channels):
+                    vvc_channels[channel].append_executor(executor_names)
+
+            # If not all channels, ask which one
+            else:
+                number_of_channels_added = 0
+                for channel in range(0, number_of_channels):
+                    if yes_no_question("Shall channel " + vvc_channels[channel].get_name() + " have multiple executors?"):
+                        vvc_channels[channel].append_executor(executor_names)
+                        number_of_channels_added += 1
+                    if number_of_channels_added == number_of_channels-1:
+                        break
+
+
+        # Individual names and numbers of executors, loop through channels
+        else:
+            number_of_channels_added = 0
+            for channel in range(0, number_of_channels):
+                if yes_no_question("Shall channel " + vvc_channels[channel].get_name() + " have multiple executors?"):
+                    vvc_channels[channel].append_executor(get_list_of_executors())
+                    number_of_channels_added += 1
+                if number_of_channels_added == number_of_channels-1:
+                        break
 
     if not os.path.exists("output"):
         os.makedirs("output")

@@ -1,0 +1,7 @@
+# library uvvm_vvc_framework
+../src/ti_vvc_framework_support_pkg.vhd
+../src/ti_generic_queue_pkg.vhd
+../src/ti_data_queue_pkg.vhd
+../src/ti_data_fifo_pkg.vhd
+../src/ti_data_stack_pkg.vhd
+../src/ti_uvvm_engine.vhd

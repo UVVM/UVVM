@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -22,9 +22,10 @@ use work.uart_pif_pkg.all;
 
 entity uart is
   generic (
-    GC_START_BIT      : std_logic                    := '0';
-    GC_STOP_BIT      : std_logic := '1';
-    GC_CLOCKS_PER_BIT : integer := 16);
+    GC_START_BIT                 : std_logic := '0';
+    GC_STOP_BIT                  : std_logic := '1';
+    GC_CLOCKS_PER_BIT            : integer   := 16;
+    GC_MIN_EQUAL_SAMPLES_PER_BIT : integer   := 15); -- Number of equal samples needed for valid bit, uart samples on every clock
   port(
     -- DSP interface and general control signals
     clk  : in  std_logic;
@@ -40,10 +41,14 @@ entity uart is
     rx_a : in  std_logic;
     tx   : out std_logic
     );
+begin
+  assert GC_MIN_EQUAL_SAMPLES_PER_BIT > GC_CLOCKS_PER_BIT/2 and GC_MIN_EQUAL_SAMPLES_PER_BIT < GC_CLOCKS_PER_BIT
+  report "GC_MIN_EQUAL_SAMPLES_PER_BIT must be between GC_CLOCKS_PER_BIT/2 and GC_CLOCKS_PER_BIT"
+  severity FAILURE;
 end uart;
 
 
- 
+
 architecture rtl of uart is
 
   -- PIF-core interface
@@ -73,9 +78,10 @@ begin
 
   i_uart_core : entity work.uart_core
     generic map(
-    GC_START_BIT => GC_START_BIT,
-    GC_STOP_BIT  => GC_STOP_BIT,
-    GC_CLOCKS_PER_BIT => GC_CLOCKS_PER_BIT
+    GC_START_BIT                 => GC_START_BIT,
+    GC_STOP_BIT                  => GC_STOP_BIT,
+    GC_CLOCKS_PER_BIT            => GC_CLOCKS_PER_BIT,
+    GC_MIN_EQUAL_SAMPLES_PER_BIT => GC_MIN_EQUAL_SAMPLES_PER_BIT
     )
     port map (
       clk  => clk,                      --

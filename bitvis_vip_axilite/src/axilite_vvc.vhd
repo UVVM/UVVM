@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -34,8 +34,8 @@ use work.td_result_queue_pkg.all;
 --=================================================================================================
 entity axilite_vvc is
   generic (
-    GC_ADDR_WIDTH                           : integer range 1 to C_VVC_CMD_ADDR_MAX_LENGTH := 8;    
-    GC_DATA_WIDTH                           : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 32;   
+    GC_ADDR_WIDTH                           : integer range 1 to C_VVC_CMD_ADDR_MAX_LENGTH := 8;
+    GC_DATA_WIDTH                           : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 32;
     GC_INSTANCE_IDX                          : natural              := 1;     -- Instance index for this AXILITE_VVCT instance
     GC_AXILITE_CONFIG                        : t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;  -- Behavior specification for BFM
     GC_CMD_QUEUE_COUNT_MAX                   : natural              := 1000;
@@ -49,7 +49,7 @@ entity axilite_vvc is
     clk                   : in  std_logic;
     axilite_vvc_master_if : inout t_axilite_if := init_axilite_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
   );
-  begin 
+  begin
     -- Check the interface widths to assure that the interface was correctly set up
     assert (axilite_vvc_master_if.write_address_channel.awaddr'length = GC_ADDR_WIDTH) report "axilite_vvc_master_if.write_address_channel.awaddr'length =/ GC_ADDR_WIDTH" severity failure;
     assert (axilite_vvc_master_if.read_address_channel.araddr'length = GC_ADDR_WIDTH) report "axilite_vvc_master_if.read_address_channel.araddr'length =/ GC_ADDR_WIDTH" severity failure;
@@ -65,7 +65,7 @@ architecture behave of axilite_vvc is
 
   constant C_SCOPE              : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
   constant C_VVC_LABELS         : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
-  
+
   signal executor_is_busy       : boolean := false;
   signal queue_is_increasing    : boolean := false;
   signal last_cmd_idx_executed  : natural := 0;
@@ -85,7 +85,7 @@ begin
 -- Constructor
 -- - Set up the defaults and show constructor if enabled
 --===============================================================================================
-  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_AXILITE_CONFIG, 
+  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_AXILITE_CONFIG,
                   GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                   GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
 --===============================================================================================
@@ -130,11 +130,11 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
 
           when AWAIT_ANY_COMPLETION =>
-             if not v_local_vvc_cmd.gen_boolean then 
-                -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue 
+             if not v_local_vvc_cmd.gen_boolean then
+                -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
                 work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
                 v_cmd_has_been_acked := true;
-             end if; 
+             end if;
              work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
           when DISABLE_LOG_MSG =>
@@ -165,7 +165,7 @@ begin
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
         work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
-      end if; 
+      end if;
 
     end loop;
   end process;
@@ -182,7 +182,8 @@ begin
     variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
     variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean;
+    variable v_command_is_bfm_access                  : boolean := false;
+    variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_normalised_addr        : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');
     variable v_normalised_data        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
   begin
@@ -192,34 +193,35 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     loop
-      
+
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
-      
+
       -- Set the transaction info for waveview
       transaction_info := C_TRANSACTION_INFO_DEFAULT;
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
-      
+
       -- Check if command is a BFM access
-      if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK then 
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
+      if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
       end if;
-      
+
       -- Insert delay if needed
       work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config               => vvc_config,
-                                                               command_is_bfm_access              => v_command_is_bfm_access,
+                                                               command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                                               scope                              => C_SCOPE);  
-      
+                                                               scope                              => C_SCOPE);
+
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
       end if;
-      
+
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -230,7 +232,7 @@ begin
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "axilite_write() called with to wide address. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "axilite_write() called with to wide data. " & v_cmd.msg);
-          
+
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.byte_enable := v_cmd.byte_enable;
@@ -243,9 +245,9 @@ begin
                         axilite_if          => axilite_vvc_master_if,
                         scope               => C_SCOPE,
                         msg_id_panel        => vvc_config.msg_id_panel,
-                        config              => vvc_config.bfm_config);                      
+                        config              => vvc_config.bfm_config);
 
-        when READ =>      
+        when READ =>
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "axilite_read() called with to wide address. " & v_cmd.msg);
 
@@ -280,7 +282,7 @@ begin
                         alert_level         => v_cmd.alert_level,
                         scope               => C_SCOPE,
                         msg_id_panel        => vvc_config.msg_id_panel,
-                        config              => vvc_config.bfm_config);                     
+                        config              => vvc_config.bfm_config);
 
         -- UVVM common operations
         --===================================
@@ -289,21 +291,21 @@ begin
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
-          else 
+          else
             -- Delay specified using integer
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
-          end if; 
+          end if;
 
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);
         end case;
-        
+
       if v_command_is_bfm_access then
         v_timestamp_end_of_last_bfm_access := now;
         v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and 
+        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and
            ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & 
+          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
                 to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
         end if;
       end if;
@@ -311,7 +313,7 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info   := C_TRANSACTION_INFO_DEFAULT;
-    
+
     end loop;
   end process;
   --===============================================================================================

@@ -1,3 +1,4 @@
+# library uvvm_util
 ../src/types_pkg.vhd
 ../src/adaptations_pkg.vhd
 ../src/string_methods_pkg.vhd

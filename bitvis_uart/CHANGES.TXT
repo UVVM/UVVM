@@ -1,6 +1,15 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.0
+----------
+Released: 2017-10-16
+- Added compile library name to compile_order.txt for use in compile_src.do
+  script and GHDL compile scripts.
+- Added generic parameter to set the number of equal samples needed per bit.
+- Fixed bug that made insert_delay() override inter_bfm_delay in VVC executor.
+- Updated VVC quick reference PDF.
+
 v1.0.4
 ----------
 Released: 2017-06-08

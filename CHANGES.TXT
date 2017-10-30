@@ -2,12 +2,21 @@ UVVM - Overview on Versions and Changes
 ==============================================================
 
 This is the changes made in the UVVM release zip-file.
-The purpose is to indicate which of the modules that have been 
-updated for this version of the zip file. For details about the 
-changes made for each individual module, please see the 
+The purpose is to indicate which of the modules that have been
+updated for this version of the zip file. For details about the
+changes made for each individual module, please see the
 CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
+
+v2017.10.16
+--------------------
+Released: 2017-10-16
+- Changed version numbering to Year.Month.Day format.
+- Changes to all the sub repositories are now listed in
+  uvvm_all_release_changes.txt.
+- Added FAQ.txt
+
 
 v2.4.1
 ----------
@@ -53,7 +62,7 @@ Released: 2017-03-27
 v2.1.0
 ----------
 Released: 2017-03-16
-- Updated the AXI4-Stream VIP with extended functionality, including support for TDEST, TID, TSTRB. 
+- Updated the AXI4-Stream VIP with extended functionality, including support for TDEST, TID, TSTRB.
   - The AXI4-Stream VIP version 3.0.0 is not directly backwards compatible with the previous version.
   - Please see the CHANGES.TXT document within the VIP for a description of changes required to upgrade to version 3.0.0.
 - Updated the VVC Generator script with the option of creating VVCs with multiple execution queues
@@ -65,7 +74,7 @@ v2.0.3
 ----------
 Released: 2017-02-13
 - Applied minor bugfixes and updated documentation for v2.0.x
-- The UVVM release of OSVVM has been removed from the repository due to the fact that it was a outdated 
+- The UVVM release of OSVVM has been removed from the repository due to the fact that it was a outdated
   version of OSVVM, and it was not used in any testbenches or examples.
 
 v2.0.2
@@ -80,14 +89,14 @@ Released: 2017-01-27
 
 This release is not backwards compatible and may require some changes in your tesbench and custom VVCs.
 
-- Change required in your test bench / test harness : 
+- Change required in your test bench / test harness :
      Replace for example
         i_initialize_uvvm : initialize_uvvm;
-     with 
+     with
         i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 
-- Changes required in your custom VVCs (if any) are listed in the CHANGES.TXT file in the sub directory uvvm_vvc_framework. 
-- Changes required in your BFM calls : see CHANGES.TXT in the respective BFM folder. 
+- Changes required in your custom VVCs (if any) are listed in the CHANGES.TXT file in the sub directory uvvm_vvc_framework.
+- Changes required in your BFM calls : see CHANGES.TXT in the respective BFM folder.
   Some parameters have been reordered in order to minimize the difference between BFM and VVC calls.
 
 All VIPs have been altered for this release.
@@ -99,14 +108,14 @@ All VIPs have been altered for this release.
   - exchange shared_vvc_cmd with local_vvc_cmd in the cmd_interpreter except for the line above as it is copied in that function
   - add parameter local_vvc_cmd to uvvm_vvc_framework.ti_vvc_framework_support_pkg.acknowledge_cmd(global_vvc_ack,local_vvc_cmd.cmd_idx)
 You can take a look at all our VVCs.
- 
+
 2. For vvc_methods_pkg.vhd
   - delete shared_vvc_cmd := C_VVC_CMD_DEFAULT; line in each procedure before set_general_target_and_command_fields
   - make sure that the ordering of commands in each function is:
     1. set_general_target_and_command_fields. It must be executed before any access to shared_vvc_cmd
     2. after the command send_command_to_vvc(VVCT); there must also be no access to shared_vvc_cmd
 
- 
+
 
 v1.5.2
 ----------
@@ -136,12 +145,12 @@ v1.5.0
 Released: 2016-08-30
 
 - This release contains a new verification IP:
-  - bitvis_vip_axistream: Allows normal access towards 
+  - bitvis_vip_axistream: Allows normal access towards
     an AXI4-Stream interface.
 
 - This release contains an updated version of:
   - UVVM-Util
-    
+
 v1.4.0
 ----------
 Released: 2016-05-02
@@ -157,7 +166,7 @@ Released: 2016-05-02
   - bitvis_vip_i2c
   - bitvis_uart
   - bitvis_irqc
-  
+
 v1.3.1
 ----------
 Released: 2016-03-16

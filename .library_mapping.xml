@@ -11,6 +11,7 @@
   <Mappings Location="bitvis_vip_spi" Library="bitvis_vip_spi"/>
   <Mappings Location="bitvis_vip_uart" Library="bitvis_vip_uart"/>
   <Mappings Location="Common Libraries/IEEE" Library="ieee"/>
+  <Mappings Location="Common Libraries/IEEE Synopsys" Library="ieee"/>
   <Mappings Location="" Library="not mapped"/>
   <Mappings Location="Common Libraries" Library="not mapped"/>
   <Mappings Location="uvvm_vvc_framework/src_target_dependent" Library="not mapped"/>

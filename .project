@@ -32,6 +32,11 @@
 			<locationURI>sigasiresource:/vhdl/2008/IEEE</locationURI>
 		</link>
 		<link>
+			<name>Common Libraries/IEEE Synopsys</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE%20Synopsys</locationURI>
+		</link>
+		<link>
 			<name>Common Libraries/STD</name>
 			<type>2</type>
 			<locationURI>sigasiresource:/vhdl/2008/STD</locationURI>
@@ -40,6 +45,11 @@
 			<name>bitvis_vip_avalon_mm/src_target_dependent</name>
 			<type>2</type>
 			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/readme.txt</name>
+			<type>1</type>
+			<locationURI>sigasiresource:/vhdl/readme.txt</locationURI>
 		</link>
 		<link>
 			<name>bitvis_vip_axilite/src_target_dependent</name>
@@ -80,6 +90,11 @@
 			<name>Common Libraries/IEEE/Synopsys</name>
 			<type>2</type>
 			<locationURI>sigasiresource:/vhdl/2008/IEEE%20Synopsys</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_avalon_mm/src/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

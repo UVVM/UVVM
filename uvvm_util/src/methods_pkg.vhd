@@ -274,6 +274,14 @@ package methods_pkg is
     attention    : t_attention := REGARD
     ) return natural;
 
+  impure function get_num_serious_alerts(
+    constant VOID : t_void
+    ) return natural;
+
+  impure function get_exit_code(
+    constant other_alerts : natural := 0
+    ) return natural;                   -- Range: 0 to 127
+
   procedure increment_alert_counter(
     alert_level: t_alert_level;
     attention    : t_attention := REGARD;  -- regard, expect, ignore
@@ -2612,6 +2620,35 @@ package body methods_pkg is
     ) return natural is
   begin
     return protected_alert_attention_counters.get(alert_level, attention);
+  end;
+
+  impure function get_num_serious_alerts(
+    constant VOID : t_void
+    ) return natural is
+
+    variable count : natural := 0;
+
+  begin
+    for alert_level in t_alert_level'rightof(MANUAL_CHECK) to t_alert_level'right loop
+      for attention in t_attention'left to EXPECT loop
+        count := count + get_alert_counter(alert_level, attention);
+      end loop;  -- attention
+    end loop;  -- alert_level
+    return count;
+  end;
+
+  impure function get_exit_code(
+    constant other_alerts : natural := 0
+    ) return natural is                 -- Range: 0 to 127
+
+    variable count : natural := other_alerts;
+
+  begin
+    count := count + get_num_serious_alerts(VOID);
+    if count > 127 then
+      count := 127;
+    end if;
+    return count;
   end;
 
   procedure increment_alert_counter(

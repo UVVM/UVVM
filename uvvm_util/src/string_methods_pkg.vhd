@@ -1299,7 +1299,7 @@ package body string_methods_pkg is
     variable v_line          : line;
     variable v_line_copy     : line;
     variable v_status_failed : boolean := true;
-    variable v_mismatch      : boolean := false;
+    variable v_status_expect : boolean := false;
     variable v_header        : string(1 to 42);
     constant prefix          : string := C_LOG_PREFIX & "     ";
   begin
@@ -1320,14 +1320,15 @@ package body string_methods_pkg is
       for j in t_attention'left to t_attention'right loop
         write(v_line, to_string(integer'(val(i)(j)), 6, RIGHT, KEEP_LEADING_SPACE) & "    ");
       end loop;
-      if (val(i)(REGARD) = val(i)(EXPECT)) then
+      if (val(i)(REGARD) = 0 and val(i)(EXPECT) = 0) then
         write(v_line, "     ok      " & LF);
+      elsif (val(i)(REGARD) = 0) then
+        write(v_line, "     Expected " & to_string(i,0) & LF);
+        v_status_expect := true;
       else
         write(v_line, "     *** " & to_string(i,0) & " *** " & LF);
         if (i > MANUAL_CHECK) then
-          if (val(i)(REGARD) < val(i)(EXPECT)) then
-            v_mismatch := true;
-          else
+          if (val(i)(REGARD) > 0 or val(i)(EXPECT) > 0) then
             v_status_failed  := false;
           end if;
         end if;
@@ -1338,11 +1339,11 @@ package body string_methods_pkg is
     -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
     if order = FINAL then
       if not v_status_failed then
-        write(v_line, ">> Simulation FAILED, with unexpected serious alert(s)" & LF);
-      elsif v_mismatch then
-        write(v_line, ">> Simulation FAILED: Mismatch between counted and expected serious alerts" & LF);
+        write(v_line, ">> Simulation FAILED: Unexpected serious alert(s)" & LF);
+      elsif v_status_expect then
+        write(v_line, ">> Simulation FAILED: Expected serious alert(s)" & LF);
       else
-        write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
+        write(v_line, ">> Simulation SUCCESS: No serious alerts" & LF);
       end if;
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
     end if;

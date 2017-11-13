@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>UVVM_All</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.sigasi.hdt.vhdl.ui.vhdlNature</nature>
+		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>Common Libraries</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/DRAG_REUSABLE_LIBRARIES_HERE.txt</name>
+			<type>1</type>
+			<locationURI>sigasiresource:/vhdl/readme2.txt</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/IEEE</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/IEEE Synopsys</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE%20Synopsys</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/STD</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/STD</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_avalon_mm/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/readme.txt</name>
+			<type>1</type>
+			<locationURI>sigasiresource:/vhdl/readme.txt</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_axilite/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_axistream/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_gpio/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_i2c/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_sbi/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_spi/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_uart/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/IEEE/Synopsys</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE%20Synopsys</locationURI>
+		</link>
+		<link>
+			<name>bitvis_vip_avalon_mm/src/src_target_dependent</name>
+			<type>2</type>
+			<locationURI>PROJECT_LOC/uvvm_vvc_framework/src_target_dependent</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

@@ -2353,7 +2353,11 @@ package body methods_pkg is
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
             if (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
-              std.env.stop;
+              if C_USE_STD_STOP_ON_ALERT_STOP_LIMIT then
+                std.env.stop;
+              else
+                assert false report "This single Failure line has been provoked to stop the simulation. See alert-message above" severity failure;
+              end if;
             end if;
           end if;
         end if;
@@ -2547,7 +2551,7 @@ package body methods_pkg is
     if alert_level = NO_ALERT then
       tb_warning("set_alert_attention not allowed for alert_level NO_ALERT (always IGNORE).");
     else
-      check_value(attention = IGNORE or attention = REGARD, TB_WARNING,
+      check_value(attention = IGNORE or attention = REGARD, TB_ERROR,
           "set_alert_attention only supported for IGNORE and REGARD", C_BURIED_SCOPE, ID_NEVER);
       shared_alert_attention(alert_level) := attention;
       log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));

@@ -3,6 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.3.0
+----------
+Released: 2017-11-16
+- Added switch C_USE_STD_STOP_ON_ALERT_STOP_LIMIT to select how simulation
+  should stop if alert limit is reached.
+- Changed alert to TB_ERROR if set_alert_attention() is called with other
+  t_attention parameter than REGARD or IGNORE.
+- Updated QR version number.
+
 v2.2.0
 ----------
 Released: 2017-10-16

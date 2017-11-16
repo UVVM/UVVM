@@ -452,10 +452,11 @@ package body i2c_bfm_pkg is
                               "that the address is never going to be used " &
                               "for its intended purpose. See I2C-bus specification Rev. 6 " &
                               "for more information.";
+    alias a_addr_value : unsigned(6 downto 0) is addr_value(6 downto 0);
   begin
     if addr_value'length = 7 then
-      if addr_value(6 downto 2) = "00000" then
-        case addr_value(1 downto 0) is
+      if a_addr_value(6 downto 2) = "00000" then
+        case a_addr_value(1 downto 0) is
           when "00" =>
             -- general call (rw = 0)
             -- START byte (rw = 1)
@@ -472,13 +473,13 @@ package body i2c_bfm_pkg is
           when others =>
             null;
         end case;
-      elsif addr_value(6 downto 2) = "00001" then
+      elsif a_addr_value(6 downto 2) = "00001" then
         -- Hs-mode master code
         alert(alert_level, head & "High-speed mode (Hs-mode) master code" & tail, C_SCOPE);
-      elsif addr_value(6 downto 2) = "11111" then
+      elsif a_addr_value(6 downto 2) = "11111" then
         -- device ID
         alert(alert_level, head & "device ID" & tail, C_SCOPE);
-      elsif addr_value(6 downto 2) = "11110" then
+      elsif a_addr_value(6 downto 2) = "11110" then
         -- 10-bit-addressing
         alert(alert_level, head & "10-bit-addressing" & tail, C_SCOPE);
       else

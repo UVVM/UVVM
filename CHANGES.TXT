@@ -9,6 +9,17 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2017.11.16
+--------------------
+Released: 2017-11-16
+- Added bug fix to i2c VIP. See CHANGES.TXT in bitvis_vip_i2c for
+  details.
+- Added new feature and changed an alert in UVVM Util.
+  See CHANGES.TXT in uvvm_util for details.
+- Changed VVC and BFM calls for t_byte_array in AXIStream VIP.
+  See CHANGES.TXT in bitvis_vip_axistream for details.
+
+
 v2017.10.16
 --------------------
 Released: 2017-10-16

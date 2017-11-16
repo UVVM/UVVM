@@ -60,6 +60,8 @@ package adaptations_pkg is
 
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
 
+  constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true; -- true: break using std.env.stop, false: break using failure
+
   shared variable shared_default_log_destination        : t_log_destination  := CONSOLE_AND_LOG;
 
 

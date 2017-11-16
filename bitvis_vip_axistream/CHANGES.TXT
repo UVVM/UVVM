@@ -1,6 +1,13 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.0.0
+----------
+Released: 2017-11-16
+- All t_byte_array VVC and BFM procedure calls are renamed with suffix
+  _bytes to fix ambiguous issues.
+- Updated QR PDFs with t_byte_array related information.
+
 v3.1.0
 ----------
 Released: 2017-10-16

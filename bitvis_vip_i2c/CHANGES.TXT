@@ -1,6 +1,12 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.1.1
+----------
+Released: 2017-11-16
+- Fixed bug in i2c_bfm_pkg which would cause a locally static issue on
+  some simulators.
+
 v2.1.0
 ----------
 Released: 2017-10-16

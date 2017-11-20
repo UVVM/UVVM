@@ -35,8 +35,8 @@ package types_pkg is
 
   type t_natural_array  is array (natural range <>) of natural;
   type t_integer_array  is array (natural range <>) of integer;
-  type t_byte_array     is array (natural range <>) of std_logic_vector(7 downto 0);
   type t_slv_array      is array (natural range <>) of std_logic_vector;
+  subtype t_byte_array  is t_slv_array(open)(7 downto 0);
   type t_signed_array   is array (natural range <>) of signed;
   type t_unsigned_array is array (natural range <>) of unsigned;
 

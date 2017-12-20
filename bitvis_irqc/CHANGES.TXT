@@ -1,6 +1,11 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.5
+----------
+Released: 2017-12-20
+- Removed log() overload from TB.
+
 v1.0.4
 ----------
 Released: 2017-06-08

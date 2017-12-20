@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -44,7 +44,7 @@ architecture func of irqc_tb is
   signal arst          : std_logic  := '0';
   -- CPU interface
   signal sbi_if : t_sbi_if(addr(2 downto 0), wdata(7 downto 0), rdata(7 downto 0)) := init_sbi_if_signals(3, 8);
-  
+
   -- Interrupt related signals
   signal irq_source    : std_logic_vector(C_NUM_SOURCES-1 downto 0) := (others => '0');
   signal irq2cpu       : std_logic := '0';
@@ -125,7 +125,7 @@ begin
         );
 
   sbi_if.ready <= '1'; -- always ready in the same clock cycle.
-  
+
   -- Set upt clock generator
   clock_gen(clk, clock_ena, 10 ns);
 
@@ -175,15 +175,6 @@ begin
       end if;
       target(target'range) <= (others => '0');
       log(ID_SEQUENCER_SUB, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), C_SCOPE);
-    end;
-
-
-
-    -- Log overloads for simplification
-    procedure log(
-      msg   : string) is
-    begin
-      log(ID_SEQUENCER, msg, C_SCOPE);
     end;
 
 
@@ -441,7 +432,7 @@ begin
     wait for 1000 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
-    
+
     -- Finish the simulation
     std.env.stop;
     wait;  -- to stop completely

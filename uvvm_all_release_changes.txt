@@ -4,24 +4,16 @@ This document summarizes the list of changes of UVVM_ALL to
 the latest release.
 --------------------------------------------------------------
 
-uvvm_util v2.3.0 (v2.2.0)
+uvvm_util v2.3.1 (v2.3.0)
 ------------------------------
-Released: 2017-11-16
-- Added switch C_USE_STD_STOP_ON_ALERT_STOP_LIMIT to select how simulation
-  should stop if alert limit is reached.
-- Changed alert to TB_ERROR if set_alert_attention() is called with other
-  t_attention parameter than REGARD or IGNORE.
-- Updated QRs version numbers.
+Released: 2017-12-20
+- Added constant C_TB_MSG_ID_DEFAULT for simplified log() procedure.
+- Added simplified log() procedure. Now the log() procedure can be called
+  simply with the logging message. Msg_id will be the default, set in
+  C_TB_MSG_ID_DEFAULT, located in the adaptions_pkg.
+- Increased default for C_MAX_VVC_INSTANCE_NUM from 8 to 20.
 
-bitvis_vip_axistream v4.0.0 (v3.1.0)
+uvvm_vvc_framework v2.1.1 (v2.1.0)
 ------------------------------
-Released: 2017-11-16
-- All t_byte_array VVC and BFM procedure calls are renamed with suffix
-  _bytes to fix ambiguous issues.
-- Updated QR PDFs with t_byte_array related information.
-
-bitvis_vip_i2c v2.1.1 (v2.1.0)
-------------------------------
-Released: 2017-11-16
-- Fixed bug in i2c_bfm_pkg which would cause a locally static issue on
-  some simulators.
+Released: 2017-12-20
+- Added documentation for UVVM FIFO Collection and UVVM Generic Queue.

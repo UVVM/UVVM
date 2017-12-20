@@ -103,6 +103,15 @@ package methods_pkg is
     open_mode       : file_open_kind     := append_mode
     );
 
+  procedure log(
+    msg             : string;
+    scope           : string            := C_TB_SCOPE_DEFAULT;
+    msg_id_panel    : t_msg_id_panel    := shared_msg_id_panel;
+    log_destination : t_log_destination := shared_default_log_destination;
+    log_file_name   : string            := C_LOG_FILE_NAME;
+    open_mode       : file_open_kind    := append_mode
+    );
+
   procedure log_text_block(
     msg_id                : t_msg_id;
     variable text_block   : inout line;
@@ -1904,7 +1913,6 @@ package body methods_pkg is
     file_close(v_specified_file_pointer);
   end procedure write_to_file;
 
-
   procedure log(
     msg_id         : t_msg_id;
     msg            : string;
@@ -2034,6 +2042,20 @@ package body methods_pkg is
       end if;
     end if;
   end;
+
+  -- Calls overloaded log procedure with default msg_id
+  procedure log(
+    msg             : string;
+    scope           : string             := C_TB_SCOPE_DEFAULT;
+    msg_id_panel    : t_msg_id_panel     := shared_msg_id_panel; -- compatible with old code
+    log_destination : t_log_destination  := shared_default_log_destination;
+    log_file_name   : string             := C_LOG_FILE_NAME;
+    open_mode       : file_open_kind     := append_mode
+  ) is
+  begin
+    log(C_TB_MSG_ID_DEFAULT, msg, scope, msg_id_panel, log_destination, log_file_name, open_mode);
+  end procedure log;
+
 
 
   -- Logging for multi line text. Also deallocates the text_block, for consistency.

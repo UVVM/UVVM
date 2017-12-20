@@ -3,6 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.3.1
+----------
+Released: 2017-12-20
+- Added constant C_TB_MSG_ID_DEFAULT for simplified log() procedure.
+- Added simplified log() procedure. Now the log() procedure can be called
+  simply with the logging message. Msg_id will be the default, set in
+  C_TB_MSG_ID_DEFAULT, located in the adaptions_pkg.
+- Increased default for C_MAX_VVC_INSTANCE_NUM from 8 to 20.
+
 v2.3.0
 ----------
 Released: 2017-11-16

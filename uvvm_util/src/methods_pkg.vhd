@@ -2305,8 +2305,8 @@ package body methods_pkg is
   --       protected_alert_counters.increment(alert_level, IGNORE);
           increment_alert_counter(alert_level, IGNORE);
         else
-          --protected_alert_counters.increment(alert_level, get_alert_attention(alert_level));
-          increment_alert_counter(alert_level, get_alert_attention(alert_level));
+          --protected_alert_counters.increment(alert_level, REGARD);
+          increment_alert_counter(alert_level, REGARD);
 
           -- 2. Write first part of alert message
           --    Serious alerts need more attention - thus more space and lines

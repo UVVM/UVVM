@@ -60,6 +60,8 @@ package adaptations_pkg is
 
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
 
+  constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true; -- true: break using std.env.stop, false: break using failure
+
   shared variable shared_default_log_destination        : t_log_destination  := CONSOLE_AND_LOG;
 
 
@@ -141,6 +143,8 @@ package adaptations_pkg is
     );
   type  t_msg_id_panel is array (t_msg_id'left to t_msg_id'right) of t_enabled;
 
+  constant C_TB_MSG_ID_DEFAULT : t_msg_id := ID_SEQUENCER; -- msg ID used when calling the log method without any msg ID switch.
+
   -- Default message Id panel to be used for all message Id panels, except:
   --  - VVC message Id panels, see constant C_VVC_MSG_ID_PANEL_DEFAULT
   constant C_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
@@ -213,7 +217,7 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_MAX                  : natural       := 20;  -- (VVC Result queue)  May be overwritten for dedicated VVC
   constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level := WARNING;
   constant C_RESULT_QUEUE_COUNT_THRESHOLD            : natural       := 18;
-  constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 8;
+  constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 20;
   constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers
 
   -- Maximum allowed length of VVC names

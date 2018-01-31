@@ -452,17 +452,11 @@ package body i2c_bfm_pkg is
                               "that the address is never going to be used " &
                               "for its intended purpose. See I2C-bus specification Rev. 6 " &
                               "for more information.";
-    -- WORKAROUND: for GHDL
-    --   Version:	 0.34dev (last tested pre-release version: 6235a6a)
-    --   Issue:		 'addr_value' is not considdered locally static, so it can't
-    --             be used as an expression in a case statement.
-    --   Ticket:   https://github.com/tgingold/ghdl/issues/190
-    --   Solution: Define an alias for the lower bits
-    alias addr_value_a : unsigned(6 downto 0) is addr_value(6 downto 0);
+    alias a_addr_value : unsigned(6 downto 0) is addr_value(6 downto 0);
   begin
     if addr_value'length = 7 then
-      if addr_value_a(6 downto 2) = "00000" then
-        case addr_value_a(1 downto 0) is
+      if a_addr_value(6 downto 2) = "00000" then
+        case a_addr_value(1 downto 0) is
           when "00" =>
             -- general call (rw = 0)
             -- START byte (rw = 1)
@@ -479,13 +473,13 @@ package body i2c_bfm_pkg is
           when others =>
             null;
         end case;
-      elsif addr_value_a(6 downto 2) = "00001" then
+      elsif a_addr_value(6 downto 2) = "00001" then
         -- Hs-mode master code
         alert(alert_level, head & "High-speed mode (Hs-mode) master code" & tail, C_SCOPE);
-      elsif addr_value_a(6 downto 2) = "11111" then
+      elsif a_addr_value(6 downto 2) = "11111" then
         -- device ID
         alert(alert_level, head & "device ID" & tail, C_SCOPE);
-      elsif addr_value_a(6 downto 2) = "11110" then
+      elsif a_addr_value(6 downto 2) = "11110" then
         -- 10-bit-addressing
         alert(alert_level, head & "10-bit-addressing" & tail, C_SCOPE);
       else

@@ -103,6 +103,15 @@ package methods_pkg is
     open_mode       : file_open_kind     := append_mode
     );
 
+  procedure log(
+    msg             : string;
+    scope           : string            := C_TB_SCOPE_DEFAULT;
+    msg_id_panel    : t_msg_id_panel    := shared_msg_id_panel;
+    log_destination : t_log_destination := shared_default_log_destination;
+    log_file_name   : string            := C_LOG_FILE_NAME;
+    open_mode       : file_open_kind    := append_mode
+    );
+
   procedure log_text_block(
     msg_id                : t_msg_id;
     variable text_block   : inout line;
@@ -1912,7 +1921,6 @@ package body methods_pkg is
     file_close(v_specified_file_pointer);
   end procedure write_to_file;
 
-
   procedure log(
     msg_id         : t_msg_id;
     msg            : string;
@@ -2042,6 +2050,20 @@ package body methods_pkg is
       end if;
     end if;
   end;
+
+  -- Calls overloaded log procedure with default msg_id
+  procedure log(
+    msg             : string;
+    scope           : string             := C_TB_SCOPE_DEFAULT;
+    msg_id_panel    : t_msg_id_panel     := shared_msg_id_panel; -- compatible with old code
+    log_destination : t_log_destination  := shared_default_log_destination;
+    log_file_name   : string             := C_LOG_FILE_NAME;
+    open_mode       : file_open_kind     := append_mode
+  ) is
+  begin
+    log(C_TB_MSG_ID_DEFAULT, msg, scope, msg_id_panel, log_destination, log_file_name, open_mode);
+  end procedure log;
+
 
 
   -- Logging for multi line text. Also deallocates the text_block, for consistency.
@@ -2361,7 +2383,11 @@ package body methods_pkg is
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
             if (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
-              std.env.stop;
+              if C_USE_STD_STOP_ON_ALERT_STOP_LIMIT then
+                std.env.stop;
+              else
+                assert false report "This single Failure line has been provoked to stop the simulation. See alert-message above" severity failure;
+              end if;
             end if;
           end if;
         end if;
@@ -2555,7 +2581,7 @@ package body methods_pkg is
     if alert_level = NO_ALERT then
       tb_warning("set_alert_attention not allowed for alert_level NO_ALERT (always IGNORE).");
     else
-      check_value(attention = IGNORE or attention = REGARD, TB_WARNING,
+      check_value(attention = IGNORE or attention = REGARD, TB_ERROR,
           "set_alert_attention only supported for IGNORE and REGARD", C_BURIED_SCOPE, ID_NEVER);
       shared_alert_attention(alert_level) := attention;
       log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));

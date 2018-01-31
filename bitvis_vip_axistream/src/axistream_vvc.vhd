@@ -187,6 +187,8 @@ begin
       variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
       variable v_command_is_bfm_access                  : boolean := false;
       variable v_prev_command_was_bfm_access            : boolean := false;
+      variable v_receive_as_slv                         : t_slv_array(0 to 0 )( (v_result.data_array'length*8)-1 downto 0);
+
    begin
 
       -- 0. Initialize the process prior to first command
@@ -235,7 +237,7 @@ begin
                transaction_info.numPacketsSent := transaction_info.numPacketsSent + 1;
 
                -- Call the corresponding procedure in the BFM package.
-               axistream_transmit(
+               axistream_transmit_bytes(
                   data_array           => v_cmd.data_array(0 to v_cmd.data_array_length-1),
                   user_array           => v_cmd.user_array(0 to v_cmd.user_array_length-1),
                   strb_array           => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
@@ -258,7 +260,7 @@ begin
                   config              => vvc_config.bfm_config);
 
             when RECEIVE =>
-               axistream_receive(data_array          => v_result.data_array,
+               axistream_receive(data_array          => v_receive_as_slv, --v_result.data_array,
                                  data_length         => v_result.data_length,
                                  user_array          => v_result.user_array,
                                  strb_array          => v_result.strb_array,
@@ -280,13 +282,14 @@ begin
                                  msg_id_panel        => vvc_config.msg_id_panel,
                                  config              => vvc_config.bfm_config);
                -- Store the result
+               v_result.data_array := convert_slv_array_to_byte_array(v_receive_as_slv, true, FIRST_BYTE_LEFT);
                work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
                                                             result       => v_result );
 
             when EXPECT =>
                -- Call the corresponding procedure in the BFM package.
-               axistream_expect(
+               axistream_expect_bytes(
                   exp_data_array      => v_cmd.data_array(0 to v_cmd.data_array_length-1),
                   exp_user_array      => v_cmd.user_array(0 to v_cmd.user_array_length-1),
                   exp_strb_array      => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),

@@ -641,7 +641,7 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     if config.use_response_signal = true and to_avalon_mm_response_status(avalon_mm_if.response) /= OKAY then
-      error("Avalon MM read response was nok OKAY, got " & to_string(avalon_mm_if.response), scope);
+      error("Avalon MM read response was not OKAY, got " & to_string(avalon_mm_if.response), scope);
     end if;
 
     v_normalized_data := avalon_mm_if.readdata;

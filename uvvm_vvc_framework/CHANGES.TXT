@@ -3,6 +3,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.1.1
+----------
+Released: 2017-12-20
+- Added documentation for UVVM FIFO Collection and UVVM Generic Queue.
+
 v2.1.0
 ----------
 Released: 2017-10-16

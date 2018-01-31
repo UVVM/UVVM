@@ -20,8 +20,8 @@ A: There is a 250 character limit on file paths in the Windows operating
 -----------------------------------------------------------
 Q: Why do I get an error message saying 'UVVM will not work without intitalize_uvvm instantiated as a concurrent procedure in the test harness' 
 
-A: You need to instantiate ‘uvvm_vvc_framework.ti_uvvm_engine’ in your testbench, and you should include wait_for_uvvm_init() as your first statement in your test case sequencer.
-   See ‘bitvis_uart/tb/uart_vvc_th|tb.vhd’ for examples.
+A: You need to instantiate â€˜uvvm_vvc_framework.ti_uvvm_engineâ€™ in your testbench, and you should include wait_for_uvvm_init() as your first statement in your test case sequencer.
+   See â€˜bitvis_uart/tb/uart_vvc_th|tb.vhdâ€™ for examples.
 
 
 -----------------------------------------------------------

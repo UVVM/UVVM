@@ -84,3 +84,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## UVVM Maintainers
 [Bitvis](http://bitvis.no) (Norway) has released UVVM as open source and we are committed to develop this system further.
 We do however appreciate contributions and suggestions from users.
+
+Please use the pull_requests branch for contributions and we will perform testing and include them in our release on the master branch.

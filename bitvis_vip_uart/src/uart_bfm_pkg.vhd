@@ -197,7 +197,7 @@ package body uart_bfm_pkg is
     tx <= not config.idle_state;
     wait for config.bit_time;
 
-    for j in 0 to config.num_data_bits-1 loop
+    for j in data_value'low to data_value'high loop
       tx <= data_value(j);
       wait for config.bit_time;
     end loop;

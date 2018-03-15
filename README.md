@@ -51,6 +51,7 @@ These VVCs and BFMs could be used inside a typical UVVM testbench, but they coul
 *	UART
 *	SPI
 *	I2C
+* GPIO
 *	More are coming
 
 

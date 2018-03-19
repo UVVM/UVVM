@@ -16,21 +16,16 @@
 # This file may be called with an argument
 # arg 1: Part directory of this library/module
 
-# Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
-proc quietly { args } {
-  if {[llength $args] == 0} {
-    puts "quietly"
-  } else {
-    # this works since tcl prompt only prints the last command given. list prints "".
-    uplevel $args; list;
-  }
-}
+# Locations of ROOT, tcl_util, and this script
+set UVVM_ALL_ROOT ../..
+set TCL_UTIL_DIR tcl_util
+set CURR_SCRIPT_DIR [ file dirname [file normalize $argv0]]
+set TCL_UTIL_DIR $CURR_SCRIPT_DIR/$UVVM_ALL_ROOT/$TCL_UTIL_DIR
 
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
+# Use tcl_util/util_base.tcl
+source "$TCL_UTIL_DIR/util_base.tcl"
+
+
 #Just in case...
 quietly quit -sim   
 

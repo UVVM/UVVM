@@ -13,17 +13,18 @@
 # This file may be called with an argument
 # arg 1: Part directory of this library/module
 
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-quit -sim   #Just in case...
+# Locations of ROOT, tcl_util, and this script
+set UVVM_ALL_ROOT ../..
+set TCL_UTIL_DIR tcl_util
+set CURR_SCRIPT_DIR [ file dirname [file normalize $argv0]]
+set TCL_UTIL_DIR $CURR_SCRIPT_DIR/$UVVM_ALL_ROOT/$TCL_UTIL_DIR
 
-###########
-# Fix possible vmap bug
-do fix_vmap.tcl 
-##########
+# Use tcl_util/util_base.tcl
+source "$TCL_UTIL_DIR/util_base.tcl"
+
+
+# Just in case...
+quit -sim
 
 # Set up irqc_part_path and lib_name
 #------------------------------------------------------

@@ -13,47 +13,18 @@
 # This file may be called with an argument
 # arg 1: Part directory of this library/module
 
-# Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
-proc quietly { args } {
-  if {[llength $args] == 0} {
-    puts "quietly"
-  } else {
-    # this works since tcl prompt only prints the last command given. list prints "".
-    uplevel $args; list;
-  }
-}
+# Locations of ROOT, tcl_util, and this script
+set UVVM_ALL_ROOT ../..
+set TCL_UTIL_DIR tcl_util
+set CURR_SCRIPT_DIR [ file dirname [file normalize $argv0]]
+set TCL_UTIL_DIR $CURR_SCRIPT_DIR/$UVVM_ALL_ROOT/$TCL_UTIL_DIR
 
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-#Just in case...
-quietly quit -sim   
+# Use tcl_util/util_base.tcl
+source "$TCL_UTIL_DIR/util_base.tcl"
 
-# Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} { 
-  quietly set simulator_version [eval "vsim -version"]
-  # puts "Version is: $simulator_version"
-  if {[regexp -nocase {modelsim} $simulator_version]} {
-    quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $simulator_version]} {
-    quietly set simulator "rivierapro"
-  } else {
-    puts "Unknown simulator. Attempting use use Modelsim commands."
-    quietly set simulator "modelsim"
-  }  
-} else { 
-    puts "vsim -version failed with the following message:\n $message"
-    abort all
-}
 
-if { [string equal -nocase $simulator "modelsim"] } {
-  ###########
-  # Fix possible vmap bug
-  do fix_vmap.tcl 
-  ##########
-}
+# Just in case...
+quietly quit -sim
 
 # Set up vip_avalon_mm_part_path and lib_name
 #------------------------------------------------------

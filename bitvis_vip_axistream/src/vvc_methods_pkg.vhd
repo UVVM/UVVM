@@ -119,6 +119,8 @@ package vvc_methods_pkg is
   -- AXIStream Transmit
   --
   --------------------------------------------------------
+
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -150,7 +152,7 @@ package vvc_methods_pkg is
     constant msg              : in    string
     );
 
-
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -173,7 +175,7 @@ package vvc_methods_pkg is
     constant msg              : in    string
     );
 
-
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -216,6 +218,8 @@ package vvc_methods_pkg is
   -- AXIStream Expect
   --
   --------------------------------------------------------
+
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -250,7 +254,7 @@ package vvc_methods_pkg is
     constant alert_level      : in    t_alert_level := error
     );
 
-
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -276,7 +280,7 @@ package vvc_methods_pkg is
     constant alert_level      : in    t_alert_level := error
     );
 
-
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -320,6 +324,8 @@ package body vvc_methods_pkg is
 
   -- These procedures will be used to forward commands to the VVC executor, which will
   -- call the corresponding BFM procedures.
+
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -334,6 +340,9 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
                                    & ", " & to_string(data_array'length, 5) & " bytes)";
   begin
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
@@ -372,13 +381,14 @@ package body vvc_methods_pkg is
     variable v_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_data_array_idx   : integer := 0;
     variable v_check_ok         : boolean := false;
+    variable v_byte_endianness  : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
   begin
     -- t_slv_array sanity check
     v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, true, FIRST_BYTE_LEFT); -- data_array is ascending, data_array(0 to N)()
+      v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending, data_array(0 to N)()
       -- call t_byte_array overloaded procedure
       axistream_transmit_bytes(VVCT, vvc_instance_idx, v_data_array, user_array, strb_array, id_array, dest_array, msg);
     end if;
@@ -407,6 +417,7 @@ package body vvc_methods_pkg is
   end procedure;
 
   -- Overload, without the strb_array, id_array, dest_array  arguments
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -454,6 +465,7 @@ package body vvc_methods_pkg is
 
 
   -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -534,6 +546,7 @@ package body vvc_methods_pkg is
   --------------------------------------------------------
 
   -- Expect, receive and compare to specified data_array, user_array, strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -549,6 +562,9 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
                                    & ", " & to_string(data_array'length) & "B)";
   begin
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
@@ -585,13 +601,14 @@ package body vvc_methods_pkg is
     variable v_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_data_array_idx   : integer := 0;
     variable v_check_ok         : boolean := false;
+    variable v_byte_endianness  : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
   begin
     -- t_slv_array sanity check
     v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, true, FIRST_BYTE_LEFT); -- data_array is ascending, data_array(0 to N)()
+      v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending, data_array(0 to N)()
       -- call t_byte_array overloaded procedure
       axistream_expect_bytes(VVCT, vvc_instance_idx, v_data_array, user_array, strb_array, id_array, dest_array, msg, alert_level);
     end if;
@@ -622,6 +639,7 @@ package body vvc_methods_pkg is
 
   -- Overload for calling axiStreamExpect() without a value for strb_array, id_array, dest_array
   -- (will be set to don't care)
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -678,6 +696,7 @@ package body vvc_methods_pkg is
 
 
   -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;

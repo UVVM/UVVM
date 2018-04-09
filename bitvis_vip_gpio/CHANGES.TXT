@@ -1,6 +1,14 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.2.0
+----------
+Released: 2018-04-09
+- Added demo TB and compile script.
+- Added multicast information to VVC QR.
+- Changed match_strictness from MATCH_EXACT to MATCH_STD in BFM config record.
+- Removed incorrect reference in BFM QR.
+
 v1.1.0
 ----------
 Released: 2017-10-16

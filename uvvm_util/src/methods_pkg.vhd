@@ -45,7 +45,7 @@ package methods_pkg is
   shared variable protected_semaphore            : t_protected_semaphore;
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
-  shared variable shared_uvvm_status             : t_uvvm_status;
+  shared variable shared_uvvm_status             : t_uvvm_status := C_UVVM_STATUS_DEFAULT;
 
 
   signal global_trigger : std_logic := 'L';
@@ -289,6 +289,13 @@ package methods_pkg is
     number     : natural := 1
     );
 
+  procedure increment_expected_alerts_and_stop_limit(
+    constant alert_level  : t_alert_level;
+    constant number       : natural := 1;
+    constant msg          : string  := "";
+    constant scope        : string  := C_TB_SCOPE_DEFAULT
+  );
+
 
 -- ============================================================================
 -- Deprecate message
@@ -373,7 +380,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -387,7 +394,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -401,7 +408,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -415,7 +422,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -474,7 +481,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -488,7 +495,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -502,7 +509,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -539,7 +546,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -553,7 +560,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -567,7 +574,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -581,7 +588,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -663,7 +670,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -677,7 +684,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -691,7 +698,7 @@ package methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -2237,6 +2244,7 @@ package body methods_pkg is
         for i in t_msg_id'left to t_msg_id'right loop
           msg_id_panel(i) := DISABLED;
         end loop;
+        msg_id_panel(ID_LOG_MSG_CTRL) := ENABLED; -- keep
       when others =>
         msg_id_panel(msg_id) := DISABLED;
         if quietness = NON_QUIET then
@@ -2674,6 +2682,18 @@ package body methods_pkg is
     end if;
   end;
 
+  procedure increment_expected_alerts_and_stop_limit(
+    constant alert_level  : t_alert_level;
+    constant number       : natural := 1;
+    constant msg          : string  := "";
+    constant scope        : string  := C_TB_SCOPE_DEFAULT
+  ) is
+    variable v_alert_stop_limit : natural := get_alert_stop_limit(alert_level);
+  begin
+    increment_expected_alerts(alert_level, number, msg, scope);
+    set_alert_stop_limit(alert_level, v_alert_stop_limit + number);
+  end ;
+
 
 -- ============================================================================
 -- Deprecation message
@@ -2910,7 +2930,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -2922,6 +2942,16 @@ package body methods_pkg is
     constant v_value_str : string := to_string(a_value, radix, format,INCL_RADIX);
     constant v_exp_str   : string := to_string(a_exp, radix, format,INCL_RADIX);
     variable v_check_ok  : boolean := true;  -- as default prior to checking
+    variable v_trigger_alert : boolean := false; -- trigger alert and log message
+
+    -- Match length of short string with long string
+    function pad_short_string(short, long : string) return string is
+      variable v_padding : string(1 to (long'length - short'length)) := (others => '0');
+    begin
+      -- Include leading 'x"'
+      return short(1 to 2) & v_padding & short(3 to short'length);
+    end function pad_short_string;
+    
   begin
     -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
@@ -2939,13 +2969,24 @@ package body methods_pkg is
           log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & "' (exp: " & v_exp_str & "'). " & add_msg_delimiter(msg),
               scope, msg_id_panel);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & "'. Expected " & v_exp_str & "'" & LF & msg, scope);
+          v_trigger_alert := true; -- alert and log
         end if;
       end if;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & "'. Expected " & v_exp_str & "'" & LF & msg, scope);
+      v_trigger_alert := true; -- alert and log
     end if;
 
+    -- trigger alert and log message
+    if v_trigger_alert then
+      if v_value_str'length > v_exp_str'length then
+        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & pad_short_string(v_exp_str,v_value_str) & "." & LF & msg, scope);
+      elsif v_value_str'length < v_exp_str'length then
+        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & pad_short_string(v_value_str,v_exp_str) & ". Expected " & v_exp_str & "." & LF & msg, scope);
+      else
+        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
+      end if;
+    end if;
+    
     return v_check_ok;
   end;
 
@@ -2956,7 +2997,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -2979,7 +3020,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -2999,7 +3040,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3109,7 +3150,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3131,7 +3172,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3153,7 +3194,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3240,7 +3281,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3258,7 +3299,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3276,7 +3317,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3294,7 +3335,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3372,7 +3413,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3392,7 +3433,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";
@@ -3412,7 +3453,7 @@ package body methods_pkg is
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant radix       : t_radix         := HEX_BIN_IF_INVALID;
-    constant format      : t_format_zeros  := SKIP_LEADING_0;
+    constant format      : t_format_zeros  := KEEP_LEADING_0;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()";

@@ -73,6 +73,7 @@ package axistream_bfm_pkg is
     clock_margin_severity       : t_alert_level; -- The above margin will have this severity
     setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
     hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
+    byte_endianness             : t_byte_endianness; -- Byte ordering from left (big-endian) or right (little-endian)
     -- config for axistream_receive()
     check_packet_length         : boolean;       -- When true, receive() will check that last is set at data_array'high
     protocol_error_severity     : t_alert_level; -- severity if protocol errors are detected by axistream_receive()
@@ -94,6 +95,7 @@ package axistream_bfm_pkg is
     clock_margin_severity       => TB_ERROR,
     setup_time                  => 0 ns,
     hold_time                   => 0 ns,
+    byte_endianness             => FIRST_BYTE_LEFT,
     check_packet_length         => false,
     protocol_error_severity     => ERROR,
     ready_low_at_word_num       => 0,
@@ -130,7 +132,8 @@ package axistream_bfm_pkg is
   --
   -- Source: BFM
   -- Sink:   DUT
-  --
+  --¨
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
@@ -175,6 +178,7 @@ package axistream_bfm_pkg is
 
 
   -- Overloaded version without records
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array          : in    t_byte_array;
     constant user_array          : in    t_user_array;
@@ -243,6 +247,7 @@ package axistream_bfm_pkg is
 
 
   -- Overload for default strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
@@ -277,6 +282,7 @@ package axistream_bfm_pkg is
     );
 
   -- Overload for default user_array, strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array   : in    t_byte_array;
     constant msg          : in    string                 := "";
@@ -317,6 +323,7 @@ package axistream_bfm_pkg is
   -- Source: DUT
   -- Sink:   BFM
   --
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_receive_bytes (
     variable data_array   : inout t_byte_array;
     variable data_length  : inout natural;  -- Number of bytes received
@@ -350,6 +357,7 @@ package axistream_bfm_pkg is
 
 
   -- Overloaded version without records
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_receive_bytes (
     variable data_array          : inout t_byte_array;
     variable data_length         : inout natural;  -- Number of bytes received
@@ -405,6 +413,7 @@ package axistream_bfm_pkg is
   -- AXIStream Expect
   --
   --------------------------------------------------------
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array : in    t_byte_array;  -- Expected data
     constant exp_user_array : in    t_user_array;  -- Expected tuser
@@ -451,6 +460,7 @@ package axistream_bfm_pkg is
     );
 
   -- Overloaded version without records
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array      : in    t_byte_array;  -- Expected data
     constant exp_user_array      : in    t_user_array;  -- Expected tuser
@@ -521,6 +531,7 @@ package axistream_bfm_pkg is
       );
 
   -- Overload for default strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array : in    t_byte_array;
     constant exp_user_array : in    t_user_array;
@@ -559,6 +570,7 @@ package axistream_bfm_pkg is
 
 
   -- Overload for default user_array, strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array : in    t_byte_array;
     constant msg            : in    string;
@@ -658,6 +670,7 @@ package body axistream_bfm_pkg is
   -- Packet length and data is defined by data_array
   -- tuser is set based on user_array,
   -- tstrb is set based on strb_array, etc
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
@@ -692,6 +705,9 @@ package body axistream_bfm_pkg is
     variable v_tready : std_logic;
 
   begin
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+
     check_value(axistream_if.tdata'length >= 8,      TB_ERROR, "Sanity check: Check that tdata is at least one byte wide. Narrower tdata is not supported.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(axistream_if.tdata'length mod 8 = 0, TB_ERROR, "Sanity check: Check that tdata is an integer number of bytes wide.",                         scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -786,6 +802,9 @@ package body axistream_bfm_pkg is
         -- Wait hold time specified in config record
         wait_until_given_time_after_rising_edge(clk, config.hold_time);
 
+        -- reset wait cycles error counter
+        v_clk_cycles_waited := 0;
+
         while v_tready = '0' loop
           wait until rising_edge(clk);
           -- check if clk period since last rising edge is within specifications and take a new time stamp
@@ -846,13 +865,14 @@ package body axistream_bfm_pkg is
     variable v_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_data_array_idx   : integer := 0;
     variable v_check_ok         : boolean := false;
+    variable v_byte_endianness  : t_byte_endianness := config.byte_endianness;
   begin
     -- t_slv_array sanity check
     v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, true, FIRST_BYTE_LEFT); -- data_array is ascending
+      v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending
       -- call t_byte_array overloaded procedure
       axistream_transmit_bytes(v_data_array, user_array, strb_array, id_array, dest_array, msg, clk, axistream_if, scope, msg_id_panel, config);
     end if;
@@ -889,6 +909,7 @@ package body axistream_bfm_pkg is
 
   -- Overload that doesn't use records for the AXI interface:
   -- (In turn calls the record version)
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array          : in    t_byte_array;
     constant user_array          : in    t_user_array;
@@ -1030,6 +1051,7 @@ package body axistream_bfm_pkg is
 
 
   -- Overload with default value for  strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant user_array   : in    t_user_array;
@@ -1125,6 +1147,7 @@ package body axistream_bfm_pkg is
 
 
   -- Overload with default value for user_array, strb_array, id_array, dest_array
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes (
     constant data_array   : in    t_byte_array;  -- Byte in index 0 is transmitted first
     constant msg          : in    string                 := "";
@@ -1209,6 +1232,7 @@ package body axistream_bfm_pkg is
 
   -- Receive a packet, store it in data_array
   -- data_array'length can be longer than the actual packet, so that you can call receive() without knowing the length to be expected.
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_receive_bytes (
     variable data_array   : inout t_byte_array;
     variable data_length  : inout natural;  -- Number of bytes received
@@ -1253,6 +1277,9 @@ package body axistream_bfm_pkg is
       -- If called from other BFM procedure like axistream_expect, log 'axistream_expect() while executing axistream_receive()...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
+
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(local_proc_call, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
     check_value(config.clock_period /= 0 ns,                    TB_ERROR, "Sanity check: Check that bfm_config.clock_period is set", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS,  TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -1475,6 +1502,7 @@ package body axistream_bfm_pkg is
     variable v_bytes_in_word        : integer := (data_array(0)'length/8);
     variable v_num_bytes            : integer := (data_array'length) * v_bytes_in_word;
     variable v_data_array_as_byte   : t_byte_array(0 to v_num_bytes-1);
+    variable v_byte_endianness      : t_byte_endianness := config.byte_endianness;
 
     begin
       -- call overloaded t_byte_array procedure
@@ -1482,11 +1510,12 @@ package body axistream_bfm_pkg is
                                 data_length, user_array, strb_array, id_array, dest_array, msg,
                                 clk, axistream_if, scope, msg_id_panel, config, ext_proc_call  );
 
-      data_array := convert_byte_array_to_slv_array(v_data_array_as_byte, v_bytes_in_word, FIRST_BYTE_LEFT);
+      data_array := convert_byte_array_to_slv_array(v_data_array_as_byte, v_bytes_in_word, v_byte_endianness);
     end procedure axistream_receive;
 
 
   -- Overloaded version without records
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_receive_bytes (
     variable data_array          : inout t_byte_array;
     variable data_length         : inout natural;  -- Number of bytes received
@@ -1596,6 +1625,7 @@ package body axistream_bfm_pkg is
   -- Receive data, then compare the received data against exp_data_array
   -- - If the received data is inconsistent with the expected data, an alert with
   --   severity 'alert_level' is triggered.
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array : in    t_byte_array;  -- Expected data
     constant exp_user_array : in    t_user_array;  -- Expected tuser
@@ -1774,13 +1804,15 @@ package body axistream_bfm_pkg is
     variable v_exp_data_array_idx   : integer := 0;
     variable v_check_ok             : boolean := false;
     variable v_dummy                : t_slv_array(0 to 0)(31 downto 0);
+    variable v_byte_endianness      : t_byte_endianness := config.byte_endianness;
+
   begin
     -- t_slv_array sanity check
     v_check_ok := check_value(exp_data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_exp_data_array := convert_slv_array_to_byte_array(exp_data_array, true, FIRST_BYTE_LEFT); -- exp_data_array is ascending
+      v_exp_data_array := convert_slv_array_to_byte_array(exp_data_array, true, v_byte_endianness); -- exp_data_array is ascending
 
       -- call t_byte_array overloaded procedure
       axistream_expect_bytes(v_exp_data_array,
@@ -1842,6 +1874,7 @@ package body axistream_bfm_pkg is
 
 
   -- Overloaded version without records
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array      : in    t_byte_array;  -- Expected data
     constant exp_user_array      : in    t_user_array;  -- Expected tuser
@@ -1990,6 +2023,7 @@ package body axistream_bfm_pkg is
 
 
   -- Overload without exp_strb_array, exp_id_array, exp_dest_array arguments' argument
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array : in    t_byte_array;  -- Expected data
     constant exp_user_array : in    t_user_array;  -- Expected tuser
@@ -2087,6 +2121,7 @@ package body axistream_bfm_pkg is
   end procedure;
 
   -- Overload without arguments exp_user_array, exp_strb_array, exp_id_array, exp_dest_array arguments
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes (
     constant exp_data_array : in    t_byte_array;  -- Expected data
     constant msg            : in    string;

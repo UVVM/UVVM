@@ -113,10 +113,28 @@ package types_pkg is
   type t_sync_flag_record_array is array (1 to C_NUM_SYNC_FLAGS) of t_sync_flag_record;
 
 
+  -- type for identifying VVC and command index finishing await_any_completion()
+  type t_info_on_finishing_await_any_completion is record
+    vvc_name                : string(1 to 100); -- VVC name should not exceed this length
+    vvc_cmd_idx             : natural;          -- VVC command index
+    vvc_time_of_completion  : time;             -- time of completion
+  end record;
+
   type t_uvvm_status is record
-    no_unexpected_simulation_warnings_or_worse  : natural range 0 to 1;
-    no_unexpected_simulation_errors_or_worse    : natural range 0 to 1;
+    no_unexpected_simulation_warnings_or_worse  : natural range 0 to 1; -- simulation end status: 0=no unexpected, 1=unexpected
+    no_unexpected_simulation_errors_or_worse    : natural range 0 to 1; -- simulation end status: 0=no unexpected, 1=unexpected
+    info_on_finishing_await_any_completion      : t_info_on_finishing_await_any_completion; -- await_any_completion() trigger identifyer
   end record t_uvvm_status;
+
+  -- defaults for t_uvvm_status and t_info_on_finishing_await_any_completion
+  constant C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT : string := "no await_any_completion() finshed yet\n";
+  constant C_UVVM_STATUS_DEFAULT : t_uvvm_status := (
+    no_unexpected_simulation_warnings_or_worse  => 0,
+    no_unexpected_simulation_errors_or_worse    => 0,
+    info_on_finishing_await_any_completion      => (vvc_name    => (C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT, others => ' '),
+                                                    vvc_cmd_idx => 0,
+                                                    vvc_time_of_completion => 0 ns)
+  );
 
 
   -------------------------------------

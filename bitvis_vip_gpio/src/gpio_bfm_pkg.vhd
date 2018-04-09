@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -28,7 +28,7 @@ context uvvm_util.uvvm_util_context;
 package gpio_bfm_pkg is
 
   --=========================================================================================
-  -- Types and constants for GPIO BFM 
+  -- Types and constants for GPIO BFM
   --=========================================================================================
   constant C_SCOPE : string := "GPIO BFM";
 
@@ -45,7 +45,7 @@ package gpio_bfm_pkg is
   -- Define the default value for the BFM config
   constant C_GPIO_BFM_CONFIG_DEFAULT : t_gpio_bfm_config := (
     clock_period     => 10 ns,
-    match_strictness => MATCH_EXACT,
+    match_strictness => MATCH_STD,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
     id_for_bfm_poll  => ID_BFM_POLL
@@ -53,7 +53,7 @@ package gpio_bfm_pkg is
 
 
   --=========================================================================================
-  -- BFM procedures 
+  -- BFM procedures
   --=========================================================================================
 
   ---------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ package gpio_bfm_pkg is
     constant alert_level  : in t_alert_level     := error;
     constant scope        : in string            := C_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT    
+    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     );
 
   ---------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ package gpio_bfm_pkg is
     constant alert_level  : in t_alert_level     := error;
     constant scope        : in string            := C_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT    
+    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     );
 
 end package gpio_bfm_pkg;
@@ -165,13 +165,13 @@ package body gpio_bfm_pkg is
     constant alert_level  : in t_alert_level     := error;
     constant scope        : in string            := C_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT    
+    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     ) is
     constant name       : string := "gpio_check(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_check_ok : boolean;
   begin
     v_check_ok := check_value(data_port, data_exp, config.match_strictness, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, name);
-    
+
     if v_check_ok then
       log(ID_BFM, name & "=> OK, read data = " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
@@ -189,7 +189,7 @@ package body gpio_bfm_pkg is
     constant alert_level  : in t_alert_level     := error;
     constant scope        : in string            := C_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
-    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT    
+    constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     ) is
     constant name : string := "gpio_expect(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
   begin

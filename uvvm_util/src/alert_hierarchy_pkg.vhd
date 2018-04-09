@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -28,71 +28,71 @@ use work.adaptations_pkg.all;
 package alert_hierarchy_pkg is
 
   shared variable global_hierarchy_tree : t_hierarchy_linked_list;
-  
+
   procedure initialize_hierarchy(
       constant base_scope : string := C_BASE_HIERARCHY_LEVEL;
       constant stop_limit : t_alert_counters := (others => 0)
     );
-  
+
   procedure add_to_alert_hierarchy(
-    constant scope : string; 
+    constant scope : string;
     constant parent_scope : string := C_BASE_HIERARCHY_LEVEL;
     constant stop_limit : t_alert_counters := (others => 0)
     );
-    
+
   procedure set_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level;
     constant value : natural
     );
-  
+
   impure function get_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level
     ) return natural;
-      
+
   procedure hierarchical_alert(
     constant alert_level: t_alert_level;
     constant msg : string;
     constant scope : string;
     constant attention : t_attention
     );
-    
+
   procedure increment_expected_alerts(
     constant scope : string;
     constant alert_level: t_alert_level;
     constant amount : natural := 1
     );
-    
+
   procedure set_expected_alerts(
     constant scope : string;
     constant alert_level: t_alert_level;
     constant expected_alerts : natural
     );
-    
+
   procedure increment_stop_limit(
     constant scope : string;
     constant alert_level: t_alert_level;
     constant amount : natural := 1
     );
-    
+
   procedure set_stop_limit(
     constant scope : string;
     constant alert_level: t_alert_level;
     constant stop_limit : natural
     );
-    
+
   procedure print_hierarchical_log(
     constant order : t_order := FINAL
   );
-  
+
   procedure clear_hierarchy(
     constant VOID : t_void
   );
 
-    
+
 end package alert_hierarchy_pkg;
 
 package body alert_hierarchy_pkg is
-  
+
   procedure initialize_hierarchy(
     constant base_scope : string := C_BASE_HIERARCHY_LEVEL;
     constant stop_limit : t_alert_counters := (others => 0)
@@ -112,9 +112,9 @@ package body alert_hierarchy_pkg is
     variable v_found : boolean := false;
   begin
       global_hierarchy_tree.contains_scope_return_data(v_scope, v_found, v_hierarchy_node);
-      if v_found then 
+      if v_found then
         -- Scope already in tree.
-        
+
         -- If the new parent is not C_BASE_HIERARCHY_LEVEL, change parent.
         -- The reason is that a child should be able to register itself
         -- with C_BASE_HIERARCHY_LEVEL as parent. The actual parent can then
@@ -126,7 +126,7 @@ package body alert_hierarchy_pkg is
           -- Verify that new parent is in tree. If not, the old parent will be kept.
           global_hierarchy_tree.change_parent(v_scope, v_parent_scope);
         end if;
-          
+
       else
         -- Scope not in tree. Check if parent is in tree. Set node data if
         -- parent is in tree.
@@ -134,7 +134,7 @@ package body alert_hierarchy_pkg is
         global_hierarchy_tree.insert_in_tree(v_hierarchy_node, v_parent_scope);
       end if;
   end procedure;
-  
+
   procedure set_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level;
     constant value : natural
@@ -142,14 +142,14 @@ package body alert_hierarchy_pkg is
   begin
     global_hierarchy_tree.set_top_level_stop_limit(alert_level, value);
   end procedure;
-  
+
   impure function get_hierarchical_alert_top_level_stop_limit(
     constant alert_level : t_alert_level
     ) return natural is
   begin
     return global_hierarchy_tree.get_top_level_stop_limit(alert_level);
   end function;
-  
+
   procedure hierarchical_alert(
     constant alert_level: t_alert_level;
     constant msg : string;
@@ -159,7 +159,7 @@ package body alert_hierarchy_pkg is
   begin
     global_hierarchy_tree.alert(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, attention, msg);
   end procedure;
-  
+
   procedure increment_expected_alerts(
     constant scope : string;
     constant alert_level: t_alert_level;
@@ -168,7 +168,7 @@ package body alert_hierarchy_pkg is
   begin
     global_hierarchy_tree.increment_expected_alerts(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, amount);
   end procedure;
-  
+
   procedure set_expected_alerts(
     constant scope : string;
     constant alert_level: t_alert_level;
@@ -177,7 +177,7 @@ package body alert_hierarchy_pkg is
   begin
     global_hierarchy_tree.set_expected_alerts(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, expected_alerts);
   end procedure;
-  
+
   procedure increment_stop_limit(
     constant scope : string;
     constant alert_level: t_alert_level;
@@ -186,7 +186,7 @@ package body alert_hierarchy_pkg is
   begin
     global_hierarchy_tree.increment_stop_limit(justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH), alert_level, amount);
   end procedure;
-  
+
   procedure set_stop_limit(
     constant scope : string;
     constant alert_level: t_alert_level;
@@ -202,12 +202,12 @@ package body alert_hierarchy_pkg is
   begin
     global_hierarchy_tree.print_hierarchical_log(order);
   end procedure;
-  
+
   procedure clear_hierarchy(
     constant VOID : t_void
   ) is
   begin
     global_hierarchy_tree.clear;
   end procedure;
-  
+
 end package body alert_hierarchy_pkg;

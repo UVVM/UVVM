@@ -9,6 +9,24 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.04.09
+--------------------
+Released: 2018-04-09
+- Added multicast information to VVC QRs.
+- Added information to the shared_uvvm_status with VVC information
+  when using await_any_completion.
+- Fixed a bug and added more configuration options to the
+  Axistream VIP.
+- Fixed a bug in the Avalon MM VIP.
+- Added a demo TB to the GPIO VIP. See CHANGES.TXT in the
+  bitvis_vip_gpio for more information.
+- Fixed a possible confusion, added documents and more features to
+  the UVVM VVC Framework. See CHANGES.TXT for more information.
+- Added more features and improved some logging in the
+  UVVM Utility Library. See CHANGES.TXT for more information.
+
+
+
 v2017.12.20
 --------------------
 Released: 2017-12-20

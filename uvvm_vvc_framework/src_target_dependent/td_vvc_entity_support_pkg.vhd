@@ -667,6 +667,11 @@ package body td_vvc_entity_support_pkg is
 
         if this_vvc_completed(VOID) then                   -- This VVC is done
           log(await_completion_finished_msg_id, "This VVC initiated completion of " & to_string(command.proc_call), to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+
+          -- update shared_uvvm_status with the VVC name and cmd index that initiated the completion
+          shared_uvvm_status.info_on_finishing_await_any_completion.vvc_name(1 to vvc_labels.vvc_name'length) := vvc_labels.vvc_name;
+          shared_uvvm_status.info_on_finishing_await_any_completion.vvc_cmd_idx := last_cmd_idx_executed;
+          shared_uvvm_status.info_on_finishing_await_any_completion.vvc_time_of_completion := now;
           exit;
         end if;
 
@@ -796,7 +801,9 @@ package body td_vvc_entity_support_pkg is
     constant vvc_labels           : in t_vvc_labels
     ) is
   begin
-    executor_is_busy  <= false;
+    executor_is_busy            <= false;
+    vvc_status.previous_cmd_idx := command.cmd_idx;
+
     wait for 0 ns;  -- to allow delta updates in other processes.
     if command_queue.is_empty(VOID) then
       log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
@@ -806,7 +813,6 @@ package body td_vvc_entity_support_pkg is
     -- Queue is now not empty
     executor_is_busy  <= true;
     wait until executor_is_busy;
-    vvc_status.previous_cmd_idx := command.cmd_idx;
     command := command_queue.get(VOID);
     log(ID_CMD_EXECUTOR, to_string(command.proc_call) & " - Will be executed " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);

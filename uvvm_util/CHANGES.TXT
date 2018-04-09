@@ -3,6 +3,18 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.4.0
+----------
+Released: 2018-04-09
+- Changed to KEEP_LEADING_0 in check_value() for SLV, signed and unsigned.
+- Added t_info_on_finishing_await_any_completion with VVC name, index and
+  time of competion to t_shared_uvvm_status.
+- Added increment_expected_alerts_and_stop_limit()
+- Made ID_LOG_MSG_CTRL always visible in the transcript window.
+- Added padding of leading zeros to check_values() with SLVs of different
+  lengths.
+
+
 v2.3.1
 ----------
 Released: 2017-12-20

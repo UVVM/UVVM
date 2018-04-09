@@ -727,4 +727,3 @@ package body avalon_mm_bfm_pkg is
   end procedure avalon_mm_unlock;
 
 end package body avalon_mm_bfm_pkg;
-

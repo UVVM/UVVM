@@ -10,8 +10,9 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-# This file may be called with an argument
+# This file may be called with arguments:
 # arg 1: Part directory of this library/module
+# arg 2: Target directory
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -54,62 +55,70 @@ if { [string equal -nocase $simulator "modelsim"] } {
 }
 
 
+#------------------------------------------------------
+# Set up source_path and default_target
 #
-# Set up util_part_path and default_library
+#   0 args: regular UVVM directory structure expected
+#   1 args: source directory specified, target will be current directory
+#   2 args: source directory and target directory specified
+#
 #------------------------------------------------------
 quietly set part_name "uvvm_util"
-# path from mpf-file in sim
-quietly set util_part_path "../..//$part_name"
 
-# argument number 1 - user specified input directory
 if { [info exists 1] } {
-  # path from this part to target part
-  quietly set util_part_path "$1/..//$part_name"
+  if {$argc == 1} {
+    echo "\nUser specified source directory"
+    quietly set source_path "$1"
+    quietly set target_path [pwd]
+    quietly set default_target 0
+  } elseif {$argc >= 2} {
+    echo "\nUser specified source and target directory"
+    quietly set target_path "$2"
+    quietly set default_target 0
+  }
   unset 1
-}
-# argument number 2 - user speficied output directory
-if {$argc >= 2} {
-  echo "\nUser specified output directory"
-  quietly set destination_path "$2"
-  quietly set default_library 0
 } else {
   echo "\nDefault output directory"
-  quietly set destination_path util_part_path
-  quietly set default_library 1
+  # path from mpf-file in /sim folder
+  quietly set source_path "../..//$part_name"
+  quietly set target_path $source_path
+  quietly set default_target 1
 }
+echo "Source path: $source_path"
+echo "Taget path: $target_path"
 
 
-#
+#------------------------------------------------------
 # Read compile_order.txt and set lib_name
-#--------------------------------------------------
-quietly set fp [open "$util_part_path/script/compile_order.txt" r]
+#------------------------------------------------------
+quietly set fp [open "$source_path/script/compile_order.txt" r]
 quietly set file_data [read $fp]
 quietly set lib_name [lindex $file_data 2]
 close $fp
 
-#
+#------------------------------------------------------
 # (Re-)Generate library and Compile source files
-#--------------------------------------------------
+#------------------------------------------------------
 echo "\n\nRe-gen lib and compile $lib_name source"
-if {$default_library} {
-  if {[file exists $util_part_path/sim/$lib_name]} {
-    file delete -force $util_part_path/sim/$lib_name
+if {$default_target} {
+  if {[file exists $source_path/sim/$lib_name]} {
+    file delete -force $source_path/sim/$lib_name
   }
-  if {![file exists $util_part_path/sim]} {
-    file mkdir $util_part_path/sim
+  if {![file exists $source_path/sim]} {
+    file mkdir $source_path/sim
   }
 } else {
-  if {![file exists $destination_path/$lib_name]} {
-    file mkdir $destination_path/$lib_name
+  if {![file exists $target_path/$lib_name]} {
+    file mkdir $target_path/$lib_name
   }
 }
 
-if {$default_library} {
-  vlib $util_part_path/sim/$lib_name
-  vmap $lib_name $util_part_path/sim/$lib_name
+if {$default_target} {
+  vlib $source_path/sim/$lib_name
+  vmap $lib_name $source_path/sim/$lib_name
 } else {
-  vlib $destination_path/$lib_name
-  vmap $lib_name $destination_path/$lib_name
+  vlib $target_path/$lib_name
+  vmap $lib_name $target_path/$lib_name
 }
 
 if { [string equal -nocase $simulator "modelsim"] } {
@@ -118,15 +127,15 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
 
-#
+#------------------------------------------------------
 # Compile src files
-#--------------------------------------------------
+#------------------------------------------------------
 echo "\n\n\n=== Compiling $lib_name source\n"
 quietly set idx 0
 foreach item $file_data {
   if {$idx > 2} {
-    echo "eval vcom  $compdirectives  $util_part_path/sim/$item"
-    eval vcom  $compdirectives  $util_part_path/sim/$item
+    echo "eval vcom  $compdirectives  $source_path/script/$item"
+    eval vcom  $compdirectives  $source_path/script/$item
   }
   incr idx 1
 }

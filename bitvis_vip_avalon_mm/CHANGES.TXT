@@ -2,6 +2,14 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
+v2.1.1
+----------
+Released: 2018-04-09
+- Fixed an issue where read response could sample read data immediately,
+  reading wrong data from a previous access.
+- Updated VVC quick reference with multicast information.
+
+
 v2.1.0
 ----------
 Released: 2017-10-16

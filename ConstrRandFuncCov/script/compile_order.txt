@@ -1,0 +1,11 @@
+# library crfc
+../src/TextUtilPkg.vhd
+../src/TranscriptPkg.vhd
+../src/NamePkg.vhd
+../src/OsvvmGlobalPkg.vhd
+../src/AlertLogPkg.vhd
+../src/RandomBasePkg.vhd
+../src/SortListPkg_int.vhd
+../src/RandomPkg.vhd
+../src/MessagePkg.vhd
+../src/VendorCovApiPkg.vhd

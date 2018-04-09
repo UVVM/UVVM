@@ -1,6 +1,12 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.1.1
+----------
+Released: 2018-04-09
+- Updated reference in BFM QR.
+- Added multicast information to VVC QR.
+
 v2.1.0
 ----------
 Released: 2017-10-16

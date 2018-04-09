@@ -10,7 +10,8 @@ This documentation is basically split into the following parts:
 1. The_critically_missing_VHDL_TB_feature.ppsx
 2. VVC_Framework_Manual.pdf
 3. VVC_Implementation_Guide.pdf
-4. VVC_Framework_common_methods_QuickRef
+4. Common_VVC_Methods.pdf
+5. UVVM_Common_Methods_And_Mechanisms.pdf
 
 These documents are located in this directory.
 

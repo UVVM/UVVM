@@ -81,7 +81,11 @@ architecture behave of avalon_mm_vvc is
   alias vvc_status                    : t_vvc_status is shared_avalon_mm_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info              : t_transaction_info is shared_avalon_mm_transaction_info(GC_INSTANCE_IDX);
 
-
+  -- Propagation delayed interface signal used when reading data from the slave in the read_response process.
+  signal avalon_mm_vvc_master_if_pd   : t_avalon_mm_if(address(GC_ADDR_WIDTH-1 downto 0),
+                                                      byte_enable((GC_DATA_WIDTH/8)-1 downto 0),
+                                                      writedata(GC_DATA_WIDTH-1 downto 0),
+                                                      readdata(GC_DATA_WIDTH-1 downto 0)) := avalon_mm_vvc_master_if;
 begin
 
 
@@ -184,7 +188,8 @@ begin
 
 --===============================================================================================
 -- Command executor
--- - Fetch and execute the commands
+-- - Fetch and execute the commands.
+-- - Note that the read response is handled in the read_response process.
 --===============================================================================================
   cmd_executor : process
     variable v_cmd                                    : t_vvc_cmd_record;
@@ -194,9 +199,9 @@ begin
     variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');
-    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-    variable v_normalised_byte_ena                    : std_logic_vector((GC_DATA_WIDTH/8)-1 downto 0) := (others => '0');
+    variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0)              := (others => '0');
+    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0)      := (others => '0');
+    variable v_normalised_byte_ena                    : std_logic_vector((GC_DATA_WIDTH/8)-1 downto 0)  := (others => '0');
   begin
 
     -- 0. Initialize the process prior to first command
@@ -275,6 +280,7 @@ begin
             while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop
               wait for vvc_config.bfm_config.clock_period;
             end loop;
+
             avalon_mm_read_request( addr_value          => v_normalised_addr,
                                     msg                 => format_msg(v_cmd),
                                     clk                 => clk,
@@ -322,7 +328,7 @@ begin
                                     msg_id_panel        => vvc_config.msg_id_panel,
                                     config              => vvc_config.bfm_config,
                                     ext_proc_call       => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, AS_IS, INCL_RADIX) & ")"
-);
+                                  );
             work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
           else
             avalon_mm_check(addr_value          => v_normalised_addr,
@@ -356,7 +362,7 @@ begin
 
         when UNLOCK =>
           -- Call the corresponding procedure in the BFM package.
-          avalon_mm_unlock( avalon_mm_if        => avalon_mm_vvc_master_if,
+          avalon_mm_unlock( avalon_mm_if      => avalon_mm_vvc_master_if,
                           msg                 => format_msg(v_cmd),
                           scope               => C_SCOPE,
                           msg_id_panel        => vvc_config.msg_id_panel,
@@ -404,11 +410,24 @@ begin
   --===============================================================================================
 
 
+
+
+  --===============================================================================================
+  -- Add a delta cycle to the read response interface signals to avoid reading wrong data.
+  --===============================================================================================
+  avalon_mm_vvc_master_if_pd <= transport avalon_mm_vvc_master_if after std.env.resolution_limit;
+
+  --===============================================================================================
+  -- Read response command execution.
+  -- - READ (and CHECK) data received from the slave after the command executor has issued an
+  --   read request (or check).
+  -- - Note the use of propagation delayed avalon_mm_vv_master_if signal
+  --===============================================================================================
   read_response : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');
-    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_cmd              : t_vvc_cmd_record;
+    variable v_read_data        : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_normalised_addr  : unsigned(GC_ADDR_WIDTH-1 downto 0)          := (others => '0');
+    variable v_normalised_data  : std_logic_vector(GC_DATA_WIDTH-1 downto 0)  := (others => '0');
   begin
     -- Set the command response queue up to the same settings as the command queue
     command_response_queue.set_scope(C_SCOPE & ":RQ");
@@ -432,7 +451,7 @@ begin
                                   data_value          => v_read_data(GC_DATA_WIDTH-1 downto 0),
                                   msg                 => format_msg(v_cmd),
                                   clk                 => clk,
-                                  avalon_mm_if        => avalon_mm_vvc_master_if,
+                                  avalon_mm_if        => avalon_mm_vvc_master_if_pd,
                                   scope               => C_SCOPE,
                                   msg_id_panel        => vvc_config.msg_id_panel,
                                   config              => vvc_config.bfm_config);
@@ -447,7 +466,7 @@ begin
                                     data_exp            => v_normalised_data,
                                     msg                 => format_msg(v_cmd),
                                     clk                 => clk,
-                                    avalon_mm_if        => avalon_mm_vvc_master_if,
+                                    avalon_mm_if        => avalon_mm_vvc_master_if_pd,
                                     alert_level         => v_cmd.alert_level,
                                     scope               => C_SCOPE,
                                     msg_id_panel        => vvc_config.msg_id_panel,

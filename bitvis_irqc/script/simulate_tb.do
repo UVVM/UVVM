@@ -10,11 +10,18 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
+# Locations of ROOT, tcl_util, and this script
+set UVVM_ALL_ROOT ../..
+set TCL_UTIL_DIR tcl_util
+set CURR_SCRIPT_DIR [ file dirname [file normalize $argv0]]
+set TCL_UTIL_DIR $CURR_SCRIPT_DIR/$UVVM_ALL_ROOT/$TCL_UTIL_DIR
+
+# Use tcl_util/util_base.tcl
+source "$TCL_UTIL_DIR/util_base.tcl"
+
+
 if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
   onbreak {abort all; exit -f}
-} else {
-  onerror {abort all}
 }
 
 vsim  bitvis_irqc.irqc_tb

@@ -264,7 +264,7 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_master_transmit_and_receive(tx_data                      => v_normalized_data,
+              spi_master_transmit_and_receive(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
                                               rx_data                      => v_result(v_num_words-1 downto 0)(v_word_length-1 downto 0),
                                               msg                          => format_msg(v_cmd),
                                               spi_if                       => spi_vvc_if,
@@ -300,8 +300,8 @@ begin
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_master_transmit_and_check(tx_data                      => v_normalized_data,
-                                            data_exp                     => v_normalized_data_exp,
+              spi_master_transmit_and_check(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
+                                            data_exp                     => v_normalized_data_exp(v_num_words-1 downto 0),
                                             msg                          => format_msg(v_cmd),
                                             spi_if                       => spi_vvc_if,
                                             action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -331,7 +331,7 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_master_transmit(tx_data                      => v_normalized_data,
+              spi_master_transmit(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
                                   msg                          => format_msg(v_cmd),
                                   spi_if                       => spi_vvc_if,
                                   action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -391,7 +391,7 @@ begin
               -- normalize
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_master_check(data_exp                     => v_normalized_data_exp,
+              spi_master_check(data_exp                     => v_normalized_data_exp(v_num_words-1 downto 0),
                                msg                          => format_msg(v_cmd),
                                spi_if                       => spi_vvc_if,
                                alert_level                  => v_cmd.alert_level,
@@ -422,7 +422,7 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_slave_transmit_and_receive(tx_data                => v_normalized_data,
+              spi_slave_transmit_and_receive(tx_data                => v_normalized_data(v_num_words-1 downto 0),
                                              rx_data                => v_result(v_num_words-1 downto 0)(v_word_length-1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
@@ -458,8 +458,8 @@ begin
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_slave_transmit_and_check(tx_data                => v_normalized_data,
-                                           data_exp               => v_normalized_data_exp,
+              spi_slave_transmit_and_check(tx_data                => v_normalized_data(v_num_words-1 downto 0),
+                                           data_exp               => v_normalized_data_exp(v_num_words-1 downto 0),
                                            msg                    => format_msg(v_cmd),
                                            spi_if                 => spi_vvc_if,
                                            alert_level            => v_cmd.alert_level,
@@ -488,7 +488,7 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_slave_transmit(tx_data                => v_normalized_data,
+              spi_slave_transmit(tx_data                => v_normalized_data(v_num_words-1 downto 0),
                                  msg                    => format_msg(v_cmd),
                                  spi_if                 => spi_vvc_if,
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -545,7 +545,7 @@ begin
               -- normalize
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_slave_check(data_exp               => v_normalized_data_exp,
+              spi_slave_check(data_exp               => v_normalized_data_exp(v_num_words-1 downto 0),
                               msg                    => format_msg(v_cmd),
                               spi_if                 => spi_vvc_if,
                               alert_level            => v_cmd.alert_level,

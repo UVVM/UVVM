@@ -41,28 +41,30 @@ package spi_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_spi_bfm_config is
   record
-    CPOL            : std_logic;  -- sclk polarity, i.e. the base value of the clock.
-                                  -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
-    CPHA            : std_logic;  -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.
-                                  -- If '0', sampling occurs on the first sclk edge and data is transmitted on the sclk active to idle state.
-                                  -- If '1', data is sampled on the second sclk edge and transmitted on sclk idle to active state.
-    spi_bit_time    : time;       -- Used in master for dictating sclk period
-    ss_n_to_sclk    : time;       --Time from SS active until SCLK active
-    sclk_to_ss_n    : time;       -- Last SCLK until SS off
-    id_for_bfm      : t_msg_id;   -- The message ID used as a general message ID in the SPI BFM
-    id_for_bfm_wait : t_msg_id;   -- The message ID used for logging waits in the SPI BFM
-    id_for_bfm_poll : t_msg_id;   -- The message ID used for logging polling in the SPI BFM
+    CPOL             : std_logic;  -- sclk polarity, i.e. the base value of the clock.
+                                   -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
+    CPHA             : std_logic;  -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.
+                                   -- If '0', sampling occurs on the first sclk edge and data is transmitted on the sclk active to idle state.
+                                   -- If '1', data is sampled on the second sclk edge and transmitted on sclk idle to active state.
+    spi_bit_time     : time;       -- Used in master for dictating sclk period
+    ss_n_to_sclk     : time;       -- Time from SS active until SCLK active
+    sclk_to_ss_n     : time;       -- Last SCLK until SS off
+    inter_word_delay : time;       -- Minimum time between words, from ss_n inactive to ss_n active
+    id_for_bfm       : t_msg_id;   -- The message ID used as a general message ID in the SPI BFM
+    id_for_bfm_wait  : t_msg_id;   -- The message ID used for logging waits in the SPI BFM
+    id_for_bfm_poll  : t_msg_id;   -- The message ID used for logging polling in the SPI BFM
   end record;
 
   constant C_SPI_BFM_CONFIG_DEFAULT : t_spi_bfm_config := (
-    CPOL            => '0',
-    CPHA            => '0',
-    spi_bit_time    => -1 ns,  -- Make sure we notice if we forget to set bit time.
-    ss_n_to_sclk    => 20 ns,
-    sclk_to_ss_n    => 20 ns,
-    id_for_bfm      => ID_BFM,
-    id_for_bfm_wait => ID_BFM_WAIT,
-    id_for_bfm_poll => ID_BFM_POLL
+    CPOL             => '0',
+    CPHA             => '0',
+    spi_bit_time     => -1 ns,  -- Make sure we notice if we forget to set bit time.
+    ss_n_to_sclk     => 20 ns,
+    sclk_to_ss_n     => 20 ns,
+    inter_word_delay => 0 ns,
+    id_for_bfm       => ID_BFM,
+    id_for_bfm_wait  => ID_BFM_WAIT,
+    id_for_bfm_poll  => ID_BFM_POLL
     );
 
   --===============================================================================================
@@ -530,27 +532,15 @@ package body spi_bfm_pkg is
       while ss_n = '0' and not v_access_done loop
 
         if not config.CPHA then
-          log(ID_BFM, " rx_data(" & to_string(C_ACCESS_SIZE-v_rx_count) & ") " & to_string(miso));
-          log(ID_BFM, " v_rx_count=" & to_string(v_rx_count) & " , ");
-
           v_rx_data(C_ACCESS_SIZE-v_rx_count) := miso;
           wait for config.spi_bit_time/2;
           sclk                                <= config.CPOL;
           mosi                                <= v_tx_data(C_ACCESS_SIZE-v_tx_count-1);
-
-          log(ID_BFM, " tx_data(" & to_string(C_ACCESS_SIZE-v_tx_count-1) & ") " & to_string(mosi));
-          log(ID_BFM, " v_tx_count=" & to_string(v_tx_count) & " , ");
         else                            -- config.CPHA
-          log(ID_BFM, " tx_data(" & to_string(C_ACCESS_SIZE-v_tx_count-1) & ") " & to_string(mosi));
-          log(ID_BFM, " v_tx_count=" & to_string(v_tx_count) & " , ");
-
           mosi                                <= v_tx_data(C_ACCESS_SIZE-v_tx_count-1);
           wait for config.spi_bit_time/2;
           sclk                                <= config.CPOL;
           v_rx_data(C_ACCESS_SIZE-v_rx_count) := miso;
-
-          log(ID_BFM, " rx_data(" & to_string(C_ACCESS_SIZE-v_rx_count) & ") " & to_string(miso));
-          log(ID_BFM, " v_rx_count=" & to_string(v_rx_count) & " , ");
         end if;
 
         if v_tx_count < C_ACCESS_SIZE-1 then  -- Not done
@@ -563,13 +553,9 @@ package body spi_bfm_pkg is
             v_rx_count                          := v_rx_count + 1;
             -- Sample Last bit on the second to last edge of SCLK (CPOL=0: last rising. CPOL=1: last falling)
             wait for config.spi_bit_time/2;
-            log(ID_BFM, " rx_data(" & to_string(C_ACCESS_SIZE-v_rx_count) & ") " & to_string(miso));
-            log(ID_BFM, " v_rx_count=" & to_string(v_rx_count) & " , ");
             v_rx_data(C_ACCESS_SIZE-v_rx_count) := miso;
             sclk                                <= not config.CPOL;
           end if;
-
-          log(ID_BFM, " rx_data(" & to_string(C_ACCESS_SIZE-v_rx_count) & ") " & to_string(miso));
           log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
           v_access_done := true;
         end if;
@@ -586,6 +572,7 @@ package body spi_bfm_pkg is
         wait for config.sclk_to_ss_n;
         mosi <= 'Z';
         ss_n <= '1';
+        wait for config.inter_word_delay;
       else  -- action_when_transfer_is_done = HOLD_LINE_AFTER_TRANSFER
         ss_n <= '0';
       end if;
@@ -864,7 +851,7 @@ package body spi_bfm_pkg is
     variable v_rx_data       : std_logic_vector(data_exp'length-1 downto 0);
     variable v_check_ok      : boolean;
   begin
-    spi_master_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, action_when_transfer_is_done, scope, msg_id_panel, config);
+    spi_master_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, action_when_transfer_is_done, scope, msg_id_panel, config, local_proc_call);
 
     -- Compare values, but ignore any leading zero's if widths are different.
     -- Use ID_NEVER so that check_value method does not log when check is OK,

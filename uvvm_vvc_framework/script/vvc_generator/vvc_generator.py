@@ -634,7 +634,7 @@ def add_vvc_executor(file_handle, vvc_channel):
 		file_handle.write("        --              msg_id_panel  => vvc_config.msg_id_panel,\n")
 		file_handle.write("        --              config        => vvc_config.bfm_config);\n")
 		file_handle.write("        --  -- Store the result\n")
-		file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(instance_idx  => result_queue,\n")
+		file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
 		file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
 		file_handle.write("        --                                       result          => v_read_data);\n")
 

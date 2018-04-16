@@ -3,17 +3,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.2.0
+v2.2.1
 ----------
-Released: 2018-04-09
-- Fixed so that previous_cmd_idx is updated before VVC executor is
-  waiting for next command.
-- Added new document UVVM Essential Mechanisms.
-- Added new document Common VVC Methods.
-- Added info_on_finishing_await_any_completion vvc_name, vvc_cmd_idx
-  and time_of_completion to shared_uvvm_status.
-- Added multicast and broadcast information to VVC Framework Manual.
-
+Released: 2018-04-16
+- Fixed an error in the generated code for vvc_generator.py script.
+- Removed a blank page from the Common_VVC_Methods.pdf
 
 v2.1.1
 ----------

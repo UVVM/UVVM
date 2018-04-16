@@ -1,10 +1,13 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
-v3.0.1
+v3.1.0
 ----------
-Released: 2018-04-09
-- Added multicast information to VVC QR.
+Released: 2018-04-16
+- Added inter_word_delay option in BFM configuration.
+- Fixed a for multiword access of variable lengths.
+- Made some changes to logging in BFM.
+
 
 v3.0.0
 ----------

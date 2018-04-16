@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.04.16
+--------------------
+Released: 2018-04-16
+- Fixed a bug in the generated code from vvc_generator.py script.
+- Added some new features and fixes to Bitvis VIP SPI.
+
+
 v2018.04.09
 --------------------
 Released: 2018-04-09

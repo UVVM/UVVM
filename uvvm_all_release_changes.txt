@@ -1,77 +1,39 @@
 UVVM_ALL - Overview on Versions and Changes
-==============================================================
-This document summarizes the list of changes of UVVM_ALL to
-the latest release.
---------------------------------------------------------------
+==============================================================================
+This document summarizes the list of changes to the latest release of UVVM_ALL
 
-uvvm_util v2.4.0 (v2.3.1)
+UVVM version description:
+  UVVM_ALL is the master repository, consisting of several sub-repositories:
+
+  UVVM_ALL --| -- uvvm_util
+             | -- uvvm_vvc_framework
+             | -- bitvis_vip_sbi
+             | -- ...
+
+  The UVVM_ALL repository use Year.Month.Day versioning and is updated on
+  every release, while the sub-repositories, i.e. VIPs, VVC Framework and
+  UVVM Util, each have individual semantic versioning numbers as specified
+  in https://semver.org/.
+  This is to distinguish non-backward compatible changes in a sub-repository
+  from other sub-repositories that are unaffected by those changes.
+
+  Semantic versioning is arranged as Major.Minor.Patch, where
+  - Major: version with incompatible backward changes.
+  - Minor: version with backwards-compatible functionality.
+  - Patch: version with backwards-compatible bug fixes or pure
+           documentation improvement.
+------------------------------------------------------------------------------
+
+
+uvvm_vvc_framework v2.2.1 (v2.2.0)
 ------------------------------
-Released: 2018-04-09
-- Changed to KEEP_LEADING_0 in check_value() for SLV, signed and unsigned.
-- Added t_info_on_finishing_await_any_completion with VVC name, index and
-  time of competion to t_shared_uvvm_status.
-- Added increment_expected_alerts_and_stop_limit()
-- Made ID_LOG_MSG_CTRL always visible in the transcript window.
-- Added padding of leading zeros to check_values() with SLVs of different
-  lengths.
+Released: 2018-04-16
+- Fixed a bug in the generated code from vvc_generator.py script.
 
-uvvm_vvc_framework v2.2.0 (v2.1.1)
+
+bitvis_vip_spi v3.1.0 (v3.0.1)
 ------------------------------
-Released: 2018-04-09
-- Fixed so that previous_cmd_idx is updated before VVC executor is
-  waiting for next command.
-- Added new document UVVM Essential Mechanisms.
-- Added new document Common VVC Methods.
-- Added info_on_finishing_await_any_completion vvc_name, vvc_cmd_idx
-  and time_of_completion to shared_uvvm_status.
-- Added multicast and broadcast information to VVC Framework Manual.
-
-bitvis_vip_uart v2.1.1 (v2.1.0)
-------------------------------
-Released: 2018-04-09
-- Added multicast information to VVC QR.
-
-bitvis_vip_spi v3.0.1 (v3.0.0)
-------------------------------
-Released: 2018-04-09
-- Added multicast information to VVC QR.
-
-bitvis_vip_sbi v2.1.1 (v2.1.0)
-------------------------------
-Released: 2018-04-09
-- Updated reference in BFM QR.
-- Added multicast information to VVC QR.
-
-bitvis_vip_i2c v2.1.2 (v2.1.1)
-------------------------------
-Released: 2018-04-09
-- Added multicast information to VVC QR.
-
-bitvis_vip_gpio v1.2.0 (v1.1.0)
-------------------------------
-Released: 2018-04-09
-- Added demo TB and compile script.
-- Added multicast information to VVC QR.
-- Changed match_strictness from MATCH_EXACT to MATCH_STD in BFM config record.
-- Removed incorrect reference in BFM QR.
-
-bitvis_vip_axistream v4.0.1 (v4.0.0)
-------------------------------
-Released: 2018-04-09
-- Added configurable byte endianness.
-- Added multicast information to the VVC quick reference.
-- Fixed a bug where the fixed cycles waited error counter was
-  accumulated in the BFM transmit_bytes procedure.
-
-bitvis_vip_avalon_mm v2.1.1 (v2.1.0)
-------------------------------
-Released: 2018-04-09
-- Fixed an issue where read response could sample read data immediately,
-  reading wrong data from a previous access.
-- Updated VVC quick reference with multicast information.
-
-bitvis_vip_axilite v2.1.1 (v2.1.0)
-------------------------------
-Released: 2018-04-09
-- Added multicast information to VVC quick reference.
-
+Released: 2018-04-16
+- Added inter_word_delay option to BFM configuration.
+- Fixed a bug for multiword access of variable lengths.
+- Made some changes to the logging in BFM.

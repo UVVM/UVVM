@@ -50,7 +50,7 @@ Python is required **if** you want to execute the VVC generation scripts
 All documents including powerpoint presentations are available in the doc-directory of VVC_Framework on GitHub.
 These are just fast access links to some interesting info:
 - *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](https://github.com/UVVM/UVVM_All/blob/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
-- *['VVC Framework Manual'*  - The user manual](https://github.com/UVVM/UVVM_All/blob/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
+- *['VVC Framework Manual'*  - The user manual](https://github.com/UVVM/UVVM/raw/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
 
 
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.

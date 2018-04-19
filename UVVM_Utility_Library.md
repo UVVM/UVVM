@@ -23,7 +23,8 @@ All documents including powerpoint presentations are available in the doc-direct
 This is just a fast access link to some interesting info:
 - *['Making a simple, structured and efficient VHDL testbench – Step-by-step'*](https://github.com/UVVM/UVVM/raw/master/uvvm_util/Simple_TB_step_by_step.pps) - A brief introduction to making good testbenches - mainly independent of language and library, but using Bitvis Utility Library as an example
 - *['UVVM Utility Library Concepts and usage'*](https://github.com/UVVM/UVVM/raw/master/uvvm_util/UVVM_Utility_Library_Concepts_and_Usage.pps)  - Going into more details of the library
-A demo of how to make a simple, but structured testbench is given in the [IRQC (simple interrupt controller) example](https://github.com/UVVM/UVVM/tree/master/bitvis_irqc).  You can compile the complete DUT, Utility library, required BFMs and the testbench via the provided [scripts](https://github.com/UVVM/UVVM/tree/master/bitvis_irqc/script)
+A demo of how to make a simple, but structured testbench is given in the [IRQC (simple interrupt controller) example](https://github.com/UVVM/UVVM/tree/master/bitvis_irqc).  
+You can compile the complete DUT, Utility library, required BFMs and the testbench via the provided [scripts](https://github.com/UVVM/UVVM/tree/master/bitvis_irqc/script)
 
 
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.

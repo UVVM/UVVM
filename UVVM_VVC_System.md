@@ -52,5 +52,9 @@ These are just fast access links to some interesting info:
 - *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](https://github.com/UVVM/UVVM_All/blob/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
 - *['VVC Framework Manual'*  - The user manual](https://github.com/UVVM/UVVM/raw/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
 
+A demo of how to make a structured VVC based testbench is given in the [UART example](https://github.com/UVVM/UVVM/tree/master/bitvis_uart).  
+You can compile everything needed via the provided [scripts](https://github.com/UVVM/UVVM/tree/master/bitvis_uart/script)
+
+
 
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.

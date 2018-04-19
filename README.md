@@ -5,14 +5,19 @@ Overview, Readability, Maintainability, Extensibility and Reuse are all vital fo
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 as a to handle exactly these aspects.
 
 UVVM consists currently of the following elements 
-- Utility Library  [Util](https://github.com/UVVM/UVVM/blob/master/Utility_Library.md)
-- VVC (VHDL Verification Component) Framework  - Including Utility Library
+- [Utility Library](https://github.com/UVVM/UVVM/raw/master/UVVM_Utility_Library.md)
+- [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/UVVM_VVC_System.md)  - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 more to come...
 
+## For starters
+Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/raw/master/UVVM_Utility_Library.md) for an introduction.
+The VVC system is slightly more complex, but has been simplified as far as possible to allow efficient development of good quality testbenhces.
+
 ## For what do I need this VVC Framework?
-UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle medium complexity verification challenges and upwards. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level. 
+UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level. 
 As an example a simple command like uart_expect(UART_VVCT, my_data), or axilite_write(AXILITE_VVCT, my_addr, my_data, my_message) will automatically tell the respective VVC (for UART or AXI-Lite) to execute the uart_receive() or axilite_write() BFM respectively. 
 
 ## What are the main benefits of using this system?

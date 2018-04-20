@@ -18,6 +18,8 @@ This yields an excellent control over your testbench and VVCs.
 
 For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete testbench.
 
+UVVM is free and open source and has standardised the way to build good testbench architectures and VVCs so that reuse is dead simple, and allows the FPGA community to share VVCs that will work together in a well structured test harness. All kind of contributions are appreciated. Please provide via pull requests.
+
 You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.
 [This post on LinkedIn](https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen) will give you some more info on why you should use this library.
 

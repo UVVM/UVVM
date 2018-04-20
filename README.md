@@ -2,7 +2,7 @@
 UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making very structured VHDL-based testbenches.
 
 Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality. 
-UVVM VVC (VHDL Verification Component) Framework was released in 2016 as a to handle exactly these aspects.
+UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
 
 UVVM consists currently of the following elements 
 - [Utility Library](https://github.com/UVVM/UVVM/raw/master/UVVM_Utility_Library.md)
@@ -27,6 +27,8 @@ This yields an excellent control over your testbench and VVCs.
 
 For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete testbench.
 
+UVVM is free and open source and has standardised the way to build good testbench architectures and VVCs so that reuse is dead simple, and allows the FPGA community to share VVCs that will work together in a well structured test harness.
+
 You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.
 [This post on LinkedIn](https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen) will give you some more info on why you should use this library.
 
@@ -40,10 +42,10 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 *	A VVC architecture that is almost exactly the same from one VVC to another - sometimes with only the BFM calls as the differentiator, thus allowing an extremely efficient reuse from one VVC to another
 *	A VVC architecture that easily allows multiple threads for e.g. simultaneous Avalon Command and Response
 *	A VVC architecture that allows simple encapsulation for ALL verification functionality for any given interface or protocol
-*	Allows VVCs to be included anywhere in the test harness - or even inside the Design it self
+*	Allows VVCs to be included anywhere in the test harness - or even inside the design it self
 *	A logging and alert system that supports full verbosity control of functionality and hierarchy
 *	A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through the execution queue - until it is executed and completed towards the DUT
-*	Allows OSVVM randomisation and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
+*	Allows 3rd party randomisation and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
 *	Simple integration with regression test tools like Jenkins
 *	Quick references are available for UVVM Utility Library, VVC System and all the BFMs/VVCs
 
@@ -92,3 +94,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 We do however appreciate contributions and suggestions from users.
 
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.
+
+Please note the new repository for external UVVM compatible community VIP (Verification IP): ****** TBD

@@ -1,4 +1,4 @@
-( [Click here to go to the UVVM overall overview](https://github.com/UVVM/UVVM/raw/master/README.md) )
+( [Click here to go to the UVVM overall overview](https://github.com/UVVM/UVVM/blob/master/README.md) )
 
 # UVVM VVC System (or Framework)
 This methodology and library is a free and Open Source Methodology and Library for making very structured VHDL-based testbenches.

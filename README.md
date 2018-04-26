@@ -5,15 +5,15 @@ Overview, Readability, Maintainability, Extensibility and Reuse are all vital fo
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
 
 UVVM consists currently of the following elements 
-- [Utility Library](https://github.com/UVVM/UVVM/raw/master/UVVM_Utility_Library.md)
-- [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/UVVM_VVC_System.md)  - Including Utility Library
+- [Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md)
+- [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/README_UVVM_VVC_System.md)  - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 more to come...
 
 ## For starters
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
-Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/raw/master/UVVM_Utility_Library.md) for an introduction.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md) for an introduction.
 The VVC system is slightly more complex, but has been simplified as far as possible to allow efficient development of good quality testbenhces.
 
 ## For what do I need this VVC Framework?

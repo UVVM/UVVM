@@ -1,6 +1,6 @@
 #========================================================================================================================
 # Copyright (c) 2017 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -15,6 +15,16 @@ if {[batch_mode]} {
   onbreak {abort all; exit -f}
 } else {
   onerror {abort all}
+}
+
+# Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
+proc quietly { args } {
+  if {[llength $args] == 0} {
+    puts "quietly"
+  } else {
+    # this works since tcl prompt only prints the last command given. list prints "".
+    uplevel $args; list;
+  }
 }
 
 quit -sim

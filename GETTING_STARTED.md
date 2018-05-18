@@ -28,16 +28,17 @@ To compile Utility Library related VHDL files you can do the following:
       Double click on uvvm_util/sim/uvvm_util.mpf (may have to relate file extension to simulator)
    1. Running commands inside Modelsim/Questasim/RivieraPro/ActiveHDL:   
       Run do-file: uvvm_util/script/compile_src.doc
-    1. Using GHDL:
-     Use GHDL provided script with uvvm_util/script/compile_order.txt as input
-  d) Any other approach - or with script problems:
-     Follow compile order given in uvvm_util/script/compile_order.txt
-     Note that VHDL 2008 must be used. Lines starting with '# ' are required library definitions
-        vlib <source_path>/sim/<lib_name>
-        vmap <lib_name> <source_path>/sim/<lib_name>
-- To compile the complete IRQ demo testbench including Utility Library and the IRQC DUT: 
+   1. Using GHDL:    
+      Use GHDL provided script with uvvm_util/script/compile_order.txt as input
+   1. Any other approach - or with script problems:    
+      Follow compile order given in uvvm_util/script/compile_order.txt    
+      Note that VHDL 2008 must be used. Lines starting with '# ' are required library definitions    
+        vlib <source_path>/sim/<lib_name>    
+        vmap <lib_name> <source_path>/sim/<lib_name>    
+* To compile the complete IRQ demo testbench including Utility Library and the IRQC DUT: 
   - For alle a,b,c,d over bytt ut path   uvvm_util med bitvis_irqc
-- To compile all above pluss all provided BFMs, the scripts for compiling the complete UVVM should be used. (See below)
+* To compile all above pluss all provided BFMs, the scripts for compiling the complete UVVM should be used. (See below)
+
 If you want to run a demo testbench using the Utility library, including the SBI BFM, you can run bitvis_irqc/tb/irqc_tb.vhd
 
 ## For developers who understand the basics of UVVM Utility library and need more than just basic testbenches:

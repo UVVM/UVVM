@@ -8,6 +8,7 @@ With the Basic/Introductory level you are given a library and methodology that p
 A number of BFMs (Bus Functional Models) compatible with the Utility Library are provided as free and open source code as a kick-start for testbenches using interfaces like AXI lite/stream, Avalon, I2C, SPI, UART, SBI, GPIO, etc.
 For more advanced testbenches with either multiple interfaces, or the need to reach interface related corner cases, the VVC system is really great. This is explained below the Utility Library.
 A number of VHDL verification components (VVCs) are provided for free with this system.
+NOTE: All Libraries, BFMs, VVCs, etc have their own dedicated Quick Reference (QR) showing you all you need to use the respective part.
 
 ## Github directory naming notation
 - The directories starting with 'uvvm_' are the core libraries for UVVM Utility Library and UVVM VVC System
@@ -36,7 +37,7 @@ To compile Utility Library related VHDL files you can do the following:
         vlib <source_path>/sim/<lib_name>    
         vmap <lib_name> <source_path>/sim/<lib_name>    
 * To compile the complete IRQ demo testbench including Utility Library and the IRQC DUT: 
-  - For alle a,b,c,d over bytt ut path   uvvm_util med bitvis_irqc
+  - For all i to iv above exchange path   'uvvm_util' with  'bitvis_irqc'
 * To compile all above pluss all provided BFMs, the scripts for compiling the complete UVVM should be used. (See below)
 
 If you want to run a demo testbench using the Utility library, including the SBI BFM, you can run bitvis_irqc/tb/irqc_tb.vhd
@@ -46,6 +47,22 @@ If you want to run a demo testbench using the Utility library, including the SBI
 * A very brief introduction to making a structured testbench architecture can be found under https://github.com/UVVM/UVVM/tree/master/_supplementary_doc Advanced Verification - Made simple.
 * Our presentation at the ESA (European Space Agency) conference on SEFUW 2018 gives a good introduction to UVVM, Testbench architecture, VVCs and how UVVM is standardising the VHDL testbench architecture: https://indico.esa.int/indico/event/232/session/6/contribution/8/material/slides/0.pdf
 * For a slightly deeper introduction - also explaining the challenges - please check out our PPT-file https://github.com/UVVM/UVVM/blob/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx
+
+### Step 2
+The easiest way to compile the complete UVVM with everything (Utility Library, VVC Framework, BFMS, VVCs, etc) is to go to uvvm_vvc_framework/script and run 'compile_all.do' inside Modelsim/Questasim/RivieraPro/ActiveHDL.
+
+Similarly for the UART VVC Demo using 'compile_demo_tb.do'
+
+For GHDL use the provided 'compile_order.txt' files.
+
+### Step 3
+If you like to use UVVM in a more advanced way you should read the relevant documentation under  https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc
+
+
+
+
+
+
 
 
 

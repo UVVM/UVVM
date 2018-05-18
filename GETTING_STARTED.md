@@ -19,11 +19,12 @@ A number of VHDL verification components (VVCs) are provided for free with this 
 You should start by first understanding and trying out the Utility Library. The basics here could be covered in less than one hour. The UVVM Utility Library has a *very* low user threshold - according to all users so far.
 * Read the [README-file for UVVM Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md) to get a first introduction to why, what and how.
 * Go through the powerpoint 'Making a simple, structured and efficient VHDL testbench – Step-by-step' linked to from the README-file
+* Note that 
 
 ## For developers with no previous UVVM experience: Step 2
 To compile Utility Library related VHDL files you can do the following:
-- To compile Utility Library only: 
-  a. Using Modelsim/Questasim project files: 
+1. To compile Utility Library only: 
+  1. Using Modelsim/Questasim project files: 
      Double click on uvvm_util/sim/uvvm_util.mpf (may have to relate file extension to simulator)
   1. Running commands inside Modelsim/Questasim/RivieraPro/ActiveHDL:
      Run do-file: uvvm_util/script/compile_src.do

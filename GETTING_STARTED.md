@@ -26,9 +26,11 @@ To compile Utility Library related VHDL files you can do the following:
 1. To compile Utility Library only: 
 
    a. Using Modelsim/Questasim project files: 
-     Double click on uvvm_util/sim/uvvm_util.mpf (may have to relate file extension to simulator)
-  - Running commands inside Modelsim/Questasim/RivieraPro/ActiveHDL:
-     Run do-file: uvvm_util/script/compile_src.doc
+   
+      Double click on uvvm_util/sim/uvvm_util.mpf (may have to relate file extension to simulator)
+     
+   b. Running commands inside Modelsim/Questasim/RivieraPro/ActiveHDL:
+      Run do-file: uvvm_util/script/compile_src.doc
     1. Using GHDL:
      Use GHDL provided script with uvvm_util/script/compile_order.txt as input
   d) Any other approach - or with script problems:

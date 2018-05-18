@@ -41,7 +41,12 @@ If you want to run a demo testbench using the Utility library, including the SBI
 
 ## For developers who understand the basics of UVVM Utility library and need more than just basic testbenches:
 ### Step 1
-A very brief introduction to making a structured testbench architecture can be found under https://github.com/UVVM/UVVM/tree/master/_supplementary_doc Advanced Verification - Made simple.
+* A very brief introduction to making a structured testbench architecture can be found under https://github.com/UVVM/UVVM/tree/master/_supplementary_doc Advanced Verification - Made simple.
+* Our presentation at the ESA (European Space Agency) conference on SEFUW 2018 gives a good introduction to UVVM, Testbench architecture, VVCs and how UVVM is standardising the VHDL testbench architecture: https://indico.esa.int/indico/event/232/session/6/contribution/8/material/slides/0.pdf
+* For a slightly deeper introduction - also explaining the challenges - please check out our PPT-file https://github.com/UVVM/UVVM/blob/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx
+
+
+
 
 
 

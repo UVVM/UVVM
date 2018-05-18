@@ -40,8 +40,9 @@ To compile Utility Library related VHDL files you can do the following:
 If you want to run a demo testbench using the Utility library, including the SBI BFM, you can run bitvis_irqc/tb/irqc_tb.vhd
 
 ## For developers who understand the basics of UVVM Utility library and need more than just basic testbenches:
-# Step 1
-A very brief introduction to making a structured testbench architecture can be found here: 
+### Step 1
+A very brief introduction to making a structured testbench architecture can be found under https://github.com/UVVM/UVVM/tree/master/_supplementary_doc Advanced Verification - Made simple.
+
 
 
 

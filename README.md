@@ -16,6 +16,8 @@ Please note that UVVM has two different complexity levels. The VVC Framework and
 Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md) for an introduction.
 The VVC system is slightly more complex, but has been simplified as far as possible to allow efficient development of good quality testbenhces.
 
+Please also see Getting Started with UVVM: https://github.com/UVVM/UVVM/blob/master/GETTING_STARTED.md
+
 ## For what do I need this VVC Framework?
 UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level. 
 As an example a simple command like uart_expect(UART_VVCT, my_data), or axilite_write(AXILITE_VVCT, my_addr, my_data, my_message) will automatically tell the respective VVC (for UART or AXI-Lite) to execute the uart_receive() or axilite_write() BFM respectively. 

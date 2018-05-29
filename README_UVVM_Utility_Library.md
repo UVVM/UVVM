@@ -9,7 +9,7 @@ UVVM Utility Library (previously Bitvis Utility Library) is a basic VHDL testben
 
 ## What are the benefits of using this system?
 The Utility Library is dead easy to use. The extremely low user threshold allows users to be up and running in less than an hour. UVVM is free and open source, and contributions from the community is welcomed (via for instance pull requests).
-* The logging procedures can be used directly and simplifies the process of reporting progress in a simulation, as well as providing valuable debug information if en error is detected. A flexible verbosity control is available - if you want this.
+* The logging procedures can be used directly and simplifies the process of reporting progress in a simulation, as well as providing valuable debug information if an error is detected. A flexible verbosity control is available - if you want this.
 * The checkers are intelligent so that they give you a mismatch report, and you may select whether you want a positive acknowledge. Alerts may be controlled in many ways - like counting, potentially ignoring and potentially stopping the simulation.
 * BFM suport, string handling and basic randomisation is also available.
 [This post on LinkedIn](https://www.linkedin.com/pulse/free-library-good-testbench-checking-functionality-espen-tallaksen?trk=mp-reader-card) will give you some more info on why you should use this library.

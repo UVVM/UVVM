@@ -48,6 +48,9 @@
 --    11/2016   2016.11    Added VendorCovApiPkg and calls to bind it in.
 --    05/2017   2017.05    Updated WriteBin name printing
 --                         ClearCov (deprecates SetCovZero)
+--    04/2018   2018.04    Updated PercentCov calculation so AtLeast of <= 0 is correct
+--                         String' Fix for GHDL
+--                         Removed Deprecated procedure Increment - see TbUtilPkg as it moved there
 --                         
 --
 --  Development Notes:
@@ -59,7 +62,7 @@
 --      composites with unconstrained elements
 --
 --
---  Copyright (c) 2010 - 2017 by SynthWorks Design Inc.  All rights reserved.
+--  Copyright (c) 2010 - 2018 by SynthWorks Design Inc.  All rights reserved.
 --
 --  Verbatim copies of this source file may be used and
 --  distributed without restriction.
@@ -760,9 +763,9 @@ package CoveragePkg is
   ------------------------------------------------------------
 -- Deprecated:  These are not part of the coverage model
   
-  procedure increment( signal Count : inout integer ) ;
-  procedure increment( signal Count : inout integer ; enable : boolean ) ;
-  procedure increment( signal Count : inout integer ; enable : std_ulogic ) ;
+--  procedure increment( signal Count : inout integer ) ;
+--  procedure increment( signal Count : inout integer ; enable : boolean ) ;
+--  procedure increment( signal Count : inout integer ; enable : std_ulogic ) ;
 
 
 
@@ -902,6 +905,22 @@ package body CoveragePkg is
     end loop ;
     Valid := ReadValid ;
   end procedure read ;
+
+
+  ------------------------------------------------------------
+  function CalcPercentCov( Count : integer ; AtLeast : integer ) return real is
+  -- package local, called by MergeBin, InsertBin, ClearCov, ReadCovDbDatabase
+  ------------------------------------------------------------
+    variable PercentCov : real ;
+  begin
+    if AtLeast > 0 then 
+      return real(Count)*100.0/real(AtLeast) ;
+    elsif AtLeast = 0 then 
+      return 100.0 ;
+    else
+      return real'right ; 
+    end if ;
+  end function CalcPercentCov ; 
 
 
   -- ------------------------------------------------------------
@@ -1474,7 +1493,7 @@ package body CoveragePkg is
           write(buf, Prefix & S & CovNameVar.Get) ;
         elsif AlertLogIDVar /= OSVVM_ALERTLOG_ID then
           -- otherwise Print AlertLogName if it is set
-          write(buf, Prefix & S & GetAlertLogName(AlertLogIDVar)) ;
+          write(buf, Prefix & S & string'(GetAlertLogName(AlertLogIDVar)) ) ;
         else 
           -- otherwise print the first line of the message
           MessageIndex := 2 ; 
@@ -1720,7 +1739,7 @@ package body CoveragePkg is
       AtLeast      : integer ;
       Weight       : integer ;
       Name         : string ;
-      PercentCov   : real := 0.0
+      PercentCov   : real 
     ) is
     begin
       if (not IsInitialized) then                                                              -- VendorCov
@@ -1757,8 +1776,9 @@ package body CoveragePkg is
       CovBinPtr.all(Position).Count   := CovBinPtr.all(Position).Count + Count ;
       CovBinPtr.all(Position).AtLeast := CovBinPtr.all(Position).AtLeast + AtLeast ;
       CovBinPtr.all(Position).Weight  := CovBinPtr.all(Position).Weight + Weight ;
-      CovBinPtr.all(Position).PercentCov :=
-        real(CovBinPtr.all(Position).Count)*100.0/maximum(real(CovBinPtr.all(Position).AtLeast), 1.0) ;
+      CovBinPtr.all(Position).PercentCov := CalcPercentCov(
+        Count => CovBinPtr.all(Position).Count,  
+        AtLeast =>  CovBinPtr.all(Position).AtLeast ) ;
     end procedure MergeBin ;
 
 
@@ -1776,12 +1796,14 @@ package body CoveragePkg is
       Count        : integer ;
       AtLeast      : integer ;
       Weight       : integer ;
-      Name         : string ;
-      PercentCov   : real := 0.0
+      Name         : string 
     ) is
-      variable Position : integer ;
+      variable Position    : integer ;
       variable FoundInside : boolean ;
+      variable PercentCov  : real ; 
     begin
+      PercentCov := CalcPercentCov(Count => Count,  AtLeast =>  AtLeast) ;
+
       if not MergingEnable then
         InsertNewBin(BinVal, Action, Count, AtLeast, Weight, Name, PercentCov) ;
 
@@ -2066,7 +2088,9 @@ package body CoveragePkg is
       -- Update Count, PercentCov
       CovBinPtr(Index).Count := CovBinPtr(Index).Count + CovBinPtr(Index).action ;
       VendorCovBinInc(VendorCovHandleVar, Index);   -- VendorCov
-      CovBinPtr(Index).PercentCov := real(CovBinPtr(Index).Count)*100.0/maximum(real(CovBinPtr(Index).AtLeast), 1.0) ;
+      CovBinPtr(Index).PercentCov := CalcPercentCov(
+        Count => CovBinPtr.all(Index).Count,  
+        AtLeast =>  CovBinPtr.all(Index).AtLeast ) ;
       -- OrderCount handling - Statistics
       OrderCount := OrderCount + 1 ;
       CovBinPtr(Index).OrderCount := OrderCount + CovBinPtr(Index).OrderCount ;
@@ -2132,7 +2156,9 @@ package body CoveragePkg is
     begin
       for i in 1 to NumBins loop
         CovBinPtr(i).Count := 0 ;
-        CovBinPtr(i).PercentCov := 0.0 ;
+        CovBinPtr(i).PercentCov := CalcPercentCov(
+          Count => CovBinPtr.all(i).Count,  
+          AtLeast =>  CovBinPtr.all(i).AtLeast ) ;
         CovBinPtr(i).OrderCount := 0 ;
       end loop ;
       OrderCount := 0 ;
@@ -3500,7 +3526,9 @@ package body CoveragePkg is
         if index > 0 then
           -- Bin is an exact match so only merge the count values
           CovBinPtr(index).Count := CovBinPtr(index).Count + Count ;
-          CovBinPtr(index).PercentCov := real(CovBinPtr(index).Count)*100.0/maximum(real(CovBinPtr(index).AtLeast), 1.0) ;
+          CovBinPtr(index).PercentCov := CalcPercentCov(
+            Count => CovBinPtr.all(index).Count,  
+            AtLeast =>  CovBinPtr.all(index).AtLeast ) ;
         else
           InsertNewBin(BinVal, Action, Count, AtLeast, Weight, NamePtr.all, PercentCov) ;
         end if ;
@@ -5013,32 +5041,32 @@ package body CoveragePkg is
   ------------------------------------------------------------
 -- Deprecated:  These are not part of the coverage model
   
-  ------------------------------------------------------------
-  procedure increment( signal Count : inout integer ) is
-  ------------------------------------------------------------
-  begin
-    Count <= Count + 1 ;
-  end procedure increment ;
-
-
-  ------------------------------------------------------------
-  procedure increment( signal Count : inout integer ; enable : boolean ) is
-  ------------------------------------------------------------
-  begin
-    if enable then
-      Count <= Count + 1 ;
-    end if ;
-  end procedure increment ;
-
-
-  ------------------------------------------------------------
-  procedure increment( signal Count : inout integer ; enable : std_ulogic ) is
-  ------------------------------------------------------------
-  begin
-    if to_x01(enable) = '1' then
-      Count <= Count + 1 ;
-    end if ;
-  end procedure increment ;
+--  ------------------------------------------------------------
+--  procedure increment( signal Count : inout integer ) is
+--  ------------------------------------------------------------
+--  begin
+--    Count <= Count + 1 ;
+--  end procedure increment ;
+--
+--
+--  ------------------------------------------------------------
+--  procedure increment( signal Count : inout integer ; enable : boolean ) is
+--  ------------------------------------------------------------
+--  begin
+--    if enable then
+--      Count <= Count + 1 ;
+--    end if ;
+--  end procedure increment ;
+--
+--
+--  ------------------------------------------------------------
+--  procedure increment( signal Count : inout integer ; enable : std_ulogic ) is
+--  ------------------------------------------------------------
+--  begin
+--    if to_x01(enable) = '1' then
+--      Count <= Count + 1 ;
+--    end if ;
+--  end procedure increment ;
   
 
 end package body CoveragePkg ;

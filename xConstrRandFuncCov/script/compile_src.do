@@ -63,7 +63,7 @@ if { [string equal -nocase $simulator "modelsim"] } {
 #   2 args: source directory and target directory specified
 #
 #------------------------------------------------------
-quietly set part_name "crfc"
+quietly set part_name "xConstrRandFuncCov"
 
 if { [info exists 1] } {
   if {$argc == 1} {

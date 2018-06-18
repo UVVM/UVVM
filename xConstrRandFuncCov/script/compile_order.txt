@@ -9,3 +9,4 @@
 ../src/RandomPkg.vhd
 ../src/MessagePkg.vhd
 ../src/VendorCovApiPkg.vhd
+../src/CoveragePkg.vhd

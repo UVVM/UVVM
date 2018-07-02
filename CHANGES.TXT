@@ -9,6 +9,17 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+
+v2018.07.02
+--------------------
+Released: 2018-07-02
+- Added bitvis_vip_scoreboard
+- Added bitvis_vip_clock_generator
+- Added new methods to ti_generic_queue_pkg
+- Fixed bug in receive_only methods in SPI VVC
+- Fixed bug in get_queue_is_full method in ti_data_queue_pkg
+
+
 v2018.04.16
 --------------------
 Released: 2018-04-16

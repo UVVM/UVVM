@@ -138,6 +138,9 @@ package adaptations_pkg is
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
+    -- SB package
+    ID_DATA,
+    ID_CTRL,
     -- Special purpose - Not really IDs
     ALL_MESSAGES          -- Applies to ALL message ID apart from ID_NEVER
     );
@@ -262,8 +265,25 @@ package adaptations_pkg is
     TX);
 
   constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
+  constant ALL_ENABLED_INSTANCES : integer := -3;
 
   constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
+
+  ------------------------------------------------------------------------
+  -- Scoreboard adaptations
+  ------------------------------------------------------------------------
+  constant C_MAX_QUEUE_INSTANCE_NUM : positive := 100; -- Maximum number of instances
+  constant C_SB_TAG_WIDTH           : positive := 128; -- Number of characters in SB tag
+  constant C_SB_SOURCE_WIDTH        : positive := 128; -- Number of characters in SB source element
+  constant C_SB_SLV_WIDTH           : positive :=   8; -- Width of the SLV in the predefined SLV SB
+
+  -- Default message Id panel intended for use in SB
+  constant C_SB_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
+    ID_CTRL => ENABLED,
+    ID_DATA => DISABLED,
+    others  => DISABLED
+  );
+
 end package adaptations_pkg;
 
 package body adaptations_pkg is

@@ -1,0 +1,4 @@
+# library bitvis_vip_scoreboard
+../src/generic_sb_support_pkg.vhd
+../src/generic_sb_pkg.vhd
+../src/predefined_sb.vhd

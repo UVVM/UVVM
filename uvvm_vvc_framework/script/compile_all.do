@@ -44,7 +44,6 @@ if { [info exists 1] } {
 
 
 quietly set vip_list_path "$uvvm_path/uvvm_vvc_framework/script/vip_list.txt"
-quietly set demo_tb_list_path "$uvvm_path/uvvm_vvc_framework/script/demo_tb_list.txt"
 
 if { [info exists 2] } {
   # vip list source

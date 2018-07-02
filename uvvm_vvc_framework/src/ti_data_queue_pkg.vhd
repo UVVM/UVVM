@@ -633,7 +633,7 @@ package body ti_data_queue_pkg is
     ) return boolean is
   begin
     check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_is_full called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
-    if v_count(queue_idx) = v_queue_size_in_bits(queue_idx) then
+    if v_count(queue_idx) >= v_queue_size_in_bits(queue_idx) then
       return true;
     else
       return false;

@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -96,8 +96,8 @@ package td_vvc_framework_common_methods_pkg is
   -- await_any_completion
   -------------------------------------------
   -- VVC interpreter IMMEDIATE command
-  -- - Waits for the first of multiple VVCs to finish : 
-  --   - Awaits completion of all commands in the queue for the specified VVC, or 
+  -- - Waits for the first of multiple VVCs to finish :
+  --   - Awaits completion of all commands in the queue for the specified VVC, or
   --   - until global_awaiting_completion /= '1' (any of the other involved VVCs completed).
   procedure await_any_completion(
     signal   vvc_target         : inout t_vvc_target_record;
@@ -105,7 +105,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_channel        : in t_channel;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0
   );
 
@@ -115,7 +115,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0
   );
 
@@ -129,7 +129,7 @@ package td_vvc_framework_common_methods_pkg is
     constant wanted_idx         : in natural;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0
   );
 
@@ -140,9 +140,9 @@ package td_vvc_framework_common_methods_pkg is
     constant wanted_idx         : in natural;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0
-  ); 
+  );
 
   -------------------------------------------
   -- disable_log_msg
@@ -227,7 +227,7 @@ package td_vvc_framework_common_methods_pkg is
   -- - Fetches result from a VVC
   -- - Requires that result is available (i.e. already executed in respective VVC)
   -- - Logs with ID ID_UVVM_CMD_RESULT
-  -- The 'result' parameter is of type t_vvc_result to 
+  -- The 'result' parameter is of type t_vvc_result to
   -- support that the BFM returns something other than a std_logic_vector.
   procedure fetch_result(
     signal   vvc_target         : inout t_vvc_target_record;
@@ -274,7 +274,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                : in string         := "";
     constant alert_level        : in t_alert_level  := TB_ERROR
   );
-  
+
   -------------------------------------------
   -- insert_delay
   -------------------------------------------
@@ -335,6 +335,13 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_channel        : in t_channel   := NA;
     constant msg                : in string      := ""
   );
+  -- Overload without VVC channel
+  procedure terminate_current_command(
+    signal   vvc_target         : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string      := ""
+  );
+
 
   -------------------------------------------
   -- terminate_all_commands
@@ -348,6 +355,13 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_channel        : in t_channel   := NA;
     constant msg                : in string      := ""
   );
+  -- Overload without VVC channel
+  procedure terminate_all_commands(
+    signal   vvc_target         : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string       := ""
+  );
+
 
   -- Returns the index of the last queued command
   impure function get_last_received_cmd_idx(
@@ -443,7 +457,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_channel        : in t_channel;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0 -- Useful when being called by multiple sequencers
   ) is
     constant proc_name : string := "await_any_completion";
@@ -455,13 +469,13 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_ANY_COMPLETION);
     shared_vvc_cmd.gen_integer_array(0) := -1;                       -- All commands must be completed (i.e. not just a selected command index)
-    shared_vvc_cmd.gen_integer_array(1) := awaiting_completion_idx;   
+    shared_vvc_cmd.gen_integer_array(1) := awaiting_completion_idx;
     shared_vvc_cmd.timeout      := timeout;
-    if lastness = LAST then 
-      shared_vvc_cmd.gen_boolean := true; -- LAST 
-    else 
-      shared_vvc_cmd.gen_boolean := false; -- NOT_LAST 
-    end if; 
+    if lastness = LAST then
+      shared_vvc_cmd.gen_boolean := true; -- LAST
+    else
+      shared_vvc_cmd.gen_boolean := false; -- NOT_LAST
+    end if;
     send_command_to_vvc(vvc_target, timeout); -- sets vvc_target.trigger, then waits until global_vvc_ack = '1' for timeout
   end procedure;
 
@@ -470,7 +484,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0
   ) is
   begin
@@ -485,7 +499,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant wanted_idx         : in natural;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0  -- Useful when being called by multiple sequencers
   ) is
     constant proc_name : string := "await_any_completion";
@@ -497,16 +511,16 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_ANY_COMPLETION);
     shared_vvc_cmd.gen_integer_array(0)  := wanted_idx;
-    shared_vvc_cmd.gen_integer_array(1) := awaiting_completion_idx;   
+    shared_vvc_cmd.gen_integer_array(1) := awaiting_completion_idx;
     shared_vvc_cmd.timeout      := timeout;
-    if lastness = LAST then 
-      -- LAST 
-      shared_vvc_cmd.gen_boolean := true; 
-    else 
+    if lastness = LAST then
+      -- LAST
+      shared_vvc_cmd.gen_boolean := true;
+    else
       -- NOT_LAST : Timeout must be handled in interpreter_await_any_completion
       -- becuase the command is always acknowledged immediately by the VVC to allow the sequencer to continue
       shared_vvc_cmd.gen_boolean := false;
-    end if; 
+    end if;
     send_command_to_vvc(vvc_target, timeout);
   end procedure;
 
@@ -516,7 +530,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant wanted_idx         : in natural;
     constant lastness           : in t_lastness;
     constant timeout            : in time          := 100 ns;
-    constant msg                : in string        := ""; 
+    constant msg                : in string        := "";
     constant awaiting_completion_idx : in natural := 0 -- Useful when being called by multiple sequencers
   ) is
   begin
@@ -662,7 +676,7 @@ package body td_vvc_framework_common_methods_pkg is
     fetch_result(vvc_target, vvc_instance_idx, vvc_channel, wanted_idx, result, v_fetch_is_accepted, msg, alert_level, proc_name & "_with_check_of_ok");
     if v_fetch_is_accepted then
       log(ID_UVVM_CMD_RESULT, proc_call & ": Legal=>" & to_string(v_fetch_is_accepted) & ", Result=>" & format_command_idx(shared_cmd_idx), C_SCOPE);    -- Get and ack the new command
-    else  
+    else
       alert(alert_level, "fetch_result(" & to_string(wanted_idx) &  "): " & add_msg_delimiter(msg) & "." &
           " Failed. Trying to fetch result from not yet executed command or from command with no result stored.  " & format_command_idx(shared_cmd_idx), C_SCOPE);
     end if;
@@ -680,7 +694,7 @@ package body td_vvc_framework_common_methods_pkg is
   begin
     fetch_result(vvc_target, vvc_instance_idx, NA, wanted_idx, result, fetch_is_accepted, msg, alert_level);
   end procedure;
-  
+
   procedure fetch_result(
     signal   vvc_target         : inout t_vvc_target_record;
     constant vvc_instance_idx   : in    integer;
@@ -692,7 +706,7 @@ package body td_vvc_framework_common_methods_pkg is
   begin
     fetch_result(vvc_target, vvc_instance_idx, NA, wanted_idx, result, msg, alert_level);
   end procedure;
-  
+
 
   procedure insert_delay(
     signal   vvc_target         : inout t_vvc_target_record;
@@ -771,6 +785,20 @@ package body td_vvc_framework_common_methods_pkg is
     send_command_to_vvc(vvc_target);
   end procedure;
 
+  -- Overload without VVC channel
+  procedure terminate_current_command(
+    signal   vvc_target         : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string        := ""
+  ) is
+    constant vvc_channel        :  t_channel  := NA;
+    constant proc_name          : string      := "terminate_current_command";
+    constant proc_call          : string      := proc_name & "(" & to_string(vvc_target, vvc_instance_idx)  -- First part common for all
+        & ")";
+  begin
+    terminate_current_command(vvc_target, vvc_instance_idx, vvc_channel, msg);
+  end procedure;
+
 
   procedure terminate_all_commands(
     signal   vvc_target         : inout t_vvc_target_record;
@@ -782,7 +810,19 @@ package body td_vvc_framework_common_methods_pkg is
     flush_command_queue(vvc_target, vvc_instance_idx, vvc_channel,msg);
     terminate_current_command(vvc_target, vvc_instance_idx, vvc_channel, msg);
   end procedure;
-  
+
+  -- Overload without VVC channel
+  procedure terminate_all_commands(
+    signal   vvc_target         : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant msg                : in string       := ""
+  ) is
+    constant vvc_channel        : t_channel       := NA;
+  begin
+    terminate_all_commands(vvc_target, vvc_instance_idx, vvc_channel, msg);
+  end procedure;
+
+
   -- Returns the index of the last queued command
   impure function get_last_received_cmd_idx(
     signal   vvc_target         : in  t_vvc_target_record;

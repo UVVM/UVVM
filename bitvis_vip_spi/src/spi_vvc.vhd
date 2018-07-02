@@ -179,7 +179,7 @@ begin
 --===============================================================================================
   cmd_executor : process
     variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_result                                 : t_vvc_result;  -- See vvc_cmd_pkg
+    variable v_result                                 : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     variable v_timestamp_start_of_current_bfm_access  : time                                                                  := 0 ns;
     variable v_timestamp_start_of_last_bfm_access     : time                                                                  := 0 ns;
     variable v_timestamp_end_of_last_bfm_access       : time                                                                  := 0 ns;
@@ -187,10 +187,10 @@ begin
     variable v_prev_command_was_bfm_access            : boolean := false;
     -- bus size
     variable v_num_words                              : natural                                                               := 0;
-    variable v_word_length                            : natural                                                               := 0;
     -- normalized data to bus width
     variable v_normalized_data                        : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0) := (others => (others => '0'));
     variable v_normalized_data_exp                    : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0) := (others => (others => '0'));
+    variable v_data_receive                           : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0) := (others => (others => '0'));
 
   begin
     -- 0. Initialize the process prior to first command
@@ -238,9 +238,8 @@ begin
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       v_num_words                  := v_cmd.num_words;
-      v_word_length                := v_cmd.word_length;
       transaction_info.num_words   := v_cmd.num_words;
-      transaction_info.word_length := v_word_length;
+      transaction_info.word_length := GC_DATA_WIDTH;
 
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
 
@@ -252,8 +251,8 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_transmit_and_receive(tx_data                      => v_cmd.data(0)(v_word_length-1 downto 0),
-                                              rx_data                      => v_result(0)(v_word_length-1 downto 0),
+              spi_master_transmit_and_receive(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
+                                              rx_data                      => v_result(0)(GC_DATA_WIDTH-1 downto 0),
                                               msg                          => format_msg(v_cmd),
                                               spi_if                       => spi_vvc_if,
                                               action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -263,9 +262,8 @@ begin
             else
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
-
               spi_master_transmit_and_receive(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
-                                              rx_data                      => v_result(v_num_words-1 downto 0)(v_word_length-1 downto 0),
+                                              rx_data                      => v_data_receive(v_num_words-1 downto 0),
                                               msg                          => format_msg(v_cmd),
                                               spi_if                       => spi_vvc_if,
                                               action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -273,11 +271,14 @@ begin
                                               scope                        => C_SCOPE,
                                               msg_id_panel                 => vvc_config.msg_id_panel,
                                               config                       => vvc_config.bfm_config);
+              v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_result);
+            for i in 0 to v_num_words-1 loop
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result(i));
+            end loop;
           else  -- attempted master transmit and receive when in slave mode
             alert(error, "Master transmit and receive called when VVC is in slave mode.", C_SCOPE);
           end if;
@@ -287,8 +288,8 @@ begin
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_transmit_and_check(tx_data                      => v_cmd.data(0)(v_word_length-1 downto 0),
-                                            data_exp                     => v_cmd.data_exp(0)(v_word_length-1 downto 0),
+              spi_master_transmit_and_check(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
+                                            data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
                                             msg                          => format_msg(v_cmd),
                                             spi_if                       => spi_vvc_if,
                                             action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -320,7 +321,7 @@ begin
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_transmit(tx_data                      => v_cmd.data(0)(v_word_length-1 downto 0),
+              spi_master_transmit(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
                                   msg                          => format_msg(v_cmd),
                                   spi_if                       => spi_vvc_if,
                                   action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -349,7 +350,7 @@ begin
           if GC_MASTER_MODE then
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_receive(rx_data                      => v_result(0)(v_word_length-1 downto 0),
+              spi_master_receive(rx_data                      => v_result(0)(GC_DATA_WIDTH-1 downto 0),
                                  msg                          => format_msg(v_cmd),
                                  spi_if                       => spi_vvc_if,
                                  action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -357,7 +358,7 @@ begin
                                  msg_id_panel                 => vvc_config.msg_id_panel,
                                  config                       => vvc_config.bfm_config);
             else
-              spi_master_receive(rx_data                      => v_result(v_num_words-1 downto 0)(v_word_length-1 downto 0),
+              spi_master_receive(rx_data                      => v_data_receive(v_num_words-1 downto 0),
                                  msg                          => format_msg(v_cmd),
                                  spi_if                       => spi_vvc_if,
                                  action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -365,11 +366,14 @@ begin
                                  scope                        => C_SCOPE,
                                  msg_id_panel                 => vvc_config.msg_id_panel,
                                  config                       => vvc_config.bfm_config);
+              v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_result);
+            for i in 0 to v_num_words-1 loop
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result(i));
+            end loop;
 
           else  -- attempted master receive when in slave mode
             alert(error, "Master receive called when VVC is in slave mode.", C_SCOPE);
@@ -379,7 +383,7 @@ begin
           if GC_MASTER_MODE then
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_check(data_exp                     => v_cmd.data_exp(0)(v_word_length-1 downto 0),
+              spi_master_check(data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
                                msg                          => format_msg(v_cmd),
                                spi_if                       => spi_vvc_if,
                                alert_level                  => v_cmd.alert_level,
@@ -410,8 +414,8 @@ begin
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_transmit_and_receive(tx_data                => v_cmd.data(0)(v_word_length-1 downto 0),
-                                             rx_data                => v_result(0)(v_word_length-1 downto 0),
+              spi_slave_transmit_and_receive(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
+                                             rx_data                => v_result(0)(GC_DATA_WIDTH-1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -423,19 +427,21 @@ begin
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
               spi_slave_transmit_and_receive(tx_data                => v_normalized_data(v_num_words-1 downto 0),
-                                             rx_data                => v_result(v_num_words-1 downto 0)(v_word_length-1 downto 0),
+                                             rx_data                => v_data_receive(v_num_words-1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
                                              scope                  => C_SCOPE,
                                              msg_id_panel           => vvc_config.msg_id_panel,
                                              config                 => vvc_config.bfm_config);
+              v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_result);
-
+            for i in 0 to v_num_words-1 loop
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result(i));
+            end loop;
           else  -- attempted slave transmit when in master mode
             alert(note, "Slave transmit and receive called when VVC is in master mode.", C_SCOPE);
           end if;
@@ -444,8 +450,8 @@ begin
           if not GC_MASTER_MODE then
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_transmit_and_check(tx_data                => v_cmd.data(0)(v_word_length-1 downto 0),
-                                           data_exp               => v_cmd.data_exp(0)(v_word_length-1 downto 0),
+              spi_slave_transmit_and_check(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
+                                           data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
                                            msg                    => format_msg(v_cmd),
                                            spi_if                 => spi_vvc_if,
                                            alert_level            => v_cmd.alert_level,
@@ -477,7 +483,7 @@ begin
           if not GC_MASTER_MODE then
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_transmit(tx_data                => v_cmd.data(0)(v_word_length-1 downto 0),
+              spi_slave_transmit(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
                                  msg                    => format_msg(v_cmd),
                                  spi_if                 => spi_vvc_if,
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -504,7 +510,7 @@ begin
           if not GC_MASTER_MODE then
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_receive(rx_data                => v_result(0)(v_word_length-1 downto 0),
+              spi_slave_receive(rx_data                => v_result(0)(GC_DATA_WIDTH-1 downto 0),
                                 msg                    => format_msg(v_cmd),
                                 spi_if                 => spi_vvc_if,
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -512,18 +518,21 @@ begin
                                 msg_id_panel           => vvc_config.msg_id_panel,
                                 config                 => vvc_config.bfm_config);
             else
-              spi_slave_receive(rx_data                => v_result(v_num_words-1 downto 0)(v_word_length-1 downto 0),
+              spi_slave_receive(rx_data                => v_data_receive(v_num_words-1 downto 0),
                                 msg                    => format_msg(v_cmd),
                                 spi_if                 => spi_vvc_if,
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
                                 scope                  => C_SCOPE,
                                 msg_id_panel           => vvc_config.msg_id_panel,
                                 config                 => vvc_config.bfm_config);
+              v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_result);
+            for i in 0 to v_num_words-1 loop
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result(i));
+            end loop;
 
           else  -- attempted slave receive when in master mode
             alert(error, "Slave receive called when VVC is in master mode.", C_SCOPE);
@@ -533,7 +542,7 @@ begin
           if not GC_MASTER_MODE then    -- slave check
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_check(data_exp               => v_cmd.data_exp(0)(v_word_length-1 downto 0),
+              spi_slave_check(data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
                               msg                    => format_msg(v_cmd),
                               spi_if                 => spi_vvc_if,
                               alert_level            => v_cmd.alert_level,

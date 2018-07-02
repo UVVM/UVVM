@@ -557,7 +557,7 @@ package body td_vvc_entity_support_pkg is
   begin
     if wanted_idx = -1 then
       -- await completion of all commands
-      if command_queue.is_not_empty(VOID) or executor_is_busy then
+      if not command_queue.is_empty(VOID) or executor_is_busy then
         log(await_completion_pending_msg_id, "await_completion() - Pending completion " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
         loop
           if command.timeout = 0 ns then

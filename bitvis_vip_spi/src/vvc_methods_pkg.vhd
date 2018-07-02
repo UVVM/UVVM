@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -35,7 +35,7 @@ use work.td_target_support_pkg.all;
 package vvc_methods_pkg is
 
   --===============================================================================================
-  -- Types and constants for the SPI VVC 
+  -- Types and constants for the SPI VVC
   --===============================================================================================
   constant C_VVC_NAME : string := "SPI_VVC";
 
@@ -55,10 +55,10 @@ package vvc_methods_pkg is
     cmd_queue_count_max                   : natural;  -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;  -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level;  -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural;  -- Maximum number of unfetched results before result_queue is full. 
+    result_queue_count_max                : natural;  -- Maximum number of unfetched results before result_queue is full.
     result_queue_count_threshold_severity : t_alert_level;  -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
     result_queue_count_threshold          : natural;  -- Severity of alert to be initiated if exceeding result_queue_count_threshold
-    bfm_config                            : t_spi_bfm_config;  -- Configuration for the BFM. See BFM quick reference 
+    bfm_config                            : t_spi_bfm_config;  -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;  -- VVC dedicated message ID panel
   end record;
 
@@ -122,10 +122,10 @@ package vvc_methods_pkg is
 
   --==============================================================================
   -- Methods dedicated to this VVC
-  -- - These procedures are called from the testbench in order to queue BFM calls 
-  --   in the VVC command queue. The VVC will store and forward these calls to the 
-  --   SPI BFM when the command is at the from of the VVC command queue. 
-  -- - For details on how the BFM procedures work, see spi_bfm_pkg.vhd or the 
+  -- - These procedures are called from the testbench in order to queue BFM calls
+  --   in the VVC command queue. The VVC will store and forward these calls to the
+  --   SPI BFM when the command is at the from of the VVC command queue.
+  -- - For details on how the BFM procedures work, see spi_bfm_pkg.vhd or the
   --   quickref.
   --==============================================================================
 
@@ -194,7 +194,9 @@ package vvc_methods_pkg is
     signal VVCT                           : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant num_words                    : in    positive := 1;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS
     );
 
   -- Single-word
@@ -279,6 +281,7 @@ package vvc_methods_pkg is
     signal VVCT                     : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
     constant msg                    : in    string;
+    constant num_words              : in    positive := 1;
     constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS
     );
 
@@ -337,7 +340,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC    
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data(0)(v_word_length-1 downto 0) := v_normalized_data(0)(v_word_length-1 downto 0);
     shared_vvc_cmd.num_words                         := v_num_words;
@@ -368,7 +371,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC    
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data                         := v_normalized_data;
     shared_vvc_cmd.num_words                    := v_num_words;
@@ -385,7 +388,7 @@ package body vvc_methods_pkg is
     constant data                         : in    std_logic_vector;
     constant data_exp                     : in    std_logic_vector;
     constant msg                          : in    string;
-    constant alert_level                  : in    t_alert_level                  := error;    
+    constant alert_level                  : in    t_alert_level                  := error;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
     ) is
     constant proc_name             : string                                                                            := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -403,7 +406,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                       := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC    
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_CHECK);
     shared_vvc_cmd.data(0)(v_word_length-1 downto 0)     := v_normalized_data(0)(v_word_length-1 downto 0);
     shared_vvc_cmd.data_exp(0)(v_word_length-1 downto 0) := v_normalized_data_exp(0)(v_word_length-1 downto 0);
@@ -439,7 +442,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC   
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_TRANSMIT_AND_CHECK);
     shared_vvc_cmd.data                         := v_normalized_data;
     shared_vvc_cmd.data_exp                     := v_normalized_data_exp;
@@ -517,7 +520,9 @@ package body vvc_methods_pkg is
     signal VVCT                           : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant num_words                    : in    positive := 1;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -527,7 +532,9 @@ package body vvc_methods_pkg is
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_RECEIVE_ONLY);
+    shared_vvc_cmd.num_words                    := num_words;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
+    shared_vvc_cmd.action_between_words         := action_between_words;
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -620,7 +627,7 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                   := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC    
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_AND_RECEIVE);
     shared_vvc_cmd.data(0)(v_word_length-1 downto 0) := v_normalized_data(0)(v_word_length-1 downto 0);
     shared_vvc_cmd.num_words                         := v_num_words;
@@ -649,12 +656,12 @@ package body vvc_methods_pkg is
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC    
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT_AND_RECEIVE);
-    shared_vvc_cmd.data(v_num_words-1 downto 0)(v_word_length-1 downto 0) := v_normalized_data(v_num_words-1 downto 0)(v_word_length-1 downto 0);
-    shared_vvc_cmd.num_words                                              := v_num_words;
-    shared_vvc_cmd.word_length                                            := v_word_length;
-    shared_vvc_cmd.when_to_start_transfer                                 := when_to_start_transfer;
+    shared_vvc_cmd.data                   := v_normalized_data;
+    shared_vvc_cmd.num_words              := v_num_words;
+    shared_vvc_cmd.word_length            := v_word_length;
+    shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     send_command_to_vvc(VVCT);
   end procedure;
 
@@ -793,6 +800,7 @@ package body vvc_methods_pkg is
     signal VVCT                     : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
     constant msg                    : in    string;
+    constant num_words              : in    positive := 1;
     constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
@@ -803,6 +811,7 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_RECEIVE_ONLY);
+    shared_vvc_cmd.num_words              := num_words;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     send_command_to_vvc(VVCT);
   end procedure;

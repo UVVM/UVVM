@@ -162,7 +162,7 @@ package ti_generic_queue_pkg is
     );
 
     procedure delete(
-      constant element  : t_generic_element
+      constant element : in t_generic_element
     );
 
     procedure delete(
@@ -244,7 +244,7 @@ package ti_generic_queue_pkg is
       constant position_val : in positive) return integer;
 
     impure function get_entry_num(
-      constant position_val : positive) return integer;
+      constant position_val : in positive) return integer;
 
     procedure print_queue(
       constant instance : in integer);
@@ -553,14 +553,16 @@ package body ti_generic_queue_pkg is
       if scope'length > C_LOG_SCOPE_WIDTH then
         vr_scope := (others => scope(1 to C_LOG_SCOPE_WIDTH));
       else
-        vr_scope := (others => (1 to scope'length => scope, others => NUL));
+        vr_scope(instance)                    := (others =>  NUL);
+        vr_scope(instance)(1 to scope'length) := scope;
       end if;
       vr_scope_is_defined := (others => true);
     else
       if scope'length > C_LOG_SCOPE_WIDTH then
         vr_scope(instance) := scope(1 to C_LOG_SCOPE_WIDTH);
       else
-        vr_scope(instance) := (1 to scope'length => scope, others => NUL);
+        vr_scope(instance)                    := (others =>  NUL);
+        vr_scope(instance)(1 to scope'length) := scope;
       end if;
       vr_scope_is_defined(instance) := true;
     end if;
@@ -853,7 +855,7 @@ package body ti_generic_queue_pkg is
           if v_deletes_remaining > 0 then
             if (v_preceding_element_ptr = null) then
               -- We just removed the first entry, so there's no pointer from a preceding entry. Next to delete is the first entry.
-              v_element_to_delete_ptr := vr_first_element(instance).next_element;
+              v_element_to_delete_ptr := vr_first_element(instance);
             else  -- Removed an intermediate or last entry. Next to delete is the pointer from the preceding element
               v_element_to_delete_ptr := v_preceding_element_ptr.next_element;
             end if;
@@ -936,8 +938,8 @@ package body ti_generic_queue_pkg is
   end procedure;
 
   procedure delete(
-    constant instance : integer;
-    constant element  : t_generic_element
+    constant instance : in integer;
+    constant element  : in t_generic_element
   ) is
     variable v_entry_num : integer:= find_entry_num(element);
   begin
@@ -945,7 +947,7 @@ package body ti_generic_queue_pkg is
   end procedure;
 
   procedure delete(
-    constant element  : t_generic_element
+    constant element  : in t_generic_element
   ) is
   begin
     delete(1, element);
@@ -1149,7 +1151,7 @@ package body ti_generic_queue_pkg is
   -- Returns position of entry if found, else C_NO_MATCH.
   impure function find_position(
     constant instance : in integer;
-    constant element  :    t_generic_element  --
+    constant element  : in t_generic_element  --
     ) return integer is
     variable v_element_ptr : t_element_ptr;
     variable v_matched_position    : integer;

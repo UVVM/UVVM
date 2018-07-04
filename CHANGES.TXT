@@ -9,6 +9,11 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.07.04
+--------------------
+Released: 2018-07-04
+- Fixed bug in the generic queue package
+
 
 v2018.07.02
 --------------------

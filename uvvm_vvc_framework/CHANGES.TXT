@@ -3,6 +3,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.3.1
+----------
+Released: 2018-07-04
+- Fixed bug in generic queue package which caused compile error in some simulator versions
+
 v2.3.0
 ----------
 Released: 2018-07-02

@@ -1,4 +1,0 @@
-# Name URL version
-bitvis_vip_avalon_st ssh://stash.bitvis.no/bv_vip/bitvis_vip_avalon_st.git branch:development
-bitvis_util          ssh://stash.bitvis.no/bv_util/bitvis_util.git  tag:v2.5.1
-x_ieee_proposed      ssh://stash.bitvis.no/ex_vip/ieee_proposed.git tag:v0.1.4

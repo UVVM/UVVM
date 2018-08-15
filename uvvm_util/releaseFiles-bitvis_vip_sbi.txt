@@ -1,8 +1,0 @@
-./doc/sbi_bfm_QuickRef.pdf
-./src/sbi_bfm_pkg.vhd
-./script/fix_vmap.tcl
-./script/compile_bfm.do
-./VERSION.TXT
-./LICENSE.TXT
-./CHANGES.TXT
-./README.TXT

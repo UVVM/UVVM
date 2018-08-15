@@ -1,5 +1,0 @@
-# Name URL version
-bitvis_vip_sbi     ssh://stash.bitvis.no/bv_vip/bitvis_vip_sbi.git  branch:development
-uvvm_util          ssh://stash.bitvis.no/bv_uvvm/uvvm_util.git          branch:development
-uvvm_vvc_framework ssh://stash.bitvis.no/bv_uvvm/uvvm_vvc_framework.git branch:development
-vunit              ssh://git@stash.bitvis.no/bv_vunit/vunit.git         branch:master

@@ -34,6 +34,7 @@ context vunit_lib.vunit_run_context;
 library uvvm_util;
 use uvvm_util.types_pkg.all;
 use uvvm_util.string_methods_pkg.all;
+use uvvm_util.global_signals_and_shared_variables_pkg.all;
 use uvvm_util.adaptations_pkg.all;
 use uvvm_util.methods_pkg.all;
 use uvvm_util.bfm_common_pkg.all;

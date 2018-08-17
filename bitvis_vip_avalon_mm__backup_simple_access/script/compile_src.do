@@ -1,6 +1,6 @@
 #========================================================================================================================
-# Copyright (c) 2016 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -12,7 +12,6 @@
 
 # This file may be called with an argument
 # arg 1: Part directory of this library/module
-
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -29,73 +28,74 @@ if {[batch_mode]} {
 } else {
   onerror {abort all}
 }
-#Just in case...
-quietly quit -sim   
 
 # Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} { 
-  quietly set version [eval "vsim -version"]
-  # puts "Version is: $version"
-  if {[regexp -nocase {modelsim} $version]} {
+if {[catch {eval "vsim -version"} message] == 0} {
+  quietly set simulator_version [eval "vsim -version"]
+  # puts "Version is: $simulator_version"
+  if {[regexp -nocase {modelsim} $simulator_version]} {
     quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $version]} {
+  } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
-    puts "Unknown simulator. Attempting use use Modelsim commands."
+    puts "Unknown simulator. Attempting to use Modelsim commands."
     quietly set simulator "modelsim"
-  }  
-} else { 
+  }
+} else {
     puts "vsim -version failed with the following message:\n $message"
     abort all
 }
 
-if { [string equal -nocase $simulator "modelsim"] } {
-  ###########
-  # Fix possible vmap bug
-  do fix_vmap.tcl 
-  ##########
-}
 
-# Set up vip_avalon_mm_part_path and lib_name
 #------------------------------------------------------
-quietly set lib_name "bitvis_vip_avalon_mm"
-quietly set part_name "bitvis_vip_avalon_mm__backup_simple_access"
-# path from mpf-file in sim
-quietly set vip_avalon_mm_part_path "../..//$part_name"
+# Set up source_path and default_target
+#
+#   0 args: regular UVVM directory structure expected
+#   1 args: source directory specified, target will be current directory
+#   2 args: source directory and target directory specified
+#
+#------------------------------------------------------
 
 if { [info exists 1] } {
-  # path from this part to target part
-  quietly set vip_avalon_mm_part_path "$1/..//$part_name"
+  quietly set source_path "$1"
+  quietly set default_target 0
+
+  if {$argc == 1} {
+    echo "\nUser specified source directory"
+    quietly set target_path "$source_path/sim"
+  } elseif {$argc >= 2} {
+    echo "\nUser specified source and target directory"
+    quietly set target_path "$2"
+  }
   unset 1
+} else {
+  echo "\nDefault output directory"
+  # path from mpf-file in /sim folder
+  quietly set source_path ".."
+  quietly set target_path "$source_path/sim"
+  quietly set default_target 1
 }
 
+namespace eval compile_util {
+  variable local_source_path $source_path
+  variable source_path $local_source_path/../uvvm_util
+  variable target_path $local_source_path/../uvvm_util/sim
 
-# (Re-)Generate library and Compile source files
-#--------------------------------------------------
-echo "\n\nRe-gen lib and compile $lib_name source\n"
+  variable argc -1
 
-
-if {[file exists $vip_avalon_mm_part_path/sim/$lib_name]} {
-  file delete -force $vip_avalon_mm_part_path/sim/$lib_name
+  source $local_source_path/../script/compile_src.do
 }
-if {![file exists $vip_avalon_mm_part_path/sim]} {
-  file mkdir $vip_avalon_mm_part_path/sim
+namespace delete compile_util
+
+namespace eval compile_vvc_framework {
+  variable local_source_path $source_path
+  variable source_path $local_source_path/../uvvm_vvc_framework
+  variable target_path $local_source_path/../uvvm_vvc_framework/sim
+
+  variable argc -1
+
+  source $local_source_path/../script/compile_src.do
 }
+namespace delete compile_vvc_framework
 
-vlib $vip_avalon_mm_part_path/sim/$lib_name
-vmap $lib_name $vip_avalon_mm_part_path/sim/$lib_name
-
-if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -work $lib_name"
-} elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -dbg -work $lib_name"
-}
-
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_bfm_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/vvc_cmd_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/vvc_methods_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
-eval vcom  $compdirectives  $vip_avalon_mm_part_path/src/avalon_mm_vvc.vhd
+do $source_path/../script/compile_src.do $source_path $target_path

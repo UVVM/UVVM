@@ -1,6 +1,18 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.1.2
+----------
+Released: 2018-08-28
+- Added VVC context file
+- Updated documentation
+- Compile script changed according to new structure
+
+v2.1.1
+----------
+Released: 2018-04-09
+- Added multicast information to VVC QR.
+
 v2.1.0
 ----------
 Released: 2017-10-16

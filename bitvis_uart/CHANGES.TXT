@@ -1,6 +1,11 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.2
+----------
+Released: 2018-08-28
+- Scripts updated to work with Riviera Pro
+
 v1.1.1
 ----------
 Released: 2017-12-20

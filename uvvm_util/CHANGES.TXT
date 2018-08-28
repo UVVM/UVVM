@@ -3,7 +3,17 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.6.0
+----------
+Released: 2018-08-28
+- Updated documentation
+- Compile script changed according to new structure
+- Fixed simulation status in shared_uvvm_status and hierarchical alert messages
+- New package for global signals and shared variables added, global_signals_and_shared_variables_pkg.vhd.
+
+
 v2.5.0
+----------
 Released: 2018-07-02
 - Added message id ID_DATA and ID_CTRL.
 - Added constants ALL_ENABLED_INTSTANCES, C_MAX_QUEUE_INSTANCE_NUM,

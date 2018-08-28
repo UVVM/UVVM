@@ -84,5 +84,7 @@ bitvis_vip_uart_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 's
 # Add all testbenches to lib
 uvvm_vvc_framework_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'internal_tb', '*.vhd'))
 
+ui.set_compile_option('modelsim.vcom_flags', ["-suppress", "1346,1236"])
+
 # Compile and run all test cases
 ui.main()

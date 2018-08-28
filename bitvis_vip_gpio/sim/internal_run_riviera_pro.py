@@ -48,7 +48,7 @@ bitvis_vip_gpio_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 's
 # Add all testbenches to lib
 bitvis_vip_gpio_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 
-ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg", "-relax"])
+ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
 
 # Compile and run
 ui.main()

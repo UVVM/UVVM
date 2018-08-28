@@ -71,7 +71,7 @@ bitvis_vip_spi_lib.add_source_file(join(root, '..', 'internal_tb', 'spi_master_s
 
 spi_vvc_tb = bitvis_vip_spi_lib.entity("spi_vvc_tb")
 
-ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg", "-relax"])
+ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
 
 # set a generic
 # spi_vvc_tb.set_generic("gc_spi_mode", "2");

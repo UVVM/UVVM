@@ -24,32 +24,20 @@ os.environ["VUNIT_SIMULATOR"] = "rivierapro"
 
 from vunit import VUnit, VUnitCLI
 
-def execute_riviera_pro_command(path):
-  try:
-    output = subprocess.call(['vsimsa', '-do', 'do ' + path + ';exit'], stderr=subprocess.PIPE)
-  except subprocess.CalledProcessError as exc:
-    LOGGER.error("Failed to run %s by running 'vsimsa -do' in %s exit code was %i",
-                 path, cwd, exc.returncode)
-    print("== Output of 'vsimsa -do' " + ("=" * 60))
-    print(exc.output)
-    print("=======================" + ("=" * 60))
-    raise
-
 root = dirname(__file__)
+uvvm_dir = join(root, '..')
 
 # Get command line arguments
 ui = VUnit.from_argv()
 
-# Create VHDL libraries and add the related project files to these
-project_root = join(dirname(__file__), '..', '..')
-
-execute_riviera_pro_command('../script/compile_src.do')
-
-uvvm_util_lib = ui.add_external_library('uvvm_util', join(project_root, 'uvvm_util', 'sim', 'uvvm_util'))
+# UVVM UTIL
+uvvm_util_lib = ui.add_library('uvvm_util')
+uvvm_util_lib.add_source_files(join(uvvm_dir, 'src', '*.vhd'))
 
 # Add all testbenches to lib
-# lib = ui.add_library('lib')
-uvvm_util_lib.add_source_files(join(root, '../tb', '*.vhd'))
+uvvm_util_lib.add_source_files(join(uvvm_dir, 'tb', '*.vhd'))
+
+ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
 
 # Compile and run all test cases
 ui.main()

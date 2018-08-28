@@ -41,19 +41,6 @@ os.environ["VUNIT_SIMULATOR"] = "modelsim"
 
 from vunit import VUnit, VUnitCLI
 
-def call_bitvis_sim_script(path):
-  try:
-    output = subprocess.call(['vsim', '-c', '-do', 'do ' + path + ';exit'], stderr=subprocess.PIPE)
-  except subprocess.CalledProcessError as exc:
-    LOGGER.error("Failed to run %s by running 'vsim -c -do' in %s exit code was %i",
-                 path, cwd, exc.returncode)
-    print("== Output of 'vsim -c -do' " + ("=" * 60))
-    print(exc.output)
-    print("=======================" + ("=" * 60))
-    raise
-
-
-
 def generate_tests(obj, spi_modes, data_widths, data_array_widths):
     """
     Generate test by varying the mode and data width generics

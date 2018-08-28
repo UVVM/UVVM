@@ -98,13 +98,13 @@ bitvis_vip_axistream_lib.add_source_files(join(project_root, 'uvvm_vvc_framework
 # Add all testbenches to lib
 bitvis_vip_axistream_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 
-## Run axistream t_slv_array BFM test - set generics : Generate tests for various data widths / tuser widths
-bitvis_vip_axistream_lib.add_source_files(join(root, '../internal_tb', 'axistream_bfm_slv_array_tb.vhd'))
+ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
+
+# Run axistream t_slv_array BFM test - set generics : Generate tests for various data widths / tuser widths
 axistream_bfm_slv_array_tb = bitvis_vip_axistream_lib.entity("axistream_bfm_slv_array_tb")
 generate_tests(axistream_bfm_slv_array_tb, [32], [8], [7], [4]);
 
 # Run axistream t_slv_array VVC test - set generics : Generate tests for various data widths / tuser widths
-bitvis_vip_axistream_lib.add_source_files(join(root, '../internal_tb', 'axistream_vvc_slv_array_tb.vhd'))
 axistream_vvc_slv_array_tb = bitvis_vip_axistream_lib.entity("axistream_vvc_slv_array_tb")
 generate_tests(axistream_vvc_slv_array_tb, [32], [8], [7], [4]);
 
@@ -123,8 +123,6 @@ generate_tests_no_tuser(axistream_vvc_simple_tb, [32], [1]);
 # Run axistream t_byte_array VVC test - testing await_any_completion
 axistream_multiple_vvc_tb = bitvis_vip_axistream_lib.entity("axistream_multiple_vvc_tb")
 generate_tests_multiple_vvc(axistream_multiple_vvc_tb, [32], [1]);
-
-ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
 
 # Compile and run all test cases
 ui.main()

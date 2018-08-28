@@ -38,34 +38,20 @@ os.environ["VUNIT_SIMULATOR"] = "modelsim"
 
 from vunit import VUnit, VUnitCLI
 
-def call_bitvis_sim_script(path):
-  try:
-    output = subprocess.call(['vsim', '-c', '-do', 'do ' + path + ';exit'], stderr=subprocess.PIPE)
-  except subprocess.CalledProcessError as exc:
-    LOGGER.error("Failed to run %s by running 'vsim -c -do' in %s exit code was %i",
-                 path, cwd, exc.returncode)
-    print("== Output of 'vsim -c -do' " + ("=" * 60))
-    print(exc.output)
-    print("=======================" + ("=" * 60))
-    raise
-
 root = dirname(__file__)
+uvvm_dir = join(root, '..')
 
 # Get command line arguments
 ui = VUnit.from_argv()
 
-# Create VHDL libraries and add the related project files to these
-project_root = join(dirname(__file__), '..', '..')
-
-call_bitvis_sim_script('../script/compile_src.do')
-
-# Since we use encrypted source code we must use add_external_library
-# All of these libraries must already be compiled before calling this script
-uvvm_util_lib = ui.add_external_library('uvvm_util', join(project_root, 'uvvm_util', 'sim', 'uvvm_util'))
+# UVVM UTIL
+uvvm_util_lib = ui.add_library('uvvm_util')
+uvvm_util_lib.add_source_files(join(uvvm_dir, 'src', '*.vhd'))
 
 # Add all testbenches to lib
-# lib = ui.add_library('lib')
-uvvm_util_lib.add_source_files(join(root, '../tb', '*.vhd'))
+uvvm_util_lib.add_source_files(join(uvvm_dir, 'tb', '*.vhd'))
+
+ui.set_compile_option('modelsim.vcom_flags', ["-suppress", "1346,1236"])
 
 # Compile and run all test cases
 ui.main()

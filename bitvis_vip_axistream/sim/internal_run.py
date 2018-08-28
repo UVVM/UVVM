@@ -117,12 +117,10 @@ bitvis_vip_axistream_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd
 ui.set_compile_option('modelsim.vcom_flags', ["-suppress", "1346,1236"])
 
 # Run axistream t_slv_array BFM test - set generics : Generate tests for various data widths / tuser widths
-#bitvis_vip_axistream_lib.add_source_files(join(root, '../internal_tb', 'axistream_bfm_slv_array_tb.vhd'))
 axistream_bfm_slv_array_tb = bitvis_vip_axistream_lib.entity("axistream_bfm_slv_array_tb")
 generate_tests(axistream_bfm_slv_array_tb, [32], [8], [7], [4]);
 
 # Run axistream t_slv_array VVC test - set generics : Generate tests for various data widths / tuser widths
-#bitvis_vip_axistream_lib.add_source_files(join(root, '../internal_tb', 'axistream_vvc_slv_array_tb.vhd'))
 axistream_vvc_slv_array_tb = bitvis_vip_axistream_lib.entity("axistream_vvc_slv_array_tb")
 generate_tests(axistream_vvc_slv_array_tb, [32], [8], [7], [4]);
 

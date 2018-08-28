@@ -24,17 +24,6 @@ os.environ["VUNIT_SIMULATOR"] = "rivierapro"
 
 from vunit import VUnit, VUnitCLI
 
-def execute_riviera_pro_command(path):
-  try:
-    output = subprocess.call(['vsimsa', '-do', 'do ' + path + ';exit'], stderr=subprocess.PIPE)
-  except subprocess.CalledProcessError as exc:
-    LOGGER.error("Failed to run %s by running 'vsimsa -do' in %s exit code was %i",
-                 path, cwd, exc.returncode)
-    print("== Output of 'vsimsa -do' " + ("=" * 60))
-    print(exc.output)
-    print("=======================" + ("=" * 60))
-    raise
-
 root = dirname(__file__)
 
 # Get command line arguments

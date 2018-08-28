@@ -1349,8 +1349,8 @@ package body string_methods_pkg is
     ) is
     variable v_line          : line;
     variable v_line_copy     : line;
-    variable v_status_failed : boolean := true;
-    variable v_mismatch      : boolean := false;
+    variable v_more_than_expected_alerts : boolean := false;
+    variable v_less_than_expected_alerts      : boolean := false;
     variable v_header        : string(1 to 42);
     constant prefix          : string := C_LOG_PREFIX & "     ";
   begin
@@ -1377,9 +1377,9 @@ package body string_methods_pkg is
         write(v_line, "     *** " & to_string(i,0) & " *** " & LF);
         if (i > MANUAL_CHECK) then
           if (val(i)(REGARD) < val(i)(EXPECT)) then
-            v_mismatch := true;
+            v_less_than_expected_alerts := true;
           else
-            v_status_failed  := false;
+            v_more_than_expected_alerts  := true;
           end if;
         end if;
       end if;
@@ -1388,9 +1388,9 @@ package body string_methods_pkg is
     -- Print a conclusion when called from the FINAL part of the test sequencer
     -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
     if order = FINAL then
-      if not v_status_failed then
+      if v_more_than_expected_alerts then
         write(v_line, ">> Simulation FAILED, with unexpected serious alert(s)" & LF);
-      elsif v_mismatch then
+      elsif v_less_than_expected_alerts then
         write(v_line, ">> Simulation FAILED: Mismatch between counted and expected serious alerts" & LF);
       else
         write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);

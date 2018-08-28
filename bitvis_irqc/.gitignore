@@ -1,0 +1,12 @@
+# Ignore compiled libraries
+sim/vunit_out/*
+sim/bitvis_irqc/*
+sim/*.txt
+sim/*.cr.mti
+sim/*.wlf
+sim/transcript
+sim/modelsim.ini
+transcript
+.library_mapping.xml
+.project
+.settings/*

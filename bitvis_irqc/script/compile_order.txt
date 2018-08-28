@@ -13,3 +13,4 @@
 ../../uvvm_util/src/bfm_common_pkg.vhd
 ../../uvvm_util/src/uvvm_util_context.vhd
 ../../bitvis_vip_sbi/src/sbi_bfm_pkg.vhd
+../tb/irqc_tb.vhd

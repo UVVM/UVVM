@@ -1,0 +1,16 @@
+# Ignore compiled libraries
+sim/bitvis_vip_avalon_mm
+sim/_Alert.txt
+sim/_Log.txt
+sim/bitvis_vip_avalon_mm.cr.mti
+sim/internal_bitvis_vip_avalon_mm.cr.mti
+sim/transcript
+sim/compile/*
+sim/library.cfg
+sim/vsim.wlf
+sim/vunit_out/*
+sim/modelsim.ini
+internal_script/transcript
+.library_mapping.xml
+.project
+.settings/*

@@ -1,0 +1,16 @@
+Bitvis VIP Wishbone - Overview of Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+v2.0.0
+----------
+Released: 2017-01-10
+
+- Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
+- Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
+- Added AWAIT_ANY_COMPLETION. 
+- Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
+-  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
+-  - updated call to store_result()
+- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
+

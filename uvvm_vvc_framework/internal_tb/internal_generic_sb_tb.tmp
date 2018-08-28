@@ -1,0 +1,566 @@
+--========================================================================================================================
+-- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
+-- contact Bitvis AS <support@bitvis.no>.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+--========================================================================================================================
+
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
+
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_generic_sb_pkg;
+
+package td_sb_pkg is new uvvm_vvc_framework.ti_generic_sb_pkg
+  generic map (
+        t_generic_element           => integer,
+        GC_SB_FIFO_COUNT_MAX        => 1000,
+        GC_SB_FIFO_COUNT_THRESHOLD  => 0,
+        GC_SB_ARRAY_WIDTH           => 10
+        );
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+library vunit_lib;
+context vunit_lib.vunit_run_context;
+
+-- Test case entity
+entity generic_sb_tb is
+  generic (
+    runner_cfg : string := runner_cfg_default);
+end entity;
+
+-- Test case architecture
+architecture func of generic_sb_tb is
+
+  use work.td_sb_pkg.all;
+  shared variable sb_under_test : t_generic_sb;
+
+  -- scope
+  constant C_SCOPE      : string  := "test_bench";
+  constant C_SB_SCOPE   : string  := "sb_scope";
+  -- scoreboard
+  constant C_SB_INDEX_1 : integer := 1;
+  constant C_SB_INDEX_2 : integer := 2;
+
+
+  begin
+
+  ------------------------------------------------
+  -- PROCESS: p_main
+  ------------------------------------------------
+  p_main: process
+
+    variable v_alert_num_mismatch : boolean := false;
+
+
+    --------------------------------------------------------------------------------------
+    -- String compare with error logging
+    --------------------------------------------------------------------------------------
+    procedure string_compare (
+      constant received   : string;
+      constant expected   : string;
+      constant msg        : string
+    ) is
+    begin
+      if (received = expected) then
+        log(msg & " is OK => received " & received);
+      else
+        alert(ERROR, msg & " failed. Expected " & expected & ", but received " & received & ". ",C_SCOPE);
+      end if;
+    end procedure;
+
+
+    --------------------------------------------------------------------------------------
+    -- Setup of SB, and test of scope and size functions
+    --------------------------------------------------------------------------------------
+    procedure setup_and_initial_check_of_sb(
+      constant dummy    : t_void
+    ) is
+    begin
+      log(ID_LOG_HDR, "Setting up generic SB FIFO and verifying scope and size", C_SCOPE);
+      sb_under_test.init_sb(VOID);
+
+      sb_under_test.set_scope(C_SB_SCOPE);
+      log("SB FIFO instantiated with depth " & to_string(sb_under_test.get_sb_count_max(VOID)));
+      string_compare(sb_under_test.get_scope(VOID), C_SB_SCOPE, "Checking SB FIFO scope");
+
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Checking if SB FIFO is initially empty", C_SCOPE);
+      check_value(sb_under_test.get_count(VOID), 0, ERROR, "Checking if SB FIFO is initially empty", C_SCOPE);
+      check_value(sb_under_test.get_sb_count_max(VOID), 1000, ERROR, "Checking size of queue", C_SCOPE); -- NOTE: Update the value when SB FIFO size is changed.
+      check_value(sb_under_test.get_sb_count_threshold(VOID), 0, ERROR, "Checking SB FIFO count alert level", C_SCOPE);
+    end procedure setup_and_initial_check_of_sb;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of read and write within size limit
+    --------------------------------------------------------------------------------------
+    procedure test_of_put_get_empty_and_not_empty(
+      constant dummy    : t_void
+    ) is
+      variable v_get_value : integer;
+    begin
+      log(ID_LOG_HDR, "Testing get and put functions within SB FIFO size limit", C_SCOPE);
+
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Checking if SB FIFO is initially empty", C_SCOPE);
+
+      log("Filling up the SB FIFO with integers from 0 to " & to_string(sb_under_test.get_sb_count_max(VOID)-1));
+      for i in 0 to sb_under_test.get_sb_count_max(VOID)-1 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+      check_value(sb_under_test.is_not_empty(VOID), ERROR, "Checking if SB FIFO is not empty after put", C_SCOPE);
+
+      log("Checking that SB FIFO content is consistent with put values");
+      for i in 0 to sb_under_test.get_sb_count_max(VOID)-1 loop
+        v_get_value := sb_under_test.get(VOID);
+        log(ID_SEQUENCER_SUB, "Got integer " & to_string(v_get_value), C_SCOPE);
+        check_value(v_get_value, i, ERROR, "Checking that retrieved value is equal to written value");
+      end loop;
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Checking if SB FIFO is empty after get", C_SCOPE);
+
+    end procedure test_of_put_get_empty_and_not_empty;
+
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of flush function
+    --------------------------------------------------------------------------------------
+    procedure test_of_flush(
+      constant dummy    : t_void
+    ) is
+    begin
+      log(ID_LOG_HDR, "Testing of flush command", C_SCOPE);
+
+      log("Filling up the SB FIFO with integers from 0 to " & to_string(sb_under_test.get_sb_count_max(VOID)-1));
+      for i in 0 to sb_under_test.get_sb_count_max(VOID)-1 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+
+      log("Checking flush of queue");
+      check_value(sb_under_test.is_not_empty(VOID), ERROR, "Checking if SB FIFO is not empty after put", C_SCOPE);
+      sb_under_test.flush(void);
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Checking if SB FIFO is empty after flush", C_SCOPE);
+    end procedure test_of_flush;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of put when SB FIFO is full
+    --------------------------------------------------------------------------------------
+    procedure test_of_put_to_full_sb(
+      constant dummy    : t_void
+    ) is
+    begin
+      log(ID_LOG_HDR, "Test of put when SB FIFO is full", C_SCOPE);
+
+      sb_under_test.set_sb_count_threshold(950);
+      sb_under_test.set_sb_count_threshold_severity(TB_WARNING);
+      log("Filling up the SB FIFO with integers from 0 to " & to_string(sb_under_test.get_sb_count_max(VOID)));
+      for i in 0 to sb_under_test.get_sb_count_max(VOID)-1 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+      increment_expected_alerts(TB_WARNING, 1);
+
+      -- Adding an item when the SB FIFO is full is supposed to result in a TB_ERROR.
+      -- To counter this the expected alerts counter is increased by one.
+      increment_expected_alerts(TB_ERROR, 1);
+      sb_under_test.put(0);
+      -- Reset the SB FIFO by calling flush.
+      sb_under_test.flush(VOID);
+      sb_under_test.set_sb_count_threshold(0);
+
+    end procedure test_of_put_to_full_sb;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of get when SB FIFO is empty
+    --------------------------------------------------------------------------------------
+    procedure test_of_get_from_empty_sb(
+      constant dummy    : t_void
+    ) is
+      variable v_get_value : integer;
+    begin
+      log(ID_LOG_HDR, "Test of get when SB FIFO is empty", C_SCOPE);
+
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Verifying that SB FIFO is empty", C_SCOPE);
+      -- Reading (and hence removeing) an item when the SB FIFO is empty is supposed to result in a TB_ERROR.
+      -- To counter this the expected alerts counter is increased by one.
+      increment_expected_alerts(TB_ERROR, 1);
+      v_get_value := sb_under_test.get(VOID);
+    end procedure test_of_get_from_empty_sb;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of memory leakage in SB.
+    --    This test will run until stopped manually. Verify that RAM usage of simulator
+    --    is consistent over time when running this test.
+    --------------------------------------------------------------------------------------
+    procedure test_memory_leakage(
+      constant dummy  : t_void
+    ) is
+      variable v_get_value : integer;
+    begin
+      log(ID_LOG_HDR, "Running memory leakage stimuli. Verify consistent RAM usage and stop the simulation.", C_SCOPE);
+
+      while true loop
+        sb_under_test.put(1);
+        v_get_value := sb_under_test.get(VOID);
+      end loop;
+
+    end procedure test_memory_leakage;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of SB FIFO max count manipulation
+    --------------------------------------------------------------------------------------
+    procedure test_of_sb_max_count_manipulation(
+      constant dummy    : t_void
+    ) is
+      variable v_get_value : integer;
+    begin
+      log(ID_LOG_HDR, "Test of SB FIFO max count manipulation", C_SCOPE);
+
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Verifying that SB FIFO is empty", C_SCOPE);
+
+      -- Test the SB FIFO with the new size
+      log("Setting SB FIFO max count to 10");
+      sb_under_test.set_sb_count_max(10);
+      check_value(sb_under_test.get_sb_count_max(VOID),10, ERROR, "Checking if SB FIFO max count was set correctly", C_SCOPE);
+      log("Filling up the SB FIFO with integers from 0 to 9");
+      for i in 0 to 9 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+      check_value(sb_under_test.is_not_empty(VOID), ERROR, "Checking if SB FIFO is not empty after put", C_SCOPE);
+
+      log("Checking that SB FIFO content is consistent with put values");
+      for i in 0 to 9 loop
+        v_get_value := sb_under_test.get(VOID);
+        log(ID_SEQUENCER_SUB, "Got integer " & to_string(v_get_value), C_SCOPE);
+        check_value(v_get_value, i, ERROR, "Checking that retrieved value is equal to written value");
+      end loop;
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Checking if SB FIFO is empty after get", C_SCOPE);
+
+
+      -- Increase the SB FIFO size and fill it up
+      log("Setting SB FIFO max count to 20");
+      sb_under_test.set_sb_count_max(20);
+      check_value(sb_under_test.get_sb_count_max(VOID),20, ERROR, "Checking if SB FIFO max count was set correctly", C_SCOPE);
+      log("Filling up the SB FIFO with integers from 0 to 19");
+      for i in 0 to 19 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+      check_value(sb_under_test.is_not_empty(VOID), ERROR, "Checking if SB FIFO is not empty after put", C_SCOPE);
+
+      -- Set new, lower SB FIFO size and expect alert
+      log("Setting SB FIFO max count lower than current count");
+      increment_expected_alerts(TB_ERROR, 1);
+      sb_under_test.set_sb_count_max(5);
+      check_value(sb_under_test.get_sb_count_max(VOID),5, ERROR, "Checking if SB FIFO max count was set correctly", C_SCOPE);
+
+      -- Reset the queue
+      log("Flushing the SB FIFO and setting the max count back to 1000");
+      sb_under_test.flush(VOID);
+      sb_under_test.set_sb_count_max(1000);
+
+    end procedure test_of_sb_max_count_manipulation;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of SB FIFO fill level and alerts
+    --------------------------------------------------------------------------------------
+    procedure test_of_sb_fill_level_and_alerts(
+      constant dummy    : t_void
+    ) is
+      variable v_get_value : integer;
+    begin
+      log(ID_LOG_HDR, "Test of SB FIFO fill level and alerts", C_SCOPE);
+
+      check_value(sb_under_test.is_empty(VOID), ERROR, "Verifying that SB FIFO is empty", C_SCOPE);
+
+      -- Test the SB FIFO with the new size
+      log("Setting SB FIFO max count to 100");
+      sb_under_test.set_sb_count_max(100);
+      check_value(sb_under_test.get_sb_count_max(VOID),100, ERROR, "Checking if SB FIFO max count was set correctly", C_SCOPE);
+
+      log("Setting SB FIFO fill level alert to be triggered at 70%, with severity TB_WARNING");
+      sb_under_test.set_sb_count_threshold(70);
+      sb_under_test.set_sb_count_threshold_severity(TB_WARNING);
+      check_value(sb_under_test.get_sb_count_threshold_severity(VOID)=TB_WARNING, ERROR, "Checking that alert level was set correctly", C_SCOPE);
+      check_value(sb_under_test.get_sb_count_threshold(VOID)=70, ERROR, "Checking that fill level was set correctly", C_SCOPE);
+
+      log("Filling the SB FIFO up to 80% and expecting TB_WARNING");
+      for i in 0 to 79 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+      increment_expected_alerts(TB_WARNING, 1);
+      -- Flush queue
+      sb_under_test.flush(VOID);
+
+      log("Setting SB FIFO fill level alert to be triggered at 85%, with severity TB_WARNING");
+      sb_under_test.set_sb_count_threshold(85);
+      sb_under_test.set_sb_count_threshold_severity(TB_ERROR);
+      check_value(sb_under_test.get_sb_count_threshold_severity(VOID)=TB_ERROR, ERROR, "Checking that alert level was set correctly", C_SCOPE);
+      check_value(sb_under_test.get_sb_count_threshold(VOID)=85, ERROR, "Checking that fill level was set correctly", C_SCOPE);
+
+      log("Filling the SB FIFO up to 80% and not expecting alert");
+      for i in 0 to 79 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+
+      log("Filling the SB FIFO up from 80% to 90% and expecting TB_ERROR");
+      for i in 0 to 9 loop
+        log(ID_SEQUENCER_SUB, "Putting integer " & to_string(i), C_SCOPE);
+        sb_under_test.put(i);
+      end loop;
+      increment_expected_alerts(TB_ERROR, 1);
+      -- Flush queue
+      sb_under_test.flush(VOID);
+
+      -- Reset the queue
+      log("Flushing and resetting the queue");
+      sb_under_test.flush(VOID);
+      sb_under_test.set_sb_count_max(1000);
+      sb_under_test.set_sb_count_threshold_severity(TB_WARNING);
+      sb_under_test.set_sb_count_threshold(950);
+
+    end procedure test_of_sb_fill_level_and_alerts;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of multiple SBs
+    --
+    --  1. Put data to two SBs
+    --  2. Verify that correct SB report not empty
+    --  3. Get all data from the two SBs
+    --  4. Verify that the two SBs report empty
+    --
+    --------------------------------------------------------------------------------------
+    procedure test_of_multiple_sb(
+      constant dummy : t_void
+    ) is
+    begin
+      log(ID_LOG_HDR, "Test of multiple SB - put, check size and get", C_SCOPE);
+
+      log("Put data to SB " & to_string(C_SB_INDEX_1) & " and " & to_string(C_SB_INDEX_2));
+      for idx in 1 to 5 loop
+        if ( idx mod 2 = 0) then
+          sb_under_test.put(idx, C_SB_INDEX_1);
+        else
+          sb_under_test.put(idx, C_SB_INDEX_2);
+        end if;
+      end loop;
+
+      log("Check SB " & to_string(C_SB_INDEX_1) & " and " & to_string(C_SB_INDEX_2) & " not empty");
+      check_value(sb_under_test.is_not_empty(C_SB_INDEX_1), ERROR, "check SB " & to_string(C_SB_INDEX_1) & " not empty", C_SCOPE);
+      check_value(sb_under_test.is_not_empty(C_SB_INDEX_2), ERROR, "check SB " & to_string(C_SB_INDEX_2) & " not empty", C_SCOPE);
+
+      log("Check SB index 3 to 10 is empty");
+      for idx in 3 to 10 loop
+        check_value(sb_under_test.is_empty(idx), ERROR, "check SB " & to_string(idx) & " empty", C_SCOPE);
+      end loop;
+
+      log("Testing get from SB "&to_string(C_SB_INDEX_1)&" and "&to_string(C_SB_INDEX_2));
+      for idx in 1 to 5 loop
+        if ( idx mod 2 = 0) then
+          check_value(sb_under_test.get(C_SB_INDEX_1) = idx, ERROR, "get value not as expected", C_SCOPE);
+        else
+          check_value(sb_under_test.get(C_SB_INDEX_2) = idx, ERROR, "get value not as expected", C_SCOPE);
+        end if;
+      end loop;
+
+      log("Check SB " & to_string(C_SB_INDEX_1) & " and " & to_string(C_SB_INDEX_2) & " is empty");
+      check_value(sb_under_test.is_empty(C_SB_INDEX_1), ERROR, "check SB " & to_string(C_SB_INDEX_1) & " is empty", C_SCOPE);
+      check_value(sb_under_test.is_empty(C_SB_INDEX_2), ERROR, "check SB " & to_string(C_SB_INDEX_2) & " is empty", C_SCOPE);
+
+      sb_under_test.flush(VOID);
+    end procedure test_of_multiple_sb;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of multiple SBs check() with tag and statistics
+    --
+    --  1. Put data with tag EVEN and ODD
+    --  2. Check correct number of elements in SBs
+    --  3. Check invalid element data for tag EVEN and ODD
+    --  4. Verify SB size not affected by invalid element data check
+    --  5. Check element data with tag search
+    --  6. Verify that check removed elements
+    --  7. Check SB statistics
+    --
+    --------------------------------------------------------------------------------------
+    procedure test_of_multiple_sb_check(
+      constant dummy : t_void
+    ) is
+      variable v_num_even     : natural := 0;   -- counter
+      variable v_num_odd      : natural := 0;   -- counter
+      variable v_num_elements : natural := 10;  -- loop limit
+    begin
+      log(ID_LOG_HDR, "Test of check command and multiple SB", C_SCOPE);
+
+      sb_under_test.init_sb(VOID); -- reset all counters
+
+      log("Put data to SBs");
+      for idx in 1 to v_num_elements loop
+        if (idx mod 2 = 0) then
+          sb_under_test.put(idx, "EVEN", C_SB_INDEX_1);
+          v_num_even := v_num_even + 1;
+        else
+          sb_under_test.put(idx, "ODD", C_SB_INDEX_2);
+          v_num_odd := v_num_odd + 1;
+        end if;
+      end loop;
+
+      log("Check number of elements in SB.");
+      check_value(sb_under_test.num_items(C_SB_INDEX_1) = v_num_even, ERROR, "check number of elements.", C_SCOPE);
+      check_value(sb_under_test.num_items(C_SB_INDEX_2) = v_num_odd, ERROR, "check number of elements.", C_SCOPE);
+
+      log("Test SB check with invalid element.");
+      -- cause failed check in SB
+      check_value(sb_under_test.check(6, "EVEN", C_SB_INDEX_1) = false, ERROR, "check with invalid element data.", C_SCOPE);
+      check_value(sb_under_test.check(7, "ODD",  C_SB_INDEX_2) = false, ERROR, "check with invalid element data.", C_SCOPE);
+      -- check SB FIFO size not affected by failed check
+      check_value(sb_under_test.num_items(C_SB_INDEX_1) = v_num_even, ERROR, "check number of elements.", C_SCOPE);
+      check_value(sb_under_test.num_items(C_SB_INDEX_2) = v_num_odd, ERROR, "check number of elements.", C_SCOPE);
+
+      log("Use SB tag search to perform element data check.");
+      for idx in 1 to v_num_elements loop
+        if (idx mod 2 = 0) then
+          check_value(sb_under_test.check(idx, "EVEN", C_SB_INDEX_1), ERROR, "check oldest element in SB.", C_SCOPE);
+        else
+          check_value(sb_under_test.check(idx, "ODD",  C_SB_INDEX_2), ERROR, "check oldest element in SB.", C_SCOPE);
+        end if;
+      end loop;
+
+      log("Check SBs are empty after check.");
+      check_value(sb_under_test.is_empty(C_SB_INDEX_1), ERROR, "check SB is empty.", C_SCOPE);
+      check_value(sb_under_test.is_empty(C_SB_INDEX_2), ERROR, "check SB is empty.", C_SCOPE);
+
+      log("Check SB statistics.");
+      -- elements checked and found
+      check_value(sb_under_test.num_passed(C_SB_INDEX_1) = v_num_even, ERROR, "check num passed checks.", C_SCOPE);
+      check_value(sb_under_test.num_passed(C_SB_INDEX_2) = v_num_odd, ERROR, "check num passed checks.", C_SCOPE);
+      -- elements checked and not found
+      check_value(sb_under_test.num_failed(C_SB_INDEX_1) = 1, ERROR, "check num failed checks.", C_SCOPE);
+      check_value(sb_under_test.num_failed(C_SB_INDEX_2) = 1, ERROR, "check num failed checks.", C_SCOPE);
+      -- total elements from put() and check()
+      check_value(sb_under_test.num_total(C_SB_INDEX_1) = (2*v_num_even) + 1, ERROR, "check num total seen.", C_SCOPE);
+      check_value(sb_under_test.num_total(C_SB_INDEX_2) = (2*v_num_odd) + 1, ERROR, "check num total seen.", C_SCOPE);
+    end procedure test_of_multiple_sb_check;
+
+
+    --------------------------------------------------------------------------------------
+    -- Test of SB peek()
+    --
+    --  1. Put data to SBs
+    --  2. Peek at oldest element data
+    --  3. Peek at oldest element data with tag
+    --
+    --------------------------------------------------------------------------------------
+    procedure test_of_sb_peek(
+      constant dummy    : t_void
+    ) is
+      variable v_num_elements : natural := 10;
+    begin
+      log(ID_LOG_HDR, "Test of SB peek", C_SCOPE);
+
+      sb_under_test.init_sb(VOID); -- reset all counters and SBs
+
+      log("Put element data from 1 to " & to_string(v_num_elements));
+      for idx in 1 to v_num_elements loop
+        sb_under_test.put(idx, to_string(idx));
+      end loop;
+      check_value(sb_under_test.num_items(VOID) = v_num_elements, ERROR, "SB: check number of elements in SB.", C_SCOPE);
+
+      log("Peek at element data in SB #1, single SB");
+      for idx in v_num_elements to 1 loop
+        check_value(sb_under_test.peek(idx) = idx, ERROR, "SB: peek at element data.", C_SCOPE);
+      end loop;
+
+      check_value(sb_under_test.num_items(VOID) = v_num_elements, ERROR, "SB: check number of elements in SB after peek.", C_SCOPE);
+
+      sb_under_test.flush(VOID);
+    end procedure test_of_sb_peek;
+
+
+
+
+
+
+
+
+
+
+  begin
+    -- Setup the VUnit runner with the input configuration.
+    test_runner_setup(runner, runner_cfg);
+
+    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
+    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
+
+    if not active_python_runner(runner_cfg) then
+      set_alert_stop_limit(ERROR, 0);
+    end if;
+
+    -- Print the configuration to the log
+    report_global_ctrl(VOID);
+    report_msg_id_panel(VOID);
+    set_alert_stop_limit(TB_ERROR, 0);    -- 0 = Never stop
+
+    enable_log_msg(ALL_MESSAGES);
+    disable_log_msg(ID_POS_ACK);
+    disable_log_msg(ID_SEQUENCER_SUB);
+
+    log(ID_LOG_HDR, "Start Simulation of generic SB FIFO package", C_SCOPE);
+    ------------------------------------------------------------
+
+    setup_and_initial_check_of_sb(VOID);
+    test_of_put_get_empty_and_not_empty(VOID);
+    test_of_flush(VOID);
+    test_of_put_to_full_sb(VOID);
+    test_of_get_from_empty_sb(VOID);
+    test_of_sb_max_count_manipulation(VOID);
+    test_of_sb_fill_level_and_alerts(VOID);
+    -- test_memory_leakage(VOID); -- NB: Will run infinitely until stopped.
+
+
+    test_of_multiple_sb(VOID);
+    test_of_multiple_sb_check(VOID);
+    test_of_sb_peek(VOID);
+
+
+    --==================================================================================================
+    -- Ending the simulation
+    --------------------------------------------------------------------------------------
+    wait for 1000 ns;             -- to allow some time for completion
+    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
+
+    -- Check for mismatch in all alert levels except MANUAL_CHECK
+    for alert_level in NOTE to t_alert_level'right loop
+      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
+        v_alert_num_mismatch := true;
+      end if;
+    end loop;
+
+    test_runner_cleanup(runner, v_alert_num_mismatch);
+    wait;
+
+  end process p_main;
+
+end func;

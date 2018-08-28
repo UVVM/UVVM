@@ -1,0 +1,19 @@
+# Ignore compiled libraries
+sim/
+!/sim/bitvis_uart.mpf
+!/sim/wave_uart_vvc_tb.do
+*.vhd~
+internal_script/transcript
+internal_script/_Alert.txt
+internal_script/_Log.txt
+internal_script/bitvis_uart/
+internal_script/modelsim.ini
+script/_Alert.txt
+script/_Log.txt
+script/modelsim.ini
+script/transcript
+
+# Ignore Sigasi files
+.library_mapping.xml
+.project
+.settings/*

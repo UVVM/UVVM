@@ -1,0 +1,1 @@
+vsim -c -do compile_and_run.do

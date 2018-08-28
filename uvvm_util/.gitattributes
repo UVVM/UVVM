@@ -1,0 +1,48 @@
+# Used to remove files from deployment using `git archive`
+# Note: Case insensitive
+
+####################
+# GIT files (Bitvis internal)
+####################
+.gitattributes                              export-ignore
+.gitattributes-bitvis_vip_sbi               export-ignore
+.gitattributes-bitvis_irqc                  export-ignore
+.gitattributes-uvvm_osvvm                   export-ignore
+.gitignore                                  export-ignore
+
+#####################
+# Bitvis internal files
+#####################
+internal_*.*                    export-ignore
+QA_*                            export-ignore
+dependencies.txt                export-ignore
+Vagrantfile                     export-ignore
+releaseFiles.txt                export-ignore
+releaseFiles-bitvis_irqc.txt    export-ignore
+releaseFiles-bitvis_vip_sbi.txt export-ignore
+releaseFiles-uvvm_osvvm.txt     export-ignore
+
+####################
+# UVVM Util
+####################
+
+# Internal scripts directory
+internal_script        export-ignore
+*/*.tmp                export-ignore
+
+# Don't include testbench for util
+# Compile scripts etc are now in internal_script directory
+tb                     export-ignore
+
+# Doc: Customers only need the pdf version
+doc/util_quick_ref.doc export-ignore
+
+# Sim: Ignore log files generated when simulating in the archive to be deployed
+sim/*.log              export-ignore
+sim/wave.do            export-ignore
+
+# Sim: Ignore the internal project file
+sim/internal_*.*         export-ignore
+sim/golden*              export-ignore
+
+ 

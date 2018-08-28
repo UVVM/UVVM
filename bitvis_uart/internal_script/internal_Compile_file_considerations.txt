@@ -1,0 +1,11 @@
+
+- Bra å samle compile av alle tb dependencies (alle VVCer og BFMer og UVVM?) i ett compile-script - for f.eks. TB for UART
+  men hva med
+    a) skille mellom VIP'er (UART, SBI, GPIO, UVVM)?
+       Kanskje helt greit siden det kun gjøres kall til lokale scripts
+    b) skille mellom BFM og VVC
+       Ikke viktig for Bitvis siden vi egentlig ønsker å kompilere VVC selv om vi bare gjør en endring på BFM (for å sjekke at alt fremdeles henger sammen)
+       Men kan være viktig dersom vi gir ut en BFM til kunde og gir med script samtidig... (som ikke skal kræsje på at VVC mangler)
+       Kanskje ha alle scripts med defaults på BFM-nivå, men parameter for VVC?
+
+  SENERE!!!

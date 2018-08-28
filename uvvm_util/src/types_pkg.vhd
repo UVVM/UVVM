@@ -124,19 +124,23 @@ package types_pkg is
   end record;
 
   type t_uvvm_status is record
-    no_unexpected_simulation_warnings_or_worse  : natural range 0 to 1; -- simulation end status: 0=no unexpected, 1=unexpected
-    no_unexpected_simulation_errors_or_worse    : natural range 0 to 1; -- simulation end status: 0=no unexpected, 1=unexpected
-    info_on_finishing_await_any_completion      : t_info_on_finishing_await_any_completion; -- await_any_completion() trigger identifyer
+    found_unexpected_simulation_warnings_or_worse     : natural range 0 to 1; -- simulation end status: 0=no unexpected, 1=unexpected
+    found_unexpected_simulation_errors_or_worse       : natural range 0 to 1; -- simulation end status: 0=no unexpected, 1=unexpected
+    mismatch_on_expected_simulation_warnings_or_worse : natural range 0 to 1; -- simulation status: 0=no mismatch, 1=mismatch
+    mismatch_on_expected_simulation_errors_or_worse   : natural range 0 to 1; -- simulation status: 0=no mismatch, 1=mismatch
+    info_on_finishing_await_any_completion            : t_info_on_finishing_await_any_completion; -- await_any_completion() trigger identifyer
   end record t_uvvm_status;
 
   -- defaults for t_uvvm_status and t_info_on_finishing_await_any_completion
   constant C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT : string := "no await_any_completion() finshed yet\n";
   constant C_UVVM_STATUS_DEFAULT : t_uvvm_status := (
-    no_unexpected_simulation_warnings_or_worse  => 0,
-    no_unexpected_simulation_errors_or_worse    => 0,
-    info_on_finishing_await_any_completion      => (vvc_name    => (C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT, others => ' '),
-                                                    vvc_cmd_idx => 0,
-                                                    vvc_time_of_completion => 0 ns)
+    found_unexpected_simulation_warnings_or_worse     => 0,
+    found_unexpected_simulation_errors_or_worse       => 0,
+    mismatch_on_expected_simulation_warnings_or_worse => 0,
+    mismatch_on_expected_simulation_errors_or_worse   => 0,
+    info_on_finishing_await_any_completion            => (vvc_name    => (C_INFO_ON_FINISHING_AWAIT_ANY_COMPLETION_VVC_NAME_DEFAULT, others => ' '),
+                                                          vvc_cmd_idx => 0,
+                                                          vvc_time_of_completion => 0 ns)
   );
 
   type t_justify_center is (center);

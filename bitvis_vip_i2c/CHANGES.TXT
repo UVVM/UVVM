@@ -1,12 +1,6 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
-v2.1.2
-----------
-Released: 2018-04-09
-- Added multicast information to VVC QR.
-
-
 v2.1.1
 ----------
 Released: 2017-11-16

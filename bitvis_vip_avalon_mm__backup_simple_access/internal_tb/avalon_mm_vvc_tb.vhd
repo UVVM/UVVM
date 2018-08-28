@@ -1,0 +1,304 @@
+--========================================================================================================================
+-- Copyright (c) 2016 by Bitvis AS.  All rights reserved.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- contact Bitvis AS <support@bitvis.no>.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+--========================================================================================================================
+
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+library vunit_lib;
+context vunit_lib.vunit_run_context;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
+use work.vvc_methods_pkg.all;
+use work.td_vvc_framework_common_methods_pkg.all;
+
+
+-- Test case entity
+entity avalon_mm_vvc_tb is
+  generic (
+    -- This generic is used to configure the testbench from run.py, e.g. what
+    -- test case to run. The default value is used when not running from script
+    -- and in that case all test cases are run.
+    runner_cfg : runner_cfg_t := runner_cfg_default);
+end entity;
+
+-- Test case architecture
+architecture func of avalon_mm_vvc_tb is
+
+  constant C_CLK_PERIOD : time := 10 ns;
+
+begin
+
+  -----------------------------------------------------------------------------
+  -- Instantiate test harness, containing DUT and Executors
+  -----------------------------------------------------------------------------
+  i_test_harness : entity work.test_harness generic map(GC_CLK_PERIOD => C_CLK_PERIOD);
+
+  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
+
+
+  ------------------------------------------------
+  -- PROCESS: p_main
+  ------------------------------------------------
+  p_main : process
+    -- Sequencer constants and variables
+    constant C_SCOPE      : string             := C_TB_SCOPE_DEFAULT;
+    variable v_cmd_idx    : natural;
+    variable v_data       : std_logic_vector(255 downto 0);
+    variable v_is_ok      : boolean;
+    variable v_is_new     : boolean;
+    variable v_timestamp  : time;
+    
+    variable v_alert_num_mismatch : boolean := false;
+    
+   -- Overload for simplification
+    procedure log(
+      msg : string) is
+    begin
+      log(ID_SEQUENCER, msg, C_SCOPE);
+    end;
+
+  begin
+    
+    -- To avoid that log files from different test cases (run in separate
+    -- simulations) overwrite each other run.py provides separate test case
+    -- directories through the runner_cfg generic (<root>/vunit_out/tests/<test case
+    -- name>). When not using run.py the default path is the current directory
+    -- (<root>/vunit_out/<simulator>). These directories are used by VUnit
+    -- itself and these lines make sure that BVUL do to.
+    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
+    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
+    
+    -- Setup the VUnit runner with the input configuration.
+    test_runner_setup(runner, runner_cfg);
+    
+    -- The default behavior for VUnit is to stop the simulation on a failing
+    -- check when running from script but keep on running when running without
+    -- script. The rationale for this and how you can change that behavior is
+    -- described at the bottom of this file (see Stopping the Simulation on
+    -- Failing Checks). The following if statement causes BVUL checks to behave
+    -- in the same way.
+    if not active_python_runner(runner_cfg) then
+      set_alert_stop_limit(ERROR, 0);
+    end if;
+  
+  
+    await_uvvm_initialization(VOID);
+
+    disable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ID_SEQUENCER);
+    enable_log_msg(ID_LOG_HDR);
+    enable_log_msg(ID_BFM);
+    enable_log_msg(ID_BFM_POLL);
+    
+    disable_log_msg(AVALON_MM_VVCT, 1, ALL_MESSAGES);
+    enable_log_msg(AVALON_MM_VVCT, 1, ID_BFM);
+    enable_log_msg(AVALON_MM_VVCT, 1, ID_BFM_POLL);
+    
+    disable_log_msg(AVALON_MM_VVCT, 2, ALL_MESSAGES);
+    enable_log_msg(AVALON_MM_VVCT, 2, ID_BFM);
+    enable_log_msg(AVALON_MM_VVCT, 2, ID_BFM_POLL);
+    
+   -- Print the configuration to the log
+    report_global_ctrl(VOID);
+    report_msg_id_panel(VOID);
+
+
+    log("Start Simulation of TB for AVALON_MM");
+    ------------------------------------------------------------
+    -- Reset the Avalon bus
+    avalon_mm_reset(AVALON_MM_VVCT, 1, 5, "Resetting Avalon MM Interface 1");
+    avalon_mm_reset(AVALON_MM_VVCT, 2, 5, "Resetting Avalon MM Interface 1");
+
+    -- Allow some time before testing starts
+    insert_delay(AVALON_MM_VVCT, 1, 50, "Giving the DUT some time to initialize");
+    insert_delay(AVALON_MM_VVCT, 2, 50, "Giving the DUT some time to initialize");
+
+    log(ID_LOG_HDR, "Testing basic read, write and check", C_SCOPE);
+    ----------------------------------------------------------------------
+    -- Write to the DUT
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"abba1111", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"abba5959", "Writing to the DUT");
+    
+    await_completion(AVALON_MM_VVCT,1, 1000 ns, "Waiting for the first write to complete");
+    await_completion(AVALON_MM_VVCT,2, 1000 ns, "Waiting for the first write to complete");
+    
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"aaaaaaaa", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"98765432", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"01234567", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"98765432", "Writing to the DUT");
+    
+    -- Read from the DUT
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", x"abba1111", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", x"aaaaaaaa", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", x"98765432", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", x"abba5959", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", x"01234567", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", x"98765432", "Checking the DUT", ERROR);
+    
+    await_completion(AVALON_MM_VVCT,1, 100 ns, "Waiting for checks to complete");
+    await_completion(AVALON_MM_VVCT,2, 100 ns, "Waiting for checks to complete");
+
+    
+    log("Write, read back and check data with avalon_mm_read on one VVC");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"10", "Write to Avalon MM 1");
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout");
+    v_cmd_idx := shared_cmd_idx; -- for last read
+    await_completion(AVALON_MM_VVCT,1, v_cmd_idx, 100 ns, "Wait for sbi_read to finish");
+    fetch_result(AVALON_MM_VVCT,1 , v_cmd_idx, v_data(31 downto 0), v_is_ok, v_is_new, "Fetching read-result");
+    check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
+    check_value(v_data(31 downto 0), x"10", ERROR, "Readback data via fetch_result()");
+    
+    log("Do another read - should timeout");
+    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles_severity := WARNING;
+    increment_expected_alerts(WARNING, 1);
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading with expected timeout");
+    await_completion(AVALON_MM_VVCT,1, 1000 ns, "Waiting for read to timeout");
+    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles_severity := TB_FAILURE;
+    
+    
+    log(ID_LOG_HDR, "Testing FIFO Capacity", C_SCOPE);
+    ----------------------------------------------------------------------
+    
+    log("Fill the FIFO with VVC 1 and 2 simultaneously");
+    for i in 0 to 15 loop
+      avalon_mm_write(AVALON_MM_VVCT, 1, "0", random(32), "Filling FIFO with random data");
+      avalon_mm_write(AVALON_MM_VVCT, 2, "0", random(32), "Filling FIFO with random data");
+    end loop;
+    await_completion(AVALON_MM_VVCT,1, 1000 ns, "Waiting for FIFO to be filled");
+    await_completion(AVALON_MM_VVCT,2, 1000 ns, "Waiting for FIFO to be filled");
+
+    log("Do another write - should timeout");
+    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles_severity := WARNING;
+    increment_expected_alerts(WARNING, 1);
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"deadbeef", "Writing to Avalon VVC 2");
+    await_completion(AVALON_MM_VVCT,1, 1000 ns, "Waiting for write timeout");
+    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles_severity := TB_FAILURE;
+    
+    shared_avalon_mm_vvc_config(2).bfm_config.max_wait_cycles_severity := WARNING;
+    increment_expected_alerts(WARNING, 1);
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"deadbeef", "Writing to Avalon VVC 2");
+    await_completion(AVALON_MM_VVCT,2, 1000 ns, "Waiting for write timeout");
+    shared_avalon_mm_vvc_config(2).bfm_config.max_wait_cycles_severity := TB_FAILURE;
+
+    log("Empty the FIFO with VVC 2");
+    for i in 0 to 15 loop
+      avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading the FIFO until empty");
+      avalon_mm_read(AVALON_MM_VVCT, 2, "0", "Reading the FIFO until empty");
+    end loop;
+    await_completion(AVALON_MM_VVCT,1, 1000 ns, "Waiting for FIFO to be emptied");
+    await_completion(AVALON_MM_VVCT,2, 1000 ns, "Waiting for FIFO to be emptied");
+
+    
+    log(ID_LOG_HDR, "Testing Random FIFO Read and Write", C_SCOPE);
+    ----------------------------------------------------------------------
+    log("Data write and read-back with check");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", std_logic_vector(to_unsigned(100,32)), "Writing to Avalon MM 2");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", std_logic_vector(to_unsigned(100,32)), "Writing to Avalon MM 2");
+    await_completion(AVALON_MM_VVCT,2, 100 ns, "Awaiting first sample ready in FIFO");
+    for i in 100 to 200 loop
+      avalon_mm_check(AVALON_MM_VVCT, 1, "0", std_logic_vector(to_unsigned(i,32)), "Checking Avalon MM 1");
+      avalon_mm_check(AVALON_MM_VVCT, 2, "0", std_logic_vector(to_unsigned(i,32)), "Checking Avalon MM 2");
+      avalon_mm_write(AVALON_MM_VVCT, 2, "0", std_logic_vector(to_unsigned(i+1,32)), "Writing to Avalon MM 2");
+      avalon_mm_write(AVALON_MM_VVCT, 1, "0", std_logic_vector(to_unsigned(i+1,32)), "Writing to Avalon MM 1");
+    end loop;
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", std_logic_vector(to_unsigned(201,32)), "Checking Avalon MM 1");
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", std_logic_vector(to_unsigned(201,32)), "Checking Avalon MM 2");
+    
+    insert_delay(AVALON_MM_VVCT, 1, 100, "Giving the DUT some time before shutting down");
+    insert_delay(AVALON_MM_VVCT, 2, 100, "Giving the DUT some time before shutting down");
+    
+    await_completion(AVALON_MM_VVCT,1, 10000 ns, "Waiting for tests to complete");
+    await_completion(AVALON_MM_VVCT,2, 10000 ns, "Waiting for tests to complete");
+
+
+    log(ID_LOG_HDR, "Testing inter-bfm delay");
+    
+    log("\rChecking TIME_START2START");
+    wait for C_CLK_PERIOD * 51;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_in_time := C_CLK_PERIOD * 50;
+    v_timestamp := now;
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"abba1111", "First write to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"00101011", "Second write to the DUT");
+    await_completion(AVALON_MM_VVCT, 1, 52 * C_CLK_PERIOD);
+    check_value(((now - v_timestamp) = C_CLK_PERIOD*51), ERROR, "Checking that inter-bfm delay was upheld");
+    
+    log("\rChecking that insert_delay does not affect inter-BFM delay");
+    wait for C_CLK_PERIOD * 51;
+    v_timestamp := now;
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"aabbcccc", "Third write to the DUT");
+    insert_delay(AVALON_MM_VVCT,1, C_CLK_PERIOD);
+    insert_delay(AVALON_MM_VVCT,1, C_CLK_PERIOD);
+    insert_delay(AVALON_MM_VVCT,1, C_CLK_PERIOD);
+    insert_delay(AVALON_MM_VVCT,1, C_CLK_PERIOD);
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"beefbeef", "Fourth write to the DUT");
+    await_completion(AVALON_MM_VVCT, 1, 52 * C_CLK_PERIOD);
+    check_value(((now - v_timestamp) = C_CLK_PERIOD*51), ERROR, "Checking that inter-bfm delay was upheld");
+    
+    
+    log("\rChecking TIME_FINISH2START");
+    wait for C_CLK_PERIOD * 101;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_type := TIME_FINISH2START;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_in_time := C_CLK_PERIOD * 100;
+    v_timestamp := now;
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"feedfeed", "First write to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"deedbeef", "Second write to the DUT");
+    await_completion(AVALON_MM_VVCT, 1, 103 * C_CLK_PERIOD);
+    check_value(((now - v_timestamp) = C_CLK_PERIOD*102), ERROR, "Checking that inter-bfm delay was upheld");
+    
+    log("\rChecking TIME_START2START and provoking inter-bfm delay violation");
+    wait for C_CLK_PERIOD * 101;
+    increment_expected_alerts(TB_WARNING,2);
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.inter_bfm_delay_violation_severity := TB_WARNING;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_in_time := 1 ns;
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"feedfeed", "First write to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"deedbeef", "Second write to the DUT");
+    await_completion(AVALON_MM_VVCT, 1, 103 * C_CLK_PERIOD);
+    
+    log("Setting delay back to initial value");
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.inter_bfm_delay_violation_severity := WARNING;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_type := NO_DELAY;
+    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
+    
+    
+   --==================================================================================================
+   -- Ending the simulation
+   --------------------------------------------------------------------------------------
+    report_alert_counters(VOID);  -- Report final counters and print conclusion for simulation (Success/Fail)
+    log("SIMULATION COMPLETED");
+    
+    -- Cleanup VUnit. The UVVM-Util error status is imported into VUnit at this
+    -- point. This is neccessary when the UVVM-Util alert stop limit is set such that
+    -- UVVM-Util doesn't stop on the first error. In that case VUnit has no way of
+    -- knowing the error status unless you tell it.
+    for alert_level in NOTE to t_alert_level'right loop
+      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
+        v_alert_num_mismatch := true;
+      end if;
+    end loop;
+    
+    test_runner_cleanup(runner, v_alert_num_mismatch);
+    wait;  -- to stop completely
+
+  end process p_main;
+
+end func;

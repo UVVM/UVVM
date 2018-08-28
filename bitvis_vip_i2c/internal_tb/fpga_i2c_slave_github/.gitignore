@@ -1,0 +1,5 @@
+*
+!*.vhd
+!*.sh
+!*.org
+!.gitignore

@@ -1,0 +1,22 @@
+# Ignore compiled libraries
+src/encrypted
+transcript
+internal_sim/
+sim/*.txt
+sim/*.cr.mti
+sim/transcript
+sim/vunit_out/*
+sim/uvvm_vvc_framework/*
+script/vvc_generator/output/*
+dependencies.txt.bak
+src/internal_license_pkg.vhd.bak
+script/vvc_name_modifier/vvc_to_be_modified/src/*.vhd
+script/vvc_name_modifier/vvc_to_be_modified/script/*.do
+script/vvc_name_modifier/vvc_to_be_modified/script/*.tcl
+*.pyc
+*modelsim.ini
+internal_script/encrypt.log
+sim/sim.log
+.library_mapping.xml
+.project
+.settings/*

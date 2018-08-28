@@ -1,0 +1,16 @@
+# Ignore compiled libraries
+sim/vunit_out/*
+sim/*.txt
+sim/transcript
+sim/compile/*
+sim/library.cfg
+sim/vsim.wlf
+sim/xunit-report.xml
+sim/bitvis_vip_spi/*
+sim/modelsim.ini
+sim/internal_bitvis_vip_spi.cr.mti
+
+# Ignore Sigasi files
+.library_mapping.xml
+.project
+.settings/*

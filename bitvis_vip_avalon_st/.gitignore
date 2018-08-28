@@ -1,0 +1,7 @@
+# Ignore compiled libraries
+sim/bitvis_vip_avalon_st
+sim/_Alert.txt
+sim/_Log.txt
+sim/bitvis_vip_avalon_st.cr.mti
+sim/transcript
+sim/vsim.wlf

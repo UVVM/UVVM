@@ -1,0 +1,12 @@
+./doc/clock_generator_vvc_QuickRef.pdf
+./src/clock_generator_vvc.vhd
+./src/vvc_cmd_pkg.vhd
+./src/vvc_methods_pkg.vhd
+./script/fix_vmap.tcl
+./script/compile_src.do
+./script/compile_uvvm.do
+./script/compile_order.txt
+./VERSION.TXT
+./LICENSE.TXT
+./CHANGES.TXT
+./README.TXT

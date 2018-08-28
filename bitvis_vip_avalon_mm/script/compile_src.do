@@ -65,15 +65,15 @@ if { [string equal -nocase $simulator "modelsim"] } {
 quietly set part_name "bitvis_vip_avalon_mm"
 
 if { [info exists 1] } {
+  quietly set source_path "$1"
+  quietly set default_target 0
+
   if {$argc == 1} {
     echo "\nUser specified source directory"
-    quietly set source_path "$1"
     quietly set target_path [pwd]
-    quietly set default_target 0
   } elseif {$argc >= 2} {
     echo "\nUser specified source and target directory"
     quietly set target_path "$2"
-    quietly set default_target 0
   }
   unset 1
 } else {

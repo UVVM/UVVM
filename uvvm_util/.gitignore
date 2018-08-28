@@ -1,0 +1,20 @@
+# Ignore compiled libraries
+sim/*.txt
+sim/vsim.wlf
+sim/transcript
+sim/uvvm_util/*
+sim/*.cr.mti
+sim/vunit_out/*
+sim/modelsim.ini
+sim/sim.log
+
+# Ignore log from running split_vhdl.bat
+internal_script/log.txt
+
+# Ignore backup-files
+*.bak
+
+# Ignore Sigasi files
+.library_mapping.xml
+.project
+.settings/*

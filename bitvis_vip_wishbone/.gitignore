@@ -1,0 +1,20 @@
+# Ignore compiled libraries
+~*.*
+sim/bitvis_vip_wishbone
+sim/_Alert.txt
+sim/_Log.txt
+sim/bitvis_vip_wishbone.cr.mti
+sim/compile/*
+sim/library.cfg
+sim/transcript
+sim/vsim.wlf
+sim/vunit_out/*
+sim/modelsim.ini
+sim/uvvm_util/*
+sim/uvvm_vvc_framework/*
+internal_script/transcript
+
+# Ignore Sigasi files
+.library_mapping.xml
+.project
+.settings/*

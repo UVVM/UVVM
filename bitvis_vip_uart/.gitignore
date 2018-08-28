@@ -1,0 +1,19 @@
+sim/_Alert.txt
+sim/_Log.txt
+sim/bitvis_vip_uart.cr.mti
+sim/internal_bitvis_vip_uart.cr.mti
+sim/bitvis_vip_uart
+sim/compile/*
+sim/library.cfg
+sim/msim
+sim/work
+sim/vsim.wlf
+sim/transcript
+sim/modelsim.ini
+sim/vunit_out/*
+internal_script/transcript
+
+# Ignore Sigasi files
+.library_mapping.xml
+.project
+.settings/*

@@ -1,0 +1,14 @@
+# Ignore compiled libraries
+sim/vunit_out/*
+sim/*.txt
+sim/transcript
+sim/compile/*
+sim/library.cfg
+sim/vsim.wlf
+sim/xunit-report.xml
+sim/bitvis_vip_clock_generator/*
+sim/modelsim.ini
+sim/internal_bitvis_vip_clock_generator.cr.mti
+.library_mapping.xml
+.project
+.settings/*

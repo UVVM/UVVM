@@ -1,0 +1,69 @@
+# Used to remove files from deployment using `git archive`
+# Note: Case insensitive
+
+# *** NB ***
+# This file is used for release of bitvis_vip_sbi as part of the util release.
+# It belongs in the uvvm_util repository (as .gitattributes-bitvis_vip_sbi)
+# but is copied to the bitvis_vip_sbi during release. It should NOT be 
+# committed to bitvis_vip_sbi.
+# *** NB ***
+
+####################
+# GIT files (Bitvis internal)
+####################
+.gitattributes                                        export-ignore
+.gitignore                                            export-ignore
+                                                      
+#####################                                 
+# Bitvis internal files                               
+#####################                                 
+internal_*.*                                          export-ignore
+Internal_*.*                                          export-ignore
+INTERNAL_*.*                                          export-ignore
+QA_*                                                  export-ignore
+dependencies.txt                                      export-ignore
+releaseFiles.txt                                      export-ignore
+Vagrantfile                                           export-ignore
+
+####################
+# bitvis_vip_sbi - special for util release
+####################
+
+src/sbi_executor_pkg.vhd                              export-ignore
+src/sbi_global_signals_pkg.vhd                        export-ignore
+src/sbi_vc.vhd                                        export-ignore
+src/sbi_vvc.vhd                                       export-ignore
+src/sbi_vvc_methods_pkg.vhd                           export-ignore
+src/vvc_cmd_record_pkg.vhd                            export-ignore
+src/vvc_cmd_pkg.vhd                                   export-ignore
+src/vvc_methods_pkg.vhd                               export-ignore
+src/zzz_sbi_executor_pkg.vhd                          export-ignore
+src/zzz_sbi_global_signals_pkg.vhd                    export-ignore
+# script: Only keep compile script relevant for sbi_bfm_pkg.vhd  
+script/2_3_4_5.do                                     export-ignore
+script/compile_dep_concurrency.do                     export-ignore
+script/compile_dep_util.do                            export-ignore
+script/compile_src_executor.do                        export-ignore
+script/compile_tb.do                                  export-ignore
+script/simulate_tb.do                                 export-ignore
+script/all_post_util.do                               export-ignore
+script/compile_dep_ieee_proposed.do                   export-ignore
+script/compile_dep_vip_gpio.do                        export-ignore
+script/compile_signal_record_simple_tb.do             export-ignore
+script/compile_src_vvc.do                             export-ignore
+script/compile_src.do                                 export-ignore
+script/compile_uvvm.do                                export-ignore
+script/signal_record_simple_tb_1_all_incl_sim_2008.do export-ignore
+script/simulate_signal_record_simple_tb.do            export-ignore
+*.doc                                                 export-ignore
+*.docx                                                export-ignore
+# Ignore VVC QR, only BFM is included in the release of UVVM Util
+doc/sbi_vvc_QuickRef.pdf                              export-ignore
+
+# bitvis_vip_sbi/sim/*.*                              export-ignore
+# Ignore folders:                                     
+tb                                                    export-ignore
+sim                                                   export-ignore
+internal_script                                       export-ignore
+internal_tb                                           export-ignore
+

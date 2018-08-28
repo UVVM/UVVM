@@ -1,0 +1,23 @@
+sim/_Alert.txt
+sim/_Log.txt
+sim/transcript
+sim/bitvis_vip_axilite.cr.mti
+sim/internal_bitvis_vip_axilite.cr.mti
+sim/bitvis_vip_axilite
+sim/vsim.wlf
+sim/vunit_out/*
+sim/modelsim.ini
+sim/compile/
+sim/library.cfg
+internal_sim/_Alert.txt
+internal_sim/_Log.txt
+internal_sim/transcript
+internal_sim/bitvis_vip_axilite.cr.mti
+internal_sim/bitvis_vip_axilite
+internal_sim/vsim.wlf
+internal_script/transcript
+
+# Ignore Sigasi files
+.library_mapping.xml
+.project
+.settings/*

@@ -23,35 +23,13 @@ use work.types_pkg.all;
 use work.string_methods_pkg.all;
 use work.adaptations_pkg.all;
 use work.license_pkg.all;
+use work.global_signals_and_shared_variables_pkg.all;
 use work.alert_hierarchy_pkg.all;
 use work.protected_types_pkg.all;
 use std.env.all;
 
 
 package methods_pkg is
-  -- Shared variables
-  shared variable shared_initialised_util        : boolean  := false;
-  shared variable shared_msg_id_panel            : t_msg_id_panel   := C_MSG_ID_PANEL_DEFAULT;
-  shared variable shared_log_file_name_is_set    : boolean  := false;
-  shared variable shared_alert_file_name_is_set  : boolean  := false;
-  shared variable shared_warned_time_stamp_trunc : boolean  := false;
-  shared variable shared_alert_attention         : t_alert_attention:= C_DEFAULT_ALERT_ATTENTION;
-  shared variable shared_stop_limit              : t_alert_counters := C_DEFAULT_STOP_LIMIT;
-  shared variable shared_log_hdr_for_waveview    : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);
-  shared variable shared_current_log_hdr         : t_current_log_hdr;
-  shared variable shared_seed1                   : positive;
-  shared variable shared_seed2                   : positive;
-  shared variable shared_flag_array              : t_sync_flag_record_array := (others => C_SYNC_FLAG_DEFAULT);
-  shared variable protected_semaphore            : t_protected_semaphore;
-  shared variable protected_broadcast_semaphore  : t_protected_semaphore;
-  shared variable protected_response_semaphore   : t_protected_semaphore;
-  shared variable shared_uvvm_status             : t_uvvm_status := C_UVVM_STATUS_DEFAULT;
-
-
-  signal global_trigger : std_logic := 'L';
-  signal global_barrier : std_logic := 'X';
-
-
 
 -- -- ============================================================================
 -- -- Initialisation and license
@@ -2655,30 +2633,47 @@ package body methods_pkg is
       ) is
     type alert_array is array (1 to 6) of t_alert_level;
     constant alert_check_array : alert_array := (WARNING, TB_WARNING, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
-    alias warning_and_worse is shared_uvvm_status.no_unexpected_simulation_warnings_or_worse;
-    alias error_and_worse   is shared_uvvm_status.no_unexpected_simulation_errors_or_worse;
+    alias found_unexpected_simulation_warnings_or_worse     is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
+    alias found_unexpected_simulation_errors_or_worse       is shared_uvvm_status.found_unexpected_simulation_errors_or_worse;
+    alias mismatch_on_expected_simulation_warnings_or_worse is shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse;
+    alias mismatch_on_expected_simulation_errors_or_worse   is shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse;
   begin
     protected_alert_attention_counters.increment(alert_level, attention, number);
 
     -- Update simulation status
     if (attention = REGARD) or (attention = EXPECT) then
       if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
-        warning_and_worse := 1; -- default
-        error_and_worse   := 1; -- default
+        found_unexpected_simulation_warnings_or_worse     := 0; -- default
+        found_unexpected_simulation_errors_or_worse       := 0; -- default
+        mismatch_on_expected_simulation_warnings_or_worse := 0; -- default
+        mismatch_on_expected_simulation_errors_or_worse   := 0; -- default
 
         -- Compare expected and current allerts
         for i in 1 to alert_check_array'high loop
-          if (get_alert_counter(alert_check_array(i), REGARD) > get_alert_counter(alert_check_array(i), EXPECT)) then
-            -- warning and worse
-            warning_and_worse := 0;
-            -- error and worse
+          if (get_alert_counter(alert_check_array(i), REGARD) /= get_alert_counter(alert_check_array(i), EXPECT)) then
+
+            -- MISMATCH
+            -- warning or worse
+            mismatch_on_expected_simulation_warnings_or_worse := 1;
+            -- error or worse
             if not(alert_check_array(i) = WARNING) and not(alert_check_array(i) = TB_WARNING) then
-              error_and_worse := 0;
+              mismatch_on_expected_simulation_errors_or_worse := 1;
             end if;
+
+            -- FOUND UNEXPECTED ALERT
+            if (get_alert_counter(alert_check_array(i), REGARD) > get_alert_counter(alert_check_array(i), EXPECT)) then
+              -- warning and worse
+              found_unexpected_simulation_warnings_or_worse := 1;
+              -- error and worse
+              if not(alert_check_array(i) = WARNING) and not(alert_check_array(i) = TB_WARNING) then
+                found_unexpected_simulation_errors_or_worse := 1;
+              end if;
+            end if;
+
           end if;
         end loop;
-      end if;
 
+      end if;
     end if;
   end;
 
@@ -2951,7 +2946,7 @@ package body methods_pkg is
       -- Include leading 'x"'
       return short(1 to 2) & v_padding & short(3 to short'length);
     end function pad_short_string;
-    
+
   begin
     -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
@@ -2986,7 +2981,7 @@ package body methods_pkg is
         alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
       end if;
     end if;
-    
+
     return v_check_ok;
   end;
 

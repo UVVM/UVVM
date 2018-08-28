@@ -3,6 +3,7 @@
 ../src/adaptations_pkg.vhd
 ../src/string_methods_pkg.vhd
 ../src/protected_types_pkg.vhd
+../src/global_signals_and_shared_variables_pkg.vhd
 ../src/hierarchy_linked_list_pkg.vhd
 ../src/alert_hierarchy_pkg.vhd
 ../src/license_pkg.vhd

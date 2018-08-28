@@ -24,3 +24,5 @@
 ../../bitvis_vip_uart/src/uart_rx_vvc.vhd
 ../../bitvis_vip_uart/src/uart_tx_vvc.vhd
 ../../bitvis_vip_uart/src/uart_vvc.vhd
+../tb/uart_vvc_th.vhd
+../tb/uart_vvc_tb.vhd

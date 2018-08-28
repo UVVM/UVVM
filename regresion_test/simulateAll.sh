@@ -10,13 +10,23 @@
 function simulate {
   echo Running $1
   cd ../$1/sim/
+  echo $'\r'  >> ../../regresion_test/status.txt
+  echo $1 $'\r'  >> ../../regresion_test/status.txt
   rm -rf vunit_out
   py internal_run.py -p8
   status=$?
   if [ $status -eq 0 ]; then
-    echo $1" : PASS"$'\r'  >> ../../regresion_test/status.txt
+    echo "modelsim : PASS"$'\r'  >> ../../regresion_test/status.txt
   else
-    echo $1" : FAILED"$'\r'  >> ../../regresion_test/status.txt
+    echo "modelsim : FAILED"$'\r'  >> ../../regresion_test/status.txt
+  fi
+  rm -rf vunit_out
+  py internal_run_riviera_pro.py
+  status=$?
+  if [ $status -eq 0 ]; then
+    echo "riviera pro : PASS"$'\r'  >> ../../regresion_test/status.txt
+  else
+    echo "riviera pro : FAILED"$'\r'  >> ../../regresion_test/status.txt
   fi
   rm -rf vunit_out
   cd ../../regresion_test

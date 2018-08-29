@@ -3,7 +3,7 @@ Bitvis VIP SPI - Overview on Versions and Changes
 
 v3.2.1
 ----------
-Released: 2018-08-28
+Released: 2018-08-30
 - Added VVC context file
 - Updated documentation
 - Compile script changed according to new structure

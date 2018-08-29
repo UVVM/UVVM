@@ -5,7 +5,7 @@ UVVM Utility Library - Overview on Versions and Changes
 
 v2.6.0
 ----------
-Released: 2018-08-28
+Released: 2018-08-30
 - Updated documentation
 - Compile script changed according to new structure
 - Fixed simulation status in shared_uvvm_status and hierarchical alert messages

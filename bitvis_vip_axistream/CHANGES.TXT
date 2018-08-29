@@ -3,7 +3,7 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 
 v4.0.2
 ----------
-Released: 2018-08-28
+Released: 2018-08-30
 - Added VVC context file
 - Updated documentation
 - Compile script changed according to new structure

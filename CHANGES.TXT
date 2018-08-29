@@ -9,9 +9,9 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2018.08.28
+v2018.08.30
 --------------------
-Released: 2018-08-28
+Released: 2018-08-30
 - New compile script structure
 - Added context file for each VVC
 - Fixed simulation status in shared_uvvm_status and hierarchical alert messages in UVVM UTIL

@@ -1,6 +1,13 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.0.2
+----------
+Released: 2018-08-30
+- Added VVC context file
+- Updated documentation
+- Compile script changed according to new structure
+
 v4.0.1
 ----------
 Released: 2018-04-09
@@ -8,7 +15,6 @@ Released: 2018-04-09
 - Added multicast information to the VVC quick reference.
 - Fixed a bug where the fixed cycles waited error counter was
   accumulated in the BFM transmit_bytes procedure.
-
 
 v4.0.0
 ----------

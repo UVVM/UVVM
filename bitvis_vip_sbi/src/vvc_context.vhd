@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -13,16 +13,10 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-context uvvm_util_context is
-  library uvvm_util;
-  use uvvm_util.types_pkg.all;
-  use uvvm_util.global_signals_and_shared_variables_pkg.all;
-  use uvvm_util.hierarchy_linked_list_pkg.all;
-  use uvvm_util.string_methods_pkg.all;
-  use uvvm_util.adaptations_pkg.all;
-  use uvvm_util.methods_pkg.all;
-  use uvvm_util.bfm_common_pkg.all;
-  use uvvm_util.alert_hierarchy_pkg.all;
-  use uvvm_util.license_pkg.all;
-  use uvvm_util.protected_types_pkg.all;
+context vvc_context is
+  library bitvis_vip_sbi;
+  use bitvis_vip_sbi.sbi_bfm_pkg.all;
+  use bitvis_vip_sbi.vvc_cmd_pkg.all;
+  use bitvis_vip_sbi.vvc_methods_pkg.all;
+  use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
 end context;

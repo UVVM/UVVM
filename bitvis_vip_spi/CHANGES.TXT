@@ -1,6 +1,15 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.2.1
+----------
+Released: 2018-08-30
+- Added VVC context file
+- Updated documentation
+- Compile script changed according to new structure
+- Added support allowing the first clock edge to come at the same time or
+  before chip select is enabled for SPI slave BFM.
+
 v3.2.0
 ----------
 Released: 2018-07-02

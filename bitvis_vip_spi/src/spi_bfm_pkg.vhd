@@ -960,7 +960,9 @@ package body spi_bfm_pkg is
       end if;
 
       -- Await first clock edge
-      wait until sclk = not(config.CPOL);
+      if sclk = config.CPOL then
+        wait until sclk = not(config.CPOL);
+      end if;
 
       -- Receive bits
       while (ss_n = '0') and not(v_access_done) loop

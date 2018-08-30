@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -21,6 +21,7 @@ use std.textio.all;
 use work.types_pkg.all;
 use work.string_methods_pkg.all;
 use work.adaptations_pkg.all;
+use work.global_signals_and_shared_variables_pkg.all;
 
 package hierarchy_linked_list_pkg is
 
@@ -75,7 +76,7 @@ package hierarchy_linked_list_pkg is
       alert_level : t_alert_level
     ) return natural;
     procedure print_hierarchical_log(
-      order : t_order := FINAL);  
+      order : t_order := FINAL);
     impure function get_parent_scope(
       scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH))
       return string;
@@ -114,7 +115,7 @@ type t_hierarchy_linked_list is protected body
   -- Types and control variables for the linked list implementation
   type t_element;
   type t_element_ptr is access t_element;
-  type t_element is 
+  type t_element is
     record
       first_child : t_element_ptr; -- Pointer to the first element in a linked list of children
       next_sibling  : t_element_ptr;  -- Pointer to the next element in a linked list of siblings
@@ -123,12 +124,12 @@ type t_hierarchy_linked_list is protected body
       element_data  : t_hierarchy_node;
       hierarchy_level : natural; -- How far down the tree this node is. Used when printing summary.
     end record;
-   
+
   variable vr_top_element_ptr     : t_element_ptr;
   variable vr_num_elements_in_tree : natural := 0;
-  
+
   variable vr_max_hierarchy_level   : natural := 0;
-  
+
   -- Initialization variables
   variable vr_has_been_initialized : boolean := false;
   variable vr_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);
@@ -138,7 +139,7 @@ type t_hierarchy_linked_list is protected body
     stop_limit : t_alert_counters) is
     variable v_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
     variable base_node : t_hierarchy_node := (v_base_scope,
-                                              (others => (others => 0)), 
+                                              (others => (others => 0)),
                                               stop_limit,
                                               (others => true));
   begin
@@ -149,7 +150,7 @@ type t_hierarchy_linked_list is protected body
       vr_has_been_initialized := true;
     end if;
   end procedure;
-  
+
   procedure search_for_scope(
     variable starting_node : in t_element_ptr;
     scope : string;
@@ -167,7 +168,7 @@ type t_hierarchy_linked_list is protected body
       found := true;
       return;
     end if;
-    
+
     -- Go downwards in the tree.
     if starting_node.first_child /= null then
       search_for_scope(starting_node.first_child, v_scope, v_current_ptr, v_found);
@@ -177,7 +178,7 @@ type t_hierarchy_linked_list is protected body
         return;
       end if;
     end if;
-    
+
     -- Go sideways in the tree
     if starting_node.next_sibling /= null then
       search_for_scope(starting_node.next_sibling, v_scope, v_current_ptr, v_found);
@@ -187,10 +188,10 @@ type t_hierarchy_linked_list is protected body
         return;
       end if;
     end if;
-    
+
     -- No candidate found
   end procedure;
-  
+
   procedure search_for_scope(
     variable starting_node : in t_element_ptr;
     hierarchy_node : t_hierarchy_node;
@@ -207,7 +208,7 @@ type t_hierarchy_linked_list is protected body
       found := true;
       return;
     end if;
-    
+
     -- Go downwards in the tree.
     if starting_node.first_child /= null then
       search_for_scope(starting_node.first_child, hierarchy_node, v_current_ptr, v_found);
@@ -217,7 +218,7 @@ type t_hierarchy_linked_list is protected body
         return;
       end if;
     end if;
-    
+
     -- Go sideways in the tree
     if starting_node.next_sibling /= null then
       search_for_scope(starting_node.next_sibling, hierarchy_node, v_current_ptr, v_found);
@@ -227,17 +228,81 @@ type t_hierarchy_linked_list is protected body
         return;
       end if;
     end if;
-    
+
     -- No candidate found
   end procedure;
-  
+
+  procedure update_uvvm_sim_status is
+    type alert_array is array (1 to 6) of t_alert_level;
+    constant alert_check_array       : alert_array := (WARNING, TB_WARNING, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
+    variable v_traverse_children_ptr : t_element_ptr;
+    variable v_traverse_siblings_ptr : t_element_ptr;
+    -- uvvm simulation status
+    alias found_unexpected_simulation_warnings_or_worse     is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
+    alias found_unexpected_simulation_errors_or_worse       is shared_uvvm_status.found_unexpected_simulation_errors_or_worse;
+    alias mismatch_on_expected_simulation_warnings_or_worse is shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse;
+    alias mismatch_on_expected_simulation_errors_or_worse   is shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse;
+  begin
+    -- set default values for uvvm simulation status
+    found_unexpected_simulation_warnings_or_worse     := 0;
+    found_unexpected_simulation_errors_or_worse       := 0;
+    mismatch_on_expected_simulation_warnings_or_worse := 0;
+    mismatch_on_expected_simulation_errors_or_worse   := 0;
+    v_traverse_children_ptr := vr_top_element_ptr;
+    -- Update uvvm simulation status
+    while v_traverse_children_ptr /= null loop -- loop through children
+      v_traverse_siblings_ptr := v_traverse_children_ptr;
+      while v_traverse_siblings_ptr /= null loop -- loop through siblings
+        -- Compare expected and current allerts
+        for i in 1 to alert_check_array'high loop
+          if (v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(REGARD) /= v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(EXPECT)) then
+
+            -- MISMATCH
+            -- warning or worse
+            mismatch_on_expected_simulation_warnings_or_worse := 1;
+            -- error or worse
+            if not(alert_check_array(i) = WARNING) and not(alert_check_array(i) = TB_WARNING) then
+              mismatch_on_expected_simulation_errors_or_worse := 1;
+            end if;
+
+            -- FOUND UNEXPECTED ALERT
+            if (v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(REGARD) > v_traverse_siblings_ptr.element_data.alert_attention_counters(alert_check_array(i))(EXPECT)) then
+              -- warning and worse
+              found_unexpected_simulation_warnings_or_worse := 1;
+              -- error and worse
+              if not(alert_check_array(i) = WARNING) and not(alert_check_array(i) = TB_WARNING) then
+                found_unexpected_simulation_errors_or_worse := 1;
+              end if;
+            end if;
+
+          end if;
+        end loop;
+        if (mismatch_on_expected_simulation_warnings_or_worse = 1) and
+           (mismatch_on_expected_simulation_errors_or_worse = 1) and
+           (found_unexpected_simulation_warnings_or_worse = 1) and
+           (found_unexpected_simulation_errors_or_worse = 1) then
+          exit;
+        end if;
+        v_traverse_siblings_ptr := v_traverse_siblings_ptr.next_sibling;
+      end loop;
+      if (mismatch_on_expected_simulation_warnings_or_worse = 1) and
+         (mismatch_on_expected_simulation_errors_or_worse = 1) and
+         (found_unexpected_simulation_warnings_or_worse = 1) and
+         (found_unexpected_simulation_errors_or_worse = 1) then
+        exit;
+      end if;
+      v_traverse_children_ptr := v_traverse_children_ptr.first_child;
+    end loop;
+  end procedure update_uvvm_sim_status;
+
+
   --
   -- insert_in_tree
   --
   --  Insert a new element in the tree.
   --
   --
- 
+
   procedure insert_in_tree(
     hierarchy_node : t_hierarchy_node;
     parent_scope : string
@@ -252,7 +317,7 @@ type t_hierarchy_linked_list is protected body
     v_hierarchy_node.name := justify(hierarchy_node.name, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
     -- Set read and write pointers when appending element to existing list
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
-    
+
       -- Search for the parent.
       search_for_scope(vr_top_element_ptr, v_parent_scope, v_parent_ptr, v_found);
       if v_found then
@@ -263,17 +328,17 @@ type t_hierarchy_linked_list is protected body
         else
           -- Parent has at least one child. This node shall be a sibling of the other child(ren).
           v_child_ptr := v_parent_ptr.first_child;
-          
+
           -- Find last current sibling
           while v_child_ptr.next_sibling /= null loop
             v_child_ptr := v_child_ptr.next_sibling;
           end loop;
-        
+
           -- Insert this node as a new sibling
           v_child_ptr.next_sibling := new t_element'(first_child => null, next_sibling => null, prev_sibling => v_child_ptr, parent => v_parent_ptr, element_data => v_hierarchy_node, hierarchy_level => v_parent_ptr.hierarchy_level + 1);
-          
+
         end if;
-        
+
         -- Update max hierarchy level
         if vr_max_hierarchy_level < v_parent_ptr.hierarchy_level + 1 then
           vr_max_hierarchy_level := v_parent_ptr.hierarchy_level + 1;
@@ -283,8 +348,8 @@ type t_hierarchy_linked_list is protected body
         -- Register to top level
         insert_in_tree(v_hierarchy_node, C_BASE_HIERARCHY_LEVEL);
       end if;
-      
-    else 
+
+    else
       -- tree is empty, create top element in tree
       vr_top_element_ptr         := new t_element'(first_child => null, next_sibling => null, prev_sibling => null, parent => null, element_data => v_hierarchy_node, hierarchy_level => 0);
     end if;
@@ -292,38 +357,40 @@ type t_hierarchy_linked_list is protected body
     -- Increment number of elements
     vr_num_elements_in_tree := vr_num_elements_in_tree + 1;
   end procedure;
-  
+
   procedure clear_recursively(variable element_ptr : inout t_element_ptr) is
   begin
     assert element_ptr /= null report "Attempting to clear null pointer!" severity error ;
-    
+
     if element_ptr.first_child /= null then
       clear_recursively(element_ptr.first_child);
     end if;
-    
+
     if element_ptr.next_sibling /= null then
       clear_recursively(element_ptr.next_sibling);
     end if;
-    
+
     DEALLOCATE(element_ptr);
   end procedure;
-  
+
   procedure clear is
     variable v_to_be_deallocated_ptr  : t_element_ptr;
   begin
-  
+
     -- Deallocate all nodes in the tree
     if vr_top_element_ptr /= null then
       clear_recursively(vr_top_element_ptr);
     end if;
-    
+
     -- Reset the linked_list counter
     vr_num_elements_in_tree := 0;
-    
+
     -- Reset the hierarchy variables
     vr_max_hierarchy_level   := 0;
     vr_has_been_initialized  := false;
-  
+
+    update_uvvm_sim_status;
+
   end procedure;
 
   impure function is_empty
@@ -347,7 +414,7 @@ type t_hierarchy_linked_list is protected body
   begin
     return vr_num_elements_in_tree;
   end function;
-  
+
   impure function contains_scope(
     scope : string
     ) return boolean is
@@ -357,7 +424,7 @@ type t_hierarchy_linked_list is protected body
     search_for_scope(vr_top_element_ptr, scope, v_candidate_ptr, v_found);
     return v_found;
   end function;
-  
+
   procedure contains_scope_return_data(
     scope : string;
     variable result : out boolean;
@@ -372,7 +439,7 @@ type t_hierarchy_linked_list is protected body
       hierarchy_node := v_candidate_ptr.element_data;
     end if;
   end procedure;
-  
+
   procedure tee (
     file     file_handle  : text;
     variable my_line      : inout line
@@ -382,8 +449,7 @@ type t_hierarchy_linked_list is protected body
     write (v_line, my_line.all);
     writeline(file_handle, v_line);
   end procedure tee;
-  
-  
+
   procedure alert (
     constant scope : string;
     constant alert_level : t_alert_level;
@@ -412,16 +478,16 @@ type t_hierarchy_linked_list is protected body
         -- Search again to get ptr
         search_for_scope(vr_top_element_ptr, scope, v_starting_node_ptr, v_found);
       end if;
-      
+
       v_current_ptr := v_starting_node_ptr;
-      
-      
-      assert v_found 
+
+
+      assert v_found
         report "Node not found!"
         severity failure;
-        
+
       write(v_msg, replace_backslash_n_with_lf(msg));
-      
+
       -- Only print of alert level print is enabled for this alert level
       -- for the node where the alert is called.
       if attention /= IGNORE then
@@ -434,25 +500,24 @@ type t_hierarchy_linked_list is protected body
         if (alert_level > MANUAL_CHECK) then
           write(v_info, LF & fill_string('=', C_LOG_INFO_WIDTH));
         end if;
-        
+
         write(v_info, LF & "***  ");
-        
+
 
       end if;
-      
-      
+
       -- 4. Propagate alert and build alert message
       while v_current_ptr /= null loop
-      
+
         if attention = IGNORE then
           -- Increment alert counter for this node at alert attention IGNORE
           v_current_ptr.element_data.alert_attention_counters(alert_level)(IGNORE) := v_current_ptr.element_data.alert_attention_counters(alert_level)(IGNORE)+ 1;
         else
           -- Increment alert counter for this node at alert attention REGARD
           v_current_ptr.element_data.alert_attention_counters(alert_level)(REGARD) := v_current_ptr.element_data.alert_attention_counters(alert_level)(REGARD)+ 1;
-          
+
           write(v_hierarchy, v_current_ptr.element_data.name(1 to pos_of_rightmost_non_whitespace(v_current_ptr.element_data.name)));
-          
+
           if v_current_ptr.parent /= null then
             write(v_hierarchy, string'(" -> "));
           end if;
@@ -460,19 +525,19 @@ type t_hierarchy_linked_list is protected body
           -- Exit loop if stop-limit is reached for number of this alert
           if (v_current_ptr.element_data.alert_stop_limit(alert_level) /= 0) and
             (v_current_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= v_current_ptr.element_data.alert_stop_limit(alert_level)) then
-            
+
             exit;
-          end if; 
-          
+          end if;
+
         end if;
-        
+
         v_current_ptr := v_current_ptr.parent;
       end loop;
-      
+
       if v_current_ptr = null then -- Nothing went wrong in the previous loop
         v_current_ptr := v_starting_node_ptr;
       end if;
-      
+
       if attention /= IGNORE then
         -- 3. Write body of alert message
         --    Remove line feed character (LF)
@@ -488,17 +553,17 @@ type t_hierarchy_linked_list is protected body
                 "        "  & v_msg.all);
         end if;
       end if;
-      
+
       if v_msg /= null then
         deallocate(v_msg);
       end if;
-      
+
       -- Write stop message if stop-limit is reached for number of this alert
       if (v_current_ptr.element_data.alert_stop_limit(alert_level) /= 0) and
         (v_current_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= v_current_ptr.element_data.alert_stop_limit(alert_level)) then
 
-        v_do_print := true; -- If the alert limit has been reached, print alert message anyway. 
-        
+        v_do_print := true; -- If the alert limit has been reached, print alert message anyway.
+
         write(v_info, LF & LF & "Simulator has been paused as requested after " &
           to_string(v_current_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & " " &
           to_upper(to_string(alert_level)) & LF);
@@ -510,21 +575,21 @@ type t_hierarchy_linked_list is protected body
               "step out the HDL calling stack in your simulator. ***" & LF &
               "*** For example, step out until you reach the call from the test sequencer. ***"));
         end if;
-      end if; 
-      
+      end if;
+
       if v_hierarchy /= null then
         deallocate(v_hierarchy);
       end if;
-      
+
       -- 5. Write last part of alert message
       if (alert_level > MANUAL_CHECK) then
         write(v_info, LF & fill_string('=', C_LOG_INFO_WIDTH) & LF & LF);
       else
         write(v_info, LF);
       end if;
-      
+
       prefix_lines(v_info);
-      
+
       if v_do_print then -- Only print if alert level print enabled for this alert level.
         tee(OUTPUT, v_info);
         tee(ALERT_FILE, v_info);
@@ -534,7 +599,11 @@ type t_hierarchy_linked_list is protected body
           deallocate(v_info);
         end if;
       end if;
-      
+
+      if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
+        update_uvvm_sim_status;
+      end if;
+
       -- Stop simulation if stop-limit is reached for number of this alert
       if v_current_ptr /= null then
         if (v_current_ptr.element_data.alert_stop_limit(alert_level) /= 0) then
@@ -545,12 +614,12 @@ type t_hierarchy_linked_list is protected body
           end if;
         end if;
       end if;
-      
+
     end if;
-  
+
   end procedure;
-  
-  
+
+
   procedure increment_expected_alerts(
     scope : string;
     alert_level: t_alert_level;
@@ -564,15 +633,15 @@ type t_hierarchy_linked_list is protected body
       -- search for tree node that contains scope
       search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
       assert v_found report "Scope not found!" severity warning;
-      
-      if v_found then 
+
+      if v_found then
         -- Increment expected alerts for this node.
         v_new_expected_alerts := v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) + amount;
         v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) := v_new_expected_alerts;
-        
+
         -- Change pointer to parent element
         v_current_ptr := v_current_ptr.parent;
-        
+
         -- Propagate expected alerts
         while v_current_ptr /= null loop
           if v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) < v_new_expected_alerts then
@@ -581,10 +650,15 @@ type t_hierarchy_linked_list is protected body
           v_current_ptr := v_current_ptr.parent;
         end loop;
       end if;
+
+      if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
+        update_uvvm_sim_status;
+      end if;
+
     end if;
 
   end procedure;
-  
+
   procedure set_expected_alerts(
     scope : string;
     alert_level: t_alert_level;
@@ -597,16 +671,16 @@ type t_hierarchy_linked_list is protected body
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
       -- search for tree node that contains scope
       search_for_scope(vr_top_element_ptr, v_scope, v_current_ptr, v_found);
-      
+
       assert v_found report "Scope not found!" severity warning;
-      
-      if v_found then 
+
+      if v_found then
         -- Set stop limit for this node
         v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) := expected_alerts;
-        
+
         -- Change pointer to parent element
         v_current_ptr := v_current_ptr.parent;
-        
+
         -- Propagate stop limit
         while v_current_ptr /= null loop
           if v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) < expected_alerts then
@@ -615,10 +689,15 @@ type t_hierarchy_linked_list is protected body
           v_current_ptr := v_current_ptr.parent;
         end loop;
       end if;
+
+      if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
+        update_uvvm_sim_status;
+      end if;
+
     end if;
 
   end procedure;
-  
+
   impure function get_expected_alerts(
     scope : string;
     alert_level : t_alert_level
@@ -628,14 +707,14 @@ type t_hierarchy_linked_list is protected body
     variable v_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
   begin
     search_for_scope(vr_top_element_ptr, v_scope, v_current_ptr, v_found);
-    
+
     if v_found then
       return v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT);
     else
       return 0;
     end if;
   end function;
-  
+
   procedure increment_stop_limit(
     scope : string;
     alert_level: t_alert_level;
@@ -648,17 +727,17 @@ type t_hierarchy_linked_list is protected body
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
       -- search for tree node that contains scope
       search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
-      
+
       assert v_found report "Scope not found!" severity warning;
-      
+
       if v_found then
         -- Increment stop limit for this node.
         v_new_stop_limit := v_current_ptr.element_data.alert_stop_limit(alert_level) + amount;
         v_current_ptr.element_data.alert_stop_limit(alert_level) := v_new_stop_limit;
-        
+
         -- Change pointer to parent element
         v_current_ptr := v_current_ptr.parent;
-        
+
         -- Propagate stop limit
         while v_current_ptr /= null loop
           if v_current_ptr.element_data.alert_stop_limit(alert_level) < v_new_stop_limit then
@@ -670,7 +749,7 @@ type t_hierarchy_linked_list is protected body
     end if;
 
   end procedure;
-  
+
   procedure set_stop_limit(
     scope : string;
     alert_level: t_alert_level;
@@ -682,14 +761,14 @@ type t_hierarchy_linked_list is protected body
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
       -- search for tree node that contains scope
       search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
-      
+
       assert v_found report "Scope not found!" severity warning;
-      
+
       if v_found then
         -- Set stop limit for this node
         v_current_ptr.element_data.alert_stop_limit(alert_level) := stop_limit;
         v_current_ptr := v_current_ptr.parent;
-        
+
         -- Propagate stop limit
         while v_current_ptr /= null loop
           if v_current_ptr.element_data.alert_stop_limit(alert_level) < stop_limit then
@@ -701,7 +780,7 @@ type t_hierarchy_linked_list is protected body
     end if;
 
   end procedure;
-  
+
   impure function get_stop_limit(
     scope : string;
     alert_level : t_alert_level
@@ -710,14 +789,14 @@ type t_hierarchy_linked_list is protected body
     variable v_found : boolean := false;
   begin
     search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
-    
+
     if v_found then
       return v_current_ptr.element_data.alert_stop_limit(alert_level);
     else
       return 0;
     end if;
   end function;
-  
+
   procedure generate_hierarchy_prefix(
     variable starting_node_ptr : in t_element_ptr;
     variable calling_node_ptr : in t_element_ptr;
@@ -726,21 +805,21 @@ type t_hierarchy_linked_list is protected body
   ) is
     variable v_indent_correction_amount : natural := 0;
   begin
-  
-    if starting_node_ptr.parent = null then 
+
+    if starting_node_ptr.parent = null then
       -- This is the top level
       -- Write a '|' as first character if the calling node (child)
       -- has another sibling, else nothing.
-      if origin_node_ptr.parent /= starting_node_ptr 
+      if origin_node_ptr.parent /= starting_node_ptr
         and calling_node_ptr.next_sibling /= null then
         write(v_line, string'("|"));
       end if;
     else
       -- This starting_node is not the top node
-    
+
       -- Create prefix for parent first.
       generate_hierarchy_prefix(starting_node_ptr.parent, starting_node_ptr, origin_node_ptr, v_line);
-      
+
       -- All that have received a '|' as the first character in the buffer
       -- has one space too many afterwards. Special case for the first character.
       if starting_node_ptr.parent.parent = null then
@@ -748,7 +827,7 @@ type t_hierarchy_linked_list is protected body
           v_indent_correction_amount := 1;
         end if;
       end if;
-      
+
       if starting_node_ptr.next_sibling /= null then
         -- Has another sibling
         if calling_node_ptr.next_sibling /= null then
@@ -761,11 +840,11 @@ type t_hierarchy_linked_list is protected body
         -- No next sibling
         write(v_line, fill_string(' ', 3 - v_indent_correction_amount));
       end if;
-      
+
     end if;
-    
+
   end procedure;
-  
+
   procedure print_node(
     variable starting_node_ptr : in t_element_ptr;
     variable v_status_ok       : inout boolean;
@@ -779,28 +858,28 @@ type t_hierarchy_linked_list is protected body
     if starting_node_ptr.hierarchy_level > 0 then
 
       generate_hierarchy_prefix(starting_node_ptr.parent, starting_node_ptr, starting_node_ptr, v_line);
-      
+
       if starting_node_ptr.next_sibling /= null then
         write(v_line, string'("|- "));
       else
         write(v_line, string'("`- "));
       end if;
-      
+
     end if;
-    
+
     -- Print name of node
     write(v_line, starting_node_ptr.element_data.name);
-    
+
     -- Adjust the columns according to max hierarchy level
     if vr_max_hierarchy_level > 0 then
       if starting_node_ptr.hierarchy_level /= vr_max_hierarchy_level then
         write(v_line, fill_string(' ', (vr_max_hierarchy_level - starting_node_ptr.hierarchy_level)*3));
       end if;
     end if;
-    
+
     -- Print colon to signify the end of the name
     write(v_line, string'(":"));
-  
+
     -- Print counters for each of the alert levels.
     for alert_level in NOTE to t_alert_level'right loop
         write(v_line, justify(integer'image(starting_node_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & "/" &
@@ -809,7 +888,7 @@ type t_hierarchy_linked_list is protected body
                                 ,RIGHT, 11) & " ");
         if v_status_ok = true then
           if starting_node_ptr.element_data.alert_attention_counters(alert_level)(REGARD) /=
-            starting_node_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) then 
+            starting_node_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) then
             if alert_level > MANUAL_CHECK then
               if starting_node_ptr.element_data.alert_attention_counters(alert_level)(REGARD) <
                  starting_node_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) then
@@ -821,19 +900,19 @@ type t_hierarchy_linked_list is protected body
           end if;
         end if;
     end loop;
-    
+
     write(v_line, LF);
-    
+
     if starting_node_ptr.first_child /= null then
       print_node(starting_node_ptr.first_child, v_status_ok, v_mismatch, v_line);
     end if;
-    
+
     if starting_node_ptr.next_sibling /= null then
       print_node(starting_node_ptr.next_sibling, v_status_ok, v_mismatch, v_line);
     end if;
-    
+
   end procedure;
-  
+
   procedure print_hierarchical_log(
     order : t_order := FINAL
   ) is
@@ -849,7 +928,7 @@ type t_hierarchy_linked_list is protected body
     else -- order=FINAL
       v_header := "*** FINAL SUMMARY OF ALL ALERTS  ***     Format: REGARDED/EXPECTED/IGNORED      ";
     end if;
-    
+
     -- Write header
     write(v_line,
         LF &
@@ -857,14 +936,14 @@ type t_hierarchy_linked_list is protected body
         v_header & LF &
         fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
         "     " & justify(" ", RIGHT, 3+ C_HIERARCHY_NODE_NAME_LENGTH + vr_max_hierarchy_level*3) & "NOTE" & justify(" ", RIGHT, 6) & "TB_NOTE" & justify(" ", RIGHT, 5) & "WARNING" & justify(" ", RIGHT, 3) & "TB_WARNING" & justify(" ", RIGHT, 2) & "MANUAL_CHECK" & justify(" ", RIGHT, 3) & "ERROR" & justify(" ", RIGHT, 5) & "TB_ERROR" & justify(" ", RIGHT, 5) & "FAILURE" & justify(" ", RIGHT, 3) & "TB_FAILURE" & LF);
-    
+
     -- Print all nodes
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
       print_node(vr_top_element_ptr, v_status_ok, v_mismatch, v_line);
     end if;
-    
+
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
-    
+
     -- Print a conclusion when called from the FINAL part of the test sequencer
     -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
     if order = FINAL then
@@ -876,8 +955,8 @@ type t_hierarchy_linked_list is protected body
         write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
       end if;
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
-    end if; 
-    
+    end if;
+
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-prefix'length);
     prefix_lines(v_line, prefix);
 
@@ -887,9 +966,9 @@ type t_hierarchy_linked_list is protected body
     writeline(LOG_FILE, v_line_copy);
 
   end procedure;
-  
+
   impure function get_parent_scope(
-    scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH)) 
+    scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH))
     return string is
     variable v_current_ptr : t_element_ptr := null;
     variable v_found : boolean := false;
@@ -898,15 +977,15 @@ type t_hierarchy_linked_list is protected body
       search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
       assert v_found report "Scope not found. Exiting get_parent_scope()..." severity warning;
       if not v_found then return justify("", LEFT, C_HIERARCHY_NODE_NAME_LENGTH); end if;
-      
+
       if v_current_ptr.parent /= null then
         return v_current_ptr.parent.element_data.name;
       end if;
-      
+
     end if;
     return "";
   end function;
-  
+
   procedure propagate_hierarchy_level(
     variable node_ptr : inout t_element_ptr
     ) is
@@ -917,21 +996,21 @@ type t_hierarchy_linked_list is protected body
       else -- No parent
         node_ptr.hierarchy_level := 0;
       end if;
-      
+
       if vr_max_hierarchy_level < node_ptr.hierarchy_level then
         vr_max_hierarchy_level := node_ptr.hierarchy_level;
       end if;
-      
+
       if node_ptr.next_sibling /= null then
         propagate_hierarchy_level(node_ptr.next_sibling);
       end if;
-      
+
       if node_ptr.first_child /= null then
         propagate_hierarchy_level(node_ptr.first_child);
       end if;
     end if;
   end procedure;
-  
+
   procedure change_parent(
     scope : string;
     parent_scope : string
@@ -943,32 +1022,32 @@ type t_hierarchy_linked_list is protected body
     variable v_found : boolean := false;
   begin
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
-    
+
       search_for_scope(vr_top_element_ptr, scope, v_child_ptr, v_found);
       assert v_found report "Child not found. Exiting change_parent()..." severity warning;
       if not v_found then return; end if;
-      
+
       search_for_scope(vr_top_element_ptr, parent_scope, v_new_parent_ptr, v_found);
       assert v_found report "Parent not found. Exiting change_parent()..." severity warning;
       if not v_found then return; end if;
-      
+
       if v_child_ptr.first_child /= null then
         search_for_scope(v_child_ptr.first_child, parent_scope, v_current_ptr, v_found);
         assert not v_found report "New parent is the descendant of the node that shall be moved! Illegal operation!" severity failure;
       end if;
-      
+
       -- Clean up
       -- Need to check the current parent of the child for any other children,
       -- then clean up the next_sibling, prev_sibling and first_child pointers.
-      
+
       v_old_parent_ptr := v_child_ptr.parent;
-      if v_old_parent_ptr /= null then 
+      if v_old_parent_ptr /= null then
         if v_old_parent_ptr.first_child = v_child_ptr then
           -- First_child is this child. Check if any siblings.
-          
+
           -- Prev_sibling is null since this is first child.
           -- Next sibling can be something else.
-          
+
           -- Correct first_child for old parent
           if v_child_ptr.next_sibling /= null then
             -- Set next_sibling to be first child
@@ -982,27 +1061,27 @@ type t_hierarchy_linked_list is protected body
         else
           -- This child must be one of the siblings.
           -- Remove this child and glue together the other siblings
-          
+
           -- Create pointer from previous sibling to next sibling
           v_child_ptr.prev_sibling.next_sibling := v_child_ptr.next_sibling;
-          
+
           -- Create pointer from next sibling to previous sibling
           if v_child_ptr.next_sibling /= null then
             v_child_ptr.next_sibling.prev_sibling := v_child_ptr.prev_sibling;
           end if;
         end if;
-        
+
         -- Clear siblings to prepare for another parent
         v_child_ptr.prev_sibling := null;
         v_child_ptr.next_sibling := null;
       end if;
-      
-      
+
+
       -- Set new parent and prev_sibling for the child.
       if v_new_parent_ptr.first_child = null then
         -- No children previously created for this parent
         v_new_parent_ptr.first_child := v_child_ptr;
-        
+
       else
         -- There is at least 1 child belonging to the new parent
         v_current_ptr := v_new_parent_ptr.first_child;
@@ -1014,7 +1093,7 @@ type t_hierarchy_linked_list is protected body
         v_current_ptr.next_sibling := v_child_ptr;
         v_child_ptr.prev_sibling := v_current_ptr;
       end if;
-      
+
       -- Set parent correctly
       v_child_ptr.parent := v_new_parent_ptr;
       -- Update hierarchy levels for the whole tree
@@ -1022,7 +1101,7 @@ type t_hierarchy_linked_list is protected body
       propagate_hierarchy_level(vr_top_element_ptr);
     end if;
   end procedure;
-  
+
   procedure set_top_level_stop_limit(
     alert_level : t_alert_level;
     value : natural
@@ -1032,27 +1111,27 @@ type t_hierarchy_linked_list is protected body
     --
 
     vr_top_element_ptr.element_data.alert_stop_limit(alert_level) := value;
-    
+
     -- Evaluate new stop limit in case it is less than or equal to the current alert counter for this alert level
     -- If that is the case, a new alert with the same alert level shall be triggered.
     if vr_top_element_ptr.element_data.alert_stop_limit(alert_level) /= 0 and
           (vr_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= vr_top_element_ptr.element_data.alert_stop_limit(alert_level)) then
-      assert false 
+      assert false
             report "Alert stop limit for scope " & vr_top_element_ptr.element_data.name & " at alert level " & to_upper(to_string(alert_level)) &  " set to " & to_string(value) &
             ", which is lower than the current " & to_upper(to_string(alert_level)) & " count (" & to_string(vr_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & ")."
             severity failure;
 
     end if;
-      
+
   end procedure;
-  
+
   impure function get_top_level_stop_limit(
     alert_level : t_alert_level
     ) return natural is
   begin
     return vr_top_element_ptr.element_data.alert_stop_limit(alert_level);
   end function;
-  
+
   procedure propagate_alert_level(
     variable node_ptr : inout t_element_ptr;
     constant alert_level : t_alert_level;
@@ -1061,11 +1140,11 @@ type t_hierarchy_linked_list is protected body
   begin
     if node_ptr /= null then
       node_ptr.element_data.alert_level_print(alert_level) := setting;
-      
+
       if node_ptr.next_sibling /= null then
         propagate_alert_level(node_ptr.next_sibling, alert_level, setting);
       end if;
-      
+
       if node_ptr.first_child /= null then
         propagate_alert_level(node_ptr.first_child, alert_level, setting);
       end if;
@@ -1084,7 +1163,7 @@ type t_hierarchy_linked_list is protected body
       propagate_alert_level(v_current_ptr, alert_level, true);
     end if;
   end procedure;
-  
+
   procedure disable_alert_level(
     scope : string;
     alert_level : t_alert_level
@@ -1097,7 +1176,7 @@ type t_hierarchy_linked_list is protected body
       propagate_alert_level(v_current_ptr, alert_level, false);
     end if;
   end procedure;
-  
+
   procedure enable_all_alert_levels(
     scope : string
     ) is
@@ -1111,7 +1190,7 @@ type t_hierarchy_linked_list is protected body
       end loop;
     end if;
   end procedure;
-  
+
   procedure disable_all_alert_levels(
     scope : string
     ) is
@@ -1125,7 +1204,7 @@ type t_hierarchy_linked_list is protected body
       end loop;
     end if;
   end procedure;
-  
+
 end protected body;
 
 end package body hierarchy_linked_list_pkg;

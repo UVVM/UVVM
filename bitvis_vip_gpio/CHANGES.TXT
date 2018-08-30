@@ -1,6 +1,13 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.2.1
+----------
+Released: 2018-08-30
+- Added VVC context file
+- Updated documentation
+- Compile script changed according to new structure
+
 v1.2.0
 ----------
 Released: 2018-04-09

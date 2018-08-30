@@ -9,6 +9,17 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.08.30
+--------------------
+Released: 2018-08-30
+- New compile script structure
+- Added context file for each VVC
+- Fixed simulation status in shared_uvvm_status and hierarchical alert messages in UVVM UTIL
+- New package for global signals and shared variables added, global_signals_and_shared_variables_pkg.vhd in UVVM UTIL
+- Added support allowing the first clock edge to come at the same time or
+  before chip select is enabled for SPI slave BFM.
+
+
 v2018.07.04
 --------------------
 Released: 2018-07-04

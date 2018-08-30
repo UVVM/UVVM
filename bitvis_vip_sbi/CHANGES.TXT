@@ -1,6 +1,13 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.1.2
+----------
+Released: 2018-08-30
+- Added VVC context file
+- Updated documentation
+- Compile script changed according to new structure
+
 v2.1.1
 ----------
 Released: 2018-04-09

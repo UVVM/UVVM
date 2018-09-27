@@ -50,7 +50,9 @@ entity sbi_vvc is
     );
   port (
     clk               : in    std_logic;
-    sbi_vvc_master_if : inout t_sbi_if := init_sbi_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
+    sbi_vvc_master_if : inout t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0),
+                                       wdata(GC_DATA_WIDTH-1 downto 0),
+                                       rdata(GC_DATA_WIDTH-1 downto 0)) := init_sbi_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
     );
 begin
   -- Check the interface widths to assure that the interface was correctly set up

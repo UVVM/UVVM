@@ -258,11 +258,10 @@ package adaptations_pkg is
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
-  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
-    NA,               -- When channel is not relevant
-    ALL_CHANNELS,     -- When command shall be received by all channels
-    RX,
-    TX);
+  type t_vvc is record
+    instance  : integer;
+    channel   : t_channel;
+  end record t_vvc;
 
   constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
   constant ALL_ENABLED_INSTANCES : integer := -3;
@@ -283,6 +282,21 @@ package adaptations_pkg is
     ID_DATA => DISABLED,
     others  => DISABLED
   );
+
+  ------------------------------------------------------------------------
+  -- Ethernet adaptations
+  ------------------------------------------------------------------------
+  -- Minimum and maximum payload length in bytes. Defined in IEEE 802.3.
+  constant C_ETHERNET_PAYLOAD_MIN_LENGTH : positive := 46;
+  constant C_ETHERNET_PAYLOAD_MAX_LENGTH : positive := 1500;
+  constant C_ETHERNET_FRAME_MIN_LENGTH   : positive := 18 + C_ETHERNET_PAYLOAD_MIN_LENGTH;
+  constant C_ETHERNET_FRAME_MAX_LENGTH   : positive := 18 + C_ETHERNET_PAYLOAD_MAX_LENGTH;
+
+
+  ------------------------------------------------------------------------
+  -- CRC32
+  ------------------------------------------------------------------------
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
 
 end package adaptations_pkg;
 

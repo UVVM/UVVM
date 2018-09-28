@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.09.28
+--------------------
+Released: 2018-09-28
+- Fixed bug in compile script in bitvis_irqc
+- Minor changes in documentation of bitvis_uart
+
+
 v2018.08.30
 --------------------
 Released: 2018-08-30

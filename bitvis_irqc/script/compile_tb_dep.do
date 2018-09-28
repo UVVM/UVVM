@@ -61,5 +61,5 @@ if { [info exists 1] } {
   unset 1
 }
 
-do $vip_sbi_part_path/script/compile_bfm.do $vip_sbi_part_path
+do $vip_sbi_part_path/script/compile_src.do $vip_sbi_part_path
 

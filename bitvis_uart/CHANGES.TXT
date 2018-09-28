@@ -1,6 +1,10 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.3
+Released: 2018-09-28
+- Minor documentation changes
+
 v1.1.2
 ----------
 Released: 2018-08-30

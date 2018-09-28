@@ -3,8 +3,8 @@ This project uses the following versions:
   uvvm_util, version v2.6.0
   bitvis_vip_sbi, version v2.1.2
   bitvis_vip_uart, version v2.1.2
-  bitvis_uart, version v1.1.2
-  bitvis_irqc, version v1.0.6
+  bitvis_uart, version v1.1.3
+  bitvis_irqc, version v1.0.7
   bitvis_vip_axilite, version v2.1.2
   bitvis_vip_axistream, version v4.0.2
   bitvis_vip_avalon_mm, version v2.1.2

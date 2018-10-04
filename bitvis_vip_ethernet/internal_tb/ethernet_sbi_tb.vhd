@@ -29,6 +29,9 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.vvc_context;
 
+library bitvis_vip_sbi;
+use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg;
+use bitvis_vip_sbi.vvc_methods_pkg.SBI_VVCT;
 -- Test case entity
 entity ethernet_sbi_tb is
   generic (
@@ -60,7 +63,7 @@ begin
   p_main: process
     variable v_alert_num_mismatch : boolean := false;
     variable v_cmd_idx            : natural;
-    variable v_send_data          : t_byte_array(0 to 9);
+    variable v_send_data          : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     variable v_receive_data       : t_vvc_result;
   begin
 
@@ -88,6 +91,12 @@ begin
 
     await_uvvm_initialization(VOID);
 
+    disable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ID_SEQUENCER);
+    enable_log_msg(ID_LOG_HDR);
+
+    bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
+    bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
     log(ID_LOG_HDR_LARGE, "START SIMULATION OF ETHERNET VVC");
 
@@ -105,7 +114,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data, "Send random data from instance 1.");
+    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to 9), "Send random data from instance 1.");
     ethernet_receive(ETHERNET_VVCT, 2, RECEIVER, "Read random data from instance 1.");
     v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RECEIVER);
     await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
@@ -121,14 +130,14 @@ begin
     end loop;
 
 
-    log(ID_LOG_HDR, "Send 5 bytes of data from i1 to i2");
-    for i in 0 to 4 loop
+    log(ID_LOG_HDR, "Send " & to_string(C_MAX_PAYLOAD_LENGTH) & " bytes of data from i1 to i2");
+    for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to 4), "Send random data from instance 1.");
+    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 1.");
     ethernet_receive(ETHERNET_VVCT, 2, RECEIVER, "Read random data from instance 1.");
     v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RECEIVER);
-    await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 ms, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
     fetch_result(ETHERNET_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
@@ -136,8 +145,10 @@ begin
     check_value(v_receive_data.ethernet_frame.mac_destination = (x"00", x"00", x"00", x"00", x"00", x"02"), ERROR, "Verify MAC destination.");
     check_value(v_receive_data.ethernet_frame.mac_source      = (x"00", x"00", x"00", x"00", x"00", x"01"), ERROR, "Verify MAC source.");
     check_value(v_receive_data.ethernet_frame_status.fcs_error, false, ERROR, "Verify FCS.");
-    for i in 0 to 4 loop
-      check_value(v_receive_data.ethernet_frame.payload(i), v_send_data(i), ERROR, "Verify received payload, byte " & to_string(i) & ".");
+
+    log(ID_LOG_HDR, "Verify received payload");
+    for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
+      check_value(v_receive_data.ethernet_frame.payload(i), v_send_data(i), ERROR, "Verify received payload, byte " & to_string(i) & ".", C_SCOPE, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER);
     end loop;
 
 

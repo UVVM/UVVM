@@ -40,20 +40,14 @@ uvvm_vvc_framework_lib.add_source_files(join(project_root, 'uvvm_vvc_framework',
 
 bitvis_vip_gmii_lib = ui.add_library('bitvis_vip_gmii')
 bitvis_vip_gmii_lib.add_source_files(join(project_root, 'bitvis_vip_gmii', 'src', '*.vhd'))
-bitvis_vip_gmii_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_queue_pkg.vhd'))
-bitvis_vip_gmii_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_target_support_pkg.vhd'))
-bitvis_vip_gmii_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_vvc_entity_support_pkg.vhd'))
-bitvis_vip_gmii_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_vvc_framework_common_methods_pkg.vhd'))
+bitvis_vip_gmii_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
 bitvis_vip_sbi_lib = ui.add_library('bitvis_vip_sbi')
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'bitvis_vip_sbi', 'src', '*.vhd'))
-bitvis_vip_sbi_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_queue_pkg.vhd'))
-bitvis_vip_sbi_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_target_support_pkg.vhd'))
-bitvis_vip_sbi_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_vvc_entity_support_pkg.vhd'))
-bitvis_vip_sbi_lib.add_source_file(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', 'td_vvc_framework_common_methods_pkg.vhd'))
+bitvis_vip_sbi_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
-bitvis_vip_hvvc_to_vvc = ui.add_library('bitvis_vip_hvvc_to_vvc')
-bitvis_vip_hvvc_to_vvc.add_source_files(join(project_root, 'bitvis_vip_hvvc_to_vvc', 'src', '*.vhd'))
+bitvis_vip_hvvc_to_vvc_bridge = ui.add_library('bitvis_vip_hvvc_to_vvc_bridge')
+bitvis_vip_hvvc_to_vvc_bridge.add_source_files(join(project_root, 'bitvis_vip_hvvc_to_vvc_bridge', 'src', '*.vhd'))
 
 bitvis_vip_ethernet_lib = ui.add_library('bitvis_vip_ethernet')
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
@@ -62,7 +56,8 @@ bitvis_vip_ethernet_lib.add_source_files(join(project_root, 'uvvm_vvc_framework'
 # Add all testbenches to lib
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 
-ui.set_compile_option('modelsim.vcom_flags', ["-suppress", "1346,1236"])
+ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
+ui.set_sim_option("rivierapro.vsim_flags", ["-i", "10000"])
 
 # Compile and run all test cases
 ui.main()

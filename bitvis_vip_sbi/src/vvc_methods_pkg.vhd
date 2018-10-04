@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -58,11 +58,12 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
-    bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference 
+    bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
+  type t_vvc_config_full_array is array (t_channel range <>) of t_vvc_config_array;
 
   constant C_SBI_VVC_CONFIG_DEFAULT : t_vvc_config := (
     inter_bfm_delay                       => C_SBI_INTER_BFM_DELAY_DEFAULT,
@@ -110,7 +111,8 @@ package vvc_methods_pkg is
   );
 
 
-  shared variable shared_sbi_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_SBI_VVC_CONFIG_DEFAULT);
+  shared variable shared_vvc_config : t_vvc_config_full_array(NA to NA)(0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_SBI_VVC_CONFIG_DEFAULT));
+  alias shared_sbi_vvc_config : t_vvc_config_array is shared_vvc_config(NA);
   shared variable shared_sbi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
 

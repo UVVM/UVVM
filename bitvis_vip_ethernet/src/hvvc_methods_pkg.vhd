@@ -24,7 +24,7 @@ package vvc_methods_pkg is
   --========================================================================================================================
   -- Types and constants for the ETHERNET VVC
   --========================================================================================================================
-  constant C_VVC_NAME     : string := "ETHERNET_VVC";
+  constant C_VVC_NAME     : string := "ETHERNET_HVVC";
 
   signal ETHERNET_VVCT     : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias  THIS_VVCT         : t_vvc_target_record is ETHERNET_VVCT;

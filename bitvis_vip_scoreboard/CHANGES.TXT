@@ -1,6 +1,11 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v1.0.2
+----------
+Released: 2018-10-09
+- Minor bugfix in non-public method check_queue_empty()
+
 v1.0.1
 ----------
 Released: 2018-08-30

@@ -9,6 +9,11 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.10.09
+--------------------
+Released: 2018-10-09
+- Fixed minor bug in bitvis_vip_scoreboard
+
 v2018.09.28
 --------------------
 Released: 2018-09-28

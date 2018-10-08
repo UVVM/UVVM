@@ -575,7 +575,7 @@ package body generic_sb_pkg is
       constant instance : in positive
     ) is
     begin
-      check_value(not vr_sb_queue.is_empty(VOID), TB_ERROR, "The queue is empty", vr_scope, ID_NEVER);
+      check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "The queue is empty", vr_scope, ID_NEVER);
     end procedure check_queue_empty;
 
     procedure check_config_validity(

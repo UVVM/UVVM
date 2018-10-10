@@ -95,6 +95,10 @@ package td_vvc_entity_support_pkg is
     signal global_awaiting_completion : out std_logic_vector(C_MAX_NUM_SEQUENCERS-1 downto 0)
     );
 
+  function get_msg_id_panel(
+    constant command    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config
+  ) return t_msg_id_panel;
 
   -------------------------------------------
   -- await_cmd_from_sequencer

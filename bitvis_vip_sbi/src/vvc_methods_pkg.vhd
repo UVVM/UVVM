@@ -127,38 +127,50 @@ package vvc_methods_pkg is
   --==============================================================================
 
   procedure sbi_write(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant data               : in std_logic_vector;
-    constant msg                : in string
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant data                      : in    std_logic_vector;
+    constant msg                       : in    string;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
   procedure sbi_read(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant msg                : in string
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant msg                       : in    string;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
   procedure sbi_check(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant data               : in std_logic_vector;
-    constant msg                : in string;
-    constant alert_level        : in t_alert_level := ERROR
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant data                      : in    std_logic_vector;
+    constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
   procedure sbi_poll_until(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant data               : in std_logic_vector;
-    constant msg                : in string;
-    constant max_polls          : in integer        := 100;
-    constant timeout            : in time           := 1 us;  -- To assure a given timeout
-    constant alert_level        : in t_alert_level  := ERROR
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant data                      : in    std_logic_vector;
+    constant msg                       : in    string;
+    constant max_polls                 : in    integer                     := 100;
+    constant timeout                   : in    time                        := 1 us;  -- To assure a given timeout
+    constant alert_level               : in    t_alert_level               := ERROR;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
 end package vvc_methods_pkg;
@@ -174,11 +186,14 @@ package body vvc_methods_pkg is
   --==============================================================================
 
   procedure sbi_write(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant data               : in std_logic_vector;
-    constant msg                : in string
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant data                      : in    std_logic_vector;
+    constant msg                       : in    string;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -192,17 +207,22 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
-    shared_vvc_cmd.addr                               := v_normalised_addr;
-    shared_vvc_cmd.data                               := v_normalised_data;
-    send_command_to_vvc(VVCT);
+    shared_vvc_cmd.addr                      := v_normalised_addr;
+    shared_vvc_cmd.data                      := v_normalised_data;
+    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
 
   procedure sbi_read(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant msg                : in string
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant msg                       : in    string;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -214,19 +234,23 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.operation                          := READ;
-    shared_vvc_cmd.addr                               := v_normalised_addr;
-    send_command_to_vvc(VVCT);
+    shared_vvc_cmd.addr                      := v_normalised_addr;
+    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
 
   procedure sbi_check(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant data               : in std_logic_vector;
-    constant msg                : in string;
-    constant alert_level        : in t_alert_level := ERROR
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant data                      : in    std_logic_vector;
+    constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -242,22 +266,27 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
-    shared_vvc_cmd.addr                               := v_normalised_addr;
-    shared_vvc_cmd.data                               := v_normalised_data;
-    shared_vvc_cmd.alert_level                        := alert_level;
-    send_command_to_vvc(VVCT);
+    shared_vvc_cmd.addr                      := v_normalised_addr;
+    shared_vvc_cmd.data                      := v_normalised_data;
+    shared_vvc_cmd.alert_level               := alert_level;
+    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
 
   procedure sbi_poll_until(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant data               : in std_logic_vector;
-    constant msg                : in string;
-    constant max_polls          : in integer        := 100;
-    constant timeout            : in time           := 1 us;
-    constant alert_level        : in t_alert_level  := ERROR
+    signal   VVCT                      : inout t_vvc_target_record;
+    constant vvc_instance_idx          : in    integer;
+    constant addr                      : in    unsigned;
+    constant data                      : in    std_logic_vector;
+    constant msg                       : in    string;
+    constant max_polls                 : in    integer                     := 100;
+    constant timeout                   : in    time                        := 1 us;
+    constant alert_level               : in    t_alert_level               := ERROR;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
+    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
+    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -271,12 +300,14 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, POLL_UNTIL);
-    shared_vvc_cmd.addr                              := v_normalised_addr;
-    shared_vvc_cmd.data                              := v_normalised_data;
-    shared_vvc_cmd.max_polls                         := max_polls;
-    shared_vvc_cmd.timeout                           := timeout;
-    shared_vvc_cmd.alert_level                       := alert_level;
-    send_command_to_vvc(VVCT);
+    shared_vvc_cmd.addr                      := v_normalised_addr;
+    shared_vvc_cmd.data                      := v_normalised_data;
+    shared_vvc_cmd.max_polls                 := max_polls;
+    shared_vvc_cmd.timeout                   := timeout;
+    shared_vvc_cmd.alert_level               := alert_level;
+    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
 

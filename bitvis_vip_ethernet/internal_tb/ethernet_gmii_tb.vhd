@@ -159,6 +159,15 @@ begin
       check_value(v_receive_data.ethernet_frame.payload(0), v_send_data(0), ERROR, "Verify received payload.");
     end loop;
 
+    log(ID_LOG_HDR_LARGE, "VERIFY EXPECT");
+    for i in 0 to 4 loop
+      v_send_data(i) := random(8);
+    end loop;
+    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to 4), "Send random data from instance 1.");
+    ethernet_expect(ETHERNET_VVCT, 2, RECEIVER, v_send_data(0 to 4), "Expect random data from instance 1.");
+    await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+
+
     --==================================================================================================
     -- Ending the simulation
     --------------------------------------------------------------------------------------

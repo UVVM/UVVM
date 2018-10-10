@@ -665,6 +665,7 @@ package body string_methods_pkg is
       write(v_msg_line, string'(" "));
     end if;
     bitvis_assert(v_line'length > 0, ERROR, "No procedure name found. " & v_msg_line.all, "get_procedure_name_from_instance_name()");
+    DEALLOCATE(v_msg_line);
     return v_line.all;
   end;
 

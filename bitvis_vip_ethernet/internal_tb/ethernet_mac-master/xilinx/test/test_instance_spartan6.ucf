@@ -1,0 +1,65 @@
+# Timing
+NET "clock_125_i" TNM_NET = "clock_125_i";
+TIMESPEC TS_clock_125_in = PERIOD "clock_125_i" 125 MHz HIGH 50% INPUT_JITTER 80 ps;
+
+NET "mii_tx_er_o" TNM = "gmii_out";
+NET "mii_txd_o[0]" TNM = "gmii_out";
+NET "mii_txd_o[1]" TNM = "gmii_out";
+NET "mii_txd_o[2]" TNM = "gmii_out";
+NET "mii_txd_o[3]" TNM = "gmii_out";
+NET "mii_txd_o[4]" TNM = "gmii_out";
+NET "mii_txd_o[5]" TNM = "gmii_out";
+NET "mii_txd_o[6]" TNM = "gmii_out";
+NET "mii_txd_o[7]" TNM = "gmii_out";
+NET "mii_tx_en_o" TNM = "gmii_out";
+NET "gmii_gtx_clk_o" TNM = "gmii_out";
+NET "mii_rx_er_i" TNM = "mii_in";
+NET "mii_rx_dv_i" TNM = "mii_in";
+NET "mii_rxd_i[7]" TNM = "mii_in";
+NET "mii_rxd_i[6]" TNM = "mii_in";
+NET "mii_rxd_i[5]" TNM = "mii_in";
+NET "mii_rxd_i[4]" TNM = "mii_in";
+NET "mii_rxd_i[3]" TNM = "mii_in";
+NET "mii_rxd_i[1]" TNM = "mii_in";
+NET "mii_rxd_i[0]" TNM = "mii_in";
+NET "mii_rxd_i[2]" TNM = "mii_in";
+# 25 ns constraint is for MII only
+# REFERENCE_PIN constraint is for GMII bus skew analysis
+TIMEGRP "gmii_out" OFFSET = OUT 25 ns AFTER "mii_tx_clk_i" REFERENCE_PIN "gmii_gtx_clk_o";
+
+NET "mii_tx_clk_i" TNM_NET = mii_tx_clk_i;
+TIMESPEC TS_mii_tx_clk_i = PERIOD "mii_tx_clk_i" 40 ns HIGH 35%;
+NET "mii_rx_clk_i" TNM_NET = mii_rx_clk_i;
+TIMESPEC TS_mii_rx_clk_i = PERIOD "mii_rx_clk_i" 125 MHz HIGH 33%;
+#TIMEGRP "mii_in" OFFSET = IN 2.5 ns VALID 3 ns BEFORE "mii_rx_clk_i" RISING;
+TIMEGRP "mii_in" OFFSET = IN 2 ns VALID 2 ns BEFORE "mii_rx_clk_i" RISING;
+
+# Pins
+NET "clock_125_i" LOC = AA12 | IOSTANDARD = LVCMOS33;
+#NET "mdc_o" LOC = AA2 | IOSTANDARD = LVCMOS33;
+#NET "mdio_io" LOC = AB3 | IOSTANDARD = LVCMOS33;
+
+NET "gmii_gtx_clk_o" LOC = R11 | IOSTANDARD = LVCMOS33;
+NET "mii_tx_en_o" LOC = AB16 | IOSTANDARD = LVCMOS33;
+NET "mii_tx_er_o" LOC = AB18 | IOSTANDARD = LVCMOS33;
+
+NET "mii_rxd_i[0]" LOC = Y3 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[1]" LOC = W8 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[2]" LOC = W4 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[3]" LOC = U9 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[4]" LOC = V7 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[5]" LOC = V5 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[6]" LOC = W9 | IOSTANDARD = LVCMOS33;
+NET "mii_rxd_i[7]" LOC = U6 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[0]" LOC = AA18 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[1]" LOC = AB14 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[2]" LOC = AA16 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[3]" LOC = W14 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[4]" LOC = T16 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[5]" LOC = Y14 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[6]" LOC = V15 | IOSTANDARD = LVCMOS33;
+NET "mii_txd_o[7]" LOC = AA14 | IOSTANDARD = LVCMOS33;
+NET "mii_rx_clk_i" LOC = Y11 | IOSTANDARD = LVCMOS33;
+NET "mii_tx_clk_i" LOC = W12 | IOSTANDARD = LVCMOS33;
+NET "mii_rx_er_i" LOC = Y8 | IOSTANDARD = LVCMOS33;
+NET "mii_rx_dv_i" LOC = Y4 | IOSTANDARD = LVCMOS33;

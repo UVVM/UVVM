@@ -50,8 +50,8 @@ package gmii_bfm_pkg is
 
   constant C_GMII_TO_DUT_PASSIVE : t_gmii_to_dut_if := (
     rxclk => 'Z',
-    rxdv  => 'Z',
-    rxd   => (others => 'Z')
+    rxdv  => '0',
+    rxd   => (others => '0')
   );
 
   -- Configuration record to be assigned in the test harness.
@@ -143,8 +143,8 @@ package body gmii_bfm_pkg is
     variable v_gmii_to_dut_if : t_gmii_to_dut_if;
   begin
     v_gmii_to_dut_if.rxclk := 'Z';
-    v_gmii_to_dut_if.rxdv  := 'Z';
-    v_gmii_to_dut_if.rxd   := (others => 'Z');
+    v_gmii_to_dut_if.rxdv  := '0';
+    v_gmii_to_dut_if.rxd   := (others => '0');
     return v_gmii_to_dut_if;
   end function init_gmii_to_dut_if;
 
@@ -201,7 +201,7 @@ package body gmii_bfm_pkg is
 
     gmii_to_dut_if <= C_GMII_TO_DUT_PASSIVE;
 
-    for i in 0 to data'length-1 loop
+    for i in data'range loop
       wait_until_given_time_before_rising_edge(gmii_to_dut_if.rxclk, config.setup_time, config.clock_period);
       gmii_to_dut_if.rxd  <= data(i);
       gmii_to_dut_if.rxdv <= '1';

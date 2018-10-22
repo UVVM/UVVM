@@ -682,6 +682,8 @@ begin
         check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_STD, error, "My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
         check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_EXACT, error, "My msg dontcare-in-extended-width HEX, AS_IS, Fail", C_SCOPE, HEX, AS_IS);
 
+        check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
+
         -- wide vector
         check_value(slv128, slv128, error, "Test wide vector, HEX, OK", C_SCOPE, HEX, AS_IS);
         check_value(slv128, slv128, error, "Test wide vector, DEC, OK", C_SCOPE, DEC, AS_IS);
@@ -744,6 +746,7 @@ begin
         check_value('L', '0', MATCH_STD, warning, "My msg SL, OK", C_SCOPE);
         check_value('1', 'H', MATCH_EXACT, warning, "My msg SL, Fail", C_SCOPE);
         check_value('-', '1', MATCH_EXACT, warning, "My msg SL, Fail", C_SCOPE);
+        check_value('Z', 'Z', MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z", C_SCOPE);
 
         -- time
         v_t := 15 ns;

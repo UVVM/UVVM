@@ -68,7 +68,7 @@ package types_pkg is
 
   type t_log_destination is (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY);
 
-  type t_match_strictness is (MATCH_STD, MATCH_EXACT);
+  type t_match_strictness is (MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT);
 
   type t_alert_counters  is array (NOTE to t_alert_level'right) of natural;
   type t_alert_attention is array (NOTE to t_alert_level'right) of t_attention;

@@ -983,8 +983,9 @@ package methods_pkg is
   --          Function is only included to support internal functionality.
   --          The function can be removed without notification.
   function matching_values(
-    value1: std_logic_vector;
-    value2: std_logic_vector
+    constant value1           : in std_logic_vector;
+    constant value2           : in std_logic_vector;
+    constant match_strictness : in t_match_strictness := MATCH_STD
   ) return boolean;
 
 
@@ -2755,16 +2756,20 @@ package body methods_pkg is
 
   -- Matching if same width or only zeros in "extended width"
   function matching_widths(
-    value1: std_logic_vector;
-    value2: std_logic_vector
+    constant value1           : in std_logic_vector;
+    constant value2           : in std_logic_vector
     ) return boolean is
     -- Normalize vectors to (N downto 0)
     alias    a_value1: std_logic_vector(value1'length - 1 downto 0) is value1;
     alias    a_value2: std_logic_vector(value2'length - 1 downto 0) is value2;
 
   begin
-    if (a_value1'left >= maximum( idx_leftmost_p1_in_p2('1', a_value2), 0)) and
-       (a_value2'left >= maximum( idx_leftmost_p1_in_p2('1', a_value1), 0)) then
+    if (a_value1'left >= maximum( idx_leftmost_p1_in_p2('1', a_value2), 0) and
+        a_value1'left >= maximum( idx_leftmost_p1_in_p2('H', a_value2), 0) and
+        a_value1'left >= maximum( idx_leftmost_p1_in_p2('Z', a_value2), 0)) and
+       (a_value2'left >= maximum( idx_leftmost_p1_in_p2('1', a_value1), 0) and
+        a_value2'left >= maximum( idx_leftmost_p1_in_p2('H', a_value1), 0) and
+        a_value2'left >= maximum( idx_leftmost_p1_in_p2('Z', a_value1), 0)) then
       return true;
     else
       return false;
@@ -2787,12 +2792,12 @@ package body methods_pkg is
     return matching_widths(std_logic_vector(value1), std_logic_vector(value2));
   end;
 
-
   -- Compare values, but ignore any leading zero's at higher indexes than v_min_length-1.
   function matching_values(
-    value1: std_logic_vector;
-    value2: std_logic_vector
-    ) return boolean is
+    constant value1           : in std_logic_vector;
+    constant value2           : in std_logic_vector;
+    constant match_strictness : in t_match_strictness := MATCH_STD
+  ) return boolean is
     -- Normalize vectors to (N downto 0)
     alias    a_value1  : std_logic_vector(value1'length - 1 downto 0) is value1;
     alias    a_value2  : std_logic_vector(value2'length - 1 downto 0) is value2;
@@ -2800,9 +2805,29 @@ package body methods_pkg is
     variable v_match      : boolean := true;  -- as default prior to checking
   begin
     if matching_widths(a_value1, a_value2) then
-      if not std_match( a_value1(v_min_length-1 downto 0), a_value2(v_min_length-1 downto 0) ) then
-          v_match := false;
-      end if;
+
+      case match_strictness is
+
+        when MATCH_STD =>
+          if not std_match( a_value1(v_min_length-1 downto 0), a_value2(v_min_length-1 downto 0) ) then
+            v_match := false;
+          end if;
+
+        when MATCH_STD_INCL_Z =>
+          for i in v_min_length-1 downto 0 loop
+            if not(std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z')) then
+              v_match := false;
+              exit;
+            end if;
+          end loop;
+
+        when others =>
+          if a_value1(v_min_length-1 downto 0) /= a_value2(v_min_length-1 downto 0) then
+            v_match := false;
+          end if;
+
+      end case;
+
     else
       v_match := false;
     end if;
@@ -2879,24 +2904,40 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()"
     ) return boolean is
     constant value_type  : string          := "std_logic";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    constant v_value_str : string  := to_string(value);
+    constant v_exp_str   : string  := to_string(exp);
+    variable v_failed    : boolean := false;
   begin
-    if std_match(value, exp) then
-      if value = exp then
-        log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
-      else
-        if match_strictness = MATCH_STD then
+    case match_strictness is
+
+      when MATCH_STD =>
+        if std_match(value, exp) then
           log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was '"  & v_value_str & "'. Expected '" & v_exp_str & "'" & LF & msg, scope);
-          return false;
+          v_failed := true;
         end if;
-      end if;
-      return true;
-    else
+
+      when MATCH_STD_INCL_Z =>
+        if (value = 'Z' and exp = 'Z') or std_match(value, exp) then
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+        else
+          v_failed := true;
+        end if;
+
+      when others =>
+        if value = exp then
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
+        else
+          v_failed := true;
+        end if;
+
+    end case;
+
+    if v_failed = true then
       alert(alert_level, caller_name & " => Failed. " & value_type & "  Was '"  & v_value_str & "'. Expected '" & v_exp_str & "'" & LF & msg, scope);
       return false;
+    else
+      return true;
     end if;
   end;
 
@@ -2953,7 +2994,7 @@ package body methods_pkg is
       deprecate(get_procedure_name_from_instance_name(value'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
     end if;
 
-    v_check_ok := matching_values(a_value, a_exp);
+    v_check_ok := matching_values(a_value, a_exp, match_strictness);
 
     if v_check_ok then
       if v_value_str = v_exp_str then

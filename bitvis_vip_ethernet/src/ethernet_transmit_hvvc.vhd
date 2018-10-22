@@ -292,11 +292,11 @@ begin
           -- FCS
           v_crc_32 := generate_crc_32_complete(v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1));
           v_crc_32 := not(v_crc_32);
-          v_ethernet_packet_raw(22+v_cmd.payload_length)   := v_crc_32(31 downto 24);
-          v_ethernet_packet_raw(22+v_cmd.payload_length+1) := v_crc_32(23 downto 16);
-          v_ethernet_packet_raw(22+v_cmd.payload_length+2) := v_crc_32(15 downto  8);
-          v_ethernet_packet_raw(22+v_cmd.payload_length+3) := v_crc_32( 7 downto  0);
+          v_ethernet_packet_raw(22+v_cmd.payload_length to 22+v_cmd.payload_length+3) := to_byte_array(v_crc_32);
           v_ethernet_frame.fcs := to_byte_array(v_crc_32);
+
+          -- Reverse each octet of the Ethernet frame
+          v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1 + 4) := reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1 + 4));
 
           -- Add info to the transaction_for_waveview_struct
           transaction_info.ethernet_frame := v_ethernet_frame;

@@ -53,6 +53,19 @@ bitvis_vip_ethernet_lib = ui.add_library('bitvis_vip_ethernet')
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_ethernet_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
+XilinxCoreLib_lib = ui.add_library('xilinxcorelib')
+XilinxCoreLib_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'xilinx', 'XilinxCoreLib', '*.vhd'))
+
+unisim_lib = ui.add_library('unisim')
+unisim_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'xilinx', 'unisims', '*.vhd'), vhdl_standard='93')
+unisim_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'xilinx', 'unisims', 'primitive', '*.vhd'), vhdl_standard='93')
+
+mac_master_lib = ui.add_library('mac_master')
+mac_master_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', '*.vhd'))
+mac_master_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'generic', '*.vhd'))
+mac_master_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'xilinx', 'ipcore_dir', '*.vhd'))
+mac_master_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'xilinx', '*.vhd'))
+
 # Add all testbenches to lib
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 

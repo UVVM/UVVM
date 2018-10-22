@@ -978,6 +978,14 @@ package methods_pkg is
     constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
   ) return t_byte_array;
 
+  function reverse_vector(
+    constant value : std_logic_vector
+  ) return std_logic_vector;
+
+  impure function reverse_vectors_in_array(
+    constant value : t_slv_array
+  ) return t_slv_array;
+
 
   -- Warning! This function should NOT be used outside the UVVM library.
   --          Function is only included to support internal functionality.
@@ -4181,6 +4189,28 @@ package body methods_pkg is
       return v_descending_array;
     end if;
   end function;
+
+  function reverse_vector(
+    constant value : std_logic_vector
+  ) return std_logic_vector is
+    variable return_val : std_logic_vector(value'range);
+  begin
+    for i in 0 to value'length-1 loop
+      return_val(value'low + i) := value(value'high - i);
+    end loop;
+    return return_val;
+  end function reverse_vector;
+
+  impure function reverse_vectors_in_array(
+    constant value : t_slv_array
+  ) return t_slv_array is
+    variable return_val : t_slv_array(value'range)(value(value'low)'range);
+  begin
+    for i in value'range loop
+      return_val(i) := reverse_vector(value(i));
+    end loop;
+    return return_val;
+  end function reverse_vectors_in_array;
 
 
 

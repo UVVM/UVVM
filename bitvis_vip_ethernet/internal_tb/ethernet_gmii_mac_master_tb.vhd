@@ -80,6 +80,7 @@ begin
     variable v_reversed_crc       : std_logic_vector(31 downto 0);
     variable v_destination_addr   : unsigned(47 downto 0);
     variable v_source_addr        : unsigned(47 downto 0);
+    variable v_random_num         : positive;
 
     procedure receive_from_mac_master(
       constant num_bytes_in_payload : in positive
@@ -245,6 +246,17 @@ begin
     receive_from_mac_master(1500);
     log(ID_LOG_HDR, "VVC --> MAC Master");
     send_to_mac_master(1500);
+
+    -----------------------------------------------------------------------------------------------
+
+    log(ID_LOG_HDR_LARGE, "Send 100 sequences of data with random number of bytes between 47 and 1499 in payload.");
+    for i in 1 to 100 loop
+      v_random_num := random(47, 1499);
+      log(ID_LOG_HDR, "MAC Master --> VVC");
+      receive_from_mac_master(v_random_num);
+      log(ID_LOG_HDR, "VVC --> MAC Master");
+      send_to_mac_master(v_random_num);
+    end loop;
 
     --==================================================================================================
     -- Ending the simulation

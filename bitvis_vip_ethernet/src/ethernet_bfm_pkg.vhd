@@ -24,7 +24,7 @@ package ethernet_bfm_pkg is
 
   constant C_SCOPE          : string := "ETHERNET BFM";
   constant C_PREAMBLE       : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
-  constant C_SFD            : std_logic_vector( 7 downto 0) := x"5D";
+  constant C_SFD            : std_logic_vector( 7 downto 0) := x"D5";
   constant C_CRC_32_RESIDUE : std_logic_vector(31 downto 0) := x"C704DD7B";
 
   type t_ethernet_frame is record
@@ -254,8 +254,10 @@ package body ethernet_bfm_pkg is
     check_value(frame_1.mac_destination,                frame_2.mac_destination,                alert_level, "Verify MAC destination", scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
     check_value(frame_1.mac_source,                     frame_2.mac_source,                     alert_level, "Verify MAC source",      scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
     check_value(frame_1.length,                         frame_2.length,                         alert_level, "Verify length",          scope,                      msg_id, msg_id_panel);
-    check_value(convert_byte_array_to_slv_array(frame_1.payload(0 to frame_1.length-1), 1), convert_byte_array_to_slv_array(frame_2.payload(0 to frame_2.length-1), 1), alert_level, "Verify payload",         scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
-    check_value(convert_byte_array_to_slv_array(frame_1.fcs, 1),                            convert_byte_array_to_slv_array(frame_2.fcs, 1),                            alert_level, "Verify FCS",             scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
+    if check_value(frame_1.payload(0 to frame_1.length-1), frame_2.payload(0 to frame_2.length-1), alert_level, "Verify payload",         scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel) then
+      log(msg_id, "check_value() => OK. " & add_msg_delimiter("Verify payload"), scope, msg_id_panel);
+    end if;
+    check_value(frame_1.fcs,                            frame_2.fcs,                            alert_level, "Verify FCS",             scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
   end procedure compare_ethernet_frames;
 
 end package body ethernet_bfm_pkg;

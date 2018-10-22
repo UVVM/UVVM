@@ -35,9 +35,6 @@ architecture struct of gmii_vvc is
 
 begin
 
-  gmii_vvc_if <= init_gmii_if;
-
-
   -- GMII TRANSMITTER VVC
   i_gmii_transmitter: entity work.gmii_transmitter_vvc
   generic map(

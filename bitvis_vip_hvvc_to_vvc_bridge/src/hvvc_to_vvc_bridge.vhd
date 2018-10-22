@@ -55,7 +55,7 @@ begin
 
   p_executor : process
     variable v_cmd_idx               : integer;
-    variable v_gmii_received_data    : t_byte_array(0 to 1549);
+    variable v_gmii_received_data    : t_byte_array(0 to 1549); --TD: Replace with C_MAX_NUM_BYTES eg...
     variable v_sbi_received_data     : std_logic_vector(bitvis_vip_sbi.vvc_cmd_pkg.C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     variable v_interface_config_idx  : natural := 0;
     variable v_dut_address           : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'high).dut_address'range);
@@ -90,11 +90,13 @@ begin
 
             when TRANSMIT =>
               gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TRANSMITTER, hvvc_to_vvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+              v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, "", GC_SCOPE);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, hvvc_to_vvc.num_data_bytes*10 ns + 1 ms, "Wait for send to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
 
             when RECEIVE =>
               gmii_read(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, hvvc_to_vvc.num_data_bytes, "Read data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
               v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, "", GC_SCOPE);
-              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, hvvc_to_vvc.num_data_bytes*10 ns + 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
               fetch_result(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
               vvc_to_hvvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1) <= v_gmii_received_data(0 to hvvc_to_vvc.num_data_bytes-1);
 

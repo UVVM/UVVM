@@ -25,7 +25,7 @@ library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.vvc_context;
+context bitvis_vip_ethernet.hvvc_context;
 
 --=================================================================================================
 entity sbi_test_harness is
@@ -77,13 +77,13 @@ architecture struct of sbi_test_harness is
 
   signal clk       : std_logic;
 
-  constant C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY : t_dut_if_field_config_channel_array(TRANSMITTER to RECEIVER)(0 to 0) :=
-   (TRANSMITTER => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_PUT, 8),
-                          dut_address_increment => 0,
-                          field_description     => "transmitter field config")),
-    RECEIVER    => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_GET, 8),
-                          dut_address_increment => 0,
-                          field_description     => "receiver field config   "))
+  constant C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY : t_dut_if_field_config_channel_array(RX to TX)(0 to 0) :=
+   (TX => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_PUT, 8),
+                 dut_address_increment => 0,
+                 field_description     => "transmitter field config")),
+    RX => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_GET, 8),
+                 dut_address_increment => 0,
+                 field_description     => "receiver field config   "))
     );
 
 begin

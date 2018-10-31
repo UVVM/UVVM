@@ -22,10 +22,19 @@ package ethernet_bfm_pkg is
   constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
   constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
 
-  constant C_SCOPE          : string := "ETHERNET BFM";
-  constant C_PREAMBLE       : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
-  constant C_SFD            : std_logic_vector( 7 downto 0) := x"D5";
-  constant C_CRC_32_RESIDUE : std_logic_vector(31 downto 0) := x"C704DD7B";
+  constant C_SCOPE             : string := "ETHERNET BFM";
+  constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
+  constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
+  constant C_CRC_32_RESIDUE    : std_logic_vector(31 downto 0) := x"C704DD7B";
+  constant C_CRC_32_POLYNOMIAL : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
+
+  -- IF field config number
+  constant C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD    : natural := 0;
+  constant C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION : natural := 1;
+  constant C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE      : natural := 2;
+  constant C_IF_FIELD_NUM_ETHERNET_LENTGTH         : natural := 3;
+  constant C_IF_FIELD_NUM_ETHERNET_PAYLOAD         : natural := 4;
+  constant C_IF_FIELD_NUM_ETHERNET_FCS             : natural := 5;
 
   type t_ethernet_frame is record
     mac_destination : unsigned(47 downto 0);
@@ -65,10 +74,10 @@ package ethernet_bfm_pkg is
   --========================================================================================================================
   -- BFM procedures
   --========================================================================================================================
-
-  function generate_crc_32(
-    constant data   : in std_logic_vector(7 downto 0);
-    constant crc_in : in std_logic_vector(31 downto 0)
+  function generate_crc(
+    constant data    : in std_logic_vector;
+    constant crc_in  : in std_logic_vector;
+    constant polynom : in std_logic_vector
   ) return std_logic_vector;
 
   impure function generate_crc_32_complete(
@@ -112,54 +121,37 @@ end package ethernet_bfm_pkg;
 
 package body ethernet_bfm_pkg is
 
+  function generate_crc(
+    constant data    : in std_logic_vector;
+    constant crc_in  : in std_logic_vector;
+    constant polynom : in std_logic_vector
+  ) return std_logic_vector is
+    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+  begin
+    -- Sanity checks
+    check_value(not data'ascending,    TB_FAILURE, "data have to be decending",    C_SCOPE, ID_NEVER);
+    check_value(not crc_in'ascending,  TB_FAILURE, "crc_in have to be decending",  C_SCOPE, ID_NEVER);
+    check_value(not polynom'ascending, TB_FAILURE, "polynom have to be decending", C_SCOPE, ID_NEVER);
+    check_value(crc_in'length, polynom'length-1, TB_FAILURE, "crc_in have to be one bit shorter than polynom", C_SCOPE, ID_NEVER);
+
+    for i in data'high downto data'low loop
+      if crc_out(crc_out'high) xor data(i) then
+        crc_out := crc_out sll 1;
+        crc_out := crc_out xor polynom(polynom'high-1 downto polynom'low);
+      else
+        crc_out := crc_out sll 1;
+      end if;
+    end loop;
+    return crc_out;
+  end function generate_crc;
+
   ---------------------------------------------------------------------------------
   -- generate_crc_32
   ---------------------------------------------------------------------------------
   --
-  -- This function generate the IEEE 802.3 CRC32 for 8-bit input data.
+  -- This function generate the IEEE 802.3 CRC32 for byte array input.
   --
   ---------------------------------------------------------------------------------
-  function generate_crc_32(
-    constant data   : in std_logic_vector(7 downto 0);
-    constant crc_in : in std_logic_vector(31 downto 0)
-  ) return std_logic_vector is
-    variable v_crc_out : std_logic_vector(31 downto 0);
-  begin
-    v_crc_out(0)  := crc_in(24) xor crc_in(30) xor data(0)    xor data(6);
-    v_crc_out(1)  := crc_in(24) xor crc_in(25) xor crc_in(30) xor crc_in(31) xor data(0)    xor data(1)    xor data(6)    xor data(7);
-    v_crc_out(2)  := crc_in(24) xor crc_in(25) xor crc_in(26) xor crc_in(30) xor crc_in(31) xor data(0)    xor data(1)    xor data(2) xor data(6) xor data(7);
-    v_crc_out(3)  := crc_in(25) xor crc_in(26) xor crc_in(27) xor crc_in(31) xor data(1)    xor data(2)    xor data(3)    xor data(7);
-    v_crc_out(4)  := crc_in(24) xor crc_in(26) xor crc_in(27) xor crc_in(28) xor crc_in(30) xor data(0)    xor data(2)    xor data(3) xor data(4) xor data(6);
-    v_crc_out(5)  := crc_in(24) xor crc_in(25) xor crc_in(27) xor crc_in(28) xor crc_in(29) xor crc_in(30) xor crc_in(31) xor data(0) xor data(1) xor data(3) xor data(4) xor data(5) xor data(6) xor data(7);
-    v_crc_out(6)  := crc_in(25) xor crc_in(26) xor crc_in(28) xor crc_in(29) xor crc_in(30) xor crc_in(31) xor data(1)    xor data(2) xor data(4) xor data(5) xor data(6) xor data(7);
-    v_crc_out(7)  := crc_in(24) xor crc_in(26) xor crc_in(27) xor crc_in(29) xor crc_in(31) xor data(0)    xor data(2)    xor data(3) xor data(5) xor data(7);
-    v_crc_out(8)  := crc_in(0)  xor crc_in(24) xor crc_in(25) xor crc_in(27) xor crc_in(28) xor data(0)    xor data(1)    xor data(3) xor data(4);
-    v_crc_out(9)  := crc_in(1)  xor crc_in(25) xor crc_in(26) xor crc_in(28) xor crc_in(29) xor data(1)    xor data(2)    xor data(4) xor data(5);
-    v_crc_out(10) := crc_in(2)  xor crc_in(24) xor crc_in(26) xor crc_in(27) xor crc_in(29) xor data(0)    xor data(2)    xor data(3) xor data(5);
-    v_crc_out(11) := crc_in(3)  xor crc_in(24) xor crc_in(25) xor crc_in(27) xor crc_in(28) xor data(0)    xor data(1)    xor data(3) xor data(4);
-    v_crc_out(12) := crc_in(4)  xor crc_in(24) xor crc_in(25) xor crc_in(26) xor crc_in(28) xor crc_in(29) xor crc_in(30) xor data(0) xor data(1) xor data(2) xor data(4) xor data(5) xor data(6);
-    v_crc_out(13) := crc_in(5)  xor crc_in(25) xor crc_in(26) xor crc_in(27) xor crc_in(29) xor crc_in(30) xor crc_in(31) xor data(1) xor data(2) xor data(3) xor data(5) xor data(6) xor data(7);
-    v_crc_out(14) := crc_in(6)  xor crc_in(26) xor crc_in(27) xor crc_in(28) xor crc_in(30) xor crc_in(31) xor data(2)    xor data(3) xor data(4) xor data(6) xor data(7);
-    v_crc_out(15) := crc_in(7)  xor crc_in(27) xor crc_in(28) xor crc_in(29) xor crc_in(31) xor data(3)    xor data(4)    xor data(5) xor data(7);
-    v_crc_out(16) := crc_in(8)  xor crc_in(24) xor crc_in(28) xor crc_in(29) xor data(0)    xor data(4)    xor data(5);
-    v_crc_out(17) := crc_in(9)  xor crc_in(25) xor crc_in(29) xor crc_in(30) xor data(1)    xor data(5)    xor data(6);
-    v_crc_out(18) := crc_in(10) xor crc_in(26) xor crc_in(30) xor crc_in(31) xor data(2)    xor data(6)    xor data(7);
-    v_crc_out(19) := crc_in(11) xor crc_in(27) xor crc_in(31) xor data(3)    xor data(7);
-    v_crc_out(20) := crc_in(12) xor crc_in(28) xor data(4);
-    v_crc_out(21) := crc_in(13) xor crc_in(29) xor data(5);
-    v_crc_out(22) := crc_in(14) xor crc_in(24) xor data(0);
-    v_crc_out(23) := crc_in(15) xor crc_in(24) xor crc_in(25) xor crc_in(30) xor data(0)    xor data(1)    xor data(6);
-    v_crc_out(24) := crc_in(16) xor crc_in(25) xor crc_in(26) xor crc_in(31) xor data(1)    xor data(2)    xor data(7);
-    v_crc_out(25) := crc_in(17) xor crc_in(26) xor crc_in(27) xor data(2)    xor data(3);
-    v_crc_out(26) := crc_in(18) xor crc_in(24) xor crc_in(27) xor crc_in(28) xor crc_in(30) xor data(0)    xor data(3)    xor data(4) xor data(6);
-    v_crc_out(27) := crc_in(19) xor crc_in(25) xor crc_in(28) xor crc_in(29) xor crc_in(31) xor data(1)    xor data(4)    xor data(5) xor data(7);
-    v_crc_out(28) := crc_in(20) xor crc_in(26) xor crc_in(29) xor crc_in(30) xor data(2)    xor data(5)    xor data(6);
-    v_crc_out(29) := crc_in(21) xor crc_in(27) xor crc_in(30) xor crc_in(31) xor data(3)    xor data(6)    xor data(7);
-    v_crc_out(30) := crc_in(22) xor crc_in(28) xor crc_in(31) xor data(4)    xor data(7);
-    v_crc_out(31) := crc_in(23) xor crc_in(29) xor data(5);
-    return v_crc_out;
-  end function generate_crc_32;
-
   impure function generate_crc_32_complete(
     constant data : in t_byte_array
   ) return std_logic_vector is
@@ -167,7 +159,7 @@ package body ethernet_bfm_pkg is
     variable crc : std_logic_vector(31 downto 0) := C_CRC_32_START_VALUE;
   begin
     for i in data'low to data'high loop
-      crc := generate_crc_32(data(i), crc);
+      crc := generate_crc(data(i), crc, C_CRC_32_POLYNOMIAL);
     end loop;
     return crc;
   end function generate_crc_32_complete;

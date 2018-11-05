@@ -29,7 +29,7 @@ package common_methods_pkg is
     signal hvvc_to_bridge : out t_hvvc_to_bridge
   );
 
-  procedure send_to_sub(
+  procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_sub_vvc_operation;
     constant data_bytes                : in  t_byte_array;
@@ -38,7 +38,7 @@ package common_methods_pkg is
     constant msg_id_panel              : in  t_msg_id_panel
   );
 
-  procedure send_to_sub(
+  procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_sub_vvc_operation;
     constant num_data_bytes            : in  positive;
@@ -47,7 +47,7 @@ package common_methods_pkg is
     constant msg_id_panel              : in  t_msg_id_panel
   );
 
-  procedure blocking_send_to_sub(
+  procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_sub_vvc_operation;
@@ -57,7 +57,7 @@ package common_methods_pkg is
     constant msg_id_panel              : in  t_msg_id_panel
   );
 
-  procedure blocking_send_to_sub(
+  procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_sub_vvc_operation;
@@ -80,7 +80,7 @@ package body common_methods_pkg is
     hvvc_to_bridge.trigger <= false;
   end procedure hvvc_to_bridge_trigger;
 
-  procedure send_to_sub(
+  procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_sub_vvc_operation;
     constant data_bytes                : in  t_byte_array;
@@ -98,9 +98,9 @@ package body common_methods_pkg is
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
     hvvc_to_bridge_trigger(hvvc_to_bridge);
-  end procedure send_to_sub;
+  end procedure send_to_bridge;
 
-  procedure send_to_sub(
+  procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_sub_vvc_operation;
     constant num_data_bytes            : in  positive;
@@ -115,9 +115,9 @@ package body common_methods_pkg is
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
     hvvc_to_bridge_trigger(hvvc_to_bridge);
-  end procedure send_to_sub;
+  end procedure send_to_bridge;
 
-  procedure blocking_send_to_sub(
+  procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_sub_vvc_operation;
@@ -127,11 +127,11 @@ package body common_methods_pkg is
     constant msg_id_panel              : in  t_msg_id_panel
   ) is
   begin
-    send_to_sub(hvvc_to_bridge, operation, data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel);
+    send_to_bridge(hvvc_to_bridge, operation, data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel);
     wait until bridge_to_hvvc.trigger = true;
-  end procedure blocking_send_to_sub;
+  end procedure blocking_send_to_bridge;
 
-  procedure blocking_send_to_sub(
+  procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_sub_vvc_operation;
@@ -141,9 +141,9 @@ package body common_methods_pkg is
     constant msg_id_panel              : in  t_msg_id_panel
   ) is
   begin
-    send_to_sub(hvvc_to_bridge, operation, num_data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel);
+    send_to_bridge(hvvc_to_bridge, operation, num_data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel);
     wait until bridge_to_hvvc.trigger = true;
-  end procedure blocking_send_to_sub;
+  end procedure blocking_send_to_bridge;
 
 
 end package body common_methods_pkg;

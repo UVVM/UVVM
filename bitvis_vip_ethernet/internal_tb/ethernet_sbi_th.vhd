@@ -72,8 +72,8 @@ architecture struct of sbi_test_harness is
     use_ready_signal            => true
     );
 
-  signal i1_sbi_if   : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
-  signal i2_sbi_if   : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
+  signal i1_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
+  signal i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
 
   signal clk       : std_logic;
 
@@ -96,18 +96,18 @@ begin
   -----------------------------
   i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX         => 1,
-      GC_INTERFACE            => SBI,
-      GC_SUB_VVC_INSTANCE_IDX => 1,
-      GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
+      GC_INSTANCE_IDX        => 1,
+      GC_INTERFACE           => SBI,
+      GC_VVC_INSTANCE_IDX    => 1,
+      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
     );
 
   i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX         => 2,
-      GC_INTERFACE            => SBI,
-      GC_SUB_VVC_INSTANCE_IDX => 2,
-      GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
+      GC_INSTANCE_IDX        => 2,
+      GC_INTERFACE           => SBI,
+      GC_VVC_INSTANCE_IDX    => 2,
+      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
     );
 
 

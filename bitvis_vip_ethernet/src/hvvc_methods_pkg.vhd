@@ -74,33 +74,33 @@ package vvc_methods_pkg is
 
   type t_vvc_status is
   record
-    current_cmd_idx       : natural;
-    previous_cmd_idx      : natural;
-    pending_cmd_cnt       : natural;
+    current_cmd_idx  : natural;
+    previous_cmd_idx : natural;
+    pending_cmd_cnt  : natural;
   end record;
 
   type t_vvc_status_array is array (t_channel range <>, natural range <>) of t_vvc_status;
 
   constant C_VVC_STATUS_DEFAULT : t_vvc_status := (
-    current_cmd_idx      => 0,
-    previous_cmd_idx     => 0,
-    pending_cmd_cnt      => 0
+    current_cmd_idx  => 0,
+    previous_cmd_idx => 0,
+    pending_cmd_cnt  => 0
   );
 
   -- Transaction information to include in the wave view during simulation
   type t_transaction_info is
   record
-    operation       : t_operation;
-    msg             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    ethernet_frame  : t_ethernet_frame;
+    operation      : t_operation;
+    msg            : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    ethernet_frame : t_ethernet_frame;
   end record;
 
   type t_transaction_info_array is array (t_channel range <>, natural range <>) of t_transaction_info;
 
   constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    operation           => NO_OPERATION,
-    msg                 => (others => ' '),
-    ethernet_frame      => C_ETHERNET_FRAME_DEFAULT
+    operation      => NO_OPERATION,
+    msg            => (others => ' '),
+    ethernet_frame => C_ETHERNET_FRAME_DEFAULT
   );
 
 
@@ -234,7 +234,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.mac_destination                := mac_destination;
     shared_vvc_cmd.mac_source                     := mac_source;
-    shared_vvc_cmd.payload_length                 := payload'length;
+    shared_vvc_cmd.length                         := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
     shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
     shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
@@ -320,7 +320,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
     shared_vvc_cmd.mac_destination                := mac_destination;
     shared_vvc_cmd.mac_source                     := mac_source;
-    shared_vvc_cmd.payload_length                 := payload'length;
+    shared_vvc_cmd.length                         := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
     shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
     shared_vvc_cmd.msg_id_panel                   := msg_id_panel;

@@ -141,6 +141,9 @@ package adaptations_pkg is
     -- SB package
     ID_DATA,
     ID_CTRL,
+    -- Specification vs Verification IDs
+    ID_FILE_PARSER,           -- Id used in file parsers
+    ID_SPEC_VS_VERIF,         -- Messages from the specification vs verification methods
     -- Special purpose - Not really IDs
     ALL_MESSAGES          -- Applies to ALL message ID apart from ID_NEVER
     );
@@ -283,6 +286,18 @@ package adaptations_pkg is
     ID_DATA => DISABLED,
     others  => DISABLED
   );
+
+
+  ------------------------------------------------------------------------
+  -- Requirement vs Verification Matrix adaptations
+  ------------------------------------------------------------------------
+  constant C_REQ_TC_MISMATCH_SEVERITY   : t_alert_level := warning;
+  constant C_DEFAULT_RESULT_FILE_NAME   : string := "resultfile.csv";
+  constant C_CSV_DELIMITER              : character := ';';
+  constant C_MAX_NUM_REQUIREMENTS       : natural := 1000;
+  constant C_MAX_NUM_TC_PR_REQUIREMENT  : natural := 20;
+
+  shared variable shared_req_vs_cov_strict_testcase_checking : boolean := false;   
 
 end package adaptations_pkg;
 

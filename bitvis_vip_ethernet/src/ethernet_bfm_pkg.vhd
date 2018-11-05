@@ -17,6 +17,7 @@ package ethernet_bfm_pkg is
   --========================================================================================================================
   -- Types and constants for ETHERNET BFM
   --========================================================================================================================
+  constant C_MIN_PAYLOAD_LENGTH          : natural := 46;
   constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
   constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
   constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
@@ -75,9 +76,9 @@ package ethernet_bfm_pkg is
   -- BFM procedures
   --========================================================================================================================
   function generate_crc(
-    constant data    : in std_logic_vector;
-    constant crc_in  : in std_logic_vector;
-    constant polynom : in std_logic_vector
+    constant data       : in std_logic_vector;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
   ) return std_logic_vector;
 
   impure function generate_crc_32_complete(
@@ -122,22 +123,22 @@ end package ethernet_bfm_pkg;
 package body ethernet_bfm_pkg is
 
   function generate_crc(
-    constant data    : in std_logic_vector;
-    constant crc_in  : in std_logic_vector;
-    constant polynom : in std_logic_vector
+    constant data       : in std_logic_vector;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
   ) return std_logic_vector is
     variable crc_out : std_logic_vector(crc_in'range) := crc_in;
   begin
     -- Sanity checks
     check_value(not data'ascending,    TB_FAILURE, "data have to be decending",    C_SCOPE, ID_NEVER);
     check_value(not crc_in'ascending,  TB_FAILURE, "crc_in have to be decending",  C_SCOPE, ID_NEVER);
-    check_value(not polynom'ascending, TB_FAILURE, "polynom have to be decending", C_SCOPE, ID_NEVER);
-    check_value(crc_in'length, polynom'length-1, TB_FAILURE, "crc_in have to be one bit shorter than polynom", C_SCOPE, ID_NEVER);
+    check_value(not polynomial'ascending, TB_FAILURE, "polynomial have to be decending", C_SCOPE, ID_NEVER);
+    check_value(crc_in'length, polynomial'length-1, TB_FAILURE, "crc_in have to be one bit shorter than polynomial", C_SCOPE, ID_NEVER);
 
     for i in data'high downto data'low loop
       if crc_out(crc_out'high) xor data(i) then
         crc_out := crc_out sll 1;
-        crc_out := crc_out xor polynom(polynom'high-1 downto polynom'low);
+        crc_out := crc_out xor polynomial(polynomial'high-1 downto polynomial'low);
       else
         crc_out := crc_out sll 1;
       end if;

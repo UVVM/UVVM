@@ -29,7 +29,7 @@ entity ethernet_transmit_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
     GC_INTERFACE                             : t_interface;
-    GC_SUB_VVC_INSTANCE_IDX                  : natural;
+    GC_VVC_INSTANCE_IDX                      : natural;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_channel_array;
     GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config := C_ETHERNET_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural               := 1000;
@@ -67,12 +67,12 @@ architecture behave of ethernet_transmit_vvc is
 begin
 
 --========================================================================================================================
--- SUB VVC
+-- HVVC-to-VVC Bridge
 --========================================================================================================================
   i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
       GC_INTERFACE           => GC_INTERFACE,
-      GC_INSTANCE_IDX        => GC_SUB_VVC_INSTANCE_IDX,
+      GC_INSTANCE_IDX        => GC_VVC_INSTANCE_IDX,
       GC_CHANNEL             => C_CHANNEL,
       GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
       GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
@@ -194,20 +194,21 @@ begin
     variable v_prev_command_was_bfm_access           : boolean := false;
     variable v_msg_id_panel                          : t_msg_id_panel;
     variable v_ethernet_packet_raw                   : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_payload_length                        : std_logic_vector(15 downto 0);
+    variable v_length                                : std_logic_vector(15 downto 0);
+    variable v_payload_length                        : natural;
     variable v_crc_32                                : std_logic_vector(31 downto 0);
     variable v_cmd_idx                               : natural;
     variable v_ethernet_frame                        : t_ethernet_frame;
 
     -- Local overload
-    procedure blocking_send_to_sub(
+    procedure blocking_send_to_bridge(
       constant data_bytes                : in  t_byte_array;
       constant dut_if_field_idx          : in  integer
     ) is
       constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
     begin
-      blocking_send_to_sub(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel);
-    end procedure blocking_send_to_sub;
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel);
+    end procedure blocking_send_to_bridge;
 
   begin
 
@@ -277,35 +278,43 @@ begin
           v_ethernet_frame.mac_source     := v_cmd.mac_source;
 
           -- Length
-          v_payload_length := std_logic_vector(to_unsigned(v_cmd.payload_length, 16));
-          v_ethernet_packet_raw(20) := v_payload_length(15 downto 8);
-          v_ethernet_packet_raw(21) := v_payload_length( 7 downto 0);
-          v_ethernet_frame.length := v_cmd.payload_length;
+          v_payload_length          := v_cmd.length;
+          v_length                  := std_logic_vector(to_unsigned(v_cmd.length, 16));
+          v_ethernet_packet_raw(20) := v_length(15 downto 8);
+          v_ethernet_packet_raw(21) := v_length( 7 downto 0);
+          v_ethernet_frame.length   := v_cmd.length;
 
           -- Payload
-          v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1) := v_cmd.payload(0 to v_cmd.payload_length-1);
+          v_ethernet_packet_raw(22 to 22+v_cmd.length-1) := v_cmd.payload(0 to v_cmd.length-1);
           v_ethernet_frame.payload := v_cmd.payload;
 
-          -- FCS
-          v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1)));
-          v_crc_32 := not(v_crc_32);
-          v_ethernet_packet_raw(22+v_cmd.payload_length to 22+v_cmd.payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
-          v_ethernet_frame.fcs := to_byte_array(v_crc_32);
+          -- Pad if length is less than C_MIN_PAYLOAD_LENGTH(46)
+          if v_cmd.length < C_MIN_PAYLOAD_LENGTH then
+            v_payload_length := C_MIN_PAYLOAD_LENGTH;
+            v_ethernet_packet_raw(22+v_cmd.length to 22+v_payload_length) := (others => (others => '0'));
+          end if;
 
-          ---- Reverse each octet of the Ethernet frame
-          --v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1 + 4) := reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1 + 4));
+
+          -- FCS
+          v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
+          v_crc_32 := not(v_crc_32);
+          v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
+          v_ethernet_frame.fcs := to_byte_array(v_crc_32);
 
           -- Add info to the transaction_for_waveview_struct
           transaction_info.ethernet_frame := v_ethernet_frame;
 
-          -- Send to sub-VVC
+          -- Send to bridge
           log(ID_PACKET_HDR, C_TRANSMIT_PROC_CALL & "Transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx) & to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
-          blocking_send_to_sub(v_ethernet_packet_raw( 0 to  7),                                             C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD);
-          blocking_send_to_sub(v_ethernet_packet_raw( 8 to 13),                                             C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION);
-          blocking_send_to_sub(v_ethernet_packet_raw(14 to 19),                                             C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE);
-          blocking_send_to_sub(v_ethernet_packet_raw(20 to 21),                                             C_IF_FIELD_NUM_ETHERNET_LENTGTH);
-          blocking_send_to_sub(v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1),                      C_IF_FIELD_NUM_ETHERNET_PAYLOAD);
-          blocking_send_to_sub(v_ethernet_packet_raw(22+v_cmd.payload_length to 22+v_cmd.payload_length+3), C_IF_FIELD_NUM_ETHERNET_FCS);
+          blocking_send_to_bridge(v_ethernet_packet_raw( 0 to  7),                                     C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD);
+          blocking_send_to_bridge(v_ethernet_packet_raw( 8 to 13),                                     C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION);
+          blocking_send_to_bridge(v_ethernet_packet_raw(14 to 19),                                     C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE);
+          blocking_send_to_bridge(v_ethernet_packet_raw(20 to 21),                                     C_IF_FIELD_NUM_ETHERNET_LENTGTH);
+          blocking_send_to_bridge(v_ethernet_packet_raw(22 to 22+v_payload_length-1),                  C_IF_FIELD_NUM_ETHERNET_PAYLOAD);
+          blocking_send_to_bridge(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3), C_IF_FIELD_NUM_ETHERNET_FCS);
+
+          -- Interpacket gap
+          wait for vvc_config.bfm_config.interpacket_gap_time;
 
           log(ID_PACKET_INITIATE, C_TRANSMIT_PROC_CALL & "Finished transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
 

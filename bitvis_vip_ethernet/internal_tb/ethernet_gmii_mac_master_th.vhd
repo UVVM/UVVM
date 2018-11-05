@@ -69,9 +69,9 @@ begin
   -----------------------------
   i_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX         => 1,
-      GC_INTERFACE            => GMII,
-      GC_SUB_VVC_INSTANCE_IDX => 1
+      GC_INSTANCE_IDX     => 1,
+      GC_INTERFACE        => GMII,
+      GC_VVC_INSTANCE_IDX => 1
     );
 
   i_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc

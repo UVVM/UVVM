@@ -128,7 +128,7 @@ begin
     ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 4), "Send random data from instance 1.");
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
     v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
-    await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
     fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
@@ -148,7 +148,7 @@ begin
       ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
       ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
       v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
-      await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
 
       log(ID_LOG_HDR, "Fetch data from i2");
       fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
@@ -165,7 +165,7 @@ begin
     end loop;
     ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 4), "Send random data from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_send_data(0 to 4), "Expect random data from instance 1.");
-    await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
 
 
     --==================================================================================================

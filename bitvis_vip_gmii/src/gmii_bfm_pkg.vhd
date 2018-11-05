@@ -57,10 +57,6 @@ package gmii_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_gmii_bfm_config is record
     clock_period                : time;           -- Period of the clock signal
-    clock_period_margin         : time;           -- Input clock period margin to specified clock_period.
-                                                  -- Checking low period of input clock if BFM is called while CLK is high.
-                                                  -- Checking clock_period of input clock if BFM is called while CLK is low.
-    clock_margin_severity       : t_alert_level;  -- The above margin will have this severity
     setup_time                  : time;           -- Generated signals setup time, set to clock_period/4
     hold_time                   : time;           -- Generated signals hold time, set to clock_period/4
     timeout                     : time;           -- The maximum time allowed to wait for DUT.
@@ -71,8 +67,6 @@ package gmii_bfm_pkg is
 
   constant C_GMII_BFM_CONFIG_DEFAULT : t_gmii_bfm_config := (
     clock_period                => 8 ns,
-    clock_period_margin         => 0 ns,
-    clock_margin_severity       => TB_ERROR,
     setup_time                  => 2 ns,
     hold_time                   => 2 ns,
     timeout                     => 1 us,
@@ -87,12 +81,11 @@ package gmii_bfm_pkg is
   -- BFM procedures
   --========================================================================================================================
 
-
+  ------------------------------------------
+  -- init_gmii_to_dut_if
+  ------------------------------------------
   function init_gmii_to_dut_if
   return t_gmii_to_dut_if;
-
-  function init_gmii_from_dut_if
-  return t_gmii_from_dut_if;
 
   ------------------------------------------
   -- gmii_write
@@ -145,17 +138,7 @@ package body gmii_bfm_pkg is
     return v_gmii_to_dut_if;
   end function init_gmii_to_dut_if;
 
-  function init_gmii_from_dut_if
-  return t_gmii_from_dut_if is
-    variable v_gmii_from_dut_if : t_gmii_from_dut_if;
-  begin
-    v_gmii_from_dut_if.gtxclk := 'Z';
-    v_gmii_from_dut_if.txen   := 'Z';
-    v_gmii_from_dut_if.txd    := (others => 'Z');
-    return v_gmii_from_dut_if;
-  end function init_gmii_from_dut_if;
-
-  procedure santity_check(
+  procedure sanity_check(
     constant config       : in t_gmii_bfm_config;
     constant scope        : in string;
     constant msg_id_panel : in t_msg_id_panel;
@@ -167,7 +150,7 @@ package body gmii_bfm_pkg is
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
-  end procedure santity_check;
+  end procedure sanity_check;
 
 
   ------------------------------------------
@@ -184,7 +167,7 @@ package body gmii_bfm_pkg is
     constant proc_name : string := "gmii_write";
     constant proc_call : string := proc_name;
   begin
-    santity_check(config, scope, msg_id_panel, proc_call);
+    sanity_check(config, scope, msg_id_panel, proc_call);
 
     gmii_to_dut_if <= C_GMII_TO_DUT_PASSIVE;
 
@@ -216,20 +199,31 @@ package body gmii_bfm_pkg is
     constant proc_name    : string := "gmii_read";
     constant proc_call    : string := proc_name;
     variable v_time_stamp : time   := now;
+
+    procedure await_rising_edge is
+    begin
+      wait until rising_edge(gmii_from_dut_if.gtxclk) for config.timeout;
+      check_value(gmii_from_dut_if.gtxclk'last_event, 0 ns, config.timeout_severity,
+          proc_call & ": timeout while waiting for rising edge of gtxclk", scope, ID_NEVER, msg_id_panel);
+    end procedure await_rising_edge;
   begin
-    santity_check(config, scope, msg_id_panel, proc_call);
+    sanity_check(config, scope, msg_id_panel, proc_call);
 
     for i in 0 to data'length-1 loop
-      wait until rising_edge(gmii_from_dut_if.gtxclk) for config.timeout;
+      await_rising_edge;
       -- Wait on data enable signal
-      while gmii_from_dut_if.txen /= '1' loop
-        if now-v_time_stamp < config.timeout then
-          wait until rising_edge(gmii_from_dut_if.gtxclk) for v_time_stamp + config.timeout - now;
-        end if;
-        if now-v_time_stamp >= config.timeout then
-          alert(config.timeout_severity, proc_call & ": timeout while waiting for DUT.");
-        end if;
-      end loop;
+      if gmii_from_dut_if.txen /= '1' then
+        log(config.id_for_bfm_wait, proc_call & ": awaiting txen", scope, msg_id_panel);
+        while gmii_from_dut_if.txen /= '1' loop
+          if now-v_time_stamp < config.timeout then
+            await_rising_edge;
+          end if;
+          if now-v_time_stamp >= config.timeout then
+            alert(config.timeout_severity, proc_call & ": timeout while waiting for txen.");
+            exit;
+          end if;
+        end loop;
+      end if;
       v_time_stamp := now;
       data(i) := gmii_from_dut_if.txd;
     end loop;

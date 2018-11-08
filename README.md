@@ -26,7 +26,7 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 [This post on LinkedIn](https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen) will give you some more info on why you should use this library.
 
 ## Main Features
-*	Very usefull support for checking values, ranges, time aspects, and for waiting for events inside a given window
+*	Very useful support for checking values, ranges, time aspects, and for waiting for events inside a given window
 *	An extremely low user threshold for the basic functionality - like logging, alert handling and checkers
 *	A very structured testbench architecture that allows LEGO-like testbench/harness implementation
 *	A very structured VHDL Verification Component (VVC) architecture that allows simultaneous activitity (stimuli and checking) on multiple interfaces in a very easily understandable manner

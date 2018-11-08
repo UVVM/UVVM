@@ -21,6 +21,9 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
@@ -77,13 +80,9 @@ architecture struct of sbi_test_harness is
 
   signal clk       : std_logic;
 
-  constant C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY : t_dut_if_field_config_channel_array(RX to TX)(0 to 0) :=
-   (TX => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_PUT, 8),
-                 dut_address_increment => 0,
-                 field_description     => "transmitter field config")),
-    RX => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_GET, 8),
-                 dut_address_increment => 0,
-                 field_description     => "receiver field config   "))
+  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 0) :=
+   (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, field_description => "transmitter field config")),
+    RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, field_description => "receiver field config   "))
     );
 
 begin
@@ -99,7 +98,7 @@ begin
       GC_INSTANCE_IDX        => 1,
       GC_INTERFACE           => SBI,
       GC_VVC_INSTANCE_IDX    => 1,
-      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
+      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
   i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
@@ -107,7 +106,7 @@ begin
       GC_INSTANCE_IDX        => 2,
       GC_INTERFACE           => SBI,
       GC_VVC_INSTANCE_IDX    => 2,
-      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
+      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
 

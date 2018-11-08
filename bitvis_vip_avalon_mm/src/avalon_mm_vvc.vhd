@@ -105,13 +105,16 @@ begin
 --===============================================================================================
   cmd_interpreter : process
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-     variable v_local_vvc_cmd        : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+     variable v_msg_id_panel       : t_msg_id_panel;
   begin
 
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
@@ -119,11 +122,12 @@ begin
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);
+      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-
+      -- Update v_msg_id_panel
+      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
@@ -199,6 +203,7 @@ begin
     variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
+    variable v_msg_id_panel                           : t_msg_id_panel;
     variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0)              := (others => '0');
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0)      := (others => '0');
     variable v_normalised_byte_ena                    : std_logic_vector((GC_DATA_WIDTH/8)-1 downto 0)  := (others => '0');
@@ -206,18 +211,23 @@ begin
 
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
-    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
+    initialize_executor(terminate_current_cmd);
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
 
     loop
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
+      fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
+
+      -- Update v_msg_id_panel
+      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for insert_bfm_delay
@@ -232,6 +242,7 @@ begin
                                                                command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
+                                                               msg_id_panel                       => v_msg_id_panel,
                                                                scope                              => C_SCOPE);
 
       if v_command_is_bfm_access then
@@ -265,7 +276,7 @@ begin
                           avalon_mm_if        => avalon_mm_vvc_master_if,
                           byte_enable         => v_cmd.byte_enable((GC_DATA_WIDTH/8)-1 downto 0),
                           scope               => C_SCOPE,
-                          msg_id_panel        => vvc_config.msg_id_panel,
+                          msg_id_panel        => v_msg_id_panel,
                           config              => vvc_config.bfm_config);
 
         when READ =>
@@ -286,7 +297,7 @@ begin
                                     clk                 => clk,
                                     avalon_mm_if        => avalon_mm_vvc_master_if,
                                     scope               => C_SCOPE,
-                                    msg_id_panel        => vvc_config.msg_id_panel,
+                                    msg_id_panel        => v_msg_id_panel,
                                     config              => vvc_config.bfm_config);
             work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
 
@@ -297,7 +308,7 @@ begin
                             clk                 => clk,
                             avalon_mm_if        => avalon_mm_vvc_master_if,
                             scope               => C_SCOPE,
-                            msg_id_panel        => vvc_config.msg_id_panel,
+                            msg_id_panel        => v_msg_id_panel,
                             config              => vvc_config.bfm_config);
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
@@ -325,7 +336,7 @@ begin
                                     clk                 => clk,
                                     avalon_mm_if        => avalon_mm_vvc_master_if,
                                     scope               => C_SCOPE,
-                                    msg_id_panel        => vvc_config.msg_id_panel,
+                                    msg_id_panel        => v_msg_id_panel,
                                     config              => vvc_config.bfm_config,
                                     ext_proc_call       => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, AS_IS, INCL_RADIX) & ")"
                                   );
@@ -338,7 +349,7 @@ begin
                             avalon_mm_if        => avalon_mm_vvc_master_if,
                             alert_level         => v_cmd.alert_level,
                             scope               => C_SCOPE,
-                            msg_id_panel        => vvc_config.msg_id_panel,
+                            msg_id_panel        => v_msg_id_panel,
                             config              => vvc_config.bfm_config);
           end if;
 
@@ -349,7 +360,7 @@ begin
                           num_rst_cycles      => v_cmd.gen_integer_array(0),
                           msg                 => format_msg(v_cmd),
                           scope               => C_SCOPE,
-                          msg_id_panel        => vvc_config.msg_id_panel,
+                          msg_id_panel        => v_msg_id_panel,
                           config              => vvc_config.bfm_config);
 
         when LOCK =>
@@ -357,7 +368,7 @@ begin
           avalon_mm_lock( avalon_mm_if        => avalon_mm_vvc_master_if,
                           msg                 => format_msg(v_cmd),
                           scope               => C_SCOPE,
-                          msg_id_panel        => vvc_config.msg_id_panel,
+                          msg_id_panel        => v_msg_id_panel,
                           config              => vvc_config.bfm_config);
 
         when UNLOCK =>
@@ -365,14 +376,14 @@ begin
           avalon_mm_unlock( avalon_mm_if      => avalon_mm_vvc_master_if,
                           msg                 => format_msg(v_cmd),
                           scope               => C_SCOPE,
-                          msg_id_panel        => vvc_config.msg_id_panel,
+                          msg_id_panel        => v_msg_id_panel,
                           config              => vvc_config.bfm_config);
 
 
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
-          log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
+          log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
@@ -397,7 +408,7 @@ begin
 
       -- Reset terminate flag if any occurred
       if (terminate_current_cmd.is_active = '1') then
-        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, vvc_config.msg_id_panel);
+        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, v_msg_id_panel);
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 
@@ -425,6 +436,7 @@ begin
   --===============================================================================================
   read_response : process
     variable v_cmd              : t_vvc_cmd_record;
+    variable v_msg_id_panel     : t_msg_id_panel;
     variable v_read_data        : t_vvc_result; -- See vvc_cmd_pkg
     variable v_normalised_addr  : unsigned(GC_ADDR_WIDTH-1 downto 0)          := (others => '0');
     variable v_normalised_data  : std_logic_vector(GC_DATA_WIDTH-1 downto 0)  := (others => '0');
@@ -436,9 +448,15 @@ begin
     command_response_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
     wait for 0 ns;  -- Wait for command response queue to initialize completely
 
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
+
     loop
       -- Fetch commands
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_response_queue, vvc_config, vvc_status, response_queue_is_increasing, read_response_is_busy, C_VVC_LABELS);
+      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_response_queue, vvc_config, vvc_status, response_queue_is_increasing, read_response_is_busy, C_VVC_LABELS, v_msg_id_panel);
+
+      -- Update v_msg_id_panel
+      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Normalise address and data
       v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "Function called with to wide address. " & v_cmd.msg);
@@ -453,7 +471,7 @@ begin
                                   clk                 => clk,
                                   avalon_mm_if        => avalon_mm_vvc_master_if_pd,
                                   scope               => C_SCOPE,
-                                  msg_id_panel        => vvc_config.msg_id_panel,
+                                  msg_id_panel        => v_msg_id_panel,
                                   config              => vvc_config.bfm_config);
           -- Store the result
           work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,
@@ -469,7 +487,7 @@ begin
                                     avalon_mm_if        => avalon_mm_vvc_master_if_pd,
                                     alert_level         => v_cmd.alert_level,
                                     scope               => C_SCOPE,
-                                    msg_id_panel        => vvc_config.msg_id_panel,
+                                    msg_id_panel        => v_msg_id_panel,
                                     config              => vvc_config.bfm_config);
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);

@@ -10,10 +10,8 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-# This file must be called with two arguments:
+# This file may be called with an argument
 # arg 1: Part directory of this library/module
-# arg 2: Target directory
-
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -48,64 +46,56 @@ if {[catch {eval "vsim -version"} message] == 0} {
     abort all
 }
 
+
 #------------------------------------------------------
 # Set up source_path and default_target
 #
-#   1 args: source directory
-#   2 args: target directory
+#   0 args: regular UVVM directory structure expected
+#   1 args: source directory specified, target will be current directory
+#   2 args: source directory and target directory specified
 #
 #------------------------------------------------------
 
-if {$argc == 2} {
+if { [info exists 1] } {
   quietly set source_path "$1"
-  quietly set target_path "$2"
-} elseif {$argc == -1} {
-  # Called from other script
-} else {
-  error "Needs two arguments: source path and target path"
-}
+  quietly set default_target 0
 
-#------------------------------------------------------
-# Read compile_order.txt and set lib_name
-#------------------------------------------------------
-quietly set fp [open "$source_path/script/compile_order.txt" r]
-quietly set file_data [read $fp]
-quietly set lib_name [lindex $file_data 2]
-close $fp
-
-echo "\n\n=== Re-gen lib and compile $lib_name source\n"
-echo "Source path: $source_path"
-echo "Taget path: $target_path"
-
-#------------------------------------------------------
-# (Re-)Generate library and Compile source files
-#------------------------------------------------------
-if {[file exists $target_path/$lib_name]} {
-  file delete -force $target_path/$lib_name
-}
-if {![file exists $target_path]} {
-  file mkdir $target_path/$lib_name
-}
-
-quietly vlib $target_path/$lib_name
-quietly vmap $lib_name $target_path/$lib_name
-
-
-if { [string equal -nocase $simulator "modelsim"] } {
-  quietly set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
-} elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
-}
-
-#------------------------------------------------------
-# Compile src files
-#------------------------------------------------------
-echo "\nCompiling $lib_name source\n"
-quietly set idx 0
-foreach item $file_data {
-  if {$idx > 2} {
-    echo "eval vcom  $compdirectives  $source_path/script/$item"
-    eval vcom  $compdirectives  $source_path/script/$item
+  if {$argc == 1} {
+    echo "\nUser specified source directory"
+    quietly set target_path "$source_path/sim"
+  } elseif {$argc >= 2} {
+    echo "\nUser specified source and target directory"
+    quietly set target_path "$2"
   }
-  incr idx 1
+  unset 1
+} else {
+  echo "\nDefault output directory"
+  # path from mpf-file in /sim folder
+  quietly set source_path ".."
+  quietly set target_path "$source_path/sim"
+  quietly set default_target 1
 }
+
+namespace eval compile_util {
+  variable local_source_path $source_path
+  variable source_path $local_source_path/../uvvm_util
+  variable target_path $local_source_path/../uvvm_util/sim
+
+  variable argc -1
+
+  source $local_source_path/../script/compile_src.do
+}
+namespace delete compile_util
+
+namespace eval compile_vvc_framework {
+  variable local_source_path $source_path
+  variable source_path $local_source_path/../uvvm_vvc_framework
+  variable target_path $local_source_path/../uvvm_vvc_framework/sim
+
+  variable argc -1
+
+  source $local_source_path/../script/compile_src.do
+}
+namespace delete compile_vvc_framework
+
+do $source_path/../script/compile_src.do $source_path $target_path

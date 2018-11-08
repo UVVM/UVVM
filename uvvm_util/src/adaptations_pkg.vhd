@@ -290,32 +290,6 @@ package adaptations_pkg is
   ------------------------------------------------------------------------
   constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
 
-  ------------------------------------------------------------------------
-  -- Hierarchical VVCs
-  ------------------------------------------------------------------------
-  constant C_HVVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (others => DISABLED);
-
-  -------------------------------------
-  -- Hierarchical VVC (HVVC)
-  -------------------------------------
-  type t_sub_vvc_operation is (TRANSMIT, RECEIVE);
-  type t_interface is (SBI, GMII);
-
-  type t_hvvc_to_bridge is record
-    trigger                   : boolean;
-    operation                 : t_sub_vvc_operation;
-    num_data_bytes            : positive;
-    data_bytes                : t_byte_array;
-    dut_if_field_idx          : integer;
-    current_byte_idx_in_field : natural; -- In protocol if field idx = -1
-    msg_id_panel              : t_msg_id_panel;
-  end record;
-
-  type t_bridge_to_hvvc is record
-    trigger        : boolean;
-    data_bytes     : t_byte_array;
-  end record;
-
 end package adaptations_pkg;
 
 package body adaptations_pkg is

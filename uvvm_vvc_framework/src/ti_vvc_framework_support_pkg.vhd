@@ -263,6 +263,49 @@ package ti_vvc_framework_support_pkg is
     constant instance_idx : natural
   ) return string;
 
+
+  -------------------------------------
+  -- Hierarchical VVC (HVVC)
+  -------------------------------------
+
+  type t_vvc_operation is (TRANSMIT, RECEIVE);
+  type t_interface is (SBI, GMII);
+  type t_direction is (TRANSMIT, RECEIVE);
+
+  type t_hvvc_to_bridge is record
+    trigger                   : boolean;
+    operation                 : t_vvc_operation;
+    num_data_bytes            : positive;
+    data_bytes                : t_byte_array;
+    dut_if_field_idx          : natural;
+    current_byte_idx_in_field : natural;
+    msg_id_panel              : t_msg_id_panel;
+  end record;
+
+  type t_bridge_to_hvvc is record
+    trigger        : boolean;
+    data_bytes     : t_byte_array;
+  end record;
+
+  type t_dut_if_field_config is record
+    dut_address           : unsigned;
+    dut_address_increment : integer;
+    field_description     : string;
+  end record;
+
+  constant C_DUT_IF_FIELD_CONFIG_DEFAULT : t_dut_if_field_config(dut_address(0 downto 0)) := (
+    dut_address           => (others => '0'),
+    dut_address_increment => 0,
+    field_description     => "default");
+
+  type t_dut_if_field_config_array is array (natural range <>) of t_dut_if_field_config;
+
+  type t_dut_if_field_config_direction_array is array (t_direction range <>) of t_dut_if_field_config_array;
+
+  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT :
+      t_dut_if_field_config_direction_array(t_direction'low to t_direction'high)(0 to 0)(dut_address(0 downto 0), field_description(1 to 7))
+      := (others => (others => C_DUT_IF_FIELD_CONFIG_DEFAULT));
+
 end package ti_vvc_framework_support_pkg;
 
 

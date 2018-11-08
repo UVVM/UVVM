@@ -9,3 +9,4 @@
 ../src/uart_rx_vvc.vhd
 ../src/uart_tx_vvc.vhd
 ../src/uart_vvc.vhd
+../src/vvc_context.vhd

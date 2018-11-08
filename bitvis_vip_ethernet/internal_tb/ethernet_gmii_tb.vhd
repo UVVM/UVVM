@@ -60,7 +60,7 @@ begin
   p_main: process
     variable v_alert_num_mismatch : boolean := false;
     variable v_cmd_idx            : natural;
-    variable v_send_data          : t_byte_array(0 to 9);
+    variable v_send_data          : t_byte_array(0 to 150);
     variable v_receive_data       : t_vvc_result;
   begin
 
@@ -105,7 +105,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data, "Send random data from instance 1.");
+    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 9), "Send random data from instance 1.");
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
     v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
     await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
@@ -166,6 +166,17 @@ begin
     ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 4), "Send random data from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_send_data(0 to 4), "Expect random data from instance 1.");
     await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
+
+
+    for i in 0 to 150 loop
+      v_send_data(i) := random(8);
+    end loop;
+    -- Expect ERROR
+    increment_expected_alerts_and_stop_limit(ERROR);
+    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 150), "Send random data from instance 2.");
+    v_send_data(100) := not v_send_data(100);
+    ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 150), "Expect random data from instance 2.");
+    await_completion(ETHERNET_VVCT, 1, RX, 2 us, "Wait for read to finish.");
 
 
     --==================================================================================================

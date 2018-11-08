@@ -51,8 +51,8 @@ package vvc_methods_pkg is
   constant C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_PACKET_INITIATE => ENABLED,
     ID_PACKET_COMPLETE => ENABLED,
-    ID_PACKET_HDR      => ENABLED,
-    ID_PACKET_DATA     => ENABLED,
+    --ID_PACKET_HDR      => ENABLED,
+    --ID_PACKET_DATA     => ENABLED,
     others             => DISABLED
   );
 
@@ -119,7 +119,6 @@ package vvc_methods_pkg is
   shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_ethernet_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
 
-
   --========================================================================================================================
   -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order to executor BFM calls
@@ -181,6 +180,7 @@ package vvc_methods_pkg is
     constant mac_source                : in    unsigned(47 downto 0);
     constant payload                   : in    t_byte_array;
     constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -193,6 +193,7 @@ package vvc_methods_pkg is
     constant mac_destination           : in    unsigned(47 downto 0);
     constant payload                   : in    t_byte_array;
     constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -204,6 +205,7 @@ package vvc_methods_pkg is
     constant channel                   : in    t_channel;
     constant payload                   : in    t_byte_array;
     constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -295,7 +297,7 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
     constant proc_name : string := "ethernet_receive";
-    constant proc_call : string := proc_name;
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
   begin
   -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
   -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -314,6 +316,7 @@ package body vvc_methods_pkg is
     constant mac_source                : in    unsigned(47 downto 0);
     constant payload                   : in    t_byte_array;
     constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -333,6 +336,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.mac_source                     := mac_source;
     shared_vvc_cmd.length                         := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
+    shared_vvc_cmd.alert_level                    := alert_level;
     shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
     shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
@@ -345,13 +349,14 @@ package body vvc_methods_pkg is
     constant mac_destination           : in    unsigned(47 downto 0);
     constant payload                   : in    t_byte_array;
     constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel, mac_destination,
-        shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+        shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
   end procedure ethernet_expect;
 
   procedure ethernet_expect(
@@ -360,6 +365,7 @@ package body vvc_methods_pkg is
     constant channel                   : in    t_channel;
     constant payload                   : in    t_byte_array;
     constant msg                       : in    string;
+    constant alert_level               : in    t_alert_level               := ERROR;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -367,7 +373,7 @@ package body vvc_methods_pkg is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel,
         shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source,
-        shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+        shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
   end procedure ethernet_expect;
 
 end package body vvc_methods_pkg;

@@ -129,7 +129,7 @@ package ethernet_bfm_pkg is
     constant proc_call    : in string
   );
 
-  function compare_ethernet_frames(
+  impure function compare_ethernet_frames(
     constant actual       : in t_ethernet_frame;
     constant expected     : in t_ethernet_frame;
     constant alert_level  : in t_alert_level;
@@ -276,7 +276,7 @@ package body ethernet_bfm_pkg is
     check_value(actual.fcs,             expected.fcs,             alert_level, "Verify FCS"                          & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
   end procedure compare_ethernet_frames;
 
-  function compare_ethernet_frames(
+  impure function compare_ethernet_frames(
     constant actual       : in t_ethernet_frame;
     constant expected     : in t_ethernet_frame;
     constant alert_level  : in t_alert_level;

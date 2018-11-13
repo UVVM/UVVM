@@ -25,8 +25,8 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.sbi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
+use work.sbi_sb_pkg.all;
 use work.td_target_support_pkg.all;
-
 
 --=================================================================================================
 --=================================================================================================
@@ -115,7 +115,7 @@ package vvc_methods_pkg is
   alias shared_sbi_vvc_config : t_vvc_config_array is shared_vvc_config(NA);
   shared variable shared_sbi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
-
+  shared variable shared_sbi_sb : t_generic_sb;
 
   --==============================================================================
   -- Methods dedicated to this VVC
@@ -142,6 +142,7 @@ package vvc_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant addr                      : in    unsigned;
     constant msg                       : in    string;
+    constant data_destination          : in    t_data_destination          := TO_RECEIVE_BUFFER;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -220,6 +221,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant addr                      : in    unsigned;
     constant msg                       : in    string;
+    constant data_destination          : in    t_data_destination          := TO_RECEIVE_BUFFER;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -235,6 +237,7 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
     shared_vvc_cmd.addr                      := v_normalised_addr;
+    shared_vvc_cmd.data_destination          := data_destination;
     shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
     shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);

@@ -55,6 +55,9 @@ bitvis_vip_hvvc_to_vvc_bridge.add_source_files(join(project_root, 'bitvis_vip_hv
 bitvis_vip_ethernet_lib = ui.add_library('bitvis_vip_ethernet')
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_ethernet_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
+ethernet_sb_pkg = bitvis_vip_ethernet_lib.get_source_file(join(root, '..', 'src', 'ethernet_sb_pkg.vhd'))
+hvvc_methods_pkg = bitvis_vip_ethernet_lib.get_source_file(join(root, '..', 'src', 'hvvc_methods_pkg.vhd'))
+hvvc_methods_pkg.add_dependency_on(ethernet_sb_pkg)
 
 XilinxCoreLib_lib = ui.add_library('xilinxcorelib')
 XilinxCoreLib_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-master', 'xilinx', 'XilinxCoreLib', '*.vhd'))

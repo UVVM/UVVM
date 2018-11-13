@@ -38,7 +38,8 @@ package common_methods_pkg is
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   );
 
   procedure send_to_bridge(
@@ -47,7 +48,8 @@ package common_methods_pkg is
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   );
 
   procedure blocking_send_to_bridge(
@@ -57,7 +59,8 @@ package common_methods_pkg is
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   );
 
   procedure blocking_send_to_bridge(
@@ -67,7 +70,8 @@ package common_methods_pkg is
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   );
 
 end package common_methods_pkg;
@@ -89,7 +93,8 @@ package body common_methods_pkg is
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   ) is
     -- Need to normalize array range or Riviera Pro fails with error code: 'DAGGEN ERROR DAGGEN_0700: "Fatal error : INTERNAL CODE GENERATOR ERROR"'
     constant C_NORMALIIZED_DATA_BYTES : t_byte_array(0 to data_bytes'length-1) := data_bytes;
@@ -100,6 +105,7 @@ package body common_methods_pkg is
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
+    hvvc_to_bridge.field_timeout_margin                 <= field_timeout_margin;
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
@@ -109,7 +115,8 @@ package body common_methods_pkg is
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   ) is
   begin
     hvvc_to_bridge.operation                            <= operation;
@@ -117,6 +124,7 @@ package body common_methods_pkg is
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
+    hvvc_to_bridge.field_timeout_margin                 <= field_timeout_margin;
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
@@ -127,10 +135,11 @@ package body common_methods_pkg is
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   ) is
   begin
-    send_to_bridge(hvvc_to_bridge, operation, data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel);
+    send_to_bridge(hvvc_to_bridge, operation, data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel, field_timeout_margin);
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 
@@ -141,10 +150,11 @@ package body common_methods_pkg is
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
-    constant msg_id_panel              : in  t_msg_id_panel
+    constant msg_id_panel              : in  t_msg_id_panel;
+    constant field_timeout_margin      : in  time
   ) is
   begin
-    send_to_bridge(hvvc_to_bridge, operation, num_data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel);
+    send_to_bridge(hvvc_to_bridge, operation, num_data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel, field_timeout_margin);
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 

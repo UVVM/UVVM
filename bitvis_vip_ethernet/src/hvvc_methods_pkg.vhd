@@ -26,6 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
+use work.ethernet_sb_pkg.all;
 use work.td_target_support_pkg.all;
 
 --========================================================================================================================
@@ -58,15 +59,16 @@ package vvc_methods_pkg is
 
   type t_vvc_config is
   record
-    inter_bfm_delay                       : t_inter_bfm_delay;-- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
-    cmd_queue_count_max                   : natural;          -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
-    cmd_queue_count_threshold             : natural;          -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
-    cmd_queue_count_threshold_severity    : t_alert_level;    -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
+    inter_bfm_delay                       : t_inter_bfm_delay;     -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural;               -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural;               -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level;         -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
     result_queue_count_max                : natural;
     result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
     bfm_config                            : t_ethernet_bfm_config; -- Configuration for the BFM. See BFM quick reference
-    msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
+    msg_id_panel                          : t_msg_id_panel;        -- VVC dedicated message ID panel
+    field_timeout_margin                  : time;                  -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -80,7 +82,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_ETHERNET_BFM_CONFIG_DEFAULT,
-    msg_id_panel                          => C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT
+    msg_id_panel                          => C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT,
+    field_timeout_margin                  => 10 us
   );
 
   type t_vvc_status is
@@ -115,10 +118,10 @@ package vvc_methods_pkg is
   );
 
 
-  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
-  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_ethernet_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
+  shared variable shared_ethernet_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_ethernet_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
-
+  shared variable shared_ethernet_sb               : t_generic_sb;
   --========================================================================================================================
   -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order to executor BFM calls
@@ -167,6 +170,7 @@ package vvc_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
     constant msg                       : in    string;
+    constant data_destination          : in    t_data_destination          := TO_RECEIVE_BUFFER;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -292,6 +296,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
     constant msg                       : in    string;
+    constant data_destination          : in    t_data_destination          := TO_RECEIVE_BUFFER;
     constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
@@ -303,6 +308,7 @@ package body vvc_methods_pkg is
   -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
   -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
+    shared_vvc_cmd.data_destination          := data_destination;
     shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
     shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);

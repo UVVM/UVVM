@@ -46,7 +46,8 @@ architecture func of ethernet_sbi_tb is
 
   constant C_CLK_PERIOD   : time := 10 ns;    -- **** Trenger metode for setting av clk period
   constant C_SCOPE        : string := "ETHERNET_SBI_VVC_TB";
-
+  alias i2_sbi_if is << signal .ethernet_sbi_tb.i_test_harness.i2_sbi_if : t_sbi_if >>;
+  alias clk       is << signal .ethernet_sbi_tb.i_test_harness.clk : std_logic >>;
 begin
 
   -----------------------------------------------------------------------------
@@ -65,6 +66,7 @@ begin
     variable v_cmd_idx            : natural;
     variable v_send_data          : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     variable v_receive_data       : bitvis_vip_ethernet.vvc_cmd_pkg.t_vvc_result;
+    variable v_time_stamp         : time;
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -118,7 +120,7 @@ begin
     ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 9), "Send random data from instance 1.");
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
     v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
-    await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
     fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
@@ -160,7 +162,7 @@ begin
       ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
       ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
       v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
-      await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
 
       log(ID_LOG_HDR, "Fetch data from i2");
       fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
@@ -168,7 +170,7 @@ begin
       check_value(v_receive_data.ethernet_frame.mac_destination = (x"00", x"00", x"00", x"00", x"00", x"02"), ERROR, "Verify MAC destination.");
       check_value(v_receive_data.ethernet_frame.mac_source      = (x"00", x"00", x"00", x"00", x"00", x"01"), ERROR, "Verify MAC source.");
       check_value(v_receive_data.ethernet_frame_status.fcs_error, false, ERROR, "Verify FCS.");
-      check_value(v_receive_data.ethernet_frame.payload(0), v_send_data(0), ERROR, "Verify received payload.");
+      check_value(v_receive_data.ethernet_frame.payload(0), v_send_data(0), ERROR, "Verify received payload.", C_SCOPE, HEX, KEEP_LEADING_0, ID_NEVER);
     end loop;
 
 
@@ -228,8 +230,19 @@ begin
     end loop;
     ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
     ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 46), "Expect data from instance 2.");
-    await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for read to finish.");
 
+    log(ID_LOG_HDR, "Verify insert_delay");
+    await_change(clk, 0 ns, 6 ns, ERROR, "Sync to clock.");
+    await_value(clk, '1', 0 ns, 6 ns, ERROR, "Sync to clock.");
+    insert_delay(ETHERNET_VVCT, 2, TX, 1 us, "Insert delay in instance 2.");
+    v_time_stamp := now;
+    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
+    ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 46), "Expect data from instance 2.");
+    --await_value(i2_sbi_if.wena, '0', 0 ns, 1.1 us, ERROR, "Await ethernet transfer.");
+    await_value(i2_sbi_if.wena, '1', 0 ns, 1.1 us, ERROR, "Await ethernet transfer.");
+    check_value_in_range(now-v_time_stamp, 1 us, 1.01 us, ERROR, "Verify inserted delay.");
+    await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
 
     --==================================================================================================
     -- Ending the simulation

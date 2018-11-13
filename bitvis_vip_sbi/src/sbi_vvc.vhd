@@ -271,6 +271,7 @@ begin
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
+          v_read_data := (others => '-');
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
           sbi_read(addr_value   => v_normalised_addr,
@@ -282,9 +283,15 @@ begin
                    msg_id_panel => v_msg_id_panel,
                    config       => vvc_config.bfm_config);
           -- Store the result
-          work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                       cmd_idx     => v_cmd.cmd_idx,
-                                                       result      => v_read_data);
+
+
+          if v_cmd.data_destination = TO_SB then
+            shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data);
+          else
+            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                         cmd_idx     => v_cmd.cmd_idx,
+                                                         result      => v_read_data);
+          end if;
 
         when CHECK =>
           -- Normalise address and data

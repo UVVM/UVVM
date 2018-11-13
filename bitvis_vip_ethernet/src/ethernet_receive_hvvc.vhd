@@ -28,6 +28,7 @@ library bitvis_vip_hvvc_to_vvc_bridge;
 use bitvis_vip_hvvc_to_vvc_bridge.common_methods_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
+use work.ethernet_sb_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
@@ -74,6 +75,7 @@ architecture behave of ethernet_receive_vvc is
   alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(C_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(C_CHANNEL, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(C_CHANNEL, GC_INSTANCE_IDX);
+  --alias sb               : t_generic_sb       is shared_ethernet_sb;
 
 begin
 
@@ -225,7 +227,7 @@ begin
     ) is
       constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
     begin
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, num_data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, num_data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel, vvc_config.field_timeout_margin);
     end procedure blocking_send_to_bridge;
 
     procedure receive_ethernet_packet(
@@ -357,13 +359,18 @@ begin
           -- Receive Ethernet packet
           receive_ethernet_packet(C_RECEIVE_PROC_CALL);
 
-          -- Store the result
           v_result.ethernet_frame                  := v_received_data;
           v_result.ethernet_frame_status.fcs_error := v_fcs_error;
-          work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
-                                                      cmd_idx       => v_cmd.cmd_idx,
-                                                      result        => v_result);
 
+          if v_cmd.data_destination = TO_SB then
+            -- Send result to scoreboard
+            shared_ethernet_sb.check_actual(GC_INSTANCE_IDX, v_result.ethernet_frame);
+          else
+            -- Store the result
+            work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
+                                                        cmd_idx       => v_cmd.cmd_idx,
+                                                        result        => v_result);
+          end if;
 
         when EXPECT =>
           -- For FCS calculation

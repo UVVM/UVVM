@@ -183,6 +183,8 @@ package types_pkg is
 
   type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
 
+  type t_data_destination is (TO_RECEIVE_BUFFER, TO_SB);
+
   -------------------------------------
   -- SB
   -------------------------------------

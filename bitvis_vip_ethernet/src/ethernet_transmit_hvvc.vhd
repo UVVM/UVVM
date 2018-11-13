@@ -217,7 +217,7 @@ begin
     ) is
       constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
     begin
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel, vvc_config.field_timeout_margin);
     end procedure blocking_send_to_bridge;
 
   begin

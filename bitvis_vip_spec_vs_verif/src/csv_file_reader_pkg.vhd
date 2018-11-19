@@ -55,9 +55,6 @@ package body csv_file_reader_pkg is
         variable current_line: line;
         -- true when end of file was reached and there are no more lines to read
         variable end_of_file_reached: boolean;
-        
-        -- Maximum string length for read operations
-        constant LINE_LENGTH_MAX: integer := 256;
 
         -- True when the end of the CSV file was reached
         impure function end_of_file return boolean is begin
@@ -93,7 +90,7 @@ package body csv_file_reader_pkg is
 
         -- Skip a separator (comma character) in the current line
         procedure skip_separator is
-            variable dummy_string: string(1 to LINE_LENGTH_MAX);
+            variable dummy_string: string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
         begin
             dummy_string := read_string;
         end;
@@ -128,7 +125,7 @@ package body csv_file_reader_pkg is
         
         -- Read a string from the csv file, until a delimiter is found
         impure function read_string return string is
-            variable return_string: string(1 to LINE_LENGTH_MAX) := (others => NUL);
+            variable return_string: string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
             variable read_char: character;
             variable read_ok: boolean := true;
             variable index: integer := 1;

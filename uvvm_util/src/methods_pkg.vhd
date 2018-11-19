@@ -2756,8 +2756,8 @@ package body methods_pkg is
 
   -- Matching if same width or only zeros in "extended width"
   function matching_widths(
-    constant value1           : in std_logic_vector;
-    constant value2           : in std_logic_vector
+    value1           : std_logic_vector;
+    value2           : std_logic_vector
     ) return boolean is
     -- Normalize vectors to (N downto 0)
     alias    a_value1: std_logic_vector(value1'length - 1 downto 0) is value1;

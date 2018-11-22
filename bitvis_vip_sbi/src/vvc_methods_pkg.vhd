@@ -174,6 +174,10 @@ package vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
+  function to_sb_result(
+    constant data : in std_logic_vector
+  ) return t_vvc_result;
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -313,6 +317,14 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
+  function to_sb_result(
+    constant data : in std_logic_vector
+  ) return t_vvc_result is
+    variable v_vvc_result : t_vvc_result := (others => '-');
+  begin
+    v_vvc_result(data'length-1 downto 0) := data;
+    return v_vvc_result;
+  end function to_sb_result;
 
 end package body vvc_methods_pkg;
 

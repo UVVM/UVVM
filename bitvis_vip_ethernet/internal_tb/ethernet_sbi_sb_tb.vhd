@@ -141,9 +141,10 @@ begin
     -- disable_log_msg(ALL_MESSAGES);
     -- enable_log_msg(ID_SEQUENCER);
     -- enable_log_msg(ID_LOG_HDR);
+    disable_log_msg(ID_UVVM_CMD_ACK);
 
-    -- bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    -- bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
+    disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
+    disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
     shared_ethernet_sb.set_scope("ETHERNET VVC");
     shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
@@ -198,8 +199,8 @@ begin
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 0));
       shared_ethernet_sb.add_expected(2, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
-      await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
-      await_completion(ETHERNET_VVCT, 1, TX, 2 us, "Wait for send to finish.");
+      await_completion(ETHERNET_VVCT, 2, RX, 2 ms, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 1, TX, 2 ms, "Wait for send to finish.");
     end loop;
 
     log(ID_LOG_HDR, "Send data on SBI level, i1 --> i2");
@@ -264,7 +265,7 @@ begin
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 9));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
-    await_completion(ETHERNET_VVCT, 1, RX, 2 us, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 1, RX, 2 ms, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Send " & to_string(C_MAX_PAYLOAD_LENGTH) & " bytes of data from i2 to i1");
     for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
@@ -283,7 +284,7 @@ begin
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 0));
       shared_ethernet_sb.add_expected(1, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
-      await_completion(ETHERNET_VVCT, 1, RX, 2 us, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 1, RX, 2 ms, "Wait for read to finish.");
     end loop;
 
     log(ID_LOG_HDR, "Send data on SBI level, i1 --> i2");

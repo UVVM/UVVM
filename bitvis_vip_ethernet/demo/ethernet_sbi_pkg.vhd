@@ -38,6 +38,11 @@ package ethernet_sbi_pkg is
   constant C_ADDR_FIFO_FLUSH          : integer := 4;
   constant C_ADDR_FIFO_MAX_COUNT      : integer := 5;
 
+  constant C_ADDR_WIDTH_1 : integer := 8;
+  constant C_DATA_WIDTH_1 : integer := 8;
+  constant C_ADDR_WIDTH_2 : integer := 8;
+  constant C_DATA_WIDTH_2 : integer := 8;
+
   constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
     max_wait_cycles             => 1000,
     max_wait_cycles_severity    => failure,

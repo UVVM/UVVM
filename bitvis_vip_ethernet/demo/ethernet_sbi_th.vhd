@@ -34,9 +34,7 @@ use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 --=================================================================================================
 entity sbi_test_harness is
   generic(
-    GC_CLK_PERIOD : time;
-    GC_ADDR_WIDTH : positive;
-    GC_DATA_WIDTH : positive
+    GC_CLK_PERIOD : time
   );
 end entity sbi_test_harness;
 
@@ -46,8 +44,8 @@ end entity sbi_test_harness;
 
 architecture struct of sbi_test_harness is
 
-  signal i1_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
-  signal i2_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
+  signal i1_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
+  signal i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
 
   signal clk       : std_logic;
 
@@ -83,8 +81,8 @@ begin
 
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH                         => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
+      GC_ADDR_WIDTH                         => 8,
+      GC_DATA_WIDTH                         => 8,
       GC_INSTANCE_IDX                       => 1,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
       GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,
@@ -98,8 +96,8 @@ begin
 
   i2_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH                         => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
+      GC_ADDR_WIDTH                         => 8,
+      GC_DATA_WIDTH                         => 8,
       GC_INSTANCE_IDX                       => 2,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
       GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,

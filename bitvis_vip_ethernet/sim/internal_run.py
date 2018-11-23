@@ -7,6 +7,7 @@
 # Adapted for Bitvis use by Daniel Blomkvist, 2015
 
 from os.path import join, dirname
+from itertools import product
 import os
 import subprocess
 import sys
@@ -23,6 +24,20 @@ os.environ["VUNIT_SIMULATOR"] = "modelsim"
 #------------------------------------------
 
 from vunit import VUnit, VUnitCLI
+
+def generate_tests(obj, data_widths):
+    """
+    Generate test by varying the mode and data width generics
+    """
+
+    for data_width in product(data_widths):
+        # This configuration name is added as a suffix to the test bench name
+        config_name = "data_width=%i" % (data_width)
+
+        # Add the configuration with a post check function to verify the output
+        obj.add_config(name=config_name,
+                       generics=dict(
+                       gc_data_width=data_width))
 
 root = dirname(__file__)
 
@@ -74,6 +89,14 @@ mac_master_lib.add_source_files(join(root, '..', 'internal_tb', 'ethernet_mac-ma
 
 # Add all testbenches to lib
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
+
+ethernet_sbi_tb = bitvis_vip_ethernet_lib.entity("ethernet_sbi_tb")
+ethernet_sbi_sb_tb = bitvis_vip_ethernet_lib.entity("ethernet_sbi_sb_tb")
+
+# Generate tests for ethernet over sbi with different lengths
+#                               data widths
+generate_tests(ethernet_sbi_tb, [4, 8, 9, 12, 16]);
+generate_tests(ethernet_sbi_sb_tb, [4, 8, 9, 12, 16]);
 
 ui.set_compile_option('modelsim.vcom_flags', ["-suppress", "1346,1236"])
 ui.set_sim_option('modelsim.vsim_flags', ['-do', '"set IterationLimit 10000"'])

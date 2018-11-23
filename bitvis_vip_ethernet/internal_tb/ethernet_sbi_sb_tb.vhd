@@ -32,7 +32,6 @@ use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
-use bitvis_vip_sbi.vvc_temp_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
@@ -43,22 +42,29 @@ entity ethernet_sbi_sb_tb is
     -- This generic is used to configure the testbench from run.py, e.g. what
     -- test case to run. The default value is used when not running from script
     -- and in that case all test cases are run.
-    runner_cfg : runner_cfg_t := runner_cfg_default);
+    runner_cfg    : runner_cfg_t := runner_cfg_default;
+    GC_DATA_WIDTH : positive     := 8);
 end entity ethernet_sbi_sb_tb;
 
 -- Test case architecture
 architecture func of ethernet_sbi_sb_tb is
 
-  constant C_CLK_PERIOD   : time := 10 ns;    -- **** Trenger metode for setting av clk period
-  constant C_SCOPE        : string := "ETHERNET_SBI_VVC_TB";
-  alias i2_sbi_if is << signal .ethernet_sbi_sb_tb.i_test_harness.i2_sbi_if : t_sbi_if >>;
+  constant C_CLK_PERIOD : time     := 10 ns;    -- **** Trenger metode for setting av clk period
+  constant C_SCOPE      : string   := "ETHERNET_SBI_VVC_TB";
+  constant C_ADDR_WIDTH : positive := 8;
+
+  alias i2_sbi_if is << signal .ethernet_sbi_sb_tb.i_test_harness.i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0)) >>;
   alias clk       is << signal .ethernet_sbi_sb_tb.i_test_harness.clk : std_logic >>;
 begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.sbi_test_harness generic map(GC_CLK_PERIOD => C_CLK_PERIOD);
+  i_test_harness : entity bitvis_vip_ethernet.sbi_test_harness
+    generic map(
+      GC_CLK_PERIOD => C_CLK_PERIOD,
+      GC_ADDR_WIDTH => C_ADDR_WIDTH,
+      GC_DATA_WIDTH => GC_DATA_WIDTH);
 
   i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 

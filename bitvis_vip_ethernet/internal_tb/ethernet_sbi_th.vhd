@@ -34,7 +34,9 @@ use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 --=================================================================================================
 entity sbi_test_harness is
   generic(
-    GC_CLK_PERIOD : time
+    GC_CLK_PERIOD : time;
+    GC_ADDR_WIDTH : positive;
+    GC_DATA_WIDTH : positive
   );
 end entity sbi_test_harness;
 
@@ -44,14 +46,14 @@ end entity sbi_test_harness;
 
 architecture struct of sbi_test_harness is
 
-  signal i1_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
-  signal i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
+  signal i1_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
+  signal i2_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
 
   signal clk       : std_logic;
 
   constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 0) :=
-   (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, field_description => "transmitter field config")),
-    RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, field_description => "receiver field config   "))
+   (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, field_description => "transmitter field config")),
+    RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, field_description => "receiver field config   "))
     );
 
 begin
@@ -81,8 +83,8 @@ begin
 
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH                         => 8,
-      GC_DATA_WIDTH                         => 8,
+      GC_ADDR_WIDTH                         => GC_ADDR_WIDTH,
+      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_INSTANCE_IDX                       => 1,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
       GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,
@@ -96,8 +98,8 @@ begin
 
   i2_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH                         => 8,
-      GC_DATA_WIDTH                         => 8,
+      GC_ADDR_WIDTH                         => GC_ADDR_WIDTH,
+      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_INSTANCE_IDX                       => 2,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
       GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,

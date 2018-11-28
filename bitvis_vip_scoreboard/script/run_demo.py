@@ -13,10 +13,18 @@
 from os.path import join, dirname
 import os
 import subprocess
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--gui", help="opens simulation in GUI mode", action="store_true")
+args = parser.parse_args()
 
 # Compile
 output = subprocess.run(['vsim', '-c', '-do', 'do compile_demo.do' + ';exit'], stderr=subprocess.PIPE)
 
 # Run simulation if successful compile
 if output.returncode == 0:
-  subprocess.call(['vsim', '-gui', '-do', 'do run_simulation.do'], stderr=subprocess.PIPE)
+    if args.gui:
+      subprocess.call(['vsim', '-gui', '-do', 'do run_simulation.do'], stderr=subprocess.PIPE)
+    else:
+      subprocess.call(['vsim', '-c', '-do', 'do run_simulation.do' + ';exit'], stderr=subprocess.PIPE)

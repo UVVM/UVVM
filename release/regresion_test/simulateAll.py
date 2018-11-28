@@ -12,10 +12,14 @@ import os
 import datetime
 import subprocess
 import shutil
+import sys
+import importlib
+sys.path.append('..')
+from commons_library import *
 
 def main():
 
-  separation_line = "\n\n=================================================="
+  separation_line = "=================================================="
 
   # Delete the status.txt file
   if os.path.exists("status.txt"):
@@ -28,45 +32,22 @@ def main():
     status.write(message)
 
   def simulate(component):
-    os.chdir("../../" + component + "/sim/")
-    log(separation_line)
-    log("\n" + component)
+    log("\n" + separation_line)
+    os.chdir("../../" + component)
+    sys.path.append('internal_script')
+    import simulate_component
+    importlib.reload(simulate_component)
+    log(simulate_component.simulate(False))
 
-    # Delete old compiled libraries and simulations if any
-    if os.path.exists("vunit_out"):
-      shutil.rmtree("vunit_out")
+    sys.path.remove('internal_script')
 
-    # Simulate in modelsim
-    if os.path.exists("internal_run.py"):
-      sim = subprocess.run(["py", "internal_run.py", "-p8"], stdout=subprocess.PIPE, stderr= subprocess.PIPE)
-      #sim.wait()
-      if sim.returncode == 0:
-        log("\nModelsim : PASS")
-      else:
-        log("\nModelsim : FAILED")
-        log(sim.stderr)
+    os.chdir("../release/regresion_test")
+  log("\n" + separation_line)
+  log("\n***               REGRESION TEST               ***")
+  log("\n" + separation_line + "\n")
 
-    # Delete compiled libraries and simulations
-    if os.path.exists("vunit_out"):
-      shutil.rmtree("vunit_out")
-
-    # Simulate in Riviera Pro
-    if os.path.exists("internal_run_riviera_pro.py"):
-      sim = subprocess.run(["py", "internal_run_riviera_pro.py"], stdout=subprocess.PIPE, stderr= subprocess.PIPE)
-      #sim.wait()
-      if sim.returncode == 0:
-        log("\nRiviera Pro : PASS")
-      else:
-        log("\nRiviera Pro : FAILED")
-        log(sim.stderr)
-
-    # Delete compiled libraries and simulations
-    if os.path.exists("vunit_out"):
-      shutil.rmtree("vunit_out")
-
-    os.chdir("../../release/regresion_test")
-
-  log("Starting tests at " + datetime.datetime.now().strftime("%H:%M:%S"))
+  start_time = datetime.datetime.now()
+  log("\nStarting tests at " + start_time.strftime("%H:%M:%S"))
 
   with open("../component_list.txt", "r") as components:
     line = components.readline()
@@ -74,8 +55,16 @@ def main():
       simulate(line.strip())
       line = components.readline()
 
-  log(separation_line)
-  log("\nEnding test at " + datetime.datetime.now().strftime("%H:%M:%S"))
+  log("\n" + separation_line)
+  end_time = datetime.datetime.now()
+  sim_time = end_time - start_time
+  days = sim_time.days
+  hours, remainder = divmod(sim_time.seconds, 3600)
+  hours += days*24
+  minutes, seconds = divmod(remainder, 60)
+  log("\nEnding test at " + end_time.strftime("%H:%M:%S"))
+  log("\nSimulation time: " + str(hours) + ":" + "{:02}".format(minutes) + ":" + "{:02}".format(seconds))
+  log("\n" + separation_line)
   status.close()
 
 

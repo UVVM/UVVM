@@ -2154,17 +2154,17 @@ begin
 
 
         -- Verify that clock_counter wraps when reaching natural'right.
-        wait until clk500M = '1';
-        p_clk_cnt_ena <= false;
-        clk500M_cnt   <= force in (natural'right-8);  -- Force output from clock_generator to a value that is almost natural'right
-        wait until clk500M = '0';
-        wait until clk500M = '1';
-        clk500M_cnt   <= release in;
-        wait until clk500M_cnt = natural'right;
-        wait for C_CLK500M_PERIOD + 1 ns;
-        check_value(clk500M_cnt, 0, error, "Verifying cnt wrap");
-        wait for C_CLK500M_PERIOD + 1 ns;
-        check_value(clk500M_cnt, 1, error, "Verifying increment after wrap");
+        --wait until clk500M = '1';
+        --p_clk_cnt_ena <= false;
+        --clk500M_cnt   <= force in (natural'right-8);  -- Force output from clock_generator to a value that is almost natural'right
+        --wait until clk500M = '0';
+        --wait until clk500M = '1';
+        --clk500M_cnt   <= release in;
+        --wait until clk500M_cnt = natural'right;
+        --wait for C_CLK500M_PERIOD + 1 ns;
+        --check_value(clk500M_cnt, 0, error, "Verifying cnt wrap");
+        --wait for C_CLK500M_PERIOD + 1 ns;
+        --check_value(clk500M_cnt, 1, error, "Verifying increment after wrap");
 
       elsif run("normalise") then
         --==================================================================================================

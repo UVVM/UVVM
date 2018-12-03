@@ -47,7 +47,7 @@ entity uart_tx_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := WARNING
   );
   port (
-    uart_vvc_tx         : inout std_logic := '1'
+    uart_vvc_tx         : inout std_logic := GC_UART_CONFIG.idle_state
   );
 end entity uart_tx_vvc;
 

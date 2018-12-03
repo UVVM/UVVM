@@ -9,10 +9,20 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2018.12.03
+--------------------
+Released: 2018-12-03
+- Minor changes in documentation of VIPs, UTIL and VVC Framework.
+- Option MATCH_STD_INCL_Z added to check_value() of std_logic/std_logic_vector in UVVM UTIL.
+- Minor bug fix in UART VIP.
+- Minor bug fix in SBI VIP.
+
+
 v2018.10.09
 --------------------
 Released: 2018-10-09
 - Fixed minor bug in bitvis_vip_scoreboard
+
 
 v2018.09.28
 --------------------

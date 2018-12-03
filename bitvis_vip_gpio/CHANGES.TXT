@@ -1,6 +1,11 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.2.2
+----------
+Released: 2018-12-03
+- Updated documentation
+
 v1.2.1
 ----------
 Released: 2018-08-30

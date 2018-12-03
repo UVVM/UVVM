@@ -64,11 +64,11 @@ quietly set uart_path "$root_path/bitvis_uart"
 do $uart_path/script/1_compile_src.do $uart_path
 
 quietly set sb_path "$root_path/bitvis_vip_scoreboard"
-do $sb_path/script/compile_lib.do uvvm_util
-do $sb_path/script/compile_lib.do uvvm_vvc_framework
-do $sb_path/script/compile_lib.do bitvis_vip_scoreboard
-do $root_path/bitvis_vip_uart/script/compile_bfm.do $root_path/bitvis_vip_uart
-do $root_path/bitvis_vip_sbi/script/compile_bfm.do $root_path/bitvis_vip_sbi
+do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
+do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim
 
 quietly set lib_name "bitvis_vip_scoreboard"
 

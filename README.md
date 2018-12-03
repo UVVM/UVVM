@@ -1,10 +1,10 @@
-# UVVM 
+# UVVM
 UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making very structured VHDL-based testbenches.
 
-Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality. 
+Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality.
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
 
-UVVM consists currently of the following elements 
+UVVM consists currently of the following elements
 - [Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md)
 - [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/README_UVVM_VVC_System.md)  - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
@@ -19,8 +19,8 @@ The VVC system is slightly more complex, but has been simplified as far as possi
 Please also see Getting Started with UVVM: https://github.com/UVVM/UVVM/blob/master/GETTING_STARTED.md
 
 ## For what do I need this VVC Framework?
-UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level. 
-As an example a simple command like uart_expect(UART_VVCT, my_data), or axilite_write(AXILITE_VVCT, my_addr, my_data, my_message) will automatically tell the respective VVC (for UART or AXI-Lite) to execute the uart_receive() or axilite_write() BFM respectively. 
+UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level.
+As an example a simple command like uart_expect(UART_VVCT, my_data), or axilite_write(AXILITE_VVCT, my_addr, my_data, my_message) will automatically tell the respective VVC (for UART or AXI-Lite) to execute the uart_receive() or axilite_write() BFM respectively.
 
 ## What are the main benefits of using this system?
 The really great benefit here is the unique overview, readability, maintainability, extensibility and reuse you get from having the best testbench architecture possible - much in the same way as a good architecure is also critical for any complex design.
@@ -35,7 +35,7 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 [This post on LinkedIn](https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen) will give you some more info on why you should use this library.
 
 ## Main Features
-*	Very usefull support for checking values, ranges, time aspects, and for waiting for events inside a given window
+*	Very useful support for checking values, ranges, time aspects, and for waiting for events inside a given window
 *	An extremely low user threshold for the basic functionality - like logging, alert handling and checkers
 *	A very structured testbench architecture that allows LEGO-like testbench/harness implementation
 *	A very structured VHDL Verification Component (VVC) architecture that allows simultaneous activitity (stimuli and checking) on multiple interfaces in a very easily understandable manner
@@ -81,15 +81,15 @@ These are just fast access links to some interesting info:
 
 ## License
 
-The MIT License (MIT) 
+The MIT License (MIT)
 
-Copyright (c) 2016 by Bitvis AS 
+Copyright (c) 2016 by Bitvis AS
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. 
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## UVVM Maintainers
 [Bitvis](http://bitvis.no) (Norway) has released UVVM as open source and we are committed to develop this system further.

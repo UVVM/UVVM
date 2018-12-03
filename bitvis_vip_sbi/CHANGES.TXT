@@ -1,6 +1,13 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.1.3
+----------
+Released: 2018-12-03
+- Updated documentation
+- Added msg_id and msg_id_panel to clock margin checks in sbi_bfm_pkg.vhd
+- Fixed typo c_clk_was_high to v_clk_was_high in sbi_bfm_pkg.vhd
+
 v2.1.2
 ----------
 Released: 2018-08-30

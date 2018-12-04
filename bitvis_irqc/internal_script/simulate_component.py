@@ -58,7 +58,17 @@ def simulate(log_to_transcript):
 
   os.chdir("../script")
   sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_and_sim_all.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+
+  demo_pass = False
   if sim.returncode == 0:
+    # Check transcript for any errors
+    with open("transcript", "r") as transcript:
+      lines = transcript.read().splitlines()
+      last_line = lines[-1]
+      if "Errors: 0" in last_line.strip():
+        demo_pass = True
+
+  if demo_pass:
     sim_log.log("\nDemo : PASS")
   else:
     sim_log.log("\nDemo : FAILED")

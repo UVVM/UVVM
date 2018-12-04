@@ -36,16 +36,14 @@ if {[catch {eval "vsim -version"} message] == 0} {
 
 vsim  bitvis_irqc.irqc_tb
 
-if {[batch_mode] == 0} {
-	if {$simulator == "modelsim"} {
-	  add log -r /*
-	  source ../script/wave_modelsim.do
-	} else {
-		catch {
-   		view wave -title ONE
-   	}
-		source ../script/wave_riviera_pro.do
-	}
+if {$simulator == "modelsim"} {
+  add log -r /*
+  source ../script/wave_modelsim.do
+} else {
+	catch {
+  		view wave -title ONE
+  	}
+	source ../script/wave_riviera_pro.do
 }
 
 run -all

@@ -1,7 +1,13 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.4
+----------
+Released: 2018-XX-XX
+- Minor changes in script 5_simulate_uart_vvc_tb.do
+
 v1.1.3
+----------
 Released: 2018-09-28
 - Minor documentation changes
 

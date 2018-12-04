@@ -1,8 +1,13 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.1.8
+----------
+Released: 2018-XX-XX
+- Minor changes in script simulate_tb.do
 
 v1.0.7
+----------
 Released: 2018-09-28
 - compile_bfm.do changed to compile_src.do in compile_tb_dep.do
 

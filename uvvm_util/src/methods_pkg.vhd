@@ -1571,19 +1571,22 @@ package methods_pkg is
      variable line_to_be_deallocated      : inout line
   );
 -- ============================================================================
--- Synchronisation methods
+-- Synchronization methods
 -- ============================================================================
   -- method to block a global flag with the name flag_name
   procedure block_flag(
-    constant flag_name : in string;
-    constant msg : in string
+    constant flag_name                : in string;
+    constant msg                      : in string;
+    constant already_blocked_severity : in t_alert_level := WARNING;
+    constant scope                    : in string := C_TB_SCOPE_DEFAULT
   );
 
   -- method to unblock a global flag with the name flag_name
   procedure unblock_flag(
     constant flag_name : in string;
     constant msg       : in string;
-    signal   trigger   : inout std_logic
+    signal   trigger   : inout std_logic; -- Parameter must be global_trigger as method await_unblock_flag() uses that global signal to detect unblocking.
+    constant scope     : in string := C_TB_SCOPE_DEFAULT
   );
 
   -- method to wait for the global flag with the name flag_name
@@ -1592,7 +1595,8 @@ package methods_pkg is
     constant timeout          : in time;
     constant msg              : in string;
     constant flag_returning   : in t_flag_returning := KEEP_UNBLOCKED;
-    constant timeout_severity : in t_alert_level := ERROR
+    constant timeout_severity : in t_alert_level := ERROR;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT
   );
   procedure await_barrier(
     signal   barrier_signal   : inout std_logic;
@@ -5907,112 +5911,161 @@ package body methods_pkg is
 
 
 
--- ============================================================================
--- Synchronisation methods
--- ============================================================================
-  procedure block_flag(
-    constant flag_name : in string;
-    constant msg : in string
-  ) is
+  -- ============================================================================
+  -- Synchronization methods
+  -- ============================================================================
+  -- Local type used in synchronization methods
+  type t_flag_array_idx_and_status_record is record
+    flag_idx        : integer;
+    flag_is_new     : boolean;
+    flag_array_full : boolean;
+  end record;
+
+  -- Local function used in synchronization methods to search through shared_flag_array for flag_name or available index
+  -- Returns: 
+  --          Flag index in the shared array
+  --          If the flag is new or already in the array
+  --          If the array is full, and the flag can not be added (alerts an error).
+  impure function find_or_add_sync_flag(
+    constant flag_name          : string
+    ) return t_flag_array_idx_and_status_record is
+    variable v_idx              : integer := 0;
+    variable v_is_new           : boolean := false;
+    variable v_is_array_full    : boolean := true;
   begin
-    -- Block the flag if it was used before
     for i in shared_flag_array'range loop
-      if shared_flag_array(i).flag_name(flag_name'range) = flag_name or shared_flag_array(i).flag_name = (shared_flag_array(i).flag_name'range => ' ') then
+      -- Search for empty index. If found add a new flag
+      if (shared_flag_array(i).flag_name = (shared_flag_array(i).flag_name'range => NUL)) then
         shared_flag_array(i).flag_name(flag_name'range) := flag_name;
-        shared_flag_array(i).is_active := true;
+        v_is_new := true;
+      end if;
+      -- Check if flag exists in the array
+      if (shared_flag_array(i).flag_name(flag_name'range) = flag_name) then
+        v_idx := i;
+        v_is_array_full := false;
         exit;
       end if;
     end loop;
-
-    log(ID_BLOCKING, "Blocking " & flag_name & ". " & add_msg_delimiter(msg), C_SCOPE);
+    return (v_idx, v_is_new, v_is_array_full);
+  end;
+  
+  procedure block_flag(
+    constant flag_name                : in string;
+    constant msg                      : in string;
+    constant already_blocked_severity : in t_alert_level := WARNING; 
+    constant scope                    : in string := C_TB_SCOPE_DEFAULT
+  ) is
+    variable v_idx            : integer := 0;
+    variable v_is_new         : boolean := false;
+    variable v_is_array_full  : boolean := true;
+  begin
+    -- Find flag, or add a new provided the array is not full. 
+    (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
+    if (v_is_array_full = true) then
+      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
+    else -- Block flag
+      if (v_is_new = true) then
+        log(ID_BLOCKING, "New blocked synchronization flag addded: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+      else
+        -- Check if the flag to be blocked already is blocked
+        if (shared_flag_array(v_idx).is_blocked = true) then
+          alert(already_blocked_severity, "The flag " & flag_name & " already was blocked. " & add_msg_delimiter(msg), scope);
+        else
+          log(ID_BLOCKING, "Blocking flag: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        end if;
+      end if;
+      shared_flag_array(v_idx).is_blocked := true;
+    end if;
   end procedure;
 
   procedure unblock_flag(
-    constant flag_name : in string;
-    constant msg       : in string;
-    signal   trigger   : inout std_logic
+    constant flag_name    : in string;
+    constant msg          : in string;
+    signal   trigger      : inout std_logic; -- Parameter must be global_trigger as method await_unblock_flag() uses that global signal to detect unblocking.
+    constant scope        : in string := C_TB_SCOPE_DEFAULT
   ) is
-    variable found : boolean := false;
+    variable v_idx            : integer := 0;
+    variable v_is_new         : boolean := false;
+    variable v_is_array_full  : boolean := true;
   begin
-    -- check if the flag has already been added. If not add it.
-    for i in shared_flag_array'range loop
-      if shared_flag_array(i).flag_name(flag_name'range) = flag_name or shared_flag_array(i).flag_name = (shared_flag_array(i).flag_name'range => ' ') then
-        shared_flag_array(i).flag_name(flag_name'range) := flag_name;
-        shared_flag_array(i).is_active := false;
-        found := true;
-        log(ID_BLOCKING, "Unblocking " & flag_name & ". " & add_msg_delimiter(msg), C_SCOPE);
-
-        gen_pulse(trigger, 0 ns, "pulsing global_trigger. " & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
-        exit;
+    -- Find flag, or add a new provided the array is not full.
+    (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
+    if (v_is_array_full = true) then
+      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
+    else -- Unblock flag
+      if (v_is_new = true) then
+        log(ID_BLOCKING, "New unblocked synchronization flag addded: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+      else
+        log(ID_BLOCKING, "Unblocking flag: " & flag_name & ". " & add_msg_delimiter(msg), scope);
       end if;
-    end loop;
-
-    if found = false then
-      log(ID_BLOCKING, "The flag " & flag_name & " was not found and the maximum of flags were used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), C_SCOPE);
+      shared_flag_array(v_idx).is_blocked := false;
+      -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
+      gen_pulse(trigger, 0 ns, "pulsing global_trigger. " & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
     end if;
-  end procedure;
+  end procedure; 
 
   procedure await_unblock_flag(
     constant flag_name        : in string;
     constant timeout          : in time;
     constant msg              : in string;
     constant flag_returning   : in t_flag_returning := KEEP_UNBLOCKED;
-    constant timeout_severity : in t_alert_level := ERROR
+    constant timeout_severity : in t_alert_level := ERROR;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT
   ) is
-    variable v_flag_is_active    : boolean := true;
-    constant start_time          : time := now;
+    variable v_idx              : integer := 0;
+    variable v_is_new           : boolean := false;
+    variable v_is_array_full    : boolean := true;
+    variable v_flag_is_blocked  : boolean := true;
+    constant start_time         : time := now;
+
   begin
-    -- check if flag was not unblocked before
-    for i in shared_flag_array'range loop
-      -- check if the flag was already in the global_flag array. If it was not -> add it to the first free space
-      if shared_flag_array(i).flag_name(flag_name'range) = flag_name or shared_flag_array(i).flag_name = (shared_flag_array(i).flag_name'range => ' ') then
-        shared_flag_array(i).flag_name(flag_name'range) := flag_name;
-        v_flag_is_active := shared_flag_array(i).is_active;
-        if v_flag_is_active = false then
-          log(ID_BLOCKING, flag_name & " was not blocked. " & add_msg_delimiter(msg), C_SCOPE);
+    -- Find flag, or add a new provided the array is not full.
+    (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
+    if (v_is_array_full = true) then
+      alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
+    else -- Waits only if the flag is found and is blocked. Will wait when a new flag is added, as it is default blocked.
+      v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
+      if (v_flag_is_blocked = false) then 
+        if (flag_returning = RETURN_TO_BLOCK) then
+          -- wait for all sequencer that are waiting for that flag before reseting it
+          wait for 0 ns;
+          shared_flag_array(v_idx).is_blocked := true;
+          log(ID_BLOCKING, flag_name & " already was unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
+        else
+          log(ID_BLOCKING, flag_name & " already was unblocked. " & add_msg_delimiter(msg), scope);
+        end if;
+      else -- Flag is blocked (or a new flag was added), starts waiting. log before while loop. Otherwise the message will be printed everytime the global_trigger was triggered.
+        if (v_is_new = true) then
+          log(ID_BLOCKING, "New blocked synchronization flag addded: " & flag_name & ". Waiting for this flag to be unblocked. " & add_msg_delimiter(msg), scope);
+        else
+          log(ID_BLOCKING, "Waiting for: " & flag_name & " to be unblocked. " & add_msg_delimiter(msg), scope);
+        end if;
+      end if;
+
+      -- Waiting for flag to be unblocked
+      while v_flag_is_blocked = true loop
+        if (timeout /= 0 ns) then
+          wait until rising_edge(global_trigger) for ((start_time + timeout) - now);
+          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out" & add_msg_delimiter(msg), scope, ID_NEVER);
+          if global_trigger /= '1' then
+            exit;
+          end if;
+        else
+          wait until rising_edge(global_trigger);
+        end if;
+
+        v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
+        if (v_flag_is_blocked = false) then
+          log(ID_BLOCKING, flag_name & " was unblocked. " & add_msg_delimiter(msg), scope);
           if flag_returning = RETURN_TO_BLOCK then
             -- wait for all sequencer that are waiting for that flag before reseting it
             wait for 0 ns;
-            shared_flag_array(i).is_active := true;
+            shared_flag_array(v_idx).is_blocked := true;
           end if;
         end if;
-        exit;
-      end if;
-    end loop;
 
-    if v_flag_is_active = true then
-      -- log before while loop. Otherwise the message will be printed everytime the global_trigger was triggered.
-      log(ID_BLOCKING, "Waiting for " & flag_name & " to be unblocked. " & add_msg_delimiter(msg), C_SCOPE);
-    end if;
-
-    while v_flag_is_active = true loop
-      if timeout /= 0 ns then
-        wait until rising_edge(global_trigger) for ((start_time + timeout) - now);
-        check_value(global_trigger = '1', timeout_severity, flag_name & " timed out" & add_msg_delimiter(msg), C_SCOPE, ID_NEVER);
-        if global_trigger /= '1' then
-          exit;
-        end if;
-      else
-        wait until rising_edge(global_trigger);
-      end if;
-
-      for i in shared_flag_array'range loop
-        if shared_flag_array(i).flag_name(flag_name'range) = flag_name then
-
-          v_flag_is_active := shared_flag_array(i).is_active;
-          if v_flag_is_active = false then
-            log(ID_BLOCKING, flag_name & " was unblocked. " & add_msg_delimiter(msg), C_SCOPE);
-            if flag_returning = RETURN_TO_BLOCK then
-              -- wait for all sequencer that are waiting for that flag before reseting it
-              wait for 0 ns;
-              shared_flag_array(i).is_active := true;
-            end if;
-          end if;
-        end if;
       end loop;
-
-    end loop;
-
+    end if;
   end procedure;
 
   procedure await_barrier(

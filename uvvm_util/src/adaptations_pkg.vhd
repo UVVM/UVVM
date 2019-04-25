@@ -200,6 +200,11 @@ package adaptations_pkg is
                                                 (others => true));
 
   -------------------------------------------------------------------------
+  -- Synchronisation
+  -------------------------------------------------------------------------
+  constant C_NUM_SYNC_FLAGS     : positive := 100; -- Maximum number of sync flags
+
+  -------------------------------------------------------------------------
   -- Deprecate
   -------------------------------------------------------------------------
   -- These values are used to indicate outdated sub-programs

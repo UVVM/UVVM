@@ -34,7 +34,7 @@ package global_signals_and_shared_variables_pkg is
   shared variable shared_current_log_hdr         : t_current_log_hdr;
   shared variable shared_seed1                   : positive;
   shared variable shared_seed2                   : positive;
-  shared variable shared_flag_array              : t_sync_flag_record_array := (others => C_SYNC_FLAG_DEFAULT);
+  shared variable shared_flag_array              : t_sync_flag_record_array(1 to C_NUM_SYNC_FLAGS) := (others => C_SYNC_FLAG_DEFAULT);
   shared variable protected_semaphore            : t_protected_semaphore;
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;

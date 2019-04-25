@@ -1,9 +1,9 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
-v1.1.8
+v1.0.8
 ----------
-Released: 2018-XX-XX
+Released: 2019-04-25
 - Minor changes in script simulate_tb.do
 
 v1.0.7

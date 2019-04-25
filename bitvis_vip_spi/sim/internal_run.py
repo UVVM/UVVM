@@ -79,7 +79,6 @@ bitvis_vip_spi_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_spi_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
 # Add all testbenches to lib
-bitvis_vip_spi_lib.add_source_files(join(root, '../internal_tb', '*.vhd'))
 bitvis_vip_spi_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 bitvis_vip_spi_lib.add_source_file(join(root, '..', 'internal_tb', 'spi_master_slave_opencores', 'trunk', 'rtl', 'spi_master_slave', 'spi_common_pkg.vhd'))
 bitvis_vip_spi_lib.add_source_file(join(root, '..', 'internal_tb', 'spi_master_slave_opencores', 'trunk', 'rtl', 'spi_master_slave', 'spi_master.vhd'))

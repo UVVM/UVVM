@@ -220,11 +220,13 @@ begin
     variable v_unsigned_array       : t_unsigned_array(2 downto 0)(3 downto 0);
     variable v_unsigned32_array     : t_unsigned_array(31 downto 0)(7 downto 0);
     -- convert t_slv_array to/from t_byte_array
-    variable v_idx                  : natural;
-    variable v_byte                 : std_logic_vector(7 downto 0);
-    variable v_byte_array           : t_byte_array(0 to 9);
-    variable v_slv_array_as_byte    : t_slv_array(0 to 9)(7 downto 0);
-    variable v_slv_array_as_3_byte  : t_slv_array(0 to 9)(23 downto 0);
+    variable v_idx                    : natural;
+    variable v_byte                   : std_logic_vector(7 downto 0);
+    variable v_byte_array             : t_byte_array(0 to 9);
+    variable v_slv_array_as_byte      : t_slv_array(0 to 9)(7 downto 0);
+    variable v_slv_array_as_3_byte    : t_slv_array(0 to 9)(23 downto 0);
+    variable v_byte_desc_array        : t_byte_array(9 downto 0);
+    variable v_slv_desc_array_as_byte : t_slv_array(9 downto 0)(7 downto 0);
 
     --alias uvvm_status is shared_uvvm_status.simulation_successful;
     alias found_unexpected_simulation_warnings_or_worse     is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
@@ -1612,7 +1614,7 @@ begin
         log(ID_LOG_HDR, "Testing and verifying convert_slv_array_to_byte_array");
         -------------------------------------------------------------------------------------
 
-        log(ID_SEQUENCER, "Byte to byte testing, default byte position");
+        log(ID_SEQUENCER, "Byte to byte testing, default byte position, ascending t_byte_array");
         v_byte_array := (others => (others => '0'));
         -- build 10x1 bytes
         for idx in 1 to 10 loop
@@ -1625,6 +1627,28 @@ begin
           v_byte := v_slv_array_as_byte(idx-1);
           check_value(v_byte = v_byte_array(idx-1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(idx-1));
         end loop;
+
+        log(ID_SEQUENCER, "Byte to byte testing, default byte position, descending t_byte_array");
+        v_byte_desc_array := (others => (others => '0'));
+        -- build 10x1 bytes
+        for idx in 1 to 10 loop
+          v_slv_desc_array_as_byte(idx-1) := std_logic_vector(to_unsigned(idx, v_slv_desc_array_as_byte(idx-1)'length));
+        end loop;
+        -- convert
+        v_byte_desc_array := convert_slv_array_to_byte_array(v_slv_desc_array_as_byte, false, FIRST_BYTE_LEFT);
+        -- check result
+        for idx in 1 to 10 loop
+          v_byte := v_slv_desc_array_as_byte(idx-1);
+          check_value(v_byte = v_byte_desc_array(idx-1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(idx-1));
+        end loop;
+
+        log(ID_SEQUENCER, "Byte to byte testing, ascending byte vector, ascending t_byte_array");
+        v_byte_array := (others => (others => '0'));
+        -- convert
+        v_byte_array(0 to 1) := convert_slv_array_to_byte_array(t_slv_array'(8x"A0", 8x"A1"), true, FIRST_BYTE_LEFT);
+        -- check result
+        check_value(8x"A0" = v_byte_array(0), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(0));
+        check_value(8x"A1" = v_byte_array(1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(1));
 
         log(ID_SEQUENCER, "3xbyte to byte testing, FIRST_BYTE_LEFT, ascending t_byte_array");
         v_byte_array := (others => (others => '0'));

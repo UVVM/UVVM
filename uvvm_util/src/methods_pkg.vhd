@@ -2506,12 +2506,12 @@ package body methods_pkg is
         fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
         "***  REPORT OF GLOBAL CTRL ***" & LF &
         fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-        "                          IGNORE    STOP_LIMIT                      " & LF);
+        "                          IGNORE    STOP_LIMIT" & LF);
     for i in NOTE to t_alert_level'right loop
       write(v_line, "          " & to_upper(to_string(i, 13, LEFT)) & ": ");          -- Severity
 
       write(v_line, to_string(get_alert_attention(i),      7, RIGHT) & "    ");       -- column 1
-      write(v_line, to_string(integer'(get_alert_stop_limit(i)), 6, RIGHT, KEEP_LEADING_SPACE) & "    " & LF);  -- column 2
+      write(v_line, to_string(integer'(get_alert_stop_limit(i)), 6, RIGHT, KEEP_LEADING_SPACE) & LF);  -- column 2
     end loop;
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
 
@@ -2541,7 +2541,7 @@ package body methods_pkg is
       for i in t_msg_id'left to t_msg_id'right loop
         if ((i /= ALL_MESSAGES) and ((i /= NO_ID) and (i /= ID_NEVER))) then  -- report all but ID_NEVER, NO_ID and ALL_MESSAGES
         write(v_line, "          " & to_upper(to_string(i, C_LOG_MSG_ID_WIDTH+5, LEFT)) & ": ");  -- MSG_ID
-        write(v_line,to_upper(to_string(shared_msg_id_panel(i))) & "    " & LF); -- Enabled/disabled
+        write(v_line,to_upper(to_string(shared_msg_id_panel(i))) & LF); -- Enabled/disabled
         end if;
       end loop;
       write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF);

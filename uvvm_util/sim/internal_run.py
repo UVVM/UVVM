@@ -49,7 +49,7 @@ uvvm_util_lib = ui.add_library('uvvm_util')
 uvvm_util_lib.add_source_files(join(uvvm_dir, 'src', '*.vhd'))
 
 # Add all testbenches to lib
-uvvm_util_lib.add_source_files(join(uvvm_dir, 'tb', '*.vhd'))
+uvvm_util_lib.add_source_files(join(uvvm_dir, 'internal_tb', '*.vhd'))
 
 ui.set_compile_option('modelsim.vcom_flags', ["-suppress", "1346,1236"])
 

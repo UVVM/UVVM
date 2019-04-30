@@ -35,7 +35,7 @@ uvvm_util_lib = ui.add_library('uvvm_util')
 uvvm_util_lib.add_source_files(join(uvvm_dir, 'src', '*.vhd'))
 
 # Add all testbenches to lib
-uvvm_util_lib.add_source_files(join(uvvm_dir, 'tb', '*.vhd'))
+uvvm_util_lib.add_source_files(join(uvvm_dir, 'internal_tb', '*.vhd'))
 
 ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
 

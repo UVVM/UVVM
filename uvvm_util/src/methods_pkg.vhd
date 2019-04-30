@@ -5983,13 +5983,13 @@ package body methods_pkg is
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else -- Block flag
       if (v_is_new = true) then
-        log(ID_BLOCKING, "New blocked synchronization flag addded: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. " & add_msg_delimiter(msg), scope);
       else
         -- Check if the flag to be blocked already is blocked
         if (shared_flag_array(v_idx).is_blocked = true) then
-          alert(already_blocked_severity, "The flag " & flag_name & " already was blocked. " & add_msg_delimiter(msg), scope);
+          alert(already_blocked_severity, "The flag " & flag_name & " was already blocked. " & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, "Blocking flag: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Blocking flag. " & add_msg_delimiter(msg), scope);
         end if;
       end if;
       shared_flag_array(v_idx).is_blocked := true;
@@ -6012,9 +6012,9 @@ package body methods_pkg is
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else -- Unblock flag
       if (v_is_new = true) then
-        log(ID_BLOCKING, "New unblocked synchronization flag addded: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": New unblocked synchronization flag added. " & add_msg_delimiter(msg), scope);
       else
-        log(ID_BLOCKING, "Unblocking flag: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": Unblocking flag. " & add_msg_delimiter(msg), scope);
       end if;
       shared_flag_array(v_idx).is_blocked := false;
       -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
@@ -6048,15 +6048,15 @@ package body methods_pkg is
           -- wait for all sequencer that are waiting for that flag before reseting it
           wait for 0 ns;
           shared_flag_array(v_idx).is_blocked := true;
-          log(ID_BLOCKING, flag_name & " already was unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Was already unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, flag_name & " already was unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Was already unblocked. " & add_msg_delimiter(msg), scope);
         end if;
       else -- Flag is blocked (or a new flag was added), starts waiting. log before while loop. Otherwise the message will be printed everytime the global_trigger was triggered.
         if (v_is_new = true) then
-          log(ID_BLOCKING, "New blocked synchronization flag addded: " & flag_name & ". Waiting for this flag to be unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. Waiting to be unblocked. " & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, "Waiting for: " & flag_name & " to be unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Waiting to be unblocked. " & add_msg_delimiter(msg), scope);
         end if;
       end if;
 
@@ -6064,7 +6064,7 @@ package body methods_pkg is
       while v_flag_is_blocked = true loop
         if (timeout /= 0 ns) then
           wait until rising_edge(global_trigger) for ((start_time + timeout) - now);
-          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out" & add_msg_delimiter(msg), scope, ID_NEVER);
+          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out. " & add_msg_delimiter(msg), scope, ID_NEVER);
           if global_trigger /= '1' then
             exit;
           end if;
@@ -6074,8 +6074,10 @@ package body methods_pkg is
 
         v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
         if (v_flag_is_blocked = false) then
-          log(ID_BLOCKING, flag_name & " was unblocked. " & add_msg_delimiter(msg), scope);
-          if flag_returning = RETURN_TO_BLOCK then
+          if flag_returning = KEEP_UNBLOCKED then
+            log(ID_BLOCKING, flag_name & ": Has been unblocked. ", scope);
+          else
+            log(ID_BLOCKING, flag_name & ": Has been unblocked. Returned to blocked. ", scope);
             -- wait for all sequencer that are waiting for that flag before reseting it
             wait for 0 ns;
             shared_flag_array(v_idx).is_blocked := true;

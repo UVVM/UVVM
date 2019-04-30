@@ -120,6 +120,7 @@ architecture func of methods_tb is
 
 
   signal p_clk_cnt_ena : boolean := true;
+  signal p_sync_test_ena : boolean := false;
 
 begin
 
@@ -3155,6 +3156,36 @@ begin
         set_log_file_name(join(output_path(runner_cfg), "testlog3.txt"), ID_SEQUENCER);
         set_alert_file_name(join(output_path(runner_cfg), "alertlog3.txt"), ID_SEQUENCER);
 
+      elsif run("synchronization_methods") then
+        log(ID_LOG_HDR, "Testing await_unblock_flag with KEEP_UNBLOCKED.", C_SCOPE);
+        --1. Enable process p_sync_test and wait for flag to be blocked
+        p_sync_test_ena <= true;
+        wait for 9 ns;
+        --3. Block flag A (already blocked by p_sync_test)
+        block_flag("FLAG_A", "This flag should already be blocked.", WARNING, C_SCOPE);
+        increment_expected_alerts(WARNING);
+        --4. Unblock flag A
+        unblock_flag("FLAG_A", "", global_trigger);
+        --7. Wait for flag B
+        await_unblock_flag("FLAG_B", 0 ns, "", KEEP_UNBLOCKED, WARNING, C_SCOPE);
+
+        log(ID_LOG_HDR, "Testing await_unblock_flag with RETURN_TO_BLOCK.", C_SCOPE);
+        block_flag("FLAG_A", "Block only once.", WARNING, C_SCOPE);
+        for i in 1 to 5 loop
+          wait for 10 ns;
+          unblock_flag("FLAG_A", "", global_trigger);
+        end loop;
+
+        log(ID_LOG_HDR, "Testing await_unblock_flag with timeout.", C_SCOPE);
+        wait for 100 ns;
+
+        log(ID_LOG_HDR, "Registering maximum number of flags.", C_SCOPE);
+        set_alert_stop_limit(TB_ERROR, 2);
+        increment_expected_alerts(TB_ERROR);
+        for i in 1 to C_NUM_SYNC_FLAGS-1 loop
+          block_flag("FLAG_" & to_string(i), "");
+        end loop;
+
       end if;
     end loop;
 
@@ -3177,5 +3208,40 @@ begin
     wait;
 
   end process p_main;
+
+  ---------------------------------------------------------
+  -- PROCESS: p_sync_test for synchronization_methods test
+  ---------------------------------------------------------
+  p_sync_test : process
+    constant C_SCOPE : string := "TB sync_seq";
+  begin
+    wait until p_sync_test_ena;
+    -----------------------------------------------------
+    -- Testing await_unblock_flag with KEEP_UNBLOCKED.
+    -----------------------------------------------------
+    --2. Wait for flag A, it will be created and blocked
+    await_unblock_flag("FLAG_A", 0 ns, "Wait for an uninitialized flag, it will be created.", KEEP_UNBLOCKED, WARNING, C_SCOPE);
+    --5. Unblock flag A (already unblocked)
+    await_unblock_flag("FLAG_A", 0 ns, "Wait for an unblocked flag.", KEEP_UNBLOCKED, WARNING, C_SCOPE);
+    --6. Block flag B
+    block_flag("FLAG_B", "", WARNING, C_SCOPE);
+    wait for 10 ns;
+    --8. Unblock flag B
+    unblock_flag("FLAG_B", "", global_trigger, C_SCOPE);
+    -----------------------------------------------------
+    -- Testing await_unblock_flag with RETURN_TO_BLOCK.
+    -----------------------------------------------------
+    for i in 1 to 5 loop
+      await_unblock_flag("FLAG_A", 0 ns, "It will return to blocked.", RETURN_TO_BLOCK, WARNING, C_SCOPE);
+    end loop;
+    wait for 10 ns;
+    -----------------------------------------------------
+    -- Testing await_unblock_flag with timeout.
+    -----------------------------------------------------
+    await_unblock_flag("FLAG_A", 50 ns, "It will timeout.", KEEP_UNBLOCKED, WARNING, C_SCOPE);
+    increment_expected_alerts(WARNING);
+
+    wait;
+  end process p_sync_test;
 
 end func;

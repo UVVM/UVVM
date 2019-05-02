@@ -9,15 +9,16 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2019.04.25
+v2019.XX.XX
 --------------------
-Released: 2019-04-25
+Released: 2019-XX-XX
 - Minor changes in script in bitvis_irqc.
 - Minor changes in script in bitvis_uart.
 - Minor changes in documentation in uvvm_util.
 - Changes to synchronization methods in uvvm_util.
 - C_NUM_SYNC_FLAGS moved to adaptation_pkg.
 - Fixed fatal error in convert_slv_array_to_byte in uvvm_util.
+- Removed extra spaces in log reports.
 
 
 v2018.12.03

@@ -63,3 +63,18 @@ if { [info exists 1] } {
 
 do $vip_sbi_part_path/script/compile_src.do $vip_sbi_part_path
 
+
+# VIP Clock generator : VVC
+#------------------------------------------------------
+quietly set lib_name "bitvis_vip_clock_generator"
+quietly set part_name "bitvis_vip_clock_generator"
+# path from mpf-file in sim
+quietly set vip_sbi_part_path "../..//$part_name"
+
+if { [info exists 1] } {
+  # path from this part to target part
+  quietly set vip_sbi_part_path "$1/..//$part_name"
+  unset 1
+}
+
+do $vip_sbi_part_path/script/compile_src.do $vip_sbi_part_path

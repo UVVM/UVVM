@@ -1667,6 +1667,10 @@ package body generic_sb_pkg is
       else
         write(v_line,
           justify(
+            fill_string(' ', 4) &
+            "instance: " &
+            justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+            fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
             justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &

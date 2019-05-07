@@ -1,6 +1,11 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.1.4
+----------
+Released: 2019-XX-XX
+- Fixed bug where the start bit could be anything other than idle_state.
+
 v2.1.3
 ----------
 Released: 2018-12-03

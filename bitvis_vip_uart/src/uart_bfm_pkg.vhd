@@ -285,9 +285,9 @@ package body uart_bfm_pkg is
 
     -- wait until the start bit is sent on the bus, configured timeout occures or procedure get terminate signal
     if config.timeout = 0 ns then
-      wait until (rx /= config.idle_state) or (terminate_loop = '1');
+      wait until (rx = not config.idle_state) or (terminate_loop = '1');
     else
-      wait until (rx /= config.idle_state) or (terminate_loop = '1') for config.timeout;
+      wait until (rx = not config.idle_state) or (terminate_loop = '1') for config.timeout;
     end if;
 
     if terminate_loop = '1' then

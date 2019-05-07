@@ -1,6 +1,6 @@
 #========================================================================================================================
 # Copyright (c) 2017 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -32,7 +32,7 @@ if {[batch_mode]} {
   onerror {abort all}
 }
 #Just in case...
-quietly quit -sim   
+quietly quit -sim
 
 # Set up part_path for uvvm_vvc_framework
 #------------------------------------------------------
@@ -79,3 +79,17 @@ if { [info exists 1] } {
 
 do $vip_uart_part_path/script/compile_src.do $vip_uart_part_path
 
+# VIP Clock generator : VVC
+#------------------------------------------------------
+quietly set lib_name "bitvis_vip_clock_generator"
+quietly set part_name "bitvis_vip_clock_generator"
+# path from mpf-file in sim
+quietly set vip_uart_part_path "../..//$part_name"
+
+if { [info exists 1] } {
+  # path from this part to target part
+  quietly set vip_uart_part_path "$1/..//$part_name"
+  unset 1
+}
+
+do $vip_uart_part_path/script/compile_src.do $vip_uart_part_path

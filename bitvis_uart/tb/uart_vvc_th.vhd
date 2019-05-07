@@ -124,14 +124,8 @@ begin
   p_arst: arst <= '1', '0' after 5 *C_CLK_PERIOD;
 
   -----------------------------------------------------------------------------
-  -- Clock process
+  -- Clock Generator VVC
   -----------------------------------------------------------------------------
---  p_clk: process
---  begin
---    clk <= '0', '1' after C_CLK_PERIOD / 2;
---    wait for C_CLK_PERIOD;
---  end process;
-
   i_clock_generator_vvc : entity bitvis_vip_clock_generator.clock_generator_vvc
     generic map(
       GC_INSTANCE_IDX    => C_CLOCK_GEN,

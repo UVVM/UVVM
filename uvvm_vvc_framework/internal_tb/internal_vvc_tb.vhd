@@ -515,8 +515,9 @@ architecture func of internal_vvc_tb is
     uart_transmit(UART_VVCT,4,  TX, x"55", "Sending data on VVC 4 should change the last received cmd index on VVC 4");
     check_value(v_cmd_idx /= get_last_received_cmd_idx(UART_VVCT, 4, TX), error, "The command index must have been changed");
 
+    log(ID_SEQUENCER, "testing a not supported channel should result in a tb_error", C_SCOPE);
     increment_expected_alerts(TB_ERROR, 1);
-    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, NA, "testing a not supported channel should result in a tb_error");
+    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, NA);
 
 
 

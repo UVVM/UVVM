@@ -23,6 +23,8 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.uart_bfm_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
@@ -46,7 +48,7 @@ package vvc_cmd_pkg is
     TRANSMIT, RECEIVE, EXPECT);
 
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := 9;
+  constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := C_DATA_MAX_LENGTH;
   constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := 300;
     
   --===============================================================================================

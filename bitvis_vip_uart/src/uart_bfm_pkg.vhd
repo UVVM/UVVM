@@ -47,9 +47,9 @@ package uart_bfm_pkg is
     STOP_BITS_TWO
   );
 
-  constant C_MAX_BITS_IN_RECEIVED_DATA              : natural := 8;
+  constant C_DATA_MAX_LENGTH                        : natural := 8;
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR  : string := "; ";
-  type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_MAX_BITS_IN_RECEIVED_DATA-1 downto 0);
+  type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_DATA_MAX_LENGTH-1 downto 0);
 
   type t_uart_bfm_config is
   record

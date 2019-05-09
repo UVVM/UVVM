@@ -56,7 +56,6 @@
     signal irq2cpu       : std_logic := '0';
     signal irq2cpu_ack   : std_logic := '0';
 
-
     constant C_CLK_PERIOD : time    := 10 ns;
     constant C_CLOCK_GEN  : natural := 1;
 
@@ -191,7 +190,7 @@
 
       set_inputs_passive(VOID);
 
-      start_clock(CLOCK_GENERATOR_VVCT, 1, "Start clock generator");
+      start_clock(CLOCK_GENERATOR_VVCT, C_CLOCK_GEN, "Start clock generator");
 
       gen_pulse(arst, 10 * C_CLK_PERIOD, "Pulsed reset-signal - active for 10T");
       v_time_stamp := now;  -- time from which irq2cpu should be stable off until triggered

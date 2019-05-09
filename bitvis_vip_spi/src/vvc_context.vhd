@@ -15,7 +15,6 @@
 
 context vvc_context is
   library bitvis_vip_spi;
-  use bitvis_vip_spi.spi_bfm_pkg.all;
   use bitvis_vip_spi.vvc_cmd_pkg.all;
   use bitvis_vip_spi.vvc_methods_pkg.all;
   use bitvis_vip_spi.td_vvc_framework_common_methods_pkg.all;

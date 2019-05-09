@@ -26,6 +26,12 @@ context vunit_lib.vunit_run_context;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
+library bitvis_vip_clock_generator;
+context bitvis_vip_clock_generator.vvc_context;
+
 library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
@@ -56,28 +62,9 @@ architecture func of irqc_tb is
   signal irq2cpu_ack   : std_logic := '0';
 
 
-  signal clock_ena  : boolean := false;
-
   constant C_CLK_PERIOD : time := 10 ns;
+  constant C_CLOCK_GEN  : natural := 1;
 
-
-  procedure clock_gen(
-    signal   clock_signal  : inout std_logic;
-    signal   clock_ena     : in    boolean;
-    constant clock_period  : in    time
-  ) is
-    variable v_first_half_clk_period : time := C_CLK_PERIOD / 2;
-  begin
-    loop
-      if not clock_ena then
-        wait until clock_ena;
-      end if;
-      wait for v_first_half_clk_period;
-      clock_signal <= not clock_signal;
-      wait for (clock_period - v_first_half_clk_period);
-      clock_signal <= not clock_signal;
-    end loop;
-  end;
 
   subtype t_irq_source is std_logic_vector(C_NUM_SOURCES-1 downto 0);
 
@@ -131,57 +118,29 @@ begin
 
   sbi_if.ready <= '1'; -- always ready in the same clock cycle.
 
-  -- Set upt clock generator
-  clock_gen(clk, clock_ena, 10 ns);
+  
+  -----------------------------------------------------------------------------
+  -- Instantiate UVVM engine and Clock Generator VVC
+  -----------------------------------------------------------------------------
+  i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
+  
+  i_clock_generator_vvc : entity bitvis_vip_clock_generator.clock_generator_vvc
+    generic map(
+      GC_INSTANCE_IDX    => C_CLOCK_GEN,
+      GC_CLOCK_NAME      => "Clock 1",
+      GC_CLOCK_PERIOD    => 10 ns,
+      GC_CLOCK_HIGH_TIME => 5 ns
+      )
+    port map(
+      clk => clk
+      );
 
+  
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
     constant C_SCOPE     : string  := C_TB_SCOPE_DEFAULT;
-
-    procedure pulse(
-      signal   target          : inout std_logic;
-      signal   clock_signal    : in    std_logic;
-      constant num_periods     : in    natural;
-      constant msg             : in    string
-    ) is
-    begin
-      if num_periods > 0 then
-        wait until falling_edge(clock_signal);
-        target  <= '1';
-        for i in 1 to num_periods loop
-          wait until falling_edge(clock_signal);
-        end loop;
-      else
-        target  <= '1';
-        wait for 0 ns;  -- Delta cycle only
-      end if;
-      target  <= '0';
-      log(ID_SEQUENCER_SUB, msg, C_SCOPE);
-    end;
-
-    procedure pulse(
-      signal   target        : inout  std_logic_vector;
-      constant pulse_value   : in     std_logic_vector;
-      signal   clock_signal  : in     std_logic;
-      constant num_periods   : in     natural;
-      constant msg           : in     string) is
-    begin
-      if num_periods > 0 then
-        wait until falling_edge(clock_signal);
-        target <= pulse_value;
-        for i in 1 to num_periods loop
-          wait until falling_edge(clock_signal);
-        end loop;
-      else
-        target <= pulse_value;
-        wait for 0 ns;  -- Delta cycle only
-      end if;
-      target(target'range) <= (others => '0');
-      log(ID_SEQUENCER_SUB, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), C_SCOPE);
-    end;
-
 
 
     -- Overloads for PIF BFMs for SBI (Simple Bus Interface)
@@ -260,8 +219,11 @@ begin
     ------------------------------------------------------------
 
     set_inputs_passive(VOID);
-    clock_ena <= true;   -- to start clock generator
-    pulse(arst, clk, 10, "Pulsed reset-signal - active for 10T");
+
+    start_clock(CLOCK_GENERATOR_VVCT, C_CLOCK_GEN, "Start clock generator");
+
+    gen_pulse(arst, 10 * C_CLK_PERIOD, "Pulsed reset-signal - active for 10T");
+
     v_time_stamp := now;  -- time from which irq2cpu should be stable off until triggered
 
 
@@ -312,16 +274,16 @@ begin
     ------------------------------------------------------------
     log("\nChecking interrupts and IRR");
     write(C_ADDR_ICR, fit(x"FF"), "ICR : Clear all interrupts");
-    pulse(irq_source, trim(x"AA"), clk, 1, "Pulse irq_source 1T");
+    gen_pulse(irq_source, trim(x"AA"), clk, 1, "Pulse irq_source 1T");
     check(C_ADDR_IRR, fit(x"AA"), ERROR, "IRR after irq pulses");
-    pulse(irq_source, trim(x"01"), clk, 1, "Add more interrupts");
+    gen_pulse(irq_source, trim(x"01"), clk, 1, "Add more interrupts");
     check(C_ADDR_IRR, fit(x"AB"), ERROR, "IRR after irq pulses");
-    pulse(irq_source, trim(x"A1"), clk, 1, "Repeat same interrupts");
+    gen_pulse(irq_source, trim(x"A1"), clk, 1, "Repeat same interrupts");
     check(C_ADDR_IRR, fit(x"AB"), ERROR, "IRR after irq pulses");
-    pulse(irq_source, trim(x"54"), clk, 1, "Add remaining interrupts");
+    gen_pulse(irq_source, trim(x"54"), clk, 1, "Add remaining interrupts");
     check(C_ADDR_IRR, fit(x"FF"), ERROR, "IRR after irq pulses");
     write(C_ADDR_ICR, fit(x"AA"), "ICR : Clear half the interrupts");
-    pulse(irq_source, trim(x"A0"), clk, 1, "Add more interrupts");
+    gen_pulse(irq_source, trim(x"A0"), clk, 1, "Add more interrupts");
     check(C_ADDR_IRR, fit(x"F5"), ERROR, "IRR after irq pulses");
     write(C_ADDR_ICR, fit(x"FF"), "ICR : Clear all interrupts");
     check(C_ADDR_IRR, fit(x"00"), ERROR, "IRR after clearing all");
@@ -336,7 +298,7 @@ begin
     check(C_ADDR_IRQ2CPU_ALLOWED, x"01", ERROR, "IRQ2CPU_ALLOWED should now be active");
     check_value(irq2cpu, '0', ERROR, "Interrupt to CPU must still be inactive", C_SCOPE);
     check_stable(irq2cpu, (now - v_time_stamp), ERROR, "No spikes allowed on irq2cpu", C_SCOPE);
-    pulse(irq_source, trim(x"01"), clk, 1, "Add a single enabled interrupt");
+    gen_pulse(irq_source, trim(x"01"), clk, 1, "Add a single enabled interrupt");
     await_value(irq2cpu, '1', 0 ns, C_CLK_PERIOD, ERROR, "Interrupt expected immediately", C_SCOPE);
     v_time_stamp := now; -- from time of stable active irq2cpu
     check(C_ADDR_IRR, fit(x"AB"), ERROR, "IRR should now be active");
@@ -363,13 +325,13 @@ begin
       v_irq_mask_inv      := (others => '1');
       v_irq_mask_inv(i)   := '0';
       write(C_ADDR_IER, v_irq_mask, "IER : Enable selected interrupt");
-      pulse(irq_source, trim(v_irq_mask_inv), clk, 1, "Pulse all non-enabled interrupts");
+      gen_pulse(irq_source, trim(v_irq_mask_inv), clk, 1, "Pulse all non-enabled interrupts");
       write(C_ADDR_ITR, v_irq_mask_inv, "ITR : Trigger all non-enabled interrupts");
       check(C_ADDR_IRR, fit(v_irq_mask_inv), ERROR, "IRR not yet triggered");
       check(C_ADDR_IPR, x"00", ERROR, "IPR not yet triggered");
       check_value(irq2cpu, '0', ERROR, "Interrupt to CPU must still be inactive", C_SCOPE);
       check_stable(irq2cpu, (now - v_time_stamp), ERROR, "No spikes allowed on irq2cpu", C_SCOPE);
-      pulse(irq_source, trim(v_irq_mask), clk, 1, "Pulse the enabled interrupt");
+      gen_pulse(irq_source, trim(v_irq_mask), clk, 1, "Pulse the enabled interrupt");
       await_value(irq2cpu, '1', 0 ns, C_CLK_PERIOD, ERROR, "Interrupt expected immediately", C_SCOPE);
       check(C_ADDR_IRR, fit(x"FF"), ERROR, "All IRR triggered");
       check(C_ADDR_IPR, v_irq_mask, ERROR, "IPR triggered for selected");
@@ -379,7 +341,7 @@ begin
       write(C_ADDR_ICR, v_irq_mask_inv, "ICR : Clear all non-enabled interrupts");
       write(C_ADDR_IER, fit(x"FF"), "IER : Enable all interrupts");
       write(C_ADDR_IER, v_irq_mask, "IER : Disable non-selected interrupts");
-      pulse(irq_source, trim(x"FF"), clk, 1, "Pulse all interrupts");
+      gen_pulse(irq_source, trim(x"FF"), clk, 1, "Pulse all interrupts");
       write(C_ADDR_ITR, x"FF", "ITR : Trigger all interrupts");
       check_stable(irq2cpu, (now - v_time_stamp), ERROR, "No spikes allowed on irq2cpu (='1')", C_SCOPE);
       write(C_ADDR_IER, v_irq_mask_inv, "IER : Enable all interrupts but disable selected");
@@ -415,7 +377,7 @@ begin
     check_stable(irq2cpu, (now - v_time_stamp), ERROR, "No spikes allowed on irq2cpu (='1')", C_SCOPE);
 
     log("\n- Acknowledge and deactivate interrupt");
-    pulse(irq2cpu_ack, clk, 1, "Pulse irq2cpu_ack");
+    gen_pulse(irq2cpu_ack, clk, 1, "Pulse irq2cpu_ack");
     await_value(irq2cpu, '0', 0 ns, C_CLK_PERIOD, ERROR, "Interrupt deactivation expected", C_SCOPE);
     v_time_stamp    := now; -- from time of stable inactive irq2cpu
 
@@ -425,8 +387,8 @@ begin
     write(C_ADDR_IRQ2CPU_ENA, x"00", "IRQ2CPU_ENA : Set to 0 - should not affect anything");
     write(C_ADDR_ITR, x"FF", "ICR : Trigger all interrupts");
     write(C_ADDR_IER, x"FF", "IER : Enable all interrupts");
-    pulse(irq_source, trim(x"FF"), clk, 1, "Pulse all interrupts");
-    pulse(irq2cpu_ack, clk, 1, "Pulse irq2cpu_ack");
+    gen_pulse(irq_source, trim(x"FF"), clk, 1, "Pulse all interrupts");
+    gen_pulse(irq2cpu_ack, clk, 1, "Pulse irq2cpu_ack");
     check_stable(irq2cpu, (now - v_time_stamp), ERROR, "No spikes allowed on irq2cpu (='0')", C_SCOPE);
 
     log("\n- Re-/de-activation");
@@ -445,7 +407,7 @@ begin
     write(C_ADDR_IER, x"FF", "IER : Enable all interrupts");
     write(C_ADDR_IRQ2CPU_ENA, x"01", "IRQ2CPU_ENA : Allow interrupt to CPU");
     await_value(irq2cpu, '1', 0 ns, C_CLK_PERIOD, ERROR, "Interrupt activation expected", C_SCOPE);
-    pulse(arst, clk, 1, "Pulse reset");
+    gen_pulse(arst, clk, 1, "Pulse reset");
     await_value(irq2cpu, '0', 0 ns, C_CLK_PERIOD, ERROR, "Interrupt deactivation", C_SCOPE);
     check(C_ADDR_IER, x"00", ERROR, "IER all inactive");
     check(C_ADDR_IRR, x"00", ERROR, "IRR all inactive");

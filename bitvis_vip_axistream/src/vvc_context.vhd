@@ -15,7 +15,6 @@
 
 context vvc_context is
   library bitvis_vip_axistream;
-  use bitvis_vip_axistream.axistream_bfm_pkg.all;
   use bitvis_vip_axistream.vvc_cmd_pkg.all;
   use bitvis_vip_axistream.vvc_methods_pkg.all;
   use bitvis_vip_axistream.td_vvc_framework_common_methods_pkg.all;

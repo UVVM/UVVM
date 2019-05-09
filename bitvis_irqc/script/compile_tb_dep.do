@@ -48,6 +48,22 @@ if { [info exists 1] } {
 do $util_part_path/script/compile_src.do $util_part_path
 
 
+# Set up part_path and lib_name for VVC Framework
+#------------------------------------------------------
+quietly set lib_name "uvvm_vvc_framework"
+quietly set part_name "uvvm_vvc_framework"
+# path from mpf-file in sim
+quietly set framework_part_path "../..//$part_name"
+
+if { [info exists 1] } {
+  # path from this part to target part
+  quietly set framework_part_path "$1/..//$part_name"
+  unset 1
+}
+
+do $framework_part_path/script/compile_src.do $framework_part_path
+
+
 # VIP SBI : BFM
 #------------------------------------------------------
 quietly set lib_name "bitvis_vip_sbi"

@@ -898,7 +898,7 @@ begin  -- architecture behav
         -- master --> slave
         tx_word := random(GC_DATA_WIDTH);
         spi_slave_receive_only(1, C_VVC_IDX_SLAVE_1);
-        v_cmd_idx := shared_cmd_idx;
+        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_SLAVE_1);
         spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
         await_slave_rx_completion(50 ms);
         await_master_tx_completion(50 ms);
@@ -908,7 +908,7 @@ begin  -- architecture behav
         -- slave --> master
         tx_word := random(GC_DATA_WIDTH);
         spi_master_receive_only(1, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
-        v_cmd_idx := shared_cmd_idx;
+        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
         spi_slave_transmit_only(tx_word, C_VVC_IDX_SLAVE_1);
         await_slave_rx_completion(50 ms);
         await_master_tx_completion(50 ms);
@@ -924,7 +924,7 @@ begin  -- architecture behav
             master_word_array(i-1) := random(GC_DATA_WIDTH);
           end loop;
           spi_slave_receive_only(iteration, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-          v_cmd_idx := shared_cmd_idx;
+          v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_SLAVE_1);
           spi_master_transmit_only(master_word_array(iteration-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
           await_slave_rx_completion(50 ms);
           await_master_tx_completion(50 ms);
@@ -940,7 +940,7 @@ begin  -- architecture behav
             master_word_array(i-1) := random(GC_DATA_WIDTH);
           end loop;
           spi_master_receive_only(iteration, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-          v_cmd_idx := shared_cmd_idx;
+          v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
           spi_slave_transmit_only(master_word_array(iteration-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
           await_slave_rx_completion(50 ms);
           await_master_tx_completion(50 ms);
@@ -1093,7 +1093,7 @@ begin  -- architecture behav
         --
         tx_word := random(GC_DATA_WIDTH);
         spi_slave_receive_only(1, 2, START_TRANSFER_IMMEDIATE);
-        v_cmd_idx := shared_cmd_idx;
+        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 2);
         sbi_master_write(tx_word);
         sbi_await_completion(50 ms);
         await_slave_rx_completion(50 ms, 2);
@@ -1104,7 +1104,7 @@ begin  -- architecture behav
         --
         for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
           spi_slave_receive_only(iteration, 2, START_TRANSFER_IMMEDIATE);
-          v_cmd_idx := shared_cmd_idx;
+          v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 2);
           for i in 1 to iteration loop
             master_word_array(i-1) := random(GC_DATA_WIDTH);
             sbi_master_write(master_word_array(i-1));
@@ -1265,7 +1265,7 @@ begin  -- architecture behav
         wait for C_CLK_PERIOD;  -- to allow the tx_word to be applied in the SPI slave dut.
         spi_master_transmit_only(not(tx_word), 3);  -- transmit dummy byte to allow slave to transmit.
         spi_master_receive_only(1, 3, RELEASE_LINE_AFTER_TRANSFER);
-        v_cmd_idx := shared_cmd_idx;
+        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 3);
         await_master_tx_completion(50 ms, 3);
         fetch_result(SPI_VVCT, 3, v_cmd_idx, result);
         check_value(result(GC_DATA_WIDTH-1 downto 0), tx_word, ERROR, "check received data");

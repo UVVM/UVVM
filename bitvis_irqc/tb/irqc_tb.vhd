@@ -26,12 +26,6 @@
   library uvvm_util;
   context uvvm_util.uvvm_util_context;
 
-  library uvvm_vvc_framework;
-  use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
-  library bitvis_vip_clock_generator;
-  context bitvis_vip_clock_generator.vvc_context;
-
   library bitvis_vip_sbi;
   use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
@@ -56,9 +50,9 @@
     signal irq2cpu       : std_logic := '0';
     signal irq2cpu_ack   : std_logic := '0';
 
+    signal clock_ena     : boolean   := false;
+      
     constant C_CLK_PERIOD : time    := 10 ns;
-    constant C_CLOCK_GEN  : natural := 1;
-
 
     subtype t_irq_source is std_logic_vector(C_NUM_SOURCES-1 downto 0);
 
@@ -112,22 +106,13 @@
 
     sbi_if.ready <= '1'; -- always ready in the same clock cycle.
 
-    -----------------------------------------------------------------------------
-    -- Instantiate UVVM engine and Clock Generator VVC
-    -----------------------------------------------------------------------------
-    i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 
-    i_clock_generator_vvc : entity bitvis_vip_clock_generator.clock_generator_vvc
-      generic map(
-        GC_INSTANCE_IDX    => C_CLOCK_GEN,
-        GC_CLOCK_NAME      => "Clock 1",
-        GC_CLOCK_PERIOD    => 10 ns,
-        GC_CLOCK_HIGH_TIME => 5 ns
-        )
-      port map(
-        clk => clk
-        );
-
+    -----------------------------------------------------------------------------
+    -- Clock Generator
+    -----------------------------------------------------------------------------
+    clock_generator(clk, clock_ena, C_CLK_PERIOD, "IRQC TB clock");
+      
+      
     ------------------------------------------------
     -- PROCESS: p_main
     ------------------------------------------------
@@ -179,8 +164,6 @@
       report_global_ctrl(VOID);
       report_msg_id_panel(VOID);
 
-      await_uvvm_initialization(VOID);
-
       enable_log_msg(ALL_MESSAGES);
       --disable_log_msg(ALL_MESSAGES);
       --enable_log_msg(ID_LOG_HDR);
@@ -190,7 +173,7 @@
 
       set_inputs_passive(VOID);
 
-      start_clock(CLOCK_GENERATOR_VVCT, C_CLOCK_GEN, "Start clock generator");
+      clock_ena <= true; -- to start clock generator
 
       gen_pulse(arst, 10 * C_CLK_PERIOD, "Pulsed reset-signal - active for 10T");
       v_time_stamp := now;  -- time from which irq2cpu should be stable off until triggered

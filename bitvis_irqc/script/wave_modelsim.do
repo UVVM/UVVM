@@ -1,6 +1,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -radix hexadecimal /irqc_tb/C_CLK_PERIOD
+add wave -noupdate -radix hexadecimal /irqc_tb/clock_ena
 add wave -noupdate -divider Clock,Reset,SBI
 add wave -noupdate -radix hexadecimal /irqc_tb/clk
 add wave -noupdate -radix hexadecimal /irqc_tb/arst

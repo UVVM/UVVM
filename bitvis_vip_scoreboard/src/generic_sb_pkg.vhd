@@ -1594,7 +1594,8 @@ package body generic_sb_pkg is
           LF &
           fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
           justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-          fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+              fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+        
       write(v_line,
         justify(
           justify("ENTERED",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
@@ -1605,7 +1606,7 @@ package body generic_sb_pkg is
           justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
           justify("DELETE",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
           justify("OVERDUE CHECK",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
-        center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       if instance = ALL_INSTANCES then
         for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
@@ -1624,7 +1625,7 @@ package body generic_sb_pkg is
               justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
         for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
@@ -1644,7 +1645,7 @@ package body generic_sb_pkg is
               justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
       elsif ext_proc_call = "" then
@@ -1663,7 +1664,7 @@ package body generic_sb_pkg is
               justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       else
         write(v_line,
           justify(
@@ -1680,7 +1681,7 @@ package body generic_sb_pkg is
             justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             fill_string(' ', 20),
-          center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end if;
 
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
@@ -1688,7 +1689,9 @@ package body generic_sb_pkg is
       prefix_lines(v_line, prefix);
 
       -- Write the info string to transcript
+      write (v_line_copy, v_line.all);  -- copy line
       writeline(OUTPUT, v_line);
+      writeline(LOG_FILE, v_line_copy);
     end procedure report_counters;
 
     procedure report_counters(

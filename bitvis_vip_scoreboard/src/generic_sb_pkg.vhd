@@ -1678,7 +1678,8 @@ package body generic_sb_pkg is
             justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
+            justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+            fill_string(' ', 20),
           center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end if;
 

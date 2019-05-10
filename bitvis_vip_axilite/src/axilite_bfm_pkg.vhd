@@ -429,7 +429,7 @@ package body axilite_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
@@ -465,7 +465,7 @@ package body axilite_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
@@ -556,7 +556,7 @@ package body axilite_bfm_pkg is
         wait until rising_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
         if v_last_rising_edge > -1 ns then
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
         end if;
         v_last_rising_edge := now; -- time stamp for clk period checking
       else
@@ -589,7 +589,7 @@ package body axilite_bfm_pkg is
         wait until rising_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
         if v_last_rising_edge > -1 ns then
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
         end if;
         v_last_rising_edge := now; -- time stamp for clk period checking
       else

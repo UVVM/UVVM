@@ -1589,13 +1589,44 @@ package body generic_sb_pkg is
       constant C_HEADER          : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
       constant prefix            : string   := C_LOG_PREFIX & "     ";
       constant log_counter_width : positive := 15;
+
+        -- add simulation time stamp to scoreboard report header
+        impure function timestamp_header(value : time; txt : string) return string is
+            variable v_line             : line;
+            variable v_delimiter_pos    : natural;
+            variable v_timestamp_width  : natural;
+            variable v_result           : string(1 to 50);
+            variable v_return           : string(1 to txt'length) := txt;
+            constant C_TIMESTAMP_END    : natural := 41;
+          begin
+            -- get a time stamp
+            write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
+            v_timestamp_width := v_line'length;
+            v_result(1 to v_timestamp_width) := v_line.all;
+            deallocate(v_line);
+            v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
+
+            -- truncate decimals and add units
+            v_timestamp_width := v_timestamp_width + 3;
+            if C_LOG_TIME_BASE = ns then
+               v_result(v_delimiter_pos+2 to v_delimiter_pos+6) := " ns  ";
+            else
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+6) := " ps  ";
+            end if;
+
+            -- add time string to return string
+            v_return(C_TIMESTAMP_END-v_timestamp_width+1 to C_TIMESTAMP_END) := v_result(1 to v_timestamp_width);
+
+            return v_return(1 to txt'length);
+          end function timestamp_header;
+
     begin
       write(v_line,
-          LF &
-          fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-          justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-              fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
-        
+              LF &
+              fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
+              timestamp_header(now, justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+
       write(v_line,
         justify(
           justify("ENTERED",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &

@@ -6,16 +6,16 @@ UVVM:
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      ***  REPORT OF GLOBAL CTRL ***
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:                                IGNORE    STOP_LIMIT                      
-UVVM:                NOTE         :  REGARD         0    
-UVVM:                TB_NOTE      :  REGARD         0    
-UVVM:                WARNING      :  REGARD         0    
-UVVM:                TB_WARNING   :  REGARD         0    
-UVVM:                MANUAL_CHECK :  REGARD         0    
-UVVM:                ERROR        :  REGARD         1    
-UVVM:                TB_ERROR     :  REGARD         1    
-UVVM:                FAILURE      :  REGARD         1    
-UVVM:                TB_FAILURE   :  REGARD         1    
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
 UVVM:      
@@ -24,57 +24,59 @@ UVVM:      ***  REPORT OF MSG ID PANEL ***
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                ID                             Status
 UVVM:                ------------------------       ------
-UVVM:                ID_UTIL_BURIED               : DISABLED    
-UVVM:                ID_BITVIS_DEBUG              : DISABLED    
-UVVM:                ID_UTIL_SETUP                : ENABLED    
-UVVM:                ID_LOG_MSG_CTRL              : ENABLED    
-UVVM:                ID_ALERT_CTRL                : ENABLED    
-UVVM:                ID_FINISH_OR_STOP            : ENABLED    
-UVVM:                ID_CLOCK_GEN                 : ENABLED    
-UVVM:                ID_GEN_PULSE                 : ENABLED    
-UVVM:                ID_BLOCKING                  : ENABLED    
-UVVM:                ID_POS_ACK                   : ENABLED    
-UVVM:                ID_LOG_HDR                   : ENABLED    
-UVVM:                ID_LOG_HDR_LARGE             : ENABLED    
-UVVM:                ID_LOG_HDR_XL                : ENABLED    
-UVVM:                ID_SEQUENCER                 : ENABLED    
-UVVM:                ID_SEQUENCER_SUB             : ENABLED    
-UVVM:                ID_BFM                       : ENABLED    
-UVVM:                ID_BFM_WAIT                  : ENABLED    
-UVVM:                ID_BFM_POLL                  : ENABLED    
-UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED    
-UVVM:                ID_TERMINATE_CMD             : ENABLED    
-UVVM:                ID_SEGMENT_INITIATE          : ENABLED    
-UVVM:                ID_SEGMENT_COMPLETE          : ENABLED    
-UVVM:                ID_SEGMENT_HDR               : ENABLED    
-UVVM:                ID_SEGMENT_DATA              : ENABLED    
-UVVM:                ID_PACKET_INITIATE           : ENABLED    
-UVVM:                ID_PACKET_COMPLETE           : ENABLED    
-UVVM:                ID_PACKET_HDR                : ENABLED    
-UVVM:                ID_PACKET_DATA               : ENABLED    
-UVVM:                ID_FRAME_INITIATE            : ENABLED    
-UVVM:                ID_FRAME_COMPLETE            : ENABLED    
-UVVM:                ID_FRAME_HDR                 : ENABLED    
-UVVM:                ID_FRAME_DATA                : ENABLED    
-UVVM:                ID_COVERAGE_MAKEBIN          : DISABLED    
-UVVM:                ID_COVERAGE_ADDBIN           : DISABLED    
-UVVM:                ID_COVERAGE_ICOVER           : DISABLED    
-UVVM:                ID_COVERAGE_CONFIG           : ENABLED    
-UVVM:                ID_COVERAGE_SUMMARY          : ENABLED    
-UVVM:                ID_COVERAGE_HOLES            : ENABLED    
-UVVM:                ID_UVVM_SEND_CMD             : ENABLED    
-UVVM:                ID_UVVM_CMD_ACK              : ENABLED    
-UVVM:                ID_UVVM_CMD_RESULT           : ENABLED    
-UVVM:                ID_CMD_INTERPRETER           : ENABLED    
-UVVM:                ID_CMD_INTERPRETER_WAIT      : ENABLED    
-UVVM:                ID_IMMEDIATE_CMD             : ENABLED    
-UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED    
-UVVM:                ID_CMD_EXECUTOR              : ENABLED    
-UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED    
-UVVM:                ID_INSERTED_DELAY            : ENABLED    
-UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED    
-UVVM:                ID_CONSTRUCTOR               : ENABLED    
-UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED    
+UVVM:                ID_UTIL_BURIED               : DISABLED
+UVVM:                ID_BITVIS_DEBUG              : DISABLED
+UVVM:                ID_UTIL_SETUP                : ENABLED
+UVVM:                ID_LOG_MSG_CTRL              : ENABLED
+UVVM:                ID_ALERT_CTRL                : ENABLED
+UVVM:                ID_FINISH_OR_STOP            : ENABLED
+UVVM:                ID_CLOCK_GEN                 : ENABLED
+UVVM:                ID_GEN_PULSE                 : ENABLED
+UVVM:                ID_BLOCKING                  : ENABLED
+UVVM:                ID_POS_ACK                   : ENABLED
+UVVM:                ID_DATA                      : ENABLED
+UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_LOG_HDR                   : ENABLED
+UVVM:                ID_LOG_HDR_LARGE             : ENABLED
+UVVM:                ID_LOG_HDR_XL                : ENABLED
+UVVM:                ID_SEQUENCER                 : ENABLED
+UVVM:                ID_SEQUENCER_SUB             : ENABLED
+UVVM:                ID_BFM                       : ENABLED
+UVVM:                ID_BFM_WAIT                  : ENABLED
+UVVM:                ID_BFM_POLL                  : ENABLED
+UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED
+UVVM:                ID_TERMINATE_CMD             : ENABLED
+UVVM:                ID_SEGMENT_INITIATE          : ENABLED
+UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
+UVVM:                ID_SEGMENT_HDR               : ENABLED
+UVVM:                ID_SEGMENT_DATA              : ENABLED
+UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_COMPLETE           : ENABLED
+UVVM:                ID_PACKET_HDR                : ENABLED
+UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_FRAME_INITIATE            : ENABLED
+UVVM:                ID_FRAME_COMPLETE            : ENABLED
+UVVM:                ID_FRAME_HDR                 : ENABLED
+UVVM:                ID_FRAME_DATA                : ENABLED
+UVVM:                ID_COVERAGE_MAKEBIN          : DISABLED
+UVVM:                ID_COVERAGE_ADDBIN           : DISABLED
+UVVM:                ID_COVERAGE_ICOVER           : DISABLED
+UVVM:                ID_COVERAGE_CONFIG           : ENABLED
+UVVM:                ID_COVERAGE_SUMMARY          : ENABLED
+UVVM:                ID_COVERAGE_HOLES            : ENABLED
+UVVM:                ID_UVVM_SEND_CMD             : ENABLED
+UVVM:                ID_UVVM_CMD_ACK              : ENABLED
+UVVM:                ID_UVVM_CMD_RESULT           : ENABLED
+UVVM:                ID_CMD_INTERPRETER           : ENABLED
+UVVM:                ID_CMD_INTERPRETER_WAIT      : ENABLED
+UVVM:                ID_IMMEDIATE_CMD             : ENABLED
+UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
+UVVM:                ID_CMD_EXECUTOR              : ENABLED
+UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
+UVVM:                ID_INSERTED_DELAY            : ENABLED
+UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
+UVVM:                ID_CONSTRUCTOR               : ENABLED
+UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
 UVVM: 
@@ -131,179 +133,311 @@ UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Above two lines: First empty string, then single char.
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Alert check
-UVVM:                                                                           shared_uvvm_status.no_unexpected_simulation_warnings_or_worse expected and actual mismatch'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Alert check
-UVVM:                                                                           shared_uvvm_status.no_unexpected_simulation_errors_or_worse expected and actual mismatch'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Alert check
+UVVM:                                                                           shared_uvvm_status.found_unexpected_simulation_warnings_or_worse expected and actual mismatch'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Alert check
+UVVM:                                                                           shared_uvvm_status.found_unexpected_simulation_errors_or_worse expected and actual mismatch'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected NOTEs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Alert check
-UVVM:                                                                           shared_uvvm_status.no_unexpected_simulation_warnings_or_worse correctly updated'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Alert check
-UVVM:                                                                           shared_uvvm_status.no_unexpected_simulation_errors_or_worse correctly updated'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Alert check
+UVVM:                                                                           shared_uvvm_status.found_unexpected_simulation_warnings_or_worse correctly updated'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Alert check
+UVVM:                                                                           shared_uvvm_status.found_unexpected_simulation_errors_or_worse correctly updated'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: ***  NOTE #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting note alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting note alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected NOTEs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected NOTEs by 1. 
+UVVM: 
+UVVM: ***  NOTE #3  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting note alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_note alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_note alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_NOTEs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_NOTEs by 1. 
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_note alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: ***  WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting warning alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting warning alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: 
+UVVM: ***  WARNING #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting warning alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_warning alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_warning alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_warning alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting manual_check alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting manual_check alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected MANUAL_CHECKs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected MANUAL_CHECKs by 1. 
+UVVM: 
+UVVM: ***  MANUAL_CHECK #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting manual_check alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting error alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting error alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting error alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_error alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_error alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_error alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting failure alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting failure alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected FAILUREs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected FAILUREs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  FAILURE #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting failure alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_failure alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_failure alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status.simulation_successful
-UVVM:                                                                           indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate mismatch.'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_failure alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate no mismatch.'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
-UVVM:                NOTE         :      2         2         0         ok      
-UVVM:                TB_NOTE      :      1         1         0         ok      
-UVVM:                WARNING      :      1         1         0         ok      
-UVVM:                TB_WARNING   :      1         1         0         ok      
-UVVM:                MANUAL_CHECK :      1         1         0         ok      
-UVVM:                ERROR        :      2         2         0         ok      
-UVVM:                TB_ERROR     :      1         1         0         ok      
-UVVM:                FAILURE      :      1         1         0         ok      
-UVVM:                TB_FAILURE   :      1         1         0         ok      
+UVVM:                NOTE         :      3         3         0         ok
+UVVM:                TB_NOTE      :      2         2         0         ok
+UVVM:                WARNING      :      2         2         0         ok
+UVVM:                TB_WARNING   :      2         2         0         ok
+UVVM:                MANUAL_CHECK :      2         2         0         ok
+UVVM:                ERROR        :      3         3         0         ok
+UVVM:                TB_ERROR     :      2         2         0         ok
+UVVM:                FAILURE      :      2         2         0         ok
+UVVM:                TB_FAILURE   :      2         2         0         ok
 UVVM:      ====================================================================================================================================================================
 UVVM:      
-
 UVVM:      
 UVVM:      ====================================================================================================================================================================
-UVVM:      *** FINAL SUMMARY OF ALL ALERTS  ***      
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
-UVVM:                NOTE         :      2         2         0         ok      
-UVVM:                TB_NOTE      :      1         1         0         ok      
-UVVM:                WARNING      :      1         1         0         ok      
-UVVM:                TB_WARNING   :      1         1         0         ok      
-UVVM:                MANUAL_CHECK :      1         1         0         ok      
-UVVM:                ERROR        :      2         2         0         ok      
-UVVM:                TB_ERROR     :      1         1         0         ok      
-UVVM:                FAILURE      :      1         1         0         ok      
-UVVM:                TB_FAILURE   :      1         1         0         ok      
+UVVM:                NOTE         :      3         3         0         ok
+UVVM:                TB_NOTE      :      2         2         0         ok
+UVVM:                WARNING      :      2         2         0         ok
+UVVM:                TB_WARNING   :      2         2         0         ok
+UVVM:                MANUAL_CHECK :      2         2         0         ok
+UVVM:                ERROR        :      3         3         0         ok
+UVVM:                TB_ERROR     :      2         2         0         ok
+UVVM:                FAILURE      :      2         2         0         ok
+UVVM:                TB_FAILURE   :      2         2         0         ok
 UVVM:      ====================================================================================================================================================================
 UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                      1001.0 ns  TB seq                         SIMULATION COMPLETED

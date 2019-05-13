@@ -14,33 +14,66 @@ UVVM:
 UVVM: 
 UVVM: ***  NOTE #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting note alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting note alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: 
+UVVM: ***  NOTE #3  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting note alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_note alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_note alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_note alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting warning alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting warning alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting warning alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_warning alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_warning alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_warning alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting manual_check alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting manual_check alert for shared_uvvm_status simulation_successful status test.
+UVVM: 
+UVVM: 
+UVVM: ***  MANUAL_CHECK #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting manual_check alert for shared_uvvm_status simulation_successful status test.
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting error alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting error alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting error alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -48,7 +81,15 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_error alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_error alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_error alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -56,7 +97,15 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting failure alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting failure alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  FAILURE #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting failure alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -64,7 +113,15 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_failure alert for shared_uvvm_status.simulation_successful status test.
+UVVM:                    Setting tb_failure alert for shared_uvvm_status simulation_successful status test.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    Setting tb_failure alert for shared_uvvm_status simulation_successful status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

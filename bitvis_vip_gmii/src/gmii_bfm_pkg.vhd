@@ -303,7 +303,7 @@ package body gmii_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, gmii_config.clock_period - gmii_config.clock_period_margin, gmii_config.clock_period + gmii_config.clock_period_margin, gmii_config.clock_margin_severity, "clk period not within requirement.");
+        check_value_in_range(now - v_last_rising_edge, gmii_config.clock_period - gmii_config.clock_period_margin, gmii_config.clock_period + gmii_config.clock_period_margin, gmii_config.clock_margin_severity, "checking clk period is within requirement.");
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
@@ -398,7 +398,7 @@ package body gmii_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, gmii_config.clock_period - gmii_config.clock_period_margin, gmii_config.clock_period + gmii_config.clock_period_margin, gmii_config.clock_margin_severity, "clk period not within requirement.");
+        check_value_in_range(now - v_last_rising_edge, gmii_config.clock_period - gmii_config.clock_period_margin, gmii_config.clock_period + gmii_config.clock_period_margin, gmii_config.clock_margin_severity, "checking clk period is within requirement.");
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
@@ -471,7 +471,7 @@ package body gmii_bfm_pkg is
     wait until rising_edge(clk);
     -- check if clk period since last rising edge is within specifications and take a new time stamp
     if v_last_rising_edge > -1 ns then
-      check_value_in_range(now - v_last_rising_edge, gmii_config.clock_period - gmii_config.clock_period_margin, gmii_config.clock_period + gmii_config.clock_period_margin, gmii_config.clock_margin_severity, "clk period not within requirement.");
+      check_value_in_range(now - v_last_rising_edge, gmii_config.clock_period - gmii_config.clock_period_margin, gmii_config.clock_period + gmii_config.clock_period_margin, gmii_config.clock_margin_severity, "checking clk period is within requirement.");
     end if;
 
     -- Wait hold time specified in config record

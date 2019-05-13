@@ -59,7 +59,7 @@ def cmp_files(folder, filename):
         print("Golden: " + str(file1) + "\nVunit_out: " + str(file2))
         exit(1)
 
-  print("Content of file "+ filename + " was as expected.")
+  print("Content of file "+ folder[0] + "." + filename + " was as expected.")
 
 
 
@@ -86,7 +86,6 @@ for folder in mapped_folders:
   elif folder[0] == "uvvm_util.methods_tb.log_to_file":
     filename = "testlog.txt"
     cmp_files(folder, filename)
-  elif folder[0] == "uvvm_util.methods_tb.log_to_file":
     filename = "alertlog.txt"
     cmp_files(folder, filename)
     filename = "file1.txt"
@@ -105,6 +104,9 @@ for folder in mapped_folders:
     filename = "testlog2.txt"
     cmp_files(folder, filename)
     filename = "testlog3.txt"
+    cmp_files(folder, filename)
+  elif folder[0] == "uvvm_util.methods_tb.string_methods":
+    filename = "testlog.txt"
     cmp_files(folder, filename)
 
 

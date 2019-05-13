@@ -1405,7 +1405,7 @@ package body string_methods_pkg is
     prefix_lines(v_line, prefix);
 
     -- Write the info string to the target file
-    write (v_line_copy, v_line.all & lf);  -- copy line
+    write (v_line_copy, v_line.all);  -- copy line
     writeline(OUTPUT, v_line);
     writeline(LOG_FILE, v_line_copy);
   end;

@@ -1975,7 +1975,16 @@ begin
         check_value(to_string(v_slv32_array, DEC), "(31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN");
         check_value(to_string(v_slv32_array, BIN), "(00011111, 00011110, 00011101, 00011100, 00011011, 00011010, 00011001, 00011000, 00010111, 00010110, 00010101, 00010100, 00010011, 00010010, 00010001, 00010000, 00001111, 00001110, 00001101, 00001100, 00001011, 00001010, 00001001, 00001000, 00000111, 00000110, 00000101, 00000100, 00000011, 00000010, 00000001, 00000000)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN");
                                         --    1F        1e        1d        1c        1b        1a        19        18        17        16        15        14        13        12        11        10        0f        0E        0d          0c        0b        0a        09        08        07        06        05        04        03        02        01        00
-
+        log("\rVerifying justify()");
+        --Log pre-appended info is 80 chars long
+        log(ID_SEQUENCER, justify("    Left", left, C_LOG_LINE_WIDTH-80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("    Left", left, C_LOG_LINE_WIDTH-80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("    Center", center, C_LOG_LINE_WIDTH-80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("    Center", center, C_LOG_LINE_WIDTH-80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH-80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH-80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+        log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
 
       elsif run("clock_generators") then
         --

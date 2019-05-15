@@ -869,7 +869,6 @@ package body axistream_bfm_pkg is
   begin
     -- t_slv_array sanity check
     v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
-
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
       v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending

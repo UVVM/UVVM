@@ -38,15 +38,6 @@ package string_methods_pkg is
     scope      : string
     );
 
-  function justify(
-    val             : string;
-    justified       : side;
-    width           : natural;
-    format_spaces   : t_format_spaces;
-    truncate        : t_truncate_string
-  ) return string;
-
-
   -- DEPRECATED.
   -- Function will be removed in future versions of UVVM-Util
   function justify(
@@ -54,6 +45,16 @@ package string_methods_pkg is
     width     : natural := 0;
     justified : side := RIGHT;
     format: t_format_string := AS_IS -- No defaults on 4 first param - to avoid ambiguity with std.textio
+    ) return string;
+
+  -- DEPRECATED.
+  -- Function will be removed in future versions of UVVM-Util
+  function justify(
+    val             : string;
+    justified       : side;
+    width           : natural;
+    format_spaces   : t_format_spaces;
+    truncate        : t_truncate_string
     ) return string;
 
   function justify(
@@ -413,8 +414,7 @@ package body string_methods_pkg is
     return result;
   end function;
 
-
-
+  -- This procedure has been deprecated, and will be removed in the near future.
   function justify(
     val             : string;
     justified       : side;
@@ -434,8 +434,8 @@ package body string_methods_pkg is
         v_num_leading_space := v_num_leading_space + 1;
       end loop;
       -- Remove leading space if any
-      v_formatted_val := remove_initial_chars(val,v_num_leading_space);
-      v_val_length := v_formatted_val'length;
+      v_formatted_val := pad_string(remove_initial_chars(val,v_num_leading_space),' ',v_formatted_val'length,LEFT);
+      v_val_length := remove_initial_chars(val,v_num_leading_space)'length;
     else
       v_formatted_val := val;
     end if;
@@ -445,16 +445,17 @@ package body string_methods_pkg is
       if (truncate = ALLOW_TRUNCATE) then
         return v_formatted_val(1 to width);
       else
-        return v_formatted_val;
+        return v_formatted_val(1 to v_val_length);
       end if;
     end if;
 
     -- Justify if string is within the width specifications
     if justified = left then
-      v_result(1 to v_val_length) := v_formatted_val;
+      v_result(1 to v_val_length) := v_formatted_val(1 to v_val_length);
     elsif justified = right then
-      v_result(width - v_val_length + 1 to width) := v_formatted_val;
+      v_result(width - v_val_length + 1 to width) := v_formatted_val(1 to v_val_length);
     end if;
+
     return v_result;
   end function;
 
@@ -478,8 +479,8 @@ package body string_methods_pkg is
         v_num_leading_space := v_num_leading_space + 1;
       end loop;
       -- Remove leading space if any
-      v_formatted_val := remove_initial_chars(val,v_num_leading_space);
-      v_val_length := v_formatted_val'length;
+      v_formatted_val := pad_string(remove_initial_chars(val,v_num_leading_space),' ',v_formatted_val'length,LEFT);
+      v_val_length := remove_initial_chars(val,v_num_leading_space)'length;
     else
       v_formatted_val := val;
     end if;
@@ -489,14 +490,13 @@ package body string_methods_pkg is
       if (truncate = ALLOW_TRUNCATE) then
         return v_formatted_val(1 to width);
       else
-        return v_formatted_val;
+        return v_formatted_val(1 to v_val_length);
       end if;
     end if;
 
     -- Justify if string is within the width specifications
     v_start_pos  := natural(ceil((real(width)-real(v_val_length))/real(2))) + 1;
-    v_result(v_start_pos to v_start_pos + v_val_length-1) := v_formatted_val;
-
+    v_result(v_start_pos to v_start_pos + v_val_length-1) := v_formatted_val(1 to v_val_length);
 
     return v_result;
   end function;

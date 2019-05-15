@@ -106,9 +106,8 @@ package td_vvc_entity_support_pkg is
     constant vvc_config        : in t_vvc_config;
     signal VVCT                : in t_vvc_target_record;
     signal VVC_BROADCAST       : inout std_logic;
-    signal global_vvc_busy : inout std_logic;
+    signal global_vvc_busy     : inout std_logic;
     signal vvc_ack             : out std_logic;
-    constant shared_vvc_cmd    : in t_vvc_cmd_record;
     variable output_vvc_cmd    : out t_vvc_cmd_record
     );
 
@@ -466,9 +465,8 @@ package body td_vvc_entity_support_pkg is
     constant vvc_config        : in t_vvc_config;
     signal VVCT                : in t_vvc_target_record;
     signal VVC_BROADCAST       : inout std_logic;
-    signal global_vvc_busy : inout std_logic;
+    signal global_vvc_busy     : inout std_logic;
     signal vvc_ack             : out std_logic;
-    constant shared_vvc_cmd    : in t_vvc_cmd_record;
     variable output_vvc_cmd    : out t_vvc_cmd_record
     ) is
     variable v_was_broadcast : boolean := false;

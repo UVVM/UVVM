@@ -393,7 +393,8 @@ package td_vvc_framework_common_methods_pkg is
   impure function get_last_received_cmd_idx(
     signal   vvc_target         : in  t_vvc_target_record;
     constant vvc_instance_idx   : in  integer;
-    constant vvc_channel        : in  t_channel := NA
+    constant vvc_channel        : in  t_channel := NA;
+    constant scope              : in  string    := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) return natural;
 
 end package td_vvc_framework_common_methods_pkg;
@@ -714,7 +715,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
         & ", " & to_string(wanted_idx) & ")";
   begin
-    fetch_result(vvc_target, vvc_instance_idx, vvc_channel, wanted_idx, result, v_fetch_is_accepted, msg, alert_level, proc_name & "_with_check_of_ok");
+    fetch_result(vvc_target, vvc_instance_idx, vvc_channel, wanted_idx, result, v_fetch_is_accepted, msg, alert_level, proc_name & "_with_check_of_ok", scope);
     if v_fetch_is_accepted then
       log(ID_UVVM_CMD_RESULT, proc_call & ": Legal=>" & to_string(v_fetch_is_accepted) & ", Result=>" & format_command_idx(shared_cmd_idx), scope);    -- Get and ack the new command
     else
@@ -878,12 +879,13 @@ package body td_vvc_framework_common_methods_pkg is
   impure function get_last_received_cmd_idx(
     signal   vvc_target         : in  t_vvc_target_record;
     constant vvc_instance_idx   : in  integer;
-    constant vvc_channel        : in  t_channel := NA
+    constant vvc_channel        : in  t_channel := NA;
+    constant scope              : in  string    := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) return natural is
     variable v_cmd_idx : integer := -1;
   begin
     v_cmd_idx := shared_vvc_last_received_cmd_idx(vvc_channel, vvc_instance_idx);
-    check_value(v_cmd_idx /= -1, tb_error, "Channel " & to_string(vvc_channel) & " not supported on VVC " & vvc_target.vvc_name, C_SCOPE, ID_NEVER);
+    check_value(v_cmd_idx /= -1, tb_error, "Channel " & to_string(vvc_channel) & " not supported on VVC " & vvc_target.vvc_name, scope, ID_NEVER);
     if v_cmd_idx /= -1 then
       return v_cmd_idx;
     else

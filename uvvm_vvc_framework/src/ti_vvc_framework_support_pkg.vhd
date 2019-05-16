@@ -430,10 +430,20 @@ package body ti_vvc_framework_support_pkg is
   begin
     await_semaphore_in_delta_cycles(protected_semaphore);
 
+    -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
+    shared_cmd_idx := shared_cmd_idx + 1;
+
+    if global_show_msg_for_uvvm_cmd then
+      log(ID_UVVM_SEND_CMD, to_string(proc_call) & ": " & add_msg_delimiter(to_string(msg))
+          & format_command_idx(shared_cmd_idx), C_SCOPE);
+    else
+      log(ID_UVVM_SEND_CMD, to_string(proc_call)
+          & format_command_idx(shared_cmd_idx), C_SCOPE);
+    end if;
+
     shared_vvc_broadcast_cmd.operation   := operation;
     shared_vvc_broadcast_cmd.msg_id      := msg_id;
-    shared_vvc_broadcast_cmd.msg         := (others => NUL); -- default empty
-    shared_vvc_broadcast_cmd.msg(1 to msg'length) := msg;
+    shared_vvc_broadcast_cmd.msg         := (msg, others => NUL);
     shared_vvc_broadcast_cmd.quietness   := quietness;
     shared_vvc_broadcast_cmd.timeout     := timeout;
     shared_vvc_broadcast_cmd.delay       := delay;
@@ -456,7 +466,7 @@ package body ti_vvc_framework_support_pkg is
     if not (VVC_BROADCAST'event) and VVC_BROADCAST /= 'L' then            -- Indicates timeout
       tb_error("Timeout while waiting for the broadcast command to be ACK'ed", C_SCOPE);
     else
-      log(ID_UVVM_CMD_ACK, "ACK received for broadcast command", C_SCOPE);
+      log(ID_UVVM_CMD_ACK, "ACK received for broadcast command" & format_command_idx(shared_cmd_idx), C_SCOPE);
     end if;
 
     shared_vvc_broadcast_cmd  := C_VVC_BROADCAST_CMD_DEFAULT;

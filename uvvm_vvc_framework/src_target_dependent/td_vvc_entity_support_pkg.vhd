@@ -282,7 +282,8 @@ package td_vvc_entity_support_pkg is
 
 
   procedure populate_shared_vvc_cmd_with_broadcast (
-    variable output_vvc_cmd   : out t_vvc_cmd_record
+    variable output_vvc_cmd   : out t_vvc_cmd_record;
+    constant scope            : in  string := C_SCOPE
   );
 
 end package td_vvc_entity_support_pkg;
@@ -428,14 +429,13 @@ package body td_vvc_entity_support_pkg is
   end function;
 
   procedure populate_shared_vvc_cmd_with_broadcast (
-    variable output_vvc_cmd   : out t_vvc_cmd_record
+    variable output_vvc_cmd   : out t_vvc_cmd_record;
+    constant scope            : in  string := C_SCOPE
   ) is
   begin
 
-    -- Increment the shared command index. This is normally done in the CDM, but for broadcast commands it is done by the VVC itself.
     check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", C_SCOPE, ID_NEVER);
     await_semaphore_in_delta_cycles(protected_broadcast_semaphore);
-    shared_cmd_idx := shared_cmd_idx + 1;
 
     -- Populate the shared VVC command record
     output_vvc_cmd.operation    := broadcast_cmd_to_shared_cmd(shared_vvc_broadcast_cmd.operation);
@@ -450,11 +450,11 @@ package body td_vvc_entity_support_pkg is
     output_vvc_cmd.command_type := get_command_type_from_operation(shared_vvc_broadcast_cmd.operation);
 
     if global_show_msg_for_uvvm_cmd then
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_cmd.msg)) & "."
-          & format_command_idx(shared_cmd_idx), C_SCOPE);
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_broadcast_cmd.msg))
+          & format_command_idx(shared_cmd_idx), scope);
     else
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call)
-          & format_command_idx(shared_cmd_idx), C_SCOPE);
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call)
+          & format_command_idx(shared_cmd_idx), scope);
     end if;
     release_semaphore(protected_broadcast_semaphore);
 
@@ -482,7 +482,7 @@ package body td_vvc_entity_support_pkg is
       if VVC_BROADCAST'event and VVC_BROADCAST = '1' then
         v_was_broadcast := true;
         VVC_BROADCAST <= '1';
-        populate_shared_vvc_cmd_with_broadcast(output_vvc_cmd);
+        populate_shared_vvc_cmd_with_broadcast(output_vvc_cmd, vvc_labels.scope);
       else
         -- set VVC_BROADCAST to 0 to force a broadcast to wait for that VVC
         VVC_BROADCAST <= '0';
@@ -520,7 +520,7 @@ package body td_vvc_entity_support_pkg is
       release_semaphore(protected_semaphore);
     end if;
 
-    log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received " & format_command_idx(output_vvc_cmd), vvc_labels.scope, vvc_config.msg_id_panel);    -- Get and ack the new command
+    log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received" & format_command_idx(output_vvc_cmd), vvc_labels.scope, vvc_config.msg_id_panel);    -- Get and ack the new command
   end procedure;
 
 

@@ -182,6 +182,7 @@ architecture func of internal_vvc_tb is
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
+    constant C_SCOPE_MAIN : string := C_TB_SCOPE_DEFAULT & " Main";
     variable v_alert_num_mismatch : boolean := false;
   begin
 
@@ -217,12 +218,12 @@ architecture func of internal_vvc_tb is
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
 
-    log(ID_LOG_HDR, "Starting simulation using several sequencer");
+    log(ID_LOG_HDR, "Starting simulation using several sequencers", C_SCOPE_MAIN);
     enable_log_msg(ALL_MESSAGES);
 
 
 
-    log("Wait 10 clock period for reset to be turned off");
+    log("Wait 10 clock period for reset to be turned off", C_SCOPE_MAIN);
     wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
 
     while test_suite loop
@@ -230,26 +231,26 @@ architecture func of internal_vvc_tb is
       -- Verifying
       --------------------------------------------------------------------------------------
       if run("Testing 2 Sequencer Parallel using different types of VVCs") then
-        unblock_flag(C_FLAG_A, "Unblocking Flag_A -> starting the other 2 sequencer", global_trigger);
-        await_barrier(barrier_a, 100 us, "waiting for all sequencer to finish");
+        unblock_flag(C_FLAG_A, "Unblocking Flag_A -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
       elsif run("Testing 2 Sequencer Parallel using same types of VVCs but different instances") then
-        unblock_flag(C_FLAG_B, "Unblocking Flag_B -> starting the other 2 sequencer", global_trigger);
-        await_barrier(barrier_b, 100 us, "waiting for all sequencer to finish");
+        unblock_flag(C_FLAG_B, "Unblocking Flag_B -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
       elsif run("Testing 2 Sequencer Parallel using same instance of a VVC type but not at the same time") then
-        unblock_flag(C_FLAG_C, "Unblocking Flag_C -> starting the other 2 sequencer", global_trigger);
-        await_barrier(barrier_c, 100 us, "waiting for all sequencer to finish");
+        unblock_flag(C_FLAG_C, "Unblocking Flag_C -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
       elsif run("Testing get_last_received_cmd_idx") then
-        unblock_flag(C_FLAG_D, "Unblocking Flag_D -> starting the other 2 sequencer", global_trigger);
-        await_barrier(barrier_d, 100 us, "waiting for all sequencer to finish");
+        unblock_flag(C_FLAG_D, "Unblocking Flag_D -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
       elsif run("Testing differt accesses between two sequencer") then
-        unblock_flag(C_FLAG_E, "Unblocking Flag_E -> starting the other 2 sequencer", global_trigger);
-        await_barrier(barrier_e, 100 us, "waiting for all sequencer to finish");
+        unblock_flag(C_FLAG_E, "Unblocking Flag_E -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
       elsif run("Testing differt single sequencer access") then
-        unblock_flag(C_FLAG_F, "Unblocking Flag_F -> starting the other sequencer", global_trigger);
-        await_barrier(barrier_f, 100 us, "waiting for the sequencer to finish");
+        unblock_flag(C_FLAG_F, "Unblocking Flag_F -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_f, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
       elsif run("Testing shared_uvvm_status await_any_completion() info") then
-        unblock_flag(C_FLAG_G, "Unblocking Flag_G -> starting the other sequencer", global_trigger);
-        await_barrier(barrier_g, 100 us, "waiting for the sequencer to finish");
+        unblock_flag(C_FLAG_G, "Unblocking Flag_G -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+        await_barrier(barrier_g, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
       end if;
     end loop;
 
@@ -257,10 +258,10 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation
     -----------------------------------------------------------------------------
     -- waiting for all VVCs to finish
-    await_completion(VVC_BROADCAST, 10 us);
+    await_completion(VVC_BROADCAST, 10 us, scope => C_SCOPE_MAIN);
     wait for 1000 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
-    log(ID_LOG_HDR, "SIMULATION COMPLETED");
+    log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE_MAIN);
 
     -- Check for mismatch in all alert levels except MANUAL_CHECK
     for alert_level in NOTE to t_alert_level'right loop
@@ -298,7 +299,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_A1);
-    await_barrier(barrier_a, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_A1);
+    await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_A1);
     wait;  -- to stop completely
 
   end process p_main_a1;
@@ -332,7 +333,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_A2);
-    await_barrier(barrier_a, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_A2);
+    await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_A2);
     wait;  -- to stop completely
 
   end process p_main_a2;
@@ -358,7 +359,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_B1);
-    await_barrier(barrier_b, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_B1);
+    await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_B1);
     wait;  -- to stop completely
 
   end process p_main_b1;
@@ -384,7 +385,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_B2);
-    await_barrier(barrier_b, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_B2);
+    await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_B2);
     wait;  -- to stop completely
 
   end process p_main_b2;
@@ -408,7 +409,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_C1);
-    await_barrier(barrier_c, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_C1);
+    await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_C1);
     wait;  -- to stop completely
 
   end process p_main_c1;
@@ -435,7 +436,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_C2);
-    await_barrier(barrier_c, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_C2);
+    await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_C2);
     wait;  -- to stop completely
 
   end process p_main_c2;
@@ -466,7 +467,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_D1);
-    await_barrier(barrier_d, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_D1);
+    await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_D1);
     wait;  -- to stop completely
 
   end process p_main_d1;
@@ -509,7 +510,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_D2);
-    await_barrier(barrier_d, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_D2);
+    await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_D2);
     wait;  -- to stop completely
 
   end process p_main_d2;
@@ -523,17 +524,17 @@ architecture func of internal_vvc_tb is
     shared_uart_vvc_config(TX,3).bfm_config.bit_time := 160 ns;
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending 2 Broadcasts at the same time", C_SCOPE_E1);
-    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 1", scope => C_SCOPE_E1);
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending Broadcast and simple command at the same time", C_SCOPE_E1);
-    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 2", scope => C_SCOPE_E1);
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending first Broadcast and afterwards simple command with some delta cycle delay", C_SCOPE_E1);
-    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 3", scope => C_SCOPE_E1);
 
@@ -541,7 +542,7 @@ architecture func of internal_vvc_tb is
     for i in 0 to 5 loop
       wait for 0 ns;
     end loop;
-    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 4", scope => C_SCOPE_E1);
 
@@ -550,7 +551,7 @@ architecture func of internal_vvc_tb is
       wait for 0 ns;
     end loop;
     v_timestamp := now;
-    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
     check_value(((now - v_timestamp) > 1 ns), ERROR, "SEQUENCER 1: Checking that it is waiting for other sequencer to finish await_completion", C_SCOPE_E1);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 5", scope => C_SCOPE_E1);
@@ -579,18 +580,18 @@ architecture func of internal_vvc_tb is
     for i in 0 to 2 loop
       wait for 0 ns;
     end loop;
-    disable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    disable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 9", scope => C_SCOPE_E1);
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending Multicast while Brodcast is running", C_SCOPE_E1);
-    disable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    disable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 10", scope => C_SCOPE_E1);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_E1);
-    await_barrier(barrier_e, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_E1);
+    await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_E1);
     wait;  -- to stop completely
 
   end process p_main_e1;
@@ -631,7 +632,7 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_E, 0 us, "SEQUENCER 2: waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_E2);
 
     log(ID_LOG_HDR, "SEQUENCER 2: Sending 2 Broadcasts at the same time", C_SCOPE_E2);
-    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 1", scope => C_SCOPE_E2);
 
@@ -686,7 +687,7 @@ architecture func of internal_vvc_tb is
     check_log(shared_sbi_vvc_config(3).msg_id_panel, DISABLED);
     check_log(shared_sbi_vvc_config(4).msg_id_panel, DISABLED);
     -- enable all messages again
-    enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST, ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 9", scope => C_SCOPE_E2);
 
@@ -704,7 +705,7 @@ architecture func of internal_vvc_tb is
     check_log(shared_uart_vvc_config(RX,4).msg_id_panel, DISABLED);
     check_log(shared_uart_vvc_config(TX,4).msg_id_panel, DISABLED);
     -- enable all messages again
-    enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
+    enable_log_msg(VVC_BROADCAST, ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 10", scope => C_SCOPE_E2);
 
@@ -714,7 +715,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_E2);
-    await_barrier(barrier_e, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_E2);
+    await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_E2);
     wait;  -- to stop completely
 
   end process p_main_e2;
@@ -742,7 +743,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_F);
-    await_barrier(barrier_f, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_F);
+    await_barrier(barrier_f, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_F);
     wait;  -- to stop completely
 
   end process p_main_f;
@@ -812,7 +813,7 @@ architecture func of internal_vvc_tb is
     -- Ending the simulation in sequencer 1
     -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_G);
-    await_barrier(barrier_g, 100 us, "waiting for all sequencer to finish", scope => C_SCOPE_G);
+    await_barrier(barrier_g, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_G);
     wait;  -- to stop completely
 
   end process p_main_g;

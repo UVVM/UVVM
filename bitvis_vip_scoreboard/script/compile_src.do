@@ -76,26 +76,4 @@ if { [info exists 1] } {
   quietly set default_target 1
 }
 
-namespace eval compile_util {
-  variable local_source_path $source_path
-  variable source_path $local_source_path/../uvvm_util
-  variable target_path $local_source_path/../uvvm_util/sim
-
-  variable argc -1
-
-  source $local_source_path/../script/compile_src.do
-}
-namespace delete compile_util
-
-namespace eval compile_vvc_framework {
-  variable local_source_path $source_path
-  variable source_path $local_source_path/../uvvm_vvc_framework
-  variable target_path $local_source_path/../uvvm_vvc_framework/sim
-
-  variable argc -1
-
-  source $local_source_path/../script/compile_src.do
-}
-namespace delete compile_vvc_framework
-
 do $source_path/../script/compile_src.do $source_path $target_path

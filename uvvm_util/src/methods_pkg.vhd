@@ -1602,7 +1602,8 @@ package methods_pkg is
     signal   barrier_signal   : inout std_logic;
     constant timeout          : in time;
     constant msg              : in string;
-    constant timeout_severity : in t_alert_level := ERROR
+    constant timeout_severity : in t_alert_level := ERROR;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT
   );
   -------------------------------------------
   -- await_semaphore_in_delta_cycles
@@ -6092,12 +6093,13 @@ package body methods_pkg is
     signal   barrier_signal   : inout std_logic;
     constant timeout          : in time;
     constant msg              : in string;
-    constant timeout_severity : in t_alert_level := ERROR
+    constant timeout_severity : in t_alert_level := ERROR;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT
   )is
   begin
     -- set barrier signal to 0
     barrier_signal <= '0';
-    log(ID_BLOCKING, "Waiting for barrier. " & add_msg_delimiter(msg), C_SCOPE);
+    log(ID_BLOCKING, "Waiting for barrier. " & add_msg_delimiter(msg), scope);
     -- wait until all sequencer using that barrier_signal wait for it
     if timeout = 0 ns then
       wait until barrier_signal = '0';
@@ -6106,9 +6108,9 @@ package body methods_pkg is
     end if;
     if barrier_signal /= '0' then
       -- timeout
-      alert(timeout_severity, "Timeout while waiting for barrier signal. " & add_msg_delimiter(msg), C_SCOPE);
+      alert(timeout_severity, "Timeout while waiting for barrier signal. " & add_msg_delimiter(msg), scope);
     else
-      log(ID_BLOCKING, "Barrier received. " & add_msg_delimiter(msg), C_SCOPE);
+      log(ID_BLOCKING, "Barrier received. " & add_msg_delimiter(msg), scope);
     end if;
     barrier_signal <= '1';
   end procedure;

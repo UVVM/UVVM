@@ -114,7 +114,7 @@ begin
          -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
          -------------------------------------------------------------------------
-         work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);
+         work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
          v_cmd_has_been_acked := false; -- Clear flag
          -- update shared_vvc_last_received_cmd_idx with received command index
          shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;

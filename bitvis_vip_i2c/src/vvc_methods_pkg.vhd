@@ -122,14 +122,14 @@ package vvc_methods_pkg is
   shared variable shared_i2c_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_i2c_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
 
-  --==============================================================================
-  -- Methods dedicated to this VVC
-  -- - These procedures are called from the testbench in order to queue BFM calls
-  --   in the VVC command queue. The VVC will store and forward these calls to the
-  --   I2C BFM when the command is at the from of the VVC command queue.
-  -- - For details on how the BFM procedures work, see i2c_bfm_pkg.vhd or the
-  --   quickref.
-  --==============================================================================
+  --==========================================================================================
+  -- Methods dedicated to this VVC 
+  -- - These procedures are called from the testbench in order for the VVC to execute
+  --   BFM calls towards the given interface. The VVC interpreter will queue these calls
+  --   and then the VVC executor will fetch the commands from the queue and handle the
+  --   actual BFM execution.
+  --   For details on how the BFM procedures work, see the QuickRef.
+  --==========================================================================================
 
   -- *****************************************************************************
   --
@@ -144,7 +144,8 @@ package vvc_methods_pkg is
     constant addr                         : in    unsigned;
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- single byte
@@ -154,7 +155,8 @@ package vvc_methods_pkg is
     constant addr                         : in    unsigned;
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- *****************************************************************************
@@ -168,7 +170,8 @@ package vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant data             : in    t_byte_array;
-    constant msg              : in    string
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- single byte
@@ -176,7 +179,8 @@ package vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant data             : in    std_logic_vector;
-    constant msg              : in    string
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
 
@@ -192,7 +196,8 @@ package vvc_methods_pkg is
     constant addr                         : in    unsigned;
     constant num_bytes                    : in    natural;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- *****************************************************************************
@@ -209,7 +214,8 @@ package vvc_methods_pkg is
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level                  : in    t_alert_level                  := error
+    constant alert_level                  : in    t_alert_level                  := error;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- single byte
@@ -220,7 +226,8 @@ package vvc_methods_pkg is
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level                  : in    t_alert_level                  := error
+    constant alert_level                  : in    t_alert_level                  := error;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
 
@@ -232,7 +239,8 @@ package vvc_methods_pkg is
     constant rw_bit                       : in    std_logic                      := C_WRITE_BIT;
     constant exp_ack                      : in    boolean                        := true;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level                  : in    t_alert_level                  := error
+    constant alert_level                  : in    t_alert_level                  := error;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- *****************************************************************************
@@ -244,7 +252,8 @@ package vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant num_bytes        : in    natural;
-    constant msg              : in    string
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- *****************************************************************************
@@ -260,7 +269,8 @@ package vvc_methods_pkg is
     constant data             : in    t_byte_array;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0'  -- Default write bit
+    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   -- single byte
@@ -270,7 +280,8 @@ package vvc_methods_pkg is
     constant data             : in    std_logic_vector;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0'  -- Default write bit
+    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
   procedure i2c_slave_check(
@@ -278,7 +289,8 @@ package vvc_methods_pkg is
     constant vvc_instance_idx : in    integer;
     constant rw_bit           : in    std_logic;
     constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
 end package vvc_methods_pkg;
@@ -300,7 +312,8 @@ package body vvc_methods_pkg is
     constant addr                         : in    unsigned;
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -316,7 +329,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data(0 to data'length - 1)   := data;
     shared_vvc_cmd.num_bytes                    := data'length;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure i2c_master_transmit(
@@ -325,7 +338,8 @@ package body vvc_methods_pkg is
     constant addr                         : in    unsigned;
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -335,7 +349,7 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_master_transmit(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done);
+    i2c_master_transmit(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, scope);
   end procedure;
 
   -- slave transmit
@@ -343,7 +357,8 @@ package body vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant data             : in    t_byte_array;
-    constant msg              : in    string
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -354,14 +369,15 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT);
     shared_vvc_cmd.data(0 to data'length - 1) := data;
     shared_vvc_cmd.num_bytes                  := data'length;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure i2c_slave_transmit(
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant data             : in    std_logic_vector;
-    constant msg              : in    string
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     variable v_byte : std_logic_vector(7 downto 0) := (others => '0');
     -- Normalize to the 8 bit data width
@@ -369,7 +385,7 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_slave_transmit(VVCT, vvc_instance_idx, v_byte_array, msg);
+    i2c_slave_transmit(VVCT, vvc_instance_idx, v_byte_array, msg, scope);
   end procedure;
 
   -- master receive
@@ -379,7 +395,8 @@ package body vvc_methods_pkg is
     constant addr                         : in    unsigned;
     constant num_bytes                    : in    natural;
     constant msg                          : in    string;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -394,14 +411,15 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.addr                         := v_normalized_addr;
     shared_vvc_cmd.num_bytes                    := num_bytes;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure i2c_slave_receive(
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant num_bytes        : in    natural;
-    constant msg              : in    string
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -411,7 +429,7 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_RECEIVE);
     shared_vvc_cmd.num_bytes := num_bytes;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
 
@@ -423,7 +441,8 @@ package body vvc_methods_pkg is
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level                  : in    t_alert_level                  := error
+    constant alert_level                  : in    t_alert_level                  := error;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -440,7 +459,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.num_bytes                    := data'length;
     shared_vvc_cmd.alert_level                  := alert_level;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure i2c_master_check(
@@ -450,7 +469,8 @@ package body vvc_methods_pkg is
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level                  : in    t_alert_level                  := error
+    constant alert_level                  : in    t_alert_level                  := error;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -460,7 +480,7 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_master_check(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, alert_level);
+    i2c_master_check(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, alert_level, scope);
   end procedure;
 
   procedure i2c_master_quick_command(
@@ -471,7 +491,8 @@ package body vvc_methods_pkg is
     constant rw_bit                       : in    std_logic                      := C_WRITE_BIT;
     constant exp_ack                      : in    boolean                        := true;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant alert_level                  : in    t_alert_level                  := error
+    constant alert_level                  : in    t_alert_level                  := error;
+    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name         : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call         : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -488,7 +509,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.alert_level                  := alert_level;
     shared_vvc_cmd.rw_bit                       := rw_bit;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   -- slave check
@@ -498,7 +519,8 @@ package body vvc_methods_pkg is
     constant data             : in    t_byte_array;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0'  -- Default write bit
+    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -511,7 +533,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.num_bytes                  := data'length;
     shared_vvc_cmd.alert_level                := alert_level;
     shared_vvc_cmd.rw_bit                     := rw_bit;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure i2c_slave_check(
@@ -520,7 +542,8 @@ package body vvc_methods_pkg is
     constant data             : in    std_logic_vector;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0'  -- Default write bit
+    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -530,7 +553,7 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_slave_check(VVCT, vvc_instance_idx, v_byte_array, msg, alert_level, rw_bit);
+    i2c_slave_check(VVCT, vvc_instance_idx, v_byte_array, msg, alert_level, rw_bit, scope);
   end procedure;
 
 
@@ -540,13 +563,14 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx : in    integer;
     constant rw_bit           : in    std_logic;
     constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     variable v_dummy_byte_array : t_byte_array(0 to -1);  -- Empty byte array to indicate that data is not checked
   begin
-    i2c_slave_check(VVCT, vvc_instance_idx, v_dummy_byte_array, msg, alert_level, rw_bit);
+    i2c_slave_check(VVCT, vvc_instance_idx, v_dummy_byte_array, msg, alert_level, rw_bit, scope);
   end procedure;
 
 

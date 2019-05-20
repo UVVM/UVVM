@@ -1591,7 +1591,8 @@ package body generic_sb_pkg is
       variable v_mismatch        : boolean  := false;
       constant C_HEADER          : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
       constant prefix            : string   := C_LOG_PREFIX & "     ";
-      constant log_counter_width : positive := 15;
+      constant log_counter_width : positive := 8; -- shouldn't be smaller than 8 due to the counters names
+      variable v_log_extra_space : integer  := 0;
 
         -- add simulation time stamp to scoreboard report header
         impure function timestamp_header(value : time; txt : string) return string is
@@ -1624,98 +1625,66 @@ package body generic_sb_pkg is
           end function timestamp_header;
 
     begin
+      -- Calculate how much space we can insert between the columns of the report
+      v_log_extra_space := (C_LOG_LINE_WIDTH - prefix'length - 20 - log_counter_width*6 - 15 - 13)/8;
+      if v_log_extra_space < 1 then
+        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small, the report will not be properly aligned.", vr_scope);
+        v_log_extra_space := 1;
+      end if;
+
       write(v_line,
-              LF &
-              fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-              timestamp_header(now, justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
+            timestamp_header(now, justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
             fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
 
       write(v_line,
         justify(
-          justify("ENTERED",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("PENDING",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("MATCH",           center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("MISMATCH",        center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("DROP",            center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("DELETE",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("OVERDUE CHECK",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
-          center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          fill_string(' ', 20) &
+          justify("ENTERED"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("PENDING"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("MATCH"          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("MISMATCH"       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("DROP"           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("DELETE"         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("OVERDUE_CHECK"  , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+          left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      if instance = ALL_INSTANCES then
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          write(v_line,
-            justify(
-              fill_string(' ', 4) &
-              "instance: " &
-              justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-              center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
+      if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
+        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+          if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
             write(v_line,
             justify(
-              fill_string(' ', 4) &
-              "instance: " &
+              fill_string(' ', 4) & "instance: " &
               justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-              center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              justify(to_string(get_entered_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_pending_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_match_count(i))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_mismatch_count(i))       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_drop_count(i))           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_initial_garbage_count(i)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_delete_count(i))         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_overdue_check_count(i))  , center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
-      elsif ext_proc_call = "" then
-        write(v_line,
-            justify(
-              fill_string(' ', 4) &
-              "instance: " &
-              justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-              center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       else
         write(v_line,
           justify(
-            fill_string(' ', 4) &
-            "instance: " &
+            fill_string(' ', 4) & "instance: " &
             justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-            justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_mismatch_count(       instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+            justify(to_string(get_entered_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_pending_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_match_count(instance))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_mismatch_count(instance))       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_drop_count(instance))           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_initial_garbage_count(instance)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_delete_count(instance))         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_overdue_check_count(instance))  , center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end if;
 
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);

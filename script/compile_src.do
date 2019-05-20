@@ -90,6 +90,11 @@ if {![file exists $target_path]} {
 quietly vlib $target_path/$lib_name
 quietly vmap $lib_name $target_path/$lib_name
 
+if {$lib_name != "uvvm_util"} {
+  echo "Mapping uvvm_util and uvvm_vvc_framework"
+  quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
+  quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework
+}
 
 if { [string equal -nocase $simulator "modelsim"] } {
   quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"

@@ -461,7 +461,8 @@ package body ti_vvc_framework_support_pkg is
 
     shared_vvc_broadcast_cmd.operation   := operation;
     shared_vvc_broadcast_cmd.msg_id      := msg_id;
-    shared_vvc_broadcast_cmd.msg         := (msg, others => NUL);
+    shared_vvc_broadcast_cmd.msg         := (others => NUL); -- default empty
+    shared_vvc_broadcast_cmd.msg(1 to msg'length) := msg;
     shared_vvc_broadcast_cmd.quietness   := quietness;
     shared_vvc_broadcast_cmd.timeout     := timeout;
     shared_vvc_broadcast_cmd.delay       := delay;

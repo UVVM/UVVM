@@ -270,32 +270,32 @@ package body ti_generic_queue_pkg is
     element_data : t_generic_element;
   end record;
 
-  type t_element_ptr_array is array(integer range 1 to C_MAX_QUEUE_INSTANCE_NUM) of t_element_ptr;
+  type t_element_ptr_array is array(integer range 0 to C_MAX_QUEUE_INSTANCE_NUM) of t_element_ptr;
 
-  type t_string_array is array(integer range 1 to C_MAX_QUEUE_INSTANCE_NUM) of string(1 to C_LOG_SCOPE_WIDTH);
+  type t_string_array is array(integer range 0 to C_MAX_QUEUE_INSTANCE_NUM) of string(1 to C_LOG_SCOPE_WIDTH);
 
   variable vr_last_element          : t_element_ptr_array := (others => null);  -- Back entry
   variable vr_first_element         : t_element_ptr_array := (others => null);  -- Front entry
-  variable vr_num_elements_in_queue : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0);
+  variable vr_num_elements_in_queue : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0);
 
   -- Scope variables
   variable vr_scope            : t_string_array := (others => (others => NUL));
-  variable vr_scope_is_defined : boolean_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
+  variable vr_scope_is_defined : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
 
   -- Name variables
   variable vr_name            : string(1 to C_LOG_SCOPE_WIDTH) := (others => NUL);
   variable vr_name_is_defined : boolean                        := false;
 
-  variable vr_queue_count_max                : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_MAX);
-  variable vr_queue_count_threshold          : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_THRESHOLD);
+  variable vr_queue_count_max                : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_MAX);
+  variable vr_queue_count_threshold          : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_THRESHOLD);
   variable vr_queue_count_threshold_severity : t_alert_level                                 := TB_WARNING;
 
-  variable vr_entry_num : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0); --  Incremented before first insert
+  variable vr_entry_num : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0); --  Incremented before first insert
 
   -- Fill level alert
   type     t_queue_count_threshold_alert_frequency is (ALWAYS, FIRST_TIME_ONLY);
   constant C_ALERT_FREQUENCY                  : t_queue_count_threshold_alert_frequency       := FIRST_TIME_ONLY;
-  variable vr_queue_count_threshold_triggered : boolean_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
+  variable vr_queue_count_threshold_triggered : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
 
   ------------------------------------------------------------------------------------------------------
   --
@@ -490,7 +490,7 @@ package body ti_generic_queue_pkg is
     ) is
     variable v_to_be_deallocated_ptr : t_element_ptr;
   begin
-    check_value(vr_scope_is_defined(instance), TB_WARNING, "Scope name must be defined for this generic queue", "???", ID_NEVER);
+    check_value(vr_scope_is_defined(instance), TB_WARNING, "Scope name must be defined for this generic queue " &to_string(instance), "???", ID_NEVER);
 
     -- Deallocate all entries in the list
     -- Setting the last element to null and iterating over the queue until finding the null element

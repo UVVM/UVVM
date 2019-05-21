@@ -516,7 +516,7 @@ package body ti_vvc_framework_support_pkg is
   begin
 
     if (C_MINIMUM_VVC_NAME_SCOPE_WIDTH + C_MINIMUM_CHANNEL_SCOPE_WIDTH + C_INSTANCE_IDX_STR'length + 2) >  C_LOG_SCOPE_WIDTH then -- +2 because of the two added commas
-      alert(TB_WARNING, "The combined width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH and C_MINIMUM_CHANNEL_SCOPE_WIDTH cannot be greather than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 2.", C_SCOPE);
+      alert(TB_WARNING, "The combined width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH and C_MINIMUM_CHANNEL_SCOPE_WIDTH cannot be greater than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 2.", C_SCOPE);
     end if;
 
     -- If C_SCOPE_LENGTH is not greater than allowed width, return scope
@@ -576,7 +576,7 @@ package body ti_vvc_framework_support_pkg is
   begin
 
     if (C_MINIMUM_VVC_NAME_SCOPE_WIDTH + C_INSTANCE_IDX_STR'length + 1) >  C_LOG_SCOPE_WIDTH then -- +1 because of the added comma
-      alert(TB_WARNING, "The width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH cannot be greather than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 1.", C_SCOPE);
+      alert(TB_WARNING, "The width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH cannot be greater than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 1.", C_SCOPE);
     end if;
 
     -- If C_SCOPE_LENGTH is not greater than allowed width, return scope

@@ -93,6 +93,9 @@ def simulate(log_to_transcript):
   if os.path.exists("../../uvvm_util/sim/uvvm_util"):
     shutil.rmtree("../../uvvm_util/sim/uvvm_util")
 
+  if os.path.exists("../../uvvm_vvc_framework/sim/uvvm_vvc_framework"):
+    shutil.rmtree("../../uvvm_vvc_framework/sim/uvvm_vvc_framework")
+
   if os.path.exists("../../bitvis_vip_sbi/sim/bitvis_vip_sbi"):
     shutil.rmtree("../../bitvis_vip_sbi/sim/bitvis_vip_sbi")
 

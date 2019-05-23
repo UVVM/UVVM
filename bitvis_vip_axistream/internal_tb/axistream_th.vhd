@@ -70,9 +70,40 @@ end entity test_harness;
 --=================================================================================================
 architecture struct_simple of test_harness is
 
+  signal s_axis_tready  :  std_logic;
+  signal s_axis_tvalid  :  std_logic;
+  signal s_axis_tdata   :  std_logic_vector (GC_DATA_WIDTH   - 1 downto 0);
+  signal s_axis_tuser   :  std_logic_vector (GC_USER_WIDTH   - 1 downto 0);
+  signal s_axis_tkeep   :  std_logic_vector (GC_DATA_WIDTH/8 - 1 downto 0);
+  signal s_axis_tlast   :  std_logic;
 
+  signal m_axis_tready  : std_logic;
+  signal m_axis_tvalid  : std_logic;
+  signal m_axis_tdata   : std_logic_vector (GC_DATA_WIDTH   - 1 downto 0);
+  signal m_axis_tuser   : std_logic_vector (GC_USER_WIDTH   - 1 downto 0);
+  signal m_axis_tkeep   : std_logic_vector (GC_DATA_WIDTH/8 - 1 downto 0);
+  signal m_axis_tlast   : std_logic;
 
 begin
+
+
+  -- Mapping of interface to signals is done to make TB run in Riviera Pro.
+  -- Values are not propagated when interface elements are mapped directly
+  -- to ports. Riviera-PRO version 2018.10.137.7135
+  axistream_if_m_VVC2FIFO.tready <= s_axis_tready;
+  s_axis_tvalid                  <= axistream_if_m_VVC2FIFO.tvalid;
+  s_axis_tdata                   <= axistream_if_m_VVC2FIFO.tdata;
+  s_axis_tuser                   <= axistream_if_m_VVC2FIFO.tuser;
+  s_axis_tkeep                   <= axistream_if_m_VVC2FIFO.tkeep;
+  s_axis_tlast                   <= axistream_if_m_VVC2FIFO.tlast;
+
+  m_axis_tready                  <= axistream_if_s_FIFO2VVC.tready;
+  axistream_if_s_FIFO2VVC.tvalid <= m_axis_tvalid;
+  axistream_if_s_FIFO2VVC.tdata  <= m_axis_tdata;
+  axistream_if_s_FIFO2VVC.tuser  <= m_axis_tuser;
+  axistream_if_s_FIFO2VVC.tkeep  <= m_axis_tkeep;
+  axistream_if_s_FIFO2VVC.tlast  <= m_axis_tlast;
+
   -----------------------------
   -- Instantiate a DUT model : a self-made AXI-Stream FIFO
   -- (I tried using a Xilinx FIFO IP between the BFMs but could only get verilog files, causing Modelsim licencing issues)
@@ -86,18 +117,18 @@ begin
    PORT MAP (
      rst     => areset,
      clk        => clk,
-     s_axis_tready      => axistream_if_m_VVC2FIFO.tready,
-     s_axis_tvalid      => axistream_if_m_VVC2FIFO.tvalid,
-     s_axis_tdata       => axistream_if_m_VVC2FIFO.tdata,
-     s_axis_tuser       => axistream_if_m_VVC2FIFO.tuser,
-     s_axis_tkeep       => axistream_if_m_VVC2FIFO.tkeep,
-     s_axis_tlast       => axistream_if_m_VVC2FIFO.tlast,
-     m_axis_tready      => axistream_if_s_FIFO2VVC.tready,
-     m_axis_tvalid      => axistream_if_s_FIFO2VVC.tvalid,
-     m_axis_tdata       => axistream_if_s_FIFO2VVC.tdata,
-     m_axis_tuser       => axistream_if_s_FIFO2VVC.tuser,
-     m_axis_tkeep       => axistream_if_s_FIFO2VVC.tkeep,
-     m_axis_tlast       => axistream_if_s_FIFO2VVC.tlast,
+     s_axis_tready      => s_axis_tready,
+     s_axis_tvalid      => s_axis_tvalid,
+     s_axis_tdata       => s_axis_tdata,
+     s_axis_tuser       => s_axis_tuser,
+     s_axis_tkeep       => s_axis_tkeep,
+     s_axis_tlast       => s_axis_tlast,
+     m_axis_tready      => m_axis_tready,
+     m_axis_tvalid      => m_axis_tvalid,
+     m_axis_tdata       => m_axis_tdata,
+     m_axis_tuser       => m_axis_tuser,
+     m_axis_tkeep       => m_axis_tkeep,
+     m_axis_tlast       => m_axis_tlast,
      empty              => open
    );
 

@@ -219,7 +219,7 @@ architecture func of internal_vvc_tb is
     await_uvvm_initialization(VOID);
 
     log(ID_LOG_HDR, "Starting simulation using several sequencers", C_SCOPE_MAIN);
-    enable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ALL_MESSAGES, scope => C_SCOPE_MAIN);
 
 
 

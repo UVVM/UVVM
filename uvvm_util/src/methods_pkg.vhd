@@ -109,7 +109,6 @@ package methods_pkg is
     variable my_line      : inout line
   );
 
-  -- Enable and Disable do not have a Scope parameter as they are only allowed from main test sequencer
   procedure enable_log_msg(
     constant msg_id         : t_msg_id;
     variable msg_id_panel   : inout t_msg_id_panel;
@@ -121,12 +120,14 @@ package methods_pkg is
   procedure enable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) ;
 
   procedure enable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) ;
 
   procedure disable_log_msg(
@@ -140,12 +141,14 @@ package methods_pkg is
   procedure disable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     );
 
   procedure disable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     );
 
   impure function is_log_msg_enabled(
@@ -2198,18 +2201,20 @@ package body methods_pkg is
   procedure enable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    enable_log_msg(msg_id, shared_msg_id_panel, msg, C_TB_SCOPE_DEFAULT, quietness);
+    enable_log_msg(msg_id, shared_msg_id_panel, msg, scope, quietness);
   end;
 
   procedure enable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    enable_log_msg(msg_id, shared_msg_id_panel, "", C_TB_SCOPE_DEFAULT, quietness);
+    enable_log_msg(msg_id, shared_msg_id_panel, "", scope, quietness);
   end;
 
   procedure disable_log_msg(
@@ -2240,18 +2245,20 @@ package body methods_pkg is
   procedure disable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    disable_log_msg(msg_id, shared_msg_id_panel, msg, C_TB_SCOPE_DEFAULT, quietness);
+    disable_log_msg(msg_id, shared_msg_id_panel, msg, scope, quietness);
   end;
 
   procedure disable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    disable_log_msg(msg_id, shared_msg_id_panel, "", C_TB_SCOPE_DEFAULT, quietness);
+    disable_log_msg(msg_id, shared_msg_id_panel, "", scope, quietness);
   end;
 
   impure function is_log_msg_enabled(

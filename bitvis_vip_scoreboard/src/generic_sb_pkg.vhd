@@ -1601,7 +1601,6 @@ package body generic_sb_pkg is
             variable v_timestamp_width  : natural;
             variable v_result           : string(1 to 50);
             variable v_return           : string(1 to txt'length) := txt;
-            constant C_TIMESTAMP_END    : natural := 41;
           begin
             -- get a time stamp
             write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
@@ -1611,16 +1610,15 @@ package body generic_sb_pkg is
             v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
 
             -- truncate decimals and add units
-            v_timestamp_width := v_timestamp_width + 3;
             if C_LOG_TIME_BASE = ns then
-               v_result(v_delimiter_pos+2 to v_delimiter_pos+6) := " ns  ";
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ns ";
             else
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+6) := " ps  ";
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ps ";
             end if;
+            v_timestamp_width := v_delimiter_pos + 5;
 
             -- add time string to return string
-            v_return(C_TIMESTAMP_END-v_timestamp_width+1 to C_TIMESTAMP_END) := v_result(1 to v_timestamp_width);
-
+            v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
             return v_return(1 to txt'length);
           end function timestamp_header;
 
@@ -1635,12 +1633,12 @@ package body generic_sb_pkg is
       write(v_line,
             LF &
             fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-            timestamp_header(now, justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+            timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
             fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
 
       write(v_line,
         justify(
-          fill_string(' ', 20) &
+          fill_string(' ', 16) &
           justify("ENTERED"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify("PENDING"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify("MATCH"          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1656,7 +1654,7 @@ package body generic_sb_pkg is
           if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
             write(v_line,
             justify(
-              fill_string(' ', 4) & "instance: " &
+              "instance: " &
               justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
               justify(to_string(get_entered_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1673,7 +1671,7 @@ package body generic_sb_pkg is
       else
         write(v_line,
           justify(
-            fill_string(' ', 4) & "instance: " &
+            "instance: " &
             justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
             fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
             justify(to_string(get_entered_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &

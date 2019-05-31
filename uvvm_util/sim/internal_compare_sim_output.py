@@ -2,7 +2,7 @@
 
 import sys
 
-
+numb_folders_to_check = 21
 
 
 #
@@ -26,12 +26,15 @@ def map_folders(filename = "vunit_out/test_output/test_name_to_path_mapping.txt"
         line = line.split()
         folder = line[1]
         line[1] = line[0]
-        line[0] = folder  
+        line[0] = folder
         folder_mapping.append(line)
+      else:
+        folder_mapping.append(line.split())
+
     else: # old VUnit version
       folder = line[1]
       line[1] = line[0]
-      line[0] = folder  
+      line[0] = folder
       folder_mapping.append(line)
 
   if new_vunit_version:
@@ -40,10 +43,10 @@ def map_folders(filename = "vunit_out/test_output/test_name_to_path_mapping.txt"
     print("Test results mapped from old VUnit version.")
   return (len(folder_mapping), folder_mapping)
 
-  
+
 #
 # Compare files and ignore CRLF
-#   Standard python filecmp.cmp() don't ignore CRLF and this 
+#   Standard python filecmp.cmp() don't ignore CRLF and this
 #   might cause the file comparing to fail.
 #
 def cmp_files(folder, filename):
@@ -111,5 +114,9 @@ for folder in mapped_folders:
 
 
 # All OK, report and exit
-print("\nAll checked log and alert files were as expected in %i folders" %(numb_folders))
+if numb_folders < numb_folders_to_check:
+  print("\nWARNING! Not all folders have been verified! %i of %i checked." %(numb_folders, numb_folders_to_check));
+else:
+  print("\nSUCESS! All checked log and alert files were as expected in %i folders" %(numb_folders))
+
 exit(0)

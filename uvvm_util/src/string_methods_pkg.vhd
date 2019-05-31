@@ -138,8 +138,11 @@ package string_methods_pkg is
     side  : side := LEFT
     ) return string;
 
-
   function replace_backslash_n_with_lf(
+    source : string
+    ) return string;
+
+  function replace_backslash_r_with_lf(
     source : string
     ) return string;
 
@@ -785,6 +788,33 @@ package body string_methods_pkg is
       end if;
       return v_dest(1 to v_dest_idx);
     end if;
+  end;
+
+  function replace_backslash_r_with_lf(
+    source : string
+    ) return string is
+    variable v_source_idx : natural := 0;
+    variable v_dest_idx   : natural := 0;
+    variable v_dest       : string(1 to source'length);
+  begin
+    if source'length = 0 then
+      return "";
+    else
+      if C_USE_BACKSLASH_N_AS_LF then
+        loop
+          if (source(v_source_idx to v_source_idx+1) = "\r") then
+            v_dest_idx := v_dest_idx + 1;
+            v_dest(v_dest_idx) := LF;
+            v_source_idx := v_source_idx + 2;
+          else
+            exit;
+          end if;
+        end loop;
+      else
+        return "";
+      end if;
+    end if;
+    return v_dest(1 to v_dest_idx);
   end;
 
   function remove_initial_chars(

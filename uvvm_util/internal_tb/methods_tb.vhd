@@ -1900,7 +1900,12 @@ begin
         v_string(10) := ascii_to_char(116);
         log(v_string);
 
+        -- One and two backslash-r
+        log("\rlog using one backslash-r");
+        log("\r\rlog using two backslash-r");
+
         -- Conversion from character to ascii integer
+        log("\rCheck char_to_ascii");
         check_value(char_to_ascii('A'), 65, error, "Check ascii value for A");
         check_value(char_to_ascii('a'), 97, error, "Check ascii value for a");
 

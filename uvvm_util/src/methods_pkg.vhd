@@ -1924,6 +1924,8 @@ package body methods_pkg is
     variable v_log_msg_id        : string(1 to C_LOG_MSG_ID_WIDTH);
     variable v_log_scope         : string(1 to C_LOG_SCOPE_WIDTH);
     variable v_log_pre_msg_width : natural;
+    variable v_idx                : natural := 1;
+
   begin
     -- Check if message ID is enabled
     if (msg_id_panel(msg_id) = ENABLED) then
@@ -1947,13 +1949,21 @@ package body methods_pkg is
       v_log_pre_msg_width := v_info'length;      -- Width of string preceeding the actual message
       -- Handle \r as potential initial open line
       if msg'length > 1 then
-        if C_USE_BACKSLASH_R_AS_LF and (msg(1 to 2) = "\r") then
-          write(v_info_final, LF);  -- Start transcript with an empty line
-          write(v_msg, remove_initial_chars(msg, 2));
+        if C_USE_BACKSLASH_R_AS_LF then
+          loop
+            if (msg(v_idx to v_idx+1) = "\r") then
+              write(v_info_final, LF);  -- Start transcript with an empty line
+              v_idx := v_idx + 2;
+            else
+              write(v_msg, remove_initial_chars(msg, v_idx-1));
+              exit;
+            end if;
+          end loop;
         else
           write(v_msg, msg);
         end if;
       end if;
+
 
       -- Handle dedicated ID indentation.
       write(v_msg_indent, to_string(C_MSG_ID_INDENT(msg_id)));
@@ -5948,7 +5958,7 @@ package body methods_pkg is
   end record;
 
   -- Local function used in synchronization methods to search through shared_flag_array for flag_name or available index
-  -- Returns: 
+  -- Returns:
   --          Flag index in the shared array
   --          If the flag is new or already in the array
   --          If the array is full, and the flag can not be added (alerts an error).
@@ -5974,18 +5984,18 @@ package body methods_pkg is
     end loop;
     return (v_idx, v_is_new, v_is_array_full);
   end;
-  
+
   procedure block_flag(
     constant flag_name                : in string;
     constant msg                      : in string;
-    constant already_blocked_severity : in t_alert_level := WARNING; 
+    constant already_blocked_severity : in t_alert_level := WARNING;
     constant scope                    : in string := C_TB_SCOPE_DEFAULT
   ) is
     variable v_idx            : integer := 0;
     variable v_is_new         : boolean := false;
     variable v_is_array_full  : boolean := true;
   begin
-    -- Find flag, or add a new provided the array is not full. 
+    -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
     if (v_is_array_full = true) then
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
@@ -6028,7 +6038,7 @@ package body methods_pkg is
       -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
       gen_pulse(trigger, 0 ns, "pulsing global_trigger. " & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
     end if;
-  end procedure; 
+  end procedure;
 
   procedure await_unblock_flag(
     constant flag_name        : in string;
@@ -6051,7 +6061,7 @@ package body methods_pkg is
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else -- Waits only if the flag is found and is blocked. Will wait when a new flag is added, as it is default blocked.
       v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
-      if (v_flag_is_blocked = false) then 
+      if (v_flag_is_blocked = false) then
         if (flag_returning = RETURN_TO_BLOCK) then
           -- wait for all sequencer that are waiting for that flag before reseting it
           wait for 0 ns;

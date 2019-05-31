@@ -2,7 +2,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM:                                                                           Use randomize().
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
-UVVM:      
+UVVM:
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      ***  REPORT OF GLOBAL CTRL ***
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,8 +17,8 @@ UVVM:                TB_ERROR     :  REGARD         1
 UVVM:                FAILURE      :  REGARD         1
 UVVM:                TB_FAILURE   :  REGARD         1
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:      
-UVVM:      
+UVVM:
+UVVM:
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      ***  REPORT OF MSG ID PANEL ***
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
 UVVM:                ID_CONSTRUCTOR               : ENABLED
 UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:      
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Valid hex, no radix
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '17'. 'to_string x"17", HEX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '00010111'. 'to_string x"17", BIN'
@@ -104,7 +104,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq                         
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '00010111'. 'to_string x"17", BIN'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'x"17"'. 'to_string b"0x010111", HEX, AS_IS, INCL_RADIX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'b"00010111"'. 'to_string b"00010111", BIN, AS_IS, INCL_RADIX'
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Signed , negative 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Signed , negative
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '-105'. 'to_string x"97", DEC'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '97'. 'to_string x"97", HEX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '10010111'. 'to_string x"97", BIN'
@@ -112,18 +112,25 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq                         
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'b"10010111"'. 'to_string b"10010111", BIN, AS_IS, INCL_RADIX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '-2147286527'. 'to_string x"80030201", DEC'
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        ASCII test
+UVVM:
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        log using one backslash-r
+UVVM:
+UVVM:
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        log using two backslash-r
+UVVM:
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check char_to_ascii
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 65. 'Check ascii value for A'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 97. 'Check ascii value for a'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check to_string on illegal characters
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'abcdef A z Z 0 9,:;#.End'. 'to_string() for illegal chars'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check function remove_initial_chars()
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'def'. 'remove_initial_chars() case 1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'bcdef'. 'remove_initial_chars() case 1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'abcdef'. 'remove_initial_chars() case 1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string ''. 'remove_initial_chars() case 1'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check functions pos_of_*() and get_string_between_delimiters()
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 3. 'leftmost c in abc'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 4. 'leftmost c in a bcdcdc'
@@ -137,20 +144,20 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'abc'. 'delimeters case 4'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'def'. 'delimeters case 5'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'abc,'. 'delimeters case 6'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check functions get_*_name_from_instance_name()
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'p_main'. 'get_process_name....'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'methods_tb'. 'get_entity_name.... 1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string 'methods_tb'. 'get_entity_name.... 2'
-UVVM: 
-UVVM: 
+UVVM:
+UVVM:
 UVVM: ID_LOG_HDR                         1.0 ns  TB seq                         Printing with pad_string()
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Fill on right with space                
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Fill on right with space
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                         Fill on left with space
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Fill on right with XXXXXXXXXXXXXXXXXXXXX
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        YYYYYYYYYYYYYYYYYYYYYFill on left with Y
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check t_slv_array(2 downto 0)(3 downto 0)
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(6, A, 9)'. 'to_string() for t_slv_array(2 downto 0)(3 downto
 UVVM:                                                                           0) as HEX'
@@ -158,7 +165,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM:                                                                           0) as DEC'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(0110, 1010, 1001)'. 'to_string() for t_slv_array(2 downto
 UVVM:                                                                           0)(3 downto 0) as BIN'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check t_signed_array(2 downto 0)(3 downto 0)
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(9, 3, D)'. 'to_string() for t_signed_array(2 downto 0)(3
 UVVM:                                                                           downto 0) as HEX'
@@ -166,7 +173,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM:                                                                           downto 0) as DEC'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(1001, 0011, 1101)'. 'to_string() for t_signed_array(2 downto
 UVVM:                                                                           0)(3 downto 0) as BIN'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check t_unsigned_array(2 downto 0)(3 downto 0)
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(9, 3, D)'. 'to_string() for t_unsigned_array(2 downto 0)(3
 UVVM:                                                                           downto 0) as HEX'
@@ -174,7 +181,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM:                                                                           downto 0) as DEC'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(1001, 0011, 1101)'. 'to_string() for t_unsigned_array(2
 UVVM:                                                                           downto 0)(3 downto 0) as BIN'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check long t_slv_array(31 downto 0)(7 downto 0)
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for string '(1F, 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11,
 UVVM:                                                                           10, 0F, 0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, 00)'. 'to_string() for
@@ -187,17 +194,17 @@ UVVM:                                                                           
 UVVM:                                                                           00010000, 00001111, 00001110, 00001101, 00001100, 00001011, 00001010, 00001001, 00001000,
 UVVM:                                                                           00000111, 00000110, 00000101, 00000100, 00000011, 00000010, 00000001, 00000000)'. 'to_string()
 UVVM:                                                                           for t_slv_array(31 downto 0)(7 downto 0) as BIN'
-UVVM: 
+UVVM:
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Verifying justify()
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                            Left                                                                                       
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Left                                                                                           
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                                                       Center                                          
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                                                     Center                                            
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                            Left
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Left
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                                                       Center
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                                                     Center
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                                                                                                  Right
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                                                                                                                  Right
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Truncate last word
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Truncate last
-UVVM:      
+UVVM:
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
 UVVM:      ====================================================================================================================================================================
@@ -212,8 +219,8 @@ UVVM:                TB_ERROR     :      0         0         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================
-UVVM:      
-UVVM:      
+UVVM:
+UVVM:
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
 UVVM:      ====================================================================================================================================================================
@@ -230,9 +237,9 @@ UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================
 UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
 UVVM:      ====================================================================================================================================================================
-UVVM:      
-UVVM:      
-UVVM: 
-UVVM: 
+UVVM:
+UVVM:
+UVVM:
+UVVM:
 UVVM: ID_LOG_HDR                      1001.0 ns  TB seq                         SIMULATION COMPLETED
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

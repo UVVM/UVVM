@@ -29,7 +29,11 @@ def map_folders(filename = "vunit_out/test_output/test_name_to_path_mapping.txt"
         line[0] = folder
         folder_mapping.append(line)
       else:
-        folder_mapping.append(line.split())
+        line = line.split()
+        folder = line[1]
+        line[1] = line[0]
+        line[0] = folder
+        folder_mapping.append(line)
 
     else: # old VUnit version
       folder = line[1]
@@ -54,13 +58,17 @@ def cmp_files(folder, filename):
   file2 = "vunit_out/test_output/" + folder[1] + "/" + filename
   l1 = l2 = ' '
   with open(file1, 'r') as f1, open(file2, 'r') as f2:
+    l1 = f1.readline().rstrip()
+    l2 = f2.readline().rstrip()
+
     while l1 != '' and l2 != '':
-      l1 = f1.readline().rstrip()
-      l2 = f2.readline().rstrip()
       if l1 != l2:
         print("ERROR: File "+ filename + " was not as expected!")
         print("Golden: " + str(file1) + "\nVunit_out: " + str(file2))
         exit(1)
+      else:
+        l1 = f1.readline().rstrip()
+        l2 = f2.readline().rstrip()
 
   print("Content of file "+ folder[0] + "." + filename + " was as expected.")
 

@@ -28,11 +28,11 @@ library bitvis_vip_clock_generator;
 
 
 -- Test harness entity
-entity uart_vvc_th is
+entity uart_vvc_demo_th is
 end entity;
 
 -- Test harness architecture
-architecture struct of uart_vvc_th is
+architecture struct of uart_vvc_demo_th is
 
   -- DSP interface and general control signals
   signal clk            : std_logic  := '0';

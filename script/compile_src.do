@@ -75,7 +75,7 @@ close $fp
 
 echo "\n\n=== Re-gen lib and compile $lib_name source\n"
 echo "Source path: $source_path"
-echo "Taget path: $target_path"
+echo "Target path: $target_path"
 
 #------------------------------------------------------
 # (Re-)Generate library and Compile source files
@@ -90,7 +90,10 @@ if {![file exists $target_path]} {
 quietly vlib $target_path/$lib_name
 quietly vmap $lib_name $target_path/$lib_name
 
-if {$lib_name != "uvvm_util"} {
+# These two core libraries are needed by every VIP (except the IRQC and UART demos),
+# therefore we should map them in case they were compiled from different directories
+# which would cause the references to be in a different file.
+if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart"} {
   echo "Mapping uvvm_util and uvvm_vvc_framework"
   quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
   quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework

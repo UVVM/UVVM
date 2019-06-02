@@ -10,14 +10,6 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-#-----------------------------------------------------------------------
-# This file may be called with 0 to 2 arguments:
-#
-#   0 args: regular UVVM directory structure expected
-#   1 args: source directory specified, target will be current directory
-#   2 args: source directory and target directory specified
-#-----------------------------------------------------------------------
-
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
   if {[llength $args] == 0} {
@@ -52,28 +44,12 @@ if {[catch {eval "vsim -version"} message] == 0} {
 }
 
 #-----------------------------------------------------------------------
-# Set up source_path and default_target
+# Call compile scripts from dependent libraries
 #-----------------------------------------------------------------------
-if { [info exists 1] } {
-  quietly set source_path "$1"
-  quietly set default_target 0
-
-  if {$argc == 1} {
-    echo "\nUser specified source directory"
-    quietly set target_path "$source_path/sim"
-  } elseif {$argc >= 2} {
-    echo "\nUser specified source and target directory"
-    quietly set target_path "$2"
-  }
-  unset 1
-} else {
-  echo "\nDefault output directory"
-  quietly set source_path ".."
-  quietly set target_path "$source_path/sim"
-  quietly set default_target 1
-}
-
-#-----------------------------------------------------------------------
-# Call top-level compile script with local library arguments
-#-----------------------------------------------------------------------
-do $source_path/../script/compile_src.do $source_path $target_path
+quietly set root_path "../.."
+do $root_path/bitvis_uart/script/1_compile_src.do $root_path/bitvis_uart
+do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
+do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim

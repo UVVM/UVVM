@@ -800,7 +800,7 @@ package body string_methods_pkg is
     if source'length = 0 then
       return "";
     else
-      if C_USE_BACKSLASH_N_AS_LF then
+      if C_USE_BACKSLASH_R_AS_LF then
         loop
           if (source(v_source_idx to v_source_idx+1) = "\r") then
             v_dest_idx := v_dest_idx + 1;

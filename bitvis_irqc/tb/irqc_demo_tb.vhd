@@ -10,7 +10,7 @@
   --========================================================================================================================
 
   ------------------------------------------------------------------------------------------
-  -- VHDL unit     : Bitvis IRQC Library : irqc_tb
+  -- VHDL unit     : Bitvis IRQC Library : irqc_demo_tb
   --
   -- Description   : See dedicated powerpoint presentation and README-file(s)
   ------------------------------------------------------------------------------------------
@@ -33,11 +33,11 @@
 
 
   -- Test case entity
-  entity irqc_tb is
+  entity irqc_demo_tb is
   end entity;
 
   -- Test case architecture
-  architecture func of irqc_tb is
+  architecture func of irqc_demo_tb is
 
     -- DSP interface and general control signals
     signal clk           : std_logic  := '0';

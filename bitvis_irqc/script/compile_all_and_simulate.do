@@ -13,7 +13,7 @@
 #-----------------------------------------------------------------------
 # Call compile and simulate scripts
 #-----------------------------------------------------------------------
-do compile_src.do
 do compile_dependencies.do
+do compile_src.do
 do compile_demo_tb.do
 do simulate_demo_tb.do

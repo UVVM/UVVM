@@ -28,7 +28,7 @@ def simulate(log_to_transcript):
 
   os.chdir("script")
 
-  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_sim_uart_vvc_tb.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_simulate.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
 
   demo_pass = False
   if sim.returncode == 0:
@@ -70,8 +70,11 @@ def simulate(log_to_transcript):
   if os.path.exists("../../bitvis_vip_sbi/sim/bitvis_vip_sbi"):
     shutil.rmtree("../../bitvis_vip_sbi/sim/bitvis_vip_sbi")
 
-  if os.path.exists("../../bitvis_vip_sbi/sim/bitvis_vip_uart"):
-    shutil.rmtree("../../bitvis_vip_sbi/sim/bitvis_vip_uart")
+  if os.path.exists("../../bitvis_vip_uart/sim/bitvis_vip_uart"):
+    shutil.rmtree("../../bitvis_vip_uart/sim/bitvis_vip_uart")
+
+  if os.path.exists("../../bitvis_vip_clock_generator/sim/bitvis_vip_clock_generator"):
+    shutil.rmtree("../../bitvis_vip_clock_generator/sim/bitvis_vip_clock_generator")
 
   # Return to main component directory
   os.chdir("..")

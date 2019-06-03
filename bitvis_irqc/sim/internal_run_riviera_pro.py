@@ -40,10 +40,6 @@ uvvm_util_lib.add_source_files(join(project_root, 'uvvm_util', 'src', '*.vhd'))
 uvvm_vvc_framework_lib = ui.add_library('uvvm_vvc_framework')
 uvvm_vvc_framework_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src', '*.vhd'))
 
-bitvis_vip_clock_generator_lib = ui.add_library('bitvis_vip_clock_generator')
-bitvis_vip_clock_generator_lib.add_source_files(join(project_root, 'bitvis_vip_clock_generator', 'src', '*.vhd'))
-bitvis_vip_clock_generator_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
-
 bitvis_vip_sbi_lib = ui.add_library('bitvis_vip_sbi')
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'bitvis_vip_sbi', 'src', 'sbi_bfm_pkg.vhd'))
 

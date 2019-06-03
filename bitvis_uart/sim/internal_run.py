@@ -48,8 +48,12 @@ bitvis_vip_uart_lib = ui.add_library('bitvis_vip_uart')
 bitvis_vip_uart_lib.add_source_files(join(project_root, 'bitvis_vip_uart', 'src', '*.vhd'))
 bitvis_vip_uart_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
+bitvis_vip_clock_generator_lib = ui.add_library('bitvis_vip_clock_generator')
+bitvis_vip_clock_generator_lib.add_source_files(join(project_root, 'bitvis_vip_clock_generator', 'src', '*.vhd'))
+bitvis_vip_clock_generator_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
+
 # Add all testbenches to lib
-bitvis_uart_lib.add_source_files(join(root, '../tb', 'uart_vvc_th.vhd'))
+bitvis_uart_lib.add_source_files(join(root, '../tb', 'uart_vvc_demo_th.vhd'))
 bitvis_uart_lib.add_source_files(join(root, '../internal_tb', '*_tb.vhd'))
 
 

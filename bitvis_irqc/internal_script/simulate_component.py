@@ -57,7 +57,7 @@ def simulate(log_to_transcript):
     shutil.rmtree("vunit_out")
 
   os.chdir("../script")
-  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_and_sim_all.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_simulate.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
 
   demo_pass = False
   if sim.returncode == 0:

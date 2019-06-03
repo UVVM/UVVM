@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -10,10 +10,12 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-# This file must be called with two arguments:
-# arg 1: Part directory of this library/module
-# arg 2: Target directory
-
+#-----------------------------------------------------------------------
+# This file must be called with 2 arguments:
+#
+#   arg 1: Part directory of this library/module
+#   arg 2: Target directory
+#-----------------------------------------------------------------------
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -25,6 +27,7 @@ proc quietly { args } {
   }
 }
 
+# End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
   onerror {abort all; exit -f -code 1}
 } else {
@@ -49,13 +52,8 @@ if {[catch {eval "vsim -version"} message] == 0} {
 }
 
 #------------------------------------------------------
-# Set up source_path and default_target
-#
-#   1 args: source directory
-#   2 args: target directory
-#
+# Set up source_path and target_path
 #------------------------------------------------------
-
 if {$argc == 2} {
   quietly set source_path "$1"
   quietly set target_path "$2"

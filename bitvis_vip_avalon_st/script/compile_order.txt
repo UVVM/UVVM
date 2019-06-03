@@ -1,0 +1,2 @@
+# library bitvis_vip_avalon_st
+../src/avalon_st_bfm_pkg.vhd

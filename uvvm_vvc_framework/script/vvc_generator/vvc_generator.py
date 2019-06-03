@@ -459,7 +459,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     print_linefeed(file_handle)
     file_handle.write("          when TERMINATE_CURRENT_COMMAND =>\n")
     file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, "+
-                      "vvc_config, C_VVC_LABELS, terminate_current_cmd);\n")
+                      "vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);\n")
     print_linefeed(file_handle)
     file_handle.write("          -- when FETCH_RESULT =>\n")
     file_handle.write("            -- work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, "+

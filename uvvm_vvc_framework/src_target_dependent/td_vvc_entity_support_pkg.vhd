@@ -191,7 +191,8 @@ package td_vvc_entity_support_pkg is
     constant command              : in t_vvc_cmd_record;
     constant vvc_config           : in t_vvc_config;
     constant vvc_labels           : in t_vvc_labels;
-    signal terminate_current_cmd  : inout t_flag_record
+    signal terminate_current_cmd  : inout t_flag_record;
+    constant executor_is_busy     : in boolean := true
     );
 
 
@@ -723,11 +724,14 @@ package body td_vvc_entity_support_pkg is
     constant command              : in t_vvc_cmd_record;
     constant vvc_config           : in t_vvc_config;
     constant vvc_labels           : in t_vvc_labels;
-    signal terminate_current_cmd  : inout t_flag_record
+    signal terminate_current_cmd  : inout t_flag_record;
+    constant executor_is_busy     : in boolean := true
     ) is
   begin
-    log(ID_IMMEDIATE_CMD, "Terminating command in executor", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
-    set_flag(terminate_current_cmd);
+    if executor_is_busy then
+      log(ID_IMMEDIATE_CMD, "Terminating command in executor", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+      set_flag(terminate_current_cmd);
+    end if;
   end procedure;
 
   procedure interpreter_fetch_result(

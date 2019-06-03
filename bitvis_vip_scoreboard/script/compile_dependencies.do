@@ -20,34 +20,11 @@ proc quietly { args } {
   }
 }
 
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-
-# Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} {
-  quietly set simulator_version [eval "vsim -version"]
-  # puts "Version is: $simulator_version"
-  if {[regexp -nocase {modelsim} $simulator_version]} {
-    quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $simulator_version]} {
-    quietly set simulator "rivierapro"
-  } else {
-    puts "Unknown simulator. Attempting to use Modelsim commands."
-    quietly set simulator "modelsim"
-  }
-} else {
-    puts "vsim -version failed with the following message:\n $message"
-    abort all
-}
-
 #-----------------------------------------------------------------------
 # Call compile scripts from dependent libraries
 #-----------------------------------------------------------------------
 quietly set root_path "../.."
-do $root_path/bitvis_uart/script/1_compile_src.do $root_path/bitvis_uart
+do $root_path/script/compile_src.do $root_path/bitvis_uart $root_path/bitvis_uart/sim
 do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
 do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim

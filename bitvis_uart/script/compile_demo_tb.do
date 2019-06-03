@@ -20,6 +20,7 @@ proc quietly { args } {
   }
 }
 
+# End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
   onerror {abort all; exit -f -code 1}
 } else {

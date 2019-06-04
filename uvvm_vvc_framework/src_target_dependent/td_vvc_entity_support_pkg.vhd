@@ -111,6 +111,16 @@ package td_vvc_entity_support_pkg is
     variable output_vvc_cmd    : out t_vvc_cmd_record
     );
 
+  procedure await_cmd_from_sequencer(
+    constant vvc_labels        : in t_vvc_labels;
+    constant vvc_config        : in t_vvc_config;
+    signal VVCT                : in t_vvc_target_record;
+    signal VVC_BROADCAST       : inout std_logic;
+    signal global_vvc_busy     : inout std_logic;
+    signal vvc_ack             : out std_logic;
+    constant shared_vvc_cmd    : in t_vvc_cmd_record;
+    variable output_vvc_cmd    : out t_vvc_cmd_record
+    );
 
   -------------------------------------------
   -- put_command_on_queue
@@ -522,6 +532,22 @@ package body td_vvc_entity_support_pkg is
     end if;
 
     log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received" & format_command_idx(output_vvc_cmd), vvc_labels.scope, vvc_config.msg_id_panel);    -- Get and ack the new command
+  end procedure;
+
+  -- Overloading procedure
+  procedure await_cmd_from_sequencer(
+    constant vvc_labels        : in t_vvc_labels;
+    constant vvc_config        : in t_vvc_config;
+    signal VVCT                : in t_vvc_target_record;
+    signal VVC_BROADCAST       : inout std_logic;
+    signal global_vvc_busy     : inout std_logic;
+    signal vvc_ack             : out std_logic;
+    constant shared_vvc_cmd    : in t_vvc_cmd_record;
+    variable output_vvc_cmd    : out t_vvc_cmd_record
+    ) is
+  begin
+    await_cmd_from_sequencer(vvc_labels, vvc_config, VVCT, VVC_BROADCAST,
+                            global_vvc_busy, vvc_ack, output_vvc_cmd);
   end procedure;
 
 

@@ -25,23 +25,18 @@ You should start by first understanding and trying out the Utility Library. The 
 ### Step 2
 To compile Utility Library related VHDL files you can do the following:
 * To compile Utility Library only you can use the following approaches:
-   * Using Modelsim/Questasim project files:    
-      1. Double click on uvvm_util/sim/uvvm_util.mpf (may have to relate file extension to simulator)
-      2. Right click -> Execute on compile_src.do file in the Project tab.
    * Running commands inside Modelsim/Questasim/RivieraPro/ActiveHDL:
       1. Go to the uvvm_util/script directory using the simulator's console.
       2. Run the command: do compile_src.do
    * Using GHDL:    
       Use GHDL provided script with uvvm_util/script/compile_order.txt as input
-   * Any other approach - or with script problems:    
-      Follow compile order given in uvvm_util/script/compile_order.txt    
-      Note that VHDL 2008 must be used. Lines starting with '# ' are required library definitions    
-* To compile the complete IRQC example testbench including Utility Library and the IRQC DUT: 
+   * Any other approach - or with script problems:
+      Follow compile order given in uvvm_util/script/compile_order.txt
+      Note that VHDL 2008 must be used. Lines starting with '# ' are required library definitions
+* To compile the complete IRQC demo testbench including Utility Library, SBI BFM and the IRQC DUT: 
    1. Use any of the approaches above and exchange the path 'uvvm_util' with 'bitvis_irqc'
-   2. Use the file compile_and_sim_all.do instead.
+   2. Use the file compile_all_and_simulate.do instead.
 * To compile all above plus all provided BFMs, the scripts for compiling the complete UVVM should be used. (See below) (This compiles far more than you need, but then at least everything is pre-compiled)
-
-If you want to run a demo testbench using the Utility library and the SBI BFM, you can run bitvis_irqc/tb/irqc_tb.vhd
 
 ## For developers who understand the basics of UVVM Utility library and need more than just basic testbenches:
 ### Step 1
@@ -50,11 +45,11 @@ If you want to run a demo testbench using the Utility library and the SBI BFM, y
 * For a slightly deeper introduction - also explaining the challenges - please check out our PPT-file https://github.com/UVVM/UVVM/raw/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx
 
 ### Step 2
-The easiest way to compile the complete UVVM with everything (Utility Library, VVC Framework, BFMS, VVCs, etc.) is to go to the top-level script directory and run 'compile_all.do' inside Modelsim/Questasim/RivieraPro/ActiveHDL.
+* The easiest way to compile the complete UVVM with everything (Utility Library, VVC Framework, BFMS, VVCs, etc.) is to go to the top-level script directory and run 'compile_all.do' inside Modelsim/Questasim/RivieraPro/ActiveHDL.
 
-For the UART VVC example, go to bitvis_uart/script and run 'compile_all_and_sim_uart_vvc_tb.do'
+* For the UART VVC demo, go to bitvis_uart/script and run 'compile_all_and_simulate.do'
 
-For GHDL use the provided 'compile_order.txt' files.
+* For GHDL use the provided 'compile_order.txt' files.
 
 ### Step 3
 If you like to use UVVM in a more advanced way you should read the relevant documentation under  https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc

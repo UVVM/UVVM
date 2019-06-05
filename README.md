@@ -5,15 +5,15 @@ Overview, Readability, Maintainability, Extensibility and Reuse are all vital fo
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
 
 UVVM consists currently of the following elements:
-- [Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md)
-- [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/README_UVVM_VVC_System.md)  - Including Utility Library
+- [Utility Library](https://github.com/UVVM/UVVM/blob/master/uvvm_util/README.md)
+- [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/uvvm_vvc_framework/README.md)  - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 more to come...
 
 ## For starters
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
-Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/blob/master/README_UVVM_Utility_Library.md) for an introduction.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/blob/master/uvvm_util/README.md) for an introduction.
 The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
 
 Please also see Getting Started with UVVM: https://github.com/UVVM/UVVM/blob/master/GETTING_STARTED.md
@@ -63,14 +63,22 @@ These VVCs and BFMs could be used inside a typical UVVM testbench, but they coul
 *   GPIO
 *	More are coming
 
+**IMPORTANT**
+The VIPs complies with respective protocols and thus allows a
+normal access towards the interface. The VIPs are not protocol checkers.
 
 ## Prerequisites
 UVVM is tool and library independent, but it must be compiled with VHDL 2008.
 UVVM has been tested with the following simulators:
-- Modelsim version 10.4d
-- Riviera-PRO version: 2017.02.99.6498
+- Modelsim version 19.1
+- Riviera-PRO version: 2018.10.137.7135
+- Questa Sim version 19.1
+- GHDL version 0.36
+
+**Note** Questa Sim version 19.2 and Modelsim version 19.2 have known bugs that might prevent UVVM from working properly.
 
 Python is required **if** you want to execute the VVC generation scripts
+
 
 ## Introduction to VVC Framework - including manuals
 All documents including powerpoint presentations are available in the *uvvm_vvc_framework/doc* directory on GitHub.

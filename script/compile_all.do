@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -10,10 +10,14 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
+#-----------------------------------------------------------------------
+# This file must be called with 3 arguments:
+#
 # This file can be called with three arguments:
 # arg 1: Part directory of this library/module
 # arg 2: Target directory
 # arg 3: Path to custom component list file
+#-----------------------------------------------------------------------
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -25,37 +29,16 @@ proc quietly { args } {
   }
 }
 
+# End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
   onerror {abort all; exit -f -code 1}
 } else {
   onerror {abort all}
 }
 
-# Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} {
-  quietly set simulator_version [eval "vsim -version"]
-  # puts "Version is: $simulator_version"
-  if {[regexp -nocase {modelsim} $simulator_version]} {
-    quietly set simulator "modelsim"
-  } elseif {[regexp -nocase {aldec} $simulator_version]} {
-    quietly set simulator "rivierapro"
-  } else {
-    puts "Unknown simulator. Attempting to use Modelsim commands."
-    quietly set simulator "modelsim"
-  }
-} else {
-    puts "vsim -version failed with the following message:\n $message"
-    abort all
-}
-
 #------------------------------------------------------
 # Set up source_path and target_path
-#
-#   1 args: source directory
-#   2 args: target directory
-#
 #------------------------------------------------------
-
 variable source_path
 variable component_path
 variable target_path

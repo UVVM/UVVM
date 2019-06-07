@@ -7,3 +7,4 @@
 ../../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
 ../../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
 ../src/spi_vvc.vhd
+../src/vvc_context.vhd

@@ -9,6 +9,37 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2019.06.06
+--------------------
+Released: 2019-06-06
+- Minor changes in script in bitvis_irqc.
+- Minor changes in script in bitvis_uart.
+- Minor changes in documentation in uvvm_util.
+- Changes to synchronization methods in uvvm_util.
+- C_NUM_SYNC_FLAGS moved to adaptation_pkg.
+- Fixed fatal error in convert_slv_array_to_byte in uvvm_util.
+- Removed extra spaces in log reports.
+- Cleaned compile scripts.
+- Added ascending slv support to convert_slv_array_to_byte_array function.
+- Scoreboard QR updated, instance number 0 is now accepted, adjusted text alignment and
+  added timestamp to report_counters method, and report_counters now writes to file.
+- Minor improvements to demo testbenches and renamed for clarification.
+- Removed GPIO VIP testbench.
+- VVC compile_order.txt files updated with vvc_context.vhd
+- Fixed bug where UART BFM would accept illegal start bits.
+- All msg_ids have comments in adaptation_pkg.
+- Updated gen_pulse() description in Util QR.
+- Removed msg parameter in get_last_received_cmd_idx method.
+- Added missing information regarding data buffer default size in Generic Queue QR.
+- Added information regarding verbosity control to UVVM Essential Mechanisms QR.
+- Removed shared_vvc_cmd as input to await_cmd_from_sequencer method.
+- Added optional scope to send_command_to_vvc, get_last_received_cmd_idx and VVC broadcast procedures.
+- Added scope to enable_log_msg and disable_log_msg.
+- Added support for several backslash-r in log method.
+- Fixed an issue with VVC terminate command.
+- Restructured README files in UVVM root, uvvm_util and uvvm_vvc_framework.
+
+
 v2018.12.03
 --------------------
 Released: 2018-12-03

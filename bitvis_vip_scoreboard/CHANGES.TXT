@@ -1,6 +1,14 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v1.1.0
+----------
+Released: 2019-06-06
+- Updated documentation
+- Added support for instance number 0
+- report_counters will now also write to file
+- Added timestamp and adjusted text alignment to report_counters
+
 v1.0.3
 ----------
 Released: 2018-12-03

@@ -1,7 +1,14 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.4
+----------
+Released: 2019-06-06
+- Minor changes to scripts.
+- Renamed demo testbench.
+
 v1.1.3
+----------
 Released: 2018-09-28
 - Minor documentation changes
 

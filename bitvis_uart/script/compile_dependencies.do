@@ -1,6 +1,6 @@
 #========================================================================================================================
-# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -9,12 +9,6 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
-
-# Compile Bitvis Util
-#----------------------------------
-
-# This file may be called with an argument
-# arg 1: Part directory of this library/module
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -26,25 +20,12 @@ proc quietly { args } {
   }
 }
 
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-#Just in case...
-quietly quit -sim   
-
-# Set up util_part_path 
-#------------------------------------------------------
-quietly set part_name "uvvm_util"
-# path from mpf-file in sim
-quietly set util_part_path "../..//$part_name"
-
-if { [info exists 1] } {
-  # path from this part to target part
-  quietly set util_part_path "$1/..//$part_name"
-  unset 1
-}
-
-do $util_part_path/script/compile_src.do $util_part_path
-
+#-----------------------------------------------------------------------
+# Call compile scripts from dependent libraries
+#-----------------------------------------------------------------------
+quietly set root_path "../.."
+do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
+do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_clock_generator $root_path/bitvis_vip_clock_generator/sim

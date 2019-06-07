@@ -15,7 +15,6 @@
 
 context vvc_context is
   library bitvis_vip_avalon_mm;
-  use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
   use bitvis_vip_avalon_mm.vvc_cmd_pkg.all;
   use bitvis_vip_avalon_mm.vvc_methods_pkg.all;
   use bitvis_vip_avalon_mm.td_vvc_framework_common_methods_pkg.all;

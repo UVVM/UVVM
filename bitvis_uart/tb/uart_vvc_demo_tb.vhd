@@ -33,13 +33,15 @@ library bitvis_vip_uart;
 use bitvis_vip_uart.vvc_methods_pkg.all;
 use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 
+library bitvis_vip_clock_generator;
+context bitvis_vip_clock_generator.vvc_context;
 
 -- Test bench entity
-entity uart_vvc_tb is
+entity uart_vvc_demo_tb is
 end entity;
 
 -- Test bench architecture
-architecture func of uart_vvc_tb is
+architecture func of uart_vvc_demo_tb is
 
   constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
 
@@ -62,7 +64,7 @@ architecture func of uart_vvc_tb is
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.uart_vvc_th;
+  i_test_harness : entity work.uart_vvc_demo_th;
 
 
   ------------------------------------------------
@@ -73,6 +75,8 @@ architecture func of uart_vvc_tb is
 
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
+
+    start_clock(CLOCK_GENERATOR_VVCT, 1, "Start clock generator");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);

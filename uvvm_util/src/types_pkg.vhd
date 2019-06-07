@@ -28,7 +28,6 @@ package types_pkg is
   file LOG_FILE : text;
 
   constant C_LOG_HDR_FOR_WAVEVIEW_WIDTH : natural := 100; -- For string in waveview indicating last log header
-  constant C_NUM_SYNC_FLAGS     : positive := 10;
   constant C_FLAG_NAME_LENGTH   : positive := 20;
 
   type t_void is (VOID);
@@ -105,15 +104,16 @@ package types_pkg is
   type t_flag_returning is (KEEP_UNBLOCKED, RETURN_TO_BLOCK); -- value after unblock
 
   type t_sync_flag_record is record
-    flag_name  : string(1 to C_FLAG_NAME_LENGTH);
-    is_active  : boolean;
+    flag_name   : string(1 to C_FLAG_NAME_LENGTH);
+    is_blocked  : boolean;
   end record;
 
   constant C_SYNC_FLAG_DEFAULT : t_sync_flag_record := (
-    flag_name  => (others => ' '),
-    is_active  => true
+    flag_name   => (others => NUL),
+    is_blocked  => true
   );
-  type t_sync_flag_record_array is array (1 to C_NUM_SYNC_FLAGS) of t_sync_flag_record;
+  
+  type t_sync_flag_record_array is array (natural range <>) of t_sync_flag_record;
 
 
   -- type for identifying VVC and command index finishing await_any_completion()

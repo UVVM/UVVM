@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -10,29 +10,10 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-  onbreak {abort all; exit -f}
-} else {
-  onerror {abort all}
-}
-
-# Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
-proc quietly { args } {
-  if {[llength $args] == 0} {
-    puts "quietly"
-  } else {
-    # this works since tcl prompt only prints the last command given. list prints "".
-    uplevel $args; list;
-  }
-}
-
-quit -sim
-
-quietly set tb_part_path ../../bitvis_irqc
-do $tb_part_path/script/compile_src.do $tb_part_path
-do $tb_part_path/script/compile_tb_dep.do $tb_part_path
-do $tb_part_path/script/compile_tb.do  $tb_part_path
-do $tb_part_path/script/simulate_tb.do $tb_part_path
-
-
+#-----------------------------------------------------------------------
+# Call compile and simulate scripts
+#-----------------------------------------------------------------------
+do compile_dependencies.do
+do compile_src.do
+do compile_demo_tb.do
+do simulate_demo_tb.do

@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -10,5 +10,10 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-vsim bitvis_vip_scoreboard.sb_uart_sbi_demo_tb
-run -all
+#-----------------------------------------------------------------------
+# Call compile and simulate scripts
+#-----------------------------------------------------------------------
+do compile_dependencies.do
+do compile_src.do
+do compile_demo_tb.do
+do simulate_demo_tb.do

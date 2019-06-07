@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -9,9 +9,6 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
-
-# This file may be called with an argument
-# arg 1: Part directory of this library/module
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -23,13 +20,12 @@ proc quietly { args } {
   }
 }
 
+# End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
   onerror {abort all; exit -f -code 1}
 } else {
   onerror {abort all}
 }
-#Just in case...
-quietly quit -sim
 
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} {
@@ -40,7 +36,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
-    puts "Unknown simulator. Attempting use use Modelsim commands."
+    puts "Unknown simulator. Attempting to use Modelsim commands."
     quietly set simulator "modelsim"
   }
 } else {
@@ -48,28 +44,9 @@ if {[catch {eval "vsim -version"} message] == 0} {
     abort all
 }
 
-# path from mpf-file in sim
-quietly set root_path "../.."
-
-if { [info exists 1] } {
-  # path from this part to target part
-  quietly set root_path "$1/.."
-  unset 1
-}
-
-
-# (Re-)Generate library and Compile source files
-#--------------------------------------------------
-quietly set uart_path "$root_path/bitvis_uart"
-do $uart_path/script/1_compile_src.do $uart_path
-
-quietly set sb_path "$root_path/bitvis_vip_scoreboard"
-do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
-do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
-do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
-do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
-do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim
-
+#-----------------------------------------------------------------------
+# Compile testbench files
+#-----------------------------------------------------------------------
 quietly set lib_name "bitvis_vip_scoreboard"
 
 if { [string equal -nocase $simulator "modelsim"] } {
@@ -78,9 +55,6 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
 
-#------------------------------------------------------
-# Compile src files
-#------------------------------------------------------
-echo "\n\n\n=== Compiling TB\n"
-echo "eval vcom  $compdirectives  $source_path/script/$item"
-eval vcom  $compdirectives  $sb_path/demo/sb_uart_sbi_demo_tb.vhd
+echo "\nCompiling TB\n"
+echo "eval vcom  $compdirectives  ../tb/sb_uart_sbi_demo_tb.vhd"
+eval vcom  $compdirectives  ../tb/sb_uart_sbi_demo_tb.vhd

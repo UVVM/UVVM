@@ -1,6 +1,6 @@
 #========================================================================================================================
-# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
-# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
+# You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
 # UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
@@ -9,9 +9,6 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
-
-# This file may be called with an argument
-# arg 1: Part directory of this library/module
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -23,16 +20,15 @@ proc quietly { args } {
   }
 }
 
+# End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
   onerror {abort all; exit -f -code 1}
 } else {
   onerror {abort all}
 }
-#Just in case...
-quietly quit -sim   
 
 # Detect simulator
-if {[catch {eval "vsim -version"} message] == 0} { 
+if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
   # puts "Version is: $simulator_version"
   if {[regexp -nocase {modelsim} $simulator_version]} {
@@ -40,56 +36,27 @@ if {[catch {eval "vsim -version"} message] == 0} {
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
   } else {
-    puts "Unknown simulator. Attempting use use Modelsim commands."
+    puts "Unknown simulator. Attempting to use Modelsim commands."
     quietly set simulator "modelsim"
-  }  
-} else { 
+  }
+} else {
     puts "vsim -version failed with the following message:\n $message"
     abort all
 }
 
-if { [string equal -nocase $simulator "modelsim"] } {
-  ###########
-  # Fix possible vmap bug
-  do fix_vmap.tcl 
-  ##########
-}
-
-# Set up uart_part_path and lib_name
-#------------------------------------------------------
+#-----------------------------------------------------------------------
+# Compile testbench files
+#-----------------------------------------------------------------------
 quietly set lib_name "bitvis_uart"
-quietly set part_name "bitvis_uart"
-# path from mpf-file in sim
-quietly set uart_part_path "../..//$part_name"
-
-if { [info exists 1] } {
-  # path from this part to target part
-  quietly set uart_part_path "$1/..//$part_name"
-  unset 1
-}
-
-
-# (Re-)Generate library and Compile source files
-#--------------------------------------------------
-echo "\n\nRe-gen lib and compile $lib_name source\n"
-if {[file exists $uart_part_path/sim/$lib_name]} {
-  file delete -force $uart_part_path/sim/$lib_name
-}
-if {![file exists $uart_part_path/sim]} {
-  file mkdir $uart_part_path/sim
-}
-
-vlib $uart_part_path/sim/$lib_name
-vmap $lib_name $uart_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -work $lib_name"
+  quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
-  set compdirectives "-2008 -dbg -work $lib_name"
+  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
 
-eval vcom  $compdirectives  $uart_part_path/src/uart_pkg.vhd
-eval vcom  $compdirectives  $uart_part_path/src/uart_pif_pkg.vhd
-eval vcom  $compdirectives  $uart_part_path/src/uart_pif.vhd
-eval vcom  $compdirectives  $uart_part_path/src/uart_core.vhd
-eval vcom  $compdirectives  $uart_part_path/src/uart.vhd
+echo "\nCompiling TB\n"
+echo "eval vcom  $compdirectives  ../tb/uart_vvc_demo_th.vhd"
+eval vcom  $compdirectives  ../tb/uart_vvc_demo_th.vhd
+echo "eval vcom  $compdirectives  ../tb/uart_vvc_demo_tb.vhd"
+eval vcom  $compdirectives  ../tb/uart_vvc_demo_tb.vhd

@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -24,19 +24,20 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_sbi;
 library bitvis_vip_uart;
 library bitvis_uart;
+library bitvis_vip_clock_generator;
 
 
 -- Test harness entity
-entity uart_vvc_th is
+entity uart_vvc_demo_th is
 end entity;
 
 -- Test harness architecture
-architecture struct of uart_vvc_th is
+architecture struct of uart_vvc_demo_th is
 
   -- DSP interface and general control signals
   signal clk            : std_logic  := '0';
   signal arst           : std_logic  := '0';
-  
+
   -- SBI VVC signals
   signal cs             : std_logic;
   signal addr           : unsigned(2 downto 0);
@@ -50,7 +51,8 @@ architecture struct of uart_vvc_th is
   signal uart_vvc_rx    : std_logic := '1';
   signal uart_vvc_tx    : std_logic := '1';
 
-  constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
+  constant C_CLK_PERIOD : time    := 10 ns; -- 100 MHz
+  constant C_CLOCK_GEN  : natural := 1;
 
 begin
 
@@ -100,10 +102,10 @@ begin
     sbi_vvc_master_if.rdata     => rdata
   );
 
- 
+
   -----------------------------------------------------------------------------
   -- UART VVC
-  -----------------------------------------------------------------------------  
+  -----------------------------------------------------------------------------
   i1_uart_vvc: entity bitvis_vip_uart.uart_vvc
   generic map(
     GC_DATA_WIDTH     => 8,
@@ -113,21 +115,27 @@ begin
     uart_vvc_rx         => uart_vvc_rx,
     uart_vvc_tx         => uart_vvc_tx
   );
- 
- 
+
+
   -- Static '1' ready signal for the SBI VVC
   ready <= '1';
- 
+
   -- Toggle the reset after 5 clock periods
   p_arst: arst <= '1', '0' after 5 *C_CLK_PERIOD;
 
   -----------------------------------------------------------------------------
-  -- Clock process
-  -----------------------------------------------------------------------------  
-  p_clk: process
-  begin
-    clk <= '0', '1' after C_CLK_PERIOD / 2;
-    wait for C_CLK_PERIOD;
-  end process;
+  -- Clock Generator VVC
+  -----------------------------------------------------------------------------
+  i_clock_generator_vvc : entity bitvis_vip_clock_generator.clock_generator_vvc
+    generic map(
+      GC_INSTANCE_IDX    => C_CLOCK_GEN,
+      GC_CLOCK_NAME      => "Clock",
+      GC_CLOCK_PERIOD    => C_CLK_PERIOD,
+      GC_CLOCK_HIGH_TIME => C_CLK_PERIOD / 2
+      )
+    port map(
+      clk => clk
+      );
+
 
 end struct;

@@ -3,6 +3,22 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.8.0
+----------
+Released: 2019-06-06
+- Changes to synchronization flag methods with local record and function.
+  Added scope and already_blocked_severity as optional inputs.
+- Moved C_NUM_SYNC_FLAGS to adaptation_pkg. t_sync_flag_record_array and
+  shared_flag_array was modified to match this.
+- Fixed fatal error in convert_slv_array_to_byte when using ascending std_logic_vector.
+- Removed extra spaces in log reports.
+- Added optional scope to all CDMs.
+- Updated documentation.
+- Added support for several backslash-r in log method.
+- Added scope to enable_log_msg and disable_log_msg.
+- Added ascending slv support to convert_slv_array_to_byte_array function.
+
+
 v2.7.0
 ----------
 Released: 2018-12-03

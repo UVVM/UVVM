@@ -113,10 +113,18 @@ cycloneive_ver = $MODEL_TECH/../altera/verilog/cycloneive
 hardcopyiv_hssi_ver = $MODEL_TECH/../altera/verilog/hardcopyiv_hssi
 hardcopyiv_pcie_hip_ver = $MODEL_TECH/../altera/verilog/hardcopyiv_pcie_hip
 
-turbo = ../sim/utility_lib
-uvvm_util = ../..//uvvm_util/sim/uvvm_util
-ieee_proposed = ../../uvvm_util/..//x_ieee_proposed/..//x_ieee_proposed/sim/ieee_proposed
-work = ../sim/work
+utility_lib = ../sim/utility_lib
+tlm_lib = ../sim/tlm_lib
+vip_pif = ../sim/vip_pif
+pif_tb = ../sim/pif_tb
+ieee_proposed = ../..//x_ieee_proposed/..//x_ieee_proposed/sim/ieee_proposed
+bitvis_vip_scoreboard = ../sim/bitvis_vip_scoreboard
+uvvm_util = ../../uvvm_util/sim/uvvm_util
+bitvis_vip_sbi = ../../bitvis_vip_sbi/sim/bitvis_vip_sbi
+bitvis_vip_uart = ../../bitvis_vip_uart/sim/bitvis_vip_uart
+uvvm_vvc_framework = ../../uvvm_vvc_framework/sim/uvvm_vvc_framework
+bitvis_vip_clock_generator = ../../bitvis_vip_clock_generator/sim/bitvis_vip_clock_generator
+bitvis_uart = ../../bitvis_uart/sim/bitvis_uart
 [vcom]
 ; VHDL93 variable selects language version as the default.
 ; Default is VHDL-2002.
@@ -430,9 +438,17 @@ DelayFileOpen = 1
 Project_Version = 6
 Project_DefaultLib = work
 Project_SortMethod = unused
-Project_Files_Count = 1
+Project_Files_Count = 5
 Project_File_0 = ../script/compile_src.do
 Project_File_P_0 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
+Project_File_1 = ../script/simulate_demo_tb.do
+Project_File_P_1 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
+Project_File_2 = ../script/compile_all_and_simulate.do
+Project_File_P_2 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
+Project_File_3 = ../script/compile_demo_tb.do
+Project_File_P_3 = compile_order -1 last_compile 0 folder {Top Level} dont_compile 1 group_id 0 file_type tcl ood 1
+Project_File_4 = ../script/compile_dependencies.do
+Project_File_P_4 = folder {Top Level} last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
 Project_Sim_Count = 0
 Project_Folder_Count = 0
 Echo_Compile_Output = 0
@@ -481,4 +497,4 @@ DEBUGDATABASE_CustomDoubleClick =
 DEBUGARCHIVE_DoubleClick = Edit
 DEBUGARCHIVE_CustomDoubleClick = 
 Project_Major_Version = 10
-Project_Minor_Version = 3
+Project_Minor_Version = 5

@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -9,18 +9,6 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
-
-# Compile UVVM Util
-#----------------------------------
-
-# This file may be called with an argument
-# arg 1: Part directory of this library/module
-
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -32,34 +20,13 @@ proc quietly { args } {
   }
 }
 
-# Set up util_part_path and lib_name
-#------------------------------------------------------
-quietly set lib_name "uvvm_util"
-quietly set part_name "uvvm_util"
-# path from mpf-file in sim
-quietly set util_part_path "../..//$part_name"
-
-if { [info exists 1] } {
-  # path from this part to target part
-  quietly set util_part_path "$1/..//$part_name"
-  unset 1
-}
-
-do $util_part_path/script/compile_src.do $util_part_path
-
-
-# VIP SBI : BFM
-#------------------------------------------------------
-quietly set lib_name "bitvis_vip_sbi"
-quietly set part_name "bitvis_vip_sbi"
-# path from mpf-file in sim
-quietly set vip_sbi_part_path "../..//$part_name"
-
-if { [info exists 1] } {
-  # path from this part to target part
-  quietly set vip_sbi_part_path "$1/..//$part_name"
-  unset 1
-}
-
-do $vip_sbi_part_path/script/compile_src.do $vip_sbi_part_path
-
+#-----------------------------------------------------------------------
+# Call compile scripts from dependent libraries
+#-----------------------------------------------------------------------
+quietly set root_path "../.."
+do $root_path/script/compile_src.do $root_path/bitvis_uart $root_path/bitvis_uart/sim
+do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
+do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim

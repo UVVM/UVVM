@@ -535,21 +535,21 @@ package body generic_sb_pkg is
     -- Variables
     ----------------------------------------------------------------------------------------------------
     variable vr_scope            : string(1 to C_LOG_SCOPE_WIDTH) := (1 to 4 => "?_SB", others => NUL);
-    variable vr_config           : t_sb_config_array(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => sb_config_default);
-    variable vr_instance_enabled : boolean_vector(1 to C_MAX_QUEUE_INSTANCE_NUM)    := (others => false);
+    variable vr_config           : t_sb_config_array(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => sb_config_default);
+    variable vr_instance_enabled : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM)    := (others => false);
     variable vr_sb_queue         : sb_queue_pkg.t_generic_queue;
 
-    type t_msg_id_panel_array is array(1 to C_MAX_QUEUE_INSTANCE_NUM) of t_msg_id_panel;
+    type t_msg_id_panel_array is array(0 to C_MAX_QUEUE_INSTANCE_NUM) of t_msg_id_panel;
     variable vr_msg_id_panel_array : t_msg_id_panel_array := (others => C_SB_MSG_ID_PANEL_DEFAULT);
 
     -- Counters
-    variable vr_entered_cnt         : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_match_cnt           : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_mismatch_cnt        : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_drop_cnt            : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_initial_garbage_cnt : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_delete_cnt          : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_overdue_check_cnt   : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_entered_cnt         : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_match_cnt           : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_mismatch_cnt        : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_drop_cnt            : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_initial_garbage_cnt : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_delete_cnt          : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_overdue_check_cnt   : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
 
 
 
@@ -560,8 +560,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) is
     begin
-      check_value_in_range(instance, 1, C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
-          "Instance must be within range 1 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
+      check_value_in_range(instance, 0, C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
+          "Instance must be within range 0 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
     end procedure check_instance_in_range;
 
     procedure check_instance_enabled(
@@ -572,7 +572,7 @@ package body generic_sb_pkg is
     end procedure check_instance_enabled;
 
     procedure check_queue_empty(
-      constant instance : in positive
+      constant instance : in natural
     ) is
     begin
       check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "The queue is empty", vr_scope, ID_NEVER);
@@ -621,7 +621,7 @@ package body generic_sb_pkg is
     end function entry_match_expected;
 
     procedure log(
-      instance : positive;
+      instance : natural;
       msg_id   : t_msg_id;
       msg      : string;
       scope    : string
@@ -652,8 +652,8 @@ package body generic_sb_pkg is
     begin
 
       -- Check if range is within limits
-      check_value(sb_config_array'low > 0 and sb_config_array'high <= C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
-        "Configuration array must be within range 1 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
+      check_value(sb_config_array'low >= 0 and sb_config_array'high <= C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
+        "Configuration array must be within range 0 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
 
       -- Apply config to the defined range
       for i in sb_config_array'low to sb_config_array'high loop
@@ -730,7 +730,7 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         vr_instance_enabled := (others => true);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_entered_cnt(i) = -1 then
             vr_entered_cnt(i)         := 0;
             vr_match_cnt(i)           := 0;
@@ -852,7 +852,7 @@ package body generic_sb_pkg is
                      entry_time       => now);
 
       if instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- add entry
             vr_sb_queue.add(i, v_sb_entry);
@@ -1081,7 +1081,7 @@ package body generic_sb_pkg is
       end if;
 
       if instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             check_actual_instance(i);
           end if;
@@ -1138,7 +1138,7 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_DATA, proc_name & ": flushing all instances." & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           -- update counters
           vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
           -- flush queue
@@ -1146,7 +1146,7 @@ package body generic_sb_pkg is
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
         log(ID_DATA, proc_name & ": flushing all enabled instances." & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- update counters
             vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
@@ -1200,28 +1200,31 @@ package body generic_sb_pkg is
       constant proc_name : string := "reset";
 
       procedure reset_instance(
-        constant instance : positive
+        constant instance : natural
       ) is
       begin
-        vr_sb_queue.reset(instance);
-        vr_entered_cnt(instance)         := 0;
-        vr_match_cnt(instance)           := 0;
-        vr_mismatch_cnt(instance)        := 0;
-        vr_drop_cnt(instance)            := 0;
-        vr_initial_garbage_cnt(instance) := 0;
-        vr_delete_cnt(instance)          := 0;
-        vr_overdue_check_cnt(instance)   := 0;
+        -- reset instance 0 only if it is used
+        if not(vr_sb_queue.is_empty(0)) or (instance > 0) then
+            vr_sb_queue.reset(instance);
+            vr_entered_cnt(instance)         := 0;
+            vr_match_cnt(instance)           := 0;
+            vr_mismatch_cnt(instance)        := 0;
+            vr_drop_cnt(instance)            := 0;
+            vr_initial_garbage_cnt(instance) := 0;
+            vr_delete_cnt(instance)          := 0;
+            vr_overdue_check_cnt(instance)   := 0;
+        end if;
       end procedure reset_instance;
 
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & ": reseting all instances.  " & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
             reset_instance(i);
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
         log(ID_CTRL, proc_name & ": reseting all enabled instances.  " & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             reset_instance(i);
           end if;
@@ -1510,7 +1513,7 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " enabled for all instances", vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           vr_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
       else
@@ -1548,7 +1551,7 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " disabled for all instances", vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           vr_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
       else
@@ -1588,94 +1591,98 @@ package body generic_sb_pkg is
       variable v_mismatch        : boolean  := false;
       constant C_HEADER          : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
       constant prefix            : string   := C_LOG_PREFIX & "     ";
-      constant log_counter_width : positive := 15;
+      constant log_counter_width : positive := 8; -- shouldn't be smaller than 8 due to the counters names
+      variable v_log_extra_space : integer  := 0;
+
+        -- add simulation time stamp to scoreboard report header
+        impure function timestamp_header(value : time; txt : string) return string is
+            variable v_line             : line;
+            variable v_delimiter_pos    : natural;
+            variable v_timestamp_width  : natural;
+            variable v_result           : string(1 to 50);
+            variable v_return           : string(1 to txt'length) := txt;
+          begin
+            -- get a time stamp
+            write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
+            v_timestamp_width := v_line'length;
+            v_result(1 to v_timestamp_width) := v_line.all;
+            deallocate(v_line);
+            v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
+
+            -- truncate decimals and add units
+            if C_LOG_TIME_BASE = ns then
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ns ";
+            else
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ps ";
+            end if;
+            v_timestamp_width := v_delimiter_pos + 5;
+
+            -- add time string to return string
+            v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
+            return v_return(1 to txt'length);
+          end function timestamp_header;
+
     begin
+      -- Calculate how much space we can insert between the columns of the report
+      v_log_extra_space := (C_LOG_LINE_WIDTH - prefix'length - 20 - log_counter_width*6 - 15 - 13)/8;
+      if v_log_extra_space < 1 then
+        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small, the report will not be properly aligned.", vr_scope);
+        v_log_extra_space := 1;
+      end if;
+
       write(v_line,
-          LF &
-          fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-          justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-          fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
+            timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+
       write(v_line,
         justify(
-          justify("ENTERED",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("PENDING",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("MATCH",           center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("MISMATCH",        center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("DROP",            center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("DELETE",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("OVERDUE CHECK",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
-        center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          fill_string(' ', 16) &
+          justify("ENTERED"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("PENDING"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("MATCH"          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("MISMATCH"       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("DROP"           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("DELETE"         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("OVERDUE_CHECK"  , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+          left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      if instance = ALL_INSTANCES then
+      if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
         for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
-          write(v_line,
-            justify(
-              fill_string(' ', 4) &
-              "instance: " &
-              justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
+          if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
             write(v_line,
             justify(
-              fill_string(' ', 4) &
               "instance: " &
               justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              justify(to_string(get_entered_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_pending_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_match_count(i))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_mismatch_count(i))       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_drop_count(i))           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_initial_garbage_count(i)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_delete_count(i))         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_overdue_check_count(i))  , center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
-      elsif ext_proc_call = "" then
-        write(v_line,
-            justify(
-              fill_string(' ', 4) &
-              "instance: " &
-              justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       else
         write(v_line,
           justify(
-            justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_mismatch_count(       instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
-          center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+            "instance: " &
+            justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+            fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
+            justify(to_string(get_entered_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_pending_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_match_count(instance))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_mismatch_count(instance))       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_drop_count(instance))           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_initial_garbage_count(instance)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_delete_count(instance))         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_overdue_check_count(instance))  , center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end if;
 
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
@@ -1683,7 +1690,9 @@ package body generic_sb_pkg is
       prefix_lines(v_line, prefix);
 
       -- Write the info string to transcript
+      write (v_line_copy, v_line.all);  -- copy line
       writeline(OUTPUT, v_line);
+      writeline(LOG_FILE, v_line_copy);
     end procedure report_counters;
 
     procedure report_counters(
@@ -1731,7 +1740,7 @@ package body generic_sb_pkg is
                      entry_time       => now);
 
       if instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- Check that instance is enabled
             check_queue_empty(instance);

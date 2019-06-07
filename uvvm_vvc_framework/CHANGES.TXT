@@ -3,6 +3,17 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.4.0
+----------
+Released: 2019-06-06
+- Removed unused msg parameter from get_last_received_cmd_idx()
+- Updated vvc_generator.py script comments and added scope parameter to example procedures in vvc_methods_pkg.
+- Added optional scope to all CDMs.
+- Updated documentation.
+- Removed shared_vvc_cmd as input to await_cmd_from_sequencer method.
+- Added optional scope to send_command_to_vvc, get_last_received_cmd_idx and VVC broadcast procedures.
+- Fixed an issue with VVC terminate command.
+
 v2.3.3
 ----------
 Released: 2018-12-03

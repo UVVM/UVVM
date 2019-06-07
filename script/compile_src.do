@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -10,10 +10,12 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-# This file must be called with two arguments:
-# arg 1: Part directory of this library/module
-# arg 2: Target directory
-
+#-----------------------------------------------------------------------
+# This file must be called with 2 arguments:
+#
+#   arg 1: Part directory of this library/module
+#   arg 2: Target directory
+#-----------------------------------------------------------------------
 
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 proc quietly { args } {
@@ -25,6 +27,7 @@ proc quietly { args } {
   }
 }
 
+# End the simulations if there's an error or when run from terminal.
 if {[batch_mode]} {
   onerror {abort all; exit -f -code 1}
 } else {
@@ -49,13 +52,8 @@ if {[catch {eval "vsim -version"} message] == 0} {
 }
 
 #------------------------------------------------------
-# Set up source_path and default_target
-#
-#   1 args: source directory
-#   2 args: target directory
-#
+# Set up source_path and target_path
 #------------------------------------------------------
-
 if {$argc == 2} {
   quietly set source_path "$1"
   quietly set target_path "$2"
@@ -75,7 +73,7 @@ close $fp
 
 echo "\n\n=== Re-gen lib and compile $lib_name source\n"
 echo "Source path: $source_path"
-echo "Taget path: $target_path"
+echo "Target path: $target_path"
 
 #------------------------------------------------------
 # (Re-)Generate library and Compile source files
@@ -90,6 +88,14 @@ if {![file exists $target_path]} {
 quietly vlib $target_path/$lib_name
 quietly vmap $lib_name $target_path/$lib_name
 
+# These two core libraries are needed by every VIP (except the IRQC and UART demos),
+# therefore we should map them in case they were compiled from different directories
+# which would cause the references to be in a different file.
+if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart"} {
+  echo "Mapping uvvm_util and uvvm_vvc_framework"
+  quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
+  quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework
+}
 
 if { [string equal -nocase $simulator "modelsim"] } {
   quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"

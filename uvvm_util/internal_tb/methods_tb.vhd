@@ -75,8 +75,7 @@ architecture func of methods_tb is
   signal clk10M_ena : boolean := true;
 
   -- Clock signals with duty cycles.
-  -- Name:
-  --    clk<frequency>_percentage_<high_percentage>_<low_percentage>
+  -- Name: clk<frequency>_percentage_<high_percentage>_<low_percentage>
   signal clk100M_percentage_60_40 : std_logic;
   signal clk100M_percentage_10_90 : std_logic;
   signal clk100M_percentage_90_10 : std_logic;
@@ -86,8 +85,7 @@ architecture func of methods_tb is
 
   signal clk500M_percentage_25_50 : std_logic;
 
-  -- Name:
-  --    clk<frequency>_time_<high_time in ns>_<low_time in ns>
+  -- Name: clk<frequency>_time_<high_time in ns>_<low_time in ns>
   signal clk100M_time_4_6 : std_logic;
   signal clk100M_time_1_9 : std_logic;
   signal clk100M_time_9_1 : std_logic;
@@ -109,20 +107,26 @@ architecture func of methods_tb is
   -- For counting results of random functions
   signal ctr                  : t_int_array := (others => 0);
 
-
   -- Adjustable clock signals
-  -- Name:
-  --      adj_clk<frequency>_percentage_<high_percentage>_<low_percentage>
+  -- Name: adj_clk<frequency>_percentage_<high_percentage>_<low_percentage>
   signal adj_clk100M                  : std_logic;
   signal adj_clk100M_high_percentage  : natural range 0 to 100 := 50;
   signal adj_clk100M_ena              : boolean := false;
   constant C_ADJ_CLK100M_PERIOD       : time := 10 ns;
 
+  -- Synchronization
+  signal p_clk_cnt_ena      : boolean := true;
+  signal p_sync_test_ena    : boolean := false;
 
-  signal p_clk_cnt_ena : boolean := true;
-  signal p_sync_test_ena : boolean := false;
+  -- Watchdog timer control signal
+  signal watchdog_ctrl : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
 
 begin
+
+  ------------------------------------------------
+  -- Process: watchdog timer
+  ------------------------------------------------
+  watchdog_timer(watchdog_ctrl, 5 sec, ERROR, "Watchdog test");
 
   ------------------------------------------------
   -- Process: clock generator
@@ -3200,6 +3204,15 @@ begin
           block_flag("FLAG_" & to_string(i), "");
         end loop;
 
+      elsif run("watchdog_timer") then
+        log(ID_LOG_HDR, "Testing watchdog timer", C_SCOPE);
+        restart_watchdog(watchdog_ctrl, 100 ns);
+        wait for 99 ns;
+        extend_watchdog(watchdog_ctrl, 200 ns);
+        wait for 200 ns;
+        increment_expected_alerts(ERROR);
+        wait for 1 ns;
+
       end if;
     end loop;
 
@@ -3207,6 +3220,7 @@ begin
     -- Ending the simulation
     --------------------------------------------------------------------------------------
     wait for 1000 ns;                   -- to allow some time for completion
+    terminate_watchdog(watchdog_ctrl);
     report_alert_counters(INTERMEDIATE);
     report_alert_counters(FINAL);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);

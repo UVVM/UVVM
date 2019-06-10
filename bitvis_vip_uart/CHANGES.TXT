@@ -3,7 +3,7 @@ Bitvis VIP UART - Overview on Versions and Changes
 
 v2.2.0
 ----------
-Released: 2019-XX-XX
+Released: 2019-06-06
 - Fixed bug where the start bit could be anything other than idle_state.
 - Added optional scope to all CDMs.
 - Updated documentation.

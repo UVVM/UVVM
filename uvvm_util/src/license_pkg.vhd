@@ -24,8 +24,6 @@ use work.adaptations_pkg.all;
 
 package license_pkg is
 
-  constant C_UVVM_VERSION_YYMMDD : integer;
-
   impure function show_license(
     constant dummy  : in t_void
     ) return boolean;
@@ -38,15 +36,9 @@ package license_pkg is
     constant dummy  : in t_void
     ) return boolean;
 
-  impure function get_uvvm_version(
-    constant dummy : in t_void
-  ) return integer;
-
 end package license_pkg;
 
 package body license_pkg is
-
-  constant C_UVVM_VERSION_YYMMDD : integer := 190515;
 
   impure function show_license(
     constant dummy  : in t_void
@@ -119,15 +111,6 @@ package body license_pkg is
     end if;
     return true;
   end;
-
-
-  impure function get_uvvm_version(
-    constant dummy : in t_void
-  ) return integer is
-
-  begin
-    return C_UVVM_VERSION_YYMMDD;
-  end function get_uvvm_version;
 
 
 end package body license_pkg;

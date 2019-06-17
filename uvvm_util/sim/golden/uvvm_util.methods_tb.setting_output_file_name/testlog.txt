@@ -1,3 +1,7 @@
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 100000000 ps. Watchdog E
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 5300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 5200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 5100000 ps. Watchdog A
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program randomise is outdated and has been replaced by another sub-program.
 UVVM:                                                                           Use randomize().
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
@@ -33,6 +37,7 @@ UVVM:                ID_FINISH_OR_STOP            : ENABLED
 UVVM:                ID_CLOCK_GEN                 : ENABLED
 UVVM:                ID_GEN_PULSE                 : ENABLED
 UVVM:                ID_BLOCKING                  : ENABLED
+UVVM:                ID_WATCHDOG                  : ENABLED
 UVVM:                ID_POS_ACK                   : ENABLED
 UVVM:                ID_DATA                      : ENABLED
 UVVM:                ID_CTRL                      : ENABLED

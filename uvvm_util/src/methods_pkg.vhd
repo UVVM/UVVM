@@ -1635,10 +1635,10 @@ package methods_pkg is
 
   procedure extend_watchdog(
     signal watchdog_ctrl : inout t_watchdog_ctrl;
-    constant time_extend : time
+    constant time_extend : time := 0 ns
   );
 
-  procedure restart_watchdog(
+  procedure reinitialize_watchdog(
     signal watchdog_ctrl : inout t_watchdog_ctrl;
     constant timeout     : time
   );
@@ -6181,8 +6181,8 @@ package body methods_pkg is
   -------------------------------------------------------------------------------
   -- Watchdog timer:
   -- Include this as a concurrent procedure from your testbench.
-  -- Use extend_watchdog(), restart_watchdog() or terminate_watchdog() to modify
-  -- the watchdog timer from the test sequencer.
+  -- Use extend_watchdog(), reinitialize_watchdog() or terminate_watchdog() to
+  -- modify the watchdog timer from the test sequencer.
   -------------------------------------------------------------------------------
   procedure watchdog_timer(
     signal watchdog_ctrl : in t_watchdog_ctrl;
@@ -6190,31 +6190,37 @@ package body methods_pkg is
     constant alert_level : t_alert_level := ERROR;
     constant msg         : string := ""
   ) is
-    variable v_timeout        : time;
-    variable v_prev_extension : time;
+    variable v_timeout      : time;
+    variable v_prev_timeout : time;
   begin
     log(ID_WATCHDOG, "Starting watchdog: " & to_string(timeout) & ". " & msg);
-    v_timeout := timeout;
-    v_prev_extension := watchdog_ctrl.extension;
+    v_prev_timeout := 0 ns;
+    v_timeout      := timeout;
 
     loop
-      wait until (watchdog_ctrl.terminate or watchdog_ctrl.restart) for v_timeout;
+      wait until (watchdog_ctrl.extend or watchdog_ctrl.restart or watchdog_ctrl.terminate) for v_timeout;
       -- Watchdog was extended
-      if v_prev_extension /= watchdog_ctrl.extension then
-        v_timeout        := watchdog_ctrl.extension - v_prev_extension;
-        v_prev_extension := watchdog_ctrl.extension;
-      -- Watchdog was restarted
+      if watchdog_ctrl.extend then
+        if watchdog_ctrl.extension = 0 ns then
+          log(ID_WATCHDOG, "Extending watchdog by default value: " & to_string(timeout) & ". " & msg);
+          v_timeout := (v_prev_timeout + v_timeout - now) + timeout;
+        else
+          log(ID_WATCHDOG, "Extending watchdog by " & to_string(watchdog_ctrl.extension) & ". " & msg);
+          v_timeout := (v_prev_timeout + v_timeout - now) + watchdog_ctrl.extension;
+        end if;
+        v_prev_timeout := now;
+      -- Watchdog was reinitialized
       elsif watchdog_ctrl.restart then
-          log(ID_WATCHDOG, "Restarting watchdog: " & to_string(watchdog_ctrl.new_timeout) & ". " & msg);
-          v_timeout        := watchdog_ctrl.new_timeout;
-          v_prev_extension := watchdog_ctrl.extension;
+          log(ID_WATCHDOG, "Reinitializing watchdog: " & to_string(watchdog_ctrl.new_timeout) & ". " & msg);
+          v_timeout := watchdog_ctrl.new_timeout;
+          v_prev_timeout := now;
       else
         -- Watchdog was terminated
         if watchdog_ctrl.terminate then
           log(ID_WATCHDOG, "Terminating watchdog. " & msg);
         -- Watchdog has timed out
         else
-          alert(alert_level, "Watchdog ended! " & msg);
+          alert(alert_level, "Watchdog timer ended! " & msg);
         end if;
         exit;
       end if;
@@ -6224,22 +6230,28 @@ package body methods_pkg is
 
   procedure extend_watchdog(
     signal watchdog_ctrl : inout t_watchdog_ctrl;
-    constant time_extend : time
+    constant time_extend : time := 0 ns
   ) is
   begin
-    log(ID_WATCHDOG, "Extending watchdog by " & to_string(time_extend));
-    watchdog_ctrl.extension <= watchdog_ctrl.extension + time_extend;
+    if not watchdog_ctrl.terminate then
+      watchdog_ctrl.extension <= time_extend;
+      watchdog_ctrl.extend <= true;
+      wait for 0 ns; -- delta cycle to execute command
+      watchdog_ctrl.extend <= false;
+    end if;
   end procedure;
 
-  procedure restart_watchdog(
+  procedure reinitialize_watchdog(
     signal watchdog_ctrl : inout t_watchdog_ctrl;
-    constant timeout : time
+    constant timeout     : time
   ) is
   begin
-    watchdog_ctrl.new_timeout <= timeout;
-    watchdog_ctrl.restart <= true;
-    wait for 0 ns; -- delta cycle to execute restart
-    watchdog_ctrl.restart <= false;
+    if not watchdog_ctrl.terminate then
+      watchdog_ctrl.new_timeout <= timeout;
+      watchdog_ctrl.restart <= true;
+      wait for 0 ns; -- delta cycle to execute command
+      watchdog_ctrl.restart <= false;
+    end if;
   end procedure;
 
   procedure terminate_watchdog(

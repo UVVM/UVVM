@@ -116,17 +116,19 @@ package types_pkg is
   type t_sync_flag_record_array is array (natural range <>) of t_sync_flag_record;
 
   type t_watchdog_ctrl is record
-    extension   : time;
+    extend      : boolean;
     restart     : boolean;
-    new_timeout : time;
     terminate   : boolean;
+    extension   : time;
+    new_timeout : time;
   end record;
 
   constant C_WATCHDOG_CTRL_DEFAULT : t_watchdog_ctrl := (
-    extension   => 0 ns,
+    extend      => false,
     restart     => false,
-    new_timeout => 0 ns,
-    terminate   => false
+    terminate   => false,
+    extension   => 0 ns,
+    new_timeout => 0 ns
   );
 
   -- type for identifying VVC and command index finishing await_any_completion()

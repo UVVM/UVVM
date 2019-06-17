@@ -119,14 +119,22 @@ architecture func of methods_tb is
   signal p_sync_test_ena    : boolean := false;
 
   -- Watchdog timer control signal
-  signal watchdog_ctrl : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
+  signal watchdog_ctrl_terminate  : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
+  signal watchdog_ctrl_init       : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
+  signal watchdog_ctrl_extend     : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
+  signal watchdog_ctrl_reinit     : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
 
 begin
 
   ------------------------------------------------
   -- Process: watchdog timer
   ------------------------------------------------
-  watchdog_timer(watchdog_ctrl, 5 sec, ERROR, "Watchdog test");
+  -- These timers should have a minimum timeout that covers all the
+  -- tests in this testbench or else it will fail.
+  watchdog_timer(watchdog_ctrl_terminate, 5100 ns, ERROR, "Watchdog A");
+  watchdog_timer(watchdog_ctrl_init, 5200 ns, ERROR, "Watchdog B");
+  watchdog_timer(watchdog_ctrl_extend, 5300 ns, ERROR, "Watchdog C");
+  watchdog_timer(watchdog_ctrl_reinit, 100 us, ERROR, "Watchdog E");
 
   ------------------------------------------------
   -- Process: clock generator
@@ -3205,11 +3213,43 @@ begin
         end loop;
 
       elsif run("watchdog_timer") then
-        log(ID_LOG_HDR, "Testing watchdog timer", C_SCOPE);
-        restart_watchdog(watchdog_ctrl, 100 ns);
+        wait for 4999 ns;
+        log(ID_LOG_HDR, "Testing watchdog timer A (5100 ns) - terminate command", C_SCOPE);
+        terminate_watchdog(watchdog_ctrl_terminate);
+
+        log(ID_LOG_HDR, "Testing watchdog timer B (5200 ns) - initial timeout", C_SCOPE);
+        wait for 199 ns;
+        log(ID_SEQUENCER, "Watchdog B still running", C_SCOPE);
+        increment_expected_alerts(ERROR);
+        wait for 1 ns;
+
+        log(ID_LOG_HDR, "Testing watchdog timer C (5300 ns) - extend command", C_SCOPE);
+        extend_watchdog(watchdog_ctrl_extend, 100 ns);
+        wait for 199 ns;
+        log(ID_SEQUENCER, "Watchdog C still running", C_SCOPE);
+        extend_watchdog(watchdog_ctrl_extend);
+        wait for 5300 ns;
+        log(ID_SEQUENCER, "Watchdog C still running", C_SCOPE);
+        extend_watchdog(watchdog_ctrl_extend, 300 ns);
+        wait for 300 ns;
+        log(ID_SEQUENCER, "Watchdog C still running", C_SCOPE);
+        extend_watchdog(watchdog_ctrl_extend, 300 ns);
+        wait for 300 ns;
+        log(ID_SEQUENCER, "Watchdog C still running", C_SCOPE);
+        extend_watchdog(watchdog_ctrl_extend);
+        wait for 5300 ns;
+        reinitialize_watchdog(watchdog_ctrl_extend, 101 ns);
+        wait for 100 ns;
+        log(ID_SEQUENCER, "Watchdog C still running", C_SCOPE);
+        extend_watchdog(watchdog_ctrl_extend, 300 ns);
+        wait for 300 ns;
+        increment_expected_alerts(ERROR);
+        wait for 1 ns;
+
+        log(ID_LOG_HDR, "Testing watchdog timer D (100 us) - reinitialize command", C_SCOPE);
+        reinitialize_watchdog(watchdog_ctrl_reinit, 100 ns);
         wait for 99 ns;
-        extend_watchdog(watchdog_ctrl, 200 ns);
-        wait for 200 ns;
+        log(ID_SEQUENCER, "Watchdog D still running", C_SCOPE);
         increment_expected_alerts(ERROR);
         wait for 1 ns;
 
@@ -3219,8 +3259,11 @@ begin
     --==================================================================================================
     -- Ending the simulation
     --------------------------------------------------------------------------------------
+    terminate_watchdog(watchdog_ctrl_terminate);
+    terminate_watchdog(watchdog_ctrl_init);
+    terminate_watchdog(watchdog_ctrl_extend);
+    terminate_watchdog(watchdog_ctrl_reinit);
     wait for 1000 ns;                   -- to allow some time for completion
-    terminate_watchdog(watchdog_ctrl);
     report_alert_counters(INTERMEDIATE);
     report_alert_counters(FINAL);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);

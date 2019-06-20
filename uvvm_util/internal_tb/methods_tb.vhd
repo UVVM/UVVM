@@ -134,7 +134,7 @@ begin
   watchdog_timer(watchdog_ctrl_terminate, 5100 ns, ERROR, "Watchdog A");
   watchdog_timer(watchdog_ctrl_init, 5200 ns, ERROR, "Watchdog B");
   watchdog_timer(watchdog_ctrl_extend, 5300 ns, ERROR, "Watchdog C");
-  watchdog_timer(watchdog_ctrl_reinit, 100 us, ERROR, "Watchdog E");
+  watchdog_timer(watchdog_ctrl_reinit, 100 us, ERROR, "Watchdog D");
 
   ------------------------------------------------
   -- Process: clock generator

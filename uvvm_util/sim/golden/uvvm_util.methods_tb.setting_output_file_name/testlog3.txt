@@ -3,7 +3,7 @@ UVVM:                                                                           
 UVVM: ID_WATCHDOG                        1.0 ns  TB seq.                        Terminating watchdog. Watchdog A
 UVVM: ID_WATCHDOG                        1.0 ns  TB seq.                        Terminating watchdog. Watchdog B
 UVVM: ID_WATCHDOG                        1.0 ns  TB seq.                        Terminating watchdog. Watchdog C
-UVVM: ID_WATCHDOG                        1.0 ns  TB seq.                        Terminating watchdog. Watchdog E
+UVVM: ID_WATCHDOG                        1.0 ns  TB seq.                        Terminating watchdog. Watchdog D
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***

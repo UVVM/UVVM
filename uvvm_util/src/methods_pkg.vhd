@@ -3477,11 +3477,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_slv_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(value(idx + v_adj_idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   procedure check_value(
@@ -3497,11 +3506,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_signed_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   procedure check_value(
@@ -3517,11 +3535,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_unsigned_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   ------------------------------------------------------------------------

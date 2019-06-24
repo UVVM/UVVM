@@ -6193,6 +6193,10 @@ package body methods_pkg is
     variable v_timeout      : time;
     variable v_prev_timeout : time;
   begin
+    -- This delta cycle is needed due to a problem with external tools that
+    -- without it, they wouldn't print the first log message.
+    wait for 0 ns;
+
     log(ID_WATCHDOG, "Starting watchdog: " & to_string(timeout) & ". " & msg);
     v_prev_timeout := 0 ns;
     v_timeout      := timeout;
@@ -6236,7 +6240,7 @@ package body methods_pkg is
     if not watchdog_ctrl.terminate then
       watchdog_ctrl.extension <= time_extend;
       watchdog_ctrl.extend <= true;
-      wait for 0 ns; -- delta cycle to execute command
+      wait for 0 ns; -- delta cycle to propagate signal
       watchdog_ctrl.extend <= false;
     end if;
   end procedure;
@@ -6249,7 +6253,7 @@ package body methods_pkg is
     if not watchdog_ctrl.terminate then
       watchdog_ctrl.new_timeout <= timeout;
       watchdog_ctrl.restart <= true;
-      wait for 0 ns; -- delta cycle to execute command
+      wait for 0 ns; -- delta cycle to propagate signal
       watchdog_ctrl.restart <= false;
     end if;
   end procedure;
@@ -6259,7 +6263,7 @@ package body methods_pkg is
   ) is
   begin
     watchdog_ctrl.terminate <= true;
-    wait for 0 ns; -- delta cycle to execute terminate
+    wait for 0 ns; -- delta cycle to propagate signal
   end procedure;
 
 end package body methods_pkg;

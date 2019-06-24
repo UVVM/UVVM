@@ -52,6 +52,12 @@ architecture func of axistream_vvc_simple_tb is
   constant C_CLK_PERIOD : time   := 10 ns;
   constant C_SCOPE      : string := C_TB_SCOPE_DEFAULT;
 
+  -- VVC idx
+  constant C_FIFO2VVC_MASTER : natural := 0;
+  constant C_FIFO2VVC_SLAVE  : natural := 1;
+  constant C_VVC2VVC_MASTER  : natural := 2;
+  constant C_VVC2VVC_SLAVE   : natural := 3;
+
   constant c_max_bytes : natural   := 100;  -- max bytes per packet to send
   constant GC_DUT_FIFO_DEPTH : natural := 4;
 --------------------------------------------------------------------------------
@@ -163,10 +169,10 @@ begin
     axistream_bfm_config.max_wait_cycles_severity := error;
 
     -- Default: use same config for both the master and slave VVC
-    shared_axistream_vvc_config(0).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
-    shared_axistream_vvc_config(1).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
-    shared_axistream_vvc_config(2).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
-    shared_axistream_vvc_config(3).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
+    shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
+    shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
+    shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -176,18 +182,20 @@ begin
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
 
-    disable_log_msg(AXISTREAM_VVCT, 0, ALL_MESSAGES);
-    disable_log_msg(AXISTREAM_VVCT, 1, ALL_MESSAGES);
-    enable_log_msg(AXISTREAM_VVCT, 0, ID_BFM);
-    enable_log_msg(AXISTREAM_VVCT, 1, ID_BFM);
-    enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_INITIATE);
-    enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_INITIATE);
---    enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_DATA);
-    enable_log_msg(AXISTREAM_VVCT, 3, ID_PACKET_DATA);
-    enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_COMPLETE);
-    enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_COMPLETE);
-    enable_log_msg(AXISTREAM_VVCT, 0, ID_IMMEDIATE_CMD);
-    enable_log_msg(AXISTREAM_VVCT, 1, ID_IMMEDIATE_CMD);
+    disable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, ALL_MESSAGES);
+    disable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, ALL_MESSAGES);
+    disable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_MASTER, ALL_MESSAGES);
+    disable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, ALL_MESSAGES);
+    --enable_log_msg(AXISTREAM_VVCT, 0, ID_BFM);
+    --enable_log_msg(AXISTREAM_VVCT, 1, ID_BFM);
+    --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_INITIATE);
+    --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_INITIATE);
+    --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_DATA);
+    --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_DATA);
+    --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_COMPLETE);
+    --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_COMPLETE);
+    --enable_log_msg(AXISTREAM_VVCT, 0, ID_IMMEDIATE_CMD);
+    --enable_log_msg(AXISTREAM_VVCT, 1, ID_IMMEDIATE_CMD);
 
 
     log(ID_LOG_HDR, "Start Simulation of AXI-Stream");
@@ -461,6 +469,18 @@ begin
       end if;
     end loop;
 
+    -- This is a test of something that should never happen so the VVC might not
+    -- work correctly afterwards
+    ------------------------------------------------------------
+    log("TC: axistream VVC Master only transmits and VVC Slave only receives");
+    ------------------------------------------------------------
+    increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+    axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array, "transmit from VVC slave");
+    increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+    axistream_receive(AXISTREAM_VVCT, C_VVC2VVC_MASTER, "receive on VVC master");
+    increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+    axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array, "expect on VVC master");
+    wait for axistream_bfm_config.max_wait_cycles*C_CLK_PERIOD;
 
     --==================================================================================================
     -- Ending the simulation

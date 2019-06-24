@@ -261,6 +261,7 @@ begin
                   config              => vvc_config.bfm_config);
 
             when RECEIVE =>
+               check_value(GC_VVC_IS_MASTER, false, TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE, ID_NEVER);
                axistream_receive(data_array          => v_receive_as_slv, --v_result.data_array,
                                  data_length         => v_result.data_length,
                                  user_array          => v_result.user_array,
@@ -289,6 +290,7 @@ begin
                                                             result       => v_result );
 
             when EXPECT =>
+               check_value(GC_VVC_IS_MASTER, false, TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE, ID_NEVER);
                -- Call the corresponding procedure in the BFM package.
                axistream_expect_bytes(
                   exp_data_array      => v_cmd.data_array(0 to v_cmd.data_array_length-1),

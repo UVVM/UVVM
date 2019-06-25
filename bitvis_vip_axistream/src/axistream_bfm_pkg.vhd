@@ -1289,7 +1289,7 @@ package body axistream_bfm_pkg is
     check_value(axistream_if.tkeep'length = (axistream_if.tdata'length/8), TB_ERROR, "Sanity check: Check that width of tkeep equals number of bytes in tdata.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(axistream_if.tstrb'length = (axistream_if.tdata'length/8), TB_ERROR, "Sanity check: Check that width of tstrb equals number of bytes in tdata.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(data_array'ascending, TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for knowing which byte is sent first", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(user_array'ascending, TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(user_array'ascending, TB_ERROR, "Sanity check: Check that user_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(strb_array'ascending, TB_ERROR, "Sanity check: Check that strb_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(id_array'ascending,   TB_ERROR, "Sanity check: Check that   id_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(dest_array'ascending, TB_ERROR, "Sanity check: Check that dest_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -1387,7 +1387,6 @@ package body axistream_bfm_pkg is
         -- Check tlast='1' at expected last byte
         if v_byte_cnt = data_array'high then
           check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope);
-
           v_done := true;  -- Stop sampling data when we have filled the data_array
         end if;
 
@@ -1413,7 +1412,11 @@ package body axistream_bfm_pkg is
                     exit l_check_remaining_TKEEP;
                   end if;
                 end loop;
-
+              else
+                -- Next byte in word is valid but the data_array has finished
+                if v_done then
+                  alert(ERROR, v_proc_call.all & "=> Failed. data_array too small for received bytes. " & add_msg_delimiter(msg), scope);
+                end if;
               end if;
             end if;
           end if;

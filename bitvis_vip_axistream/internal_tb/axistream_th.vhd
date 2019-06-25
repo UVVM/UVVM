@@ -55,13 +55,6 @@ entity test_harness is
                                                 tstrb(  GC_DATA_WIDTH/8 -1 downto 0),
                                                 tid(    GC_ID_WIDTH     -1 downto 0),
                                                 tdest(  GC_DEST_WIDTH   -1 downto 0)
-                                              );
-    signal axistream_if_s_VVC2VVC : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0),
-                                                tkeep( (GC_DATA_WIDTH/8)-1 downto 0),
-                                                tuser(  GC_USER_WIDTH   -1 downto 0),
-                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0),
-                                                tid(    GC_ID_WIDTH     -1 downto 0),
-                                                tdest(  GC_DEST_WIDTH   -1 downto 0)
                                               )
   );
 

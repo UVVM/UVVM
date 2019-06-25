@@ -308,6 +308,17 @@ begin
     end loop;
 
 
+    log("TC: Testing BFM receive and expect check the correct number of bytes in the last word: ");
+    if GC_DATA_WIDTH > 8 then
+      axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+      axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    end if;
+
+
+    log("Transmit a last frame to check normal operation");
+    axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+
+
     --==================================================================================================
     -- Ending the simulation
     --------------------------------------------------------------------------------------
@@ -497,6 +508,19 @@ begin
 
       BFM_expect_wrong_size(v_numBytes, bytes_in_word, v_user_array(0 to v_numWords-1));
     end loop;
+
+
+    -- TC: Testing BFM receive and expect check the correct number of bytes in the last word
+    if GC_DATA_WIDTH > 8 then
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      axistream_receive(v_data_array_1_byte(0 to 1), v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "receiving 2 bytes", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      axistream_expect(v_data_array_1_byte(0 to 1), "expecting 2 bytes", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    end if;
+
+
+    -- Receive the last valid frame
+    axistream_expect(v_data_array_1_byte(0 to 3), "expecting 4 bytes", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
 
 
     wait;

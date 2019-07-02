@@ -860,7 +860,7 @@ package body axistream_bfm_pkg is
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
     ) is
     -- Helper variables
-    variable v_bytes_in_word    : integer := (data_array(0)'length/8);
+    variable v_bytes_in_word    : integer := (data_array(data_array'low)'length/8);
     variable v_num_bytes        : integer := (data_array'length) * v_bytes_in_word;
     variable v_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_data_array_idx   : integer := 0;
@@ -868,7 +868,7 @@ package body axistream_bfm_pkg is
     variable v_byte_endianness  : t_byte_endianness := config.byte_endianness;
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
       v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending
@@ -1501,7 +1501,7 @@ package body axistream_bfm_pkg is
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
     constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
     ) is    -- helper variables
-    variable v_bytes_in_word        : integer := (data_array(0)'length/8);
+    variable v_bytes_in_word        : integer := (data_array(data_array'low)'length/8);
     variable v_num_bytes            : integer := (data_array'length) * v_bytes_in_word;
     variable v_data_array_as_byte   : t_byte_array(0 to v_num_bytes-1);
     variable v_byte_endianness      : t_byte_endianness := config.byte_endianness;
@@ -1800,7 +1800,7 @@ package body axistream_bfm_pkg is
     ) is
     constant local_proc_name    : string := "axistream_expect";  -- Internal proc_name; used if called from sequncer or VVC
     -- helper variables
-    variable v_bytes_in_word        : integer := (exp_data_array(0)'length/8);
+    variable v_bytes_in_word        : integer := (exp_data_array(exp_data_array'low)'length/8);
     variable v_num_bytes            : integer := (exp_data_array'length) * v_bytes_in_word;
     variable v_exp_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_exp_data_array_idx   : integer := 0;
@@ -1810,7 +1810,7 @@ package body axistream_bfm_pkg is
 
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(exp_data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array is N*byte");
+    v_check_ok := check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array

@@ -4200,7 +4200,7 @@ package body methods_pkg is
     constant ascending        : boolean           := false;
     constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
   ) return t_byte_array is
-    variable v_bytes_in_word      : integer := (slv_array(0)'length/8);
+    variable v_bytes_in_word      : integer := (slv_array(slv_array'low)'length/8);
     variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
     variable v_ascending_array    : t_byte_array(0 to v_byte_array_length-1);
     variable v_descending_array   : t_byte_array(v_byte_array_length-1 downto 0);
@@ -4212,10 +4212,10 @@ package body methods_pkg is
     bitvis_assert((slv_array'ascending and ascending) or (not(slv_array'ascending) and not(ascending)), ERROR,
       "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
 
-    v_ascending_vector := slv_array(0)'ascending;
+    v_ascending_vector := slv_array(slv_array'low)'ascending;
 
     if byte_endianness = FIRST_BYTE_LEFT then
-      for slv_idx in 0 to slv_array'length-1 loop
+      for slv_idx in slv_array'range loop
         for byte in v_bytes_in_word downto 1 loop
           if v_ascending_vector then
             v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
@@ -4228,7 +4228,7 @@ package body methods_pkg is
         end loop;
       end loop;
     else -- FIRST_BYTE_RIGHT
-      for slv_idx in 0 to slv_array'length-1 loop
+      for slv_idx in slv_array'range loop
         for byte in 1 to v_bytes_in_word loop
           if v_ascending_vector then
             v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);

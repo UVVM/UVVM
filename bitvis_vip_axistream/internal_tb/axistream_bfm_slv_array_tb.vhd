@@ -222,7 +222,7 @@ begin
     -- Directly assign arguments in BFM procedure using slv
     --
     ---------------------------------------------------------------
-    log("TC: BFM axistream transmits short slv packet: ");
+    log(ID_LOG_HDR, "TC: BFM axistream transmits short slv packet: ");
     v_data_array_as_slv(31 downto 0) := x"AABBCCDD"; -- 4 bytes
     -- transmit 0xAA
     axistream_transmit(v_data_array_as_slv(31 downto 24), "Directly assign args, transmitting " & to_string(v_data_array_as_slv(31 downto 24), HEX), clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
@@ -239,7 +239,7 @@ begin
     -- Directly assign arguments in BFM procedure usint t_slv_array
     --
     ---------------------------------------------------------------
-    log("TC: BFM axistream transmits short packet: ");
+    log(ID_LOG_HDR, "TC: BFM axistream transmits short packet: ");
 
     -- TC: Directly assigning args
     v_cnt := 0;
@@ -293,7 +293,7 @@ begin
     end loop;
 
 
-    log("TC: BFM transmit verify alert if data_array don't consist of N*bytes: ");
+    log(ID_LOG_HDR, "TC: BFM transmit verify alert if data_array don't consist of N*bytes: ");
     for bytes_in_word in 1 to C_MAX_BYTES_IN_WORD loop
       v_numBytes := 8;
       v_numWords := integer(ceil(real(v_numBytes*bytes_in_word)/(real(GC_DATA_WIDTH)/8.0)));
@@ -308,15 +308,17 @@ begin
     end loop;
 
 
-    log("TC: Testing BFM receive and expect check the correct number of bytes in the last word: ");
+    log(ID_LOG_HDR, "TC: Testing BFM receive and expect check the correct number of bytes in the last word: ");
     if GC_DATA_WIDTH > 8 then
       axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
       axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
     end if;
 
 
-    log("Transmit a last frame to check normal operation");
-    axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    log(ID_LOG_HDR, "TC: Testing BFM transmit, receive and expect with non-normalized slv_array: ");
+    v_data_array_1_byte(1 to 4) := (x"00",x"01",x"02",x"03");
+    axistream_transmit(v_data_array_1_byte(1 to 4), "transmit bytes 1 to 4", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    axistream_transmit(v_data_array_1_byte(1 to 4), "transmit bytes 1 to 4", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
 
 
     --==================================================================================================
@@ -519,9 +521,10 @@ begin
     end if;
 
 
-    -- Receive the last valid frame
-    axistream_expect(v_data_array_1_byte(0 to 3), "expecting 4 bytes", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
-
+    -- TC: Testing BFM transmit, receive and expect with non-normalized slv_array
+    v_data_array_1_byte(1 to 4) := (x"00",x"01",x"02",x"03");
+    axistream_receive(v_data_array_1_byte(1 to 4), v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "receiving bytes 1 to 4", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    axistream_expect(v_data_array_1_byte(1 to 4), "expecting bytes 1 to 4", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
 
     wait;
   end process p_slave;

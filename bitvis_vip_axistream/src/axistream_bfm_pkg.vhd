@@ -1308,11 +1308,6 @@ package body axistream_bfm_pkg is
       dest_width => axistream_if.tdest'length,
       config     => config );
 
-    -- Ensure ready_default_value of '1' is used if specified.
-    if config.ready_default_value = '1' then
-      v_ready_low_duration := 0;
-    end if;
-
     -- check if enough room for setup_time in low period
     if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event))then
       await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, v_proc_call.all & ": timeout waiting for clk low period for setup_time.");

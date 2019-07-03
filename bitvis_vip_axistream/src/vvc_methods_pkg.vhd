@@ -400,7 +400,7 @@ package body vvc_methods_pkg is
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     -- helper variables
-    variable v_bytes_in_word    : integer := (data_array(0)'length/8);
+    variable v_bytes_in_word    : integer := (data_array(data_array'low)'length/8);
     variable v_num_bytes        : integer := (data_array'length) * v_bytes_in_word;
     variable v_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_data_array_idx   : integer := 0;
@@ -408,7 +408,7 @@ package body vvc_methods_pkg is
     variable v_byte_endianness  : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
@@ -631,7 +631,7 @@ package body vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)" 
     ) is
     -- helper variables
-    variable v_bytes_in_word    : integer := (data_array(0)'length/8);
+    variable v_bytes_in_word    : integer := (data_array(data_array'low)'length/8);
     variable v_num_bytes        : integer := (data_array'length) * v_bytes_in_word;
     variable v_data_array       : t_byte_array(0 to v_num_bytes-1);
     variable v_data_array_idx   : integer := 0;
@@ -639,7 +639,7 @@ package body vvc_methods_pkg is
     variable v_byte_endianness  : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(0)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array

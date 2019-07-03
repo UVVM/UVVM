@@ -747,6 +747,14 @@ begin
     end loop;
 
     ------------------------------------------------------------
+    log(ID_LOG_HDR, "TC: Testing VVC transmit and expect with non-normalized slv_array");
+    ------------------------------------------------------------
+    v_data_array_1_byte(1 to 4) := (x"00",x"01",x"02",x"03");
+    axistream_transmit(AXISTREAM_VVCT, 0, v_data_array_1_byte(1 to 4), "transmit bytes 1 to 4");
+    axistream_expect(AXISTREAM_VVCT, 1, v_data_array_1_byte(1 to 4), "expecting bytes 1 to 4");
+    await_completion(AXISTREAM_VVCT, 1, 1 ms);
+
+    ------------------------------------------------------------
     log("TC: sanity check ");
     ------------------------------------------------------------
     for bytes_in_word in 1 to C_MAX_BYTES_IN_WORD loop

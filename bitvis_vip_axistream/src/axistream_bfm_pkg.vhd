@@ -1323,32 +1323,39 @@ package body axistream_bfm_pkg is
     while not v_done loop
       v_waited_this_iteration := false;
 
-      --
-      -- Set tready low before given word
-      --
-      if (v_byte_in_word = 0) and
-        (config.ready_low_at_word_num = v_byte_cnt/c_num_bytes_per_word) and
-        (not v_ready_low_done) then
+      ------------------------------------------------------------
+      -- Set tready low before given word (once per transmission)
+      ------------------------------------------------------------
+      if not(v_ready_low_done) and (v_byte_in_word = 0) and
+        (config.ready_low_at_word_num = v_byte_cnt/c_num_bytes_per_word)
+      then
         axistream_if.tready <= '0';
 
         -- If we deassert ready before byte 0, keep it deasserted until valid goes high so that it matters
         if config.ready_low_at_word_num = 0 and axistream_if.tvalid = '0' then
-          wait until axistream_if.tvalid = '1';
-
-          -- Wait hold time specified in config record
-          wait_until_given_time_after_rising_edge(clk, config.hold_time);
+          wait until axistream_if.tvalid = '1' for (config.max_wait_cycles * config.clock_period);
+          -- Check for timeout
+          if axistream_if.tvalid = '0' then
+            v_timeout := true;
+            v_done    := true;
+            v_waited_this_iteration := true;
+            v_ready_low_duration    := 0;
+          else
+            -- Wait hold time specified in config record
+            wait_until_given_time_after_rising_edge(clk, config.hold_time);
+          end if;
         end if;
 
-        --wait for config.ready_low_duration * config.clock_period;
         wait for v_ready_low_duration * config.clock_period;
         v_ready_low_done := true;
-
       end if;
 
       axistream_if.tready <= '1';       -- In case it was '0'
       wait for 0 ns;                    -- Wait for signal to change value
 
+      ------------------------------------------------------------
       -- Wait until data is transferred: valid and ready
+      ------------------------------------------------------------
       if axistream_if.tvalid = '1' and axistream_if.tready = '1' then
         v_invalid_count := 0;
 
@@ -1416,7 +1423,6 @@ package body axistream_bfm_pkg is
             end if;
           end if;
         else
-
           -- tlast = 0
           if (v_byte_cnt = data_array'high) then
             alert(config.protocol_error_severity, v_proc_call.all & "=> Failed. tlast not received, expected at or before byte#" & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope);
@@ -1438,11 +1444,13 @@ package body axistream_bfm_pkg is
         -- Next byte
         v_byte_cnt := v_byte_cnt + 1;
 
-      else
-        -- (tvalid and tready) = '0'
+      ------------------------------------------------------------
+      -- (tvalid and tready) = '0'
+      ------------------------------------------------------------
+      elsif not(v_timeout) then
         -- Check for timeout (also when max_wait_cycles_severity = NO_ALERT,
-        --                    or else the VVC will wait forever, until the UVVM cmd times out)
-        if (v_invalid_count >= config.max_wait_cycles) then
+        -- or else the VVC will wait forever, until the UVVM cmd times out)
+        if (v_invalid_count >= config.max_wait_cycles-1) then
           v_timeout := true;
           v_done    := true;
         else
@@ -1451,7 +1459,6 @@ package body axistream_bfm_pkg is
 
         wait for config.clock_period;
         v_waited_this_iteration := true;
-
       end if;
 
     end loop;  -- while not v_done

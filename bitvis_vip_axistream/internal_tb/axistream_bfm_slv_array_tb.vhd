@@ -321,6 +321,11 @@ begin
     axistream_transmit(v_data_array_1_byte(1 to 4), "transmit bytes 1 to 4", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
 
 
+    await_barrier(global_barrier, 1 us, "Synchronizing master");
+    log(ID_LOG_HDR, "TC: Testing BFM receive() timeouts at max_wait_cycles: ");
+    wait for (axistream_bfm_config.max_wait_cycles)*C_CLK_PERIOD;
+    wait for (axistream_bfm_config.max_wait_cycles)*C_CLK_PERIOD;
+
     --==================================================================================================
     -- Ending the simulation
     --------------------------------------------------------------------------------------
@@ -525,6 +530,16 @@ begin
     v_data_array_1_byte(1 to 4) := (x"00",x"01",x"02",x"03");
     axistream_receive(v_data_array_1_byte(1 to 4), v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "receiving bytes 1 to 4", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
     axistream_expect(v_data_array_1_byte(1 to 4), "expecting bytes 1 to 4", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+
+
+    await_barrier(global_barrier, 1 us, "Synchronizing slave");
+    -- TC: Testing BFM receive() timeouts at max_wait_cycles
+    axistream_bfm_config.ready_low_at_word_num := 0;
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    axistream_receive(v_data_array, v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "invalid receive", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    axistream_bfm_config.ready_low_at_word_num := 1;
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    axistream_receive(v_data_array, v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "invalid receive", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
 
     wait;
   end process p_slave;

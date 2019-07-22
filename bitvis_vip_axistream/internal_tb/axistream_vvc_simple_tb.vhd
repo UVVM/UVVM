@@ -188,12 +188,12 @@ begin
     disable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, ALL_MESSAGES);
     --enable_log_msg(AXISTREAM_VVCT, 0, ID_BFM);
     --enable_log_msg(AXISTREAM_VVCT, 1, ID_BFM);
-    --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_INITIATE);
-    --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_INITIATE);
+    enable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, ID_PACKET_INITIATE);
+    enable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_MASTER, ID_PACKET_INITIATE);
     --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_DATA);
     --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_DATA);
-    --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_COMPLETE);
-    --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_COMPLETE);
+    enable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, ID_PACKET_COMPLETE);
+    enable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, ID_PACKET_COMPLETE);
     --enable_log_msg(AXISTREAM_VVCT, 0, ID_IMMEDIATE_CMD);
     --enable_log_msg(AXISTREAM_VVCT, 1, ID_IMMEDIATE_CMD);
 
@@ -469,10 +469,8 @@ begin
       end if;
     end loop;
 
-    -- This is a test of something that should never happen so the VVC might not
-    -- work correctly afterwards
     ------------------------------------------------------------
-    log("TC: axistream VVC Master only transmits and VVC Slave only receives");
+    log("TC: check axistream VVC Master only transmits and VVC Slave only receives");
     ------------------------------------------------------------
     increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
     axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array, "transmit from VVC slave");
@@ -480,7 +478,10 @@ begin
     axistream_receive(AXISTREAM_VVCT, C_VVC2VVC_MASTER, "receive on VVC master");
     increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
     axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array, "expect on VVC master");
-    wait for axistream_bfm_config.max_wait_cycles*C_CLK_PERIOD;
+
+    axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array, "transmit");
+    axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array, "expect ");
+    await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
 
     --==================================================================================================
     -- Ending the simulation

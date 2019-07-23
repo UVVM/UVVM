@@ -1,6 +1,0 @@
-From ubuntu/riviera-pro-2016.2:latest
-COPY ./ /uvvm/
-ENV LM_LICENSE_FILE 27008@webserver1.bv
-WORKDIR /uvvm/bitvis_vip_i2c/sim/
-CMD ["bash", "-c", "python internal_run_riviera_pro.py --clean --no-color --xunit-xml xunit-report.xml"]
-

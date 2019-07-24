@@ -189,7 +189,9 @@ begin
     --enable_log_msg(AXISTREAM_VVCT, 0, ID_BFM);
     --enable_log_msg(AXISTREAM_VVCT, 1, ID_BFM);
     enable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, ID_PACKET_INITIATE);
+    enable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, ID_PACKET_INITIATE);
     enable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_MASTER, ID_PACKET_INITIATE);
+    enable_log_msg(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, ID_PACKET_INITIATE);
     --enable_log_msg(AXISTREAM_VVCT, 0, ID_PACKET_DATA);
     --enable_log_msg(AXISTREAM_VVCT, 1, ID_PACKET_DATA);
     enable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, ID_PACKET_COMPLETE);
@@ -482,6 +484,39 @@ begin
     axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array, "transmit");
     axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array, "expect ");
     await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
+
+    --------------------------------------------------------------
+    log("TC: Test different configurations of ready low");
+    --------------------------------------------------------------
+    for i in 0 to 3 loop
+      shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_default_value   := '0' when i < 2 else '1';
+      shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_default_value    := '0' when i < 2 else '1';
+      wait for C_CLK_PERIOD;
+      shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_at_word_num := 0 when (i mod 2 = 0) else 2;
+      shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_at_word_num  := 0 when (i mod 2 = 0) else 2;
+      shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_duration    := 1;
+      shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_duration     := 1;
+
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 0), "transmit 1 byte");
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 0), "transmit 1 byte");
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 3), "transmit 4 bytes");
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 3), "transmit 4 bytes");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 0), "expect 1 byte");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 0), "expect 1 byte");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 3), "expect 4 bytes");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 3), "expect 4 bytes");
+      await_completion(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, 1 ms);
+
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array(0 to 0), "transmit 1 byte");
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array(0 to 0), "transmit 1 byte");
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array(0 to 3), "transmit 4 bytes");
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array(0 to 3), "transmit 4 bytes");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 0), "expect 1 byte");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 0), "expect 1 byte");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 3), "expect 4 bytes");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 3), "expect 4 bytes");
+      await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
+    end loop;
 
     --==================================================================================================
     -- Ending the simulation

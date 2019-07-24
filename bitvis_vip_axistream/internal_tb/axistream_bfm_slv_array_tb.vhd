@@ -211,6 +211,10 @@ begin
     report_msg_id_panel(VOID);
 
     enable_log_msg(ALL_MESSAGES);
+    disable_log_msg(ID_UTIL_SETUP);
+    disable_log_msg(ID_POS_ACK);
+    disable_log_msg(ID_BFM);
+    disable_log_msg(ID_PACKET_DATA);
 
     log(ID_LOG_HDR, "Start Simulation of TB for AXISTREAM 1", C_SCOPE);
     ------------------------------------------------------------
@@ -486,18 +490,18 @@ begin
       if bytes_in_word = 1 then
         -- Test the overload without exp_user_array, exp_strb_array etc
         axistream_expect(get_slv_array(v_numBytes, bytes_in_word),
-                          "ready_low_at_word_num = " & to_string(axistream_bfm_config.ready_low_at_word_num) &
-                          "ready_low_duration = " & to_string(axistream_bfm_config.ready_low_duration) &
-                          "ready_default_value = " & to_string(axistream_bfm_config.ready_default_value) &
-                          "bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
+                          "ready_low_at_word_num=" & to_string(axistream_bfm_config.ready_low_at_word_num) &
+                          ", ready_low_duration=" & to_string(axistream_bfm_config.ready_low_duration) &
+                          ", ready_default_value=" & to_string(axistream_bfm_config.ready_default_value) &
+                          ", bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
       else
         -- Test the overload without exp_strb_array, exp_id_array, exp_dest_array
         -- More tstrb, tid, tdest tests in axistream_vvc_simple_tb.
         axistream_expect(get_slv_array(v_numBytes, bytes_in_word), v_user_array(0 to v_numWords-1),
-                          "ready_low_at_word_num = " & to_string(axistream_bfm_config.ready_low_at_word_num) &
-                          "ready_low_duration = " & to_string(axistream_bfm_config.ready_low_duration) &
-                          "ready_default_value = " & to_string(axistream_bfm_config.ready_default_value) &
-                          "bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
+                          "ready_low_at_word_num=" & to_string(axistream_bfm_config.ready_low_at_word_num) &
+                          ", ready_low_duration=" & to_string(axistream_bfm_config.ready_low_duration) &
+                          ", ready_default_value=" & to_string(axistream_bfm_config.ready_default_value) &
+                          ", bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
       end if;
     end loop;
 

@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -58,7 +58,7 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
-    bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference 
+    bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
   end record;
 
@@ -116,7 +116,74 @@ package vvc_methods_pkg is
 
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  --
+  -- DTT - Direct Transaction Transfer types, constants and signal
+  --
+  --==========================================================================================
+
+  type t_vvc_specific is record
+    addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+  end record;
+
+  constant C_VVC_SPECIFIC_DEFAULT : t_vvc_specific := (
+    addr => (others => '0'),
+    data => (others => '0')
+  );
+
+  type t_vvc_meta_data is record
+    msg                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    cmd_idx             : integer;
+  end record;
+
+  constant C_VVC_META_DATA_DEFAULT : t_vvc_meta_data := (
+    msg     => (others => ' '),
+    cmd_idx => 0
+  );
+
+  --subtype t_vvc_operation is t_operation range WRITE to POLL_UNTIL;
+  type t_vvc_operation is (NO_OPERATION, WRITE, READ, CHECK, POLL_UNTIL);
+
+  type t_vvc_error_info is record
+    delay_error : boolean; -- bytt ut med en relevant feil
+  end record;
+
+  constant C_VVC_ERROR_INFO_DEFAULT : t_vvc_error_info := (
+    delay_error => false
+  );
+
+  type t_transaction is record
+    operation           : t_vvc_operation;
+    vvc_specific        : t_vvc_specific;
+    transaction_valid   : boolean;
+    meta                : t_vvc_meta_data;
+    error_info          : t_vvc_error_info;
+  end record;
+
+  constant C_TRANSACTION_DEFAULT : t_transaction := (
+    operation         => NO_OPERATION,
+    vvc_specific      => C_VVC_SPECIFIC_DEFAULT,
+    transaction_valid => false,
+    meta              => C_VVC_META_DATA_DEFAULT,
+    error_info        => C_VVC_ERROR_INFO_DEFAULT
+  );
+
+  type t_vvc_transaction is record
+    bt                  : t_transaction; -- base transaction
+    ct                  : t_transaction; -- compound transaction
+  end record;
+
+  constant C_SBI_VVC_TRANSACTION_DEFAULT : t_vvc_transaction := (
+    bt => C_TRANSACTION_DEFAULT,
+    ct => C_TRANSACTION_DEFAULT
+  );
+
+  type t_vvc_transaction_array is array(natural range <>) of t_vvc_transaction;
+  signal global_sbi_vvc_transaction : t_vvc_transaction_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_SBI_VVC_TRANSACTION_DEFAULT);
+
+
+  --==========================================================================================
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the

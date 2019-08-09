@@ -43,7 +43,7 @@ ui = VUnit.from_argv()
 # Create VHDL libraries and add the related project files to these
 project_root = join(dirname(__file__), '..', '..')
 
-execute_riviera_pro_command('../sim/make_altera_rv.do')
+execute_riviera_pro_command('../internal_script/make_altera_rv.do')
 uvvm_util_lib = ui.add_library('uvvm_util')
 uvvm_util_lib.add_source_files(join(project_root, 'uvvm_util', 'src', '*.vhd'))
 

@@ -26,7 +26,7 @@ def simulate(log_to_transcript):
   sim_log.log("\n" + component)
   sim_log.log("\n" + separation_line)
 
-  os.chdir("sim")
+  os.chdir("internal_script")
 
   # Delete old compiled libraries and simulations if any
   if os.path.exists("vunit_out"):

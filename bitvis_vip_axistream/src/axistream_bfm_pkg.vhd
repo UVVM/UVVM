@@ -38,10 +38,13 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   -- C_MAX_*_BITS : Maximum number of bits per data word supported by the BFM.
   -- These constant can be increased as needed.
-  constant C_MAX_TUSER_BITS : positive := 8;
-  constant C_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
-  constant C_MAX_TID_BITS   : positive := 8; -- Recommended maximum in protocol specification (ARM IHI0051A)
-  constant C_MAX_TDEST_BITS : positive := 4; -- Recommended maximum in protocol specification (ARM IHI0051A)
+  constant C_MAX_TUSER_BITS  : positive := 8;
+  constant C_MAX_TSTRB_BITS  : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
+  constant C_MAX_TID_BITS    : positive := 8;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+  constant C_MAX_TDEST_BITS  : positive := 4;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+
+  constant C_RANDOM          : integer := -1;
+  constant C_MULTIPLE_RANDOM : integer := -2;
 
   type     t_user_array is array(natural range <>) of std_logic_vector(C_MAX_TUSER_BITS-1 downto 0);
   type     t_strb_array is array(natural range <>) of std_logic_vector(C_MAX_TSTRB_BITS-1 downto 0);
@@ -74,10 +77,13 @@ package axistream_bfm_pkg is
     setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
     hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
     byte_endianness             : t_byte_endianness; -- Byte ordering from left (big-endian) or right (little-endian)
+    -- config for axistream_transmit()
+    valid_low_at_word_num       : integer;       -- Word index where the Source BFM shall deassert valid
+    valid_low_duration          : integer;       -- Number of clock cycles to deassert valid
     -- config for axistream_receive()
     check_packet_length         : boolean;       -- When true, receive() will check that last is set at data_array'high
     protocol_error_severity     : t_alert_level; -- severity if protocol errors are detected by axistream_receive()
-    ready_low_at_word_num       : integer;       -- When the Sink BFM shall deassert ready
+    ready_low_at_word_num       : integer;       -- Word index where the Sink BFM shall deassert ready
     ready_low_duration          : integer;       -- Number of clock cycles to deassert ready
     ready_default_value         : std_logic;     -- Which value the BFM shall set ready to between accesses.
     -- Common
@@ -96,6 +102,8 @@ package axistream_bfm_pkg is
     setup_time                  => 0 ns,
     hold_time                   => 0 ns,
     byte_endianness             => FIRST_BYTE_LEFT,
+    valid_low_at_word_num       => 0,
+    valid_low_duration          => 0,
     check_packet_length         => false,
     protocol_error_severity     => ERROR,
     ready_low_at_word_num       => 0,
@@ -696,10 +704,11 @@ package body axistream_bfm_pkg is
 
     -- Helper variables
     variable v_byte_in_word                 : integer range 0 to c_num_bytes_per_word-1 := 0;  -- current byte within the data word
-    variable v_byte_cnt                     : natural := 0;
     variable v_clk_cycles_waited            : natural := 0;
     variable v_wait_for_next_transfer_cycle : boolean;  -- When set, the BFM shall wait for at least one clock cycle, until tready='1' before continuing
-    variable v_last_rising_edge  : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_last_rising_edge             : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_valid_low_duration           : natural := 0;
+    variable v_next_deassert_byte           : natural := c_num_bytes_per_word; -- C_MULTIPLE_RANDOM always deasserts on second word the first time
 
     -- Sampled tready for the current clock cycle
     variable v_tready : std_logic;
@@ -733,7 +742,7 @@ package body axistream_bfm_pkg is
                                               id_width   => axistream_if.tid'length,
                                               dest_width => axistream_if.tdest'length);
 
-    -- check if enough room for setup_time in low period
+    -- Check if enough room for setup_time in low period
     if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event))then
       await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, proc_call & ": timeout waiting for clk low period for setup_time.");
     end if;
@@ -742,6 +751,9 @@ package body axistream_bfm_pkg is
 
     log(ID_PACKET_INITIATE, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
+    ------------------------------------------------------------------------------------------------------------
+    -- Send byte by byte. There may be multiple bytes per clock cycle, depending on axistream_if'tdata width.
+    ------------------------------------------------------------------------------------------------------------
     for byte in 0 to data_array'high loop
       log(ID_PACKET_DATA, proc_call & "=> Tx " & to_string(data_array(byte), HEX, AS_IS, INCL_RADIX) &
       --     ", tuser=" & to_string(user_array(byte/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
@@ -749,6 +761,29 @@ package body axistream_bfm_pkg is
       --     ", tid="   & to_string(id_array(byte/c_num_bytes_per_word),   HEX, AS_IS, INCL_RADIX) &
       --     ", tdest=" & to_string(dest_array(byte/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
           ", byte# " & to_string(byte) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+
+      -------------------------------------------------------------------
+      -- Set tvalid low (once per transmission or multiple random times)
+      -------------------------------------------------------------------
+      if v_byte_in_word = 0 and (config.valid_low_duration > 0 or config.valid_low_duration = C_RANDOM) then
+        -- Check if pulse duration is defined or random
+        if config.valid_low_duration > 0 then
+          v_valid_low_duration := config.valid_low_duration;
+        elsif config.valid_low_duration = C_RANDOM then
+          v_valid_low_duration := random(1,5);
+        end if;
+        -- Deassert tvalid once per transmission on a specific word
+        if config.valid_low_at_word_num = byte/c_num_bytes_per_word then
+          wait for v_valid_low_duration * config.clock_period;
+          v_last_rising_edge := -1 ns; -- clear the time stamp since it will be longer than one period
+        -- Deassert tvalid multiple random times per transmission
+        elsif config.valid_low_at_word_num = C_MULTIPLE_RANDOM and v_next_deassert_byte = byte then
+          wait for v_valid_low_duration * config.clock_period;
+          v_next_deassert_byte := byte + (1+random(1,5))*c_num_bytes_per_word; -- avoid deasserting on the next word
+          v_last_rising_edge := -1 ns; -- clear the time stamp since it will be longer than one period
+        end if;
+      end if;
+
       axistream_if.tvalid <= '1';
 
       -- Byte locations within the data word is described in chapter 2.3 in "ARM IHI0051A"
@@ -765,7 +800,7 @@ package body axistream_bfm_pkg is
       -- TKEEP[x] is associated with TDATA[(7+8*v_byte_in_word) : 8*v_byte_in_word].
       axistream_if.tkeep(v_byte_in_word) <= '1';
 
-      -- Default: Go to next 'byte' iteration in zero time (when tdata is not completely fillled with bytes).
+      -- Default: Go to next 'byte' iteration in zero time (when tdata is not completely filled with bytes).
       v_wait_for_next_transfer_cycle := false;
 
       if byte = data_array'high then
@@ -835,8 +870,6 @@ package body axistream_bfm_pkg is
     end loop;
 
     -- Done.
-    axistream_if.tvalid <= '0';
-
     log(ID_PACKET_COMPLETE, proc_call & "=> Tx DONE" &
         ". " & add_msg_delimiter(msg),
         scope, msg_id_panel);
@@ -1359,7 +1392,7 @@ package body axistream_bfm_pkg is
       ------------------------------------------------------------
       if v_byte_in_word = 0 then
         -- To receive the first byte wait until tvalid goes high before asserting tready
-        if axistream_if.tvalid = '0' and not(v_timeout) then
+        if v_byte_cnt = 0 and axistream_if.tvalid = '0' and not(v_timeout) then
           wait until axistream_if.tvalid = '1' for (config.max_wait_cycles * config.clock_period);
           if axistream_if.tvalid = '1' then
             axistream_if.tready <= '1';

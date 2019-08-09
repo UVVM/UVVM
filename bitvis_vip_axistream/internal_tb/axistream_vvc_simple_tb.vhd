@@ -206,7 +206,7 @@ begin
     gen_pulse(areset, 10*C_CLK_PERIOD, "Pulsing reset for 10 clock periods");
 
     ------------------------------------------------------------
-    log("TC: axistream VVC Master (VVC_IDX=2) transmits directly to VVC Slave (VVC_IDX=3)");
+    log(ID_LOG_HDR, "TC: axistream VVC Master (VVC_IDX=2) transmits directly to VVC Slave (VVC_IDX=3)");
     ------------------------------------------------------------
 
     for i in 1 to 10 loop
@@ -321,7 +321,7 @@ begin
 
 
     ------------------------------------------------------------
-    log("TC: axistream_receive and fetch_result ");
+    log(ID_LOG_HDR, "TC: axistream_receive and fetch_result ");
     ------------------------------------------------------------
     v_numBytes := random(1, c_max_bytes);
     v_numWords := integer(ceil(real(v_numBytes)/(real(GC_DATA_WIDTH)/8.0)));
@@ -346,7 +346,7 @@ begin
     check_value(v_result_from_fetch.data_length, v_numBytes, error, "Verifying that fetched data_length is as expected", C_TB_SCOPE_DEFAULT, ID_SEQUENCER);
 
     ------------------------------------------------------------
-    log("TC: axistream transmit when tready=0 from DUT at start of transfer  ");
+    log(ID_LOG_HDR, "TC: axistream transmit when tready=0 from DUT at start of transfer  ");
     ------------------------------------------------------------
 
     -- Fill DUT FIFO to provoke tready=0
@@ -376,7 +376,7 @@ begin
     wait for 100 ns;
 
     ------------------------------------------------------------
-    log("TC: axistream transmits: ");
+    log(ID_LOG_HDR, "TC: axistream transmits: ");
     ------------------------------------------------------------
     shared_axistream_vvc_config(0).inter_bfm_delay.delay_type := TIME_FINISH2START;
     for i in 0 to 2 loop
@@ -472,7 +472,7 @@ begin
     end loop;
 
     ------------------------------------------------------------
-    log("TC: check axistream VVC Master only transmits and VVC Slave only receives");
+    log(ID_LOG_HDR, "TC: check axistream VVC Master only transmits and VVC Slave only receives");
     ------------------------------------------------------------
     increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
     axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array, "transmit from VVC slave");
@@ -486,7 +486,7 @@ begin
     await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
 
     --------------------------------------------------------------
-    log("TC: Test different configurations of ready low");
+    log(ID_LOG_HDR, "TC: Test different configurations of ready low");
     --------------------------------------------------------------
     for i in 0 to 3 loop
       shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_default_value   := '0' when i < 2 else '1';
@@ -515,6 +515,29 @@ begin
       axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 0), "expect 1 byte");
       axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 3), "expect 4 bytes");
       axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 3), "expect 4 bytes");
+      await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
+    end loop;
+
+    --------------------------------------------------------------
+    log(ID_LOG_HDR ,"TC: Test different configurations of valid low");
+    --------------------------------------------------------------
+    for i in 0 to 19 loop
+      if i < 10 then
+        shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_at_word_num := random(0,5);
+        shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_duration    := random(0,5);
+        shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_at_word_num  := random(0,5);
+        shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_duration     := random(0,5);
+      else
+        shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_at_word_num := C_MULTIPLE_RANDOM;
+        shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_duration    := C_RANDOM;
+        shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_at_word_num  := C_MULTIPLE_RANDOM;
+        shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_duration     := C_RANDOM;
+      end if;
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 15), "transmit 16 bytes");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 15), "expect 16 bytes");
+      await_completion(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, 1 ms);
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array(0 to 15), "transmit 16 bytes");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 15), "expect 16 bytes");
       await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
     end loop;
 

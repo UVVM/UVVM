@@ -519,19 +519,27 @@ begin
     end loop;
 
     --------------------------------------------------------------
-    log(ID_LOG_HDR ,"TC: Test different configurations of valid low");
+    log(ID_LOG_HDR ,"TC: Test random configurations of valid and ready low");
     --------------------------------------------------------------
-    for i in 0 to 19 loop
-      if i < 10 then
+    for i in 0 to 39 loop
+      if i < 20 then
         shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_at_word_num := random(0,5);
         shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_duration    := random(0,5);
         shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_at_word_num  := random(0,5);
         shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_duration     := random(0,5);
+        shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_at_word_num  := random(0,5);
+        shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_duration     := random(0,5);
+        shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_at_word_num   := random(0,5);
+        shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_duration      := random(0,5);
       else
         shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_at_word_num := C_MULTIPLE_RANDOM;
         shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_duration    := C_RANDOM;
         shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_at_word_num  := C_MULTIPLE_RANDOM;
         shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_duration     := C_RANDOM;
+        shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_at_word_num  := C_MULTIPLE_RANDOM;
+        shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_duration     := C_RANDOM;
+        shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_at_word_num   := C_MULTIPLE_RANDOM;
+        shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_duration      := C_RANDOM;
       end if;
       axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 15), "transmit 16 bytes");
       axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 15), "expect 16 bytes");

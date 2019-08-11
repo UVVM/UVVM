@@ -1296,10 +1296,10 @@ package body axistream_bfm_pkg is
     variable v_done                  : boolean                                   := false;
     variable v_invalid_count         : integer                                   := 0;  -- # cycles without valid being asserted
     variable v_sample_on_next_cycle  : boolean                                   := false;
-    variable v_ready_low_done        : boolean                                   := false;
     variable v_byte_idx              : integer;
     variable v_word_idx              : integer;
-    variable v_ready_low_duration    : integer                                   := config.ready_low_duration;
+    variable v_ready_low_duration    : natural := 0;
+    variable v_next_deassert_byte    : natural := c_num_bytes_per_word; -- C_MULTIPLE_RANDOM always deasserts on second word the first time
 
   begin
     -- If called from sequencer/VVC, show 'axistream_receive()...' in log
@@ -1357,34 +1357,47 @@ package body axistream_bfm_pkg is
     while not v_done loop
       v_sample_on_next_cycle := false;
 
-      ------------------------------------------------------------
-      -- Set tready low before given byte (once per transmission)
-      ------------------------------------------------------------
-      if not(v_ready_low_done) and v_byte_in_word = 0 and config.ready_low_duration > 0
-        and config.ready_low_at_word_num = v_byte_cnt/c_num_bytes_per_word
-      then
-        -- If we deassert tready before byte 0, wait until tvalid goes high before doing so
-        if config.ready_low_at_word_num = 0 and axistream_if.tvalid = '0' then
-          wait until axistream_if.tvalid = '1' for (config.max_wait_cycles * config.clock_period);
-          if axistream_if.tvalid = '1' then
-            -- Wait until the setup time before the next rising edge to lower tready
-            wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
-          else
-            -- TValid timed out
-            v_timeout := true;
-            v_done    := true;
-            v_ready_low_duration := 0;
-          end if;
+      --------------------------------------------------------------------------------------
+      -- Set tready low before given byte (once per transmission or multiple random times)
+      --------------------------------------------------------------------------------------
+      if v_byte_in_word = 0 and (config.ready_low_duration > 0 or config.ready_low_duration = C_RANDOM) then
+        -- Check if pulse duration is defined or random
+        if config.ready_low_duration > 0 then
+          v_ready_low_duration := config.ready_low_duration;
+        elsif config.ready_low_duration = C_RANDOM then
+          v_ready_low_duration := random(1,5);
         end if;
-        -- If config.ready_low_at_word_num = 0 and tvalid was already high then
-        -- tready will be deasserted right away.
-        -- If config.ready_low_at_word_num > 0 then tready will be deasserted before the
-        -- rising edge (previous iteration in the loop will wait for period-setup_time).
-        axistream_if.tready <= '0';
-        wait for v_ready_low_duration * config.clock_period;
-        axistream_if.tready <= '1';
-        wait for config.setup_time;
-        v_ready_low_done := true;
+        -- Deassert tready once per transmission on a specific word
+        if config.ready_low_at_word_num = v_byte_cnt/c_num_bytes_per_word then
+          -- Wait until tvalid goes high before deasserting tready so it has an effect
+          if axistream_if.tvalid = '0' then
+            wait until axistream_if.tvalid = '1' for (config.max_wait_cycles * config.clock_period);
+            if axistream_if.tvalid = '1' then
+              -- Wait until the setup time before the next rising edge to lower tready
+              wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
+            else
+              -- TValid timed out
+              v_timeout := true;
+              v_done    := true;
+              v_ready_low_duration := 0;
+            end if;
+          end if;
+          -- If config.ready_low_at_word_num = 0 and tvalid was already high then
+          -- tready will be deasserted right away.
+          -- If config.ready_low_at_word_num > 0 then tready will be deasserted before the
+          -- rising edge (previous iteration in the loop will wait for period-setup_time).
+          axistream_if.tready <= '0';
+          wait for v_ready_low_duration * config.clock_period;
+          axistream_if.tready <= '1';
+          wait for config.setup_time;
+        -- Deassert tready multiple random times per transmission
+        elsif config.ready_low_at_word_num = C_MULTIPLE_RANDOM and v_next_deassert_byte = v_byte_cnt then
+          axistream_if.tready <= '0';
+          wait for v_ready_low_duration * config.clock_period;
+          axistream_if.tready <= '1';
+          wait for config.setup_time;
+          v_next_deassert_byte := v_byte_cnt + (1+random(1,5))*c_num_bytes_per_word; -- avoid deasserting on the next word
+        end if;
       end if;
 
       ------------------------------------------------------------
@@ -1497,13 +1510,15 @@ package body axistream_bfm_pkg is
         -- Next byte is in the next clk cycle
         if v_byte_in_word = c_num_bytes_per_word-1 then
           if axistream_if.tlast = '0' then
-            if not(v_ready_low_done) and config.ready_low_duration > 0
-              and config.ready_low_at_word_num-1 = v_byte_cnt/c_num_bytes_per_word
+            -- Next byte will have tready deasserted so it needs to happen before
+            -- the rising edge of the clock
+            if (config.ready_low_duration > 0 or config.ready_low_duration = C_RANDOM) and
+               (config.ready_low_at_word_num = v_byte_cnt/c_num_bytes_per_word + 1 or
+               (config.ready_low_at_word_num = C_MULTIPLE_RANDOM and v_next_deassert_byte = v_byte_cnt + 1))
             then
-              -- Next byte will have tready deasserted so it needs to happen before
-              -- the rising edge of the clock
               wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
             else
+              -- No tready deassertion, wait a full period
               wait for config.clock_period;
             end if;
           end if;

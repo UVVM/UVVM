@@ -1299,7 +1299,7 @@ package body axistream_bfm_pkg is
     variable v_byte_idx              : integer;
     variable v_word_idx              : integer;
     variable v_ready_low_duration    : natural := 0;
-    variable v_next_deassert_byte    : natural := c_num_bytes_per_word; -- C_MULTIPLE_RANDOM always deasserts on second word the first time
+    variable v_next_deassert_byte    : natural := 0;
 
   begin
     -- If called from sequencer/VVC, show 'axistream_receive()...' in log

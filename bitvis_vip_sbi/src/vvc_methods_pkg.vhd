@@ -117,7 +117,7 @@ package vvc_methods_pkg is
 
   --==========================================================================================
   --
-  -- DTT - Direct Transaction Transfer types, constants and signal
+  -- DTT - Direct Transaction Transfer types, constants and global signal
   --
   --==========================================================================================
 
@@ -141,8 +141,7 @@ package vvc_methods_pkg is
     cmd_idx => 0
   );
 
-  --subtype t_vvc_operation is t_operation range WRITE to POLL_UNTIL;
-  type t_vvc_operation is (NO_OPERATION, WRITE, READ, CHECK, POLL_UNTIL);
+  --type t_vvc_operation is (NO_OPERATION, WRITE, READ, CHECK, POLL_UNTIL);
 
   type t_vvc_error_info is record
     delay_error : boolean; -- bytt ut med en relevant feil
@@ -153,7 +152,7 @@ package vvc_methods_pkg is
   );
 
   type t_transaction is record
-    operation           : t_vvc_operation;
+    operation           : t_operation; -- from vvc_cmd_pkg.   t_vvc_operation;
     vvc_specific        : t_vvc_specific;
     transaction_valid   : boolean;
     meta                : t_vvc_meta_data;

@@ -23,10 +23,8 @@ context uvvm_util.uvvm_util_context;
 library vunit_lib;
 context vunit_lib.vunit_run_context;
 
---library bitvis_vip_sb;
-
-use work.generic_sb_support_pkg.all;
---use work.generic_sb_pkg;
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 -- Test case entity
 entity generic_sb_slv_tb is
@@ -44,7 +42,7 @@ architecture func of generic_sb_slv_tb is
                                                      overdue_check_time_limit  => 0 ns,
                                                      ignore_initial_garbage    => false);
 
-  package slv_sb_pkg is new work.generic_sb_pkg
+  package slv_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
   generic map (t_expected_element       => std_logic_vector(7 downto 0),
                t_actual_element         => std_logic_vector(7 downto 0),
                match                    => std_match,

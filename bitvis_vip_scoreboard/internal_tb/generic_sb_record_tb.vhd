@@ -24,8 +24,8 @@ context uvvm_util.uvvm_util_context;
 library vunit_lib;
 context vunit_lib.vunit_run_context;
 
-use work.generic_sb_support_pkg.all;
-use work.generic_sb_pkg;
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 -- Test case entity
 entity generic_sb_record_tb is
@@ -77,7 +77,7 @@ architecture func of generic_sb_record_tb is
                                                         ignore_initial_garbage    => false);
 
   -- Package declaration
-  package record_sb_pkg is new work.generic_sb_pkg
+  package record_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
   generic map (t_expected_element       => t_input,
                t_actual_element         => t_output,
                match                    => data_match,

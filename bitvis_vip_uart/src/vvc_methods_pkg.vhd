@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -46,17 +46,17 @@ package vvc_methods_pkg is
     delay_in_time                       => 0 ns,
     inter_bfm_delay_violation_severity  => WARNING
   );
-  
+
   type t_vvc_config is
   record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural;           -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;           -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level;     -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural;           -- Maximum number of unfetched results before result_queue is full. 
+    result_queue_count_max                : natural;           -- Maximum number of unfetched results before result_queue is full.
     result_queue_count_threshold_severity : t_alert_level;     -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
     result_queue_count_threshold          : natural;           -- Severity of alert to be initiated if exceeding result_queue_count_threshold
-    bfm_config                            : t_uart_bfm_config; -- Configuration for the BFM. See BFM quick reference                                                                                                                                                   
+    bfm_config                            : t_uart_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
   end record;
 
@@ -73,7 +73,7 @@ package vvc_methods_pkg is
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
     );
-    
+
   type t_vvc_status is
   record
     current_cmd_idx       : natural;
@@ -88,8 +88,8 @@ package vvc_methods_pkg is
     previous_cmd_idx     => 0,
     pending_cmd_cnt      => 0
   );
-    
-    
+
+
   -- Transaction information to include in the wave view during simulation
   type t_transaction_info is
   record
@@ -105,14 +105,80 @@ package vvc_methods_pkg is
     data                => (others => '0'),
     msg                 => (others => ' ')
   );
-    
+
   shared variable shared_uart_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
   shared variable shared_uart_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
-  
+
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  --
+  -- DTT - Direct Transaction Transfer types, constants and global signal
+  --
+  --==========================================================================================
+
+  type t_vvc_specific is record
+    addr : unsigned(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+  end record;
+
+  constant C_VVC_SPECIFIC_DEFAULT : t_vvc_specific := (
+    addr => (others => '0'),
+    data => (others => '0')
+  );
+
+  type t_vvc_meta_data is record
+    msg                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    cmd_idx             : integer;
+  end record;
+
+  constant C_VVC_META_DATA_DEFAULT : t_vvc_meta_data := (
+    msg     => (others => ' '),
+    cmd_idx => 0
+  );
+
+  type t_vvc_error_info is record
+    parity_error : boolean; -- bytt ut med en relevant feil
+  end record;
+
+  constant C_VVC_ERROR_INFO_DEFAULT : t_vvc_error_info := (
+    parity_error => false
+  );
+
+  type t_transaction is record
+    operation           : t_operation; -- from vvc_cmd_pkg.   t_vvc_operation;
+    vvc_specific        : t_vvc_specific;
+    transaction_valid   : boolean;
+    meta                : t_vvc_meta_data;
+    error_info          : t_vvc_error_info;
+  end record;
+
+  constant C_TRANSACTION_DEFAULT : t_transaction := (
+    operation         => NO_OPERATION,
+    vvc_specific      => C_VVC_SPECIFIC_DEFAULT,
+    transaction_valid => false,
+    meta              => C_VVC_META_DATA_DEFAULT,
+    error_info        => C_VVC_ERROR_INFO_DEFAULT
+  );
+
+  type t_vvc_transaction is record
+    bt                  : t_transaction; -- base transaction
+    ct                  : t_transaction; -- compound transaction
+  end record;
+
+  constant C_UART_VVC_TRANSACTION_DEFAULT : t_vvc_transaction := (
+    bt => C_TRANSACTION_DEFAULT,
+    ct => C_TRANSACTION_DEFAULT
+  );
+
+  type t_vvc_transaction_array is array(natural range <>) of t_vvc_transaction;
+  signal global_uart_vvc_transaction : t_vvc_transaction_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_UART_VVC_TRANSACTION_DEFAULT);
+
+
+
+
+  --==========================================================================================
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the

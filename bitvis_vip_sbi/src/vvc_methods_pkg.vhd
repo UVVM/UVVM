@@ -229,11 +229,23 @@ package vvc_methods_pkg is
     constant scope              : in string         := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
+
+  --==============================================================================
+  -- Global DTT methods dedicated for this VVC
+  --==============================================================================
+  procedure sbi_vvc_set_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  );
+
+  procedure sbi_vvc_restore_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  );
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
-
-
 
   --==============================================================================
   -- Methods dedicated to this VVC
@@ -351,6 +363,52 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
+
+  --==============================================================================
+  -- Global DTT methods dedicated for this VVC
+  --==============================================================================
+
+  procedure sbi_vvc_set_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  ) is
+    variable v_transaction    : t_transaction;
+  begin
+    v_transaction.operation               := vvc_cmd.operation;
+    v_transaction.vvc_specific.addr       := vvc_cmd.addr;
+    v_transaction.vvc_specific.data       := vvc_cmd.data;
+    v_transaction.transaction_valid       := true;
+    v_transaction.meta.msg                := vvc_cmd.msg;
+    v_transaction.meta.cmd_idx            := vvc_cmd.cmd_idx;
+    v_transaction.error_info.delay_error  := false;
+
+    case vvc_cmd.operation is
+
+      when WRITE | READ | CHECK =>
+        vvc_transaction.bt <= v_transaction;
+
+      when POLL_UNTIL =>
+        vvc_transaction.ct <= v_transaction;
+
+      when others =>
+        null;
+    end case;
+  end procedure sbi_vvc_set_global_dtt;
+
+  procedure sbi_vvc_restore_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  ) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        vvc_transaction.bt <= C_TRANSACTION_DEFAULT;
+      when POLL_UNTIL =>
+        vvc_transaction.ct <= C_TRANSACTION_DEFAULT;
+      when others =>
+        null;
+    end case;
+  end procedure sbi_vvc_restore_global_dtt;
 
 end package body vvc_methods_pkg;
 

@@ -80,9 +80,7 @@ architecture behave of sbi_vvc is
   alias vvc_config       : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
-
-  --alias sbi_vvc_transaction : t_vvc_transaction is global_sbi_vvc_transaction(GC_INSTANCE_IDX);
-  alias sbi_vvc_transaction : t_vvc_transaction_array is global_sbi_vvc_transaction;
+  alias sbi_vvc_transaction : t_vvc_transaction is global_sbi_vvc_transaction(GC_INSTANCE_IDX);
 
 begin
 
@@ -230,6 +228,9 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
+      -- update DTT
+      sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd);
+
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -237,15 +238,6 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- update DTT
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.operation               <= WRITE;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.vvc_specific.addr       <= v_cmd.addr;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.vvc_specific.data       <= v_cmd.data;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.transaction_valid       <= true;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.meta.msg                <= v_cmd.msg;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.meta.cmd_idx            <= v_cmd.cmd_idx;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.error_info.delay_error  <= false;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
@@ -264,15 +256,6 @@ begin
                     config       => vvc_config.bfm_config);
 
         when READ =>
-          -- update DTT
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.operation              <= READ;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.vvc_specific.addr      <= v_cmd.addr;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.vvc_specific.data      <= v_cmd.data;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.transaction_valid      <= true;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.meta.msg               <= v_cmd.msg;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.meta.cmd_idx           <= v_cmd.cmd_idx;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).bt.error_info.delay_error <= false;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
@@ -292,15 +275,6 @@ begin
                                                        result      => v_read_data);
 
         when CHECK =>
-          -- update DTT
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.operation              <= CHECK;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.vvc_specific.addr      <= v_cmd.addr;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.vvc_specific.data      <= v_cmd.data;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.transaction_valid      <= true;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.meta.msg               <= v_cmd.msg;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.meta.cmd_idx           <= v_cmd.cmd_idx;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.error_info.delay_error <= false;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with to wide data. " & v_cmd.msg);
@@ -319,15 +293,6 @@ begin
                     config       => vvc_config.bfm_config);
 
         when POLL_UNTIL =>
-          -- update DTT
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.operation              <= POLL_UNTIL;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.vvc_specific.addr      <= v_cmd.addr;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.vvc_specific.data      <= v_cmd.data;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.transaction_valid      <= true;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.meta.msg               <= v_cmd.msg;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.meta.cmd_idx           <= v_cmd.cmd_idx;
-          sbi_vvc_transaction(GC_INSTANCE_IDX).ct.error_info.delay_error <= false;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with to wide data. " & v_cmd.msg);
@@ -386,8 +351,7 @@ begin
 
 
       -- reset DTT
-      sbi_vvc_transaction(GC_INSTANCE_IDX) <= C_SBI_VVC_TRANSACTION_DEFAULT;
-
+      sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd);
     end loop;
   end process;
   --===============================================================================================

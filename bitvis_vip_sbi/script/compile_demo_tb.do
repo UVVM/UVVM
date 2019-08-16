@@ -47,7 +47,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
 #-----------------------------------------------------------------------
 # Compile testbench files
 #-----------------------------------------------------------------------
-quietly set lib_name "bitvis_dtt"
+quietly set lib_name "bitvis_vip_sbi"
 
 if { [string equal -nocase $simulator "modelsim"] } {
   quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"

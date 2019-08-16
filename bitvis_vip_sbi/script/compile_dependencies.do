@@ -29,3 +29,4 @@ do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvv
 do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_clock_generator $root_path/bitvis_vip_clock_generator/sim
+do $root_path/script/compile_src.do $root_path/bitvis_uart $root_path/bitvis_uart/sim

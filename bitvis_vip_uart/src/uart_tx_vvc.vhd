@@ -72,6 +72,8 @@ architecture behave of uart_tx_vvc is
   alias vvc_config : t_vvc_config is shared_uart_vvc_config(TX, GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_uart_vvc_status(TX, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_uart_transaction_info(TX, GC_INSTANCE_IDX);
+  alias uart_vvc_transaction : t_vvc_transaction is global_uart_vvc_transaction(TX, GC_INSTANCE_IDX);
+
 
 begin
 
@@ -216,6 +218,9 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
+      -- update DTT
+      uart_vvc_set_global_dtt(uart_vvc_transaction, v_cmd);
+
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -259,6 +264,9 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info   := C_TRANSACTION_INFO_DEFAULT;
+
+      -- reset DTT
+      uart_vvc_restore_global_dtt(uart_vvc_transaction, v_cmd);
 
     end loop;
   end process;

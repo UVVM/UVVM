@@ -171,8 +171,8 @@ package vvc_methods_pkg is
     ct => C_TRANSACTION_DEFAULT
   );
 
-  type t_vvc_transaction_array is array(natural range <>) of t_vvc_transaction;
-  signal global_uart_vvc_transaction : t_vvc_transaction_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_UART_VVC_TRANSACTION_DEFAULT);
+  type t_vvc_transaction_array is array(t_channel range <>, natural range <>) of t_vvc_transaction;
+  signal global_uart_vvc_transaction : t_vvc_transaction_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_UART_VVC_TRANSACTION_DEFAULT));
 
 
 
@@ -216,9 +216,24 @@ package vvc_methods_pkg is
     constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
+  --==============================================================================
+  -- Global DTT methods dedicated for this VVC
+  --==============================================================================
+  procedure uart_vvc_set_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  );
+
+  procedure uart_vvc_restore_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  );
+
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
+
 
   procedure uart_transmit(
     signal   VVCT               : inout t_vvc_target_record;
@@ -296,6 +311,53 @@ package body vvc_methods_pkg is
     end if;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
+
+
+  --==============================================================================
+  -- Global DTT methods dedicated for this VVC
+  --==============================================================================
+
+  procedure uart_vvc_set_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  ) is
+    variable v_transaction    : t_transaction;
+  begin
+    v_transaction.operation               := vvc_cmd.operation;
+    --v_transaction.vvc_specific.addr       := vvc_cmd.addr;
+    v_transaction.vvc_specific.data       := vvc_cmd.data;
+    v_transaction.transaction_valid       := true;
+    v_transaction.meta.msg                := vvc_cmd.msg;
+    v_transaction.meta.cmd_idx            := vvc_cmd.cmd_idx;
+    v_transaction.error_info.parity_error := false;
+
+    case vvc_cmd.operation is
+
+      when RECEIVE | EXPECT | TRANSMIT =>
+        vvc_transaction.bt <= v_transaction;
+
+      when others =>
+        null;
+
+    end case;
+  end procedure uart_vvc_set_global_dtt;
+
+
+  procedure uart_vvc_restore_global_dtt(
+    signal vvc_transaction    : inout t_vvc_transaction;
+    constant vvc_cmd          : in t_vvc_cmd_record
+  ) is
+  begin
+    case vvc_cmd.operation is
+
+      when RECEIVE | EXPECT | TRANSMIT =>
+        vvc_transaction.bt <= C_TRANSACTION_DEFAULT;
+
+      when others =>
+        null;
+
+    end case;
+  end procedure uart_vvc_restore_global_dtt;
 
 end package body vvc_methods_pkg;
 

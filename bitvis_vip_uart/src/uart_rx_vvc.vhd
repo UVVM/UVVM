@@ -72,6 +72,8 @@ architecture behave of uart_rx_vvc is
   alias vvc_config : t_vvc_config is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
+  alias uart_vvc_transaction : t_vvc_transaction is global_uart_vvc_transaction(RX, GC_INSTANCE_IDX);
+
 
 begin
 
@@ -181,6 +183,7 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -217,6 +220,9 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
+      -- update DTT
+      uart_vvc_set_global_dtt(uart_vvc_transaction, v_cmd);
+
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -234,6 +240,7 @@ begin
           work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
                                                        cmd_idx      => v_cmd.cmd_idx,
                                                        result       => v_read_data );
+
 
         when EXPECT =>
           -- Normalise address and data
@@ -284,6 +291,9 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info   := C_TRANSACTION_INFO_DEFAULT;
+
+      -- reset DTT
+      uart_vvc_restore_global_dtt(uart_vvc_transaction, v_cmd);
 
     end loop;
   end process;

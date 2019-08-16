@@ -21,8 +21,17 @@ use IEEE.numeric_std.all;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library uvvm_util;
+context uvvm_util.uvvm_util_context; -- t_channel (RX/TX)
+
 library bitvis_vip_sbi;
+use bitvis_vip_sbi.vvc_methods_pkg.all; -- global_sbi_X
+use bitvis_vip_sbi.vvc_cmd_pkg.t_operation;
+
 library bitvis_vip_uart;
+use bitvis_vip_uart.vvc_methods_pkg.all; -- global_uart_X
+use bitvis_vip_uart.vvc_cmd_pkg.t_operation;
+
 library bitvis_uart;
 library bitvis_vip_clock_generator;
 
@@ -67,7 +76,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate DUT
   -----------------------------------------------------------------------------
-  i_uart: entity work.uart
+  i_uart: entity bitvis_uart.uart
     port map (
       -- DSP interface and general control signals
       clk             => clk,
@@ -146,17 +155,71 @@ begin
   -- Model
   -----------------------------------------------------------------------------
   p_model : process is
+    constant C_SBI_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
+    -- Global DTT aliases
+    alias sbi_dtt     : bitvis_vip_sbi.vvc_methods_pkg.t_vvc_transaction is global_sbi_vvc_transaction(C_SBI_VVC);
+    alias uart_rx_dtt : bitvis_vip_uart.vvc_methods_pkg.t_vvc_transaction is global_uart_vvc_transaction(RX, C_UART_VVC);
+    alias uart_tx_dtt : bitvis_vip_uart.vvc_methods_pkg.t_vvc_transaction is global_uart_vvc_transaction(TX, C_UART_VVC);
+    -- DUT flags
+    alias uart_rx_ready is << signal i_uart.i_uart_core.rx_data_valid   : std_logic >>;
+    alias uart_tx_ready is << signal i_uart.i_uart_core.tx_ready        : std_logic >>;
+
   begin
     while true loop
-      wait on global_sbi_vvc_transaction or global_uart_vvc_transaction;
+      wait on sbi_dtt, uart_rx_dtt, uart_tx_dtt;
 
-      if global_sbi_vvc_transaction(C_SBI_VVC)'event then
 
+      ---------------------------------
+      --  SBI
+      ---------------------------------
+      if sbi_dtt.bt'event then
+
+        case sbi_dtt.bt.operation is
+          when WRITE =>
+            uart_expect(UART_VVCT, C_UART_VVC, RX,  sbi_dtt.bt.vvc_specific.data(7 downto 0), "Expecting data on UART RX");
+
+          when READ =>
+
+          when CHECK =>
+
+          when others =>
+            null;
+        end case;
       end if;
 
-      if global_uart_vvc_transaction(C_UART_VVC)'event then
 
+      ---------------------------------
+      --  UART TX
+      ---------------------------------
+      if uart_tx_dtt'event then
+
+        case uart_tx_dtt.bt.operation is
+          when TRANSMIT =>
+            wait until uart_tx_ready = '1';
+            sbi_check(SBI_VVCT, C_SBI_VVC,  C_SBI_ADDR_RX_DATA, uart_tx_dtt.bt.vvc_specific.data(7 downto 0), "RX_DATA");
+
+          when others =>
+            null;
+
+        end case;
       end if;
+
+
+      ---------------------------------
+      --  UART RX
+      ---------------------------------
+      if uart_rx_dtt'event then
+
+        case uart_rx_dtt.bt.operation is
+          when RECEIVE =>
+
+          when EXPECT =>
+
+          when others =>
+            null;
+        end case;
+      end if;
+
 
     end loop;
     wait;

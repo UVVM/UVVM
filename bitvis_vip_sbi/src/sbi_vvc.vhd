@@ -299,19 +299,13 @@ begin
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-          -- Call the corresponding procedure in the BFM package.
-          sbi_poll_until(addr_value     => v_normalised_addr,
-                         data_exp       => v_normalised_data,
-                         max_polls      => v_cmd.max_polls,
-                         timeout        => v_cmd.timeout,
-                         msg            => format_msg(v_cmd),
-                         clk            => clk,
-                         sbi_if         => sbi_vvc_master_if,
-                         terminate_loop => terminate_current_cmd.is_active,
-                         alert_level    => v_cmd.alert_level,
-                         scope          => C_SCOPE,
-                         msg_id_panel   => vvc_config.msg_id_panel,
-                         config         => vvc_config.bfm_config);
+
+          loop
+            sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd); -- oppdatere med BT
+            kalle BFM sbi_read(......
+            sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd); -- BT
+          end loop;
+
 
           -- UVVM common operations
           --===================================

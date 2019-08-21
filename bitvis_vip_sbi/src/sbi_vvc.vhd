@@ -192,6 +192,13 @@ begin
     variable v_prev_command_was_bfm_access           : boolean  := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    -- DTT
+    constant c_start_time             : time := now;
+    variable v_check_ok               : boolean;
+    variable v_timeout_ok             : boolean;
+    variable v_num_of_occurrences_ok  : boolean;
+    variable v_num_of_occurrences     : integer          := 0;
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -300,10 +307,37 @@ begin
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
 
-          loop
-            sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd); -- oppdatere med BT
-            kalle BFM sbi_read(......
-            sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd); -- BT
+          while not v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and (terminate_current_cmd.is_active = '0') loop
+            -- Set DTT base transaction
+            sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd);
+
+            sbi_read(addr_value   => v_normalised_addr,
+                     data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
+                     msg          => format_msg(v_cmd),
+                     clk          => clk,
+                     sbi_if       => sbi_vvc_master_if,
+                     scope        => C_SCOPE,
+                     msg_id_panel => vvc_config.msg_id_panel,
+                     config       => vvc_config.bfm_config);
+
+            -- Evaluate data
+            v_check_ok := matching_values(v_read_data(GC_DATA_WIDTH - 1 downto 0), v_normalised_data(GC_DATA_WIDTH - 1 downto 0));
+
+            -- Evaluate number of occurrences, if limited by user
+            v_num_of_occurrences := v_num_of_occurrences + 1;
+            if v_cmd.max_polls > 0 then
+              v_num_of_occurrences_ok := v_num_of_occurrences < v_cmd.max_polls;
+            end if;
+
+            -- Evaluate timeout, if specified by user
+            if v_cmd.timeout = 0 ns then
+              v_timeout_ok := true;
+            else
+              v_timeout_ok := (now - c_start_time) < v_cmd.timeout;
+            end if;
+
+            -- Reset DTT base transaction
+            sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd);
           end loop;
 
 

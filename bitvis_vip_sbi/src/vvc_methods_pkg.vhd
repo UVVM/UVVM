@@ -120,17 +120,6 @@ package vvc_methods_pkg is
   -- DTT - Direct Transaction Transfer types, constants and global signal
   --
   --==========================================================================================
-
-  type t_vvc_specific is record
-    addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-  end record;
-
-  constant C_VVC_SPECIFIC_DEFAULT : t_vvc_specific := (
-    addr => (others => '0'),
-    data => (others => '0')
-  );
-
   type t_vvc_meta_data is record
     msg                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     cmd_idx             : integer;
@@ -153,7 +142,8 @@ package vvc_methods_pkg is
 
   type t_transaction is record
     operation           : t_operation; -- from vvc_cmd_pkg.   t_vvc_operation;
-    vvc_specific        : t_vvc_specific;
+    address             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     transaction_valid   : boolean;
     meta                : t_vvc_meta_data;
     error_info          : t_vvc_error_info;
@@ -161,7 +151,8 @@ package vvc_methods_pkg is
 
   constant C_TRANSACTION_DEFAULT : t_transaction := (
     operation         => NO_OPERATION,
-    vvc_specific      => C_VVC_SPECIFIC_DEFAULT,
+    address           => (others => '0'),
+    data              => (others => '0'),
     transaction_valid => false,
     meta              => C_VVC_META_DATA_DEFAULT,
     error_info        => C_VVC_ERROR_INFO_DEFAULT
@@ -375,21 +366,18 @@ package body vvc_methods_pkg is
     variable v_transaction    : t_transaction;
   begin
     v_transaction.operation               := vvc_cmd.operation;
-    v_transaction.vvc_specific.addr       := vvc_cmd.addr;
-    v_transaction.vvc_specific.data       := vvc_cmd.data;
+    v_transaction.address                 := vvc_cmd.addr;
+    v_transaction.data                    := vvc_cmd.data;
     v_transaction.transaction_valid       := true;
     v_transaction.meta.msg                := vvc_cmd.msg;
     v_transaction.meta.cmd_idx            := vvc_cmd.cmd_idx;
     v_transaction.error_info.delay_error  := false;
 
     case vvc_cmd.operation is
-
       when WRITE | READ | CHECK =>
         vvc_transaction.bt <= v_transaction;
-
       when POLL_UNTIL =>
         vvc_transaction.ct <= v_transaction;
-
       when others =>
         null;
     end case;

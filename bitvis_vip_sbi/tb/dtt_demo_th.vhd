@@ -176,7 +176,7 @@ begin
 
         case sbi_dtt.bt.operation is
           when WRITE =>
-            uart_expect(UART_VVCT, C_UART_VVC, RX,  sbi_dtt.bt.vvc_specific.data(7 downto 0), "Expecting data on UART RX");
+            uart_expect(UART_VVCT, C_UART_VVC, RX,  sbi_dtt.bt.data(7 downto 0), "Expecting data on UART RX");
 
           when READ =>
 
@@ -196,7 +196,7 @@ begin
         case uart_tx_dtt.bt.operation is
           when TRANSMIT =>
             wait until uart_tx_ready = '1';
-            sbi_check(SBI_VVCT, C_SBI_VVC,  C_SBI_ADDR_RX_DATA, uart_tx_dtt.bt.vvc_specific.data(7 downto 0), "RX_DATA");
+            sbi_check(SBI_VVCT, C_SBI_VVC,  C_SBI_ADDR_RX_DATA, uart_tx_dtt.bt.data(7 downto 0), "RX_DATA");
 
           when others =>
             null;

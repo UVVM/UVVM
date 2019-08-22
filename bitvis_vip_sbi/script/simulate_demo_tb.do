@@ -14,6 +14,6 @@
 # Run simulation
 #-----------------------------------------------------------------------
 vsim bitvis_vip_sbi.dtt_demo_tb
-#do wave.do
+do wave.do
 run -all
-exit -f
+#exit -f

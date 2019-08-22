@@ -83,23 +83,18 @@ architecture func of dtt_demo_tb is
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
-    --enable_log_msg(ALL_MESSAGES);
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
-    --enable_log_msg(ID_UVVM_SEND_CMD);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    --enable_log_msg(SBI_VVCT, 1, ID_BFM);
-    --enable_log_msg(SBI_VVCT, 1, ID_FINISH_OR_STOP);
-
     disable_log_msg(UART_VVCT, 1, RX, ALL_MESSAGES);
-    --enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
-
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
-    --enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
 
-    log(ID_LOG_HDR, "Starting simulation of TB for UART using VVCs", C_SCOPE);
+    enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
+--    enable_log_msg(SBI_VVCT, 1, ID_BFM);
+
+    log(ID_LOG_HDR, "Starting simulation of Demo TB for DTT using UART and SBI VVCs", C_SCOPE);
     ------------------------------------------------------------
 
     log("Wait 10 clock period for reset to be turned off");
@@ -129,8 +124,7 @@ architecture func of dtt_demo_tb is
     -- UART VVC is instructed to expect the data x"55" on the RX port. The test sequence will not continue
     -- until the UART VVC has received the data from the DUT, indicated by the await_completion method.
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "TX_DATA");
-    --uart_expect(UART_VVCT,1,RX,  x"55", "Expecting data on UART RX"); -- MODEL
-    --await_completion(UART_VVCT,1,RX,  13 * C_BIT_PERIOD);
+
     wait for 200 ns;  -- margin
 
 
@@ -144,9 +138,8 @@ architecture func of dtt_demo_tb is
     -- when the SBI VVC is done checking the C_ADDR_RX_DATA register.
     uart_transmit(UART_VVCT, 1, TX, x"AA", "UART TX");
     await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
+
     wait for 200 ns;  -- margin
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA"); -- MODEL
-    --await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
 
 
 
@@ -160,12 +153,11 @@ architecture func of dtt_demo_tb is
     -- that the DUT received the correct data from the UART VVC. After this check is completed, the test sequencer
     -- can continue to the next test case.
     sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"B4", "TX_DATA");
+
     uart_transmit(UART_VVCT,1,TX,  x"87", "UART TX");
-    --uart_expect(UART_VVCT,1,RX,  x"B4", "Expecting data on UART RX"); -- MODEL
     await_completion(UART_VVCT,1,TX, 13 * C_BIT_PERIOD);
+
     wait for 200 ns;  -- margin
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA"); -- MODEL
-    --await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
 
 
 
@@ -181,12 +173,8 @@ architecture func of dtt_demo_tb is
     uart_transmit(UART_VVCT,1,TX,  x"A2", "UART TX");
     uart_transmit(UART_VVCT,1,TX,  x"A3", "UART TX");
     await_completion(UART_VVCT, 1, TX, 3 * 13 * C_BIT_PERIOD);
-    wait for 200 ns;  -- margin
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"A1", "RX_DATA"); -- MODEL
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"A2", "RX_DATA"); -- MODEL
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"A3", "RX_DATA"); -- MODEL
-    --await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
 
+    wait for 200 ns;  -- margin
 
 
     log(ID_LOG_HDR, "Skew SBI read over UART receive ", C_SCOPE);
@@ -219,15 +207,10 @@ architecture func of dtt_demo_tb is
       -- Every read will now be 1T later relative to a new byte being valid internally
       insert_delay(SBI_VVCT,1, C_TIME_OF_ONE_UART_TX, "Delaying for the time of one uart transmission");
       insert_delay(SBI_VVCT,1, C_CLK_PERIOD, "Skewing the SBI read one clock cycle");
-      --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i)); -- MODEL
     end loop;
 
     await_completion(UART_VVCT,1,TX,  103 * C_TIME_OF_ONE_UART_TX);
     wait for 50 ns; -- to assure UART RX complete internally
-    -- Check the last two bytes in the DUT RX buffer.
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101)); -- MODEL
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102)); -- MODEL
-    --await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
 
 
 
@@ -248,22 +231,13 @@ architecture func of dtt_demo_tb is
     shared_sbi_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
     shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := C_TIME_OF_ONE_UART_TX+C_CLK_PERIOD;
 
-    --for i in 1 to 100 loop
-    --  sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i)); -- MODEL
-    --end loop;
-
     await_completion(UART_VVCT,1,TX,  103 * C_TIME_OF_ONE_UART_TX);
-    --await_completion(SBI_VVCT,1, 2 * C_TIME_OF_ONE_UART_TX);
 
     wait for 50 ns; -- to assure UART RX complete internally
     -- Check the last two bytes in the DUT RX buffer.
     log("Setting the SBI VVC back to no delay between BFM accesses");
     shared_sbi_vvc_config(1).inter_bfm_delay.delay_type := NO_DELAY;
     shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
-
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101)); -- MODEL
-    --sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102)); -- MODEL
-    --await_completion(SBI_VVCT,1,  2*C_TIME_OF_ONE_UART_TX);
 
 
     -----------------------------------------------------------------------------

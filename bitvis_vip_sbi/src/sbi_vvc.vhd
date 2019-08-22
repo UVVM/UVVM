@@ -77,9 +77,9 @@ architecture behave of sbi_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config       : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status       : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_config          : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status          : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
+  alias transaction_info    : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
   alias sbi_vvc_transaction : t_vvc_transaction is global_sbi_vvc_transaction(GC_INSTANCE_IDX);
 
 begin
@@ -100,8 +100,8 @@ begin
 -- - Interpret, decode and acknowledge commands from the central sequencer
 --===============================================================================================
   cmd_interpreter : process
-     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-     variable v_local_vvc_cmd        : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+    variable v_cmd_has_been_acked : boolean;  -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
   begin
 
     -- 0. Initialize the process prior to first command
@@ -116,7 +116,7 @@ begin
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
-      v_cmd_has_been_acked := false; -- Clear flag
+      v_cmd_has_been_acked                                  := false;  -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
 
@@ -126,8 +126,8 @@ begin
         work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
 
 
-        -- 2b. Otherwise command is intended for immediate response
-        -------------------------------------------------------------------------
+      -- 2b. Otherwise command is intended for immediate response
+      -------------------------------------------------------------------------
       elsif v_local_vvc_cmd.command_type = IMMEDIATE then
         case v_local_vvc_cmd.operation is
 
@@ -137,7 +137,7 @@ begin
           when AWAIT_ANY_COMPLETION =>
             if not v_local_vvc_cmd.gen_boolean then
               -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
               v_cmd_has_been_acked := true;
             end if;
             work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
@@ -169,7 +169,7 @@ begin
       -- 3. Acknowledge command after runing or queuing the command
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
-        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
       end if;
 
     end loop;
@@ -185,19 +185,19 @@ begin
   cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result;  -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access : time     := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access    : time     := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access      : time     := 0 ns;
-    variable v_command_is_bfm_access                 : boolean  := false;
-    variable v_prev_command_was_bfm_access           : boolean  := false;
+    variable v_timestamp_start_of_current_bfm_access : time                                       := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access    : time                                       := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access      : time                                       := 0 ns;
+    variable v_command_is_bfm_access                 : boolean                                    := false;
+    variable v_prev_command_was_bfm_access           : boolean                                    := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
     -- DTT
-    constant c_start_time             : time := now;
-    variable v_check_ok               : boolean;
-    variable v_timeout_ok             : boolean;
-    variable v_num_of_occurrences_ok  : boolean;
-    variable v_num_of_occurrences     : integer          := 0;
+    variable v_start_time                            : time;
+    variable v_check_ok                              : boolean                                    := false;
+    variable v_timeout_ok                            : boolean                                    := true;
+    variable v_num_of_occurrences_ok                 : boolean                                    := true;
+    variable v_num_of_occurrences                    : integer                                    := 0;
 
   begin
 
@@ -217,7 +217,7 @@ begin
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Check if command is a BFM access
-      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
+      v_prev_command_was_bfm_access := v_command_is_bfm_access;  -- save for inter_bfm_delay
       if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK or v_cmd.operation = POLL_UNTIL then
         v_command_is_bfm_access := true;
       else
@@ -278,8 +278,8 @@ begin
                    config       => vvc_config.bfm_config);
           -- Store the result
           work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                       cmd_idx     => v_cmd.cmd_idx,
-                                                       result      => v_read_data);
+                                                      cmd_idx      => v_cmd.cmd_idx,
+                                                      result       => v_read_data);
 
         when CHECK =>
           -- Normalise address and data
@@ -307,6 +307,8 @@ begin
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
 
+          v_start_time := now;
+          v_cmd.operation := READ;
           while not v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and (terminate_current_cmd.is_active = '0') loop
             -- Set DTT base transaction
             sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd);
@@ -320,6 +322,8 @@ begin
                      msg_id_panel => vvc_config.msg_id_panel,
                      config       => vvc_config.bfm_config);
 
+            log("Reading DUT data: " & to_string(v_read_data(GC_DATA_WIDTH - 1 downto 0), HEX));
+            
             -- Evaluate data
             v_check_ok := matching_values(v_read_data(GC_DATA_WIDTH - 1 downto 0), v_normalised_data(GC_DATA_WIDTH - 1 downto 0));
 
@@ -333,24 +337,28 @@ begin
             if v_cmd.timeout = 0 ns then
               v_timeout_ok := true;
             else
-              v_timeout_ok := (now - c_start_time) < v_cmd.timeout;
+              v_timeout_ok := (now - v_start_time) < v_cmd.timeout;
             end if;
 
             -- Reset DTT base transaction
             sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd);
           end loop;
 
+          v_cmd.operation := POLL_UNTIL;
 
-          -- UVVM common operations
-          --===================================
+
+        -- UVVM common operations
+        --===================================
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
-            wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
+            wait until terminate_current_cmd.is_active = '1'
+              for v_cmd.delay;
           else
             -- Delay specified using integer
-            wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
+            wait until terminate_current_cmd.is_active = '1'
+              for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;
 
         when others =>

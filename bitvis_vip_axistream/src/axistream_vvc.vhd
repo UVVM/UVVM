@@ -187,7 +187,6 @@ begin
       variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
       variable v_command_is_bfm_access                  : boolean := false;
       variable v_prev_command_was_bfm_access            : boolean := false;
-      variable v_receive_as_slv                         : t_slv_array(0 to 0 )( (v_result.data_array'length*8)-1 downto 0);
       variable v_byte_endianness                        : t_byte_endianness := vvc_config.bfm_config.byte_endianness;
 
    begin
@@ -257,8 +256,8 @@ begin
             when RECEIVE =>
                if not GC_VVC_IS_MASTER then
                   -- Call the corresponding procedure in the BFM package.
-                  axistream_receive(
-                     data_array   => v_receive_as_slv, --v_result.data_array,
+                  axistream_receive_bytes(
+                     data_array   => v_result.data_array,
                      data_length  => v_result.data_length,
                      user_array   => v_result.user_array,
                      strb_array   => v_result.strb_array,
@@ -271,7 +270,6 @@ begin
                      msg_id_panel => vvc_config.msg_id_panel,
                      config       => vvc_config.bfm_config);
                   -- Store the result
-                  v_result.data_array := convert_slv_array_to_byte_array(v_receive_as_slv, true, v_byte_endianness);
                   work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
                                                                cmd_idx      => v_cmd.cmd_idx,
                                                                result       => v_result );

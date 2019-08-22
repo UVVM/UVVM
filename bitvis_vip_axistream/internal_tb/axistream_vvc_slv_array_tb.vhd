@@ -146,24 +146,20 @@ begin
     ------------------------------------------------------
     -- overloading procedure
     ------------------------------------------------------
-    procedure check_value(expected : t_byte_array; actual : t_slv_array; numb_bytes_received : natural; msg : string) is
-      variable v_byte_endianness   : t_byte_endianness := axistream_bfm_config.byte_endianness;
-      variable v_bytes_in_word     : integer           := (actual(0)'length/8);
-      variable v_byte_array_length : integer           := (actual'length * v_bytes_in_word);
-      variable v_actual            : t_byte_array(0 to v_byte_array_length-1) :=
-        convert_slv_array_to_byte_array(actual, true, v_byte_endianness);
-      variable v_expected_byte     : std_logic_vector(7 downto 0);
+    procedure check_value(received : t_byte_array;
+                          expected : t_slv_array;
+                          numb_bytes_received : natural;
+                          msg : string) is
+      constant c_byte_endianness   : t_byte_endianness := axistream_bfm_config.byte_endianness;
+      constant c_bytes_in_word     : integer           := (expected(0)'length/8);
+      constant c_byte_array_length : integer           := (expected'length * c_bytes_in_word);
+      variable v_expected          : t_byte_array(0 to c_byte_array_length-1);
     begin
+      v_expected := convert_slv_array_to_byte_array(expected, true, c_byte_endianness);
       for byte_idx in 0 to numb_bytes_received-1 loop
-        if v_byte_endianness = FIRST_BYTE_LEFT then
-          v_expected_byte := expected(byte_idx);
-        else
-          v_expected_byte := expected(expected'length-1-byte_idx);
-        end if;
-        check_value(v_expected_byte = v_actual(byte_idx), error, msg, C_TB_SCOPE_DEFAULT);
+        check_value(received(byte_idx) = v_expected(byte_idx), error, msg, C_TB_SCOPE_DEFAULT);
       end loop;
     end procedure check_value;
-
 
     ------------------------------------------------------
     -- return a t_slv_array of given size with random data
@@ -525,7 +521,7 @@ begin
 
     -- Short packet test - transmit, receive and check test
     ------------------------------------------------------------
-    log("TC: axistream VVC Master (VVC_IDX=2) transmits short packet directly to VVC Slave (VVC_IDX=3)");
+    log(ID_LOG_HDR, "TC: axistream VVC Master (VVC_IDX=2) transmits short packet directly to VVC Slave (VVC_IDX=3)");
     ------------------------------------------------------------
     v_data_array_1_byte(0) := (x"AA");
     v_data_array_2_byte(0) := (x"AABB");
@@ -542,7 +538,7 @@ begin
 
     -- Short packet test wih SLV
     ------------------------------------------------------------
-    log("TC: axistream VVC Master (VVC_IDX=2) transmits short SLV packet directly to VVC Slave (VVC_IDX=3)");
+    log(ID_LOG_HDR, "TC: axistream VVC Master (VVC_IDX=2) transmits short SLV packet directly to VVC Slave (VVC_IDX=3)");
     ------------------------------------------------------------
     v_data_array_as_slv(31 downto 0) := x"AABBCCDD";  -- 4 bytes
     -- transmit and receive 0xAA
@@ -561,7 +557,7 @@ begin
 
     -- Long packet test - transmit, receive and check test
     ------------------------------------------------------------
-    log("TC: axistream VVC Master (VVC_IDX=2) transmits long packet directly to VVC Slave (VVC_IDX=3)");
+    log(ID_LOG_HDR, "TC: axistream VVC Master (VVC_IDX=2) transmits long packet directly to VVC Slave (VVC_IDX=3)");
     ------------------------------------------------------------
     for i in 1 to 5 loop
       v_numBytes := random(1, C_MAX_BYTES);
@@ -593,7 +589,7 @@ begin
 
     -- Test transmit, receive and check with various parameters
     ------------------------------------------------------------
-    log("include tuser test. VVC Master (VVC_IDX=2) transmits directly to VVC Slave (VVC_IDX=3)");
+    log(ID_LOG_HDR, "include tuser test. VVC Master (VVC_IDX=2) transmits directly to VVC Slave (VVC_IDX=3)");
     ------------------------------------------------------------
     -- run test with word size from 1 to 4 bytes
     for bytes_in_word in 1 to C_MAX_BYTES_IN_WORD loop
@@ -658,7 +654,7 @@ begin
     end loop;
 
     ------------------------------------------------------------
-    log("TC: axistream_receive and fetch_result ");
+    log(ID_LOG_HDR, "TC: axistream_receive and fetch_result ");
     ------------------------------------------------------------
     for bytes_in_word in 1 to C_MAX_BYTES_IN_WORD loop
       v_numBytes := random(1, C_MAX_BYTES/bytes_in_word);
@@ -668,7 +664,7 @@ begin
     end loop;
 
     ------------------------------------------------------------
-    log("TC: axistream transmit when tready=0 from DUT at start of transfer  ");
+    log(ID_LOG_HDR, "TC: axistream transmit when tready=0 from DUT at start of transfer  ");
     ------------------------------------------------------------
     -- Fill DUT FIFO to provoke tready=0
     v_numBytes := 1;
@@ -695,7 +691,7 @@ begin
 
 
     ------------------------------------------------------------
-    log("TC: axistream transmits: ");
+    log(ID_LOG_HDR, "TC: axistream transmits: ");
     ------------------------------------------------------------
     shared_axistream_vvc_config(0).inter_bfm_delay.delay_type := TIME_FINISH2START;
     for i in 0 to 2 loop
@@ -755,7 +751,7 @@ begin
     await_completion(AXISTREAM_VVCT, 1, 1 ms);
 
     ------------------------------------------------------------
-    log("TC: sanity check ");
+    log(ID_LOG_HDR, "TC: sanity check ");
     ------------------------------------------------------------
     for bytes_in_word in 1 to C_MAX_BYTES_IN_WORD loop
       v_numBytes := random(1, C_MAX_BYTES/bytes_in_word);

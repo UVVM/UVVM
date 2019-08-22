@@ -1,11 +1,11 @@
-( [Click here to go to the UVVM overall overview](https://github.com/UVVM/UVVM/blob/master/README.md) )
+( [Click here to go to the UVVM overall overview](./../README.md) )
 
 # UVVM VVC System (or Framework)
 This methodology and library is a free and Open Source Methodology and Library for making very structured VHDL-based testbenches.
 
 Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality. 
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 as a tool to handle exactly these aspects.
-This library is a part of the overall [UVVM](https://github.com/UVVM/UVVM/raw/master/README.md)
+This library is a part of the overall [UVVM](./../README.md)
 
 ## For what do I need this VVC Framework?
 UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle medium complexity verification challenges and upwards. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level. 
@@ -41,20 +41,20 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 *	Quick references are available for UVVM Utility Library, VVC System and all the BFMs/VVCs
 
 ## Available VVCs and BFMs 
-See [UVVM](https://github.com/UVVM/UVVM/raw/master/README.md)
+See [UVVM](./../README.md)
 
 ## Prerequisites
 UVVM is tool and library independent, but it must be compiled with VHDL 2008.
-See the overall [UVVM](https://github.com/UVVM/UVVM/raw/master/README.md) documentation for prerequisites, license, maintainers, etc.
+See the overall [UVVM](./../README.md) documentation for prerequisites, license, maintainers, etc.
 Python is required **if** you want to execute the VVC generation scripts
 
 ## Introduction to VVC Framework - including manuals
 All documents including powerpoint presentations are available in the *uvvm_vvc_framework/doc* directory on GitHub.
 These are just fast access links to some interesting info:
-- *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](https://github.com/UVVM/UVVM/raw/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
-- *['VVC Framework Manual'*  - The user manual](https://github.com/UVVM/UVVM/raw/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
+- *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](./../uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
+- *['VVC Framework Manual'*  - The user manual](./../uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
 
-A demo of how to make a structured VVC based testbench is given in the [UART example](https://github.com/UVVM/UVVM/tree/master/bitvis_uart).  
-You can compile everything needed via the provided [scripts](https://github.com/UVVM/UVVM/tree/master/bitvis_uart/script)
+A demo of how to make a structured VVC based testbench is given in the [UART example](./../bitvis_uart).  
+You can compile everything needed via the provided [scripts](./../bitvis_uart/script)
 
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.

@@ -134,7 +134,7 @@ package vvc_methods_pkg is
     parity_error => false
     );
 
-  type t_transaction_validity is (VALID, INVALID, INTENDED_VALID, INTENDED_INVALID);
+  type t_transaction_validity is (NA, VALID, INVALID);
 
   type t_transaction is record
     operation            : t_operation;  -- from vvc_cmd_pkg.   t_vvc_operation;
@@ -147,7 +147,7 @@ package vvc_methods_pkg is
   constant C_TRANSACTION_DEFAULT : t_transaction := (
     operation            => NO_OPERATION,
     data                 => (others => '0'),
-    transaction_validity => VALID,
+    transaction_validity => NA,
     meta                 => C_VVC_META_DATA_DEFAULT,
     error_info           => C_VVC_ERROR_INFO_DEFAULT
     );

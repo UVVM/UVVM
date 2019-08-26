@@ -13,7 +13,8 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_hvvc_to_vvc;
+library bitvis_vip_hvvc_to_vvc_bridge;
+use bitvis_vip_hvvc_to_vvc_bridge.common_methods_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -59,8 +60,8 @@ architecture behave of ethernet_transmit_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config : t_vvc_config is shared_ethernet_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias vvc_status : t_vvc_status is shared_ethernet_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
 
 begin
@@ -68,12 +69,13 @@ begin
 --========================================================================================================================
 -- SUB VVC
 --========================================================================================================================
-  i_td_sub_vvc_engine : entity bitvis_vip_hvvc_to_vvc.hvvc_to_vvc
+  i_td_sub_vvc_engine : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
       GC_INTERFACE           => GC_INTERFACE,
       GC_INSTANCE_IDX        => GC_SUB_VVC_INSTANCE_IDX,
       GC_CHANNEL             => GC_CHANNEL,
-      GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG
+      GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
+      GC_SCOPE               => C_SCOPE
     )
     port map(
       hvvc_to_vvc => hvvc_to_vvc,
@@ -98,12 +100,15 @@ begin
   cmd_interpreter : process
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
      variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+     variable v_msg_id_panel       : t_msg_id_panel;
   begin
 
     -- 0. Initialize the process prior to first command
     initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
@@ -111,10 +116,16 @@ begin
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
-      await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);
+      await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
       v_cmd_has_been_acked := false; -- Clear flag
-      -- update shared_vvc_last_received_cmd_idx with received command index
+      -- Update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      -- Update v_msg_id_panel
+      if v_local_vvc_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+        v_msg_id_panel := v_local_vvc_cmd.msg_id_panel;
+      else
+        v_msg_id_panel := vvc_config.msg_id_panel;
+      end if;
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
@@ -150,9 +161,6 @@ begin
           when TERMINATE_CURRENT_COMMAND =>
             interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
 
-          -- when FETCH_RESULT =>
-            -- work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
-
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
 
@@ -185,10 +193,22 @@ begin
     variable v_timestamp_end_of_last_bfm_access      : time := 0 ns;
     variable v_command_is_bfm_access                 : boolean := false;
     variable v_prev_command_was_bfm_access           : boolean := false;
+    variable v_msg_id_panel                          : t_msg_id_panel;
     variable v_ethernet_packet_raw                   : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_payload_length                        : std_logic_vector(15 downto 0);
     variable v_crc_32                                : std_logic_vector(31 downto 0);
     variable v_cmd_idx                               : natural;
+
+    -- Local overload
+    procedure send_to_sub_and_await_finish(
+      constant data_bytes                : in  t_byte_array;
+      constant dut_if_field_idx          : in  integer;
+      constant current_byte_idx_in_field : in  natural
+    ) is
+    begin
+      send_to_sub_and_await_finish(hvvc_to_vvc, vvc_to_hvvc, SEND, data_bytes, dut_if_field_idx, current_byte_idx_in_field);
+    end procedure send_to_sub_and_await_finish;
+
   begin
 
     -- Default values
@@ -198,16 +218,26 @@ begin
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     initialize_executor(terminate_current_cmd);
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
+
     loop
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
+      fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- Reset the transaction info for waveview
       transaction_info := C_TRANSACTION_INFO_DEFAULT;
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
+
+      -- Update v_msg_id_panel
+      if v_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+        v_msg_id_panel := v_cmd.msg_id_panel;
+      else
+        v_msg_id_panel := vvc_config.msg_id_panel;
+      end if;
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
@@ -223,7 +253,8 @@ begin
                                           command_is_bfm_access              => v_prev_command_was_bfm_access,
                                           timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                           timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                          scope                              => C_SCOPE);
+                                          scope                              => C_SCOPE,
+                                          msg_id_panel                       => v_msg_id_panel);
 
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
@@ -238,23 +269,47 @@ begin
 
         when SEND =>
 
-          -- Preamble and SFD
+          -- Preamble
           for i in 0 to 6 loop
             v_ethernet_packet_raw(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);
           end loop;
+          -- Send to sub-VVC
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(0 to 6), 0, 0);
+
+          -- SFD
           v_ethernet_packet_raw(7) := C_SFD;
+          -- Send to sub-VVC
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(7 to 7), 1, 0);
 
           -- MAC destination
-          v_ethernet_packet_raw( 8 to 13) := v_cmd.mac_destination;
+          v_ethernet_packet_raw(8 to 13) := v_cmd.mac_destination;
+          -- Add info to the transaction_for_waveview_struct
+          transaction_info.ethernet_frame.mac_destination := v_cmd.mac_destination;
+          -- Send to sub-VVC
+          send_to_sub_and_await_finish(v_ethernet_packet_raw( 8 to 13), 2, 0);
+
+          -- MAC source
           v_ethernet_packet_raw(14 to 19) := v_cmd.mac_source;
+          -- Add info to the transaction_for_waveview_struct
+          transaction_info.ethernet_frame.mac_source := v_cmd.mac_source;
+          -- Send to sub-VVC
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(14 to 19), 3, 0);
 
           -- Length
           v_payload_length := std_logic_vector(to_unsigned(v_cmd.payload_length, 16));
           v_ethernet_packet_raw(20) := v_payload_length(15 downto 8);
           v_ethernet_packet_raw(21) := v_payload_length( 7 downto 0);
+          -- Add info to the transaction_for_waveview_struct
+          transaction_info.ethernet_frame.length := (v_payload_length(15 downto 8), v_payload_length(7 downto 0));
+          -- Send to sub-VVC
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(20 to 21), 4, 0);
 
           -- Payload
           v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1) := v_cmd.payload(0 to v_cmd.payload_length-1);
+          -- Add info to the transaction_for_waveview_struct
+          transaction_info.ethernet_frame.payload := v_cmd.payload;
+          -- Send to sub-VVC
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1), 5, 0);
 
           -- FCS
           v_crc_32 := generate_crc_32_complete(v_ethernet_packet_raw(0 to 22+v_cmd.payload_length-1));
@@ -263,29 +318,17 @@ begin
           v_ethernet_packet_raw(22+v_cmd.payload_length+1) := v_crc_32(23 downto 16);
           v_ethernet_packet_raw(22+v_cmd.payload_length+2) := v_crc_32(15 downto  8);
           v_ethernet_packet_raw(22+v_cmd.payload_length+3) := v_crc_32( 7 downto  0);
-
           -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame.mac_destination := v_cmd.mac_destination;
-          transaction_info.ethernet_frame.mac_source      := v_cmd.mac_source;
-          transaction_info.ethernet_frame.length          := (v_payload_length(15 downto 8), v_payload_length(7 downto 0));
-          transaction_info.ethernet_frame.payload         := v_cmd.payload;
-          transaction_info.ethernet_frame.fcs             := (v_crc_32(31 downto 24), v_crc_32(23 downto 16), v_crc_32(15 downto  8), v_crc_32( 7 downto  0));
-
+          transaction_info.ethernet_frame.fcs := (v_crc_32(31 downto 24), v_crc_32(23 downto 16), v_crc_32(15 downto  8), v_crc_32( 7 downto  0));
           -- Send to sub-VVC
-          hvvc_to_vvc.operation                                  <= SEND;
-          hvvc_to_vvc.num_data_bytes                             <= 22+v_cmd.payload_length+4;
-          hvvc_to_vvc.data_bytes(0 to 22+v_cmd.payload_length+3) <= v_ethernet_packet_raw(0 to 22+v_cmd.payload_length+3);
-          hvvc_to_vvc.trigger <= '1';
-          wait for 0 ns;
-          hvvc_to_vvc.trigger <= '0';
-          wait until vvc_to_hvvc.trigger = '1';
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(22+v_cmd.payload_length to 22+v_cmd.payload_length+3), 6, 0);
 
 
 
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
-          log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
+          log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
@@ -310,7 +353,7 @@ begin
 
       -- Reset terminate flag if any occurred
       if (terminate_current_cmd.is_active = '1') then
-        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, vvc_config.msg_id_panel);
+        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, v_msg_id_panel);
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 

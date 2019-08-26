@@ -41,7 +41,7 @@ entity ethernet_transmit_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_INTERFACE                             : t_interface;
     GC_VVC_INSTANCE_IDX                      : natural;
-    GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_channel_array;
+    GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array;
     GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config := C_ETHERNET_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural               := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural               := 950;
@@ -84,7 +84,6 @@ begin
     generic map(
       GC_INTERFACE           => GC_INTERFACE,
       GC_INSTANCE_IDX        => GC_VVC_INSTANCE_IDX,
-      GC_CHANNEL             => C_CHANNEL,
       GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
       GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
       GC_SCOPE               => C_SCOPE
@@ -195,7 +194,7 @@ begin
 -- - Fetch and execute the commands
 --========================================================================================================================
   cmd_executor : process
-    constant C_TRANSMIT_PROC_CALL                    : string := "Ethernet transmit: ";
+    constant C_TRANSMIT_PROC_CALL                    : string := "Ethernet transmit";
 
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
@@ -310,24 +309,28 @@ begin
           v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
           v_crc_32 := not(v_crc_32);
           v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
-          v_ethernet_frame.fcs := to_byte_array(v_crc_32);
+          v_ethernet_frame.fcs := v_crc_32;
 
           -- Add info to the transaction_for_waveview_struct
           transaction_info.ethernet_frame := v_ethernet_frame;
 
           -- Send to bridge
-          log(ID_PACKET_HDR, C_TRANSMIT_PROC_CALL & "Transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx) & to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
+          log(ID_PACKET_INITIATE, C_TRANSMIT_PROC_CALL & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
           blocking_send_to_bridge(v_ethernet_packet_raw( 0 to  7),                                     C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD);
+
+          log(ID_PACKET_HDR, C_TRANSMIT_PROC_CALL & ": Transmitting header." & format_command_idx(v_cmd.cmd_idx) & hdr_to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
           blocking_send_to_bridge(v_ethernet_packet_raw( 8 to 13),                                     C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION);
           blocking_send_to_bridge(v_ethernet_packet_raw(14 to 19),                                     C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE);
           blocking_send_to_bridge(v_ethernet_packet_raw(20 to 21),                                     C_IF_FIELD_NUM_ETHERNET_LENTGTH);
+
+          log(ID_PACKET_DATA, C_TRANSMIT_PROC_CALL & ": Transmitting payload." & format_command_idx(v_cmd.cmd_idx) & data_to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
           blocking_send_to_bridge(v_ethernet_packet_raw(22 to 22+v_payload_length-1),                  C_IF_FIELD_NUM_ETHERNET_PAYLOAD);
           blocking_send_to_bridge(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3), C_IF_FIELD_NUM_ETHERNET_FCS);
 
           -- Interpacket gap
           wait for vvc_config.bfm_config.interpacket_gap_time;
 
-          log(ID_PACKET_INITIATE, C_TRANSMIT_PROC_CALL & "Finished transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
+          log(ID_PACKET_COMPLETE, C_TRANSMIT_PROC_CALL & ": Finished transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
 
 
         -- UVVM common operations

@@ -46,6 +46,9 @@ bitvis_vip_sbi_lib = ui.add_library('bitvis_vip_sbi')
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'bitvis_vip_sbi', 'src', '*.vhd'))
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
+bitvis_vip_scoreboard_lib = ui.add_library('bitvis_vip_scoreboard')
+bitvis_vip_scoreboard_lib.add_source_files(join(project_root, 'bitvis_vip_scoreboard', 'src', '*.vhd'))
+
 bitvis_vip_hvvc_to_vvc_bridge = ui.add_library('bitvis_vip_hvvc_to_vvc_bridge')
 bitvis_vip_hvvc_to_vvc_bridge.add_source_files(join(project_root, 'bitvis_vip_hvvc_to_vvc_bridge', 'src', '*.vhd'))
 

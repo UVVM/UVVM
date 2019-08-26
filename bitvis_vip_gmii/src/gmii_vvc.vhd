@@ -47,8 +47,8 @@ architecture struct of gmii_vvc is
 
 begin
 
-  -- GMII TRANSMITTER VVC
-  i_gmii_transmitter: entity work.gmii_transmitter_vvc
+  -- GMII TRANSMIT VVC
+  i_gmii_transmit: entity work.gmii_transmit_vvc
   generic map(
     GC_INSTANCE_IDX                           => GC_INSTANCE_IDX,
     GC_GMII_BFM_CONFIG                        => GC_GMII_BFM_CONFIG,
@@ -64,8 +64,8 @@ begin
   );
 
 
-  -- GMII RECEIVER VVC
-  i_gmii_receiver: entity work.gmii_receiver_vvc
+  -- GMII RECEIVE VVC
+  i_gmii_receive: entity work.gmii_receive_vvc
   generic map(
     GC_INSTANCE_IDX                           => GC_INSTANCE_IDX,
     GC_GMII_BFM_CONFIG                        => GC_GMII_BFM_CONFIG,

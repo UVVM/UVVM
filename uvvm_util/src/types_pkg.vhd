@@ -178,9 +178,8 @@ package types_pkg is
     NA,               -- When channel is not relevant
     ALL_CHANNELS,     -- When command shall be received by all channels
     RX,
-    TX,
-    TRANSMITTER,
-    RECEIVER);
+    TX
+  );
 
   type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
 
@@ -205,7 +204,7 @@ package types_pkg is
   -------------------------------------
   type t_dut_if_field_config is record
     dut_address           : unsigned;
-    dut_address_increment : natural;
+    dut_address_increment : integer;
     field_description     : string;
   end record;
 

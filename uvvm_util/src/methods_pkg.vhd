@@ -294,8 +294,8 @@ package methods_pkg is
 
   -- Matching if same width or only zeros in "extended width"
   function matching_widths(
-    value1: std_logic_vector;
-    value2: std_logic_vector
+    constant value1 : in std_logic_vector;
+    constant value2 : in std_logic_vector
     ) return boolean;
 
   function matching_widths(

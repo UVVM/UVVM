@@ -7,6 +7,8 @@ vX.X.X
 ----------
 Released: 2019-XX-XX
 - Fixed an issue when using ALL_INSTANCES with set_scope() in the generic queue package.
+- Updated vvc_generator.py script to use the correct await_cmd_from_sequencer() call
+  and changed some constants which should've been variables.
 
 v2.4.0
 ----------

@@ -9,6 +9,15 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2019.XX.XX
+--------------------
+Released: 2019-XX-XX
+- Changed to relative links in MD files.
+- Bugfixes in Axistream VIP.
+- Added new config to deassert tvalid once or multiple random times in Axistream BFM.
+- Added new feature to deassert tready multiple random times in Axistream BFM.
+- Minor fixes in vvc_generator.py
+
 v2019.06.06
 --------------------
 Released: 2019-06-06

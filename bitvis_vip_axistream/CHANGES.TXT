@@ -1,6 +1,29 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.2.0
+----------
+Released: 2019-XX-XX
+- Fixed bug in BFM receive procedure where it could receive more bytes
+  than expected in the last word.
+- Allowed non-normalized data arrays to be used in the transmit, receive
+  and expect VVC & BFM procedures.
+- Fixed deassertion of tready signal when config ready_default_value=1.
+- Avoid executing commands in the VVC when GC_VVC_IS_MASTER is wrongly configured.
+- Made BFM receive procedure always timeout at max_wait_cycles.
+- BFM receive procedure now samples the data at the rising edge of the clock.
+- Fixed tready signal being asserted before tvalid was asserted when using
+  config ready_default_value=0.
+- Changed back to using the record BFM calls from the VVC as the bug from Questa
+  has been fixed.
+- Added a feature to deassert tvalid once or multiple random times from the master
+  using the config record.
+- Added a feature to deassert tready multiple random times from the slave using
+  the config record.
+- Fixed VVC receive procedure returning the data at the end of the byte_array
+  when config byte_endianness was FIRST_BYTE_RIGHT.
+- Updated documentation.
+
 v4.1.0
 ----------
 Released: 2019-06-06

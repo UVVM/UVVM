@@ -91,12 +91,13 @@ begin
 
     await_uvvm_initialization(VOID);
 
-    disable_log_msg(ALL_MESSAGES);
-    enable_log_msg(ID_SEQUENCER);
-    enable_log_msg(ID_LOG_HDR);
+    disable_log_msg(ID_UVVM_DATA_QUEUE);
+    -- disable_log_msg(ALL_MESSAGES);
+    -- enable_log_msg(ID_SEQUENCER);
+    -- enable_log_msg(ID_LOG_HDR);
 
-    bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
+    -- bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
+    -- bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
     log(ID_LOG_HDR_LARGE, "START SIMULATION OF ETHERNET VVC");
 

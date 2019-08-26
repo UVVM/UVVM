@@ -116,7 +116,7 @@ package vvc_methods_pkg is
     constant channel                   : in    t_channel;
     constant data                      : in    t_byte_array;
     constant msg                       : in    string;
-    constant scope                     : in    string                      := C_TB_UVVM_CMD_SCOPE_DEFAULT;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
@@ -127,7 +127,7 @@ package vvc_methods_pkg is
     constant channel                   : in    t_channel;
     constant num_bytes                 : in    positive;
     constant msg                       : in    string;
-    constant scope                     : in    string                      := C_TB_UVVM_CMD_SCOPE_DEFAULT;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
@@ -148,7 +148,7 @@ package body vvc_methods_pkg is
     constant channel                   : in    t_channel;
     constant data                      : in    t_byte_array;
     constant msg                       : in    string;
-    constant scope                     : in    string                      := C_TB_UVVM_CMD_SCOPE_DEFAULT;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
@@ -174,7 +174,7 @@ package body vvc_methods_pkg is
     constant channel                   : in    t_channel;
     constant num_bytes                 : in    positive;
     constant msg                       : in    string;
-    constant scope                     : in    string                      := C_TB_UVVM_CMD_SCOPE_DEFAULT;
+    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is

@@ -69,7 +69,7 @@ begin
 --========================================================================================================================
 -- SUB VVC
 --========================================================================================================================
-  i_td_sub_vvc_engine : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
+  i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
       GC_INTERFACE           => GC_INTERFACE,
       GC_INSTANCE_IDX        => GC_SUB_VVC_INSTANCE_IDX,
@@ -121,11 +121,7 @@ begin
       -- Update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Update v_msg_id_panel
-      if v_local_vvc_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
-        v_msg_id_panel := v_local_vvc_cmd.msg_id_panel;
-      else
-        v_msg_id_panel := vvc_config.msg_id_panel;
-      end if;
+      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
@@ -187,6 +183,8 @@ begin
 -- - Fetch and execute the commands
 --========================================================================================================================
   cmd_executor : process
+    constant C_TRANSMIT_PROC_CALL                    : string := "Ethernet transmit: ";
+
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time := 0 ns;
@@ -198,6 +196,7 @@ begin
     variable v_payload_length                        : std_logic_vector(15 downto 0);
     variable v_crc_32                                : std_logic_vector(31 downto 0);
     variable v_cmd_idx                               : natural;
+    variable v_ethernet_frame                        : t_ethernet_frame;
 
     -- Local overload
     procedure send_to_sub_and_await_finish(
@@ -206,7 +205,7 @@ begin
       constant current_byte_idx_in_field : in  natural
     ) is
     begin
-      send_to_sub_and_await_finish(hvvc_to_vvc, vvc_to_hvvc, SEND, data_bytes, dut_if_field_idx, current_byte_idx_in_field);
+      send_to_sub_and_await_finish(hvvc_to_vvc, vvc_to_hvvc, TRANSMIT, data_bytes, dut_if_field_idx, current_byte_idx_in_field, v_msg_id_panel);
     end procedure send_to_sub_and_await_finish;
 
   begin
@@ -233,16 +232,12 @@ begin
       transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Update v_msg_id_panel
-      if v_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
-        v_msg_id_panel := v_cmd.msg_id_panel;
-      else
-        v_msg_id_panel := vvc_config.msg_id_panel;
-      end if;
+      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
 
-      if v_cmd.operation = SEND then  -- Replace this line with actual check
+      if v_cmd.operation = TRANSMIT then  -- Replace this line with actual check
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -267,62 +262,56 @@ begin
         -- VVC dedicated operations
         --===================================
 
-        when SEND =>
-
+        when TRANSMIT =>
           -- Preamble
           for i in 0 to 6 loop
             v_ethernet_packet_raw(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);
           end loop;
-          -- Send to sub-VVC
-          send_to_sub_and_await_finish(v_ethernet_packet_raw(0 to 6), 0, 0);
 
           -- SFD
           v_ethernet_packet_raw(7) := C_SFD;
-          -- Send to sub-VVC
-          send_to_sub_and_await_finish(v_ethernet_packet_raw(7 to 7), 1, 0);
 
           -- MAC destination
-          v_ethernet_packet_raw(8 to 13) := v_cmd.mac_destination;
-          -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame.mac_destination := v_cmd.mac_destination;
-          -- Send to sub-VVC
-          send_to_sub_and_await_finish(v_ethernet_packet_raw( 8 to 13), 2, 0);
+          v_ethernet_packet_raw(8 to 13)   := to_byte_array(std_logic_vector(v_cmd.mac_destination));
+          v_ethernet_frame.mac_destination := v_cmd.mac_destination;
 
           -- MAC source
-          v_ethernet_packet_raw(14 to 19) := v_cmd.mac_source;
-          -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame.mac_source := v_cmd.mac_source;
-          -- Send to sub-VVC
-          send_to_sub_and_await_finish(v_ethernet_packet_raw(14 to 19), 3, 0);
+          v_ethernet_packet_raw(14 to 19) := to_byte_array(std_logic_vector(v_cmd.mac_source));
+          v_ethernet_frame.mac_source     := v_cmd.mac_source;
 
           -- Length
           v_payload_length := std_logic_vector(to_unsigned(v_cmd.payload_length, 16));
           v_ethernet_packet_raw(20) := v_payload_length(15 downto 8);
           v_ethernet_packet_raw(21) := v_payload_length( 7 downto 0);
-          -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame.length := (v_payload_length(15 downto 8), v_payload_length(7 downto 0));
-          -- Send to sub-VVC
-          send_to_sub_and_await_finish(v_ethernet_packet_raw(20 to 21), 4, 0);
+          v_ethernet_frame.length := v_cmd.payload_length;
 
           -- Payload
           v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1) := v_cmd.payload(0 to v_cmd.payload_length-1);
-          -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame.payload := v_cmd.payload;
-          -- Send to sub-VVC
-          send_to_sub_and_await_finish(v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1), 5, 0);
+          v_ethernet_frame.payload := v_cmd.payload;
 
           -- FCS
-          v_crc_32 := generate_crc_32_complete(v_ethernet_packet_raw(0 to 22+v_cmd.payload_length-1));
+          v_crc_32 := generate_crc_32_complete(v_ethernet_packet_raw(8 to 22+v_cmd.payload_length-1));
           v_crc_32 := not(v_crc_32);
           v_ethernet_packet_raw(22+v_cmd.payload_length)   := v_crc_32(31 downto 24);
           v_ethernet_packet_raw(22+v_cmd.payload_length+1) := v_crc_32(23 downto 16);
           v_ethernet_packet_raw(22+v_cmd.payload_length+2) := v_crc_32(15 downto  8);
           v_ethernet_packet_raw(22+v_cmd.payload_length+3) := v_crc_32( 7 downto  0);
+          v_ethernet_frame.fcs := to_byte_array(v_crc_32);
+
           -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame.fcs := (v_crc_32(31 downto 24), v_crc_32(23 downto 16), v_crc_32(15 downto  8), v_crc_32( 7 downto  0));
+          transaction_info.ethernet_frame := v_ethernet_frame;
+
           -- Send to sub-VVC
+          log(ID_PACKET_HDR, C_TRANSMIT_PROC_CALL & "Transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx) & to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
+          send_to_sub_and_await_finish(v_ethernet_packet_raw( 0 to  6), 0, 0);
+          send_to_sub_and_await_finish(v_ethernet_packet_raw( 7 to  7), 1, 0);
+          send_to_sub_and_await_finish(v_ethernet_packet_raw( 8 to 13), 2, 0);
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(14 to 19), 3, 0);
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(20 to 21), 4, 0);
+          send_to_sub_and_await_finish(v_ethernet_packet_raw(22 to 22+v_cmd.payload_length-1), 5, 0);
           send_to_sub_and_await_finish(v_ethernet_packet_raw(22+v_cmd.payload_length to 22+v_cmd.payload_length+3), 6, 0);
 
+          log(ID_PACKET_INITIATE, C_TRANSMIT_PROC_CALL & "Finished transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
 
 
         -- UVVM common operations

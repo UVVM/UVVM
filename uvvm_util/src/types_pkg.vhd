@@ -34,10 +34,12 @@ package types_pkg is
 
   type t_natural_array  is array (natural range <>) of natural;
   type t_integer_array  is array (natural range <>) of integer;
-  type t_byte_array     is array (natural range <>) of std_logic_vector(7 downto 0);
   type t_slv_array      is array (natural range <>) of std_logic_vector;
   type t_signed_array   is array (natural range <>) of signed;
   type t_unsigned_array is array (natural range <>) of unsigned;
+
+  --subtype t_byte_array  is t_slv_array(open)(7 downto 0);
+  type t_byte_array      is array (natural range <>) of std_logic_vector(7 downto 0);
 
   -- Additions to predefined vector types
   type natural_vector  is array (natural range <>) of natural;
@@ -173,6 +175,14 @@ package types_pkg is
   type t_void_bfm_config is (VOID);
   constant C_VOID_BFM_CONFIG : t_void_bfm_config := VOID;
 
+  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+    NA,               -- When channel is not relevant
+    ALL_CHANNELS,     -- When command shall be received by all channels
+    RX,
+    TX,
+    TRANSMITTER,
+    RECEIVER);
+
   -------------------------------------
   -- SB
   -------------------------------------
@@ -187,6 +197,44 @@ package types_pkg is
   type t_range_option is (SINGLE, AND_LOWER, AND_HIGHER);
 
   type t_tag_usage is (TAG, NO_TAG);
+
+
+  -------------------------------------
+  -- Hierarchical VVC
+  -------------------------------------
+  type t_sub_vvc_operation is (SEND, RECEIVE);
+  type t_interface is (SBI, GMII);
+
+  type t_hvvc_to_vvc is record
+    trigger                   : std_logic;
+    operation                 : t_sub_vvc_operation;
+    num_data_bytes            : positive;
+    data_bytes                : t_byte_array;
+    dut_if_field_idx          : integer;
+    current_byte_idx_in_field : natural; -- In protocol if field idx = -1
+  end record;
+
+  type t_vvc_to_hvvc is record
+    trigger        : std_logic;
+    data_bytes     : t_byte_array;
+  end record;
+
+  type t_dut_if_field_config is record
+    dut_address           : unsigned;
+    dut_address_increment : natural;
+    field_description     : string;
+  end record;
+
+  constant C_DUT_IF_FIELD_CONFIG_DEFAULT : t_dut_if_field_config(dut_address(0 downto 0)) := (
+    dut_address           => (others => '0'),
+    dut_address_increment => 0,
+    field_description     => "default");
+
+  type t_dut_if_field_config_array is array (natural range <>) of t_dut_if_field_config;
+
+  type t_dut_if_field_config_channel_array is array (t_channel range <>) of t_dut_if_field_config_array;
+
+  constant C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY_DEFAULT : t_dut_if_field_config_channel_array(t_channel'low to t_channel'high)(0 to 0)(dut_address(0 downto 0), field_description(1 to 7)) := (others => (others => C_DUT_IF_FIELD_CONFIG_DEFAULT));
 
 end package types_pkg;
 

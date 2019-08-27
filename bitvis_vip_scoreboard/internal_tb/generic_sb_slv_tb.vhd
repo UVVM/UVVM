@@ -43,12 +43,10 @@ architecture func of generic_sb_slv_tb is
                                                      ignore_initial_garbage    => false);
 
   package slv_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_expected_element       => std_logic_vector(7 downto 0),
-               t_actual_element         => std_logic_vector(7 downto 0),
-               match                    => std_match,
-               expected_to_string       => to_string,
-               actual_to_string         => to_string,
-               sb_config_default        => C_SLV_SB_CONFIG_DEFAULT);
+  generic map (t_element         => std_logic_vector(7 downto 0),
+               element_match     => std_match,
+               to_string_element => to_string,
+               sb_config_default => C_SLV_SB_CONFIG_DEFAULT);
 
 
   use slv_sb_pkg.all;

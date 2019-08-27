@@ -29,24 +29,28 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.hvvc_context;
 use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
+use bitvis_vip_ethernet.ethernet_sb_pkg.all;
+
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 library mac_master;
 use mac_master.ethernet_types.all;
 
 -- Test case entity
-entity ethernet_gmii_mac_master_tb is
+entity ethernet_gmii_mac_master_sb_tb is
   generic (
     -- This generic is used to configure the testbench from run.py, e.g. what
     -- test case to run. The default value is used when not running from script
     -- and in that case all test cases are run.
     runner_cfg : runner_cfg_t := runner_cfg_default);
-end entity ethernet_gmii_mac_master_tb;
+end entity ethernet_gmii_mac_master_sb_tb;
 
 -- Test case architecture
-architecture func of ethernet_gmii_mac_master_tb is
+architecture func of ethernet_gmii_mac_master_sb_tb is
 
   constant C_CLK_PERIOD   : time := 8 ns;    -- **** Trenger metode for setting av clk period
-  constant C_SCOPE        : string := "ETHERNET VVC - MAC MASTER TB";
+  constant C_SCOPE        : string := "ETHERNET VVC - MAC MASTER SCOREBOARD TB";
 
   signal if_in  : t_if_in;
   signal if_out : t_if_out;
@@ -81,11 +85,26 @@ begin
     variable v_destination_addr   : unsigned(47 downto 0);
     variable v_source_addr        : unsigned(47 downto 0);
     variable v_random_num         : positive;
+    variable v_ethernet_sb        : t_generic_sb;
 
     procedure receive_from_mac_master(
       constant num_bytes_in_payload : in positive
     ) is
-      variable v_send_data_raw      : t_byte_array(0 to num_bytes_in_payload+16-1);
+      impure function get_payload_length
+      return positive is
+      begin
+        if num_bytes_in_payload < C_MIN_PAYLOAD_LENGTH then
+          return C_MIN_PAYLOAD_LENGTH;
+        else
+          return num_bytes_in_payload;
+        end if;
+      end function get_payload_length;
+
+      variable v_send_data_raw   : t_byte_array(0 to get_payload_length+16-1);
+      variable v_send_data_frame : t_ethernet_frame;
+      variable v_receive_data    : t_vvc_result;
+      variable v_cmd_idx         : integer;
+      variable v_payload_length  : positive;
     begin
       log(ID_SEQUENCER, "Start sending " & to_string(num_bytes_in_payload) & " bytes of data from Ethernet MAC Master to VVC");
 
@@ -94,24 +113,39 @@ begin
 
 
       -- MAC destination
-      v_send_data_raw(2 to 7) := to_byte_array(x"00_00_00_00_00_01");
+      v_send_data_frame.mac_destination := x"00_00_00_00_00_01";
+      v_send_data_raw(2 to 7) := to_byte_array(std_logic_vector(v_send_data_frame.mac_destination));
 
       -- MAC source
-      v_send_data_raw(8 to 13) := to_byte_array(x"00_00_00_00_00_02");
+      v_send_data_frame.mac_source := x"00_00_00_00_00_02";
+      v_send_data_raw(8 to 13) := to_byte_array(std_logic_vector(v_send_data_frame.mac_source));
 
       -- length
-      v_send_data_raw(14 to 15) := to_byte_array(std_logic_vector(to_unsigned(num_bytes_in_payload, 16)));
+      v_send_data_frame.length := num_bytes_in_payload;
+      v_send_data_raw(14 to 15) := to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.length, 16)));
 
       -- payload
       for i in 0 to num_bytes_in_payload-1 loop
-        v_send_data_raw(16+i) := random(8);
+        v_send_data_frame.payload(i) := random(8);
+        v_send_data_raw(16+i)        := v_send_data_frame.payload(i);
       end loop;
+
+      -- Pad if length < C_MIN_PAYLOAD_LENGTH
+      v_payload_length := get_payload_length;
+      if v_send_data_frame.length < C_MIN_PAYLOAD_LENGTH then
+        v_send_data_raw(16+v_send_data_frame.length to 16+v_payload_length-1) := (others => (others => '0'));
+      end if;
+
+      -- FCS
+      v_send_data_frame.fcs := not generate_crc_32_complete(reverse_vectors_in_array(v_send_data_raw(2 to 16+v_payload_length-1)));
+
+      v_ethernet_sb.add_expected(v_send_data_frame);
 
       if if_out.tx_reset_o = '1' then
         wait until if_out.tx_reset_o = '0';
       end if;
 
-      for i in v_send_data_raw'range loop
+      for i in 0 to 16+num_bytes_in_payload-1 loop
         wait until rising_edge(if_out.clk);
 
         while if_out.tx_full_o = '1' loop
@@ -124,7 +158,8 @@ begin
 
       end loop;
 
-      ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data_raw(16 to 16+num_bytes_in_payload-1), "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master");
+      ethernet_receive(ETHERNET_VVCT, 1, RX, "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master");
+      v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 1, RX);
 
       wait until rising_edge(if_out.clk);
       if_in.tx_wr_en_i <= '0';
@@ -132,6 +167,8 @@ begin
       log(ID_LOG_HDR, "Sending data to MAC Master finished");
 
       await_completion(ETHERNET_VVCT, 1, RX, num_bytes_in_payload*10 ns + 10 us, "Wait for read to finish.");
+      fetch_result(ETHERNET_VVCT, 1, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
+      v_ethernet_sb.check_actual(v_receive_data.ethernet_frame);
     end procedure receive_from_mac_master;
 
     procedure send_to_mac_master(
@@ -160,7 +197,7 @@ begin
       -- payload
       for i in 0 to num_bytes_in_payload-1 loop
         v_send_data_frame.payload(i) := random(8);
-        v_data_raw(14+i)        := v_send_data_frame.payload(i);
+        v_data_raw(14+i)             := v_send_data_frame.payload(i);
       end loop;
       -- FCS
       v_send_data_frame.fcs := not generate_crc_32_complete(reverse_vectors_in_array(v_data_raw(0 to 14+num_bytes_in_payload-1)));
@@ -215,6 +252,10 @@ begin
     end if;
 
     await_uvvm_initialization(VOID);
+
+    v_ethernet_sb.config(C_SB_CONFIG_DEFAULT);
+    v_ethernet_sb.enable(VOID);
+    v_ethernet_sb.set_scope(C_SCOPE);
 
     if_in.rx_rd_en_i <= '0';
 
@@ -276,6 +317,7 @@ begin
     -- Ending the simulation
     --------------------------------------------------------------------------------------
     wait for 1000 ns;  -- to allow some time for completion
+    v_ethernet_sb.report_counters(VOID);
     report_alert_counters(VOID);
     log(ID_LOG_HDR, "SIMULATION COMPLETED");
 

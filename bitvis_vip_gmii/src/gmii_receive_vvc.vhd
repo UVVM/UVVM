@@ -33,7 +33,7 @@ use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
 --========================================================================================================================
-entity gmii_receiver_vvc is
+entity gmii_receive_vvc is
   generic (
     GC_INSTANCE_IDX                          : natural;
     GC_GMII_BFM_CONFIG                       : t_gmii_bfm_config         := C_GMII_BFM_CONFIG_DEFAULT;
@@ -47,11 +47,11 @@ entity gmii_receiver_vvc is
   port (
     gmii_from_dut_if : in t_gmii_from_dut_if
   );
-end entity gmii_receiver_vvc;
+end entity gmii_receive_vvc;
 
 --========================================================================================================================
 --========================================================================================================================
-architecture behave of gmii_receiver_vvc is
+architecture behave of gmii_receive_vvc is
 
   constant C_CHANNEL    : t_channel     := RX;
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);

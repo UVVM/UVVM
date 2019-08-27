@@ -20,6 +20,9 @@ use ieee.std_logic_1164.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
 package common_methods_pkg is
 
   --========================================================================================================================
@@ -31,7 +34,7 @@ package common_methods_pkg is
 
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -40,7 +43,7 @@ package common_methods_pkg is
 
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -50,7 +53,7 @@ package common_methods_pkg is
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -60,7 +63,7 @@ package common_methods_pkg is
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -82,7 +85,7 @@ package body common_methods_pkg is
 
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -102,7 +105,7 @@ package body common_methods_pkg is
 
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -120,7 +123,7 @@ package body common_methods_pkg is
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant data_bytes                : in  t_byte_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
@@ -134,7 +137,7 @@ package body common_methods_pkg is
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_sub_vvc_operation;
+    constant operation                 : in  t_vvc_operation;
     constant num_data_bytes            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;

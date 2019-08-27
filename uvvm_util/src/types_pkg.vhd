@@ -198,27 +198,6 @@ package types_pkg is
 
   type t_tag_usage is (TAG, NO_TAG);
 
-
-  -------------------------------------
-  -- Hierarchical VVC
-  -------------------------------------
-  type t_dut_if_field_config is record
-    dut_address           : unsigned;
-    dut_address_increment : integer;
-    field_description     : string;
-  end record;
-
-  constant C_DUT_IF_FIELD_CONFIG_DEFAULT : t_dut_if_field_config(dut_address(0 downto 0)) := (
-    dut_address           => (others => '0'),
-    dut_address_increment => 0,
-    field_description     => "default");
-
-  type t_dut_if_field_config_array is array (natural range <>) of t_dut_if_field_config;
-
-  type t_dut_if_field_config_channel_array is array (t_channel range <>) of t_dut_if_field_config_array;
-
-  constant C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY_DEFAULT : t_dut_if_field_config_channel_array(t_channel'low to t_channel'high)(0 to 0)(dut_address(0 downto 0), field_description(1 to 7)) := (others => (others => C_DUT_IF_FIELD_CONFIG_DEFAULT));
-
 end package types_pkg;
 
 package body types_pkg is

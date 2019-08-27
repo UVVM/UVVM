@@ -289,7 +289,6 @@ package ti_vvc_framework_support_pkg is
     dut_if_field_idx          : natural;
     current_byte_idx_in_field : natural;
     msg_id_panel              : t_msg_id_panel;
-    field_timeout_margin      : time;
   end record;
 
   type t_bridge_to_hvvc is record
@@ -298,17 +297,15 @@ package ti_vvc_framework_support_pkg is
   end record;
 
   type t_dut_if_field_config is record
-    dut_address                : unsigned;
-    dut_address_increment      : integer;
-    data_width                 : positive;
-    field_description          : string;
+    dut_address           : unsigned;
+    dut_address_increment : integer;
+    field_description     : string;
   end record;
 
   constant C_DUT_IF_FIELD_CONFIG_DEFAULT : t_dut_if_field_config(dut_address(0 downto 0)) := (
-    dut_address                => (others => '0'),
-    dut_address_increment      => 0,
-    data_width                 => 8,
-    field_description          => "default");
+    dut_address           => (others => '0'),
+    dut_address_increment => 0,
+    field_description     => "default");
 
   type t_dut_if_field_config_array is array (natural range <>) of t_dut_if_field_config;
 

@@ -30,8 +30,8 @@ library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.hvvc_context;
 
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg;
-use bitvis_vip_sbi.vvc_methods_pkg.SBI_VVCT;
+context bitvis_vip_sbi.vvc_context;
+
 -- Test case entity
 entity ethernet_sbi_tb is
   generic (
@@ -64,7 +64,7 @@ begin
     variable v_alert_num_mismatch : boolean := false;
     variable v_cmd_idx            : natural;
     variable v_send_data          : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
-    variable v_receive_data       : t_vvc_result;
+    variable v_receive_data       : bitvis_vip_ethernet.vvc_cmd_pkg.t_vvc_result;
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -170,6 +170,66 @@ begin
       check_value(v_receive_data.ethernet_frame_status.fcs_error, false, ERROR, "Verify FCS.");
       check_value(v_receive_data.ethernet_frame.payload(0), v_send_data(0), ERROR, "Verify received payload.");
     end loop;
+
+
+
+    log(ID_LOG_HDR, "Send " & to_string(C_MAX_PAYLOAD_LENGTH) & " byte of data from i1 to i2");
+    for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
+      v_send_data(i) := random(8);
+    end loop;
+    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 1.");
+    ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
+    v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
+    await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
+
+    log(ID_LOG_HDR, "Fetch data from i2");
+    fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
+
+    check_value(v_receive_data.ethernet_frame.mac_destination = (x"00", x"00", x"00", x"00", x"00", x"02"), ERROR, "Verify MAC destination.");
+    check_value(v_receive_data.ethernet_frame.mac_source      = (x"00", x"00", x"00", x"00", x"00", x"01"), ERROR, "Verify MAC source.");
+    check_value(v_receive_data.ethernet_frame_status.fcs_error, false, ERROR, "Verify FCS.");
+    check_value(v_receive_data.ethernet_frame.payload, v_send_data, ERROR, "Verify received payload.");
+
+
+
+    log(ID_LOG_HDR, "Send " & to_string(C_MAX_PAYLOAD_LENGTH) & " byte of data from i2, check with expect in i1");
+    for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
+      v_send_data(i) := random(8);
+    end loop;
+    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send data from instance 2.");
+    ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Expect data from instance 2.");
+    await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
+
+
+
+    log(ID_LOG_HDR, "Send 45 byte of data (min payload size -1) from i2, check with expect in i1");
+    for i in 0 to 44 loop
+      v_send_data(i) := random(8);
+    end loop;
+    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 44), "Send data from instance 2.");
+    ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 44), "Expect data from instance 2.");
+    await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
+
+
+
+    log(ID_LOG_HDR, "Send 46 byte of data (min payload size) from i2, check with expect in i1");
+    for i in 0 to 45 loop
+      v_send_data(i) := random(8);
+    end loop;
+    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 45), "Send data from instance 2.");
+    ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 45), "Expect data from instance 2.");
+    await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
+
+
+
+    log(ID_LOG_HDR, "Send 47 byte of data (min payload size +1) from i2, check with expect in i1");
+    for i in 0 to 46 loop
+      v_send_data(i) := random(8);
+    end loop;
+    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
+    ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 46), "Expect data from instance 2.");
+    await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
+
 
     --==================================================================================================
     -- Ending the simulation

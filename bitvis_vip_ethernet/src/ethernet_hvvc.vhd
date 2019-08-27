@@ -21,6 +21,9 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
 use work.ethernet_bfm_pkg.all;
 
 --========================================================================================================================
@@ -29,14 +32,14 @@ entity ethernet_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_INTERFACE                             : t_interface;
     GC_VVC_INSTANCE_IDX                      : natural;
-    GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_channel_array := C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY_DEFAULT;
-    GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config               := C_ETHERNET_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                             := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                             := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                       := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                             := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                             := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                       := WARNING
+    GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array := C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT;
+    GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config                 := C_ETHERNET_BFM_CONFIG_DEFAULT;
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                               := 1000;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                               := 950;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                         := WARNING;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                               := 1000;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                               := 950;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                         := WARNING
   );
 end entity ethernet_vvc;
 

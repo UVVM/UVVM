@@ -163,7 +163,7 @@ begin
         v_data_raw(14+i)        := v_send_data_frame.payload(i);
       end loop;
       -- FCS
-      v_send_data_frame.fcs := to_byte_array(not generate_crc_32_complete(reverse_vectors_in_array(v_data_raw(0 to 14+num_bytes_in_payload-1))));
+      v_send_data_frame.fcs := not generate_crc_32_complete(reverse_vectors_in_array(v_data_raw(0 to 14+num_bytes_in_payload-1)));
 
       ethernet_send(ETHERNET_VVCT, 1, TX, v_data_raw(14 to 14+num_bytes_in_payload-1), "Send random data from instance 1.");
 
@@ -187,7 +187,7 @@ begin
       v_receive_data_frame.payload(0 to num_bytes_in_payload-1) :=                            v_data_raw(   16 to 16+num_bytes_in_payload-1);
       v_receive_data_frame.fcs                                  := v_send_data_frame.fcs;
 
-      compare_ethernet_frames(v_receive_data_frame, v_send_data_frame, ERROR, C_SCOPE, ID_PACKET_COMPLETE, shared_msg_id_panel);
+      compare_ethernet_frames(v_receive_data_frame, v_send_data_frame, ERROR, "Comparing received and expected frames", C_SCOPE, shared_msg_id_panel, "Compare Ethernet frames:");
     end procedure send_to_mac_master;
 
   begin
@@ -223,6 +223,9 @@ begin
 
     wait for 10 us;
 
+    shared_msg_id_panel(ID_PACKET_DATA) := DISABLED;
+    shared_msg_id_panel(ID_PACKET_HDR)  := DISABLED;
+
     shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";
     shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source      := x"00_00_00_00_00_01";
     shared_ethernet_vvc_config(   RX, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";
@@ -233,6 +236,22 @@ begin
     receive_from_mac_master(46);
     log(ID_LOG_HDR, "VVC --> MAC Master");
     send_to_mac_master(46);
+
+    -----------------------------------------------------------------------------------------------
+
+    log(ID_LOG_HDR_LARGE, "Send minimum amount of bytes -1 in payload, payload = 45, total = 63.");
+    log(ID_LOG_HDR, "MAC Master --> VVC");
+    receive_from_mac_master(45);
+    log(ID_LOG_HDR, "VVC --> MAC Master");
+    send_to_mac_master(45);
+
+    -----------------------------------------------------------------------------------------------
+
+    log(ID_LOG_HDR_LARGE, "Send minimum amount of bytes +1 in payload, payload = 47, total = 65.");
+    log(ID_LOG_HDR, "MAC Master --> VVC");
+    receive_from_mac_master(47);
+    log(ID_LOG_HDR, "VVC --> MAC Master");
+    send_to_mac_master(47);
 
     -----------------------------------------------------------------------------------------------
 

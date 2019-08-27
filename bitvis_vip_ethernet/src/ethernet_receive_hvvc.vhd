@@ -1,17 +1,6 @@
 --========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
---
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
-
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
 
 
 library ieee;
@@ -28,7 +17,6 @@ library bitvis_vip_hvvc_to_vvc_bridge;
 use bitvis_vip_hvvc_to_vvc_bridge.common_methods_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
-use work.ethernet_sb_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
@@ -40,9 +28,10 @@ use work.td_result_queue_pkg.all;
 entity ethernet_receive_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
+    GC_CHANNEL                               : t_channel;
     GC_INTERFACE                             : t_interface;
-    GC_VVC_INSTANCE_IDX                      : natural;
-    GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array;
+    GC_SUB_VVC_INSTANCE_IDX                  : natural;
+    GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_channel_array;
     GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config := C_ETHERNET_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural               := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural               := 950;
@@ -57,42 +46,40 @@ end entity ethernet_receive_vvc;
 --========================================================================================================================
 architecture behave of ethernet_receive_vvc is
 
-  constant C_CHANNEL    : t_channel     := RX;
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
-  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, C_CHANNEL);
+  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
   signal executor_is_busy       : boolean := false;
   signal queue_is_increasing    : boolean := false;
   signal last_cmd_idx_executed  : natural := 0;
   signal terminate_current_cmd  : t_flag_record;
-  signal hvvc_to_bridge         : t_hvvc_to_bridge(data_bytes(0 to C_MAX_PACKET_LENGTH-1));
-  signal bridge_to_hvvc         : t_bridge_to_hvvc(data_bytes(0 to C_MAX_PACKET_LENGTH-1));
+  signal hvvc_to_vvc            : t_hvvc_to_vvc(data_bytes(0 to C_MAX_PACKET_LENGTH-1));
+  signal vvc_to_hvvc            : t_vvc_to_hvvc(data_bytes(0 to C_MAX_PACKET_LENGTH-1));
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(C_CHANNEL, GC_INSTANCE_IDX);
-  alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(C_CHANNEL, GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(C_CHANNEL, GC_INSTANCE_IDX);
-  --alias sb               : t_generic_sb       is shared_ethernet_sb;
+  alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
 
 begin
 
 --========================================================================================================================
--- HVVC-to-VVC Bridge
+-- SUB VVC
 --========================================================================================================================
-  i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
+  i_td_sub_vvc_engine : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
       GC_INTERFACE           => GC_INTERFACE,
-      GC_INSTANCE_IDX        => GC_VVC_INSTANCE_IDX,
+      GC_INSTANCE_IDX        => GC_SUB_VVC_INSTANCE_IDX,
+      GC_CHANNEL             => GC_CHANNEL,
       GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
-      GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
       GC_SCOPE               => C_SCOPE
     )
     port map(
-      hvvc_to_bridge => hvvc_to_bridge,
-      bridge_to_hvvc => bridge_to_hvvc
+      hvvc_to_vvc => hvvc_to_vvc,
+      vvc_to_hvvc => vvc_to_hvvc
     );
 
 
@@ -119,7 +106,7 @@ begin
     -- 0. Initialize the process prior to first command
     initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
-    shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := 0;
+    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -132,9 +119,13 @@ begin
       await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
       v_cmd_has_been_acked := false; -- Clear flag
       -- Update shared_vvc_last_received_cmd_idx with received command index
-      shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Update v_msg_id_panel
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
+      if v_local_vvc_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+        v_msg_id_panel := v_local_vvc_cmd.msg_id_panel;
+      else
+        v_msg_id_panel := vvc_config.msg_id_panel;
+      end if;
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
@@ -199,14 +190,8 @@ begin
 -- - Fetch and execute the commands
 --========================================================================================================================
   cmd_executor : process
-    constant C_RECEIVE_PROC_CALL : string := "Ethernet receive";
-    constant C_EXPECT_PROC_CALL  : string := "Ethernet expect";
-
     variable v_cmd                                   : work.vvc_cmd_pkg.t_vvc_cmd_record;
-    variable v_result                                : work.vvc_cmd_pkg.t_vvc_result; -- See vvc_cmd_pkg
-    variable v_received_data                         : t_ethernet_frame;
-    variable v_expected_data                         : t_ethernet_frame;
-    variable v_fcs_error                             : boolean;
+    variable v_read_data                             : work.vvc_cmd_pkg.t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time := 0 ns;
     variable v_timestamp_end_of_last_bfm_access      : time := 0 ns;
@@ -215,95 +200,26 @@ begin
     variable v_msg_id_panel                          : t_msg_id_panel;
     variable v_sfd_found                             : boolean := false;
     variable v_cmd_idx                               : natural;
+    variable v_data_from_sub_vvc                     : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_ethernet_packet_raw                   : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_payload_length                        : integer;
+    variable v_payload_length                        : positive;
     variable v_preamble_sfd                          : std_logic_vector(63 downto 0) := (others => '0');
-    variable v_frame_passed                          : boolean;
 
     -- Local overload
-    procedure blocking_send_to_bridge(
-      constant num_data_bytes            : in positive;
-      constant dut_if_field_idx          : in integer
-    ) is
-      constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
-    begin
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, num_data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel, vvc_config.field_timeout_margin);
-    end procedure blocking_send_to_bridge;
-
-    procedure receive_ethernet_packet(
-      constant proc_call : in string
+    procedure send_to_sub_and_await_finish(
+      constant data_bytes                : in  t_byte_array;
+      constant dut_if_field_idx          : in  integer;
+      constant current_byte_idx_in_field : in  natural
     ) is
     begin
-      v_received_data := C_ETHERNET_FRAME_DEFAULT;
-      -- Await preamble and SFD
-      while true loop
-        -- Fetch one byte at the time until SFD is found
-        blocking_send_to_bridge(1, C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD);
-        v_preamble_sfd := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_bytes(0);
-        v_ethernet_packet_raw(1 to 7) := v_ethernet_packet_raw(0 to 6);
-        v_ethernet_packet_raw(0)      := bridge_to_hvvc.data_bytes(0);
-        if v_preamble_sfd = C_PREAMBLE & C_SFD then
-          exit;
-        end if;
-      end loop;
-
-      -- Read MAC destination
-      -- Send to bridge
-      blocking_send_to_bridge(6, C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION);
-      v_ethernet_packet_raw(8 to 13)  := bridge_to_hvvc.data_bytes(0 to 5);
-      v_received_data.mac_destination := unsigned(to_slv(v_ethernet_packet_raw( 8 to 13)));
-      -- Add info to the transaction_for_waveview_struct
-      transaction_info.ethernet_frame.mac_destination := v_received_data.mac_destination;
-
-      -- Read MAC source
-      -- Send to bridge
-      blocking_send_to_bridge(6, C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE);
-      v_ethernet_packet_raw(14 to 19) := bridge_to_hvvc.data_bytes(0 to 5);
-      v_received_data.mac_source      := unsigned(to_slv(v_ethernet_packet_raw(14 to 19)));
-      -- Add info to the transaction_for_waveview_struct
-      transaction_info.ethernet_frame.mac_source := v_received_data.mac_source;
-
-      -- Read length
-      -- Send to bridge
-      blocking_send_to_bridge(2, C_IF_FIELD_NUM_ETHERNET_LENTGTH);
-      v_ethernet_packet_raw(20 to 21) := bridge_to_hvvc.data_bytes(0 to 1);
-      v_received_data.length          := to_integer(unsigned(to_slv(v_ethernet_packet_raw(20 to 21))));
-      -- Add info to the transaction_for_waveview_struct
-      transaction_info.ethernet_frame.length := v_received_data.length;
-
-      log(ID_PACKET_HDR, proc_call & ": Packet header received." & format_command_idx(v_cmd.cmd_idx) & hdr_to_string(v_received_data), C_SCOPE, v_msg_id_panel);
-
-      -- Check length and if payload is padded
-      if v_received_data.length > C_MAX_PAYLOAD_LENGTH then
-        alert(ERROR, "Payload is larger than maximum alowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", C_SCOPE);
-      end if;
-      if v_received_data.length < C_MIN_PAYLOAD_LENGTH then
-        v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      else
-        v_payload_length := v_received_data.length;
-      end if;
-
-      -- Read payload
-      blocking_send_to_bridge(v_payload_length, C_IF_FIELD_NUM_ETHERNET_PAYLOAD);
-      v_ethernet_packet_raw(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_bytes(0 to v_payload_length-1);
-      v_received_data.payload                            := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
-      v_received_data.payload(0 to v_payload_length-1)   := v_ethernet_packet_raw(22 to 22+v_payload_length-1);
-      -- Add info to the transaction_for_waveview_struct
-      transaction_info.ethernet_frame.payload := v_received_data.payload;
-
-      log(ID_PACKET_DATA, proc_call & ": Packet data received." & format_command_idx(v_cmd.cmd_idx) & data_to_string(v_received_data), C_SCOPE, v_msg_id_panel);
-
-      -- Read FCS
-      blocking_send_to_bridge(4, C_IF_FIELD_NUM_ETHERNET_FCS);
-      v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_bytes(0 to 3);
-      v_received_data.fcs                                                   := to_slv(reverse_vectors_in_array(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1)));
-      transaction_info.ethernet_frame.fcs                                   := v_received_data.fcs;
-      v_fcs_error                                                           := not check_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length+4-1)));
-      log(ID_PACKET_COMPLETE, proc_call & ": Packet received. " & complete_to_string(v_received_data) & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
-      check_value(v_fcs_error, false, vvc_config.bfm_config.fcs_error_severity, "Check FCS value", C_SCOPE, ID_NEVER, v_msg_id_panel);
-    end procedure receive_ethernet_packet;
+      send_to_sub_and_await_finish(hvvc_to_vvc, vvc_to_hvvc, RECEIVE, data_bytes, dut_if_field_idx, current_byte_idx_in_field);
+    end procedure send_to_sub_and_await_finish;
 
   begin
+
+    -- Default values
+    hvvc_to_vvc.dut_if_field_idx          <= 0;
+    hvvc_to_vvc.current_byte_idx_in_field <= 0;
 
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
@@ -323,7 +239,11 @@ begin
       transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- Update v_msg_id_panel
-      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
+      if v_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+        v_msg_id_panel := v_cmd.msg_id_panel;
+      else
+        v_msg_id_panel := vvc_config.msg_id_panel;
+      end if;
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
@@ -354,54 +274,68 @@ begin
 
         -- If the result from the BFM call is to be stored, e.g. in a read call, use the additional procedure illustrated in this read example
         when RECEIVE =>
-          log(ID_PACKET_INITIATE, C_RECEIVE_PROC_CALL & ": Await ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
 
-          -- Receive Ethernet packet
-          receive_ethernet_packet(C_RECEIVE_PROC_CALL);
+          -- Await preamble and SFD
+          while true loop
+            -- Send to sub-VVC
+            hvvc_to_vvc.operation      <= RECEIVE;
+            hvvc_to_vvc.num_data_bytes <= 1;
+            hvvc_to_vvc_trigger(hvvc_to_vvc);
+            wait until vvc_to_hvvc.trigger = '1';
+            v_preamble_sfd := v_preamble_sfd(55 downto 0) & vvc_to_hvvc.data_bytes(0);
+            v_ethernet_packet_raw(1 to 7) := v_ethernet_packet_raw(0 to 6);
+            v_ethernet_packet_raw(0)      := vvc_to_hvvc.data_bytes(0);
+            if v_preamble_sfd = C_PREAMBLE & C_SFD then
+              log(ID_CTRL, "Found preamble", C_SCOPE);
+              exit;
+            end if;
+          end loop;
 
-          v_result.ethernet_frame                  := v_received_data;
-          v_result.ethernet_frame_status.fcs_error := v_fcs_error;
+          -- Read first part of ethernet frame
+          -- Send to sub-VVC
+          hvvc_to_vvc.operation      <= RECEIVE;
+          hvvc_to_vvc.num_data_bytes <= 14;
+          hvvc_to_vvc_trigger(hvvc_to_vvc);
+          wait until vvc_to_hvvc.trigger = '1';
+          v_ethernet_packet_raw(8 to 21) := vvc_to_hvvc.data_bytes(0 to 13);
 
-          if v_cmd.data_destination = TO_SB then
-            -- Send result to scoreboard
-            shared_ethernet_sb.check_actual(GC_INSTANCE_IDX, v_result.ethernet_frame);
-          else
-            -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
-                                                        cmd_idx       => v_cmd.cmd_idx,
-                                                        result        => v_result);
-          end if;
+          -- Add info to the transaction_for_waveview_struct
+          transaction_info.ethernet_frame.mac_destination := v_ethernet_packet_raw( 8 to 13);
+          transaction_info.ethernet_frame.mac_source      := v_ethernet_packet_raw(14 to 19);
+          transaction_info.ethernet_frame.length          := v_ethernet_packet_raw(20 to 21);
+
+
+          v_payload_length := to_integer(unsigned(std_logic_vector'((v_ethernet_packet_raw(20) & v_ethernet_packet_raw(21)))));
+
+
+          -- Read second part of ethernet frame
+          hvvc_to_vvc.operation      <= RECEIVE;
+          hvvc_to_vvc.num_data_bytes <= v_payload_length+4;
+          hvvc_to_vvc_trigger(hvvc_to_vvc);
+          wait until vvc_to_hvvc.trigger = '0';
+          v_ethernet_packet_raw(22 to 22+v_payload_length+4-1) := vvc_to_hvvc.data_bytes(0 to v_payload_length+4-1);
+
+          -- Add info to the transaction_for_waveview_struct
+          transaction_info.ethernet_frame.payload                          := (others => (others => 'Z')); -- Riviera pro don't allow non-static and others in aggregates
+          transaction_info.ethernet_frame.payload(0 to v_payload_length-1) := v_ethernet_packet_raw(22 to 22+v_payload_length-1);
+          transaction_info.ethernet_frame.fcs                              := v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1);
+
+          v_read_data.ethernet_frame.mac_destination                  := v_ethernet_packet_raw( 8 to 13);
+          v_read_data.ethernet_frame.mac_source                       := v_ethernet_packet_raw(14 to 19);
+          v_read_data.ethernet_frame.length                           := v_ethernet_packet_raw(20 to 21);
+          v_read_data.ethernet_frame.payload                          := (others => (others => 'Z')); -- Riviera pro don't allow non-static and others in aggregates
+          v_read_data.ethernet_frame.payload(0 to v_payload_length-1) := v_ethernet_packet_raw(22 to 22+v_payload_length-1);
+          v_read_data.ethernet_frame.fcs                              := v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1);
+          v_read_data.ethernet_frame_status.fcs_error                 := check_crc_32(v_ethernet_packet_raw(8 to 22+v_payload_length+4-1));
+
+          -- Store the result
+          work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
+                                                      cmd_idx       => v_cmd.cmd_idx,
+                                                      result        => v_read_data);
+
 
         when EXPECT =>
-          -- For FCS calculation
-          v_ethernet_packet_raw( 8 to 13)                        := to_byte_array(std_logic_vector(v_cmd.mac_destination));
-          v_ethernet_packet_raw(14 to 19)                        := to_byte_array(std_logic_vector(v_cmd.mac_source));
-          v_ethernet_packet_raw(20 to 21)                        := to_byte_array(std_logic_vector(to_unsigned(v_cmd.length, 16)));
-          v_ethernet_packet_raw(22 to 22+v_cmd.length-1) := v_cmd.payload(0 to v_cmd.length-1);
-          if v_cmd.length < C_MIN_PAYLOAD_LENGTH then
-            v_payload_length := C_MIN_PAYLOAD_LENGTH;
-            v_ethernet_packet_raw(22+v_cmd.length to 22+v_payload_length) := (others => (others => '0'));
-          else
-            v_payload_length := v_cmd.length;
-          end if;
 
-          v_expected_data                 := C_ETHERNET_FRAME_DEFAULT;
-          v_expected_data.mac_destination := v_cmd.mac_destination;
-          v_expected_data.mac_source      := v_cmd.mac_source;
-          v_expected_data.length          := v_cmd.length;
-          v_expected_data.payload         := v_cmd.payload;
-          v_expected_data.fcs             := not generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
-
-          log(ID_PACKET_INITIATE, C_EXPECT_PROC_CALL & ": Expecting ethernet packet. " & complete_to_string(v_expected_data) & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
-
-          receive_ethernet_packet(C_EXPECT_PROC_CALL);
-
-          -- Check received frame against expected frame
-          v_frame_passed := compare_ethernet_frames(v_received_data, v_expected_data, v_cmd.alert_level, format_msg(v_cmd), C_SCOPE, v_msg_id_panel, C_EXPECT_PROC_CALL);
-
-          if v_frame_passed then
-            log(ID_PACKET_COMPLETE, C_EXPECT_PROC_CALL & " => OK. " & add_msg_delimiter(v_cmd.msg) & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
-          end if;
 
 
         -- UVVM common operations

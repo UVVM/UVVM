@@ -1,17 +1,6 @@
 --========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
---
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
-
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
 
 
 library ieee;
@@ -45,10 +34,15 @@ package vvc_cmd_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    TRANSMIT,
+    SEND,
     RECEIVE,
     EXPECT
   );
+
+  constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
+  constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
+  constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
+  constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
 
   --========================================================================================================================
   -- t_vvc_cmd_record
@@ -56,9 +50,9 @@ package vvc_cmd_pkg is
   --========================================================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    mac_destination           : unsigned(47 downto 0);
-    mac_source                : unsigned(47 downto 0);
-    length                    : natural range 0 to C_MAX_PAYLOAD_LENGTH;
+    mac_destination           : t_byte_array(0 to 5);
+    mac_source                : t_byte_array(0 to 5);
+    payload_length            : natural;
     payload                   : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     -- Common VVC fields
     operation                 : t_operation;
@@ -73,16 +67,15 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    data_destination          : t_data_destination;
     use_provided_msg_id_panel : t_use_provided_msg_id_panel;
     msg_id_panel              : t_msg_id_panel;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
     -- VVC dedicated fields
-    mac_destination           => (others => '0'),
-    mac_source                => (others => '0'),
-    length                    => 0,
+    mac_destination           => (others => (others => '0')),
+    mac_source                => (others => (others => '0')),
+    payload_length            => 0,
     payload                   => (others => (others => '0')),
     -- Common VVC fields
     operation                 => NO_OPERATION,
@@ -97,7 +90,6 @@ package vvc_cmd_pkg is
     alert_level               => FAILURE,
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
-    data_destination          => TO_RECEIVE_BUFFER,
     use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
     msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
   );
@@ -119,7 +111,7 @@ package vvc_cmd_pkg is
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --========================================================================================================================
   type  t_vvc_result is record
-    ethernet_frame        : t_ethernet_frame;
+    ethernet_frame        : t_ethernet_frame(payload(0 to C_MAX_PAYLOAD_LENGTH-1));
     ethernet_frame_status : t_ethernet_frame_status;
   end record t_vvc_result;
 

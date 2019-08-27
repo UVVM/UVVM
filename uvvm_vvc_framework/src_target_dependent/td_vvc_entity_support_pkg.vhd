@@ -95,10 +95,6 @@ package td_vvc_entity_support_pkg is
     signal global_awaiting_completion : out std_logic_vector(C_MAX_NUM_SEQUENCERS-1 downto 0)
     );
 
-  function get_msg_id_panel(
-    constant command    : in t_vvc_cmd_record;
-    constant vvc_config : in t_vvc_config
-  ) return t_msg_id_panel;
 
   -------------------------------------------
   -- await_cmd_from_sequencer
@@ -113,7 +109,7 @@ package td_vvc_entity_support_pkg is
     signal global_vvc_busy     : inout std_logic;
     signal vvc_ack             : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
+    constant msg_id_panel      : in    t_msg_id_panel
     );
 
 
@@ -256,7 +252,7 @@ package td_vvc_entity_support_pkg is
   procedure store_result(
     variable result_queue  : inout work.td_result_queue_pkg.t_generic_queue;
     constant cmd_idx       : in natural;
-    constant result        : in t_vvc_result
+    constant result          : in t_vvc_result
     );
 
 
@@ -487,7 +483,7 @@ package body td_vvc_entity_support_pkg is
     signal   global_vvc_busy   : inout std_logic;
     signal   vvc_ack           : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
+    constant msg_id_panel      : in    t_msg_id_panel
     ) is
     variable v_was_broadcast : boolean         := false;
     variable v_msg_id_panel  : t_msg_id_panel;

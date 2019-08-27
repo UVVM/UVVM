@@ -126,7 +126,11 @@ begin
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- update v_msg_id_panel
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
+      if v_local_vvc_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+        v_msg_id_panel := v_local_vvc_cmd.msg_id_panel;
+      else
+        v_msg_id_panel := vvc_config.msg_id_panel;
+      end if;
 
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
@@ -222,7 +226,11 @@ begin
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- update v_msg_id_panel
-      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
+      if v_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+        v_msg_id_panel := v_cmd.msg_id_panel;
+      else
+        v_msg_id_panel := vvc_config.msg_id_panel;
+      end if;
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
@@ -271,7 +279,6 @@ begin
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
-          v_read_data := (others => '-');
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
           sbi_read(addr_value   => v_normalised_addr,
@@ -283,15 +290,9 @@ begin
                    msg_id_panel => v_msg_id_panel,
                    config       => vvc_config.bfm_config);
           -- Store the result
-
-
-          if v_cmd.data_destination = TO_SB then
-            shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data);
-          else
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                         cmd_idx     => v_cmd.cmd_idx,
-                                                         result      => v_read_data);
-          end if;
+          work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                       cmd_idx     => v_cmd.cmd_idx,
+                                                       result      => v_read_data);
 
         when CHECK =>
           -- Normalise address and data

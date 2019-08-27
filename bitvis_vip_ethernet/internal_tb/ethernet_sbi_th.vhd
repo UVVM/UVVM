@@ -57,7 +57,7 @@ architecture struct of sbi_test_harness is
   constant C_DATA_WIDTH_2 : integer := 8;
 
   constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
-    max_wait_cycles             => 10,
+    max_wait_cycles             => 100,
     max_wait_cycles_severity    => failure,
     use_fixed_wait_cycles_read  => false,
     fixed_wait_cycles_read      => 0,
@@ -118,8 +118,8 @@ begin
       GC_DATA_WIDTH                         => 8,
       GC_INSTANCE_IDX                       => 1,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
-      GC_CMD_QUEUE_COUNT_MAX                => 500,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => 450,
+      GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,
+      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_MAX_PACKET_LENGTH+1,
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
@@ -133,8 +133,8 @@ begin
       GC_DATA_WIDTH                         => 8,
       GC_INSTANCE_IDX                       => 2,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
-      GC_CMD_QUEUE_COUNT_MAX                => 500,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => 450,
+      GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,
+      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_MAX_PACKET_LENGTH+1,
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(

@@ -68,7 +68,6 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    data_destination          : t_data_destination;
     use_provided_msg_id_panel : t_use_provided_msg_id_panel;
     msg_id_panel              : t_msg_id_panel;
     -- VVC dedicated fields
@@ -90,7 +89,6 @@ package vvc_cmd_pkg is
     alert_level               => failure,
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
-    data_destination          => TO_RECEIVE_BUFFER,
     use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
     msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT,
     addr                      => (others => '0'),

@@ -21,19 +21,15 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_gmii;
 context bitvis_vip_gmii.vvc_context;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
+context bitvis_vip_ethernet.vvc_context;
 use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
 
 library mac_master;
 use mac_master.ethernet_types.all;
-use mac_master.utility.all;
 
 --=================================================================================================
 entity gmii_mac_master_test_harness is
@@ -53,10 +49,9 @@ end entity gmii_mac_master_test_harness;
 
 architecture struct of gmii_mac_master_test_harness is
 
-  signal clk              : std_logic;
-  signal reset            : std_logic;
-  signal gmii_to_dut_if   : t_gmii_to_dut_if;
-  signal gmii_from_dut_if : t_gmii_from_dut_if;
+  signal clk       : std_logic;
+  signal reset     : std_logic;
+  signal gmii_if : t_gmii_if;
 
 begin
 
@@ -65,16 +60,16 @@ begin
   p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
   if_out.clk                   <= clk;
-  gmii_to_dut_if.rxclk <= clk;
+  gmii_if.gmii_to_dut_if.rxclk <= clk;
 
   -----------------------------
   -- vvc/executors
   -----------------------------
   i_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX     => 1,
-      GC_INTERFACE        => GMII,
-      GC_VVC_INSTANCE_IDX => 1
+      GC_INSTANCE_IDX         => 1,
+      GC_INTERFACE            => GMII,
+      GC_SUB_VVC_INSTANCE_IDX => 1
     );
 
   i_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
@@ -86,8 +81,7 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => gmii_to_dut_if,
-      gmii_from_dut_if => gmii_from_dut_if
+      gmii_vvc_if => gmii_if
     );
 
   -----------------------------
@@ -104,19 +98,19 @@ begin
       reset_i          => reset,
       -- MAC address of this station
       -- Must not change after reset is deasserted
-      mac_address_i    => t_mac_address(reverse_bytes(std_ulogic_vector(GC_MAC_ADDRESS))),
+      mac_address_i    => t_mac_address(reverse_vector(std_logic_vector(GC_MAC_ADDRESS))),
       -- MII (Media-independent interface)
       mii_tx_clk_i     => clk,
       mii_tx_er_o      => open,
-      mii_tx_en_o      => gmii_from_dut_if.txen,
-      mii_txd_o        => gmii_from_dut_if.txd,
+      mii_tx_en_o      => gmii_if.gmii_from_dut_if.txen,
+      mii_txd_o        => gmii_if.gmii_from_dut_if.txd,
       mii_rx_clk_i     => clk,
       mii_rx_er_i      => '0',
-      mii_rx_dv_i      => gmii_to_dut_if.rxdv,
-      mii_rxd_i        => gmii_to_dut_if.rxd,
+      mii_rx_dv_i      => gmii_if.gmii_to_dut_if.rxdv,
+      mii_rxd_i        => gmii_if.gmii_to_dut_if.rxd,
 
     -- GMII (Gigabit media-independent interface)
-    gmii_gtx_clk_o     => gmii_from_dut_if.gtxclk,
+    gmii_gtx_clk_o     => gmii_if.gmii_from_dut_if.gtxclk,
 
     -- RGMII (Reduced pin count gigabit media-independent interface)
     rgmii_tx_ctl_o     => open,

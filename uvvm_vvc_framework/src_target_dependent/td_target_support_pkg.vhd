@@ -87,7 +87,7 @@ package td_target_support_pkg is
   procedure send_command_to_vvc(                  -- VVC dedicated shared command used  shared_vvc_cmd
     signal   vvc_target   : inout t_vvc_target_record;
     constant timeout      : in    time                 := std.env.resolution_limit;
-    constant scope        : in    string               := C_TB_UVVM_CMD_SCOPE_DEFAULT;
+    constant scope        : in    string               := C_VVC_CMD_SCOPE_DEFAULT;
     constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   );
 
@@ -278,7 +278,7 @@ package body td_target_support_pkg is
   procedure send_command_to_vvc(
     signal   vvc_target   : inout t_vvc_target_record;
     constant timeout      : in    time                 := std.env.resolution_limit;
-    constant scope        : in    string               := C_TB_UVVM_CMD_SCOPE_DEFAULT;
+    constant scope        : in    string               := C_VVC_CMD_SCOPE_DEFAULT;
     constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   ) is
     constant C_CMD_INFO      : string := "uvvm cmd " & format_command_idx(shared_cmd_idx+1) & ": ";

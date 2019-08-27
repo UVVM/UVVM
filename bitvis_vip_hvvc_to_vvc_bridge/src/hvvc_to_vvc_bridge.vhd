@@ -51,7 +51,6 @@ architecture func of hvvc_to_vvc_bridge is
   constant C_UNSUPPORTED_OPERATION   : string         := "Unsupported operation";
   constant C_UNSUPPORTED_INTERFACE   : string         := "Unsupported interface";
   constant C_INTERFACE_CONFIG_LENGTH : positive       := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'length;
-  constant C_MSG_ID_PANEL            : t_msg_id_panel := C_SUB_VVC_MSG_ID_PANEL_DEFAULT;
 begin
 
   p_executor : process
@@ -89,14 +88,14 @@ begin
 
           case hvvc_to_vvc.operation is
 
-            when SEND =>
-              gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TRANSMITTER, hvvc_to_vvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, C_MSG_ID_PANEL);
+            when TRANSMIT =>
+              gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TRANSMITTER, hvvc_to_vvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
 
             when RECEIVE =>
-              gmii_read(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, hvvc_to_vvc.num_data_bytes, "Read data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, C_MSG_ID_PANEL);
+              gmii_read(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, hvvc_to_vvc.num_data_bytes, "Read data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
               v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, "", GC_SCOPE);
-              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, C_MSG_ID_PANEL);
-              fetch_result(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, C_MSG_ID_PANEL);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+              fetch_result(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
               vvc_to_hvvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1) <= v_gmii_received_data(0 to hvvc_to_vvc.num_data_bytes-1);
 
             when others =>
@@ -111,11 +110,11 @@ begin
 
           case hvvc_to_vvc.operation is
 
-            when SEND =>
+            when TRANSMIT =>
               -- Loop through bytes
               for i in 0 to hvvc_to_vvc.num_data_bytes-1 loop
                 -- Send data over SBI
-                sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, hvvc_to_vvc.data_bytes(i), "Send data over SBI");
+                sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, hvvc_to_vvc.data_bytes(i), "Send data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
 
@@ -124,10 +123,10 @@ begin
               -- Loop through bytes
               for i in 0 to hvvc_to_vvc.num_data_bytes-1 loop
                 -- Read data over SBI
-                sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI");
+                sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
                 v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX);
-                await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, 1 ms, "Wait for read to finish.");
-                fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.");
+                await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+                fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
                 vvc_to_hvvc.data_bytes(i) <= v_sbi_received_data(7 downto 0);
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
@@ -150,12 +149,5 @@ begin
     end loop;
 
   end process;
-
---  p_deactivate_log : process
---  begin
---    await_uvvm_initialization(VOID);
---    disable_log_msg(SBI_VVCT, GC_INSTANCE_IDX, ALL_MESSAGES);
---    wait;
---  end process;
 
 end architecture func;

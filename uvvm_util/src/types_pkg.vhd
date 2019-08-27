@@ -204,23 +204,6 @@ package types_pkg is
   -------------------------------------
   -- Hierarchical VVC
   -------------------------------------
-  type t_sub_vvc_operation is (SEND, RECEIVE);
-  type t_interface is (SBI, GMII);
-
-  type t_hvvc_to_vvc is record
-    trigger                   : std_logic;
-    operation                 : t_sub_vvc_operation;
-    num_data_bytes            : positive;
-    data_bytes                : t_byte_array;
-    dut_if_field_idx          : integer;
-    current_byte_idx_in_field : natural; -- In protocol if field idx = -1
-  end record;
-
-  type t_vvc_to_hvvc is record
-    trigger        : std_logic;
-    data_bytes     : t_byte_array;
-  end record;
-
   type t_dut_if_field_config is record
     dut_address           : unsigned;
     dut_address_increment : natural;

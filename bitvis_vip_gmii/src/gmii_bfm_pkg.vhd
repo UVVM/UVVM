@@ -94,9 +94,6 @@ package gmii_bfm_pkg is
   function init_gmii_from_dut_if
   return t_gmii_from_dut_if;
 
-  impure function init_gmii_if
-  return t_gmii_if;
-
   ------------------------------------------
   -- gmii_write
   ------------------------------------------
@@ -158,15 +155,6 @@ package body gmii_bfm_pkg is
     return v_gmii_from_dut_if;
   end function init_gmii_from_dut_if;
 
-  impure function init_gmii_if
-  return t_gmii_if is
-    variable v_gmii_if : t_gmii_if;
-  begin
-    v_gmii_if.gmii_to_dut_if   := init_gmii_to_dut_if;
-    v_gmii_if.gmii_from_dut_if := init_gmii_from_dut_if;
-    return v_gmii_if;
-  end function init_gmii_if;
-
   procedure santity_check(
     constant config       : in t_gmii_bfm_config;
     constant scope        : in string;
@@ -196,7 +184,6 @@ package body gmii_bfm_pkg is
     constant proc_name : string := "gmii_write";
     constant proc_call : string := proc_name;
   begin
-    -- Sanity check
     santity_check(config, scope, msg_id_panel, proc_call);
 
     gmii_to_dut_if <= C_GMII_TO_DUT_PASSIVE;
@@ -230,7 +217,6 @@ package body gmii_bfm_pkg is
     constant proc_call    : string := proc_name;
     variable v_time_stamp : time   := now;
   begin
-    -- Sanity check
     santity_check(config, scope, msg_id_panel, proc_call);
 
     for i in 0 to data'length-1 loop

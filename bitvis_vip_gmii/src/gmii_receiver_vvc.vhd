@@ -1,6 +1,17 @@
 --========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
+-- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
+-- contact Bitvis AS <support@bitvis.no>.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+-- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
 --========================================================================================================================
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+--
+------------------------------------------------------------------------------------------
 
 
 library ieee;
@@ -25,7 +36,6 @@ use work.td_result_queue_pkg.all;
 entity gmii_receiver_vvc is
   generic (
     GC_INSTANCE_IDX                          : natural;
-    GC_CHANNEL                               : t_channel;
     GC_GMII_BFM_CONFIG                       : t_gmii_bfm_config         := C_GMII_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural                   := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                   := 950;
@@ -43,8 +53,9 @@ end entity gmii_receiver_vvc;
 --========================================================================================================================
 architecture behave of gmii_receiver_vvc is
 
+  constant C_CHANNEL    : t_channel     := RX;
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
-  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
+  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, C_CHANNEL);
 
   signal executor_is_busy       : boolean := false;
   signal queue_is_increasing    : boolean := false;
@@ -55,9 +66,9 @@ architecture behave of gmii_receiver_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config       : t_vvc_config       is shared_gmii_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias vvc_status       : t_vvc_status       is shared_gmii_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_gmii_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_config       : t_vvc_config       is shared_gmii_vvc_config(C_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_status       : t_vvc_status       is shared_gmii_vvc_status(C_CHANNEL, GC_INSTANCE_IDX);
+  alias transaction_info : t_transaction_info is shared_gmii_transaction_info(C_CHANNEL, GC_INSTANCE_IDX);
 
 begin
 
@@ -85,7 +96,7 @@ begin
     -- 0. Initialize the process prior to first command
     initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
-    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
+    shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -98,7 +109,7 @@ begin
       await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
-      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- update v_msg_id_panel
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
@@ -198,8 +209,7 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
-      --<USER_INPUT> Replace this if statement with a check of the current v_cmd.operation, in order to set v_cmd_is_bfm_access to true if this is a BFM access command
-      -- Example:
+
       if v_cmd.operation = READ then
         v_command_is_bfm_access := true;
       else
@@ -236,7 +246,7 @@ begin
                     scope            => C_SCOPE,
                     msg_id_panel     => v_msg_id_panel,
                     config           => vvc_config.bfm_config);
-       -- Store the result
+          -- Store the result
           store_result(result_queue => result_queue,
                        cmd_idx      => v_cmd.cmd_idx,
                        result       => v_read_data);

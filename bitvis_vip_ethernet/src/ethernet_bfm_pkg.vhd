@@ -17,18 +17,30 @@ package ethernet_bfm_pkg is
   --========================================================================================================================
   -- Types and constants for ETHERNET BFM
   --========================================================================================================================
+  constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
+  constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
+  constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
+  constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
+
   constant C_SCOPE          : string := "ETHERNET BFM";
   constant C_PREAMBLE       : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD            : std_logic_vector( 7 downto 0) := x"5D";
   constant C_CRC_32_RESIDUE : std_logic_vector(31 downto 0) := x"C704DD7B";
 
   type t_ethernet_frame is record
-    mac_destination : t_byte_array(0 to 5);
-    mac_source      : t_byte_array(0 to 5);
-    length          : t_byte_array(0 to 1);
-    payload         : t_byte_array;
+    mac_destination : unsigned(47 downto 0);
+    mac_source      : unsigned(47 downto 0);
+    length          : integer;
+    payload         : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     fcs             : t_byte_array(0 to 3);
   end record t_ethernet_frame;
+
+  constant C_ETHERNET_FRAME_DEFAULT : t_ethernet_frame := (
+    mac_destination => (others => '0'),
+    mac_source      => (others => '0'),
+    length          => 0,
+    payload         => (others => (others => '0')),
+    fcs             => (others => (others => '0')));
 
   type t_ethernet_frame_status is record
     fcs_error : boolean;
@@ -36,15 +48,15 @@ package ethernet_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_ethernet_bfm_config is record
-    mac_destination      : t_byte_array(0 to 5);
-    mac_source           : t_byte_array(0 to 5);
+    mac_destination      : unsigned(47 downto 0);
+    mac_source           : unsigned(47 downto 0);
     fcs_error_severity   : t_alert_level;
     interpacket_gap_time : time;
   end record;
 
   constant C_ETHERNET_BFM_CONFIG_DEFAULT : t_ethernet_bfm_config := (
-    mac_destination      => (others => (others => 'Z')),
-    mac_source           => (others => (others => 'Z')),
+    mac_destination      => (others => 'Z'),
+    mac_source           => (others => 'Z'),
     fcs_error_severity   => ERROR,
     interpacket_gap_time => 768 ns
   );
@@ -71,19 +83,26 @@ package ethernet_bfm_pkg is
     constant payload_length : in positive
   ) return positive;
 
---  function encode_ethernet_frame(
---    constant mac_destination : in t_byte_array(0 to 5);
---    constant mac_source      : in t_byte_array(0 to 5);
---    constant payload         : in t_byte_array;
---    constant scope           : in string         := C_SCOPE;
---    constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel
---  ) return t_byte_array;
---
---  function decode_ethernet_frame(
---    constant data         : in t_byte_array;
---    constant scope        : in string         := C_SCOPE;
---    constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel
---  ) return t_ethernet_frame;
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame
+  ) return string;
+
+  function to_slv(
+    constant byte_array : in t_byte_array
+  ) return std_logic_vector;
+
+  function to_byte_array(
+    constant data : in std_logic_vector
+  ) return t_byte_array;
+
+  procedure compare_ethernet_frames(
+    constant frame_1      : in t_ethernet_frame;
+    constant frame_2      : in t_ethernet_frame;
+    constant alert_level  : in t_alert_level;
+    constant scope        : in string;
+    constant msg_id       : in t_msg_id;
+    constant msg_id_panel : in t_msg_id_panel
+  );
 
 end package ethernet_bfm_pkg;
 
@@ -166,88 +185,78 @@ package body ethernet_bfm_pkg is
   begin
     return payload_length + 18;
   end function get_ethernet_frame_length;
---
---  impure function encode_ethernet_frame(
---    constant mac_destination : in t_byte_array(0 to 5);
---    constant mac_source      : in t_byte_array(0 to 5);
---    constant payload         : in t_byte_array;
---    constant scope           : in string         := C_SCOPE;
---    constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel
---  ) return t_byte_array is
---    constant proc_name               : string := "encode_ethernet_package";
---    constant proc_call               : string := proc_name;
---    constant C_PAYLOAD_LENGTH        : positive := payload'high-payload'low;
---    constant C_PAYLOAD_LENGTH_VECTOR : std_logic_vector(15 downto 0) := std_logic_vector(to_unsigned(C_PAYLOAD_LENGTH, 16));
---    variable v_ethernet_frame        : t_byte_array(0 to 17 + C_PAYLOAD_LENGTH) := (others => (others => '0'));
---    variable v_crc, v_fcs            : std_logic_vector(31 downto 0);
---  begin
---    -- Check valid payload length
---    check_value_in_range(payload'high-payload'low, C_ETHERNET_PAYLOAD_MIN_LENGTH, C_ETHERNET_PAYLOAD_MAX_LENGTH, TB_ERROR, proc_call &
---        ": length of payload is not in the valid range " & to_string(C_ETHERNET_PAYLOAD_MAX_LENGTH) & " - " &
---        to_string(C_ETHERNET_PAYLOAD_MIN_LENGTH) & " bytes.", scope, ID_NEVER, msg_id_panel);
---
---    -- MAC destination
---    v_ethernet_frame( 0 to  5) := mac_destination;
---
---    -- MAC source
---    v_ethernet_frame( 6 to 11) := mac_source;
---
---    -- payload length
---    v_ethernet_frame(12) := C_PAYLOAD_LENGTH_VECTOR(15 downto 8);
---    v_ethernet_frame(13) := C_PAYLOAD_LENGTH_VECTOR( 7 downto 0);
---
---    -- payload
---    v_ethernet_frame(14 to 14 + C_PAYLOAD_LENGTH - 1) := payload; -- TBD: normalize
---
---    -- FCS
---    v_crc := generate_crc_32_complete(v_ethernet_frame(0 to 14 + C_PAYLOAD_LENGTH - 1));
---    v_fcs := not(v_crc);
---    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH)     := v_fcs(31 downto 24);
---    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH + 1) := v_fcs(23 downto 16);
---    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH + 2) := v_fcs(15 downto  8);
---    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH + 3) := v_fcs( 7 downto  0);
---
---    return v_ethernet_frame;
---  end function encode_ethernet_frame;
---
---  impure function decode_ethernet_frame(
---    constant data         : in t_byte_array
---    constant scope        : in string         := C_SCOPE;
---    constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel
---  ) return t_ethernet_frame is
---    constant proc_name        : string := "decode_ethernet_package";
---    constant proc_call        : string := proc_name;
---    variable v_ethernet_frame : t_ethernet_frame;
---  begin
---    -- Check valid pa
---    check_value_in_range(data'length, 18 + C_ETHERNET_PAYLOAD_MIN_LENGTH, 18 + C_ETHERNET_PAYLOAD_MAX_LENGTH, TB_ERROR, proc_call &
---        ": length of ethernet packet is not in the valid range " & to_string(18 + C_ETHERNET_PAYLOAD_MIN_LENGTH) & " - " &
---        to_string(18 + C_ETHERNET_PAYLOAD_MAX_LENGTH) & " bytes.", C_SCOPE, ID_NEVER, msg_id_panel);
---
---    v_ethernet_frame.mac_destination := data( 0 to  5);
---    v_ethernet_frame.mac_source      := data( 6 to 11);
---    v_ethernet_frame.length          := data(12 to 13);
---    v_ethernet_frame.payload         := data(14 to data'length-5);
---    v_ethernet_frame.fcs             := data(data'length-4 to data'length-1);
---
---    return v_ethernet_frame;
---  end function decode_ethernet_frame;
---
---  procedure send_to_sub_vvc(
---    constant sub_vvc : in t_vvc;
---    constant ethernet_packet : in t_ethernet_packet
---  ) begin
---
---    case sub_vvc.interface is
---
---      when GMII =>
---        transmit(GMII_VVCT, sub_vvc.instance, sub_vvc.channel, ethernet_packet);
---
---      when others =>
---        alert(TB_ERROR, "This interface has not been defined for this VVC");
---
---  end procedure send_to_sub_vvc;
 
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame
+  ) return string is
+  begin
+    return "\n    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
+           "\n    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
+           "\n    length:          " & to_string(ethernet_frame.length);
+  end function to_string;
+
+  function to_slv(
+    constant byte_array : in t_byte_array
+  ) return std_logic_vector is
+    constant C_NUM_BYTES           : integer := byte_array'length;
+    variable normalized_byte_array : t_byte_array(0 to C_NUM_BYTES-1) ;
+    variable v_return_val          : std_logic_vector(8*C_NUM_BYTES-1 downto 0);
+  begin
+    normalized_byte_array := byte_array;
+    for i in 0 to C_NUM_BYTES-1 loop
+      v_return_val(8*(C_NUM_BYTES-i)-1 downto 8*(C_NUM_BYTES-i-1)) := normalized_byte_array(i);
+    end loop;
+    return v_return_val;
+  end function to_slv;
+
+  function get_num_bytes(
+    constant num_bits : in positive
+  ) return positive is
+    variable v_num_bytes : positive;
+  begin
+    v_num_bytes := num_bits/8;
+    if (num_bits rem 8) /= 0 then
+      v_num_bytes := v_num_bytes+1;
+    end if;
+    return v_num_bytes;
+  end function get_num_bytes;
+
+  function to_byte_array(
+    constant data : in std_logic_vector
+  ) return t_byte_array is
+    alias    normalized_data : std_logic_vector(data'length-1 downto 0) is data;
+    constant C_NUM_BYTES     : positive := get_num_bytes(data'length);
+    variable v_byte_array    : t_byte_array(0 to C_NUM_BYTES-1);
+    variable v_bit_idx       : integer := normalized_data'high;
+  begin
+    for byte_idx in 0 to C_NUM_BYTES-1 loop
+      for i in 7 downto 0 loop
+        if v_bit_idx = -1 then
+          v_byte_array(byte_idx)(i) := 'Z'; -- Pads 'Z'
+        else
+          v_byte_array(byte_idx)(i) := normalized_data(v_bit_idx);
+          v_bit_idx := v_bit_idx-1;
+        end if;
+      end loop;
+    end loop;
+    return v_byte_array;
+  end function to_byte_array;
+
+  procedure compare_ethernet_frames(
+    constant frame_1      : in t_ethernet_frame;
+    constant frame_2      : in t_ethernet_frame;
+    constant alert_level  : in t_alert_level;
+    constant scope        : in string;
+    constant msg_id       : in t_msg_id;
+    constant msg_id_panel : in t_msg_id_panel
+  ) is
+  begin
+    check_value(frame_1.mac_destination,                frame_2.mac_destination,                alert_level, "Verify MAC destination", scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
+    check_value(frame_1.mac_source,                     frame_2.mac_source,                     alert_level, "Verify MAC source",      scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
+    check_value(frame_1.length,                         frame_2.length,                         alert_level, "Verify length",          scope,                      msg_id, msg_id_panel);
+    check_value(convert_byte_array_to_slv_array(frame_1.payload(0 to frame_1.length-1), 1), convert_byte_array_to_slv_array(frame_2.payload(0 to frame_2.length-1), 1), alert_level, "Verify payload",         scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
+    check_value(convert_byte_array_to_slv_array(frame_1.fcs, 1),                            convert_byte_array_to_slv_array(frame_2.fcs, 1),                            alert_level, "Verify FCS",             scope, HEX, KEEP_LEADING_0, msg_id, msg_id_panel);
+  end procedure compare_ethernet_frames;
 
 end package body ethernet_bfm_pkg;
 

@@ -34,15 +34,10 @@ package vvc_cmd_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    SEND,
+    TRANSMIT,
     RECEIVE,
     EXPECT
   );
-
-  constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
-  constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
-  constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
-  constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
 
   --========================================================================================================================
   -- t_vvc_cmd_record
@@ -50,8 +45,8 @@ package vvc_cmd_pkg is
   --========================================================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    mac_destination           : t_byte_array(0 to 5);
-    mac_source                : t_byte_array(0 to 5);
+    mac_destination           : unsigned(47 downto 0);
+    mac_source                : unsigned(47 downto 0);
     payload_length            : natural;
     payload                   : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     -- Common VVC fields
@@ -73,8 +68,8 @@ package vvc_cmd_pkg is
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
     -- VVC dedicated fields
-    mac_destination           => (others => (others => '0')),
-    mac_source                => (others => (others => '0')),
+    mac_destination           => (others => '0'),
+    mac_source                => (others => '0'),
     payload_length            => 0,
     payload                   => (others => (others => '0')),
     -- Common VVC fields
@@ -111,7 +106,7 @@ package vvc_cmd_pkg is
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --========================================================================================================================
   type  t_vvc_result is record
-    ethernet_frame        : t_ethernet_frame(payload(0 to C_MAX_PAYLOAD_LENGTH-1));
+    ethernet_frame        : t_ethernet_frame;
     ethernet_frame_status : t_ethernet_frame_status;
   end record t_vvc_result;
 

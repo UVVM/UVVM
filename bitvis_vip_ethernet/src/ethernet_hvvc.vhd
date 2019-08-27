@@ -37,7 +37,7 @@ begin
 
 
   -- ETHERNET TRANSMIT VVC
-  i1_ethernet_transmit: entity work.ethernet_transmit_vvc
+  i_ethernet_transmit: entity work.ethernet_transmit_vvc
   generic map(
     GC_INSTANCE_IDX                           => GC_INSTANCE_IDX,
     GC_CHANNEL                                => TRANSMITTER,
@@ -52,7 +52,7 @@ begin
 
 
   -- ETHERNET RECEIVE VVC
-  i1_ethernet_receive: entity work.ethernet_receive_vvc
+  i_ethernet_receive: entity work.ethernet_receive_vvc
   generic map(
     GC_INSTANCE_IDX                           => GC_INSTANCE_IDX,
     GC_CHANNEL                                => RECEIVER,

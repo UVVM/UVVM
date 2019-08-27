@@ -57,7 +57,7 @@ bitvis_vip_ethernet_lib.add_source_files(join(project_root, 'uvvm_vvc_framework'
 bitvis_vip_ethernet_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 
 ui.set_compile_option('rivierapro.vcom_flags', ["-nowarn", "COMP96_0564", "-nowarn", "COMP96_0048", "-dbg"])
-ui.set_sim_option("rivierapro.vsim_flags", ["-i", "10000"])
+ui.set_sim_option("rivierapro.vsim_flags", ["-i", "10000", "-access_leak_report"])
 
 # Compile and run all test cases
 ui.main()

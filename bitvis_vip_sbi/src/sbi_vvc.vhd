@@ -126,11 +126,7 @@ begin
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- update v_msg_id_panel
-      if v_local_vvc_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
-        v_msg_id_panel := v_local_vvc_cmd.msg_id_panel;
-      else
-        v_msg_id_panel := vvc_config.msg_id_panel;
-      end if;
+      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
@@ -226,11 +222,7 @@ begin
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
       -- update v_msg_id_panel
-      if v_cmd.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
-        v_msg_id_panel := v_cmd.msg_id_panel;
-      else
-        v_msg_id_panel := vvc_config.msg_id_panel;
-      end if;
+      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay

@@ -52,7 +52,7 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
   constant C_TB_SCOPE_DEFAULT          : string := "TB seq."; -- Default scope in test sequencer
-  constant C_TB_UVVM_CMD_SCOPE_DEFAULT : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in UVVM commands
+  constant C_VVC_CMD_SCOPE_DEFAULT : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
@@ -296,7 +296,28 @@ package adaptations_pkg is
   ------------------------------------------------------------------------
   -- Hierarchical VVCs
   ------------------------------------------------------------------------
-  constant C_SUB_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (others => DISABLED);
+  constant C_HVVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (others => DISABLED);
+
+  -------------------------------------
+  -- Hierarchical VVC (HVVC)
+  -------------------------------------
+  type t_sub_vvc_operation is (TRANSMIT, RECEIVE);
+  type t_interface is (SBI, GMII);
+
+  type t_hvvc_to_vvc is record
+    trigger                   : std_logic;
+    operation                 : t_sub_vvc_operation;
+    num_data_bytes            : positive;
+    data_bytes                : t_byte_array;
+    dut_if_field_idx          : integer;
+    current_byte_idx_in_field : natural; -- In protocol if field idx = -1
+    msg_id_panel              : t_msg_id_panel;
+  end record;
+
+  type t_vvc_to_hvvc is record
+    trigger        : std_logic;
+    data_bytes     : t_byte_array;
+  end record;
 
 end package adaptations_pkg;
 

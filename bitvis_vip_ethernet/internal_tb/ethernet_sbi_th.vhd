@@ -72,7 +72,6 @@ architecture struct of sbi_test_harness is
     use_ready_signal            => true
     );
 
-
   signal i1_sbi_if   : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
   signal i2_sbi_if   : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
 

@@ -1,17 +1,6 @@
 --========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
---
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
-
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
 
 
 library ieee;
@@ -36,8 +25,7 @@ entity gmii_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level             := WARNING
   );
   port (
-    gmii_to_dut_if   : inout t_gmii_to_dut_if;
-    gmii_from_dut_if : in t_gmii_from_dut_if
+    gmii_vvc_if : inout t_gmii_if
   );
 end entity gmii_vvc;
 
@@ -47,37 +35,36 @@ architecture struct of gmii_vvc is
 
 begin
 
-  -- GMII TRANSMIT VVC
-  i_gmii_transmit: entity work.gmii_transmit_vvc
+  gmii_vvc_if <= init_gmii_if;
+
+
+  -- GMII TRANSMITTER VVC
+  i_gmii_transmitter: entity work.gmii_transmitter_vvc
   generic map(
     GC_INSTANCE_IDX                           => GC_INSTANCE_IDX,
+    GC_CHANNEL                                => TRANSMITTER,
     GC_GMII_BFM_CONFIG                        => GC_GMII_BFM_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                    => GC_CMD_QUEUE_COUNT_MAX,
     GC_CMD_QUEUE_COUNT_THRESHOLD              => GC_CMD_QUEUE_COUNT_THRESHOLD,
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY     => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-    GC_RESULT_QUEUE_COUNT_MAX                 => GC_RESULT_QUEUE_COUNT_MAX,
-    GC_RESULT_QUEUE_COUNT_THRESHOLD           => GC_RESULT_QUEUE_COUNT_THRESHOLD,
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY  => GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY     => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
   )
   port map(
-    gmii_to_dut_if => gmii_to_dut_if
+    gmii_to_dut_if => gmii_vvc_if.gmii_to_dut_if
   );
 
 
-  -- GMII RECEIVE VVC
-  i_gmii_receive: entity work.gmii_receive_vvc
+  -- GMII RECEIVER VVC
+  i_gmii_receiver: entity work.gmii_receiver_vvc
   generic map(
     GC_INSTANCE_IDX                           => GC_INSTANCE_IDX,
+    GC_CHANNEL                                => RECEIVER,
     GC_GMII_BFM_CONFIG                        => GC_GMII_BFM_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                    => GC_CMD_QUEUE_COUNT_MAX,
     GC_CMD_QUEUE_COUNT_THRESHOLD              => GC_CMD_QUEUE_COUNT_THRESHOLD,
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY     => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-    GC_RESULT_QUEUE_COUNT_MAX                 => GC_RESULT_QUEUE_COUNT_MAX,
-    GC_RESULT_QUEUE_COUNT_THRESHOLD           => GC_RESULT_QUEUE_COUNT_THRESHOLD,
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY  => GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY     => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
   )
   port map(
-    gmii_from_dut_if => gmii_from_dut_if
+    gmii_from_dut_if => gmii_vvc_if.gmii_from_dut_if
   );
 
 end struct;

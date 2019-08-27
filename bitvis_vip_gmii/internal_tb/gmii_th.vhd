@@ -55,8 +55,7 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => i1_gmii_if.gmii_to_dut_if,
-      gmii_from_dut_if => i1_gmii_if.gmii_from_dut_if
+      gmii_vvc_if => i1_gmii_if
     );
 
   i2_gmii_vvc : entity work.gmii_vvc
@@ -68,8 +67,7 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => i2_gmii_if.gmii_to_dut_if,
-      gmii_from_dut_if => i2_gmii_if.gmii_from_dut_if
+      gmii_vvc_if => i2_gmii_if
     );
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);

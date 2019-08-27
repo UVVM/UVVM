@@ -1,23 +1,11 @@
 --========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
---
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
-
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
 
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use std.textio.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -29,40 +17,18 @@ package ethernet_bfm_pkg is
   --========================================================================================================================
   -- Types and constants for ETHERNET BFM
   --========================================================================================================================
-  constant C_MIN_PAYLOAD_LENGTH          : natural := 46;
-  constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
-  constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
-  constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
-  constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
-
-  constant C_SCOPE             : string := "ETHERNET BFM";
-  constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
-  constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
-  constant C_CRC_32_RESIDUE    : std_logic_vector(31 downto 0) := x"C704DD7B";
-  constant C_CRC_32_POLYNOMIAL : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
-
-  -- IF field config number
-  constant C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD    : natural := 0;
-  constant C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION : natural := 1;
-  constant C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE      : natural := 2;
-  constant C_IF_FIELD_NUM_ETHERNET_LENTGTH         : natural := 3;
-  constant C_IF_FIELD_NUM_ETHERNET_PAYLOAD         : natural := 4;
-  constant C_IF_FIELD_NUM_ETHERNET_FCS             : natural := 5;
+  constant C_SCOPE          : string := "ETHERNET BFM";
+  constant C_PREAMBLE       : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
+  constant C_SFD            : std_logic_vector( 7 downto 0) := x"5D";
+  constant C_CRC_32_RESIDUE : std_logic_vector(31 downto 0) := x"C704DD7B";
 
   type t_ethernet_frame is record
-    mac_destination : unsigned(47 downto 0);
-    mac_source      : unsigned(47 downto 0);
-    length          : integer;
-    payload         : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
-    fcs             : std_logic_vector(31 downto 0);
+    mac_destination : t_byte_array(0 to 5);
+    mac_source      : t_byte_array(0 to 5);
+    length          : t_byte_array(0 to 1);
+    payload         : t_byte_array;
+    fcs             : t_byte_array(0 to 3);
   end record t_ethernet_frame;
-
-  constant C_ETHERNET_FRAME_DEFAULT : t_ethernet_frame := (
-    mac_destination => (others => '0'),
-    mac_source      => (others => '0'),
-    length          => 0,
-    payload         => (others => (others => '0')),
-    fcs             => (others => '0'));
 
   type t_ethernet_frame_status is record
     fcs_error : boolean;
@@ -70,15 +36,15 @@ package ethernet_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_ethernet_bfm_config is record
-    mac_destination      : unsigned(47 downto 0);
-    mac_source           : unsigned(47 downto 0);
+    mac_destination      : t_byte_array(0 to 5);
+    mac_source           : t_byte_array(0 to 5);
     fcs_error_severity   : t_alert_level;
     interpacket_gap_time : time;
   end record;
 
   constant C_ETHERNET_BFM_CONFIG_DEFAULT : t_ethernet_bfm_config := (
-    mac_destination      => (others => 'Z'),
-    mac_source           => (others => 'Z'),
+    mac_destination      => (others => (others => 'Z')),
+    mac_source           => (others => (others => 'Z')),
     fcs_error_severity   => ERROR,
     interpacket_gap_time => 768 ns
   );
@@ -87,6 +53,12 @@ package ethernet_bfm_pkg is
   --========================================================================================================================
   -- BFM procedures
   --========================================================================================================================
+
+  function generate_crc_32(
+    constant data   : in std_logic_vector(7 downto 0);
+    constant crc_in : in std_logic_vector(31 downto 0)
+  ) return std_logic_vector;
+
   impure function generate_crc_32_complete(
     constant data : in t_byte_array
   ) return std_logic_vector;
@@ -99,50 +71,19 @@ package ethernet_bfm_pkg is
     constant payload_length : in positive
   ) return positive;
 
-  function hdr_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string;
-
-  function data_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string;
-
-  function complete_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string;
-
-  function to_slv(
-    constant byte_array : in t_byte_array
-  ) return std_logic_vector;
-
-  function to_byte_array(
-    constant data : in std_logic_vector
-  ) return t_byte_array;
-
-  procedure compare_ethernet_frames(
-    constant actual       : in t_ethernet_frame;
-    constant expected     : in t_ethernet_frame;
-    constant alert_level  : in t_alert_level;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
-  );
-
-  impure function compare_ethernet_frames(
-    constant actual       : in t_ethernet_frame;
-    constant expected     : in t_ethernet_frame;
-    constant alert_level  : in t_alert_level;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
-  ) return boolean;
-
-  function ethernet_match(
-    constant actual   : in t_ethernet_frame;
-    constant expected : in t_ethernet_frame
-  ) return boolean;
+--  function encode_ethernet_frame(
+--    constant mac_destination : in t_byte_array(0 to 5);
+--    constant mac_source      : in t_byte_array(0 to 5);
+--    constant payload         : in t_byte_array;
+--    constant scope           : in string         := C_SCOPE;
+--    constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel
+--  ) return t_byte_array;
+--
+--  function decode_ethernet_frame(
+--    constant data         : in t_byte_array;
+--    constant scope        : in string         := C_SCOPE;
+--    constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel
+--  ) return t_ethernet_frame;
 
 end package ethernet_bfm_pkg;
 
@@ -156,14 +97,60 @@ package body ethernet_bfm_pkg is
   -- generate_crc_32
   ---------------------------------------------------------------------------------
   --
-  -- This function generate the IEEE 802.3 CRC32 for byte array input.
+  -- This function generate the IEEE 802.3 CRC32 for 8-bit input data.
   --
   ---------------------------------------------------------------------------------
+  function generate_crc_32(
+    constant data   : in std_logic_vector(7 downto 0);
+    constant crc_in : in std_logic_vector(31 downto 0)
+  ) return std_logic_vector is
+    variable v_crc_out : std_logic_vector(31 downto 0);
+  begin
+    v_crc_out(0)  := crc_in(24) xor crc_in(30) xor data(0)    xor data(6);
+    v_crc_out(1)  := crc_in(24) xor crc_in(25) xor crc_in(30) xor crc_in(31) xor data(0)    xor data(1)    xor data(6)    xor data(7);
+    v_crc_out(2)  := crc_in(24) xor crc_in(25) xor crc_in(26) xor crc_in(30) xor crc_in(31) xor data(0)    xor data(1)    xor data(2) xor data(6) xor data(7);
+    v_crc_out(3)  := crc_in(25) xor crc_in(26) xor crc_in(27) xor crc_in(31) xor data(1)    xor data(2)    xor data(3)    xor data(7);
+    v_crc_out(4)  := crc_in(24) xor crc_in(26) xor crc_in(27) xor crc_in(28) xor crc_in(30) xor data(0)    xor data(2)    xor data(3) xor data(4) xor data(6);
+    v_crc_out(5)  := crc_in(24) xor crc_in(25) xor crc_in(27) xor crc_in(28) xor crc_in(29) xor crc_in(30) xor crc_in(31) xor data(0) xor data(1) xor data(3) xor data(4) xor data(5) xor data(6) xor data(7);
+    v_crc_out(6)  := crc_in(25) xor crc_in(26) xor crc_in(28) xor crc_in(29) xor crc_in(30) xor crc_in(31) xor data(1)    xor data(2) xor data(4) xor data(5) xor data(6) xor data(7);
+    v_crc_out(7)  := crc_in(24) xor crc_in(26) xor crc_in(27) xor crc_in(29) xor crc_in(31) xor data(0)    xor data(2)    xor data(3) xor data(5) xor data(7);
+    v_crc_out(8)  := crc_in(0)  xor crc_in(24) xor crc_in(25) xor crc_in(27) xor crc_in(28) xor data(0)    xor data(1)    xor data(3) xor data(4);
+    v_crc_out(9)  := crc_in(1)  xor crc_in(25) xor crc_in(26) xor crc_in(28) xor crc_in(29) xor data(1)    xor data(2)    xor data(4) xor data(5);
+    v_crc_out(10) := crc_in(2)  xor crc_in(24) xor crc_in(26) xor crc_in(27) xor crc_in(29) xor data(0)    xor data(2)    xor data(3) xor data(5);
+    v_crc_out(11) := crc_in(3)  xor crc_in(24) xor crc_in(25) xor crc_in(27) xor crc_in(28) xor data(0)    xor data(1)    xor data(3) xor data(4);
+    v_crc_out(12) := crc_in(4)  xor crc_in(24) xor crc_in(25) xor crc_in(26) xor crc_in(28) xor crc_in(29) xor crc_in(30) xor data(0) xor data(1) xor data(2) xor data(4) xor data(5) xor data(6);
+    v_crc_out(13) := crc_in(5)  xor crc_in(25) xor crc_in(26) xor crc_in(27) xor crc_in(29) xor crc_in(30) xor crc_in(31) xor data(1) xor data(2) xor data(3) xor data(5) xor data(6) xor data(7);
+    v_crc_out(14) := crc_in(6)  xor crc_in(26) xor crc_in(27) xor crc_in(28) xor crc_in(30) xor crc_in(31) xor data(2)    xor data(3) xor data(4) xor data(6) xor data(7);
+    v_crc_out(15) := crc_in(7)  xor crc_in(27) xor crc_in(28) xor crc_in(29) xor crc_in(31) xor data(3)    xor data(4)    xor data(5) xor data(7);
+    v_crc_out(16) := crc_in(8)  xor crc_in(24) xor crc_in(28) xor crc_in(29) xor data(0)    xor data(4)    xor data(5);
+    v_crc_out(17) := crc_in(9)  xor crc_in(25) xor crc_in(29) xor crc_in(30) xor data(1)    xor data(5)    xor data(6);
+    v_crc_out(18) := crc_in(10) xor crc_in(26) xor crc_in(30) xor crc_in(31) xor data(2)    xor data(6)    xor data(7);
+    v_crc_out(19) := crc_in(11) xor crc_in(27) xor crc_in(31) xor data(3)    xor data(7);
+    v_crc_out(20) := crc_in(12) xor crc_in(28) xor data(4);
+    v_crc_out(21) := crc_in(13) xor crc_in(29) xor data(5);
+    v_crc_out(22) := crc_in(14) xor crc_in(24) xor data(0);
+    v_crc_out(23) := crc_in(15) xor crc_in(24) xor crc_in(25) xor crc_in(30) xor data(0)    xor data(1)    xor data(6);
+    v_crc_out(24) := crc_in(16) xor crc_in(25) xor crc_in(26) xor crc_in(31) xor data(1)    xor data(2)    xor data(7);
+    v_crc_out(25) := crc_in(17) xor crc_in(26) xor crc_in(27) xor data(2)    xor data(3);
+    v_crc_out(26) := crc_in(18) xor crc_in(24) xor crc_in(27) xor crc_in(28) xor crc_in(30) xor data(0)    xor data(3)    xor data(4) xor data(6);
+    v_crc_out(27) := crc_in(19) xor crc_in(25) xor crc_in(28) xor crc_in(29) xor crc_in(31) xor data(1)    xor data(4)    xor data(5) xor data(7);
+    v_crc_out(28) := crc_in(20) xor crc_in(26) xor crc_in(29) xor crc_in(30) xor data(2)    xor data(5)    xor data(6);
+    v_crc_out(29) := crc_in(21) xor crc_in(27) xor crc_in(30) xor crc_in(31) xor data(3)    xor data(6)    xor data(7);
+    v_crc_out(30) := crc_in(22) xor crc_in(28) xor crc_in(31) xor data(4)    xor data(7);
+    v_crc_out(31) := crc_in(23) xor crc_in(29) xor data(5);
+    return v_crc_out;
+  end function generate_crc_32;
+
   impure function generate_crc_32_complete(
     constant data : in t_byte_array
   ) return std_logic_vector is
+    constant C_NUM_BYTES : positive := data'length;
+    variable crc : std_logic_vector(31 downto 0) := C_CRC_32_START_VALUE;
   begin
-    return generate_crc(data, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
+    for i in data'low to data'high loop
+      crc := generate_crc_32(data(i), crc);
+    end loop;
+    return crc;
   end function generate_crc_32_complete;
 
   impure function check_crc_32(
@@ -179,144 +166,88 @@ package body ethernet_bfm_pkg is
   begin
     return payload_length + 18;
   end function get_ethernet_frame_length;
+--
+--  impure function encode_ethernet_frame(
+--    constant mac_destination : in t_byte_array(0 to 5);
+--    constant mac_source      : in t_byte_array(0 to 5);
+--    constant payload         : in t_byte_array;
+--    constant scope           : in string         := C_SCOPE;
+--    constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel
+--  ) return t_byte_array is
+--    constant proc_name               : string := "encode_ethernet_package";
+--    constant proc_call               : string := proc_name;
+--    constant C_PAYLOAD_LENGTH        : positive := payload'high-payload'low;
+--    constant C_PAYLOAD_LENGTH_VECTOR : std_logic_vector(15 downto 0) := std_logic_vector(to_unsigned(C_PAYLOAD_LENGTH, 16));
+--    variable v_ethernet_frame        : t_byte_array(0 to 17 + C_PAYLOAD_LENGTH) := (others => (others => '0'));
+--    variable v_crc, v_fcs            : std_logic_vector(31 downto 0);
+--  begin
+--    -- Check valid payload length
+--    check_value_in_range(payload'high-payload'low, C_ETHERNET_PAYLOAD_MIN_LENGTH, C_ETHERNET_PAYLOAD_MAX_LENGTH, TB_ERROR, proc_call &
+--        ": length of payload is not in the valid range " & to_string(C_ETHERNET_PAYLOAD_MAX_LENGTH) & " - " &
+--        to_string(C_ETHERNET_PAYLOAD_MIN_LENGTH) & " bytes.", scope, ID_NEVER, msg_id_panel);
+--
+--    -- MAC destination
+--    v_ethernet_frame( 0 to  5) := mac_destination;
+--
+--    -- MAC source
+--    v_ethernet_frame( 6 to 11) := mac_source;
+--
+--    -- payload length
+--    v_ethernet_frame(12) := C_PAYLOAD_LENGTH_VECTOR(15 downto 8);
+--    v_ethernet_frame(13) := C_PAYLOAD_LENGTH_VECTOR( 7 downto 0);
+--
+--    -- payload
+--    v_ethernet_frame(14 to 14 + C_PAYLOAD_LENGTH - 1) := payload; -- TBD: normalize
+--
+--    -- FCS
+--    v_crc := generate_crc_32_complete(v_ethernet_frame(0 to 14 + C_PAYLOAD_LENGTH - 1));
+--    v_fcs := not(v_crc);
+--    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH)     := v_fcs(31 downto 24);
+--    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH + 1) := v_fcs(23 downto 16);
+--    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH + 2) := v_fcs(15 downto  8);
+--    v_ethernet_frame(14 + C_PAYLOAD_LENGTH to 14 + C_PAYLOAD_LENGTH + 3) := v_fcs( 7 downto  0);
+--
+--    return v_ethernet_frame;
+--  end function encode_ethernet_frame;
+--
+--  impure function decode_ethernet_frame(
+--    constant data         : in t_byte_array
+--    constant scope        : in string         := C_SCOPE;
+--    constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel
+--  ) return t_ethernet_frame is
+--    constant proc_name        : string := "decode_ethernet_package";
+--    constant proc_call        : string := proc_name;
+--    variable v_ethernet_frame : t_ethernet_frame;
+--  begin
+--    -- Check valid pa
+--    check_value_in_range(data'length, 18 + C_ETHERNET_PAYLOAD_MIN_LENGTH, 18 + C_ETHERNET_PAYLOAD_MAX_LENGTH, TB_ERROR, proc_call &
+--        ": length of ethernet packet is not in the valid range " & to_string(18 + C_ETHERNET_PAYLOAD_MIN_LENGTH) & " - " &
+--        to_string(18 + C_ETHERNET_PAYLOAD_MAX_LENGTH) & " bytes.", C_SCOPE, ID_NEVER, msg_id_panel);
+--
+--    v_ethernet_frame.mac_destination := data( 0 to  5);
+--    v_ethernet_frame.mac_source      := data( 6 to 11);
+--    v_ethernet_frame.length          := data(12 to 13);
+--    v_ethernet_frame.payload         := data(14 to data'length-5);
+--    v_ethernet_frame.fcs             := data(data'length-4 to data'length-1);
+--
+--    return v_ethernet_frame;
+--  end function decode_ethernet_frame;
+--
+--  procedure send_to_sub_vvc(
+--    constant sub_vvc : in t_vvc;
+--    constant ethernet_packet : in t_ethernet_packet
+--  ) begin
+--
+--    case sub_vvc.interface is
+--
+--      when GMII =>
+--        transmit(GMII_VVCT, sub_vvc.instance, sub_vvc.channel, ethernet_packet);
+--
+--      when others =>
+--        alert(TB_ERROR, "This interface has not been defined for this VVC");
+--
+--  end procedure send_to_sub_vvc;
 
-  function hdr_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-  begin
-    return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
-           LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
-           LF & "    length:          " & to_string(ethernet_frame.length);
-  end function hdr_to_string;
-
-  function data_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-    variable payload_string : string(1 to 21*ethernet_frame.length); --byte 1500: x"00"
-  begin
-    for i in 0 to ethernet_frame.length-1 loop
-      payload_string(i*21+1 to (i+1)*21) := LF & "    byte " & to_string(i, 4, RIGHT) & ": " & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX);
-    end loop;
-    return LF & "    Payload:" & payload_string;
-  end function data_to_string;
-
-  function complete_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-  begin
-    return "MAC dest: "  & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           "; MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           "; length: "  & to_string(ethernet_frame.length) &
-           "; fcs: "     & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
-  end function complete_to_string;
-
-  function to_slv(
-    constant byte_array : in t_byte_array
-  ) return std_logic_vector is
-    constant C_NUM_BYTES           : integer := byte_array'length;
-    variable normalized_byte_array : t_byte_array(0 to C_NUM_BYTES-1) ;
-    variable v_return_val          : std_logic_vector(8*C_NUM_BYTES-1 downto 0);
-  begin
-    normalized_byte_array := byte_array;
-    for i in 0 to C_NUM_BYTES-1 loop
-      v_return_val(8*(C_NUM_BYTES-i)-1 downto 8*(C_NUM_BYTES-i-1)) := normalized_byte_array(i);
-    end loop;
-    return v_return_val;
-  end function to_slv;
-
-  function get_num_bytes(
-    constant num_bits : in positive
-  ) return positive is
-    variable v_num_bytes : positive;
-  begin
-    v_num_bytes := num_bits/8;
-    if (num_bits rem 8) /= 0 then
-      v_num_bytes := v_num_bytes+1;
-    end if;
-    return v_num_bytes;
-  end function get_num_bytes;
-
-  function to_byte_array(
-    constant data : in std_logic_vector
-  ) return t_byte_array is
-    alias    normalized_data : std_logic_vector(data'length-1 downto 0) is data;
-    constant C_NUM_BYTES     : positive := get_num_bytes(data'length);
-    variable v_byte_array    : t_byte_array(0 to C_NUM_BYTES-1);
-    variable v_bit_idx       : integer := normalized_data'high;
-  begin
-    for byte_idx in 0 to C_NUM_BYTES-1 loop
-      for i in 7 downto 0 loop
-        if v_bit_idx = -1 then
-          v_byte_array(byte_idx)(i) := 'Z'; -- Pads 'Z'
-        else
-          v_byte_array(byte_idx)(i) := normalized_data(v_bit_idx);
-          v_bit_idx := v_bit_idx-1;
-        end if;
-      end loop;
-    end loop;
-    return v_byte_array;
-  end function to_byte_array;
-
-  procedure compare_ethernet_frames(
-    constant actual       : in t_ethernet_frame;
-    constant expected     : in t_ethernet_frame;
-    constant alert_level  : in t_alert_level;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
-  ) is
-  begin
-    check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination"              & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_HDR,  msg_id_panel, proc_call);
-    check_value(actual.mac_source,      expected.mac_source,      alert_level, "Verify MAC source"                   & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_HDR,  msg_id_panel, proc_call);
-    check_value(actual.length,          expected.length,          alert_level, "Verify length"                       & LF & msg, scope,                      ID_PACKET_HDR,  msg_id_panel, proc_call);
-    for i in 0 to actual.length-1 loop
-      check_value(actual.payload(i),    expected.payload(i),      alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
-    end loop;
-    check_value(actual.fcs,             expected.fcs,             alert_level, "Verify FCS"                          & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
-  end procedure compare_ethernet_frames;
-
-  impure function compare_ethernet_frames(
-    constant actual       : in t_ethernet_frame;
-    constant expected     : in t_ethernet_frame;
-    constant alert_level  : in t_alert_level;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
-  ) return boolean is
-  begin
-    if not check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    if not check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    if not check_value(actual.length, expected.length, alert_level, "Verify length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    for i in 0 to actual.length-1 loop
-      if not check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-        return false;
-      end if;
-    end loop;
-    if not check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    return true;
-  end function compare_ethernet_frames;
-
-  function ethernet_match(
-    constant actual   : in t_ethernet_frame;
-    constant expected : in t_ethernet_frame
-  ) return boolean is
-  begin
-    return actual.mac_destination               = expected.mac_destination                 and
-           actual.mac_source                    = expected.mac_source                      and
-           actual.length                        = expected.length                          and
-           actual.payload(0 to actual.length-1) = expected.payload(0 to expected.length-1) and
-           actual.fcs                           = expected.fcs;
-  end function ethernet_match;
 
 end package body ethernet_bfm_pkg;
 

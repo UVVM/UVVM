@@ -21,22 +21,16 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
-use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
+context bitvis_vip_ethernet.vvc_context;
 
 --=================================================================================================
 entity sbi_test_harness is
   generic(
-    GC_CLK_PERIOD : time;
-    GC_ADDR_WIDTH : positive;
-    GC_DATA_WIDTH : positive
+    GC_CLK_PERIOD : time
   );
 end entity sbi_test_harness;
 
@@ -46,14 +40,51 @@ end entity sbi_test_harness;
 
 architecture struct of sbi_test_harness is
 
-  signal i1_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
-  signal i2_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
+  --------------------------------
+  -- SBI config
+  --------------------------------
+  -- Register map :
+  constant C_ADDR_FIFO_PUT            : integer := 0;
+  constant C_ADDR_FIFO_GET            : integer := 1;
+  constant C_ADDR_FIFO_COUNT          : integer := 2;
+  constant C_ADDR_FIFO_PEEK           : integer := 3;
+  constant C_ADDR_FIFO_FLUSH          : integer := 4;
+  constant C_ADDR_FIFO_MAX_COUNT      : integer := 5;
+
+  constant C_ADDR_WIDTH_1 : integer := 8;
+  constant C_DATA_WIDTH_1 : integer := 8;
+  constant C_ADDR_WIDTH_2 : integer := 8;
+  constant C_DATA_WIDTH_2 : integer := 8;
+
+  constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
+    max_wait_cycles             => 10,
+    max_wait_cycles_severity    => failure,
+    use_fixed_wait_cycles_read  => false,
+    fixed_wait_cycles_read      => 0,
+    clock_period                => 10 ns,
+    clock_period_margin         => 0 ns,
+    clock_margin_severity       => TB_ERROR,
+    setup_time                  => 2.5 ns,
+    hold_time                   => 2.5 ns,
+    id_for_bfm                  => ID_BFM,
+    id_for_bfm_wait             => ID_BFM_WAIT,
+    id_for_bfm_poll             => ID_BFM_POLL,
+    use_ready_signal            => true
+    );
+
+
+  signal i1_sbi_if   : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
+  signal i2_sbi_if   : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
 
   signal clk       : std_logic;
 
-  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 0) :=
-   (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, field_description => "transmitter field config")),
-    RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, field_description => "receiver field config   "))
+  constant C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY : t_dut_if_field_config_channel_array(TRANSMITTER to RECEIVER)(0 to 0) :=
+   (TRANSMITTER => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_PUT, 8),
+                          dut_address_increment => 0,
+                          field_description     => "transmitter field config")),
+    RECEIVER    => (0 => (dut_address           => to_unsigned(C_ADDR_FIFO_GET, 8),
+                          dut_address_increment => 0,
+                          field_description     => "receiver field config   "))
     );
 
 begin
@@ -66,29 +97,29 @@ begin
   -----------------------------
   i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX        => 1,
-      GC_INTERFACE           => SBI,
-      GC_VVC_INSTANCE_IDX    => 1,
-      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
+      GC_INSTANCE_IDX         => 1,
+      GC_INTERFACE            => SBI,
+      GC_SUB_VVC_INSTANCE_IDX => 1,
+      GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
     );
 
   i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX        => 2,
-      GC_INTERFACE           => SBI,
-      GC_VVC_INSTANCE_IDX    => 2,
-      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
+      GC_INSTANCE_IDX         => 2,
+      GC_INTERFACE            => SBI,
+      GC_SUB_VVC_INSTANCE_IDX => 2,
+      GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_CHANNEL_ARRAY
     );
 
 
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH                         => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
+      GC_ADDR_WIDTH                         => 8,
+      GC_DATA_WIDTH                         => 8,
       GC_INSTANCE_IDX                       => 1,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
-      GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_MAX_PACKET_LENGTH+1,
+      GC_CMD_QUEUE_COUNT_MAX                => 500,
+      GC_CMD_QUEUE_COUNT_THRESHOLD          => 450,
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
@@ -98,12 +129,12 @@ begin
 
   i2_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH                         => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
+      GC_ADDR_WIDTH                         => 8,
+      GC_DATA_WIDTH                         => 8,
       GC_INSTANCE_IDX                       => 2,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
-      GC_CMD_QUEUE_COUNT_MAX                => C_MAX_PACKET_LENGTH+50,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_MAX_PACKET_LENGTH+1,
+      GC_CMD_QUEUE_COUNT_MAX                => 500,
+      GC_CMD_QUEUE_COUNT_THRESHOLD          => 450,
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(

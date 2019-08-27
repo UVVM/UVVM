@@ -21,14 +21,11 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_gmii;
 context bitvis_vip_gmii.vvc_context;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
+context bitvis_vip_ethernet.vvc_context;
 
 --=================================================================================================
 entity gmii_test_harness is
@@ -54,16 +51,16 @@ begin
   -----------------------------
   i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX     => 1,
-      GC_INTERFACE        => GMII,
-      GC_VVC_INSTANCE_IDX => 1
+      GC_INSTANCE_IDX         => 1,
+      GC_INTERFACE            => GMII,
+      GC_SUB_VVC_INSTANCE_IDX => 1
     );
 
   i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX     => 2,
-      GC_INTERFACE        => GMII,
-      GC_VVC_INSTANCE_IDX => 2
+      GC_INSTANCE_IDX         => 2,
+      GC_INTERFACE            => GMII,
+      GC_SUB_VVC_INSTANCE_IDX => 2
     );
 
 
@@ -76,8 +73,7 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => i1_gmii_if.gmii_to_dut_if,
-      gmii_from_dut_if => i1_gmii_if.gmii_from_dut_if
+      gmii_vvc_if => i1_gmii_if
     );
 
   i2_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
@@ -89,8 +85,7 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => i2_gmii_if.gmii_to_dut_if,
-      gmii_from_dut_if => i2_gmii_if.gmii_from_dut_if
+      gmii_vvc_if => i2_gmii_if
     );
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);

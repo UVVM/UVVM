@@ -1,17 +1,6 @@
 --========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
---
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
-
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
 
 
 library ieee;
@@ -122,25 +111,19 @@ package vvc_methods_pkg is
   --========================================================================================================================
 
   procedure gmii_write(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant data                      : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant channel            : in t_channel;
+    constant data               : in t_byte_array;
+    constant msg                : in string
   );
 
   procedure gmii_read(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant num_bytes                 : in    positive;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant channel            : in t_channel;
+    constant num_bytes          : in positive;
+    constant msg                : in string
   );
 
 end package vvc_methods_pkg;
@@ -154,14 +137,11 @@ package body vvc_methods_pkg is
   --========================================================================================================================
 
   procedure gmii_write(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant data                      : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant data             : in t_byte_array;
+    constant msg              : in string
   ) is
     constant proc_name : string := "gmii_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
@@ -170,24 +150,18 @@ package body vvc_methods_pkg is
   -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
   -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
-    shared_vvc_cmd.num_bytes                 := data'length;
-    shared_vvc_cmd.data                      := (others => (others => 'U'));
-    shared_vvc_cmd.data(0 to data'length-1)  := data;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    shared_vvc_cmd.num_bytes                := data'length;
+    shared_vvc_cmd.data                     := (others => (others => 'U'));
+    shared_vvc_cmd.data(0 to data'length-1) := data;
+    send_command_to_vvc(VVCT);
   end procedure gmii_write;
 
-
   procedure gmii_read(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant num_bytes                 : in    positive;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant num_bytes        : in positive;
+    constant msg              : in string
   ) is
     constant proc_name : string := "gmii_read";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
@@ -196,10 +170,9 @@ package body vvc_methods_pkg is
   -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
   -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.num_bytes                 := num_bytes;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    shared_vvc_cmd.num_bytes := num_bytes;
+    send_command_to_vvc(VVCT);
   end procedure gmii_read;
+
 
 end package body vvc_methods_pkg;

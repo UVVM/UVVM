@@ -123,24 +123,21 @@ begin
   p_write_reg_sbi_1 : process (clk)
   begin
     if rising_edge(clk) then
-      if write_ready_1 = '0' then
-        if sbi_if_1.cs = '1' and sbi_if_1.wena = '1' then
-          -- Decode write address
-          case to_integer(sbi_if_1.addr) is
-            when C_ADDR_FIFO_PUT =>
-              if not uvvm_fifo_is_full(C_BUFFER_INDEX_2) then
-                uvvm_fifo_put(C_BUFFER_INDEX_2, sbi_if_1.wdata);
-                write_ready_1 <= '1';
-              end if;
-            when C_ADDR_FIFO_FLUSH =>
-              uvvm_fifo_flush(C_BUFFER_INDEX_2);
+      write_ready_1 <= '0';
+      if sbi_if_1.cs = '1' and sbi_if_1.wena = '1' then
+        -- Decode write address
+        case to_integer(sbi_if_1.addr) is
+          when C_ADDR_FIFO_PUT =>
+            if not uvvm_fifo_is_full(C_BUFFER_INDEX_2) then
+              uvvm_fifo_put(C_BUFFER_INDEX_2, sbi_if_1.wdata);
               write_ready_1 <= '1';
-            when others =>
-              alert(ERROR, "SBI_IF_1 Write Address " & to_string(to_integer(sbi_if_1.addr)) & " not supported!", C_SCOPE);
-            end case;
-        end if;
-      else
-        write_ready_1 <= '0';
+            end if;
+          when C_ADDR_FIFO_FLUSH =>
+            uvvm_fifo_flush(C_BUFFER_INDEX_2);
+            write_ready_1 <= '1';
+          when others =>
+            alert(ERROR, "SBI_IF_1 Write Address " & to_string(to_integer(sbi_if_1.addr)) & " not supported!", C_SCOPE);
+          end case;
       end if;
     end if;
   end process;
@@ -181,24 +178,21 @@ begin
   p_write_reg_sbi_2 : process (clk)
   begin
     if rising_edge(clk) then
-      if write_ready_2 = '0' then
-        if sbi_if_2.cs = '1' and sbi_if_2.wena = '1' then
-          -- Decode write address
-          case to_integer(sbi_if_2.addr) is
-            when C_ADDR_FIFO_PUT =>
-              if not uvvm_fifo_is_full(C_BUFFER_INDEX_1) then
-                uvvm_fifo_put(C_BUFFER_INDEX_1, sbi_if_2.wdata);
-                write_ready_2 <= '1';
-              end if;
-            when C_ADDR_FIFO_FLUSH =>
-              uvvm_fifo_flush(C_BUFFER_INDEX_1);
+      write_ready_2 <= '0';
+      if sbi_if_2.cs = '1' and sbi_if_2.wena = '1' then
+        -- Decode write address
+        case to_integer(sbi_if_2.addr) is
+          when C_ADDR_FIFO_PUT =>
+            if not uvvm_fifo_is_full(C_BUFFER_INDEX_1) then
+              uvvm_fifo_put(C_BUFFER_INDEX_1, sbi_if_2.wdata);
               write_ready_2 <= '1';
-            when others =>
-              alert(ERROR, "SBI_IF_2 Write Address " & to_string(to_integer(sbi_if_2.addr)) & " not supported!", C_SCOPE);
-            end case;
-        end if;
-      else
-        write_ready_2 <= '0';
+            end if;
+          when C_ADDR_FIFO_FLUSH =>
+            uvvm_fifo_flush(C_BUFFER_INDEX_1);
+            write_ready_2 <= '1';
+          when others =>
+            alert(ERROR, "SBI_IF_2 Write Address " & to_string(to_integer(sbi_if_2.addr)) & " not supported!", C_SCOPE);
+          end case;
       end if;
     end if;
   end process;
@@ -217,8 +211,8 @@ begin
   sbi_if_2.wena <= 'Z';
   sbi_if_2.wdata <= (others => 'Z');
 
-  sbi_if_1.ready <= (sbi_if_1.wena and write_ready_1) or (sbi_if_1.rena and read_ready_1);
-  sbi_if_2.ready <= (sbi_if_2.wena and write_ready_2) or (sbi_if_2.rena and read_ready_2);
+  sbi_if_1.ready <= write_ready_1 or read_ready_1;
+  sbi_if_2.ready <= write_ready_2 or read_ready_2;
 
 end behave;
 

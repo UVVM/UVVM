@@ -13,6 +13,8 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.ethernet_bfm_pkg.all;
+
 --========================================================================================================================
 --========================================================================================================================
 package vvc_cmd_pkg is
@@ -32,13 +34,15 @@ package vvc_cmd_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    WRITE,
-    READ
+    SEND,
+    RECEIVE,
+    EXPECT
   );
 
-
-  constant C_VVC_CMD_DATA_MAX_BYTES    : natural := 1550;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
+  constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
+  constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
+  constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
 
   --========================================================================================================================
   -- t_vvc_cmd_record
@@ -46,8 +50,10 @@ package vvc_cmd_pkg is
   --========================================================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    num_bytes             : natural;
-    data                  : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    mac_destination       : t_byte_array(0 to 5);
+    mac_source            : t_byte_array(0 to 5);
+    payload_length        : natural;
+    payload               : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     -- Common VVC fields
     operation             : t_operation;
     proc_call             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -64,8 +70,11 @@ package vvc_cmd_pkg is
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
-    num_bytes             => 0,
-    data                  => (others => (others => '0')),
+    -- VVC dedicated fields
+    mac_destination       => (others => (others => '0')),
+    mac_source            => (others => (others => '0')),
+    payload_length        => 0,
+    payload               => (others => (others => '0')),
     -- Common VVC fields
     operation             => NO_OPERATION,
     proc_call             => (others => NUL),
@@ -97,7 +106,14 @@ package vvc_cmd_pkg is
   -- - t_vvc_result includes the return value of the procedure in the BFM.
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --========================================================================================================================
-  subtype  t_vvc_result is t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+  type  t_vvc_result is record
+    ethernet_frame        : t_ethernet_frame(payload(0 to C_ETHERNET_PAYLOAD_MAX_LENGTH-1));
+    ethernet_frame_status : t_ethernet_frame_status;
+  end record t_vvc_result;
+
+  function to_string(
+    constant val : in t_vvc_result
+  ) return string;
 
   type t_vvc_result_queue_element is record
     cmd_idx       : natural;   -- from UVVM handshake mechanism
@@ -116,7 +132,7 @@ package vvc_cmd_pkg is
   -- t_last_received_cmd_idx :
   -- - Used to store the last queued cmd in vvc interpreter.
   --========================================================================================================================
-  type t_last_received_cmd_idx is array (t_channel range <>,natural range <>) of integer;
+  type t_last_received_cmd_idx is array (t_channel range <>, natural range <>) of integer;
 
   --========================================================================================================================
   -- shared_vvc_last_received_cmd_idx
@@ -128,5 +144,14 @@ end package vvc_cmd_pkg;
 
 
 package body vvc_cmd_pkg is
+
+  function to_string(
+    constant val : in t_vvc_result
+  ) return string is
+  begin
+    return "MAC destination: " & to_string(val.ethernet_frame.mac_destination, HEX) &
+           ", MAC source: "    & to_string(val.ethernet_frame.mac_source, HEX);
+  end function to_string;
+
 end package body vvc_cmd_pkg;
 

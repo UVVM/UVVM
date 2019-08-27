@@ -51,8 +51,7 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_TB_SCOPE_DEFAULT          : string := "TB seq."; -- Default scope in test sequencer
-  constant C_VVC_CMD_SCOPE_DEFAULT : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
+  constant C_TB_SCOPE_DEFAULT : string := "TB seq."; -- Default scope in test sequencer
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
@@ -286,6 +285,15 @@ package adaptations_pkg is
     ID_DATA => DISABLED,
     others  => DISABLED
   );
+
+  ------------------------------------------------------------------------
+  -- Ethernet adaptations
+  ------------------------------------------------------------------------
+  -- Minimum and maximum payload length in bytes. Defined in IEEE 802.3.
+  constant C_ETHERNET_PAYLOAD_MIN_LENGTH : positive := 46;
+  constant C_ETHERNET_PAYLOAD_MAX_LENGTH : positive := 1500;
+  constant C_ETHERNET_FRAME_MIN_LENGTH   : positive := 18 + C_ETHERNET_PAYLOAD_MIN_LENGTH;
+  constant C_ETHERNET_FRAME_MAX_LENGTH   : positive := 18 + C_ETHERNET_PAYLOAD_MAX_LENGTH;
 
 
   ------------------------------------------------------------------------

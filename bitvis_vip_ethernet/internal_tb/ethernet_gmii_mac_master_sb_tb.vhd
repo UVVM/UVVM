@@ -29,7 +29,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.hvvc_context;
 use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
-use bitvis_vip_ethernet.ethernet_sb_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
@@ -85,7 +84,6 @@ begin
     variable v_destination_addr   : unsigned(47 downto 0);
     variable v_source_addr        : unsigned(47 downto 0);
     variable v_random_num         : positive;
-    variable v_ethernet_sb        : t_generic_sb;
 
     procedure receive_from_mac_master(
       constant num_bytes_in_payload : in positive
@@ -139,7 +137,7 @@ begin
       -- FCS
       v_send_data_frame.fcs := not generate_crc_32_complete(reverse_vectors_in_array(v_send_data_raw(2 to 16+v_payload_length-1)));
 
-      v_ethernet_sb.add_expected(v_send_data_frame);
+      shared_ethernet_sb.add_expected(1, v_send_data_frame);
 
       if if_out.tx_reset_o = '1' then
         wait until if_out.tx_reset_o = '0';
@@ -158,7 +156,7 @@ begin
 
       end loop;
 
-      ethernet_receive(ETHERNET_VVCT, 1, RX, "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master");
+      ethernet_receive(ETHERNET_VVCT, 1, RX, "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master", TO_SB);
       v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 1, RX);
 
       wait until rising_edge(if_out.clk);
@@ -167,8 +165,6 @@ begin
       log(ID_LOG_HDR, "Sending data to MAC Master finished");
 
       await_completion(ETHERNET_VVCT, 1, RX, num_bytes_in_payload*10 ns + 10 us, "Wait for read to finish.");
-      fetch_result(ETHERNET_VVCT, 1, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
-      v_ethernet_sb.check_actual(v_receive_data.ethernet_frame);
     end procedure receive_from_mac_master;
 
     procedure send_to_mac_master(
@@ -253,9 +249,9 @@ begin
 
     await_uvvm_initialization(VOID);
 
-    v_ethernet_sb.config(C_SB_CONFIG_DEFAULT);
-    v_ethernet_sb.enable(VOID);
-    v_ethernet_sb.set_scope(C_SCOPE);
+    shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
+    shared_ethernet_sb.enable(1);
+    shared_ethernet_sb.set_scope("ETHERNET VVC");
 
     if_in.rx_rd_en_i <= '0';
 
@@ -304,9 +300,9 @@ begin
 
     -----------------------------------------------------------------------------------------------
 
-    log(ID_LOG_HDR_LARGE, "Send 100 sequences of data with random number of bytes between 47 and 1499 in payload.");
+    log(ID_LOG_HDR_LARGE, "Send 100 sequences of data with random number of bytes between 1 and 1500 in payload.");
     for i in 1 to 100 loop
-      v_random_num := random(47, 1499);
+      v_random_num := random(1, 1500);
       log(ID_LOG_HDR, "MAC Master --> VVC");
       receive_from_mac_master(v_random_num);
       log(ID_LOG_HDR, "VVC --> MAC Master");
@@ -317,7 +313,7 @@ begin
     -- Ending the simulation
     --------------------------------------------------------------------------------------
     wait for 1000 ns;  -- to allow some time for completion
-    v_ethernet_sb.report_counters(VOID);
+    shared_ethernet_sb.report_counters(1);
     report_alert_counters(VOID);
     log(ID_LOG_HDR, "SIMULATION COMPLETED");
 

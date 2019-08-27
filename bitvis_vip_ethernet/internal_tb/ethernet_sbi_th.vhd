@@ -29,6 +29,7 @@ context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.hvvc_context;
+use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 
 --=================================================================================================
 entity sbi_test_harness is
@@ -42,38 +43,6 @@ end entity sbi_test_harness;
 --=================================================================================================
 
 architecture struct of sbi_test_harness is
-
-  --------------------------------
-  -- SBI config
-  --------------------------------
-  -- Register map :
-  constant C_ADDR_FIFO_PUT            : integer := 0;
-  constant C_ADDR_FIFO_GET            : integer := 1;
-  constant C_ADDR_FIFO_COUNT          : integer := 2;
-  constant C_ADDR_FIFO_PEEK           : integer := 3;
-  constant C_ADDR_FIFO_FLUSH          : integer := 4;
-  constant C_ADDR_FIFO_MAX_COUNT      : integer := 5;
-
-  constant C_ADDR_WIDTH_1 : integer := 8;
-  constant C_DATA_WIDTH_1 : integer := 8;
-  constant C_ADDR_WIDTH_2 : integer := 8;
-  constant C_DATA_WIDTH_2 : integer := 8;
-
-  constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
-    max_wait_cycles             => 100,
-    max_wait_cycles_severity    => failure,
-    use_fixed_wait_cycles_read  => false,
-    fixed_wait_cycles_read      => 0,
-    clock_period                => 10 ns,
-    clock_period_margin         => 0 ns,
-    clock_margin_severity       => TB_ERROR,
-    setup_time                  => 2.5 ns,
-    hold_time                   => 2.5 ns,
-    id_for_bfm                  => ID_BFM,
-    id_for_bfm_wait             => ID_BFM_WAIT,
-    id_for_bfm_poll             => ID_BFM_POLL,
-    use_ready_signal            => true
-    );
 
   signal i1_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
   signal i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));

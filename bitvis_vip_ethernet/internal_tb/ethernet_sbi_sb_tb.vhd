@@ -32,6 +32,7 @@ use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
+use bitvis_vip_sbi.vvc_temp_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
@@ -42,29 +43,22 @@ entity ethernet_sbi_sb_tb is
     -- This generic is used to configure the testbench from run.py, e.g. what
     -- test case to run. The default value is used when not running from script
     -- and in that case all test cases are run.
-    runner_cfg    : runner_cfg_t := runner_cfg_default;
-    GC_DATA_WIDTH : positive     := 8);
+    runner_cfg : runner_cfg_t := runner_cfg_default);
 end entity ethernet_sbi_sb_tb;
 
 -- Test case architecture
 architecture func of ethernet_sbi_sb_tb is
 
-  constant C_CLK_PERIOD : time     := 10 ns;    -- **** Trenger metode for setting av clk period
-  constant C_SCOPE      : string   := "ETHERNET_SBI_VVC_TB";
-  constant C_ADDR_WIDTH : positive := 8;
-
-  alias i2_sbi_if is << signal .ethernet_sbi_sb_tb.i_test_harness.i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0)) >>;
+  constant C_CLK_PERIOD   : time := 10 ns;    -- **** Trenger metode for setting av clk period
+  constant C_SCOPE        : string := "ETHERNET_SBI_VVC_TB";
+  alias i2_sbi_if is << signal .ethernet_sbi_sb_tb.i_test_harness.i2_sbi_if : t_sbi_if >>;
   alias clk       is << signal .ethernet_sbi_sb_tb.i_test_harness.clk : std_logic >>;
 begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.sbi_test_harness
-    generic map(
-      GC_CLK_PERIOD => C_CLK_PERIOD,
-      GC_ADDR_WIDTH => C_ADDR_WIDTH,
-      GC_DATA_WIDTH => GC_DATA_WIDTH);
+  i_test_harness : entity bitvis_vip_ethernet.sbi_test_harness generic map(GC_CLK_PERIOD => C_CLK_PERIOD);
 
   i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 
@@ -147,10 +141,9 @@ begin
     -- disable_log_msg(ALL_MESSAGES);
     -- enable_log_msg(ID_SEQUENCER);
     -- enable_log_msg(ID_LOG_HDR);
-    disable_log_msg(ID_UVVM_CMD_ACK);
 
-    disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
+    -- bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
+    -- bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
     shared_ethernet_sb.set_scope("ETHERNET VVC");
     shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
@@ -205,8 +198,8 @@ begin
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 0));
       shared_ethernet_sb.add_expected(2, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
-      await_completion(ETHERNET_VVCT, 2, RX, 2 ms, "Wait for read to finish.");
-      await_completion(ETHERNET_VVCT, 1, TX, 2 ms, "Wait for send to finish.");
+      await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 1, TX, 2 us, "Wait for send to finish.");
     end loop;
 
     log(ID_LOG_HDR, "Send data on SBI level, i1 --> i2");
@@ -271,7 +264,7 @@ begin
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 9));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
-    await_completion(ETHERNET_VVCT, 1, RX, 2 ms, "Wait for read to finish.");
+    await_completion(ETHERNET_VVCT, 1, RX, 2 us, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Send " & to_string(C_MAX_PAYLOAD_LENGTH) & " bytes of data from i2 to i1");
     for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
@@ -290,7 +283,7 @@ begin
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 0));
       shared_ethernet_sb.add_expected(1, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
-      await_completion(ETHERNET_VVCT, 1, RX, 2 ms, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 1, RX, 2 us, "Wait for read to finish.");
     end loop;
 
     log(ID_LOG_HDR, "Send data on SBI level, i1 --> i2");

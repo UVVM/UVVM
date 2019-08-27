@@ -61,7 +61,7 @@ begin
     variable v_alert_num_mismatch : boolean := false;
     variable v_cmd_idx            : natural;
     variable v_send_data          : t_byte_array(0 to 9);
-    variable v_receive_data       : t_byte_array(0 to 9);
+    variable v_receive_data       : t_vvc_result;
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -96,13 +96,13 @@ begin
     for i in 0 to 9 loop
       v_send_data(i) := random(8);
     end loop;
-    gmii_write(GMII_VVCT, 1, TRANSMITTER, v_send_data, "Send random data from instance 1.");
-    gmii_read(GMII_VVCT, 2, RECEIVER, 10, "Read random data from instance 1.");
+    gmii_write(GMII_VVCT, 1, TX, v_send_data, "Send random data from instance 1.");
+    gmii_read(GMII_VVCT, 2, RX, 10, "Read random data from instance 1.");
     v_cmd_idx := shared_cmd_idx;
-    await_completion(GMII_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+    await_completion(GMII_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
-    fetch_result(GMII_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
+    fetch_result(GMII_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
 
     for i in 0 to 9 loop
       check_value(v_receive_data(i), v_send_data(i), ERROR, "Verify received data byte " & to_string(i) & ".");
@@ -113,13 +113,13 @@ begin
     for i in 0 to 4 loop
       v_send_data(i) := random(8);
     end loop;
-    gmii_write(GMII_VVCT, 1, TRANSMITTER, v_send_data(0 to 4), "Send random data from instance 1.");
-    gmii_read(GMII_VVCT, 2, RECEIVER, 5, "Read random data from instance 1.");
+    gmii_write(GMII_VVCT, 1, TX, v_send_data(0 to 4), "Send random data from instance 1.");
+    gmii_read(GMII_VVCT, 2, RX, 5, "Read random data from instance 1.");
     v_cmd_idx := shared_cmd_idx;
-    await_completion(GMII_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+    await_completion(GMII_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
-    fetch_result(GMII_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
+    fetch_result(GMII_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
 
     for i in 0 to 4 loop
       check_value(v_receive_data(i), v_send_data(i), ERROR, "Verify received data byte " & to_string(i) & ".");
@@ -130,13 +130,13 @@ begin
     for i in 0 to 19 loop
       log(ID_LOG_HDR, "Send 1 byte of data from i1 to i2: byte " & to_string(i));
       v_send_data(0) := random(8);
-      gmii_write(GMII_VVCT, 1, TRANSMITTER, v_send_data(0 to 0), "Send random data from instance 1.");
-      gmii_read(GMII_VVCT, 2, RECEIVER, 1, "Read random data from instance 1.");
+      gmii_write(GMII_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
+      gmii_read(GMII_VVCT, 2, RX, 1, "Read random data from instance 1.");
       v_cmd_idx := shared_cmd_idx;
-      await_completion(GMII_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+      await_completion(GMII_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
       log(ID_LOG_HDR, "Fetch data from i2");
-      fetch_result(GMII_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
+      fetch_result(GMII_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
 
       check_value(v_receive_data(0), v_send_data(0), ERROR, "Verify single received data byte " & to_string(i) & ".");
     end loop;

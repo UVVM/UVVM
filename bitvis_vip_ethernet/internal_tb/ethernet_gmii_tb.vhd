@@ -27,7 +27,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.vvc_context;
+context bitvis_vip_ethernet.hvvc_context;
 
 -- Test case entity
 entity ethernet_gmii_tb is
@@ -91,27 +91,27 @@ begin
 
     log(ID_LOG_HDR_LARGE, "START SIMULATION OF ETHERNET VVC");
 
-    shared_ethernet_vvc_config(TRANSMITTER, 1).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"02");
-    shared_ethernet_vvc_config(TRANSMITTER, 1).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"01");
-    shared_ethernet_vvc_config(   RECEIVER, 1).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"02");
-    shared_ethernet_vvc_config(   RECEIVER, 1).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"01");
-    shared_ethernet_vvc_config(TRANSMITTER, 2).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"01");
-    shared_ethernet_vvc_config(TRANSMITTER, 2).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"02");
-    shared_ethernet_vvc_config(   RECEIVER, 2).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"01");
-    shared_ethernet_vvc_config(   RECEIVER, 2).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"02");
+    shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"02");
+    shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"01");
+    shared_ethernet_vvc_config(RX, 1).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"02");
+    shared_ethernet_vvc_config(RX, 1).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"01");
+    shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"01");
+    shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"02");
+    shared_ethernet_vvc_config(RX, 2).bfm_config.mac_destination := (x"00", x"00", x"00", x"00", x"00", x"01");
+    shared_ethernet_vvc_config(RX, 2).bfm_config.mac_source      := (x"00", x"00", x"00", x"00", x"00", x"02");
 
 
     log(ID_LOG_HDR, "Send 10 bytes of data from i1 to i2");
     for i in 0 to 9 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data, "Send random data from instance 1.");
-    ethernet_receive(ETHERNET_VVCT, 2, RECEIVER, "Read random data from instance 1.");
-    v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RECEIVER);
-    await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data, "Send random data from instance 1.");
+    ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
+    v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
+    await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
-    fetch_result(ETHERNET_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
+    fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
 
     check_value(v_receive_data.ethernet_frame.mac_destination = (x"00", x"00", x"00", x"00", x"00", x"02"), ERROR, "Verify MAC destination.");
     check_value(v_receive_data.ethernet_frame.mac_source      = (x"00", x"00", x"00", x"00", x"00", x"01"), ERROR, "Verify MAC source.");
@@ -125,13 +125,13 @@ begin
     for i in 0 to 4 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to 4), "Send random data from instance 1.");
-    ethernet_receive(ETHERNET_VVCT, 2, RECEIVER, "Read random data from instance 1.");
-    v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RECEIVER);
-    await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 4), "Send random data from instance 1.");
+    ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
+    v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
+    await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
     log(ID_LOG_HDR, "Fetch data from i2");
-    fetch_result(ETHERNET_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
+    fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
 
     check_value(v_receive_data.ethernet_frame.mac_destination = (x"00", x"00", x"00", x"00", x"00", x"02"), ERROR, "Verify MAC destination.");
     check_value(v_receive_data.ethernet_frame.mac_source      = (x"00", x"00", x"00", x"00", x"00", x"01"), ERROR, "Verify MAC source.");
@@ -145,13 +145,13 @@ begin
     for i in 0 to 19 loop
       log(ID_LOG_HDR, "Send 1 byte of data from i1 to i2: byte " & to_string(i));
       v_send_data(0) := random(8);
-      ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to 0), "Send random data from instance 1.");
-      ethernet_receive(ETHERNET_VVCT, 2, RECEIVER, "Read random data from instance 1.");
-      v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RECEIVER);
-      await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+      ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
+      ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.");
+      v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 2, RX);
+      await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
       log(ID_LOG_HDR, "Fetch data from i2");
-      fetch_result(ETHERNET_VVCT, 2, RECEIVER, v_cmd_idx, v_receive_data, "Fetching received data.");
+      fetch_result(ETHERNET_VVCT, 2, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
 
       check_value(v_receive_data.ethernet_frame.mac_destination = (x"00", x"00", x"00", x"00", x"00", x"02"), ERROR, "Verify MAC destination.");
       check_value(v_receive_data.ethernet_frame.mac_source      = (x"00", x"00", x"00", x"00", x"00", x"01"), ERROR, "Verify MAC source.");
@@ -163,9 +163,9 @@ begin
     for i in 0 to 4 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_send_data(0 to 4), "Send random data from instance 1.");
-    ethernet_expect(ETHERNET_VVCT, 2, RECEIVER, v_send_data(0 to 4), "Expect random data from instance 1.");
-    await_completion(ETHERNET_VVCT, 2, RECEIVER, 1 us, "Wait for read to finish.");
+    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 4), "Send random data from instance 1.");
+    ethernet_expect(ETHERNET_VVCT, 2, RX, v_send_data(0 to 4), "Expect random data from instance 1.");
+    await_completion(ETHERNET_VVCT, 2, RX, 1 us, "Wait for read to finish.");
 
 
     --==================================================================================================

@@ -304,8 +304,8 @@ package adaptations_pkg is
   type t_sub_vvc_operation is (TRANSMIT, RECEIVE);
   type t_interface is (SBI, GMII);
 
-  type t_hvvc_to_vvc is record
-    trigger                   : std_logic;
+  type t_hvvc_to_bridge is record
+    trigger                   : boolean;
     operation                 : t_sub_vvc_operation;
     num_data_bytes            : positive;
     data_bytes                : t_byte_array;
@@ -314,8 +314,8 @@ package adaptations_pkg is
     msg_id_panel              : t_msg_id_panel;
   end record;
 
-  type t_vvc_to_hvvc is record
-    trigger        : std_logic;
+  type t_bridge_to_hvvc is record
+    trigger        : boolean;
     data_bytes     : t_byte_array;
   end record;
 

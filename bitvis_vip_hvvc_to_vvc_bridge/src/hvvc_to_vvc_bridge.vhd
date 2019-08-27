@@ -1,5 +1,5 @@
 --========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
+-- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
@@ -11,8 +11,6 @@
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
---
--- Note: This entity will be compiled into every single VVC library.
 ------------------------------------------------------------------------------------------
 
 library ieee;
@@ -39,11 +37,12 @@ entity hvvc_to_vvc_bridge is
     GC_INSTANCE_IDX        : integer;
     GC_CHANNEL             : t_channel;
     GC_DUT_IF_FIELD_CONFIG : t_dut_if_field_config_channel_array;
+    GC_MAX_NUM_BYTES       : positive;
     GC_SCOPE               : string
-    );
+  );
   port(
-    hvvc_to_vvc : in  t_hvvc_to_vvc;
-    vvc_to_hvvc : out t_vvc_to_hvvc
+    hvvc_to_bridge : in  t_hvvc_to_bridge;
+    bridge_to_hvvc : out t_bridge_to_hvvc
   );
 end entity hvvc_to_vvc_bridge;
 
@@ -55,8 +54,8 @@ begin
 
   p_executor : process
     variable v_cmd_idx               : integer;
-    variable v_gmii_received_data    : t_byte_array(0 to 1549); --TD: Replace with C_MAX_NUM_BYTES eg...
-    variable v_sbi_received_data     : std_logic_vector(bitvis_vip_sbi.vvc_cmd_pkg.C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    variable v_gmii_received_data    : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
+    variable v_sbi_received_data     : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
     variable v_interface_config_idx  : natural := 0;
     variable v_dut_address           : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'high).dut_address'range);
     variable v_dut_address_increment : integer;
@@ -65,17 +64,17 @@ begin
     loop
 
       -- Await cmd
-      wait until hvvc_to_vvc.trigger = '1';
+      wait until hvvc_to_bridge.trigger = true;
 
       -- If not configs are defined for all fields the last config is used
-      if hvvc_to_vvc.dut_if_field_idx > GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'high then
+      if hvvc_to_bridge.dut_if_field_idx > GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'high then
         v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'high).dut_address_increment;
         v_dut_address := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)'high).dut_address +
-            (hvvc_to_vvc.current_byte_idx_in_field*v_dut_address_increment);
+            (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
       else
-        v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(hvvc_to_vvc.dut_if_field_idx).dut_address_increment;
-        v_dut_address := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(hvvc_to_vvc.dut_if_field_idx).dut_address +
-            (hvvc_to_vvc.current_byte_idx_in_field*v_dut_address_increment);
+        v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(hvvc_to_bridge.dut_if_field_idx).dut_address_increment;
+        v_dut_address := GC_DUT_IF_FIELD_CONFIG(GC_CHANNEL)(hvvc_to_bridge.dut_if_field_idx).dut_address +
+            (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
       end if;
 
       -- Execute cmd
@@ -86,19 +85,19 @@ begin
         -------------------------------------
         when GMII =>
 
-          case hvvc_to_vvc.operation is
+          case hvvc_to_bridge.operation is
 
             when TRANSMIT =>
-              gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TRANSMITTER, hvvc_to_vvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+              gmii_write(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, hvvc_to_bridge.data_bytes(0 to hvvc_to_bridge.num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
               v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, "", GC_SCOPE);
-              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, hvvc_to_vvc.num_data_bytes*10 ns + 1 ms, "Wait for send to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, hvvc_to_bridge.num_data_bytes*10 ns + 1 ms, "Wait for send to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
 
             when RECEIVE =>
-              gmii_read(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, hvvc_to_vvc.num_data_bytes, "Read data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+              gmii_read(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, hvvc_to_bridge.num_data_bytes, "Read data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
               v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, "", GC_SCOPE);
-              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, hvvc_to_vvc.num_data_bytes*10 ns + 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
-              fetch_result(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
-              vvc_to_hvvc.data_bytes(0 to hvvc_to_vvc.num_data_bytes-1) <= v_gmii_received_data(0 to hvvc_to_vvc.num_data_bytes-1);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, hvvc_to_bridge.num_data_bytes*10 ns + 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+              fetch_result(GMII_VVCT, GC_INSTANCE_IDX, GC_CHANNEL, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+              bridge_to_hvvc.data_bytes(0 to hvvc_to_bridge.num_data_bytes-1) <= v_gmii_received_data(0 to hvvc_to_bridge.num_data_bytes-1);
 
             when others =>
               alert(TB_ERROR, C_UNSUPPORTED_OPERATION);
@@ -110,26 +109,26 @@ begin
         -------------------------------------
         when SBI =>
 
-          case hvvc_to_vvc.operation is
+          case hvvc_to_bridge.operation is
 
             when TRANSMIT =>
               -- Loop through bytes
-              for i in 0 to hvvc_to_vvc.num_data_bytes-1 loop
+              for i in 0 to hvvc_to_bridge.num_data_bytes-1 loop
                 -- Send data over SBI
-                sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, hvvc_to_vvc.data_bytes(i), "Send data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+                sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, hvvc_to_bridge.data_bytes(i), "Send data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
 
 
             when RECEIVE =>
               -- Loop through bytes
-              for i in 0 to hvvc_to_vvc.num_data_bytes-1 loop
+              for i in 0 to hvvc_to_bridge.num_data_bytes-1 loop
                 -- Read data over SBI
-                sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
+                sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX);
-                await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
-                fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_vvc.msg_id_panel);
-                vvc_to_hvvc.data_bytes(i) <= v_sbi_received_data(7 downto 0);
+                await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, 1 ms, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+                fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+                bridge_to_hvvc.data_bytes(i) <= v_sbi_received_data(7 downto 0);
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
 
@@ -144,9 +143,9 @@ begin
 
       end case;
 
-      vvc_to_hvvc.trigger <= '1';
+      bridge_to_hvvc.trigger <= true;
       wait for 0 ns;
-      vvc_to_hvvc.trigger <= '0';
+      bridge_to_hvvc.trigger <= false;
 
     end loop;
 

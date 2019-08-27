@@ -13,7 +13,7 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-context vvc_context is
+context hvvc_context is
   library bitvis_vip_ethernet;
   use bitvis_vip_ethernet.ethernet_bfm_pkg.all;
   use bitvis_vip_ethernet.vvc_cmd_pkg.all;

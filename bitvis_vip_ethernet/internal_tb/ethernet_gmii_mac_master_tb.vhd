@@ -27,7 +27,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.vvc_context;
+context bitvis_vip_ethernet.hvvc_context;
 use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
 
 library mac_master;
@@ -118,25 +118,20 @@ begin
           if_in.tx_wr_en_i <= '0';
           wait until rising_edge(if_out.clk);
         end loop;
-
-        if i > 1 then
-          if_in.tx_data_i  <= t_ethernet_data(reverse_vector(v_send_data_raw(i)));
-        else
-          if_in.tx_data_i  <= t_ethernet_data(v_send_data_raw(i));
-        end if;
+        if_in.tx_data_i  <= t_ethernet_data(v_send_data_raw(i));
         if_in.tx_wr_en_i <= '1';
         wait until falling_edge(if_out.clk);
 
       end loop;
 
-      ethernet_expect(ETHERNET_VVCT, 1, RECEIVER, v_send_data_raw(16 to 16+num_bytes_in_payload-1), "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master");
+      ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data_raw(16 to 16+num_bytes_in_payload-1), "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master");
 
       wait until rising_edge(if_out.clk);
       if_in.tx_wr_en_i <= '0';
 
       log(ID_LOG_HDR, "Sending data to MAC Master finished");
 
-      await_completion(ETHERNET_VVCT, 1, RECEIVER, num_bytes_in_payload*10 ns + 10 us, "Wait for read to finish.");
+      await_completion(ETHERNET_VVCT, 1, RX, num_bytes_in_payload*10 ns + 10 us, "Wait for read to finish.");
     end procedure receive_from_mac_master;
 
     procedure send_to_mac_master(
@@ -168,9 +163,9 @@ begin
         v_data_raw(14+i)        := v_send_data_frame.payload(i);
       end loop;
       -- FCS
-      v_send_data_frame.fcs := reverse_vectors_in_array(to_byte_array(not generate_crc_32_complete(v_data_raw(0 to 14+num_bytes_in_payload-1))));
+      v_send_data_frame.fcs := to_byte_array(not generate_crc_32_complete(reverse_vectors_in_array(v_data_raw(0 to 14+num_bytes_in_payload-1))));
 
-      ethernet_send(ETHERNET_VVCT, 1, TRANSMITTER, v_data_raw(14 to 14+num_bytes_in_payload-1), "Send random data from instance 1.");
+      ethernet_send(ETHERNET_VVCT, 1, TX, v_data_raw(14 to 14+num_bytes_in_payload-1), "Send random data from instance 1.");
 
       log(ID_LOG_HDR, "Fetch data from MAC Master");
 
@@ -186,10 +181,10 @@ begin
 
       log(ID_LOG_HDR, "Fetch data from MAC Master finished");
 
-      v_receive_data_frame.mac_destination                      :=            unsigned(to_slv(reverse_vectors_in_array(v_data_raw(    2 to  7))));
-      v_receive_data_frame.mac_source                           :=            unsigned(to_slv(reverse_vectors_in_array(v_data_raw(    8 to 13))));
-      v_receive_data_frame.length                               := to_integer(unsigned(to_slv(reverse_vectors_in_array(v_data_raw(   14 to 15)))));
-      v_receive_data_frame.payload(0 to num_bytes_in_payload-1) :=                            reverse_vectors_in_array(v_data_raw(   16 to 16+num_bytes_in_payload-1));
+      v_receive_data_frame.mac_destination                      :=            unsigned(to_slv(v_data_raw(    2 to  7)));
+      v_receive_data_frame.mac_source                           :=            unsigned(to_slv(v_data_raw(    8 to 13)));
+      v_receive_data_frame.length                               := to_integer(unsigned(to_slv(v_data_raw(   14 to 15))));
+      v_receive_data_frame.payload(0 to num_bytes_in_payload-1) :=                            v_data_raw(   16 to 16+num_bytes_in_payload-1);
       v_receive_data_frame.fcs                                  := v_send_data_frame.fcs;
 
       compare_ethernet_frames(v_receive_data_frame, v_send_data_frame, ERROR, C_SCOPE, ID_PACKET_COMPLETE, shared_msg_id_panel);
@@ -228,10 +223,10 @@ begin
 
     wait for 10 us;
 
-    shared_ethernet_vvc_config(TRANSMITTER, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";
-    shared_ethernet_vvc_config(TRANSMITTER, 1).bfm_config.mac_source      := x"00_00_00_00_00_01";
-    shared_ethernet_vvc_config(   RECEIVER, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";
-    shared_ethernet_vvc_config(   RECEIVER, 1).bfm_config.mac_source      := x"00_00_00_00_00_01";
+    shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";
+    shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source      := x"00_00_00_00_00_01";
+    shared_ethernet_vvc_config(   RX, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";
+    shared_ethernet_vvc_config(   RX, 1).bfm_config.mac_source      := x"00_00_00_00_00_01";
 
     log(ID_LOG_HDR_LARGE, "Send minimum amount of bytes in payload, payload = 46, total = 64.");
     log(ID_LOG_HDR, "MAC Master --> VVC");

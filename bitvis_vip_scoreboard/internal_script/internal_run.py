@@ -38,7 +38,7 @@ uvvm_util_lib.add_source_files(join(project_root, 'uvvm_util', 'src', '*.vhd'))
 uvvm_vvc_framework_lib = ui.add_library('uvvm_vvc_framework')
 uvvm_vvc_framework_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src', '*.vhd'))
 
-bitvis_vip_sb_lib = ui.add_library('bitvis_vip_sb')
+bitvis_vip_sb_lib = ui.add_library('bitvis_vip_scoreboard')
 bitvis_vip_sb_lib.add_source_files(join(project_root, 'bitvis_vip_scoreboard', 'src', '*.vhd'))
 
 # Add all testbenches to lib

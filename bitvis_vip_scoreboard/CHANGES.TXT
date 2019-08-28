@@ -1,6 +1,15 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.0.0
+----------
+Released: 2019-XX-XX
+- Renamed some elements in the generic_sb_pkg.
+- Changed order of inputs in match function.
+- Use the same type for both elements in the scoreboard: received and expected.
+- Use a single to_string function.
+- Updated documentation
+
 v1.1.0
 ----------
 Released: 2019-06-06

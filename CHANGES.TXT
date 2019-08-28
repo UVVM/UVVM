@@ -17,6 +17,9 @@ Released: 2019-XX-XX
 - Added new config to deassert tvalid once or multiple random times in Axistream BFM.
 - Added new feature to deassert tready multiple random times in Axistream BFM.
 - Minor fixes in vvc_generator.py
+- Bug fix for std.env.stop return value when UVVM stop simulations if stop-limit is
+  reached for a given alert.
+  
 
 v2019.06.06
 --------------------

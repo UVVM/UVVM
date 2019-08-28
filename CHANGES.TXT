@@ -19,7 +19,8 @@ Released: 2019-XX-XX
 - Minor fixes in vvc_generator.py
 - Bug fix for std.env.stop return value when UVVM stop simulations if stop-limit is
   reached for a given alert.
-  
+- Major changes in generics used in the Scoreboard VIP.
+- Updated Scoreboard QR.
 
 v2019.06.06
 --------------------

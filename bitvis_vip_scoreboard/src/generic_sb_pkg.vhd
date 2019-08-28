@@ -31,7 +31,7 @@ use work.generic_sb_support_pkg.all;
 package generic_sb_pkg is
 
   generic (type t_element;
-           function element_match(actual_element   : t_element;
+           function element_match(received_element : t_element;
                                   expected_element : t_element) return boolean;
            function to_string_element(element : t_element) return string;
            constant sb_config_default        : t_sb_config := C_SB_CONFIG_DEFAULT;
@@ -82,7 +82,7 @@ package generic_sb_pkg is
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := "";
+      constant source           : in string := "";
       constant ext_proc_call    : in string := "");
 
     procedure add_expected(
@@ -90,41 +90,41 @@ package generic_sb_pkg is
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := "");
+      constant source           : in string := "");
 
     procedure add_expected(
       constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := "");
+      constant source           : in string := "");
 
     procedure add_expected(
       constant instance         : in integer;
       constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := "");
+      constant source           : in string := "");
 
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := "";
-      constant ext_proc_call  : in string := "");
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := "";
+      constant ext_proc_call    : in string := "");
 
-    procedure check_actual(
-      constant actual_element : in t_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := "");
+    procedure check_received(
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := "");
 
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_element;
-      constant msg            : in string := "");
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant msg              : in string := "");
 
-    procedure check_actual(
-      constant actual_element : in t_element;
-      constant msg            : in string := "");
+    procedure check_received(
+      constant received_element : in t_element;
+      constant msg              : in string := "");
 
     procedure flush(
       constant instance      : in integer;
@@ -239,7 +239,7 @@ package generic_sb_pkg is
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := "";
+      constant source            : in string := "";
       constant ext_proc_call     : in string := "");
 
     procedure insert_expected(
@@ -249,7 +249,7 @@ package generic_sb_pkg is
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := "");
+      constant source            : in string := "");
 
     procedure delete_expected(
       constant instance         : in integer;
@@ -587,10 +587,10 @@ package body generic_sb_pkg is
     end procedure;
 
     impure function match_received_vs_entry (
-      constant actual_element : in t_element;
-      constant sb_entry       : in t_sb_entry;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string
+      constant received_element : in t_element;
+      constant sb_entry         : in t_sb_entry;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string
     ) return boolean is
     begin
       -- If TAG then check if tag match
@@ -599,7 +599,7 @@ package body generic_sb_pkg is
           return false;
         end if;
       end if;
-      return element_match(actual_element, sb_entry.expected_element);
+      return element_match(received_element, sb_entry.expected_element);
     end function match_received_vs_entry;
 
     impure function match_expected_vs_entry (
@@ -837,7 +837,7 @@ package body generic_sb_pkg is
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := "";
+      constant source           : in string := "";
       constant ext_proc_call    : in string := ""
     ) is
       constant proc_name  : string := "add_expected";
@@ -896,7 +896,7 @@ package body generic_sb_pkg is
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := ""
+      constant source           : in string := ""
     ) is
     begin
       if tag_usage = NO_TAG then
@@ -910,7 +910,7 @@ package body generic_sb_pkg is
       constant instance         : in integer;
       constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := ""
+      constant source           : in string := ""
     ) is
     begin
       add_expected(instance, expected_element, NO_TAG, "", msg, source);
@@ -919,7 +919,7 @@ package body generic_sb_pkg is
     procedure add_expected(
       constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := ""
+      constant source           : in string := ""
     ) is
     begin
       add_expected(expected_element, NO_TAG, "", msg, source);
@@ -929,21 +929,21 @@ package body generic_sb_pkg is
 
     ----------------------------------------------------------------------------------------------------
     --
-    --  check_actual
+    --  check_received
     --
-    --    Checks actual against expected. Updates counters acording to match/mismatch and configuration.
+    --    Checks received against expected. Updates counters acording to match/mismatch and configuration.
     --
     ----------------------------------------------------------------------------------------------------
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := "";
-      constant ext_proc_call  : in string := ""
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := "";
+      constant ext_proc_call    : in string := ""
     ) is
 
-      constant proc_name : string := "check_actual";
+      constant proc_name : string := "check_received";
 
       procedure check_pending_exists(
         constant instance : in integer
@@ -952,7 +952,7 @@ package body generic_sb_pkg is
         check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "instance " & to_string(instance) & ": no pending entries to check.", vr_scope, ID_NEVER);
       end procedure check_pending_exists;
 
-      procedure check_actual_instance(
+      procedure check_received_instance(
         constant instance : in integer
       ) is
         variable v_matched     : boolean := false;
@@ -967,7 +967,7 @@ package body generic_sb_pkg is
           -- Loop through entries in queue until match
           for i in 1 to get_pending_count(instance) loop
             v_entry := vr_sb_queue.peek(instance, POSITION, i);
-            if match_received_vs_entry(actual_element, v_entry, tag_usage, tag) then
+            if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete entry
@@ -983,7 +983,7 @@ package body generic_sb_pkg is
           -- Loop through entries in queue until match
           for i in 1 to get_pending_count(instance) loop
             v_entry := vr_sb_queue.peek(instance, POSITION, i);
-            if match_received_vs_entry(actual_element, v_entry, tag_usage, tag) then
+            if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete matching entry and preceding entries
@@ -998,7 +998,7 @@ package body generic_sb_pkg is
         -- Not OOB or LOSSY
         else
           v_entry := vr_sb_queue.peek(instance);
-          if match_received_vs_entry(actual_element, v_entry, tag_usage, tag) then
+          if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
             v_matched := true;
             -- delete entry
             vr_sb_queue.delete(instance, POSITION, 1, SINGLE);
@@ -1044,9 +1044,9 @@ package body generic_sb_pkg is
           -- Called from other SB method
           else
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for actual: " & to_string_element(actual_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ".  " & add_msg_delimiter(msg), vr_scope);
             else
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for actual: " & to_string_element(actual_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
         -- Initial garbage
@@ -1054,22 +1054,22 @@ package body generic_sb_pkg is
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
               alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: "  & to_string_element(v_entry.expected_element) &
-                               "; actual: " & to_string_element(actual_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+                               "; received: " & to_string_element(received_element) & ".  " & add_msg_delimiter(msg), vr_scope);
             else
               alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) &
-                "'; actual: " & to_string_element(actual_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+                "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           else
             if tag_usage = NO_TAG then
               alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) &
-                "; actual: " & to_string_element(actual_element) & add_msg_delimiter(msg), vr_scope);
+                "; received: " & to_string_element(received_element) & add_msg_delimiter(msg), vr_scope);
             else
               alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) &
-                "; actual: " & to_string_element(actual_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+                "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
         end if;
-      end procedure check_actual_instance;
+      end procedure check_received_instance;
 
     begin
 
@@ -1081,42 +1081,42 @@ package body generic_sb_pkg is
       if instance = ALL_ENABLED_INSTANCES then
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
-            check_actual_instance(i);
+            check_received_instance(i);
           end if;
         end loop;
       else
         check_instance_enabled(instance);
-        check_actual_instance(instance);
+        check_received_instance(instance);
       end if;
 
-    end procedure check_actual;
+    end procedure check_received;
 
-    procedure check_actual(
-      constant actual_element : in t_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := ""
+    procedure check_received(
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := ""
     ) is
     begin
-      check_actual(1, actual_element, tag_usage, tag, msg, "check_actual()");
-    end procedure check_actual;
+      check_received(1, received_element, tag_usage, tag, msg, "check_received()");
+    end procedure check_received;
 
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_element;
-      constant msg            : in string := ""
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant msg              : in string := ""
     ) is
     begin
-      check_actual(instance, actual_element, NO_TAG, "", msg);
-    end procedure check_actual;
+      check_received(instance, received_element, NO_TAG, "", msg);
+    end procedure check_received;
 
-    procedure check_actual(
-      constant actual_element : in t_element;
-      constant msg            : in string := ""
+    procedure check_received(
+      constant received_element : in t_element;
+      constant msg              : in string := ""
     ) is
     begin
-      check_actual(actual_element, NO_TAG, "", msg);
-    end procedure check_actual;
+      check_received(received_element, NO_TAG, "", msg);
+    end procedure check_received;
 
 
 
@@ -1334,7 +1334,7 @@ package body generic_sb_pkg is
     --
     --  get_match_count
     --
-    --    Returns number of entries checked and matched against an actual.
+    --    Returns number of entries checked and matched against a received.
     --
     ----------------------------------------------------------------------------------------------------
     impure function get_match_count(
@@ -1357,7 +1357,7 @@ package body generic_sb_pkg is
     --
     --  get_mismatch_count
     --
-    --    Returns number of entries checked and not matched against an actual.
+    --    Returns number of entries checked and not matched against a received.
     --
     ----------------------------------------------------------------------------------------------------
     impure function get_mismatch_count(
@@ -1404,7 +1404,7 @@ package body generic_sb_pkg is
     --
     --  get_initial_garbage_count
     --
-    --    Returns number of actuals checked before first match.
+    --    Returns number of received checked before first match.
     --    Only relevant when allow_initial_garbage is enabled.
     --
     ----------------------------------------------------------------------------------------------------
@@ -1452,7 +1452,7 @@ package body generic_sb_pkg is
     --
     --  get_overdue_check_count
     --
-    --    Returns number of actuals checked when time limit is overdue.
+    --    Returns number of received checked when time limit is overdue.
     --    Only relevant when overdue_check_time_limit is set.
     --
     ----------------------------------------------------------------------------------------------------
@@ -1721,7 +1721,7 @@ package body generic_sb_pkg is
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := "";
+      constant source            : in string := "";
       constant ext_proc_call     : in string := ""
     ) is
       constant proc_name : string := "insert_expected";
@@ -1802,7 +1802,7 @@ package body generic_sb_pkg is
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := ""
+      constant source            : in string := ""
     ) is
     begin
       if identifier_option = POSITION then

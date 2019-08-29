@@ -26,7 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 use work.sbi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
-
+use work.transaction_pkg.all;
 
 --=================================================================================================
 --=================================================================================================
@@ -116,65 +116,6 @@ package vvc_methods_pkg is
 
 
   --==========================================================================================
-  --
-  -- DTT - Direct Transaction Transfer types, constants and global signal
-  --
-  --==========================================================================================
-  type t_vvc_meta is record
-    msg     : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    cmd_idx : integer;
-  end record;
-
-  constant C_VVC_META_DATA_DEFAULT : t_vvc_meta := (
-    msg     => (others => ' '),
-    cmd_idx => 0
-    );
-
-  --type t_vvc_operation is (NO_OPERATION, WRITE, READ, CHECK, POLL_UNTIL);
-
-  type t_error_info is record
-    delay_error : boolean;              -- bytt ut med en relevant feil
-  end record;
-
-  constant C_VVC_ERROR_INFO_DEFAULT : t_error_info := (
-    delay_error => false
-    );
-
-  type t_transaction_validity is (NA, VALID, INVALID);
-
-  type t_transaction is record
-    operation            : t_operation;  -- from vvc_cmd_pkg.   t_vvc_operation;
-    address              : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    data                 : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    transaction_validity : t_transaction_validity;
-    meta                 : t_vvc_meta;
-    error_info           : t_error_info;
-  end record;
-
-  constant C_TRANSACTION_DEFAULT : t_transaction := (
-    operation            => NO_OPERATION,
-    address              => (others => '0'),
-    data                 => (others => '0'),
-    transaction_validity => NA,
-    meta                 => C_VVC_META_DATA_DEFAULT,
-    error_info           => C_VVC_ERROR_INFO_DEFAULT
-    );
-
-  type t_vvc_transaction is record
-    bt : t_transaction;                 -- base transaction
-    ct : t_transaction;                 -- compound transaction
-  end record;
-
-  constant C_SBI_VVC_TRANSACTION_DEFAULT : t_vvc_transaction := (
-    bt => C_TRANSACTION_DEFAULT,
-    ct => C_TRANSACTION_DEFAULT
-    );
-
-  type t_vvc_transaction_array is array(natural range <>) of t_vvc_transaction;
-  signal global_sbi_vvc_transaction : t_vvc_transaction_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_SBI_VVC_TRANSACTION_DEFAULT);
-
-
-  --==========================================================================================
   -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
@@ -222,19 +163,6 @@ package vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
-
-  --==============================================================================
-  -- Global DTT methods dedicated for this VVC
-  --==============================================================================
-  procedure sbi_vvc_set_global_dtt(
-    signal vvc_transaction : inout t_vvc_transaction;
-    constant vvc_cmd       : in    t_vvc_cmd_record
-    );
-
-  procedure sbi_vvc_restore_global_dtt(
-    signal vvc_transaction : inout t_vvc_transaction;
-    constant vvc_cmd       : in    t_vvc_cmd_record
-    );
 
 end package vvc_methods_pkg;
 
@@ -356,49 +284,6 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
-
-  --==============================================================================
-  -- Global DTT methods dedicated for this VVC
-  --==============================================================================
-
-  procedure sbi_vvc_set_global_dtt(
-    signal vvc_transaction : inout t_vvc_transaction;
-    constant vvc_cmd       : in    t_vvc_cmd_record
-    ) is
-    variable v_transaction : t_transaction;
-  begin
-    v_transaction.operation              := vvc_cmd.operation;
-    v_transaction.address                := vvc_cmd.addr;
-    v_transaction.data                   := vvc_cmd.data;
-    v_transaction.transaction_validity   := VALID;
-    v_transaction.meta.msg               := vvc_cmd.msg;
-    v_transaction.meta.cmd_idx           := vvc_cmd.cmd_idx;
-    v_transaction.error_info.delay_error := false;
-
-    case vvc_cmd.operation is
-      when WRITE | READ | CHECK =>
-        vvc_transaction.bt <= v_transaction;
-      when POLL_UNTIL =>
-        vvc_transaction.ct <= v_transaction;
-      when others =>
-        null;
-    end case;
-  end procedure sbi_vvc_set_global_dtt;
-
-  procedure sbi_vvc_restore_global_dtt(
-    signal vvc_transaction : inout t_vvc_transaction;
-    constant vvc_cmd       : in    t_vvc_cmd_record
-    ) is
-  begin
-    case vvc_cmd.operation is
-      when WRITE | READ | CHECK =>
-        vvc_transaction.bt <= C_TRANSACTION_DEFAULT;
-      when POLL_UNTIL =>
-        vvc_transaction.ct <= C_TRANSACTION_DEFAULT;
-      when others =>
-        null;
-    end case;
-  end procedure sbi_vvc_restore_global_dtt;
 
 end package body vvc_methods_pkg;
 

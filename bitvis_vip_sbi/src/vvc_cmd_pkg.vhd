@@ -23,13 +23,14 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_sbi;
-use bitvis_vip_sbi.transaction_pkg.all;
+use work.transaction_pkg.all;
 
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
 package vvc_cmd_pkg is
+
+  alias t_operation is work.transaction_pkg.t_operation;
 
   constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := C_CMD_DATA_MAX_LENGTH;
   constant C_VVC_CMD_ADDR_MAX_LENGTH          : natural := C_CMD_ADDR_MAX_LENGTH;
@@ -57,7 +58,6 @@ package vvc_cmd_pkg is
     addr                  : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     max_polls             : integer;
-
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -71,9 +71,9 @@ package vvc_cmd_pkg is
     cmd_idx             => 0,
     command_type        => NO_command_type,
     msg_id              => NO_ID,
-    gen_integer_array     => (others => -1),
-    gen_boolean           => false,
-    timeout               => 0 ns,
+    gen_integer_array   => (others => -1),
+    gen_boolean         => false,
+    timeout             => 0 ns,
     delay               => 0 ns,
     quietness           => NON_QUIET
     );

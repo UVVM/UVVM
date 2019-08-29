@@ -15,6 +15,7 @@
 
 context vvc_context is
   library bitvis_vip_sbi;
+  use bitvis_vip_sbi.transaction_pkg.all;
   use bitvis_vip_sbi.vvc_cmd_pkg.all;
   use bitvis_vip_sbi.vvc_methods_pkg.all;
   use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;

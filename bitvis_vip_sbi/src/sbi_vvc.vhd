@@ -34,6 +34,8 @@ use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
+use work.transaction_pkg.all;
+
 --=================================================================================================
 entity sbi_vvc is
   generic (
@@ -77,10 +79,11 @@ architecture behave of sbi_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config          : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status          : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info    : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
-  alias sbi_vvc_transaction : t_vvc_transaction is global_sbi_vvc_transaction(GC_INSTANCE_IDX);
+  alias vvc_config              : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status              : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
+  alias transaction_info        : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
+  -- DTT
+  alias dtt_transaction_info    : t_transaction_info_group is global_sbi_transaction_info(GC_INSTANCE_IDX);
 
 begin
 
@@ -192,12 +195,6 @@ begin
     variable v_prev_command_was_bfm_access           : boolean                                    := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-    -- DTT
-    variable v_start_time                            : time;
-    variable v_check_ok                              : boolean                                    := false;
-    variable v_timeout_ok                            : boolean                                    := true;
-    variable v_num_of_occurrences_ok                 : boolean                                    := true;
-    variable v_num_of_occurrences                    : integer                                    := 0;
 
   begin
 
@@ -235,8 +232,6 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
-      -- update DTT
-      sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd);
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
@@ -245,43 +240,64 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
+          -- DTT: VVC set meta data
+          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
+          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-
           -- Call the corresponding procedure in the BFM package.
-          sbi_write(addr_value   => v_normalised_addr,
-                    data_value   => v_normalised_data,
-                    msg          => format_msg(v_cmd),
-                    clk          => clk,
-                    sbi_if       => sbi_vvc_master_if,
-                    scope        => C_SCOPE,
-                    msg_id_panel => vvc_config.msg_id_panel,
-                    config       => vvc_config.bfm_config);
+          sbi_write(addr_value            => v_normalised_addr,
+                    data_value            => v_normalised_data,
+                    msg                   => format_msg(v_cmd),
+                    clk                   => clk,
+                    sbi_if                => sbi_vvc_master_if,
+                    dtt_transaction_info  => dtt_transaction_info,
+                    scope                 => C_SCOPE,
+                    msg_id_panel          => vvc_config.msg_id_panel,
+                    config                => vvc_config.bfm_config);
+
+          -- DTT: VVC clear meta data
+          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+
 
         when READ =>
+          -- DTT: VVC set meta data
+          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
+          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
-          sbi_read(addr_value   => v_normalised_addr,
-                   data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
-                   msg          => format_msg(v_cmd),
-                   clk          => clk,
-                   sbi_if       => sbi_vvc_master_if,
-                   scope        => C_SCOPE,
-                   msg_id_panel => vvc_config.msg_id_panel,
-                   config       => vvc_config.bfm_config);
+          sbi_read(addr_value           => v_normalised_addr,
+                   data_value           => v_read_data(GC_DATA_WIDTH - 1 downto 0),
+                   msg                  => format_msg(v_cmd),
+                   clk                  => clk,
+                   sbi_if               => sbi_vvc_master_if,
+                   dtt_transaction_info => dtt_transaction_info,
+                   scope                => C_SCOPE,
+                   msg_id_panel         => vvc_config.msg_id_panel,
+                   config               => vvc_config.bfm_config);
           -- Store the result
           work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                       cmd_idx      => v_cmd.cmd_idx,
                                                       result       => v_read_data);
 
+          -- DTT: VVC clear meta data
+          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+
+
         when CHECK =>
+          -- DTT: VVC set meta data
+          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
+          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with to wide data. " & v_cmd.msg);
@@ -289,62 +305,49 @@ begin
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
-          sbi_check(addr_value   => v_normalised_addr,
-                    data_exp     => v_normalised_data,
-                    msg          => format_msg(v_cmd),
-                    clk          => clk,
-                    sbi_if       => sbi_vvc_master_if,
-                    alert_level  => v_cmd.alert_level,
-                    scope        => C_SCOPE,
-                    msg_id_panel => vvc_config.msg_id_panel,
-                    config       => vvc_config.bfm_config);
+          sbi_check(addr_value            => v_normalised_addr,
+                    data_exp              => v_normalised_data,
+                    msg                   => format_msg(v_cmd),
+                    clk                   => clk,
+                    sbi_if                => sbi_vvc_master_if,
+                    dtt_transaction_info  => dtt_transaction_info,
+                    alert_level           => v_cmd.alert_level,
+                    scope                 => C_SCOPE,
+                    msg_id_panel          => vvc_config.msg_id_panel,
+                    config                => vvc_config.bfm_config);
+
+          -- DTT: VVC clear meta data
+          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+
 
         when POLL_UNTIL =>
+          -- DTT: VVC set meta data
+          dtt_transaction_info.ct.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.ct.meta.msg'length);
+          dtt_transaction_info.ct.meta.cmd_idx <= v_cmd.cmd_idx;
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with to wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
+          -- Call the corresponding procedure in the BFM package.
+          sbi_poll_until(addr_value           => v_normalised_addr,
+                         data_exp             => v_normalised_data,
+                         max_polls            => v_cmd.max_polls,
+                         timeout              => v_cmd.timeout,
+                         msg                  => format_msg(v_cmd),
+                         clk                  => clk,
+                         sbi_if               => sbi_vvc_master_if,
+                        dtt_transaction_info  => dtt_transaction_info,
+                         terminate_loop       => terminate_current_cmd.is_active,
+                         alert_level          => v_cmd.alert_level,
+                         scope                => C_SCOPE,
+                         msg_id_panel         => vvc_config.msg_id_panel,
+                         config               => vvc_config.bfm_config);
 
-          v_start_time := now;
-          v_cmd.operation := READ;
-          while not v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and (terminate_current_cmd.is_active = '0') loop
-            -- Set DTT base transaction
-            sbi_vvc_set_global_dtt(sbi_vvc_transaction, v_cmd);
-
-            sbi_read(addr_value   => v_normalised_addr,
-                     data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
-                     msg          => format_msg(v_cmd),
-                     clk          => clk,
-                     sbi_if       => sbi_vvc_master_if,
-                     scope        => C_SCOPE,
-                     msg_id_panel => vvc_config.msg_id_panel,
-                     config       => vvc_config.bfm_config);
-
-            log("Reading DUT data: " & to_string(v_read_data(GC_DATA_WIDTH - 1 downto 0), HEX));
-            
-            -- Evaluate data
-            v_check_ok := matching_values(v_read_data(GC_DATA_WIDTH - 1 downto 0), v_normalised_data(GC_DATA_WIDTH - 1 downto 0));
-
-            -- Evaluate number of occurrences, if limited by user
-            v_num_of_occurrences := v_num_of_occurrences + 1;
-            if v_cmd.max_polls > 0 then
-              v_num_of_occurrences_ok := v_num_of_occurrences < v_cmd.max_polls;
-            end if;
-
-            -- Evaluate timeout, if specified by user
-            if v_cmd.timeout = 0 ns then
-              v_timeout_ok := true;
-            else
-              v_timeout_ok := (now - v_start_time) < v_cmd.timeout;
-            end if;
-
-            -- Reset DTT base transaction
-            sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd);
-          end loop;
-
-          v_cmd.operation := POLL_UNTIL;
+          -- DTT: VVC clear meta data
+          dtt_transaction_info.ct.meta <= C_META_DEFAULT;
 
 
         -- UVVM common operations
@@ -384,10 +387,6 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
-
-      -- reset DTT
-      sbi_vvc_restore_global_dtt(sbi_vvc_transaction, v_cmd);
     end loop;
   end process;
   --===============================================================================================

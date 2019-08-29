@@ -429,7 +429,7 @@ package body axilite_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
@@ -465,13 +465,13 @@ package body axilite_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
       if axilite_if.write_response_channel.bvalid = '1' then
 
-        check_value(axilite_if.write_response_channel.bresp, to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, AS_IS, ID_NEVER, msg_id_panel, proc_call);
+        check_value(axilite_if.write_response_channel.bresp, to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
         -- Wait hold_time specified in config record
         wait_until_given_time_after_rising_edge(clk, config.hold_time);
@@ -556,7 +556,7 @@ package body axilite_bfm_pkg is
         wait until rising_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
         if v_last_rising_edge > -1 ns then
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
         end if;
         v_last_rising_edge := now; -- time stamp for clk period checking
       else
@@ -575,7 +575,7 @@ package body axilite_bfm_pkg is
       if axilite_if.read_data_channel.rvalid = '1' and cycle > 0 then
         v_await_rvalid := false;
 
-        check_value(axilite_if.read_data_channel.rresp, to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, AS_IS, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(axilite_if.read_data_channel.rresp, to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
 
         v_data_value := axilite_if.read_data_channel.rdata;
 
@@ -589,7 +589,7 @@ package body axilite_bfm_pkg is
         wait until rising_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
         if v_last_rising_edge > -1 ns then
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
         end if;
         v_last_rising_edge := now; -- time stamp for clk period checking
       else

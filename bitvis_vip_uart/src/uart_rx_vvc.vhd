@@ -23,6 +23,10 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+--library bitvis_vip_uart;
+--use bitvis_vip_uart.transaction_pkg.all;
+use work.transaction_pkg.all;
+
 use work.uart_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -30,7 +34,6 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
-
 
 --=================================================================================================
 entity uart_rx_vvc is
@@ -72,7 +75,8 @@ architecture behave of uart_rx_vvc is
   alias vvc_config              : t_vvc_config is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
   alias vvc_status              : t_vvc_status is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
   alias transaction_info        : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
-  alias uart_vvc_rx_transaction : t_vvc_transaction is global_uart_vvc_transaction(RX, GC_INSTANCE_IDX);
+  -- DTT
+  alias dtt_transaction_info    : t_transaction_info_group is global_uart_transaction_info(RX, GC_INSTANCE_IDX);
 
 
 begin
@@ -220,43 +224,58 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
-      -- update DTT
-      uart_vvc_set_global_dtt(uart_vvc_rx_transaction, v_cmd);
-
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
+          -- DTT: VVC set meta data
+          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
+          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+
+
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
-          uart_receive(data_value     => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                       msg            => format_msg(v_cmd),
-                       rx             => uart_vvc_rx,
-                       terminate_loop => terminate_current_cmd.is_active,
-                       config         => vvc_config.bfm_config,
-                       scope          => C_SCOPE,
-                       msg_id_panel   => vvc_config.msg_id_panel);
+          uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                        msg                   => format_msg(v_cmd),
+                        rx                    => uart_vvc_rx,
+                        dtt_transaction_info  => dtt_transaction_info,
+                        terminate_loop        => terminate_current_cmd.is_active,
+                        config                => vvc_config.bfm_config,
+                        scope                 => C_SCOPE,
+                        msg_id_panel          => vvc_config.msg_id_panel);
           -- Store the result
           work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                       cmd_idx      => v_cmd.cmd_idx,
                                                       result       => v_read_data);
 
+          -- DTT: VVC clear meta data
+          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+
 
         when EXPECT =>
+          -- DTT: VVC set meta data
+          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
+          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           -- Call the corresponding procedure in the BFM package.
-          uart_expect(data_exp       => v_normalised_data,
-                      msg            => format_msg(v_cmd),
-                      rx             => uart_vvc_rx,
-                      terminate_loop => terminate_current_cmd.is_active,
-                      max_receptions => v_cmd.max_receptions,
-                      timeout        => v_cmd.timeout,
-                      alert_level    => v_cmd.alert_level,
-                      config         => vvc_config.bfm_config,
-                      scope          => C_SCOPE,
-                      msg_id_panel   => vvc_config.msg_id_panel);
+          uart_expect(data_exp              => v_normalised_data,
+                      msg                   => format_msg(v_cmd),
+                      rx                    => uart_vvc_rx,
+                      dtt_transaction_info  => dtt_transaction_info,
+                      terminate_loop        => terminate_current_cmd.is_active,
+                      max_receptions        => v_cmd.max_receptions,
+                      timeout               => v_cmd.timeout,
+                      alert_level           => v_cmd.alert_level,
+                      config                => vvc_config.bfm_config,
+                      scope                 => C_SCOPE,
+                      msg_id_panel          => vvc_config.msg_id_panel);
+
+          -- DTT: VVC clear meta data
+          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+
 
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
@@ -293,9 +312,6 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
-      -- reset DTT
-      uart_vvc_restore_global_dtt(uart_vvc_rx_transaction, v_cmd);
 
     end loop;
   end process;

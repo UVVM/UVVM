@@ -161,16 +161,17 @@ begin
   p_model : process is
     constant C_SBI_ADDR_RX_DATA : unsigned(2 downto 0) := "000";
 
-    -- Global DTT aliases
+    -- SBI DTT
     alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_info_group is
       global_sbi_transaction_info(GC_SBI_VVC_IDX);
+
+    -- UART DTT
     alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
       global_uart_transaction_info(RX, GC_UART_VVC_IDX);
     alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
       global_uart_transaction_info(TX, GC_UART_VVC_IDX);
 
-    -- DUT flags
-    alias uart_rx_ready is << signal i_uart.i_uart_core.rx_data_valid : std_logic >>;
+    -- DUT flag
     alias uart_tx_ready is << signal i_uart.i_uart_core.tx_ready      : std_logic >>;
 
   begin

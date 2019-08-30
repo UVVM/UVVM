@@ -18,9 +18,11 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
+
+library vunit_lib;
+context vunit_lib.vunit_run_context;
 
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
@@ -84,6 +86,7 @@ begin
   -- PROCESS: p_main
   ------------------------------------------------
   p_main : process
+    variable v_alert_num_mismatch : boolean := false;
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other run.py provides separate test case
@@ -290,10 +293,18 @@ begin
     report_alert_counters(FINAL);  -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
-    -- Finish the simulation
-    std.env.stop;
-    wait;                               -- to stop completely
+    -- Cleanup VUnit. The UVVM-Util error status is imported into VUnit at this
+    -- point. This is neccessary when the UVVM-Util alert stop limit is set such that
+    -- UVVM-Util doesn't stop on the first error. In that case VUnit has no way of
+    -- knowing the error status unless you tell it.
+    for alert_level in NOTE to t_alert_level'right loop
+      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
+        v_alert_num_mismatch := true;
+      end if;
+    end loop;
 
+    test_runner_cleanup(runner, v_alert_num_mismatch);
+    wait;
   end process p_main;
 
 end func;

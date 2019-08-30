@@ -323,6 +323,9 @@ begin
           -- DTT: VVC set vvc_meta data
           dtt_transaction_info.ct.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.ct.vvc_meta.msg'length);
           dtt_transaction_info.ct.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
+          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string("CT: " & to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
+          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
+
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);

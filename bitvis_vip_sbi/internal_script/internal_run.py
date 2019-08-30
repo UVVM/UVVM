@@ -42,6 +42,9 @@ bitvis_vip_sbi_lib = ui.add_library('bitvis_vip_sbi')
 bitvis_vip_sbi_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
+bitvis_vip_uart = ui.add_library('bitvis_vip_uart')
+bitvis_vip_uart.add_source_files(join(project_root, 'bitvis_vip_uart', 'src', '*.vhd'))
+
 # Add all testbenches to lib
 bitvis_vip_sbi_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))
 

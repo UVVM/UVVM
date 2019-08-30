@@ -56,19 +56,11 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  --
-  --   NA: when no ongoing transaction
-  --   IN_PROGRESS: a started transaction
-  --   SUCCEEDED: a finished transaction without error - will immediately return to NA
-  --   FAILED: a finished transaction with error - will immediately return to NA
   type t_transaction_status is (NA, IN_PROGRESS, SUCCEEDED, FAILED);
 
   constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NA;
 
   -- VVC Meta
-  --
-  --   msg: any message sendt together with a VVC command
-  --   cmd_idx: VVC command index
   type t_vvc_meta is record
     msg     : string(1 to C_CMD_STRING_MAX_LENGTH);
     cmd_idx : integer;
@@ -80,8 +72,6 @@ package transaction_pkg is
     );
 
   -- Error info
-  --
-  --    delay_error: error induced on request (read or write) signal
   type t_error_info is record
     delay_error : boolean;
   end record;
@@ -91,13 +81,6 @@ package transaction_pkg is
     );
 
   -- Transaction
-  --
-  --   operation: BFM operation
-  --   address: SBI read/write address
-  --   data: SBI write data
-  --   vvc_meta: VVC command message and index
-  --   transaction_status: transaction status
-  --   error_info: error info
   type t_transaction is record
     operation           : t_operation;
     address             : unsigned(C_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
@@ -117,9 +100,6 @@ package transaction_pkg is
     );
 
   -- Transaction info group
-  --
-  --  bt: base transaction info
-  --  ct: compound transaction info
   type t_transaction_info_group is record
     bt : t_transaction;
     ct : t_transaction;
@@ -130,20 +110,15 @@ package transaction_pkg is
     ct => C_TRANSACTION_INFO_SET_DEFAULT
     );
 
-
+  -- Transcation groups array
   type t_sbi_transaction_info_array is array (natural range <>) of t_transaction_info_group;
 
+
+  -- Global DTT signals
   signal global_sbi_transaction_info : t_sbi_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
     (others => C_TRANSACTION_INFO_GROUP_DEFAULT);
 
   signal global_sbi_monitor_transaction_info : t_sbi_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
     (others => C_TRANSACTION_INFO_GROUP_DEFAULT);
 
-
 end package transaction_pkg;
-
-
-
-package body transaction_pkg is
-
-end package body transaction_pkg;

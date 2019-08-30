@@ -55,19 +55,11 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  --
-  --   NA: when no ongoing transaction
-  --   IN_PROGRESS: a started transaction
-  --   SUCCEEDED: a finished transaction without error - will immediately return to NA
-  --   FAILED: a finished transaction with error - will immediately return to NA
   type t_transaction_status is (NA, IN_PROGRESS, SUCCEEDED, FAILED);
 
   constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NA;
 
   -- VVC Meta
-  --
-  --   message: any message sendt together with a VVC command
-  --   cmd_idx: VVC command index
   type t_vvc_meta is record
     msg     : string(1 to C_CMD_STRING_MAX_LENGTH);
     cmd_idx : integer;
@@ -79,8 +71,6 @@ package transaction_pkg is
     );
 
   -- Error info
-  --
-  --    delay_error: error induced on request (read or write) signal
   type t_error_info is record
     parity_error : boolean;
   end record;
@@ -90,12 +80,6 @@ package transaction_pkg is
     );
 
   -- Transaction
-  --
-  --   operation: BFM operation
-  --   data: SBI write data
-  --   vvc_meta: VVC command message and index
-  --   transaction_status: transaction status
-  --   error_info: error info
   type t_transaction is record
     operation          : t_operation;
     data               : std_logic_vector(C_CMD_DATA_MAX_LENGTH-1 downto 0);
@@ -113,9 +97,6 @@ package transaction_pkg is
     );
 
   -- Transaction info group
-  --
-  --  bt: base transaction info
-  --  ct: compound transaction info
   type t_transaction_info_group is record
     bt : t_transaction;
     ct : t_transaction;
@@ -127,8 +108,11 @@ package transaction_pkg is
     );
 
 
+  -- Transaction groups array
   type t_uart_transaction_info_array is array (t_channel range <>, natural range <>) of t_transaction_info_group;
 
+
+  -- Global DTT signals
   signal global_uart_transaction_info : t_uart_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
                                           (others => (others => C_TRANSACTION_INFO_GROUP_DEFAULT));
 
@@ -136,13 +120,4 @@ package transaction_pkg is
                                           (others => (others => C_TRANSACTION_INFO_GROUP_DEFAULT));
 
 end package transaction_pkg;
-
-
-
-
-package body transaction_pkg is
-
-
-end package body transaction_pkg;
-
 

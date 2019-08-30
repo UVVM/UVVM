@@ -229,8 +229,8 @@ begin
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
           -- DTT: VVC set meta data
-          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
-          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
+          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
 
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
@@ -249,13 +249,13 @@ begin
                                                       result       => v_read_data);
 
           -- DTT: VVC clear meta data
-          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+          dtt_transaction_info.bt.vvc_meta <= C_VVC_META_DEFAULT;
 
 
         when EXPECT =>
           -- DTT: VVC set meta data
-          dtt_transaction_info.bt.meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.meta.msg'length);
-          dtt_transaction_info.bt.meta.cmd_idx <= v_cmd.cmd_idx;
+          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
+          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -274,7 +274,7 @@ begin
                       msg_id_panel          => vvc_config.msg_id_panel);
 
           -- DTT: VVC clear meta data
-          dtt_transaction_info.bt.meta <= C_META_DEFAULT;
+          dtt_transaction_info.bt.vvc_meta <= C_VVC_META_DEFAULT;
 
 
         when INSERT_DELAY =>

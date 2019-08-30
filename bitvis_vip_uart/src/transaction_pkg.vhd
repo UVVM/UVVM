@@ -64,16 +64,16 @@ package transaction_pkg is
 
   constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NA;
 
-  -- Meta
+  -- VVC Meta
   --
   --   message: any message sendt together with a VVC command
   --   cmd_idx: VVC command index
-  type t_meta is record
+  type t_vvc_meta is record
     msg     : string(1 to C_CMD_STRING_MAX_LENGTH);
     cmd_idx : integer;
   end record;
 
-  constant C_META_DEFAULT : t_meta := (
+  constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
     );
@@ -93,13 +93,13 @@ package transaction_pkg is
   --
   --   operation: BFM operation
   --   data: SBI write data
-  --   meta: VVC command message and index
+  --   vvc_meta: VVC command message and index
   --   transaction_status: transaction status
   --   error_info: error info
   type t_transaction is record
     operation          : t_operation;
     data               : std_logic_vector(C_CMD_DATA_MAX_LENGTH-1 downto 0);
-    meta               : t_meta;
+    vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
     error_info         : t_error_info;
   end record;
@@ -107,7 +107,7 @@ package transaction_pkg is
   constant C_TRANSACTION_INFO_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
     data                => (others => '0'),
-    meta                => C_META_DEFAULT,
+    vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT,
     error_info          => C_ERROR_INFO_DEFAULT
     );

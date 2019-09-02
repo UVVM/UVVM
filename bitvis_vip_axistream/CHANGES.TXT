@@ -3,7 +3,7 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 
 v4.2.0
 ----------
-Released: 2019-XX-XX
+Released: 2019-09-02
 - Fixed bug in BFM receive procedure where it could receive more bytes
   than expected in the last word.
 - Allowed non-normalized data arrays to be used in the transmit, receive

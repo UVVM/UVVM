@@ -3,6 +3,13 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.5.0
+----------
+Released: 2019-09-02
+- Fixed an issue when using ALL_INSTANCES with set_scope() in the generic queue package.
+- Updated vvc_generator.py script to use the correct await_cmd_from_sequencer() call
+  and changed some constants which should've been variables.
+
 v2.4.0
 ----------
 Released: 2019-06-06

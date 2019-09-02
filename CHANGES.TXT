@@ -9,6 +9,20 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2019.09.02
+--------------------
+Released: 2019-09-02
+- Changed to relative links in MD files.
+- Bugfixes in Axistream VIP.
+- Added new config to deassert tvalid once or multiple random times in Axistream BFM.
+- Added new feature to deassert tready multiple random times in Axistream BFM.
+- Minor fixes in vvc_generator.py
+- Bug fix for std.env.stop return value when UVVM stop simulations if stop-limit is
+  reached for a given alert.
+- Major changes in generics used in the Scoreboard VIP.
+- Updated Scoreboard QR.
+  
+
 v2019.06.06
 --------------------
 Released: 2019-06-06

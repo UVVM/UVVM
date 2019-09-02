@@ -2385,7 +2385,7 @@ package body methods_pkg is
           if (get_alert_stop_limit(alert_level) /= 0) then
             if (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
               if C_USE_STD_STOP_ON_ALERT_STOP_LIMIT then
-                std.env.stop;
+                std.env.stop(1);
               else
                 assert false report "This single Failure line has been provoked to stop the simulation. See alert-message above" severity failure;
               end if;
@@ -3477,11 +3477,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_slv_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(value(idx + v_adj_idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   procedure check_value(
@@ -3497,11 +3506,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_signed_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   procedure check_value(
@@ -3517,11 +3535,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_unsigned_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   ------------------------------------------------------------------------
@@ -4173,29 +4200,32 @@ package body methods_pkg is
     constant ascending        : boolean           := false;
     constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
   ) return t_byte_array is
-    variable v_bytes_in_word      : integer := (slv_array(0)'length/8);
+    variable v_bytes_in_word      : integer := (slv_array(slv_array'low)'length/8);
     variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
     variable v_ascending_array    : t_byte_array(0 to v_byte_array_length-1);
     variable v_descending_array   : t_byte_array(v_byte_array_length-1 downto 0);
     variable v_ascending_vector   : boolean := false;
     variable v_byte_number        : integer := 0;
+    variable v_offset             : natural := 0;
   begin
     -- The ascending parameter should match the array direction. We could also just remove the ascending
     -- parameter and use the t'ascending attribute.
     bitvis_assert((slv_array'ascending and ascending) or (not(slv_array'ascending) and not(ascending)), ERROR,
       "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
 
-    v_ascending_vector := slv_array(0)'ascending;
+    v_ascending_vector := slv_array(slv_array'low)'ascending;
+    -- Use this offset in case the slv_array doesn't start at 0
+    v_offset := slv_array'low;
 
     if byte_endianness = FIRST_BYTE_LEFT then
       for slv_idx in 0 to slv_array'length-1 loop
         for byte in v_bytes_in_word downto 1 loop
           if v_ascending_vector then
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
           else -- SLV vector is descending
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
           end if;
           v_byte_number := v_byte_number + 1;
         end loop;
@@ -4204,11 +4234,11 @@ package body methods_pkg is
       for slv_idx in 0 to slv_array'length-1 loop
         for byte in 1 to v_bytes_in_word loop
           if v_ascending_vector then
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
           else -- SLV vector is descending
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
           end if;
           v_byte_number := v_byte_number + 1;
         end loop;

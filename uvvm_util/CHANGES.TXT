@@ -3,6 +3,13 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.9.0
+----------
+Released: 2019-09-02
+- Bug fix for std.env.stop return value when UVVM stop simulations if stop-limit is
+  reached for a given alert.
+
+
 v2.8.0
 ----------
 Released: 2019-06-06

@@ -253,7 +253,6 @@ begin
                     msg                   => format_msg(v_cmd),
                     clk                   => clk,
                     sbi_if                => sbi_vvc_master_if,
-                    dtt_transaction_info  => dtt_transaction_info,
                     scope                 => C_SCOPE,
                     msg_id_panel          => vvc_config.msg_id_panel,
                     config                => vvc_config.bfm_config);
@@ -269,7 +268,6 @@ begin
                    msg                  => format_msg(v_cmd),
                    clk                  => clk,
                    sbi_if               => sbi_vvc_master_if,
-                   dtt_transaction_info => dtt_transaction_info,
                    scope                => C_SCOPE,
                    msg_id_panel         => vvc_config.msg_id_panel,
                    config               => vvc_config.bfm_config);
@@ -291,7 +289,6 @@ begin
                     msg                   => format_msg(v_cmd),
                     clk                   => clk,
                     sbi_if                => sbi_vvc_master_if,
-                    dtt_transaction_info  => dtt_transaction_info,
                     alert_level           => v_cmd.alert_level,
                     scope                 => C_SCOPE,
                     msg_id_panel          => vvc_config.msg_id_panel,
@@ -312,7 +309,6 @@ begin
                          msg                  => format_msg(v_cmd),
                          clk                  => clk,
                          sbi_if               => sbi_vvc_master_if,
-                        dtt_transaction_info  => dtt_transaction_info,
                          terminate_loop       => terminate_current_cmd.is_active,
                          alert_level          => v_cmd.alert_level,
                          scope                => C_SCOPE,

@@ -232,6 +232,8 @@ begin
       end if;
 
 
+      set_global_dtt(dtt_transaction_info, v_cmd);
+
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -239,10 +241,6 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- DTT: VVC set vvc_meta data
-          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
-          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
@@ -260,15 +258,7 @@ begin
                     msg_id_panel          => vvc_config.msg_id_panel,
                     config                => vvc_config.bfm_config);
 
-          -- DTT: VVC clear vvc_meta data
-          dtt_transaction_info.bt.vvc_meta <= C_VVC_META_DEFAULT;
-
-
         when READ =>
-          -- DTT: VVC set vvc_meta data
-          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
-          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
@@ -288,15 +278,7 @@ begin
                                                       cmd_idx      => v_cmd.cmd_idx,
                                                       result       => v_read_data);
 
-          -- DTT: VVC clear vvc_meta data
-          dtt_transaction_info.bt.vvc_meta <= C_VVC_META_DEFAULT;
-
-
         when CHECK =>
-          -- DTT: VVC set vvc_meta data
-          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
-          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with to wide data. " & v_cmd.msg);
@@ -315,18 +297,7 @@ begin
                     msg_id_panel          => vvc_config.msg_id_panel,
                     config                => vvc_config.bfm_config);
 
-          -- DTT: VVC clear vvc_meta data
-          dtt_transaction_info.bt.vvc_meta <= C_VVC_META_DEFAULT;
-
-
         when POLL_UNTIL =>
-          -- DTT: VVC set vvc_meta data
-          dtt_transaction_info.ct.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.ct.vvc_meta.msg'length);
-          dtt_transaction_info.ct.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
-          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string("CT: " & to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
-          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
-
-
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with to wide data. " & v_cmd.msg);
@@ -347,10 +318,6 @@ begin
                          scope                => C_SCOPE,
                          msg_id_panel         => vvc_config.msg_id_panel,
                          config               => vvc_config.bfm_config);
-
-          -- DTT: VVC clear vvc_meta data
-          dtt_transaction_info.ct.vvc_meta <= C_VVC_META_DEFAULT;
-
 
         -- UVVM common operations
         --===================================
@@ -389,6 +356,9 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
+
+
+      restore_global_dtt(dtt_transaction_info, v_cmd);
     end loop;
   end process;
   --===============================================================================================

@@ -163,6 +163,18 @@ package vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
+  --==============================================================================
+  -- DTT procedures
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record);
+
+
+  procedure restore_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record);
+
 
 end package vvc_methods_pkg;
 
@@ -284,6 +296,55 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
+
+
+
+  --==============================================================================
+  -- DTT procedures
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        dtt_group.bt.operation                                  <= vvc_cmd.operation;
+        dtt_group.bt.address(vvc_cmd.address'length-1 downto 0) <= vvc_cmd.address;
+        dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       <= vvc_cmd.data;
+        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
+        dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
+        dtt_group.bt.transaction_status                         <= IN_PRORGESS;
+        dtt_group.bt.error_info.delay_error                     <= false;
+
+      when POLL_UNTIL =>
+        dtt_group.ct.operation                                  <= vvc_cmd.operation;
+        dtt_group.ct.address(vvc_cmd.address'length-1 downto 0) <= vvc_cmd.address;
+        dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)       <= vvc_cmd.data;
+        dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
+        dtt_group.ct.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
+        dtt_group.ct.transaction_status                         <= IN_PRORGESS;
+        dtt_group.ct.error_info.delay_error                     <= false;
+
+      when others =>
+        null;
+    end case;
+  end procedure set_global_dtt;
+
+
+  procedure restore_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        dtt_group.bt <= C_TRANSACTION_INFO_SET_DEFAULT;
+      when POLL_UNTIL =>
+        dtt_group.ct <= C_TRANSACTION_INFO_SET_DEFAULT;
+      when others =>
+        null;
+    end case;
+
+  end procedure restore_global_dtt;
 
 end package body vvc_methods_pkg;
 

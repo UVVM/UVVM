@@ -56,9 +56,9 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  type t_transaction_status is (NA, IN_PROGRESS, SUCCEEDED, FAILED);
+  type t_transaction_status is (NO_OPERATION, IN_PROGRESS);
 
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NA;
+  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NO_OPERATION;
 
   -- VVC Meta
   type t_vvc_meta is record

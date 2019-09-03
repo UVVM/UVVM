@@ -65,7 +65,6 @@ package sbi_bfm_pkg is
     id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
     id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
     use_ready_signal            : boolean;        -- Whether or not to use the interface �ready� signal
-    vvc_instance_idx            : integer;        -- Parent VVC instance number
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (
@@ -81,8 +80,7 @@ package sbi_bfm_pkg is
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL,
-    use_ready_signal            => true,
-    vvc_instance_idx            => 1
+    use_ready_signal            => true
     );
 
 
@@ -118,7 +116,6 @@ package sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal wdata                : inout std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
@@ -136,7 +133,6 @@ package sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
@@ -160,7 +156,6 @@ package sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal rdata                : in    std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
@@ -180,7 +175,6 @@ package sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
@@ -207,7 +201,6 @@ package sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal rdata                : in    std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
@@ -229,7 +222,6 @@ package sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
@@ -265,7 +257,6 @@ package sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal rdata                : in    std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in    std_logic;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
@@ -297,13 +288,15 @@ package sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in    std_logic;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
+
+
+
 
 end package sbi_bfm_pkg;
 
@@ -351,7 +344,6 @@ package body sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal wdata                : inout std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
@@ -372,13 +364,6 @@ package body sbi_bfm_pkg is
     variable v_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
     variable v_check_ok           : boolean;
   begin
-    -- Set DTT BT start info
-    dtt_transaction_info.bt.operation                             <= WRITE;
-    dtt_transaction_info.bt.address(addr_value'length-1 downto 0) <= addr_value;
-    dtt_transaction_info.bt.data(data_value'length-1 downto 0)    <= data_value;
-    dtt_transaction_info.bt.transaction_status                    <= IN_PROGRESS;
-    dtt_transaction_info.bt.error_info.delay_error                <= false; -- TO DO!!
-
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -438,21 +423,6 @@ package body sbi_bfm_pkg is
     cs   <= '0';
     wena <= '0';
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
-
-
-    -- Set DTT BT transaction result
-    if v_check_ok then
-      dtt_transaction_info.bt.transaction_status <= SUCCEEDED;
-    else
-      dtt_transaction_info.bt.transaction_status <= FAILED;
-    end if;
-
-    -- Restore DTT BT end info
-    dtt_transaction_info.bt.operation               <= NO_OPERATION;
-    dtt_transaction_info.bt.address                 <= (others => '0');
-    dtt_transaction_info.bt.data                    <= (others => '0');
-    dtt_transaction_info.bt.transaction_status      <= NA;
-    dtt_transaction_info.bt.error_info.delay_error  <= false; -- TO DO!!
   end procedure;
 
   procedure sbi_write (
@@ -461,15 +431,13 @@ package body sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
   begin
     sbi_write(addr_value, data_value, msg, clk, sbi_if.cs, sbi_if.addr,
-              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.wdata,
-              dtt_transaction_info, scope, msg_id_panel, config);
+              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.wdata, scope, msg_id_panel, config);
   end procedure;
 
 
@@ -487,7 +455,6 @@ package body sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal rdata                : in    std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
@@ -509,17 +476,6 @@ package body sbi_bfm_pkg is
     variable v_clk_was_high       : boolean := false; -- clk high/low status on BFM call
     variable v_check_ok           : boolean;
   begin
-    -- Set DTT BT start info
-    if ext_proc_call = "" then
-      dtt_transaction_info.bt.operation                             <= READ;
-      dtt_transaction_info.bt.address(addr_value'length-1 downto 0) <= addr_value;
-      dtt_transaction_info.bt.data(data_value'length-1 downto 0)    <= data_value;
-      dtt_transaction_info.bt.transaction_status                    <= IN_PROGRESS;
-      dtt_transaction_info.bt.error_info.delay_error                <= false; -- TO DO!!
-    else
-      -- Will be andled by calling procedure (e.g. uart_expect)
-    end if;
-
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
@@ -597,18 +553,6 @@ package body sbi_bfm_pkg is
     rena <= '0';
     if ext_proc_call = "" then          -- proc_name = "sbi_read"
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      -- Set DTT BT transaction result
-      if v_check_ok then
-        dtt_transaction_info.bt.transaction_status <= SUCCEEDED;
-      else
-        dtt_transaction_info.bt.transaction_status <= FAILED;
-      end if;
-      -- Restore DTT BT end info
-      dtt_transaction_info.bt.operation               <= NO_OPERATION;
-      dtt_transaction_info.bt.address                 <= (others => '0');
-      dtt_transaction_info.bt.data                    <= (others => '0');
-      dtt_transaction_info.bt.transaction_status      <= NA;
-      dtt_transaction_info.bt.error_info.delay_error  <= false; -- TO DO!!
     else
       -- Will be handled by calling procedure (e.g. sbi_check)
     end if;
@@ -620,7 +564,6 @@ package body sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
@@ -628,8 +571,7 @@ package body sbi_bfm_pkg is
     ) is
   begin
     sbi_read(addr_value, data_value, msg, clk, sbi_if.cs, sbi_if.addr,
-             sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata,
-             dtt_transaction_info, scope, msg_id_panel, config, ext_proc_call);
+             sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
 
@@ -648,7 +590,6 @@ package body sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal rdata                : in    std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
@@ -665,13 +606,6 @@ package body sbi_bfm_pkg is
     variable v_check_ok          : boolean;
     variable v_clk_cycles_waited : natural := 0;
   begin
-    -- Set DTT BT start info
-    dtt_transaction_info.bt.operation                             <= CHECK;
-    dtt_transaction_info.bt.address(addr_value'length-1 downto 0) <= addr_value;
-    dtt_transaction_info.bt.data(data_exp'length-1 downto 0)      <= data_exp;
-    dtt_transaction_info.bt.transaction_status                    <= IN_PROGRESS;
-    dtt_transaction_info.bt.error_info.delay_error                <= false; -- TO DO!!
-
     sbi_read(addr_value, v_data_value, msg, clk, cs, addr, rena, wena, ready, rdata, dtt_transaction_info, scope, msg_id_panel, config, proc_call);
 
     -- Compare values, but ignore any leading zero's if widths are different.
@@ -681,20 +615,6 @@ package body sbi_bfm_pkg is
     if v_check_ok then
       log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
-
-    -- Set DTT BT transaction result
-    if v_check_ok then
-      dtt_transaction_info.bt.transaction_status <= SUCCEEDED;
-    else
-      dtt_transaction_info.bt.transaction_status <= FAILED;
-    end if;
-
-    -- Restore DTT BT end info
-    dtt_transaction_info.bt.operation               <= NO_OPERATION;
-    dtt_transaction_info.bt.address                 <= (others => '0');
-    dtt_transaction_info.bt.data                    <= (others => '0');
-    dtt_transaction_info.bt.transaction_status      <= NA;
-    dtt_transaction_info.bt.error_info.delay_error  <= false; -- TO DO!!
   end procedure;
 
   procedure sbi_check (
@@ -703,7 +623,6 @@ package body sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
@@ -711,8 +630,7 @@ package body sbi_bfm_pkg is
     ) is
   begin
     sbi_check(addr_value, data_exp, msg, clk, sbi_if.cs, sbi_if.addr,
-              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata,
-              dtt_transaction_info, alert_level, scope, msg_id_panel, config);
+              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, alert_level, scope, msg_id_panel, config);
   end procedure;
 
 
@@ -734,7 +652,6 @@ package body sbi_bfm_pkg is
     signal wena                 : inout std_logic;
     signal ready                : in    std_logic;
     signal rdata                : in    std_logic_vector;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in    std_logic;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
@@ -757,13 +674,6 @@ package body sbi_bfm_pkg is
     variable v_clk_cycles_waited     : natural          := 0;
     variable v_config                : t_sbi_bfm_config := config;
   begin
-    -- Set DTT CT start info
-    dtt_transaction_info.ct.operation                             <= POLL_UNTIL;
-    dtt_transaction_info.ct.address(addr_value'length-1 downto 0) <= addr_value;
-    dtt_transaction_info.ct.data(data_exp'length-1 downto 0)      <= data_exp;
-    dtt_transaction_info.ct.transaction_status                    <= IN_PROGRESS;
-    dtt_transaction_info.ct.error_info.delay_error                <= false; -- TO DO!!
-
     -- Check for timeout = 0 and max_polls = 0. This combination can result in an infinite loop if the POLL_UNTILed data does not appear.
     if max_polls = 0 and timeout = 0 ns then
       alert(TB_WARNING, proc_name & " called with timeout=0 and max_polls=0. This can result in an infinite loop. " & add_msg_delimiter(msg), scope);
@@ -808,20 +718,6 @@ package body sbi_bfm_pkg is
     else
       alert(alert_level, proc_call & "=> Failed. POLL_UNTILed value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_polls) & " occurrences. " & add_msg_delimiter(msg), scope);
     end if;
-
-    -- Set DTT CT transaction result
-    if v_check_ok then
-      dtt_transaction_info.ct.transaction_status <= SUCCEEDED;
-    else
-      dtt_transaction_info.ct.transaction_status <= FAILED;
-    end if;
-
-    -- Restore DTT CT done info
-    dtt_transaction_info.ct.operation               <= NO_OPERATION;
-    dtt_transaction_info.ct.address                 <= (others => '0');
-    dtt_transaction_info.ct.data                    <= (others => '0');
-    dtt_transaction_info.ct.transaction_status      <= NA;
-    dtt_transaction_info.ct.error_info.delay_error  <= false; -- TO DO!!
   end procedure;
 
 
@@ -833,7 +729,6 @@ package body sbi_bfm_pkg is
     constant msg                : in    string;
     signal clk                  : in    std_logic;
     signal sbi_if               : inout t_sbi_if;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in    std_logic;
     constant alert_level        : in    t_alert_level    := error;
     constant scope              : in    string           := C_SCOPE;
@@ -842,7 +737,9 @@ package body sbi_bfm_pkg is
     ) is
   begin
     sbi_poll_until(addr_value, data_exp, max_polls, timeout, msg, clk, sbi_if.cs, sbi_if.addr,
-                   sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, dtt_transaction_info,
-                   terminate_loop, alert_level, scope, msg_id_panel, config);
+                   sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, terminate_loop, alert_level, scope, msg_id_panel, config);
   end procedure;
+
+
+
 end package body sbi_bfm_pkg;

@@ -55,9 +55,9 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  type t_transaction_status is (NA, IN_PROGRESS, SUCCEEDED, FAILED);
+  type t_transaction_status is (NO_OPERATION, IN_PROGRESS);
 
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NA;
+  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NO_OPERATION;
 
   -- VVC Meta
   type t_vvc_meta is record
@@ -72,11 +72,13 @@ package transaction_pkg is
 
   -- Error info
   type t_error_info is record
-    parity_error : boolean;
+    parity_bit_error  : boolean;
+    stop_bit_error    : boolean;
   end record;
 
   constant C_ERROR_INFO_DEFAULT : t_error_info := (
-    parity_error => false
+    parity_bit_error  => false,
+    stop_bit_error    => false
     );
 
   -- Transaction

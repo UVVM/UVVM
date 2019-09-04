@@ -198,6 +198,10 @@ package body uart_bfm_pkg is
     ) is
     constant proc_name    : string := "uart_transmit";
     constant proc_call    : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+
+    variable v_odd_parity_bit   : std_logic;
+    variable v_even_parity_bit  : std_logic;
+
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
@@ -214,22 +218,33 @@ package body uart_bfm_pkg is
       wait for config.bit_time;
     end loop;
 
-    -- parity?
-    if (config.parity = PARITY_ODD) then
-      tx <= odd_parity(data_value);
-      wait for config.bit_time;
-    elsif(config.parity = PARITY_EVEN) then
-      tx <= not odd_parity(data_value);
-      wait for config.bit_time;
+    -- Error Injection: invert parity bit if parity_bit_error = true
+    if config.error_injection.parity_bit_error = false then
+      v_odd_parity_bit := odd_parity(data_value);
+    else -- true
+      v_odd_parity_bit := not(odd_parity(data_value));
     end if;
+
+    -- set parity
+    if (config.parity = PARITY_ODD) then
+      tx <= v_odd_parity_bit;
+    elsif(config.parity = PARITY_EVEN) then
+      tx <= not(v_odd_parity_bit);
+    end if;
+    wait for config.bit_time;
 
     -- stop bits
     tx <= config.idle_state;
-    wait for config.bit_time;
-    if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
-      wait for config.bit_time/2;
-    elsif(config.num_stop_bits = STOP_BITS_TWO) then
+
+    -- Error Injection: skip stop bit(s) if stop_bit_error = true
+    if config.error_injection.stop_bit_error = false then
       wait for config.bit_time;
+
+      if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
+        wait for config.bit_time/2;
+      elsif(config.num_stop_bits = STOP_BITS_TWO) then
+        wait for config.bit_time;
+      end if;
     end if;
 
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);

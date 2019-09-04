@@ -221,14 +221,12 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
+      set_global_dtt(dtt_transaction_info, v_cmd);
+
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
-          -- DTT: VVC set meta data
-          dtt_transaction_info.bt.vvc_meta.msg     <= pad_string(to_string(v_cmd.msg), ' ', dtt_transaction_info.bt.vvc_meta.msg'length);
-          dtt_transaction_info.bt.vvc_meta.cmd_idx <= v_cmd.cmd_idx;
-
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
@@ -237,14 +235,9 @@ begin
           uart_transmit(data_value            => v_normalised_data,
                         msg                   => format_msg(v_cmd),
                         tx                    => uart_vvc_tx,
-                        dtt_transaction_info  => dtt_transaction_info,
                         config                => vvc_config.bfm_config,
                         scope                 => C_SCOPE,
                         msg_id_panel          => vvc_config.msg_id_panel);
-
-          -- DTT: VVC clear meta data
-          dtt_transaction_info.bt.vvc_meta <= C_VVC_META_DEFAULT;
-
 
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
@@ -276,6 +269,7 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
+      restore_global_dtt(dtt_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================

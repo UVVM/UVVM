@@ -328,6 +328,8 @@ package body vvc_methods_pkg is
       when others =>
         null;
     end case;
+
+    wait for 0 ns;
   end procedure set_global_dtt;
 
 
@@ -344,6 +346,7 @@ package body vvc_methods_pkg is
         null;
     end case;
 
+    wait for 0 ns;
   end procedure restore_global_dtt;
 
 end package body vvc_methods_pkg;

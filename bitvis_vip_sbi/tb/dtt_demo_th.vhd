@@ -69,6 +69,7 @@ architecture struct of dtt_demo_th is
   constant C_CLK_PERIOD : time    := 10 ns;  -- 100 MHz
   constant C_CLOCK_GEN  : natural := 1;
 
+  signal debug : std_logic_vector(7 downto 0);
 
 begin
 
@@ -161,7 +162,7 @@ begin
   p_model : process is
     constant C_SBI_ADDR_RX_DATA : unsigned(2 downto 0) := "000";
 
-    variable v_data : std_logic_vector(7 downto 0);
+    variable v_data  : std_logic_vector(7 downto 0);
 
     -- SBI DTT
     alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_info_group is
@@ -173,9 +174,8 @@ begin
     alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
       global_uart_transaction_info(TX, GC_UART_VVC_IDX);
 
-    -- DUT flag
-    alias uart_tx_ready   is << signal i_uart.i_uart_core.tx_ready      : std_logic >>;
-    alias uart_tx_active  is << signal i_uart.i_uart_core.tx_active    : std_logic >>;
+    -- UART DUT flag
+    alias uart_rx_data_valid is << signal i_uart.i_uart_core.rx_data_valid: std_logic >>;
 
 
   begin
@@ -189,7 +189,7 @@ begin
 
         case sbi_dtt.bt.operation is
           when WRITE =>
-            log(ID_SEQUENCER_SUB, "Monitor request: UART_EXEPECT()", C_SCOPE);
+            log(ID_SEQUENCER_SUB, "Monitor request: UART_EXEPECT(), 0x" & to_string(sbi_dtt.bt.data(7 downto 0), HEX), C_SCOPE);
             uart_expect(UART_VVCT, GC_UART_VVC_IDX, RX, sbi_dtt.bt.data(7 downto 0), "Expecting data on UART RX");
 
           when READ =>
@@ -209,12 +209,12 @@ begin
 
         case uart_tx_dtt.bt.operation is
           when TRANSMIT =>
-            v_data := uart_tx_dtt.bt.data(7 downto 0); -- save expected data
+            v_data := uart_tx_dtt.bt.data(7 downto 0); -- save expected data, will be set to default by VVC
+            debug <= v_data;
 
-            wait until falling_edge(uart_tx_active); --'event and uart_tx_active = '0';
-            wait for 200 ns;  -- margin
+            wait until uart_rx_data_valid = '1'; -- DUT UART data ready for SBI read
 
-            log(ID_SEQUENCER_SUB, "Monitor request: SBI_CHECK()", C_SCOPE);
+            log(ID_SEQUENCER_SUB, "Monitor request: SBI_CHECK(), 0x" & to_string(v_data, HEX), C_SCOPE);
             sbi_check(SBI_VVCT, GC_SBI_VVC_IDX, C_SBI_ADDR_RX_DATA, v_data, "RX_DATA");
 
           when others =>

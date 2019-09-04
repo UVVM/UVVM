@@ -26,9 +26,6 @@ context uvvm_util.uvvm_util_context;
 library STD;
 use std.textio.all;
 
---library bitvis_vip_uart;
---use bitvis_vip_uart.transaction_pkg.all;
-
 use work.transaction_pkg.all;
 
 
@@ -71,7 +68,6 @@ package uart_bfm_pkg is
     id_for_bfm_wait                           : t_msg_id;             -- The message ID used for logging waits in the UART BFM
     id_for_bfm_poll                           : t_msg_id;             -- The message ID used for logging polling in the UART BFM
     id_for_bfm_poll_summary                   : t_msg_id;             -- The message ID used for logging polling summary in the UART BFM
-    vvc_instance_idx                          : integer;              -- Parent VVC instance number
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
@@ -86,8 +82,7 @@ package uart_bfm_pkg is
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
-    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
-    vvc_instance_idx                          => 1
+    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY
     );
 
   ----------------------------------------------------
@@ -103,7 +98,6 @@ package uart_bfm_pkg is
     constant data_value         : in  std_logic_vector;
     constant msg                : in  string;
     signal tx                   : inout std_logic;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant config             : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string             := C_SCOPE;
     constant msg_id_panel       : in  t_msg_id_panel     := shared_msg_id_panel
@@ -119,7 +113,6 @@ package uart_bfm_pkg is
     variable data_value         : out std_logic_vector;
     constant msg                : in  string;
     signal rx                   : in  std_logic;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in  std_logic;
     constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string            := C_SCOPE;
@@ -146,7 +139,6 @@ package uart_bfm_pkg is
     constant data_exp           : in std_logic_vector;
     constant msg                : in string;
     signal rx                   : in std_logic;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in std_logic;
     constant max_receptions     : in natural           := 1;
     constant timeout            : in time              := -1 ns;
@@ -191,21 +183,13 @@ package body uart_bfm_pkg is
     constant data_value         : in  std_logic_vector;
     constant msg                : in  string;
     signal tx                   : inout std_logic;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     constant config             : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string             := C_SCOPE;
     constant msg_id_panel       : in  t_msg_id_panel     := shared_msg_id_panel
     ) is
     constant proc_name          : string := "uart_transmit";
     constant proc_call          : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_check_ok         : boolean := true;
   begin
-    -- Set DTT BT start info
-    dtt_transaction_info.bt.operation                             <= TRANSMIT;
-    dtt_transaction_info.bt.data(data_value'length-1 downto 0)    <= data_value;
-    dtt_transaction_info.bt.transaction_status                    <= IN_PROGRESS;
-    dtt_transaction_info.bt.error_info.parity_error               <= false; -- TO DO!!
-
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
     check_value(data_value'length = config.num_data_bits, FAILURE, "length of data_value does not match config.num_data_bits. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
@@ -240,19 +224,6 @@ package body uart_bfm_pkg is
     end if;
 
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
-
-    -- Set DTT BT transaction result
-    if v_check_ok then
-      dtt_transaction_info.bt.transaction_status <= SUCCEEDED;
-    else
-      dtt_transaction_info.bt.transaction_status <= FAILED;
-    end if;
-
-    -- Restore DTT BT end info
-    dtt_transaction_info.bt.operation               <= NO_OPERATION;
-    dtt_transaction_info.bt.data                    <= (others => '0');
-    dtt_transaction_info.bt.transaction_status      <= NA;
-    dtt_transaction_info.bt.error_info.parity_error <= false; -- TO DO!!
   end procedure;
 
 
@@ -264,7 +235,6 @@ package body uart_bfm_pkg is
     variable data_value         : out std_logic_vector;
     constant msg                : in  string;
     signal rx                   : in  std_logic;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in  std_logic;
     constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string            := C_SCOPE;
@@ -284,17 +254,7 @@ package body uart_bfm_pkg is
     variable v_data_value     : std_logic_vector(config.num_data_bits-1 downto 0);
     variable v_terminated     : boolean := false;
     variable v_timeout        : boolean := false;
-    variable v_check_ok         : boolean := true;
   begin
-    -- Set DTT BT start info
-    if ext_proc_call = "" then
-      dtt_transaction_info.bt.operation               <= RECEIVE;
-      dtt_transaction_info.bt.transaction_status      <= IN_PROGRESS;
-      dtt_transaction_info.bt.error_info.parity_error <= false; -- TO DO!!
-    else
-      -- Will be andled by calling procedure (e.g. uart_expect)
-    end if;
-
     -- check whether config.bit_time was set properly
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
@@ -324,7 +284,7 @@ package body uart_bfm_pkg is
     end if;
 
     -- check if bus is in idle state
-    v_check_ok := check_value(rx, config.idle_state, FAILURE, v_proc_call.all & "Bus was active when trying to receive data. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+    check_value(rx, config.idle_state, FAILURE, v_proc_call.all & "Bus was active when trying to receive data. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
 
     -- wait until the start bit is sent on the bus, configured timeout occures or procedure get terminate signal
     if config.timeout = 0 ns then
@@ -382,13 +342,11 @@ package body uart_bfm_pkg is
       if config.parity = PARITY_ODD then
         if rx /= odd_parity(v_data_value) then
           alert(error, v_proc_call.all & "=> Failed. Incorrect parity received. " & add_msg_delimiter(msg),scope);
-          v_check_ok := false;
         end if;
         wait for config.bit_time;
       elsif config.parity = PARITY_EVEN then
         if rx /= not odd_parity(v_data_value) then
           alert(error, v_proc_call.all & "=> Failed. Incorrect parity received. " & add_msg_delimiter(msg),scope);
-          v_check_ok := false;
         end if;
         wait for config.bit_time;
       end if;
@@ -396,20 +354,17 @@ package body uart_bfm_pkg is
       -- check the stop bit
       if rx /= config.idle_state then
         alert(error, v_proc_call.all & "=> Failed. Incorrect stop bit received. " & add_msg_delimiter(msg),scope);
-        v_check_ok := false;
       end if;
 
       if config.num_stop_bits = STOP_BITS_ONE_AND_HALF then
         wait for config.bit_time/2 + config.bit_time/4;  -- middle of the last half. Last half of previous stop bit + first half of current stop bit
         if rx /= config.idle_state then
           alert(error, v_proc_call.all & "=> Failed. Incorrect second half stop bit received. " & add_msg_delimiter(msg),scope);
-          v_check_ok := false;
         end if;
       elsif config.num_stop_bits = STOP_BITS_TWO then
         wait for config.bit_time;  -- middle of the last bit. Last half of previous stop bit + first half of current stop bit
         if rx /= config.idle_state then
           alert(error, v_proc_call.all & "=> Failed. Incorrect second stop bit received. " & add_msg_delimiter(msg),scope);
-          v_check_ok := false;
         end if;
       end if;
 
@@ -417,19 +372,6 @@ package body uart_bfm_pkg is
       data_value := v_data_value;
       if ext_proc_call = "" then
         log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        -- Set DTT data output
-        dtt_transaction_info.bt.data(data_value'length-1 downto 0) <= data_value;
-        -- Set DTT BT transaction result
-        if v_check_ok  and not(v_terminated) and not(v_timeout) then
-          dtt_transaction_info.bt.transaction_status <= SUCCEEDED;
-        else
-          dtt_transaction_info.bt.transaction_status <= FAILED;
-        end if;
-        -- Restore DTT BT end info
-        dtt_transaction_info.bt.operation               <= NO_OPERATION;
-        dtt_transaction_info.bt.data                    <= (others => '0');
-        dtt_transaction_info.bt.transaction_status      <= NA;
-        dtt_transaction_info.bt.error_info.parity_error <= false; -- TO DO!!
       else
         -- Will be andled by calling procedure (e.g. uart_expect)
       end if;
@@ -444,7 +386,6 @@ package body uart_bfm_pkg is
     constant data_exp           : in std_logic_vector;
     constant msg                : in string;
     signal rx                   : in std_logic;
-    signal dtt_transaction_info : inout t_transaction_info_group;
     signal terminate_loop       : in  std_logic;
     constant max_receptions     : in natural            := 1;     -- 0 = any occurrence before timeout
     constant timeout            : in time               := -1 ns;
@@ -467,11 +408,6 @@ package body uart_bfm_pkg is
     variable v_received_output_line         : line;
     variable v_internal_timeout             : time;
   begin
-    -- Set DTT BT start info
-    dtt_transaction_info.bt.operation                             <= EXPECT;
-    dtt_transaction_info.bt.transaction_status                    <= IN_PROGRESS;
-    dtt_transaction_info.bt.error_info.parity_error               <= false; -- TO DO!!
-
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
@@ -512,7 +448,7 @@ package body uart_bfm_pkg is
     while not v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and (terminate_loop = '0') loop
 
       -- Receive and check data
-      uart_receive(v_data_value, msg, rx, dtt_transaction_info, terminate_loop, v_config, scope, msg_id_panel, proc_call);
+      uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
       for i in 0 to v_config.num_data_bits-1 loop
         if (data_exp(i) = '-' or
           v_data_value(i) = data_exp(i)) then
@@ -576,19 +512,6 @@ package body uart_bfm_pkg is
     else
       alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
     end if;
-
-    -- Set DTT BT transaction result
-    if v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and terminate_loop = '0' then
-      dtt_transaction_info.bt.transaction_status <= SUCCEEDED;
-    else
-      dtt_transaction_info.bt.transaction_status <= FAILED;
-    end if;
-
-    -- Restore DTT BT end info
-    dtt_transaction_info.bt.operation               <= NO_OPERATION;
-    dtt_transaction_info.bt.data                    <= (others => '0');
-    dtt_transaction_info.bt.transaction_status      <= NA;
-    dtt_transaction_info.bt.error_info.parity_error <= false; -- TO DO!!
   end procedure;
 
 end package body uart_bfm_pkg;

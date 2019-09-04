@@ -161,6 +161,8 @@ begin
   p_model : process is
     constant C_SBI_ADDR_RX_DATA : unsigned(2 downto 0) := "000";
 
+    variable v_data : std_logic_vector(7 downto 0);
+
     -- SBI DTT
     alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_info_group is
       global_sbi_transaction_info(GC_SBI_VVC_IDX);
@@ -172,7 +174,9 @@ begin
       global_uart_transaction_info(TX, GC_UART_VVC_IDX);
 
     -- DUT flag
-    alias uart_tx_ready is << signal i_uart.i_uart_core.tx_ready      : std_logic >>;
+    alias uart_tx_ready   is << signal i_uart.i_uart_core.tx_ready      : std_logic >>;
+    alias uart_tx_active  is << signal i_uart.i_uart_core.tx_active    : std_logic >>;
+
 
   begin
     while true loop
@@ -181,10 +185,11 @@ begin
       ---------------------------------
       --  SBI
       ---------------------------------
-      if sbi_dtt.bt'event then
+      if sbi_dtt'event then
 
         case sbi_dtt.bt.operation is
           when WRITE =>
+            log(ID_SEQUENCER_SUB, "Monitor request: UART_EXEPECT()", C_SCOPE);
             uart_expect(UART_VVCT, GC_UART_VVC_IDX, RX, sbi_dtt.bt.data(7 downto 0), "Expecting data on UART RX");
 
           when READ =>
@@ -204,8 +209,13 @@ begin
 
         case uart_tx_dtt.bt.operation is
           when TRANSMIT =>
-            wait until uart_tx_ready = '1';
-            sbi_check(SBI_VVCT, GC_SBI_VVC_IDX, C_SBI_ADDR_RX_DATA, uart_tx_dtt.bt.data(7 downto 0), "RX_DATA");
+            v_data := uart_tx_dtt.bt.data(7 downto 0); -- save expected data
+
+            wait until falling_edge(uart_tx_active); --'event and uart_tx_active = '0';
+            wait for 200 ns;  -- margin
+
+            log(ID_SEQUENCER_SUB, "Monitor request: SBI_CHECK()", C_SCOPE);
+            sbi_check(SBI_VVCT, GC_SBI_VVC_IDX, C_SBI_ADDR_RX_DATA, v_data, "RX_DATA");
 
           when others =>
             null;

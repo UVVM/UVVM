@@ -87,24 +87,20 @@ begin
     start_clock(CLOCK_GENERATOR_VVCT, C_CLOCK_VVC_IDX, "Start clock generator");
 
     -- Print the configuration to the log
-    report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
+    --report_global_ctrl(VOID);
+    --report_msg_id_panel(VOID);
 
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
+    enable_log_msg(ID_SEQUENCER_SUB);
 
     disable_log_msg(SBI_VVCT, C_SBI_VVC_IDX, ALL_MESSAGES);
     disable_log_msg(UART_VVCT, C_UART_VVC_IDX, RX, ALL_MESSAGES);
     disable_log_msg(UART_VVCT, C_UART_VVC_IDX, TX, ALL_MESSAGES);
 
-    enable_log_msg(UART_VVCT, C_UART_VVC_IDX, TX, ID_BFM);
+--    enable_log_msg(UART_VVCT, C_UART_VVC_IDX, TX, ID_BFM);
 --    enable_log_msg(SBI_VVCT, C_SBI_VVC_IDX, ID_BFM);
-
-
-    shared_sbi_vvc_config(C_SBI_VVC_IDX).bfm_config.vvc_instance_idx       := C_SBI_VVC_IDX;
-    shared_uart_vvc_config(RX, C_UART_VVC_IDX).bfm_config.vvc_instance_idx := C_UART_VVC_IDX;
-    shared_uart_vvc_config(TX, C_UART_VVC_IDX).bfm_config.vvc_instance_idx := C_UART_VVC_IDX;
 
 
     log(ID_LOG_HDR, "Starting simulation of Demo TB for DTT using UART and SBI VVCs", C_SCOPE);
@@ -122,8 +118,6 @@ begin
 
     log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
     ------------------------------------------------------------
-    -- This test will send three sbi_check commands to the SBI VVC, and then
-    -- wait for them all to complete before continuing the test sequence.
     sbi_check(SBI_VVCT, C_SBI_VVC_IDX, C_ADDR_RX_DATA, x"00", "RX_DATA default");
     sbi_check(SBI_VVCT, C_SBI_VVC_IDX, C_ADDR_TX_READY, x"01", "TX_READY default");
     sbi_check(SBI_VVCT, C_SBI_VVC_IDX, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
@@ -132,45 +126,28 @@ begin
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE);
     ------------------------------------------------------------
-    -- This test case will instruct the SBI VVC to send the data x"55" to the DUT C_ADDR_TX_DATA address.
-    -- This will cause the DUT to transmit x"55" on the UART line. In order to receive the data, the
-    -- UART VVC is instructed to expect the data x"55" on the RX port. The test sequence will not continue
-    -- until the UART VVC has received the data from the DUT, indicated by the await_completion method.
     sbi_write(SBI_VVCT, C_SBI_VVC_IDX, C_ADDR_TX_DATA, x"55", "TX_DATA");
-
     wait for 200 ns;                    -- margin
 
 
 
     log(ID_LOG_HDR, "Check simple receive", C_SCOPE);
     ------------------------------------------------------------
-    -- In this test case the UART VVC (TX channel) is instructed to send the data x"AA" to the DUT.
-    -- This data should be received and stored to a RX buffer by the DUT. After the UART VVC has completed
-    -- the transmission, the SBI VVC is instructed to check read and check (sbi_check) the C_ADDR_RX_DATA
-    -- register, and verify that it is in fact x"AA" that the DUT received. The test sequencer will continue
-    -- when the SBI VVC is done checking the C_ADDR_RX_DATA register.
     uart_transmit(UART_VVCT, C_UART_VVC_IDX, TX, x"AA", "UART TX");
     await_completion(UART_VVCT, C_UART_VVC_IDX, TX, 13 * C_BIT_PERIOD);
-
     wait for 200 ns;                    -- margin
 
 
 
     log(ID_LOG_HDR, "Check single simultaneous transmit and receive", C_SCOPE);
     ------------------------------------------------------------
-    -- Since the UART consists of two individual VVCs (TX and RX), it is capable of full duplex operation.
-    -- This test case will instruct the SBI VVC to write x"B4" to the C_ADDR_TX_DATA register of the DUT,
-    -- which will cause the DUT to send x"B4" on its UART TX line. Simultaneously, the UART VVC is instructed
-    -- to both transmit x"87" to the DUT, and expect x"B4" from the DUT. When the UART VVC is done transmitting
-    -- to the DUT, the SBI VVC will be instructed to read and check the DUT C_ADDR_RX_DATA register and verify
-    -- that the DUT received the correct data from the UART VVC. After this check is completed, the test sequencer
-    -- can continue to the next test case.
     sbi_write(SBI_VVCT, C_SBI_VVC_IDX, C_ADDR_TX_DATA, x"B4", "TX_DATA");
 
     uart_transmit(UART_VVCT, C_UART_VVC_IDX, TX, x"87", "UART TX");
     await_completion(UART_VVCT, C_UART_VVC_IDX, TX, 13 * C_BIT_PERIOD);
 
     wait for 200 ns;                    -- margin
+    await_completion(SBI_VVCT, C_SBI_VVC_IDX,  10 * C_CLK_PERIOD);
 
 
 
@@ -212,16 +189,16 @@ begin
       uart_transmit(UART_VVCT, C_UART_VVC_IDX, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i)));
     end loop;
 
-    log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
-    -- 1760 ns is measured time from start of UART receive to received data is available in the DUT C_ADDR_RX_DATA register
-    -- The SBI VVC will wait until the UART VVC is 50 clock periods away from successfully transmitting the first byte.
-    insert_delay(SBI_VVCT, C_SBI_VVC_IDX, C_TIME_OF_ONE_UART_TX - 50 * C_CLK_PERIOD, "Inserting delay in SBI VVC to wait for first byte to complete");
-    for i in 1 to 100 loop
-      -- Wait for the time of one complete UART transmission + one clock cycle (for skew).
-      -- Every read will now be 1T later relative to a new byte being valid internally
-      insert_delay(SBI_VVCT, C_SBI_VVC_IDX, C_TIME_OF_ONE_UART_TX, "Delaying for the time of one uart transmission");
-      insert_delay(SBI_VVCT, C_SBI_VVC_IDX, C_CLK_PERIOD, "Skewing the SBI read one clock cycle");
-    end loop;
+--    log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
+--    -- 1760 ns is measured time from start of UART receive to received data is available in the DUT C_ADDR_RX_DATA register
+--    -- The SBI VVC will wait until the UART VVC is 50 clock periods away from successfully transmitting the first byte.
+--    insert_delay(SBI_VVCT, C_SBI_VVC_IDX, C_TIME_OF_ONE_UART_TX - 50 * C_CLK_PERIOD, "Inserting delay in SBI VVC to wait for first byte to complete");
+--    for i in 1 to 100 loop
+--      -- Wait for the time of one complete UART transmission + one clock cycle (for skew).
+--      -- Every read will now be 1T later relative to a new byte being valid internally
+--      insert_delay(SBI_VVCT, C_SBI_VVC_IDX, C_TIME_OF_ONE_UART_TX, "Delaying for the time of one uart transmission");
+--      insert_delay(SBI_VVCT, C_SBI_VVC_IDX, C_CLK_PERIOD, "Skewing the SBI read one clock cycle");
+--    end loop;
 
     await_completion(UART_VVCT, C_UART_VVC_IDX, TX, 103 * C_TIME_OF_ONE_UART_TX);
     wait for 50 ns;  -- to assure UART RX complete internally

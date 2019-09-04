@@ -606,7 +606,7 @@ package body sbi_bfm_pkg is
     variable v_check_ok          : boolean;
     variable v_clk_cycles_waited : natural := 0;
   begin
-    sbi_read(addr_value, v_data_value, msg, clk, cs, addr, rena, wena, ready, rdata, dtt_transaction_info, scope, msg_id_panel, config, proc_call);
+    sbi_read(addr_value, v_data_value, msg, clk, cs, addr, rena, wena, ready, rdata, scope, msg_id_panel, config, proc_call);
 
     -- Compare values, but ignore any leading zero's if widths are different.
     -- Use ID_NEVER so that check_value method does not log when check is OK,
@@ -687,7 +687,7 @@ package body sbi_bfm_pkg is
 
     while not v_check_ok and v_timeout_ok and v_num_of_occurrences_ok and (terminate_loop = '0') loop
       -- Read data on SBI register
-      sbi_read(v_normalised_addr, v_data_value, "As a part of " & proc_call & ". " & add_msg_delimiter(msg), clk, cs, addr, rena, wena, ready, rdata, dtt_transaction_info, scope, msg_id_panel, v_config,
+      sbi_read(v_normalised_addr, v_data_value, "As a part of " & proc_call & ". " & add_msg_delimiter(msg), clk, cs, addr, rena, wena, ready, rdata, scope, msg_id_panel, v_config,
                return_string1_if_true_otherwise_string2("", proc_call, is_log_msg_enabled(ID_BFM_POLL, msg_id_panel)));  -- ID_BFM_POLL will allow the logging inside sbi_read to be executed
 
       -- Evaluate data

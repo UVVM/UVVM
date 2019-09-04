@@ -151,6 +151,18 @@ package vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
+  --==============================================================================
+  -- DTT procedures
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record);
+
+
+  procedure restore_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record);
+
 
 end package vvc_methods_pkg;
 
@@ -235,6 +247,43 @@ package body vvc_methods_pkg is
   end procedure;
 
 
+
+  --==============================================================================
+  -- DTT procedures
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when TRANSMIT | RECEIVE | EXPECT =>
+        dtt_group.bt.operation                                  <= vvc_cmd.operation;
+        dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       <= vvc_cmd.data;
+        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
+        dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
+        dtt_group.bt.transaction_status                         <= IN_PROGRESS;
+        dtt_group.bt.error_info.parity_bit_error                <= false; -- set to config
+        dtt_group.bt.error_info.stop_bit_error                  <= false; -- set to config
+
+      when others =>
+        null;
+    end case;
+  end procedure set_global_dtt;
+
+
+  procedure restore_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when TRANSMIT | RECEIVE | EXPECT =>
+        dtt_group.bt <= C_TRANSACTION_INFO_SET_DEFAULT;
+
+      when others =>
+        null;
+    end case;
+
+  end procedure restore_global_dtt;
 end package body vvc_methods_pkg;
 
 

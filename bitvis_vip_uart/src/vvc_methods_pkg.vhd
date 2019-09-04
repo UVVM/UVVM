@@ -162,6 +162,11 @@ package vvc_methods_pkg is
     constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
+  impure function determine_error_injection(
+    constant probability  : in real
+  ) return boolean;
+
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -242,6 +247,18 @@ package body vvc_methods_pkg is
     end if;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
+
+
+  impure function determine_error_injection(
+    constant probability  : in real
+  ) return boolean is
+  begin
+    check_value(probability <= 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
+
+    return (random(0.0, 1.0) <= probability);
+  end function determine_error_injection;
+
+
 
 end package body vvc_methods_pkg;
 

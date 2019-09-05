@@ -56,7 +56,7 @@ if { [string equal -nocase $simulator "modelsim"] } {
 }
 
 echo "\nCompiling TB\n"
-echo "eval vcom  $compdirectives  ../tb/uart_demo_th.vhd"
-eval vcom  $compdirectives  ../tb/uart_demo_th.vhd
-echo "eval vcom  $compdirectives  ../tb/uart_demo_tb.vhd"
-eval vcom  $compdirectives  ../tb/uart_demo_tb.vhd
+echo "eval vcom  $compdirectives  ../tb/uvvm_demo_th.vhd"
+eval vcom  $compdirectives  ../tb/uvvm_demo_th.vhd
+echo "eval vcom  $compdirectives  ../tb/uvvm_demo_tb.vhd"
+eval vcom  $compdirectives  ../tb/uvvm_demo_tb.vhd

@@ -162,7 +162,7 @@ package vvc_methods_pkg is
     constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
-  impure function determine_error_injection(
+  impure function decide_if_error_is_injected(
     constant probability  : in real
   ) return boolean;
 
@@ -249,14 +249,14 @@ package body vvc_methods_pkg is
   end procedure;
 
 
-  impure function determine_error_injection(
+  impure function decide_if_error_is_injected(
     constant probability  : in real
   ) return boolean is
   begin
     check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
 
     return (random(0.0, 1.0) <= probability);
-  end function determine_error_injection;
+  end function decide_if_error_is_injected;
 
 
 

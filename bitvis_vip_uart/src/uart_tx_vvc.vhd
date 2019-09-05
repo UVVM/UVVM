@@ -226,8 +226,8 @@ begin
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
           -- Set error injection
-          vvc_config.bfm_config.error_injection.parity_bit_error  := determine_error_injection(vvc_config.error_injection.parity_bit_prob);
-          vvc_config.bfm_config.error_injection.stop_bit_error    := determine_error_injection(vvc_config.error_injection.stop_bit_prob);
+          vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_prob);
+          vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_prob);
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));

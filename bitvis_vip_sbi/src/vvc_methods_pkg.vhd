@@ -50,11 +50,13 @@ package vvc_methods_pkg is
     );
 
   type t_error_injection is record
-    delay_error_prob : real;
+    delay_error_prob          : real;
+    write_and_read_error_prob : real;
   end record t_error_injection;
 
   constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
-    delay_error_prob => 0.0
+    delay_error_prob            => 0.0,
+    write_and_read_error_prob   => 0.0
   );
 
   type t_vvc_config is
@@ -335,7 +337,7 @@ package body vvc_methods_pkg is
         dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                         <= IN_PROGRESS;
         dtt_group.bt.error_info.delay_error                     <= vvc_config.bfm_config.error_injection.delay_error;
-
+        dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when POLL_UNTIL =>
         dtt_group.ct.operation                                  <= vvc_cmd.operation;
@@ -345,6 +347,7 @@ package body vvc_methods_pkg is
         dtt_group.ct.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.ct.transaction_status                         <= IN_PROGRESS;
         dtt_group.ct.error_info.delay_error                     <= vvc_config.bfm_config.error_injection.delay_error;
+        dtt_group.ct.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when others =>
         null;

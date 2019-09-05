@@ -73,11 +73,13 @@ package transaction_pkg is
 
   -- Error info
   type t_error_info is record
-    delay_error : boolean;
+    delay_error           : boolean;
+    write_and_read_error  : boolean;
   end record;
 
   constant C_ERROR_INFO_DEFAULT : t_error_info := (
-    delay_error => false
+    delay_error           => false,
+    write_and_read_error  => false
     );
 
   -- Transaction

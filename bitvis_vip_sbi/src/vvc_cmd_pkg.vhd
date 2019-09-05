@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -23,33 +23,19 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.transaction_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
 package vvc_cmd_pkg is
 
-  --===============================================================================================
-  -- t_operation
-  -- - Bitvis defined BFM operations
-  --===============================================================================================
- type t_operation is (
-    -- UVVM common
-    NO_OPERATION,
-    AWAIT_COMPLETION,
-    AWAIT_ANY_COMPLETION,
-    ENABLE_LOG_MSG,
-    DISABLE_LOG_MSG,
-    FLUSH_COMMAND_QUEUE,
-    FETCH_RESULT,
-    INSERT_DELAY,
-    TERMINATE_CURRENT_COMMAND,
-    -- VVC local
-    WRITE, READ, CHECK, POLL_UNTIL);
+  alias t_operation is work.transaction_pkg.t_operation;
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := 32;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH          : natural := 32;
-  constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := 300;
-    
+  constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := C_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH          : natural := C_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := C_CMD_STRING_MAX_LENGTH;
+
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC
@@ -72,7 +58,6 @@ package vvc_cmd_pkg is
     addr                  : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     max_polls             : integer;
-
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -86,30 +71,30 @@ package vvc_cmd_pkg is
     cmd_idx             => 0,
     command_type        => NO_command_type,
     msg_id              => NO_ID,
-    gen_integer_array     => (others => -1), 
-    gen_boolean           => false,
-    timeout               => 0 ns, 
+    gen_integer_array   => (others => -1),
+    gen_boolean         => false,
+    timeout             => 0 ns,
     delay               => 0 ns,
     quietness           => NON_QUIET
     );
-    
+
   --===============================================================================================
   -- shared_vvc_cmd
   --  - Shared variable used for transmitting VVC commands
   --===============================================================================================
   shared variable shared_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
-  
+
   --===============================================================================================
-  -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response : 
-  -- 
+  -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response :
+  --
   -- - These are used for storing the result of the read/receive BFM commands issued by the VVC,
-  -- - so that the result can be transported from the VVC to the sequencer via a 
+  -- - so that the result can be transported from the VVC to the sequencer via a
   --   a fetch_result() call as described in VVC_Framework_common_methods_QuickRef
-  -- 
+  --
   -- - t_vvc_result matches the return value of read/receive procedure in the BFM.
   --===============================================================================================
   subtype  t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-  
+
   type t_vvc_result_queue_element is record
     cmd_idx       : natural;   -- from UVVM handshake mechanism
     result        : t_vvc_result;
@@ -122,26 +107,26 @@ package vvc_cmd_pkg is
   end record;
 
   shared variable shared_vvc_response : t_vvc_response;
-  
+
   --===============================================================================================
-  -- t_last_received_cmd_idx : 
+  -- t_last_received_cmd_idx :
   -- - Used to store the last queued cmd in vvc interpreter.
   --===============================================================================================
   type t_last_received_cmd_idx is array (t_channel range <>,natural range <>) of integer;
-  
+
   --===============================================================================================
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from vvc to sequencer
-  --=============================================================================================== 
+  --===============================================================================================
   shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => -1));
-  
-  
+
+
 end package vvc_cmd_pkg;
 
 package body vvc_cmd_pkg is
 
-  
-  
+
+
 end package body vvc_cmd_pkg;
 
 

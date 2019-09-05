@@ -26,6 +26,9 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+use work.transaction_pkg.all;
+
+
 --=================================================================================================
 package sbi_bfm_pkg is
 
@@ -103,19 +106,19 @@ package sbi_bfm_pkg is
   -- - This procedure writes data to the SBI DUT
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_write (
-    constant addr_value   : in    unsigned;
-    constant data_value   : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal cs             : inout std_logic;
-    signal addr           : inout unsigned;
-    signal rena           : inout std_logic;
-    signal wena           : inout std_logic;
-    signal ready          : in    std_logic;
-    signal wdata          : inout std_logic_vector;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_value         : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal wdata                : inout std_logic_vector;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
 
 
@@ -125,14 +128,14 @@ package sbi_bfm_pkg is
   -- - This procedure writes data 'data_value' to the SBI DUT address 'addr_value'
   -- - The SBI interface in this procedure is given as a t_sbi_if signal record
   procedure sbi_write (
-    constant addr_value   : in    unsigned;
-    constant data_value   : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal sbi_if         : inout t_sbi_if;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_value         : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
 
 
@@ -143,20 +146,20 @@ package sbi_bfm_pkg is
   --   returns the read data in the output 'data_value'
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_read (
-    constant addr_value    : in    unsigned;
-    variable data_value    : out   std_logic_vector;
-    constant msg           : in    string;
-    signal clk             : in    std_logic;
-    signal cs              : inout std_logic;
-    signal addr            : inout unsigned;
-    signal rena            : inout std_logic;
-    signal wena            : inout std_logic;
-    signal ready           : in    std_logic;
-    signal rdata           : in    std_logic_vector;
-    constant scope         : in    string           := C_SCOPE;
-    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant addr_value         : in    unsigned;
+    variable data_value         : out   std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal rdata                : in    std_logic_vector;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call      : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
 
     );
 
@@ -167,15 +170,15 @@ package sbi_bfm_pkg is
   --   the read data in the output 'data_value'
   -- - The SBI interface in this procedure is given as a t_sbi_if signal record
   procedure sbi_read (
-    constant addr_value    : in    unsigned;
-    variable data_value    : out   std_logic_vector;
-    constant msg           : in    string;
-    signal clk             : in    std_logic;
-    signal sbi_if          : inout t_sbi_if;
-    constant scope         : in    string           := C_SCOPE;
-    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant addr_value         : in    unsigned;
+    variable data_value         : out   std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call      : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
     );
 
 
@@ -188,20 +191,20 @@ package sbi_bfm_pkg is
   --   severity 'alert_level' is triggered.
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_check (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal cs             : inout std_logic;
-    signal addr           : inout unsigned;
-    signal rena           : inout std_logic;
-    signal wena           : inout std_logic;
-    signal ready          : in    std_logic;
-    signal rdata          : in    std_logic_vector;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal rdata                : in    std_logic_vector;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
 
 
@@ -214,15 +217,15 @@ package sbi_bfm_pkg is
   --   severity 'alert_level' is triggered.
   -- - The SBI interface in this procedure is given as a t_sbi_if signal record
   procedure sbi_check (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal sbi_if         : inout t_sbi_if;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
 
 
@@ -242,23 +245,23 @@ package sbi_bfm_pkg is
   -- - If 'max_polls' is set to 0, it will be interpreted as no limitation on number of polls
   -- - The SBI interface in this procedure is given as individual signals
   procedure sbi_poll_until (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant max_polls    : in    integer          := 1;
-    constant timeout      : in    time             := 0 ns;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal cs             : inout std_logic;
-    signal addr           : inout unsigned;
-    signal rena           : inout std_logic;
-    signal wena           : inout std_logic;
-    signal ready          : in    std_logic;
-    signal rdata          : in    std_logic_vector;
-    signal terminate_loop : in    std_logic;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant max_polls          : in    integer          := 1;
+    constant timeout            : in    time             := 0 ns;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal rdata                : in    std_logic_vector;
+    signal terminate_loop       : in    std_logic;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
 
 
@@ -278,19 +281,22 @@ package sbi_bfm_pkg is
   -- - If 'max_polls' is set to 0, it will be interpreted as no limitation on number of polls
   -- - The SBI interface in this procedure is given as a t_sbi_if signal record
   procedure sbi_poll_until (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant max_polls    : in    integer          := 1;
-    constant timeout      : in    time             := 0 ns;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal sbi_if         : inout t_sbi_if;
-    signal terminate_loop : in    std_logic;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant max_polls          : in    integer          := 1;
+    constant timeout            : in    time             := 0 ns;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    signal terminate_loop       : in    std_logic;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     );
+
+
+
 
 end package sbi_bfm_pkg;
 
@@ -299,6 +305,8 @@ end package sbi_bfm_pkg;
 --=================================================================================================
 
 package body sbi_bfm_pkg is
+
+
 
   ---------------------------------------------------------------------------------
   -- initialize sbi to dut signals
@@ -326,19 +334,19 @@ package body sbi_bfm_pkg is
   -- write
   ---------------------------------------------------------------------------------
   procedure sbi_write (
-    constant addr_value   : in    unsigned;
-    constant data_value   : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal cs             : inout std_logic;
-    signal addr           : inout unsigned;
-    signal rena           : inout std_logic;
-    signal wena           : inout std_logic;
-    signal ready          : in    std_logic;
-    signal wdata          : inout std_logic_vector;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_value         : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal wdata                : inout std_logic_vector;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
     constant proc_name : string := "sbi_write";
     constant proc_call : string := "sbi_write(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
@@ -354,7 +362,7 @@ package body sbi_bfm_pkg is
     variable v_max_time           : time    := -1 ns;  -- max allowed clk low period
     variable v_start_time         : time    := -1 ns;  -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
-
+    variable v_check_ok           : boolean;
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -405,8 +413,8 @@ package body sbi_bfm_pkg is
       wait until rising_edge(clk);
 
       v_clk_cycles_waited := v_clk_cycles_waited + 1;
-      check_value(v_clk_cycles_waited <= config.max_wait_cycles, config.max_wait_cycles_severity,
-                  ": Timeout while waiting for sbi ready", scope, ID_NEVER, msg_id_panel, proc_call);
+      v_check_ok := check_value(v_clk_cycles_waited <= config.max_wait_cycles, config.max_wait_cycles_severity,
+                                ": Timeout while waiting for sbi ready", scope, ID_NEVER, msg_id_panel, proc_call);
     end loop;
 
     -- Wait hold time specified in config record
@@ -418,19 +426,18 @@ package body sbi_bfm_pkg is
   end procedure;
 
   procedure sbi_write (
-    constant addr_value   : in    unsigned;
-    constant data_value   : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal sbi_if         : inout t_sbi_if;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_value         : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
   begin
     sbi_write(addr_value, data_value, msg, clk, sbi_if.cs, sbi_if.addr,
-              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.wdata,
-              scope, msg_id_panel, config);
+              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.wdata, scope, msg_id_panel, config);
   end procedure;
 
 
@@ -438,20 +445,20 @@ package body sbi_bfm_pkg is
   -- sbi_read
   ---------------------------------------------------------------------------------
   procedure sbi_read (
-    constant addr_value    : in    unsigned;
-    variable data_value    : out   std_logic_vector;
-    constant msg           : in    string;
-    signal clk             : in    std_logic;
-    signal cs              : inout std_logic;
-    signal addr            : inout unsigned;
-    signal rena            : inout std_logic;
-    signal wena            : inout std_logic;
-    signal ready           : in    std_logic;
-    signal rdata           : in    std_logic_vector;
-    constant scope         : in    string           := C_SCOPE;
-    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant addr_value         : in    unsigned;
+    variable data_value         : out   std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal rdata                : in    std_logic_vector;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call      : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
     ) is
     -- local_proc_* used if called from sequencer or VVC
     constant local_proc_name : string := "sbi_read";
@@ -467,7 +474,7 @@ package body sbi_bfm_pkg is
     variable v_max_time           : time  := -1 ns;   -- max allowed clk low period
     variable v_start_time         : time := -1 ns;    -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false; -- clk high/low status on BFM call
-
+    variable v_check_ok           : boolean;
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
@@ -531,8 +538,8 @@ package body sbi_bfm_pkg is
         end if;
         wait until rising_edge(clk);
         v_clk_cycles_waited := v_clk_cycles_waited + 1;
-        check_value(v_clk_cycles_waited <= config.max_wait_cycles, config.max_wait_cycles_severity,
-                    ": Timeout while waiting for sbi ready", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+        v_check_ok := check_value(v_clk_cycles_waited <= config.max_wait_cycles, config.max_wait_cycles_severity,
+                                  ": Timeout while waiting for sbi ready", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
       end loop;
     end if;
 
@@ -547,25 +554,24 @@ package body sbi_bfm_pkg is
     if ext_proc_call = "" then          -- proc_name = "sbi_read"
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-    -- Log will be handled by calling procedure (e.g. sbi_check)
+      -- Will be handled by calling procedure (e.g. sbi_check)
     end if;
   end procedure;
 
   procedure sbi_read (
-    constant addr_value    : in    unsigned;
-    variable data_value    : out   std_logic_vector;
-    constant msg           : in    string;
-    signal clk             : in    std_logic;
-    signal sbi_if          : inout t_sbi_if;
-    constant scope         : in    string           := C_SCOPE;
-    constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant addr_value         : in    unsigned;
+    variable data_value         : out   std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call      : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
     ) is
   begin
     sbi_read(addr_value, data_value, msg, clk, sbi_if.cs, sbi_if.addr,
-             sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata,
-             scope, msg_id_panel, config, ext_proc_call);
+             sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
 
@@ -574,20 +580,20 @@ package body sbi_bfm_pkg is
   ---------------------------------------------------------------------------------
   -- Perform a read operation, then compare the read value to the POLL_UNTILed value.
   procedure sbi_check (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal cs             : inout std_logic;
-    signal addr           : inout unsigned;
-    signal rena           : inout std_logic;
-    signal wena           : inout std_logic;
-    signal ready          : in    std_logic;
-    signal rdata          : in    std_logic_vector;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal rdata                : in    std_logic_vector;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
     constant proc_name : string := "sbi_check";
     constant proc_call : string := "sbi_check(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
@@ -612,20 +618,19 @@ package body sbi_bfm_pkg is
   end procedure;
 
   procedure sbi_check (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal sbi_if         : inout t_sbi_if;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
   begin
     sbi_check(addr_value, data_exp, msg, clk, sbi_if.cs, sbi_if.addr,
-              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata,
-              alert_level, scope, msg_id_panel, config);
+              sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, alert_level, scope, msg_id_panel, config);
   end procedure;
 
 
@@ -635,23 +640,23 @@ package body sbi_bfm_pkg is
   -- Perform a read operation, then compare the read value to the POLL_UNTILed value.
   -- The checking is repeated until timeout or N occurrences (reads) without POLL_UNTILed data.
   procedure sbi_poll_until (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant max_polls    : in    integer          := 1;
-    constant timeout      : in    time             := 0 ns;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal cs             : inout std_logic;
-    signal addr           : inout unsigned;
-    signal rena           : inout std_logic;
-    signal wena           : inout std_logic;
-    signal ready          : in    std_logic;
-    signal rdata          : in    std_logic_vector;
-    signal terminate_loop : in    std_logic;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant max_polls          : in    integer          := 1;
+    constant timeout            : in    time             := 0 ns;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal cs                   : inout std_logic;
+    signal addr                 : inout unsigned;
+    signal rena                 : inout std_logic;
+    signal wena                 : inout std_logic;
+    signal ready                : in    std_logic;
+    signal rdata                : in    std_logic_vector;
+    signal terminate_loop       : in    std_logic;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
     constant proc_name : string := "sbi_poll_until";
     constant proc_call : string := proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
@@ -668,7 +673,6 @@ package body sbi_bfm_pkg is
     variable v_num_of_occurrences    : integer          := 0;
     variable v_clk_cycles_waited     : natural          := 0;
     variable v_config                : t_sbi_bfm_config := config;
-
   begin
     -- Check for timeout = 0 and max_polls = 0. This combination can result in an infinite loop if the POLL_UNTILed data does not appear.
     if max_polls = 0 and timeout = 0 ns then
@@ -718,22 +722,24 @@ package body sbi_bfm_pkg is
 
 
   procedure sbi_poll_until (
-    constant addr_value   : in    unsigned;
-    constant data_exp     : in    std_logic_vector;
-    constant max_polls    : in    integer          := 1;
-    constant timeout      : in    time             := 0 ns;
-    constant msg          : in    string;
-    signal clk            : in    std_logic;
-    signal sbi_if         : inout t_sbi_if;
-    signal terminate_loop : in    std_logic;
-    constant alert_level  : in    t_alert_level    := error;
-    constant scope        : in    string           := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel   := shared_msg_id_panel;
-    constant config       : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
+    constant addr_value         : in    unsigned;
+    constant data_exp           : in    std_logic_vector;
+    constant max_polls          : in    integer          := 1;
+    constant timeout            : in    time             := 0 ns;
+    constant msg                : in    string;
+    signal clk                  : in    std_logic;
+    signal sbi_if               : inout t_sbi_if;
+    signal terminate_loop       : in    std_logic;
+    constant alert_level        : in    t_alert_level    := error;
+    constant scope              : in    string           := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel   := shared_msg_id_panel;
+    constant config             : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
   begin
     sbi_poll_until(addr_value, data_exp, max_polls, timeout, msg, clk, sbi_if.cs, sbi_if.addr,
-                   sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata,
-                   terminate_loop, alert_level, scope, msg_id_panel, config);
+                   sbi_if.rena, sbi_if.wena, sbi_if.ready, sbi_if.rdata, terminate_loop, alert_level, scope, msg_id_panel, config);
   end procedure;
+
+
+
 end package body sbi_bfm_pkg;

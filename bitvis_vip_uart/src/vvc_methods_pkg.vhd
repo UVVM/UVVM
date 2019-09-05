@@ -43,22 +43,33 @@ package vvc_methods_pkg is
 
   -- Type found in UVVM-Util types_pkg
   constant C_UART_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
-    delay_type                         => NO_DELAY,
-    delay_in_time                      => 0 ns,
-    inter_bfm_delay_violation_severity => warning
-    );
+    delay_type                          => NO_DELAY,
+    delay_in_time                       => 0 ns,
+    inter_bfm_delay_violation_severity  => WARNING
+  );
+
+  type t_error_injection is record
+    parity_bit_prob : real;
+    stop_bit_prob   : real;
+  end record t_error_injection;
+
+  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+    parity_bit_prob => 0.0,
+    stop_bit_prob   => 0.0
+  );
 
   type t_vvc_config is
   record
-    inter_bfm_delay                       : t_inter_bfm_delay;  -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
-    cmd_queue_count_max                   : natural;  -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
-    cmd_queue_count_threshold             : natural;  -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
-    cmd_queue_count_threshold_severity    : t_alert_level;  -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural;  -- Maximum number of unfetched results before result_queue is full.
-    result_queue_count_threshold_severity : t_alert_level;  -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
-    result_queue_count_threshold          : natural;  -- Severity of alert to be initiated if exceeding result_queue_count_threshold
-    bfm_config                            : t_uart_bfm_config;  -- Configuration for the BFM. See BFM quick reference
-    msg_id_panel                          : t_msg_id_panel;  -- VVC dedicated message ID panel
+    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural;           -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural;           -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level;     -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
+    result_queue_count_max                : natural;           -- Maximum number of unfetched results before result_queue is full.
+    result_queue_count_threshold_severity : t_alert_level;     -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
+    result_queue_count_threshold          : natural;           -- Severity of alert to be initiated if exceeding result_queue_count_threshold
+    bfm_config                            : t_uart_bfm_config; -- Configuration for the BFM. See BFM quick reference
+    msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
+    error_injection                       : t_error_injection;
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -72,7 +83,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
-    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
+    error_injection                       => C_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -162,6 +174,11 @@ package vvc_methods_pkg is
   procedure restore_global_dtt(
     signal dtt_group : inout t_transaction_info_group ;
     constant vvc_cmd : in t_vvc_cmd_record);
+
+
+  impure function decide_if_error_is_injected(
+    constant probability  : in real
+  ) return boolean;
 
 
 end package vvc_methods_pkg;
@@ -287,6 +304,15 @@ package body vvc_methods_pkg is
 
     wait for 0 ns;
   end procedure restore_global_dtt;
+  impure function decide_if_error_is_injected(
+    constant probability  : in real
+  ) return boolean is
+  begin
+    check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
+
+    return (random(0.0, 1.0) <= probability);
+  end function decide_if_error_is_injected;
+
 
 
 end package body vvc_methods_pkg;

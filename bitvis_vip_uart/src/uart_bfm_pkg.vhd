@@ -54,6 +54,16 @@ package uart_bfm_pkg is
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR  : string := "; ";
   type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_DATA_MAX_LENGTH-1 downto 0);
 
+  type t_error_injection is record
+    parity_bit_error  : boolean;
+    stop_bit_error    : boolean;
+  end record t_error_injection;
+
+  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+    parity_bit_error  => false,
+    stop_bit_error    => false
+  );
+
   type t_uart_bfm_config is
   record
     bit_time                                  : time;                 -- The time it takes to transfer one bit
@@ -68,6 +78,7 @@ package uart_bfm_pkg is
     id_for_bfm_wait                           : t_msg_id;             -- The message ID used for logging waits in the UART BFM
     id_for_bfm_poll                           : t_msg_id;             -- The message ID used for logging polling in the UART BFM
     id_for_bfm_poll_summary                   : t_msg_id;             -- The message ID used for logging polling summary in the UART BFM
+    error_injection                           : t_error_injection;
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
@@ -82,7 +93,8 @@ package uart_bfm_pkg is
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
-    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY
+    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
+    error_injection                           => C_ERROR_INJECTION_INACTIVE
     );
 
   ----------------------------------------------------
@@ -180,15 +192,23 @@ package body uart_bfm_pkg is
   -- uart_transmit
   ---------------------------------------------------------------------------------
   procedure uart_transmit (
-    constant data_value         : in  std_logic_vector;
-    constant msg                : in  string;
-    signal tx                   : inout std_logic;
-    constant config             : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope              : in  string             := C_SCOPE;
-    constant msg_id_panel       : in  t_msg_id_panel     := shared_msg_id_panel
+    constant data_value     : in  std_logic_vector;
+    constant msg            : in  string;
+    signal tx               : inout std_logic;
+    constant config         : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope          : in  string             := C_SCOPE;
+    constant msg_id_panel   : in  t_msg_id_panel     := shared_msg_id_panel
     ) is
-    constant proc_name          : string := "uart_transmit";
-    constant proc_call          : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_name      : string := "uart_transmit";
+    constant proc_call      : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+
+    variable v_odd_parity_bit   : std_logic;
+    variable v_even_parity_bit  : std_logic;
+
+    alias stop_bit_error    is config.error_injection.stop_bit_error;
+    alias parity_bit_error  is config.error_injection.parity_bit_error;
+
+
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
@@ -205,17 +225,28 @@ package body uart_bfm_pkg is
       wait for config.bit_time;
     end loop;
 
-    -- parity?
+    -- Set parity bit
     if (config.parity = PARITY_ODD) then
       tx <= odd_parity(data_value);
-      wait for config.bit_time;
     elsif(config.parity = PARITY_EVEN) then
-      tx <= not odd_parity(data_value);
-      wait for config.bit_time;
+      tx <= not(odd_parity(data_value));
     end if;
 
-    -- stop bits
-    tx <= config.idle_state;
+    -- Invert parity bit if error injection is requested
+    if parity_bit_error = true then
+      tx <= not(tx);
+    end if;
+    wait for config.bit_time;
+
+
+    -- Set stop bits
+    if stop_bit_error = false then
+      tx <= config.idle_state;
+    else
+      -- Invert stop bit if error injection is requested
+      tx <= not(config.idle_state);
+    end if;
+
     wait for config.bit_time;
     if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
       wait for config.bit_time/2;

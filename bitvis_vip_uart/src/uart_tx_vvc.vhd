@@ -177,14 +177,18 @@ begin
 -- - Fetch and execute the commands
 --===============================================================================================
   cmd_executor : process
-    variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_read_data                             : t_vvc_result;  -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access : time                                       := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access    : time                                       := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access      : time                                       := 0 ns;
-    variable v_command_is_bfm_access                 : boolean                                    := false;
-    variable v_prev_command_was_bfm_access           : boolean                                    := false;
-    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_cmd                                    : t_vvc_cmd_record;
+    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
+    variable v_command_is_bfm_access                  : boolean := false;
+    variable v_prev_command_was_bfm_access            : boolean := false;
+    variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+
+    variable v_seed1 : positive := 1;
+    variable v_seed2 : positive := 5;
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -227,6 +231,10 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
+          -- Set error injection
+          vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_prob);
+          vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_prob);
+
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
@@ -238,6 +246,11 @@ begin
                         config                => vvc_config.bfm_config,
                         scope                 => C_SCOPE,
                         msg_id_panel          => vvc_config.msg_id_panel);
+
+          -- Disable any error injection
+          vvc_config.bfm_config.error_injection.parity_bit_error  := false;
+          vvc_config.bfm_config.error_injection.stop_bit_error    := false;
+
 
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);

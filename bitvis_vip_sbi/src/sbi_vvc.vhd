@@ -239,8 +239,9 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set error injection
-          vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
+          -- Set BFM error injection
+          vvc_config.bfm_config.error_injection.delay_error           := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
+          vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection.write_and_read_error_prob);
 
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
@@ -262,7 +263,7 @@ begin
                     config                => vvc_config.bfm_config);
 
         when READ =>
-          -- Set error injection
+          -- Set BFM error injection
           vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
 
           -- Set DTT
@@ -287,7 +288,7 @@ begin
                                                       result       => v_read_data);
 
         when CHECK =>
-          -- Set error injection
+          -- Set BFM error injection
           vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
 
           -- Set DTT
@@ -311,7 +312,7 @@ begin
                     config                => vvc_config.bfm_config);
 
         when POLL_UNTIL =>
-          -- Set error injection
+          -- Set BFM error injection
           vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
 
           -- Set DTT

@@ -232,8 +232,6 @@ begin
       end if;
 
 
-      set_global_dtt(dtt_transaction_info, v_cmd);
-
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
@@ -241,6 +239,12 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
+          -- Set error injection
+          vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
+
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
@@ -258,6 +262,12 @@ begin
                     config                => vvc_config.bfm_config);
 
         when READ =>
+          -- Set error injection
+          vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
+
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
@@ -277,6 +287,12 @@ begin
                                                       result       => v_read_data);
 
         when CHECK =>
+          -- Set error injection
+          vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
+
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with to wide data. " & v_cmd.msg);
@@ -295,6 +311,12 @@ begin
                     config                => vvc_config.bfm_config);
 
         when POLL_UNTIL =>
+          -- Set error injection
+          vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
+
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with to wide data. " & v_cmd.msg);
@@ -354,6 +376,7 @@ begin
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
 
+      -- Set DTT back to default values
       restore_global_dtt(dtt_transaction_info, v_cmd);
     end loop;
   end process;

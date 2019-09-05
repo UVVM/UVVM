@@ -254,6 +254,7 @@ package body vvc_methods_pkg is
   ) return boolean is
   begin
     check_value(probability <= 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
+    check_value(probability >= 0.0, tb_error, "Verify probability value within range 0.0 - 1.0");
 
     return (random(0.0, 1.0) <= probability);
   end function determine_error_injection;

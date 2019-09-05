@@ -225,12 +225,13 @@ begin
       end if;
 
 
-      set_global_dtt(dtt_transaction_info, v_cmd);
-
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
           uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
@@ -246,6 +247,9 @@ begin
                                                       result       => v_read_data);
 
         when EXPECT =>
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
@@ -298,6 +302,7 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
+      -- Set DTT back to default values
       restore_global_dtt(dtt_transaction_info, v_cmd);
     end loop;
   end process;

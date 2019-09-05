@@ -225,7 +225,6 @@ begin
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
-      set_global_dtt(dtt_transaction_info, v_cmd);
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
@@ -234,6 +233,9 @@ begin
           -- Set error injection
           vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_prob);
           vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_prob);
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -282,6 +284,7 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
+      -- Set DTT back to default values
       restore_global_dtt(dtt_transaction_info, v_cmd);
     end loop;
   end process;

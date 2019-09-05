@@ -164,11 +164,12 @@ package vvc_methods_pkg is
     );
 
   --==============================================================================
-  -- DTT procedures
+  -- Direct Transaction Transfer methods
   --==============================================================================
   procedure set_global_dtt(
-    signal dtt_group : inout t_transaction_info_group ;
-    constant vvc_cmd : in t_vvc_cmd_record);
+    signal dtt_group    : inout t_transaction_info_group ;
+    constant vvc_cmd    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config);
 
 
   procedure restore_global_dtt(
@@ -176,6 +177,9 @@ package vvc_methods_pkg is
     constant vvc_cmd : in t_vvc_cmd_record);
 
 
+  --==============================================================================
+  -- Error Injection methods
+  --==============================================================================
   impure function decide_if_error_is_injected(
     constant probability  : in real
   ) return boolean;
@@ -266,11 +270,13 @@ package body vvc_methods_pkg is
 
 
   --==============================================================================
-  -- DTT procedures
+  -- Direct Transaction Transfer methods
   --==============================================================================
   procedure set_global_dtt(
-    signal dtt_group : inout t_transaction_info_group ;
-    constant vvc_cmd : in t_vvc_cmd_record) is
+    signal dtt_group    : inout t_transaction_info_group ;
+    constant vvc_cmd    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config) is
+
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
@@ -279,11 +285,16 @@ package body vvc_methods_pkg is
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                         <= IN_PROGRESS;
-        dtt_group.bt.error_info.parity_bit_error                <= false; -- set to config
-        dtt_group.bt.error_info.stop_bit_error                  <= false; -- set to config
+        dtt_group.bt.error_info.parity_bit_error                <= false;
+        dtt_group.bt.error_info.stop_bit_error                  <= false;
+
+        if vvc_cmd.operation = TRANSMIT then
+          dtt_group.bt.error_info.parity_bit_error                <= vvc_config.bfm_config.error_injection.parity_bit_error;
+          dtt_group.bt.error_info.stop_bit_error                  <= vvc_config.bfm_config.error_injection.stop_bit_error;
+        end if;
 
       when others =>
-        null;
+        alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;
@@ -304,6 +315,12 @@ package body vvc_methods_pkg is
 
     wait for 0 ns;
   end procedure restore_global_dtt;
+
+
+  --==============================================================================
+  -- Error Injection methods
+  --==============================================================================
+
   impure function decide_if_error_is_injected(
     constant probability  : in real
   ) return boolean is

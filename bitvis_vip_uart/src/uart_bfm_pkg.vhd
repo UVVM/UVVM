@@ -189,18 +189,22 @@ package body uart_bfm_pkg is
   -- uart_transmit
   ---------------------------------------------------------------------------------
   procedure uart_transmit (
-    constant data_value    : in  std_logic_vector;
-    constant msg           : in  string;
-    signal tx              : inout std_logic;
-    constant config        : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope         : in  string             := C_SCOPE;
-    constant msg_id_panel  : in  t_msg_id_panel     := shared_msg_id_panel
+    constant data_value     : in  std_logic_vector;
+    constant msg            : in  string;
+    signal tx               : inout std_logic;
+    constant config         : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope          : in  string             := C_SCOPE;
+    constant msg_id_panel   : in  t_msg_id_panel     := shared_msg_id_panel
     ) is
-    constant proc_name    : string := "uart_transmit";
-    constant proc_call    : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_name      : string := "uart_transmit";
+    constant proc_call      : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
 
     variable v_odd_parity_bit   : std_logic;
     variable v_even_parity_bit  : std_logic;
+
+    alias stop_bit_error    is config.error_injection.stop_bit_error;
+    alias parity_bit_error  is config.error_injection.parity_bit_error;
+
 
   begin
     -- check whether config.bit_time was set probably
@@ -218,33 +222,31 @@ package body uart_bfm_pkg is
       wait for config.bit_time;
     end loop;
 
-    -- Error Injection: invert parity bit if parity_bit_error = true
-    if config.error_injection.parity_bit_error = false then
-      v_odd_parity_bit := odd_parity(data_value);
-    else -- true
-      v_odd_parity_bit := not(odd_parity(data_value));
+    -- Set parity bit
+    if (config.parity = PARITY_ODD) then
+      tx <= odd_parity(data_value);
+    elsif(config.parity = PARITY_EVEN) then
+      tx <= not(odd_parity(data_value));
     end if;
 
-    -- set parity
-    if (config.parity = PARITY_ODD) then
-      tx <= v_odd_parity_bit;
-    elsif(config.parity = PARITY_EVEN) then
-      tx <= not(v_odd_parity_bit);
+    if parity_bit_error = true then
+      tx <= not(tx);
     end if;
     wait for config.bit_time;
 
-    -- stop bits
-    tx <= config.idle_state;
 
-    -- Error Injection: skip stop bit(s) if stop_bit_error = true
-    if config.error_injection.stop_bit_error = false then
+    -- Set stop bits
+    if stop_bit_error = false then
+      tx <= config.idle_state;
+    else
+      tx <= not(config.idle_state);
+    end if;
+
+    wait for config.bit_time;
+    if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
+      wait for config.bit_time/2;
+    elsif(config.num_stop_bits = STOP_BITS_TWO) then
       wait for config.bit_time;
-
-      if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
-        wait for config.bit_time/2;
-      elsif(config.num_stop_bits = STOP_BITS_TWO) then
-        wait for config.bit_time;
-      end if;
     end if;
 
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);

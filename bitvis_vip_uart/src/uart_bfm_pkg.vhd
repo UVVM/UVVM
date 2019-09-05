@@ -229,6 +229,7 @@ package body uart_bfm_pkg is
       tx <= not(odd_parity(data_value));
     end if;
 
+    -- Invert parity bit if error injection is requested
     if parity_bit_error = true then
       tx <= not(tx);
     end if;
@@ -239,6 +240,7 @@ package body uart_bfm_pkg is
     if stop_bit_error = false then
       tx <= config.idle_state;
     else
+      -- Invert stop bit if error injection is requested
       tx <= not(config.idle_state);
     end if;
 

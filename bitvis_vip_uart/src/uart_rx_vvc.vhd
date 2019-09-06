@@ -23,6 +23,11 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.slv_sb_pkg.all;
+
+
 --library bitvis_vip_uart;
 --use bitvis_vip_uart.transaction_pkg.all;
 use work.transaction_pkg.all;
@@ -78,6 +83,7 @@ architecture behave of uart_rx_vvc is
   -- DTT
   alias dtt_transaction_info    : t_transaction_info_group is global_uart_transaction_info(RX, GC_INSTANCE_IDX);
 
+  shared variable v_uart_sb                         : t_generic_sb;
 
 begin
 
@@ -187,12 +193,17 @@ begin
     variable v_command_is_bfm_access                 : boolean                                    := false;
     variable v_prev_command_was_bfm_access           : boolean                                    := false;
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-
   begin
 
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
+
+
+    -- Setup UART scoreboard
+    v_uart_sb.set_scope("SB UART");
+    v_uart_sb.enable(GC_INSTANCE_IDX, "SB UART Enabled");
+
 
     loop
 
@@ -246,11 +257,13 @@ begin
                                                       cmd_idx      => v_cmd.cmd_idx,
                                                       result       => v_read_data);
 
+          -- Request SB check result
           check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
           if v_cmd.data_routing = TO_SB then
             -- call SB check_actual
-
+            v_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           end if;
+
 
         when EXPECT =>
           -- Set DTT

@@ -36,10 +36,6 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
-
 
 
 -- Test bench entity
@@ -64,8 +60,6 @@ architecture func of uvvm_demo_tb is
   constant C_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
   constant C_ADDR_TX_READY      : unsigned(2 downto 0) := "011";
 
-  -- SB for the UART side of the DUT
-  shared variable v_uart_sb : t_generic_sb;
 
 
   begin
@@ -107,11 +101,6 @@ architecture func of uvvm_demo_tb is
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
     enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
 
-    -- Setup Scoreboard
-    v_uart_sb.set_scope("UART_SB");
-    v_uart_sb.config(C_SB_CONFIG_DEFAULT, "Set config for SB UART");
-    v_uart_sb.enable(VOID);
-    v_uart_sb.enable_log_msg(ID_DATA);
 
     ------------------------------------------------------------
 
@@ -175,7 +164,7 @@ architecture func of uvvm_demo_tb is
 
 
     -- print report of counters
-    v_uart_sb.report_counters(VOID);
+    --v_uart_sb.report_counters(VOID);
 
 
     -----------------------------------------------------------------------------

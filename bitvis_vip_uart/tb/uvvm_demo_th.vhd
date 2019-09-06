@@ -26,6 +26,10 @@ library bitvis_vip_uart;
 library bitvis_uart;
 library bitvis_vip_clock_generator;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
+
 
 -- Test harness entity
 entity uvvm_demo_th is
@@ -53,6 +57,8 @@ architecture struct of uvvm_demo_th is
 
   constant C_CLK_PERIOD : time    := 10 ns; -- 100 MHz
   constant C_CLOCK_GEN  : natural := 1;
+
+
 
 begin
 
@@ -122,6 +128,15 @@ begin
 
   -- Toggle the reset after 5 clock periods
   p_arst: arst <= '1', '0' after 5 *C_CLK_PERIOD;
+
+
+  -----------------------------------------------------------------------------
+  -- Monitor - UART
+  -----------------------------------------------------------------------------
+
+
+
+
 
   -----------------------------------------------------------------------------
   -- Clock Generator VVC

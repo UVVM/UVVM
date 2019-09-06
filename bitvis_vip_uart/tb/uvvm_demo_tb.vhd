@@ -109,6 +109,9 @@ architecture func of uvvm_demo_tb is
 
     -- Setup Scoreboard
     v_uart_sb.set_scope("UART_SB");
+    v_uart_sb.config(C_SB_CONFIG_DEFAULT, "Set config for SB UART");
+    v_uart_sb.enable(VOID);
+    v_uart_sb.enable_log_msg(ID_DATA);
 
     ------------------------------------------------------------
 
@@ -169,108 +172,10 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob := 0.0;
 
 
---    log(ID_LOG_HDR, "Check simple transmit", C_SCOPE);
---    ------------------------------------------------------------
---    sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"55", "TX_DATA");
---    uart_expect(UART_VVCT,1,RX,  x"55", "Expecting data on UART RX");
---    await_completion(UART_VVCT,1,RX,  13 * C_BIT_PERIOD);
---    wait for 200 ns;  -- margin
---
---
---
---    log(ID_LOG_HDR, "Check simple receive", C_SCOPE);
---    ------------------------------------------------------------
---    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
---    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
---    wait for 200 ns;  -- margin
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
---    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
---
---
---
---    log(ID_LOG_HDR, "Check single simultaneous transmit and receive", C_SCOPE);
---    ------------------------------------------------------------
---    sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"B4", "TX_DATA");
---    uart_transmit(UART_VVCT,1,TX,  x"87", "UART TX");
---    uart_expect(UART_VVCT,1,RX,  x"B4", "Expecting data on UART RX");
---    await_completion(UART_VVCT,1,TX, 13 * C_BIT_PERIOD);
---    wait for 200 ns;  -- margin
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA");
---    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
---
---
---
---    log(ID_LOG_HDR, "Check multiple simultaneous receive and read", C_SCOPE);
---    ------------------------------------------------------------
---    uart_transmit(UART_VVCT,1,TX,  x"A1", "UART TX");
---    uart_transmit(UART_VVCT,1,TX,  x"A2", "UART TX");
---    uart_transmit(UART_VVCT,1,TX,  x"A3", "UART TX");
---    await_completion(UART_VVCT,1,TX,  3 * 13 * C_BIT_PERIOD);
---    wait for 200 ns;  -- margin
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"A1", "RX_DATA");
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"A2", "RX_DATA");
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"A3", "RX_DATA");
---    await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
---
---
---
---    log(ID_LOG_HDR, "Skew SBI read over UART receive ", C_SCOPE);
---    ------------------------------------------------------------
---    log("Setting up the UART VVC to transmit 102 samples to the DUT");
---    for i in 1 to 102 loop
---      uart_transmit(UART_VVCT,1,TX,  std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i)));
---    end loop;
---
---    log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
---    insert_delay(SBI_VVCT,1, C_TIME_OF_ONE_UART_TX - 50 * C_CLK_PERIOD, "Inserting delay in SBI VVC to wait for first byte to complete");
---    for i in 1 to 100 loop
---      insert_delay(SBI_VVCT,1, C_TIME_OF_ONE_UART_TX, "Delaying for the time of one uart transmission");
---      insert_delay(SBI_VVCT,1, C_CLK_PERIOD, "Skewing the SBI read one clock cycle");
---      sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
---    end loop;
---
---    await_completion(UART_VVCT,1,TX,  103 * C_TIME_OF_ONE_UART_TX);
---    wait for 50 ns; -- to assure UART RX complete internally
---    -- Check the last two bytes in the DUT RX buffer.
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
---    await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
---
---
---
---    log(ID_LOG_HDR, "Skew SBI read over UART receive with inter-BFM delay functionality", C_SCOPE);
---    ------------------------------------------------------------
---    -- This test case will test the same as the test case above, but using the built in delay functionality in the SBI VVC
---    log("Setting up the UART VVC to transmit 102 samples to the DUT");
---    for i in 1 to 102 loop
---      uart_transmit(UART_VVCT,1,TX,  std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i)));
---    end loop;
---
---    log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
---    -- The SBI VVC will wait until the UART VVC is 50 clock periods away from successfully transmitting the second byte.
---    insert_delay(SBI_VVCT,1, C_TIME_OF_ONE_UART_TX, "Insert delay in SBI VVC until the first UART transmission has completed");
---    insert_delay(SBI_VVCT,1, C_TIME_OF_ONE_UART_TX - 50 * C_CLK_PERIOD, "Inserting delay in SBI VVC until second UART transmission has almost completed");
---
---    log("Setting the SBI VVC to separate each BFM access with 1760 ns");
---    shared_sbi_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
---    shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := C_TIME_OF_ONE_UART_TX+C_CLK_PERIOD;
---
---    for i in 1 to 100 loop
---      sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
---    end loop;
---
---    await_completion(UART_VVCT,1,TX,  103 * C_TIME_OF_ONE_UART_TX);
---    await_completion(SBI_VVCT,1, 2 * C_TIME_OF_ONE_UART_TX);
---
---    wait for 50 ns; -- to assure UART RX complete internally
---    -- Check the last two bytes in the DUT RX buffer.
---    log("Setting the SBI VVC back to no delay between BFM accesses");
---    shared_sbi_vvc_config(1).inter_bfm_delay.delay_type := NO_DELAY;
---    shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
---
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
---    await_completion(SBI_VVCT,1,  2*C_TIME_OF_ONE_UART_TX);
+
+
+    -- print report of counters
+    v_uart_sb.report_counters(VOID);
 
 
     -----------------------------------------------------------------------------

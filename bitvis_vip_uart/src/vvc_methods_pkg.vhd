@@ -146,6 +146,7 @@ package vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant data_routing     : in    t_data_routing;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
@@ -217,9 +218,10 @@ package body vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant data_routing     : in    t_data_routing;
     constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant alert_level      : in    t_alert_level   := error;
+    constant scope            : in    string          := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
@@ -229,8 +231,9 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation   := RECEIVE;
-    shared_vvc_cmd.alert_level := alert_level;
+    shared_vvc_cmd.operation    := RECEIVE;
+    shared_vvc_cmd.alert_level  := alert_level;
+    shared_vvc_cmd.data_routing := data_routing;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 

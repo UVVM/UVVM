@@ -55,9 +55,9 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  type t_transaction_status is (NO_OPERATION, IN_PROGRESS);
+  type t_transaction_status is (INACTIVE, IN_PROGRESS);
 
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := NO_OPERATION;
+  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
   -- VVC Meta
   type t_vvc_meta is record

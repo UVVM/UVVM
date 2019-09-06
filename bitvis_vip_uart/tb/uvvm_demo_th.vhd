@@ -21,8 +21,17 @@ use IEEE.numeric_std.all;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library uvvm_util;
+context uvvm_util.uvvm_util_context;    -- t_channel (RX/TX)
+
 library bitvis_vip_sbi;
+use bitvis_vip_sbi.transaction_pkg.all;
+use bitvis_vip_sbi.vvc_methods_pkg.all;
+
 library bitvis_vip_uart;
+use bitvis_vip_uart.transaction_pkg.all;
+use bitvis_vip_uart.vvc_methods_pkg.all;
+
 library bitvis_uart;
 library bitvis_vip_clock_generator;
 
@@ -135,6 +144,34 @@ begin
   -----------------------------------------------------------------------------
 
 
+
+
+
+
+
+
+  -----------------------------------------------------------------------------
+  -- Model
+  -----------------------------------------------------------------------------
+  p_model: process
+    -- SBI DTT
+    alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_info_group is
+      global_sbi_transaction_info(1);
+    -- UART DTT
+    alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
+      global_uart_transaction_info(RX, 1);
+    alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
+      global_uart_transaction_info(TX, 1);
+  begin
+
+    while true loop
+      wait on sbi_dtt, uart_rx_dtt, uart_tx_dtt;
+
+
+    end loop;
+
+    wait;
+  end process p_model;
 
 
 

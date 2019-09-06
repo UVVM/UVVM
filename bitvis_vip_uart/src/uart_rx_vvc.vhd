@@ -246,6 +246,12 @@ begin
                                                       cmd_idx      => v_cmd.cmd_idx,
                                                       result       => v_read_data);
 
+          check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_actual
+
+          end if;
+
         when EXPECT =>
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);

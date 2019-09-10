@@ -83,7 +83,6 @@ architecture behave of uart_rx_vvc is
   -- DTT
   alias dtt_transaction_info    : t_transaction_info_group is global_uart_transaction_info(RX, GC_INSTANCE_IDX);
 
-  shared variable v_uart_sb                         : t_generic_sb;
 
 begin
 
@@ -203,6 +202,7 @@ begin
     -- Setup UART scoreboard
     v_uart_sb.set_scope("SB UART");
     v_uart_sb.enable(GC_INSTANCE_IDX, "SB UART Enabled");
+    v_uart_sb.enable_log_msg(ID_DATA);
 
 
     loop

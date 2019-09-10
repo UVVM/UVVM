@@ -234,6 +234,7 @@ package body uart_bfm_pkg is
 
     -- Invert parity bit if error injection is requested
     if parity_bit_error = true then
+      log(config.id_for_bfm, "Injecting parity bit error", scope);
       tx <= not(tx);
     end if;
     wait for config.bit_time;
@@ -243,6 +244,7 @@ package body uart_bfm_pkg is
     if stop_bit_error = false then
       tx <= config.idle_state;
     else
+      log(config.id_for_bfm, "Injecting stop bit error", scope);
       -- Invert stop bit if error injection is requested
       tx <= not(config.idle_state);
     end if;

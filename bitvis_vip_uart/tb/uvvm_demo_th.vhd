@@ -47,6 +47,12 @@ end entity;
 -- Test harness architecture
 architecture struct of uvvm_demo_th is
 
+  constant C_DATA_WIDTH   : natural := 8;
+  constant C_ADDR_WIDTH   : natural := 3;
+  constant C_SBI_VVC      : natural := 1;
+  constant C_UART_TX_VVC  : natural := 1;
+  constant C_UART_RX_VVC  : natural := 1;
+
   -- DSP interface and general control signals
   signal clk            : std_logic  := '0';
   signal arst           : std_logic  := '0';
@@ -102,8 +108,8 @@ begin
   -----------------------------------------------------------------------------
   i1_sbi_vvc: entity bitvis_vip_sbi.sbi_vvc
   generic map(
-    GC_ADDR_WIDTH     => 3,
-    GC_DATA_WIDTH     => 8,
+    GC_ADDR_WIDTH     => C_ADDR_WIDTH,
+    GC_DATA_WIDTH     => C_DATA_WIDTH,
     GC_INSTANCE_IDX   => 1
   )
   port map(
@@ -156,16 +162,54 @@ begin
   p_model: process
     -- SBI DTT
     alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_info_group is
-      global_sbi_transaction_info(1);
+      global_sbi_transaction_info(C_SBI_VVC);
     -- UART DTT
     alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
-      global_uart_transaction_info(RX, 1);
+      global_uart_transaction_info(RX, C_UART_RX_VVC);
     alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
-      global_uart_transaction_info(TX, 1);
+      global_uart_transaction_info(TX, C_UART_TX_VVC);
   begin
 
     while true loop
       wait on sbi_dtt, uart_rx_dtt, uart_tx_dtt;
+
+
+      if sbi_dtt.bt'event then
+
+        case sbi_dtt.bt.operation is
+
+          when WRITE =>
+
+            if  not(sbi_dtt.bt.error_info.delay_error) or
+                not(sbi_dtt.bt.error_info.write_and_read_error) then
+
+                -- add to UART scoreboard
+                v_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
+            end if;
+
+
+          when others =>
+            null;
+        end case;
+
+
+      end if;
+
+
+      if uart_rx_dtt.bt'event then
+
+      end if;
+
+
+      if uart_tx_dtt.bt'event then
+        if  not(uart_tx_dtt.bt.error_info.parity_bit_error) or
+            not(uart_tx_dtt.bt.error_info.stop_bit_error) then
+
+        end if;
+
+      end if;
+
+
 
 
     end loop;

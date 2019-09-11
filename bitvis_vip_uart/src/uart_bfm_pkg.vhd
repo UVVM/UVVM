@@ -202,9 +202,6 @@ package body uart_bfm_pkg is
     constant proc_name      : string := "uart_transmit";
     constant proc_call      : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
 
-    variable v_odd_parity_bit   : std_logic;
-    variable v_even_parity_bit  : std_logic;
-
     alias stop_bit_error    is config.error_injection.stop_bit_error;
     alias parity_bit_error  is config.error_injection.parity_bit_error;
 
@@ -234,7 +231,11 @@ package body uart_bfm_pkg is
 
     -- Invert parity bit if error injection is requested
     if parity_bit_error = true then
-      tx <= not(tx);
+      if (config.parity = PARITY_ODD) then
+        tx <= not(odd_parity(data_value));
+      elsif(config.parity = PARITY_EVEN) then
+        tx <= odd_parity(data_value);
+      end if;
     end if;
     wait for config.bit_time;
 

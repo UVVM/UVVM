@@ -173,47 +173,32 @@ begin
     while true loop
       wait on sbi_dtt, uart_rx_dtt, uart_tx_dtt;
 
-
       if sbi_dtt.bt'event then
-
         case sbi_dtt.bt.operation is
-
           when WRITE =>
-
             if  not(sbi_dtt.bt.error_info.delay_error) or
                 not(sbi_dtt.bt.error_info.write_and_read_error) then
-
                 -- add to UART scoreboard
                 v_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
             end if;
-
-
           when others =>
             null;
         end case;
-
-
       end if;
-
 
       if uart_rx_dtt.bt'event then
-
+        -- Send to SB is handled by RX VVC.
+        null;
       end if;
-
 
       if uart_tx_dtt.bt'event then
         if  not(uart_tx_dtt.bt.error_info.parity_bit_error) or
             not(uart_tx_dtt.bt.error_info.stop_bit_error) then
-
+            null;
         end if;
-
       end if;
 
-
-
-
     end loop;
-
     wait;
   end process p_model;
 

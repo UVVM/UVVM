@@ -74,16 +74,8 @@ architecture func of uvvm_demo_tb is
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
-
-
-    procedure release_uart_tx is
-      alias uart_tx is <<signal i_test_harness.uart_vvc_tx : std_logic>>;
-    begin
-      log("releaseing UART TX");
-      uart_tx <= force shared_uart_vvc_config(TX,1).bfm_config.idle_state;
-      wait for 2* C_CLK_PERIOD;
-      uart_tx <= release;
-    end procedure release_uart_tx;
+    variable v_prob : real;
+    variable v_data : std_logic_vector(7 downto 0);
 
   begin
 
@@ -120,7 +112,7 @@ architecture func of uvvm_demo_tb is
     ------------------------------------------------------------
 
     log("Wait 10 clock period for reset to be turned off");
-    wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
+    wait for (10 * C_CLK_PERIOD);
 
 
     log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE);
@@ -129,72 +121,171 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
 
---    log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
---    ------------------------------------------------------------
---    sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"00", "RX_DATA default");
---    sbi_check(SBI_VVCT, 1, C_ADDR_TX_READY, x"01", "TX_READY default");
---    sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
---    await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
 
-
---    log(ID_LOG_HDR, "UART Transmit - no error injection", C_SCOPE);
---    ------------------------------------------------------------
---    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
---    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
---
---    wait for 200 ns;  -- margin
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
---    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
---
---
---    log(ID_LOG_HDR, "UART Transmit - parity bit error injection", C_SCOPE);
---    ------------------------------------------------------------
---    log(ID_SEQUENCER, "Configure parity bit error injection", C_SCOPE);
---    --shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob  := 1.0;
---    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
---
---    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
---    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
---    log(ID_SEQUENCER, "Disabling parity bit error", C_SCOPE);
---
---    wait for 200 ns;  -- margin
---    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"55", "RX_DATA");
---    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-
-
-
-
-    log(ID_LOG_HDR, "UART Transmit - stop bit error injection", C_SCOPE);
+    log(ID_LOG_HDR, "UART Transmit - no error injection, no SB", C_SCOPE);
     ------------------------------------------------------------
+    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
+    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
+
+
+    log(ID_LOG_HDR, "SBI Transmit - no error injection, UART SB active", C_SCOPE);
+    ------------------------------------------------------------
+    log(ID_SEQUENCER, "Performing 3x SBI Write and UART Reveive", C_SCOPE);
+    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"01", "SBI Write");
+    uart_receive(UART_VVCT, 1, RX, TO_SB, "UART RX");
+    await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+
+    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"02", "SBI Write");
+    uart_receive(UART_VVCT, 1, RX, TO_SB, "UART RX");
+    await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+
+    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"03", "SBI Write");
+    uart_receive(UART_VVCT, 1, RX, TO_SB, "UART RX");
+    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
+    await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+
+
+    log(ID_LOG_HDR, "UART Transmit - parity bit error injections", C_SCOPE);
+    ------------------------------------------------------------
+    log(ID_SEQUENCER, "Setting parity error probability to 0%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.0;
+    v_data := x"11";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting parity error probability to 20%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.2;
+    v_data := x"22";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting parity error probability to 40%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.4;
+    v_data := x"33";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting parity error probability to 60%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.6;
+    v_data := x"44";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting parity error probability to 80%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.8;
+    v_data := x"55";
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting parity error probability to 100%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 1.0;
+    v_data := x"66";
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting parity error probability to 0%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.0;
+
+
+
+
+
+    log(ID_LOG_HDR, "UART Transmit - stop bit error injections", C_SCOPE);
+    ------------------------------------------------------------
+
+    log(ID_SEQUENCER, "Setting stop error probability to 0%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
+    v_data := x"11";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting stop error probability to 25%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.25;
+    v_data := x"22";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting stop error probability to 50%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.5;
+    v_data := x"33";
+
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting stop error probability to 75%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.75;
+    v_data := x"44";
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+
+    log(ID_SEQUENCER, "Setting stop error probability to 100%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 1.0;
+    v_data := x"55";
 
-    uart_transmit(UART_VVCT, 1, TX, x"55", "UART TX");
-    await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
-
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob := 0.0;
-
+    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"55", "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-
-    release_uart_tx;
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
 
-    log(ID_LOG_HDR, "SBI Write - no error", C_SCOPE);
-    ------------------------------------------------------------
-    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "SBI Write");
-    uart_transmit(UART_VVCT, 1, TX,  x"87", "UART TX");
-    uart_receive(UART_VVCT, 1, RX, TO_SB, "UART receive");
-    await_completion(UART_VVCT, 1, TX, 13*C_BIT_PERIOD);
+    log(ID_SEQUENCER, "Setting stop error probability to 0%", C_SCOPE);
+    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
 
-
-    wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
 
 
     -- print report of counters
-    --v_uart_sb.report_counters(VOID);
+    v_uart_sb.report_counters(VOID);
 
 
     -----------------------------------------------------------------------------

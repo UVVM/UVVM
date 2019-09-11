@@ -220,17 +220,33 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
+
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          -- Call the corresponding procedure in the BFM package.
-          uart_transmit(data_value    => v_normalised_data,
-                        msg           => format_msg(v_cmd),
-                        tx            => uart_vvc_tx,
-                        config        => vvc_config.bfm_config,
-                        scope         => C_SCOPE,
-                        msg_id_panel  => vvc_config.msg_id_panel);
+          -- Loop the number of bytes to transmit
+          for idx in 1 to v_cmd.num_bytes_to_send loop
+
+            -- Randomise data if applicable
+            case v_cmd.randomness is
+              when RANDOM =>
+                v_normalised_data := random(v_normalised_data'length);
+              when RANDOM_FAVOUR_EDGES =>
+                null; -- Not implemented yet
+              when others => -- NA
+                null;
+            end case;
+
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            -- Call the corresponding procedure in the BFM package.
+            uart_transmit(data_value    => v_normalised_data,
+                          msg           => format_msg(v_cmd),
+                          tx            => uart_vvc_tx,
+                          config        => vvc_config.bfm_config,
+                          scope         => C_SCOPE,
+                          msg_id_panel  => vvc_config.msg_id_panel);
+
+          end loop;
 
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);

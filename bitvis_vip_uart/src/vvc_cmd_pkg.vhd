@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -50,7 +50,7 @@ package vvc_cmd_pkg is
 
   constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := C_DATA_MAX_LENGTH;
   constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := 300;
-    
+
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC
@@ -72,8 +72,8 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     data                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     max_receptions        : integer;
-
-
+    randomness            : t_randomisation;
+    num_bytes_to_send     : natural;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -86,13 +86,15 @@ package vvc_cmd_pkg is
     cmd_idx               =>  0,
     command_type          =>  NO_command_type,
     msg_id                =>  NO_ID,
-    gen_integer_array     => (others => -1), 
+    gen_integer_array     => (others => -1),
     gen_boolean           => false,
-    timeout               => 0 ns, 
+    timeout               => 0 ns,
     delay                 => 0 ns,
-    quietness             => NON_QUIET
+    quietness             => NON_QUIET,
+    randomness            => NA,
+    num_bytes_to_send     => 1
     );
-  
+
   --===============================================================================================
   -- shared_vvc_cmd
   --  - Shared variable used for transmitting VVC commands
@@ -100,17 +102,17 @@ package vvc_cmd_pkg is
   shared variable shared_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
 
   --===============================================================================================
-  -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response : 
-  -- 
+  -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response :
+  --
   -- - Used for storing the result of a BFM procedure called by the VVC,
-  --   so that the result can be transported from the VVC to for example a sequencer via  
+  --   so that the result can be transported from the VVC to for example a sequencer via
   --   fetch_result() as described in VVC_Framework_common_methods_QuickRef
-  -- 
+  --
   -- - t_vvc_result includes the return value of the procedure in the BFM.
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --===============================================================================================
   subtype  t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-  
+
   type t_vvc_result_queue_element is record
     cmd_idx       : natural;   -- from UVVM handshake mechanism
     result        : t_vvc_result;
@@ -123,17 +125,17 @@ package vvc_cmd_pkg is
   end record;
 
   shared variable shared_vvc_response : t_vvc_response;
-  
+
   --===============================================================================================
-  -- t_last_received_cmd_idx : 
+  -- t_last_received_cmd_idx :
   -- - Used to store the last queued cmd in vvc interpreter.
   --===============================================================================================
   type t_last_received_cmd_idx is array (t_channel range <>,natural range <>) of integer;
-  
+
   --===============================================================================================
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from vvc to sequencer
-  --=============================================================================================== 
+  --===============================================================================================
   shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => -1));
 
 end package vvc_cmd_pkg;

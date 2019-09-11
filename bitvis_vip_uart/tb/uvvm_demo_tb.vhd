@@ -74,6 +74,17 @@ architecture func of uvvm_demo_tb is
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
+
+
+    procedure release_uart_tx is
+      alias uart_tx is <<signal i_test_harness.uart_vvc_tx : std_logic>>;
+    begin
+      log("releaseing UART TX");
+      uart_tx <= force shared_uart_vvc_config(TX,1).bfm_config.idle_state;
+      wait for 2* C_CLK_PERIOD;
+      uart_tx <= release;
+    end procedure release_uart_tx;
+
   begin
 
     -- Wait for UVVM to finish initialization
@@ -126,59 +137,60 @@ architecture func of uvvm_demo_tb is
 --    await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
 
 
-    log(ID_LOG_HDR, "UART Transmit - no error injection", C_SCOPE);
-    ------------------------------------------------------------
-    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
-    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
-
-    wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-
-
-    log(ID_LOG_HDR, "UART Transmit - parity bit error injection", C_SCOPE);
-    ------------------------------------------------------------
-    log(ID_SEQUENCER, "Configure parity bit error injection", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob  := 1.0;
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
-
-    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
-    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
-    log(ID_SEQUENCER, "Disabling parity bit error", C_SCOPE);
-
-    wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"55", "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
+--    log(ID_LOG_HDR, "UART Transmit - no error injection", C_SCOPE);
+--    ------------------------------------------------------------
+--    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
+--    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+--
+--    wait for 200 ns;  -- margin
+--    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
+--    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
+--
+--
+--    log(ID_LOG_HDR, "UART Transmit - parity bit error injection", C_SCOPE);
+--    ------------------------------------------------------------
+--    log(ID_SEQUENCER, "Configure parity bit error injection", C_SCOPE);
+--    --shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob  := 1.0;
+--    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
+--
+--    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
+--    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+--    log(ID_SEQUENCER, "Disabling parity bit error", C_SCOPE);
+--
+--    wait for 200 ns;  -- margin
+--    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"55", "RX_DATA");
+--    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
 
 
 
 
     log(ID_LOG_HDR, "UART Transmit - stop bit error injection", C_SCOPE);
     ------------------------------------------------------------
-    log(ID_SEQUENCER, "Configure stop bit error injection", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 1.0;
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob  := 0.0;
 
-    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
-    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
-    log(ID_SEQUENCER, "Disabling stop bit error", C_SCOPE);
+    uart_transmit(UART_VVCT, 1, TX, x"55", "UART TX");
+    await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
+
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob := 0.0;
 
     wait for 200 ns;  -- margin
     sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"55", "RX_DATA");
     await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
 
+    release_uart_tx;
 
 
-    log(ID_LOG_HDR, "SBI Write", C_SCOPE);
+    log(ID_LOG_HDR, "SBI Write - no error", C_SCOPE);
     ------------------------------------------------------------
-    log(ID_SEQUENCER, "Status: " & to_string(shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob), C_SCOPE);
-    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "Write 0xAB to UART");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
-
-    wait for 200 ns;
+    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "SBI Write");
+    uart_transmit(UART_VVCT, 1, TX,  x"87", "UART TX");
     uart_receive(UART_VVCT, 1, RX, TO_SB, "UART receive");
-    await_completion(UART_VVCT, 1, RX, 13*C_BIT_PERIOD);
+    await_completion(UART_VVCT, 1, TX, 13*C_BIT_PERIOD);
+
+
+    wait for 200 ns;  -- margin
+    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA");
+    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
 
 
     -- print report of counters

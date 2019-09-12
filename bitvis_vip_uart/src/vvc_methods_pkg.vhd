@@ -142,7 +142,7 @@ package vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
     constant num_bytes_to_send  : in natural;
-    constant randomness         : in t_randomisation;
+    constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -216,7 +216,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
     constant num_bytes_to_send  : in natural;
-    constant randomness         : in t_randomisation;
+    constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
@@ -228,10 +228,10 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.operation                     := TRANSMIT;
+    shared_vvc_cmd.operation          := TRANSMIT;
     -- Randomisation spesific
-    shared_vvc_cmd.randomness                     := randomness;
-    shared_vvc_cmd.num_bytes_to_send              := num_bytes_to_send;
+    shared_vvc_cmd.randomisation      := randomisation;
+    shared_vvc_cmd.num_bytes_to_send  := num_bytes_to_send;
     -- Send to VVC
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;

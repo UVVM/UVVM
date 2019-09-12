@@ -181,6 +181,45 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+
+    type t_boolean_array is array (integer range <>) of boolean;
+    variable v_fc_all_low   : t_boolean_array(GC_DATA_WIDTH-1 downto 0) := (others => false);
+    variable v_fc_all_high  : t_boolean_array(GC_DATA_WIDTH-1 downto 0) := (others => false);
+
+    procedure reset_fc_detectors(void : t_void) is
+    begin
+      v_fc_all_high := (others => false);
+      v_fc_all_low  := (others => false);
+    end procedure reset_fc_detectors;
+
+    impure function is_full_coverage_fullfilled(data : std_logic_vector; coverage : t_coverage) return boolean is
+    begin
+      -- Coverage not requested
+      if coverage = NA then
+        return true;
+      end if;
+
+      -- Update coverage holders
+      for idx in 0 to data'length-1 loop
+        if data(idx) = '0' then
+          v_fc_all_low(idx) := true;
+        elsif data(idx) = '1' then
+          v_fc_all_high(idx) := true;
+        end if;
+      end loop;
+
+      -- Check coverage
+      for idx in v_fc_all_high'range loop
+        if v_fc_all_high(idx) = false or v_fc_all_low(idx) = false then
+          return false;
+        end if;
+      end loop;
+
+      return true;
+    end function is_full_coverage_fullfilled;
+
+
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -221,19 +260,26 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
-          -- Call the corresponding procedure in the BFM package.
-          uart_receive(data_value     => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                       msg            => format_msg(v_cmd),
-                       rx             => uart_vvc_rx,
-                       terminate_loop => terminate_current_cmd.is_active,
-                       config         => vvc_config.bfm_config,
-                       scope          => C_SCOPE,
-                       msg_id_panel   => vvc_config.msg_id_panel);
-          -- Store the result
-          work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
-                                                       cmd_idx      => v_cmd.cmd_idx,
-                                                       result       => v_read_data );
+          -- Prepare for functional coverage
+          reset_fc_detectors(VOID);
+
+          -- Continue read until coverage is achieved
+          while not is_full_coverage_fullfilled(v_read_data(GC_DATA_WIDTH-1 downto 0), v_cmd.coverage) loop
+
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
+            -- Call the corresponding procedure in the BFM package.
+            uart_receive(data_value     => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                         msg            => format_msg(v_cmd),
+                         rx             => uart_vvc_rx,
+                         terminate_loop => terminate_current_cmd.is_active,
+                         config         => vvc_config.bfm_config,
+                         scope          => C_SCOPE,
+                         msg_id_panel   => vvc_config.msg_id_panel);
+            -- Store the result
+            work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
+                                                         cmd_idx      => v_cmd.cmd_idx,
+                                                         result       => v_read_data );
+          end loop;
 
         when EXPECT =>
           -- Normalise address and data

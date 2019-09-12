@@ -111,16 +111,6 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
 
-    log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
-    ------------------------------------------------------------
-    -- This test will send three sbi_check commands to the SBI VVC, and then
-    -- wait for them all to complete before continuing the test sequence.
-    sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"00", "RX_DATA default");
-    sbi_check(SBI_VVCT, 1, C_ADDR_TX_READY, x"01", "TX_READY default");
-    sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
-    await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
-
-
 
     log(ID_LOG_HDR, "Check random transmit", C_SCOPE);
     ------------------------------------------------------------
@@ -129,9 +119,10 @@ architecture func of uvvm_demo_tb is
     uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_read(SBI_VVCT, 1, C_ADDR_RX_DATA, "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_LOG_HDR, "Check 3 byte random transmit", C_SCOPE);
@@ -141,23 +132,19 @@ architecture func of uvvm_demo_tb is
     uart_transmit(UART_VVCT, 1, TX, 3, RANDOM, "UART TX RANDOM");
     await_completion(UART_VVCT,1,TX,  3 * 13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_read(SBI_VVCT, 1, C_ADDR_RX_DATA, "RX_DATA");
-    sbi_read(SBI_VVCT, 1, C_ADDR_RX_DATA, "RX_DATA");
-    sbi_read(SBI_VVCT, 1, C_ADDR_RX_DATA, "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
 
-    log(ID_LOG_HDR, "Check simple receive", C_SCOPE);
-    ------------------------------------------------------------
-    -- This test will request the UART VVC using the TX
-    -- channel to send 0xAA to the DUT.
-    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
-    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
-    wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
+    wait for 1000 ns; -- wait for all VVCs to finish
 
+
+    -- Print report of Scoreboard counters
+    v_uart_sb.report_counters(VOID);
+    v_sbi_sb.report_counters(VOID);
 
 
 

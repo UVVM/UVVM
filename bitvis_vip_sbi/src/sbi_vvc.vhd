@@ -302,7 +302,6 @@ begin
             v_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           end if;
 
-
         when CHECK =>
           -- Set BFM error injection
           vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);

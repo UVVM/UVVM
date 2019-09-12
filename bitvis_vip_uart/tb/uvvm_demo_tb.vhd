@@ -74,8 +74,8 @@ architecture func of uvvm_demo_tb is
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
-    variable v_prob : real;
-    variable v_data : std_logic_vector(7 downto 0);
+
+  --await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
   begin
 
@@ -92,48 +92,41 @@ architecture func of uvvm_demo_tb is
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
+    enable_log_msg(ID_SEQUENCER_SUB);
     enable_log_msg(ID_UVVM_SEND_CMD);
-    enable_log_msg(ID_BFM);
+    --enable_log_msg(ID_BFM);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    enable_log_msg(SBI_VVCT, 1, ID_BFM);
+    --enable_log_msg(SBI_VVCT, 1, ID_BFM);
     enable_log_msg(SBI_VVCT, 1, ID_FINISH_OR_STOP);
 
     disable_log_msg(UART_VVCT, 1, RX, ALL_MESSAGES);
-    enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
+    --enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
 
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
-    enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
+    --enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
 
 
-    ------------------------------------------------------------
 
     log(ID_LOG_HDR, "Starting simulation of TB for UART using VVCs", C_SCOPE);
-    ------------------------------------------------------------
+    --============================================================================================================
 
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD);
 
 
+
     log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE);
-    ------------------------------------------------------------
+    --============================================================================================================
+
     shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
 
 
-    log(ID_LOG_HDR, "UART Transmit - no error injection, no SB", C_SCOPE);
-    ------------------------------------------------------------
-    uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
-    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+    log(ID_LOG_HDR, "SBI Transmit - no error injection, results are checked in Scoreboard UART.", C_SCOPE);
+    --============================================================================================================
 
-    wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
-    await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-
-
-    log(ID_LOG_HDR, "SBI Transmit - no error injection, UART SB active", C_SCOPE);
-    ------------------------------------------------------------
     log(ID_SEQUENCER, "Performing 3x SBI Write and UART Reveive", C_SCOPE);
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"01", "SBI Write");
     uart_receive(UART_VVCT, 1, RX, TO_SB, "UART RX");
@@ -149,70 +142,82 @@ architecture func of uvvm_demo_tb is
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
 
 
-    log(ID_LOG_HDR, "UART Transmit - parity bit error injections", C_SCOPE);
-    ------------------------------------------------------------
+
+
+
+
+    log(ID_LOG_HDR, "UART Transmit - parity bit error injections, results are checked in Scoreboard SBI.", C_SCOPE);
+    --============================================================================================================
+
     log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.0;
-    v_data := x"11";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"11", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 20%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.2;
-    v_data := x"22";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"22", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 40%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.4;
-    v_data := x"33";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"33", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 60%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.6;
-    v_data := x"44";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"44", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 80%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.8;
-    v_data := x"55";
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 100%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 1.0;
-    v_data := x"66";
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"66", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
@@ -222,61 +227,63 @@ architecture func of uvvm_demo_tb is
 
 
 
-    log(ID_LOG_HDR, "UART Transmit - stop bit error injections", C_SCOPE);
-    ------------------------------------------------------------
+
+    log(ID_LOG_HDR, "UART Transmit - stop bit error injections, results are checked in Scoreboard SBI.", C_SCOPE);
+    --============================================================================================================
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
-    v_data := x"11";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"11", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 25%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.25;
-    v_data := x"22";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"22", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 50%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.5;
-    v_data := x"33";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"33", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 75%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.75;
-    v_data := x"44";
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"44", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 100%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 1.0;
-    v_data := x"55";
-
-    uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
-    sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data, "RX_DATA");
-    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    -- SBI Read is requested by Model.
+    -- Results are checked in Scoreboard.
+    -- Add delay for DUT to prepare for next transaction
+    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
@@ -284,8 +291,11 @@ architecture func of uvvm_demo_tb is
 
 
 
-    -- print report of counters
+
+    -- Print report of Scoreboard counters
     v_uart_sb.report_counters(VOID);
+    v_sbi_sb.report_counters(VOID);
+
 
 
     -----------------------------------------------------------------------------

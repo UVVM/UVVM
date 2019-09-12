@@ -54,13 +54,13 @@ package vvc_methods_pkg is
   );
 
   type t_error_injection is record
-    parity_bit_prob : real;
-    stop_bit_prob   : real;
+    parity_bit_error_prob : real;
+    stop_bit_error_prob   : real;
   end record t_error_injection;
 
   constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
-    parity_bit_prob => 0.0,
-    stop_bit_prob   => 0.0
+    parity_bit_error_prob => 0.0,
+    stop_bit_error_prob   => 0.0
   );
 
   type t_vvc_config is
@@ -74,7 +74,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;           -- Severity of alert to be initiated if exceeding result_queue_count_threshold
     bfm_config                            : t_uart_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
-    error_injection                       : t_error_injection;
+    error_injection_config                : t_error_injection;
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -89,7 +89,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    error_injection                       => C_ERROR_INJECTION_INACTIVE
+    error_injection_config                => C_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -299,8 +299,8 @@ package body vvc_methods_pkg is
         dtt_group.bt.error_info.stop_bit_error                  <= false;
 
         if vvc_cmd.operation = TRANSMIT then
-          dtt_group.bt.error_info.parity_bit_error                <= vvc_config.bfm_config.error_injection.parity_bit_error;
-          dtt_group.bt.error_info.stop_bit_error                  <= vvc_config.bfm_config.error_injection.stop_bit_error;
+          dtt_group.bt.error_info.parity_bit_error              <= vvc_config.bfm_config.error_injection.parity_bit_error;
+          dtt_group.bt.error_info.stop_bit_error                <= vvc_config.bfm_config.error_injection.stop_bit_error;
         end if;
 
       when others =>

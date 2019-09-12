@@ -231,8 +231,8 @@ begin
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
           -- Set error injection
-          vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_prob);
-          vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_prob);
+          vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection_config.parity_bit_error_prob);
+          vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection_config.stop_bit_error_prob);
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 

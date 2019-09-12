@@ -74,7 +74,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;
     bfm_config                            : t_sbi_bfm_config;  -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;  -- VVC dedicated message ID panel
-    error_injection                       : t_error_injection;
+    error_injection_config                : t_error_injection;
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -89,7 +89,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_SBI_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    error_injection                       => C_ERROR_INJECTION_INACTIVE
+    error_injection_config                => C_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is

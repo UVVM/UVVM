@@ -150,7 +150,7 @@ architecture func of uvvm_demo_tb is
     --============================================================================================================
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.0;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.0;
     uart_transmit(UART_VVCT,1,TX,  x"11", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -162,7 +162,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 20%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.2;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.2;
     uart_transmit(UART_VVCT,1,TX,  x"22", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -174,7 +174,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 40%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.4;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.4;
     uart_transmit(UART_VVCT,1,TX,  x"33", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -186,7 +186,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 60%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.6;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.6;
     uart_transmit(UART_VVCT,1,TX,  x"44", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -198,7 +198,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 80%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.8;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.8;
     uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -210,7 +210,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 100%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 1.0;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 1.0;
     uart_transmit(UART_VVCT,1,TX,  x"66", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -221,7 +221,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.parity_bit_prob    := 0.0;
+    shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.0;
 
 
 
@@ -232,7 +232,7 @@ architecture func of uvvm_demo_tb is
     --============================================================================================================
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
+    shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.0;
     uart_transmit(UART_VVCT,1,TX,  x"11", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -243,7 +243,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 25%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.25;
+    shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.25;
     uart_transmit(UART_VVCT,1,TX,  x"22", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -254,7 +254,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 50%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.5;
+    shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.5;
     uart_transmit(UART_VVCT,1,TX,  x"33", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -265,7 +265,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 75%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.75;
+    shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.75;
     uart_transmit(UART_VVCT,1,TX,  x"44", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -276,7 +276,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 100%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 1.0;
+    shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 1.0;
     uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
@@ -287,7 +287,7 @@ architecture func of uvvm_demo_tb is
 
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
-    shared_uart_vvc_config(TX,1).error_injection.stop_bit_prob    := 0.0;
+    shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.0;
 
 
 

@@ -297,6 +297,7 @@ begin
           -- are we done? not counting the start bit
           if to_integer(rx_bit_counter) >= 9 then
             rx_active <= '0';
+            rx_bit_samples <= (others => '1');
           end if;
 
           case to_integer(rx_bit_counter) is
@@ -309,12 +310,19 @@ begin
                 parity_err <= '1';
               end if;
             when 9 =>
+              rx_data_valid <= '1';     -- ready for higher level protocol
+
               -- check stop bit, and end byte receive
               if find_most_repeated_bit(rx_bit_samples) /= GC_STOP_BIT then
                 stop_err <= '1';
+                rx_data_valid <= '0';
               end if;
               rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
-              rx_data_valid <= '1';     -- ready for higher level protocol
+
+              -- Data not valid on error
+              if transient_err = '1' or parity_err = '1' then
+                rx_data_valid <= '0';
+              end if;
 
               if vr_rx_data_idx < 3 then
                 vr_rx_data_idx := vr_rx_data_idx + 1;
@@ -323,6 +331,7 @@ begin
               end if;
             when others =>
               rx_active <= '0';
+              rx_bit_samples <= (others => '1');
 
           end case;
         end if;

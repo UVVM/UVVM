@@ -201,6 +201,13 @@ begin
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
+
+    -- Setup UART scoreboard
+    v_sbi_sb.set_scope("SB SBI");
+    v_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
+    v_sbi_sb.enable_log_msg(ID_DATA);
+
+
     loop
 
       -- 1. Set defaults, fetch command and log
@@ -262,6 +269,7 @@ begin
                     msg_id_panel          => vvc_config.msg_id_panel,
                     config                => vvc_config.bfm_config);
 
+
         when READ =>
           -- Set BFM error injection
           vvc_config.bfm_config.error_injection.delay_error  := decide_if_error_is_injected(vvc_config.error_injection.delay_error_prob);
@@ -286,6 +294,14 @@ begin
           work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                       cmd_idx      => v_cmd.cmd_idx,
                                                       result       => v_read_data);
+
+          -- Request SB check result
+          check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for READ");
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_actual
+            v_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+          end if;
+
 
         when CHECK =>
           -- Set BFM error injection

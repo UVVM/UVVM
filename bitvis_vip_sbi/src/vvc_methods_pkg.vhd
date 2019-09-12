@@ -26,6 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 use work.sbi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
+use work.transaction_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
@@ -369,8 +370,8 @@ package body vvc_methods_pkg is
         dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
         dtt_group.ct.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.ct.transaction_status                         <= IN_PROGRESS;
-        dtt_group.ct.error_info.delay_error                     <= vvc_config.bfm_config.error_injection.delay_error;
-        dtt_group.ct.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
+        dtt_group.bt.error_info.delay_error                     <= vvc_config.bfm_config.error_injection.delay_error;
+        dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when others =>
         null;

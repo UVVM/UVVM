@@ -33,6 +33,7 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+use work.transaction_pkg.all;
 
 --=================================================================================================
 entity sbi_vvc is
@@ -80,7 +81,8 @@ architecture behave of sbi_vvc is
   alias vvc_config       : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
-
+  -- DTT
+  alias dtt_transaction_info    : t_transaction_info_group is global_sbi_transaction_info(GC_INSTANCE_IDX);
 
 begin
 

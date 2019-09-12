@@ -230,24 +230,24 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
-          -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-
-          -- Normalise address and data
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
-
           -- Loop the number of bytes to transmit
           for idx in 1 to v_cmd.num_bytes_to_send loop
 
             -- Randomise data if applicable
-            case v_cmd.randomness is
+            case v_cmd.randomisation is
               when RANDOM =>
-                v_normalised_data := random(v_normalised_data'length);
+                v_cmd.data := random(v_cmd.data'length);
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA
                 null;
             end case;
+
+            -- Set DTT
+            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
+            -- Normalise address and data
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
             transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.
@@ -258,6 +258,8 @@ begin
                           scope         => C_SCOPE,
                           msg_id_panel  => vvc_config.msg_id_panel);
 
+            -- Set DTT back to default values
+            restore_global_dtt(dtt_transaction_info, v_cmd);
           end loop;
 
 

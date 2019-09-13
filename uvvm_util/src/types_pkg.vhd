@@ -112,7 +112,7 @@ package types_pkg is
     flag_name   => (others => NUL),
     is_blocked  => true
   );
-  
+
   type t_sync_flag_record_array is array (natural range <>) of t_sync_flag_record;
 
 
@@ -172,6 +172,9 @@ package types_pkg is
 
   type t_void_bfm_config is (VOID);
   constant C_VOID_BFM_CONFIG : t_void_bfm_config := VOID;
+
+
+  type t_data_routing is (NA, TO_SB, TO_BUFFER, FROM_BUFFER); -- TO_FILE and FROM_FILE may be added later on
 
   -------------------------------------
   -- SB

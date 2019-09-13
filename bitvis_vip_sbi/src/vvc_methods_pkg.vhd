@@ -1,6 +1,6 @@
 --========================================================================================================================
 -- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not, 
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
 -- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -26,6 +26,11 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 use work.sbi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
+use work.transaction_pkg.all;
+
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 
 --=================================================================================================
@@ -49,6 +54,16 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity  => WARNING
   );
 
+  type t_error_injection is record
+    delay_error_prob          : real;
+    write_and_read_error_prob : real;
+  end record t_error_injection;
+
+  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+    delay_error_prob            => 0.0,
+    write_and_read_error_prob   => 0.0
+  );
+
   type t_vvc_config is
   record
     inter_bfm_delay                       : t_inter_bfm_delay;-- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
@@ -58,8 +73,9 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
-    bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference 
+    bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
+    error_injection_config                : t_error_injection;
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -73,7 +89,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_SBI_BFM_CONFIG_DEFAULT,
-    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
+    error_injection_config                => C_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -114,9 +131,11 @@ package vvc_methods_pkg is
   shared variable shared_sbi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
 
+  -- Scoreboard
+  shared variable shared_sbi_sb : t_generic_sb;
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -133,6 +152,17 @@ package vvc_methods_pkg is
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
+
+  procedure sbi_write(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant addr               : in unsigned;
+    constant num_bytes_to_send  : in natural;
+    constant randomisation      : in t_randomisation;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  );
+
   procedure sbi_read(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
@@ -140,6 +170,15 @@ package vvc_methods_pkg is
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
+
+  procedure sbi_read(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant addr             : in    unsigned;
+    constant data_routing     : in    t_data_routing;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    );
 
   procedure sbi_check(
     signal   VVCT               : inout t_vvc_target_record;
@@ -162,6 +201,29 @@ package vvc_methods_pkg is
     constant alert_level        : in t_alert_level  := ERROR;
     constant scope              : in string         := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
+
+
+  --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_group    : inout t_transaction_info_group ;
+    constant vvc_cmd    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config);
+
+
+  procedure restore_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record);
+
+
+  --==============================================================================
+  -- Error Injection methods
+  --==============================================================================
+  impure function decide_if_error_is_injected(
+    constant probability  : in real
+  ) return boolean;
+
 
 end package vvc_methods_pkg;
 
@@ -195,8 +257,36 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    shared_vvc_cmd.operation                          := WRITE;
     shared_vvc_cmd.addr                               := v_normalised_addr;
     shared_vvc_cmd.data                               := v_normalised_data;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+
+  procedure sbi_write(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant addr               : in unsigned;
+    constant num_bytes_to_send  : in natural;
+    constant randomisation      : in t_randomisation;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+        & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", RANDOM)";
+    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    shared_vvc_cmd.operation                          := WRITE;
+    shared_vvc_cmd.addr                               := v_normalised_addr;
+    shared_vvc_cmd.randomisation                      := randomisation;
+    shared_vvc_cmd.num_bytes_to_send                  := num_bytes_to_send;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
@@ -220,6 +310,31 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
     shared_vvc_cmd.operation                          := READ;
     shared_vvc_cmd.addr                               := v_normalised_addr;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+
+  procedure sbi_read(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant addr             : in    unsigned;
+    constant data_routing     : in    t_data_routing;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+                                   & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+      normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
+    shared_vvc_cmd.operation := READ;
+    shared_vvc_cmd.addr      := v_normalised_addr;
+    shared_vvc_cmd.data_routing := data_routing;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
@@ -284,6 +399,72 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.alert_level                       := alert_level;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
+
+
+
+  --==============================================================================
+  -- DTT procedures
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_group    : inout t_transaction_info_group ;
+    constant vvc_cmd    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        dtt_group.bt.operation                                  <= vvc_cmd.operation;
+        dtt_group.bt.address(vvc_cmd.addr'length-1 downto 0)    <= vvc_cmd.addr;
+        dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       <= vvc_cmd.data;
+        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
+        dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
+        dtt_group.bt.transaction_status                         <= IN_PROGRESS;
+        dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
+
+      when POLL_UNTIL =>
+        dtt_group.ct.operation                                  <= vvc_cmd.operation;
+        dtt_group.ct.address(vvc_cmd.addr'length-1 downto 0)    <= vvc_cmd.addr;
+        dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)       <= vvc_cmd.data;
+        dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
+        dtt_group.ct.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
+        dtt_group.ct.transaction_status                         <= IN_PROGRESS;
+        dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
+
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_dtt;
+
+
+  procedure restore_global_dtt(
+    signal dtt_group : inout t_transaction_info_group ;
+    constant vvc_cmd : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | CHECK =>
+        dtt_group.bt <= C_TRANSACTION_INFO_SET_DEFAULT;
+      when POLL_UNTIL =>
+        dtt_group.ct <= C_TRANSACTION_INFO_SET_DEFAULT;
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure restore_global_dtt;
+
+
+  --==============================================================================
+  -- Error Injection methods
+  --==============================================================================
+  impure function decide_if_error_is_injected(
+    constant probability  : in real
+  ) return boolean is
+  begin
+    check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
+
+    return (random(0.0, 1.0) <= probability);
+  end function decide_if_error_is_injected;
 
 
 end package body vvc_methods_pkg;

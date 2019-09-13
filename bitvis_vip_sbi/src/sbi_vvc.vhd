@@ -201,9 +201,9 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup UART scoreboard
-    v_sbi_sb.set_scope("SB SBI");
-    v_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
-    v_sbi_sb.enable_log_msg(ID_DATA);
+    shared_sbi_sb.set_scope("SB SBI");
+    shared_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
+    shared_sbi_sb.enable_log_msg(ID_DATA);
 
 
     loop
@@ -243,36 +243,51 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set BFM error injection
-          vvc_config.bfm_config.error_injection.delay_error           := decide_if_error_is_injected(vvc_config.error_injection_config.delay_error_prob);
-          vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
+          -- Loop the number of bytes to transmit
+          for idx in 1 to v_cmd.num_bytes_to_send loop
 
-          -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+            -- Set BFM error injection
+            vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
 
-          -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
+            -- Randomise data if applicable
+            case v_cmd.randomisation is
+              when RANDOM =>
+                v_cmd.data := std_logic_vector(to_unsigned(random(0, 16), v_cmd.data'length)); -- Hard coded for TB example
+              when RANDOM_FAVOUR_EDGES =>
+                null; -- Not implemented yet
+              when others => -- NA
+                null;
+            end case;
 
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-          -- Call the corresponding procedure in the BFM package.
-          sbi_write(addr_value   => v_normalised_addr,
-                    data_value   => v_normalised_data,
-                    msg          => format_msg(v_cmd),
-                    clk          => clk,
-                    sbi_if       => sbi_vvc_master_if,
-                    scope        => C_SCOPE,
-                    msg_id_panel => vvc_config.msg_id_panel,
-                    config       => vvc_config.bfm_config);
+            -- Set DTT
+            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
-          -- Disable error injection
-          vvc_config.bfm_config.error_injection.delay_error           := false;
-          vvc_config.bfm_config.error_injection.write_and_read_error  := false;
+            -- Normalise address and data
+            v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
+
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
+            -- Call the corresponding procedure in the BFM package.
+            sbi_write(addr_value   => v_normalised_addr,
+                      data_value   => v_normalised_data,
+                      msg          => format_msg(v_cmd),
+                      clk          => clk,
+                      sbi_if       => sbi_vvc_master_if,
+                      scope        => C_SCOPE,
+                      msg_id_panel => vvc_config.msg_id_panel,
+                      config       => vvc_config.bfm_config);
+
+            -- Disable error injection
+            vvc_config.bfm_config.error_injection.write_and_read_error  := false;
+
+            -- Set DTT back to default values
+            restore_global_dtt(dtt_transaction_info, v_cmd);
+          end loop;
+
 
         when READ =>
           -- Set BFM error injection
-          vvc_config.bfm_config.error_injection.delay_error           := decide_if_error_is_injected(vvc_config.error_injection_config.delay_error_prob);
           vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
 
           -- Set DTT
@@ -300,11 +315,10 @@ begin
           check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for READ");
           if v_cmd.data_routing = TO_SB then
             -- call SB check_actual
-            v_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           end if;
 
           -- Disable error injection
-          vvc_config.bfm_config.error_injection.delay_error           := false;
           vvc_config.bfm_config.error_injection.write_and_read_error  := false;
 
 

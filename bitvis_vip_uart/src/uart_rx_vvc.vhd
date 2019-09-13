@@ -28,10 +28,7 @@ use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 
---library bitvis_vip_uart;
---use bitvis_vip_uart.transaction_pkg.all;
 use work.transaction_pkg.all;
-
 use work.uart_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -39,6 +36,11 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+
+-- Coverage
+library crfc;
+use crfc.Coveragepkg.all;
+
 
 --=================================================================================================
 entity uart_rx_vvc is
@@ -82,7 +84,6 @@ architecture behave of uart_rx_vvc is
   alias transaction_info        : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
   -- DTT
   alias dtt_transaction_info    : t_transaction_info_group is global_uart_transaction_info(RX, GC_INSTANCE_IDX);
-
 
 begin
 
@@ -192,6 +193,9 @@ begin
     variable v_command_is_bfm_access                 : boolean                                    := false;
     variable v_prev_command_was_bfm_access           : boolean                                    := false;
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    -- Coverage
+    variable v_coverage_ok                           : boolean                                    := false;
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -200,10 +204,13 @@ begin
 
 
     -- Setup UART scoreboard
-    v_uart_sb.set_scope("SB UART");
-    v_uart_sb.enable(GC_INSTANCE_IDX, "SB UART Enabled");
-    v_uart_sb.enable_log_msg(ID_DATA);
+    shared_uart_sb.set_scope("SB UART");
+    shared_uart_sb.enable(GC_INSTANCE_IDX, "SB UART Enabled");
+    shared_uart_sb.enable_log_msg(ID_DATA);
 
+    -- Coverage
+    shared_uart_byte_coverage.AddBins(GenBin(0, 2, 3));
+    shared_uart_byte_coverage.SetName("UATR Receive coverage");
 
     loop
 
@@ -240,29 +247,76 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
-          -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
-          -- Call the corresponding procedure in the BFM package.
-          uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                        msg                   => format_msg(v_cmd),
-                        rx                    => uart_vvc_rx,
-                        terminate_loop        => terminate_current_cmd.is_active,
-                        config                => vvc_config.bfm_config,
-                        scope                 => C_SCOPE,
-                        msg_id_panel          => vvc_config.msg_id_panel);
-          -- Store the result
-          work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                      cmd_idx      => v_cmd.cmd_idx,
-                                                      result       => v_read_data);
+          case v_cmd.coverage is
 
-          -- Request SB check result
-          check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
-          if v_cmd.data_routing = TO_SB then
-            -- call SB check_actual
-            v_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
-          end if;
+            when NA =>
+              -- Set DTT
+              set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
+              transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
+              -- Call the corresponding procedure in the BFM package.
+              uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                            msg                   => format_msg(v_cmd),
+                            rx                    => uart_vvc_rx,
+                            terminate_loop        => terminate_current_cmd.is_active,
+                            config                => vvc_config.bfm_config,
+                            scope                 => C_SCOPE,
+                            msg_id_panel          => vvc_config.msg_id_panel);
+              -- Store the result
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_read_data);
+
+              -- Request SB check result
+              check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
+              if v_cmd.data_routing = TO_SB then
+                -- call SB check_actual
+                shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+              end if;
+
+            when COVERAGE_FULL =>
+              v_coverage_ok := false;
+
+              while not(v_coverage_ok) loop
+                log("UART RECEIVE");
+                -- Set DTT
+                set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
+                transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
+                -- Call the corresponding procedure in the BFM package.
+                uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                              msg                   => format_msg(v_cmd),
+                              rx                    => uart_vvc_rx,
+                              terminate_loop        => terminate_current_cmd.is_active,
+                              config                => vvc_config.bfm_config,
+                              scope                 => C_SCOPE,
+                              msg_id_panel          => vvc_config.msg_id_panel);
+                -- Store the result
+                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                            cmd_idx      => v_cmd.cmd_idx,
+                                                            result       => v_read_data);
+
+                -- Request SB check result
+                check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
+                if v_cmd.data_routing = TO_SB then
+                  -- call SB check_actual
+                  shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+                end if;
+
+                -- Update coverage
+                shared_uart_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
+                -- Check if coverage is fulfilled
+                v_coverage_ok := shared_uart_byte_coverage.IsCovered;
+
+                log("UART done");
+              end loop;
+
+            when COVERAGE_EDGES =>
+              null; -- Not implemented yet
+            when others =>
+              null;
+          end case;
 
 
         when EXPECT =>

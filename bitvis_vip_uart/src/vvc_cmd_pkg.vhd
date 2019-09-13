@@ -57,6 +57,8 @@ package vvc_cmd_pkg is
     quietness         : t_quietness;
     -- VVC dedicated fields
     data              : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    randomisation     : t_randomisation;
+    num_bytes_to_send : natural;
     max_receptions    : integer;
   end record;
 
@@ -75,7 +77,9 @@ package vvc_cmd_pkg is
     gen_boolean       => false,
     timeout           => 0 ns,
     delay             => 0 ns,
-    quietness         => NON_QUIET
+    quietness         => NON_QUIET,
+    randomisation     => NA,
+    num_bytes_to_send => 1
     );
 
   --===============================================================================================

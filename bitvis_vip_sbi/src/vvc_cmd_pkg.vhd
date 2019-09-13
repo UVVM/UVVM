@@ -73,9 +73,9 @@ package vvc_cmd_pkg is
     cmd_idx             => 0,
     command_type        => NO_command_type,
     msg_id              => NO_ID,
-    gen_integer_array   => (others => -1),
-    gen_boolean         => false,
-    timeout             => 0 ns,
+    gen_integer_array     => (others => -1),
+    gen_boolean           => false,
+    timeout               => 0 ns,
     delay               => 0 ns,
     quietness           => NON_QUIET
     );

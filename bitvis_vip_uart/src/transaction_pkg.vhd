@@ -122,4 +122,3 @@ package transaction_pkg is
                                           (others => (others => C_TRANSACTION_INFO_GROUP_DEFAULT));
 
 end package transaction_pkg;
-

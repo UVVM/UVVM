@@ -54,6 +54,7 @@ package uart_bfm_pkg is
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR  : string := "; ";
   type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_DATA_MAX_LENGTH-1 downto 0);
 
+
   type t_error_injection is record
     parity_bit_error  : boolean;
     stop_bit_error    : boolean;
@@ -204,7 +205,6 @@ package body uart_bfm_pkg is
 
     alias stop_bit_error    is config.error_injection.stop_bit_error;
     alias parity_bit_error  is config.error_injection.parity_bit_error;
-
 
   begin
     -- check whether config.bit_time was set probably

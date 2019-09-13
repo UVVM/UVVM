@@ -51,9 +51,6 @@ architecture func of uvvm_demo_tb is
   constant C_CLK_PERIOD         : time := 10 ns;
   constant C_BIT_PERIOD         : time := 16 * C_CLK_PERIOD;
 
-  -- Time for one UART transmission to complete
-  constant C_TIME_OF_ONE_UART_TX : time := 11*C_BIT_PERIOD; -- =1760 ns;
-
   -- Predefined SBI addresses
   constant C_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
   constant C_ADDR_RX_DATA_VALID : unsigned(2 downto 0) := "001";
@@ -151,7 +148,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.0;
-    uart_transmit(UART_VVCT,1,TX,  x"11", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"01", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -163,7 +160,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 20%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.2;
-    uart_transmit(UART_VVCT,1,TX,  x"22", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"02", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -175,7 +172,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 40%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.4;
-    uart_transmit(UART_VVCT,1,TX,  x"33", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"03", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -187,7 +184,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 60%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.6;
-    uart_transmit(UART_VVCT,1,TX,  x"44", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"04", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -199,7 +196,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 80%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.8;
-    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"05", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -211,7 +208,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting parity error probability to 100%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 1.0;
-    uart_transmit(UART_VVCT,1,TX,  x"66", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"06", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -233,7 +230,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.0;
-    uart_transmit(UART_VVCT,1,TX,  x"11", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"10", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -244,7 +241,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 25%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.25;
-    uart_transmit(UART_VVCT,1,TX,  x"22", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"20", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -255,7 +252,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 50%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.5;
-    uart_transmit(UART_VVCT,1,TX,  x"33", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"30", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -266,7 +263,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 75%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.75;
-    uart_transmit(UART_VVCT,1,TX,  x"44", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"40", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -277,7 +274,7 @@ architecture func of uvvm_demo_tb is
 
     log(ID_SEQUENCER, "\nSetting stop error probability to 100%", C_SCOPE);
     shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 1.0;
-    uart_transmit(UART_VVCT,1,TX,  x"55", "UART TX");
+    uart_transmit(UART_VVCT,1,TX,  x"50", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
@@ -290,6 +287,8 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.0;
 
 
+    -- Wait for all VVCs to finish
+    wait for 1000 ns;
 
 
     -- Print report of Scoreboard counters

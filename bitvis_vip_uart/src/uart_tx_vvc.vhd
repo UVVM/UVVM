@@ -230,27 +230,46 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
-          -- Set error injection
-          vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection_config.parity_bit_error_prob);
-          vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection_config.stop_bit_error_prob);
-          -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          -- Loop the number of bytes to transmit
+          for idx in 1 to v_cmd.num_bytes_to_send loop
 
-          -- Normalise address and data
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
+            -- Set error injection
+            vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection_config.parity_bit_error_prob);
+            vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection_config.stop_bit_error_prob);
 
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          -- Call the corresponding procedure in the BFM package.
-          uart_transmit(data_value            => v_normalised_data,
-                        msg                   => format_msg(v_cmd),
-                        tx                    => uart_vvc_tx,
-                        config                => vvc_config.bfm_config,
-                        scope                 => C_SCOPE,
-                        msg_id_panel          => vvc_config.msg_id_panel);
+            -- Randomise data if applicable
+            case v_cmd.randomisation is
+              when RANDOM =>
+                v_cmd.data := random(v_cmd.data'length);
+              when RANDOM_FAVOUR_EDGES =>
+                null; -- Not implemented yet
+              when others => -- NA
+                null;
+            end case;
 
-          -- Disable any error injection
-          vvc_config.bfm_config.error_injection.parity_bit_error  := false;
-          vvc_config.bfm_config.error_injection.stop_bit_error    := false;
+            -- Set DTT
+            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
+
+            -- Normalise address and data
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
+
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            -- Call the corresponding procedure in the BFM package.
+            uart_transmit(data_value    => v_normalised_data,
+                          msg           => format_msg(v_cmd),
+                          tx            => uart_vvc_tx,
+                          config        => vvc_config.bfm_config,
+                          scope         => C_SCOPE,
+                          msg_id_panel  => vvc_config.msg_id_panel);
+
+            -- Disable error injection
+            vvc_config.bfm_config.error_injection.parity_bit_error  := false;
+            vvc_config.bfm_config.error_injection.stop_bit_error    := false;
+
+            -- Set DTT back to default values
+            restore_global_dtt(dtt_transaction_info, v_cmd);
+          end loop;
 
 
         when INSERT_DELAY =>

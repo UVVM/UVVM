@@ -149,6 +149,16 @@ package vvc_methods_pkg is
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
+  procedure uart_transmit(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant channel            : in t_channel;
+    constant num_bytes_to_send  : in natural;
+    constant randomisation      : in t_randomisation;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  );
+
   procedure uart_receive(
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -193,6 +203,7 @@ package vvc_methods_pkg is
   ) return boolean;
 
 
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -218,6 +229,31 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.operation := TRANSMIT;
     shared_vvc_cmd.data      := v_normalised_data;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+  procedure uart_transmit(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant channel            : in t_channel;
+    constant num_bytes_to_send  : in natural;
+    constant randomisation      : in t_randomisation;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
+        & ", RANDOM)";
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
+    shared_vvc_cmd.operation          := TRANSMIT;
+    -- Randomisation spesific
+    shared_vvc_cmd.randomisation      := randomisation;
+    shared_vvc_cmd.num_bytes_to_send  := num_bytes_to_send;
+    -- Send to VVC
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
@@ -325,6 +361,7 @@ package body vvc_methods_pkg is
 
     wait for 0 ns;
   end procedure restore_global_dtt;
+
 
 
   --==============================================================================

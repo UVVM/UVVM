@@ -229,7 +229,7 @@ begin
                 -- Add to UART scoreboard
                 shared_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
                 -- Wait for UART Transmit to finish
-                insert_delay(SBI_VVCT, 1, 12*C_BIT_PERIOD, "");
+                insert_delay(SBI_VVCT, 1, 12*C_BIT_PERIOD, "Wait for UART TX to finish");
                 -- Request SBI Read
                 sbi_read(SBI_VVCT, 1, C_ADDR_RX_DATA, TO_SB, "SBI_READ");
 

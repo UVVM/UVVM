@@ -42,6 +42,12 @@ library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
+use work.transaction_pkg.all;
+
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.slv_sb_pkg.all;
+
 
 --=================================================================================================
 --=================================================================================================

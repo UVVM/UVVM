@@ -243,6 +243,10 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
+          -- Set BFM error injection
+          vvc_config.bfm_config.error_injection.delay_error           := decide_if_error_is_injected(vvc_config.error_injection_config.delay_error_prob);
+          vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
+
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
@@ -262,7 +266,15 @@ begin
                     msg_id_panel => vvc_config.msg_id_panel,
                     config       => vvc_config.bfm_config);
 
+          -- Disable error injection
+          vvc_config.bfm_config.error_injection.delay_error           := false;
+          vvc_config.bfm_config.error_injection.write_and_read_error  := false;
+
         when READ =>
+          -- Set BFM error injection
+          vvc_config.bfm_config.error_injection.delay_error           := decide_if_error_is_injected(vvc_config.error_injection_config.delay_error_prob);
+          vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
+
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
@@ -290,6 +302,10 @@ begin
             -- call SB check_actual
             v_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           end if;
+
+          -- Disable error injection
+          vvc_config.bfm_config.error_injection.delay_error           := false;
+          vvc_config.bfm_config.error_injection.write_and_read_error  := false;
 
 
         when CHECK =>

@@ -233,6 +233,10 @@ begin
           -- Loop the number of bytes to transmit
           for idx in 1 to v_cmd.num_bytes_to_send loop
 
+            -- Set error injection
+            vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection_config.parity_bit_error_prob);
+            vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection_config.stop_bit_error_prob);
+
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
@@ -246,6 +250,7 @@ begin
             -- Set DTT
             set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
+
             -- Normalise address and data
             v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
@@ -257,6 +262,10 @@ begin
                           config        => vvc_config.bfm_config,
                           scope         => C_SCOPE,
                           msg_id_panel  => vvc_config.msg_id_panel);
+
+            -- Disable error injection
+            vvc_config.bfm_config.error_injection.parity_bit_error  := false;
+            vvc_config.bfm_config.error_injection.stop_bit_error    := false;
 
             -- Set DTT back to default values
             restore_global_dtt(dtt_transaction_info, v_cmd);

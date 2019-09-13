@@ -49,9 +49,6 @@ architecture func of uvvm_demo_tb is
   constant C_CLK_PERIOD         : time := 10 ns;
   constant C_BIT_PERIOD         : time := 16 * C_CLK_PERIOD;
 
-  -- Time for one UART transmission to complete
-  constant C_TIME_OF_ONE_UART_TX : time := 11*C_BIT_PERIOD; -- =1760 ns;
-
   -- Predefined SBI addresses
   constant C_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
   constant C_ADDR_RX_DATA_VALID : unsigned(2 downto 0) := "001";

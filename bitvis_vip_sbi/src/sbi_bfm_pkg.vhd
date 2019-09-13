@@ -44,6 +44,17 @@ package sbi_bfm_pkg is
     rdata : std_logic_vector;           -- from dut
   end record;
 
+
+  type t_error_injection is record
+    delay_error           : boolean;
+    write_and_read_error  : boolean;
+  end record t_error_injection;
+
+  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+    delay_error           => false,
+    write_and_read_error  => false
+  );
+
   -- Configuration record to be assigned in the test harness.
   type t_sbi_bfm_config is
   record
@@ -62,6 +73,7 @@ package sbi_bfm_pkg is
     id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
     id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
     use_ready_signal            : boolean;        -- Whether or not to use the interface �ready� signal
+    error_injection             : t_error_injection;
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (
@@ -77,7 +89,8 @@ package sbi_bfm_pkg is
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL,
-    use_ready_signal            => true
+    use_ready_signal            => true,
+    error_injection             => C_ERROR_INJECTION_INACTIVE
     );
 
 

@@ -33,6 +33,7 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+use work.transaction_pkg.all;
 
 --=================================================================================================
 entity sbi_vvc is
@@ -80,7 +81,8 @@ architecture behave of sbi_vvc is
   alias vvc_config       : t_vvc_config is shared_sbi_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
-
+  -- DTT
+  alias dtt_transaction_info    : t_transaction_info_group is global_sbi_transaction_info(GC_INSTANCE_IDX);
 
 begin
 
@@ -198,6 +200,12 @@ begin
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
+    -- Setup UART scoreboard
+    v_sbi_sb.set_scope("SB SBI");
+    v_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
+    v_sbi_sb.enable_log_msg(ID_DATA);
+
+
     loop
 
       -- 1. Set defaults, fetch command and log
@@ -235,6 +243,9 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
@@ -252,6 +263,9 @@ begin
                     config       => vvc_config.bfm_config);
 
         when READ =>
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
 
@@ -270,7 +284,18 @@ begin
                                                        cmd_idx     => v_cmd.cmd_idx,
                                                        result      => v_read_data);
 
+          -- Request SB check result
+          check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for READ");
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_actual
+            v_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+          end if;
+
+
         when CHECK =>
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with to wide data. " & v_cmd.msg);
@@ -345,6 +370,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
+      -- Set DTT back to default values
+      restore_global_dtt(dtt_transaction_info, v_cmd);
     end loop;
   end process;
   --===============================================================================================

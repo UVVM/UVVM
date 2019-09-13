@@ -36,6 +36,11 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
+-- Coverage
+library crfc;
+use crfc.Coveragepkg.all;
+
+
 -- Test bench entity
 entity uvvm_demo_tb is
 end entity;
@@ -68,6 +73,8 @@ architecture func of uvvm_demo_tb is
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
+    variable v_data : std_logic_vector(7 downto 0);
+
   begin
 
     -- Wait for UVVM to finish initialization
@@ -107,32 +114,32 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
+    -- num_words
 
 
-    log(ID_LOG_HDR, "Check random transmit", C_SCOPE);
-    ------------------------------------------------------------
-    -- This test will request the UART VVC using the TX
-    -- channel to send a random byte to the DUT.
-    uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
-    await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
-    wait for 200 ns;  -- margin
-    -- SBI Read is requested by Model.
-    -- Results are checked in Scoreboard.
-    -- Add delay for DUT to prepare for next transaction
-    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+    log(ID_LOG_HDR, "SBI Write random bytes until UART Coverage is fulfiled", C_SCOPE);
+
+    --while not(shared_uart_byte_coverage.IsCovered) loop
+    for idx in 1 to 20 loop
+      v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
+      sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
+      -- Add time for UART to finish
+      insert_delay(SBI_VVCT, 1, 40*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+      uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, "UART RX");
+      insert_delay(SBI_VVCT, 1, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+    end loop;
 
 
-    log(ID_LOG_HDR, "Check 3 byte random transmit", C_SCOPE);
-    ------------------------------------------------------------
-    -- This test will request the UART VVC using the TX
-    -- channel to send 3 random bytes to the DUT.
-    uart_transmit(UART_VVCT, 1, TX, 3, RANDOM, "UART TX RANDOM");
-    await_completion(UART_VVCT,1,TX,  3 * 13 * C_BIT_PERIOD);
-    wait for 200 ns;  -- margin
-    -- SBI Read is requested by Model.
-    -- Results are checked in Scoreboard.
-    -- Add delay for DUT to prepare for next transaction
-    insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
+      await_completion(UART_VVCT, 1, RX, 1 sec, "Waiting for UART RX coverage.");
+
+
+--    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, 1  6, RANDOM, "SBI Write random");
+--    await_completion(UART_VVCT, 1, RX, 1 sec, "Waiting for UART RX coverage.");
+
+    log("Success: " & to_string(shared_uart_byte_coverage.IsCovered));
+
+    shared_uart_byte_coverage.writebin;
 
 
 
@@ -140,8 +147,8 @@ architecture func of uvvm_demo_tb is
 
 
     -- Print report of Scoreboard counters
-    v_uart_sb.report_counters(VOID);
-    v_sbi_sb.report_counters(VOID);
+    shared_uart_sb.report_counters(VOID);
+    shared_sbi_sb.report_counters(VOID);
 
 
 

@@ -58,6 +58,8 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     addr                  : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    randomisation         : t_randomisation;
+    num_bytes_to_send     : natural;
     max_polls             : integer;
   end record;
 
@@ -73,11 +75,13 @@ package vvc_cmd_pkg is
     cmd_idx             => 0,
     command_type        => NO_command_type,
     msg_id              => NO_ID,
-    gen_integer_array     => (others => -1),
-    gen_boolean           => false,
-    timeout               => 0 ns,
+    gen_integer_array   => (others => -1),
+    gen_boolean         => false,
+    timeout             => 0 ns,
     delay               => 0 ns,
-    quietness           => NON_QUIET
+    quietness           => NON_QUIET,
+    randomisation       => NA,
+    num_bytes_to_send   => 1
     );
 
   --===============================================================================================

@@ -132,7 +132,7 @@ package vvc_methods_pkg is
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable v_sbi_sb : t_generic_sb;
+  shared variable shared_sbi_sb : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -148,6 +148,17 @@ package vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant addr               : in unsigned;
     constant data               : in std_logic_vector;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  );
+
+
+  procedure sbi_write(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant addr               : in unsigned;
+    constant num_bytes_to_send  : in natural;
+    constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -246,8 +257,36 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    shared_vvc_cmd.operation                          := WRITE;
     shared_vvc_cmd.addr                               := v_normalised_addr;
     shared_vvc_cmd.data                               := v_normalised_data;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+
+  procedure sbi_write(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant addr               : in unsigned;
+    constant num_bytes_to_send  : in natural;
+    constant randomisation      : in t_randomisation;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
+        & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", RANDOM)";
+    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
+        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
+    shared_vvc_cmd.operation                          := WRITE;
+    shared_vvc_cmd.addr                               := v_normalised_addr;
+    shared_vvc_cmd.randomisation                      := randomisation;
+    shared_vvc_cmd.num_bytes_to_send                  := num_bytes_to_send;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
@@ -379,7 +418,6 @@ package body vvc_methods_pkg is
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                         <= IN_PROGRESS;
-        dtt_group.bt.error_info.delay_error                     <= vvc_config.bfm_config.error_injection.delay_error;
         dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when POLL_UNTIL =>
@@ -389,7 +427,6 @@ package body vvc_methods_pkg is
         dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
         dtt_group.ct.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.ct.transaction_status                         <= IN_PROGRESS;
-        dtt_group.bt.error_info.delay_error                     <= vvc_config.bfm_config.error_injection.delay_error;
         dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when others =>

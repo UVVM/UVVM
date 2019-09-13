@@ -202,6 +202,10 @@ package body uart_bfm_pkg is
     ) is
     constant proc_name      : string := "uart_transmit";
     constant proc_call      : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+
+    alias stop_bit_error    is config.error_injection.stop_bit_error;
+    alias parity_bit_error  is config.error_injection.parity_bit_error;
+
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
@@ -224,13 +228,29 @@ package body uart_bfm_pkg is
     elsif(config.parity = PARITY_EVEN) then
       tx <= not(odd_parity(data_value));
     end if;
+
+    -- Invert parity bit if error injection is requested
+    if parity_bit_error = true then
+      if (config.parity = PARITY_ODD) then
+        tx <= not(odd_parity(data_value));
+      elsif(config.parity = PARITY_EVEN) then
+        tx <= odd_parity(data_value);
+      end if;
+    end if;
     wait for config.bit_time;
 
 
     -- Set stop bits
-    tx <= config.idle_state;
-    wait for config.bit_time;
+    if stop_bit_error = false then
+      tx <= config.idle_state;
+    else
+      -- Invert stop bit if error injection is requested
+      tx <= not(config.idle_state);
+      --Will return to idle/normal stop bit after 1 bit time
+      tx <= transport config.idle_state after config.bit_time;
+    end if;
 
+    wait for config.bit_time;
     if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
       wait for config.bit_time/2;
     elsif(config.num_stop_bits = STOP_BITS_TWO) then

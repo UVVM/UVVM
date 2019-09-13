@@ -368,6 +368,8 @@ package body sbi_bfm_pkg is
     variable v_start_time         : time    := -1 ns;  -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
 
+    alias write_and_read_error    is config.error_injection.write_and_read_error;
+
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -394,6 +396,11 @@ package body sbi_bfm_pkg is
     rena  <= '0';
     addr  <= v_normalised_addr;
     wdata <= v_normalised_data;
+
+    -- Set error injection
+    if write_and_read_error = true then
+      rena <= '1';
+    end if;
 
     if config.use_ready_signal then
       check_value(ready = '1' or ready = '0', failure, "Verifying that ready signal is set to either '1' or '0' when in use", scope, ID_NEVER, msg_id_panel);

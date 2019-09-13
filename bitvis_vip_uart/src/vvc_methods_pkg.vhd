@@ -53,6 +53,16 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity  => WARNING
   );
 
+  type t_error_injection is record
+    parity_bit_error_prob : real;
+    stop_bit_error_prob   : real;
+  end record t_error_injection;
+
+  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+    parity_bit_error_prob => 0.0,
+    stop_bit_error_prob   => 0.0
+  );
+
   type t_vvc_config is
   record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
@@ -64,6 +74,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;           -- Severity of alert to be initiated if exceeding result_queue_count_threshold
     bfm_config                            : t_uart_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
+    error_injection_config                : t_error_injection;
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -77,7 +88,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
-    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
+    error_injection_config                => C_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -181,6 +193,15 @@ package vvc_methods_pkg is
   procedure restore_global_dtt(
     signal dtt_group : inout t_transaction_info_group ;
     constant vvc_cmd : in t_vvc_cmd_record);
+
+
+  --==============================================================================
+  -- Error Injection methods
+  --==============================================================================
+  impure function decide_if_error_is_injected(
+    constant probability  : in real
+  ) return boolean;
+
 
 
 end package vvc_methods_pkg;
@@ -340,6 +361,22 @@ package body vvc_methods_pkg is
 
     wait for 0 ns;
   end procedure restore_global_dtt;
+
+
+
+  --==============================================================================
+  -- Error Injection methods
+  --==============================================================================
+
+  impure function decide_if_error_is_injected(
+    constant probability  : in real
+  ) return boolean is
+  begin
+    check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
+
+    return (random(0.0, 1.0) <= probability);
+  end function decide_if_error_is_injected;
+
 
 
 end package body vvc_methods_pkg;

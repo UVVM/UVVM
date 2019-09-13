@@ -59,6 +59,7 @@ package vvc_cmd_pkg is
     data              : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     randomisation     : t_randomisation;
     num_bytes_to_send : natural;
+    coverage          : t_coverage;
     max_receptions    : integer;
   end record;
 
@@ -79,7 +80,8 @@ package vvc_cmd_pkg is
     delay             => 0 ns,
     quietness         => NON_QUIET,
     randomisation     => NA,
-    num_bytes_to_send => 1
+    num_bytes_to_send => 1,
+    coverage          => NA
     );
 
   --===============================================================================================

@@ -193,10 +193,9 @@ begin
 
         case sbi_dtt.bt.operation is
           when WRITE =>
-            if  (sbi_dtt.bt.error_info.delay_error = false) and
-                (sbi_dtt.bt.error_info.write_and_read_error = false) then
+            if (sbi_dtt.bt.error_info.write_and_read_error = false) then
                 -- add to UART scoreboard
-                v_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
+                shared_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
             end if;
 
           when READ =>
@@ -228,7 +227,7 @@ begin
                 (uart_tx_dtt.bt.error_info.stop_bit_error = false) then
 
                 -- Add to UART scoreboard
-                v_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
+                shared_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
                 -- Wait for UART Transmit to finish
                 insert_delay(SBI_VVCT, 1, 12*C_BIT_PERIOD, "");
                 -- Request SBI Read

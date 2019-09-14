@@ -119,19 +119,21 @@ architecture func of uvvm_demo_tb is
 
     log(ID_LOG_HDR, "SBI Write random bytes until UART Coverage is fulfiled", C_SCOPE);
 
+
+    uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, "UART RX");
+
     --while not(shared_uart_byte_coverage.IsCovered) loop
-    for idx in 1 to 20 loop
+    for idx in 1 to 50 loop
       v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
+
       sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
       -- Add time for UART to finish
-      insert_delay(SBI_VVCT, 1, 40*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
-      uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, "UART RX");
-      insert_delay(SBI_VVCT, 1, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+      insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
     end loop;
 
 
 
-      await_completion(UART_VVCT, 1, RX, 1 sec, "Waiting for UART RX coverage.");
+      --await_completion(UART_VVCT, 1, RX, 1 sec, "Waiting for UART RX coverage.");
 
 
 --    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, 1  6, RANDOM, "SBI Write random");

@@ -209,7 +209,7 @@ begin
     shared_uart_sb.enable_log_msg(ID_DATA);
 
     -- Coverage
-    shared_uart_byte_coverage.AddBins(GenBin(0, 2, 3));
+    shared_uart_byte_coverage.AddBins(GenBin(0, 7, 8));
     shared_uart_byte_coverage.SetName("UATR Receive coverage");
 
     loop
@@ -279,7 +279,6 @@ begin
               v_coverage_ok := false;
 
               while not(v_coverage_ok) loop
-                log("UART RECEIVE");
                 -- Set DTT
                 set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
@@ -292,6 +291,7 @@ begin
                               config                => vvc_config.bfm_config,
                               scope                 => C_SCOPE,
                               msg_id_panel          => vvc_config.msg_id_panel);
+
                 -- Store the result
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -308,8 +308,6 @@ begin
                 shared_uart_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
                 -- Check if coverage is fulfilled
                 v_coverage_ok := shared_uart_byte_coverage.IsCovered;
-
-                log("UART done");
               end loop;
 
             when COVERAGE_EDGES =>

@@ -74,6 +74,8 @@ architecture func of uvvm_demo_tb is
   ------------------------------------------------
   p_main: process
     variable v_data : std_logic_vector(7 downto 0);
+    constant C_NUM_BYTES  : natural := 30;
+    constant C_TIMEOUT    : time := C_NUM_BYTES * 16 * C_BIT_PERIOD;
 
   begin
 
@@ -93,14 +95,14 @@ architecture func of uvvm_demo_tb is
     enable_log_msg(ID_UVVM_SEND_CMD);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    enable_log_msg(SBI_VVCT, 1, ID_BFM);
+    --enable_log_msg(SBI_VVCT, 1, ID_BFM);
     enable_log_msg(SBI_VVCT, 1, ID_FINISH_OR_STOP);
 
     disable_log_msg(UART_VVCT, 1, RX, ALL_MESSAGES);
-    enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
+    --enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
 
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
-    enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
+    --enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
 
     log(ID_LOG_HDR, "Starting simulation of TB for UART using VVCs", C_SCOPE);
     ------------------------------------------------------------
@@ -114,39 +116,27 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
-    -- num_words
 
+    log(ID_LOG_HDR, "UART Receive full coverage from 0x0 to 0x7", C_SCOPE);
+    ------------------------------------------------------------
+    -- Reuqest UART Receive from DUT with full coverage
+    uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, TO_SB, "UART RX");
 
-    log(ID_LOG_HDR, "SBI Write random bytes until UART Coverage is fulfiled", C_SCOPE);
-
-
-    uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, "UART RX");
-
-    --while not(shared_uart_byte_coverage.IsCovered) loop
-    for idx in 1 to 50 loop
+    -- SBI Write random data to DUT
+    for idx in 1 to C_NUM_BYTES loop
       v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
-
       sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
       -- Add time for UART to finish
       insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
     end loop;
 
+    -- Wait for UART RX VVC to finish data readout
+    await_completion(UART_VVCT, 1, RX, C_TIMEOUT, "Waiting for UART RX coverage.");
 
-
-      --await_completion(UART_VVCT, 1, RX, 1 sec, "Waiting for UART RX coverage.");
-
-
---    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, 1  6, RANDOM, "SBI Write random");
---    await_completion(UART_VVCT, 1, RX, 1 sec, "Waiting for UART RX coverage.");
-
-    log("Success: " & to_string(shared_uart_byte_coverage.IsCovered));
-
+    -- Print coverage results
+    log(ID_LOG_HDR, "Coverage results", C_SCOPE);
+    ------------------------------------------------------------
     shared_uart_byte_coverage.writebin;
-
-
-
-    wait for 1000 ns; -- wait for all VVCs to finish
-
 
     -- Print report of Scoreboard counters
     shared_uart_sb.report_counters(VOID);

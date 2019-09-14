@@ -49,9 +49,6 @@ architecture func of uvvm_demo_tb is
   constant C_CLK_PERIOD         : time := 10 ns;
   constant C_BIT_PERIOD         : time := 16 * C_CLK_PERIOD;
 
-  -- Time for one UART transmission to complete
-  constant C_TIME_OF_ONE_UART_TX : time := 11*C_BIT_PERIOD; -- =1760 ns;
-
   -- Predefined SBI addresses
   constant C_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
   constant C_ADDR_RX_DATA_VALID : unsigned(2 downto 0) := "001";
@@ -82,21 +79,15 @@ architecture func of uvvm_demo_tb is
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
-    --enable_log_msg(ALL_MESSAGES);
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
     enable_log_msg(ID_UVVM_SEND_CMD);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    enable_log_msg(SBI_VVCT, 1, ID_BFM);
-    enable_log_msg(SBI_VVCT, 1, ID_FINISH_OR_STOP);
-
     disable_log_msg(UART_VVCT, 1, RX, ALL_MESSAGES);
-    enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
-
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
-    enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
+
 
     log(ID_LOG_HDR, "Starting simulation of TB for UART using VVCs", C_SCOPE);
     ------------------------------------------------------------
@@ -112,16 +103,17 @@ architecture func of uvvm_demo_tb is
 
 
 
-    log(ID_LOG_HDR, "Check random transmit", C_SCOPE);
+    log(ID_LOG_HDR, "Check 1 byet random transmit", C_SCOPE);
     ------------------------------------------------------------
     -- This test will request the UART VVC using the TX
     -- channel to send a random byte to the DUT.
     uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
-    wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
     -- Results are checked in Scoreboard.
-    -- Add delay for DUT to prepare for next transaction
+
+
+    -- Add a delay for DUT to prepare for next transaction
     insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
@@ -131,19 +123,16 @@ architecture func of uvvm_demo_tb is
     -- channel to send 3 random bytes to the DUT.
     uart_transmit(UART_VVCT, 1, TX, 3, RANDOM, "UART TX RANDOM");
     await_completion(UART_VVCT,1,TX,  3 * 13 * C_BIT_PERIOD);
-    wait for 200 ns;  -- margin
     -- SBI Read is requested by Model.
     -- Results are checked in Scoreboard.
-    -- Add delay for DUT to prepare for next transaction
-    insert_delay(UART_VVCT, 1, TX, 30*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
 
 
 
-    wait for 1000 ns; -- wait for all VVCs to finish
-
+    -- Wait for final SBI READ to finish and update SB
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
     -- Print report of Scoreboard counters
-    shared_uart_sb.report_counters(VOID);
+    --shared_uart_sb.report_counters(VOID);
     shared_sbi_sb.report_counters(VOID);
 
 

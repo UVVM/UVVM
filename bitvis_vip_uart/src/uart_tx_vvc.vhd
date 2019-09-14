@@ -230,7 +230,7 @@ begin
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
           -- Loop the number of bytes to transmit
-          for idx in 1 to v_cmd.num_bytes_to_send loop
+          for idx in 1 to v_cmd.num_bytes loop
 
             -- Set error injection
             vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection_config.parity_bit_error_prob);
@@ -268,6 +268,8 @@ begin
 
             -- Set DTT back to default values
             restore_global_dtt(dtt_transaction_info, v_cmd);
+            wait for vvc_config.bfm_config.bit_time;
+
           end loop;
 
 

@@ -244,7 +244,7 @@ begin
         --===================================
         when WRITE =>
           -- Loop the number of bytes to transmit
-          for idx in 1 to v_cmd.num_bytes_to_send loop
+          for idx in 1 to v_cmd.num_bytes loop
 
             -- Set BFM error injection
             vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);

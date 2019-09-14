@@ -59,7 +59,7 @@ package vvc_cmd_pkg is
     addr                  : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     randomisation         : t_randomisation;
-    num_bytes_to_send     : natural;
+    num_bytes             : natural;
     max_polls             : integer;
   end record;
 
@@ -81,7 +81,7 @@ package vvc_cmd_pkg is
     delay               => 0 ns,
     quietness           => NON_QUIET,
     randomisation       => NA,
-    num_bytes_to_send   => 1
+    num_bytes           => 1
     );
 
   --===============================================================================================

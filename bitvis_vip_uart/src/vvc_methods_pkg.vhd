@@ -78,16 +78,17 @@ package vvc_methods_pkg is
     stop_bit_error_prob   => 0.0
   );
 
-  type t_bit_rate_checker is record
-    enable        : boolean;
-    min_period    : time;
-    max_period    : time;
+ type t_bit_rate_checker is
+  record
+    enable     : boolean;
+    min_period : time;
+    alert_level: t_alert_level;
   end record;
 
   constant C_BIT_RATE_CHECKER_DEFAULT : t_bit_rate_checker := (
-    enable        => false,
-    min_period    => 160 ns,
-    max_period    => 160 ns
+    enable     => FALSE,
+    min_period => -1 ns,
+    alert_level=> WARNING
   );
 
 

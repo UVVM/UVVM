@@ -215,6 +215,22 @@ architecture func of uvvm_demo_tb is
     end procedure test_functional_coverage;
 
 
+    procedure test_protocol_checker(void : t_void) is
+    begin
+      log(ID_LOG_HDR_XL, "Test protocol checker", C_SCOPE);
+      -- Note:
+      -- Results are checked in Scoreboard.
+
+
+
+      -- Print report of Scoreboard counters
+      shared_uart_sb.report_counters(VOID);
+      -- Empty SB for next test
+      shared_uart_sb.flush("Empty SB for next test");
+      -- Add small delay before next test
+      wait for 3 * C_BIT_PERIOD;
+    end procedure test_protocol_checker;
+
 
   begin
 

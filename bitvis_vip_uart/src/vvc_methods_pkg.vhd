@@ -78,6 +78,19 @@ package vvc_methods_pkg is
     stop_bit_error_prob   => 0.0
   );
 
+  type t_bit_rate_checker is record
+    enable        : boolean;
+    min_period    : time;
+    max_period    : time;
+  end record;
+
+  constant C_BIT_RATE_CHECKER_DEFAULT : t_bit_rate_checker := (
+    enable        => false,
+    min_period    => 160 ns,
+    max_period    => 160 ns
+  );
+
+
   type t_vvc_config is
   record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
@@ -90,6 +103,7 @@ package vvc_methods_pkg is
     bfm_config                            : t_uart_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
     error_injection_config                : t_error_injection;
+    bit_rate_checker                      : t_bit_rate_checker;
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -104,7 +118,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    error_injection_config                => C_ERROR_INJECTION_INACTIVE
+    error_injection_config                => C_ERROR_INJECTION_INACTIVE,
+    bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT
     );
 
   type t_vvc_status is

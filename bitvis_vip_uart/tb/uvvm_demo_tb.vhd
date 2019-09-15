@@ -210,6 +210,7 @@ architecture func of uvvm_demo_tb is
       shared_uart_sb.report_counters(VOID);
       -- Empty SB for next test
       shared_uart_sb.flush("Empty SB for next test");
+      shared_sbi_sb.flush("Empty SB for next test");
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_functional_coverage;
@@ -217,16 +218,52 @@ architecture func of uvvm_demo_tb is
 
     procedure test_protocol_checker(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test protocol checker", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test protocol checker: bit rate checker", C_SCOPE);
       -- Note:
       -- Results are checked in Scoreboard.
 
+      log(ID_SEQUENCER, "\nIncrease number of expected alerts with 3.", C_SCOPE);
+      increment_expected_alerts(WARNING, 3);
 
+      log(ID_SEQUENCER, "\nEnable and configure bit rate checker.");
+      shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := true;
+      shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD;
+
+
+      for idx in 1 to 6 loop
+
+        -- Adjust bit rate period
+        case idx is
+          when 3 =>
+            log(ID_SEQUENCER, "\nSetting bit rate 5% below bit period.\n", C_SCOPE);
+            shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := (0.95 * C_BIT_PERIOD);
+          when 4 =>
+            log(ID_SEQUENCER, "\nSetting bit rate 5% above bit period.\n", C_SCOPE);
+            shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := (1.05 * C_BIT_PERIOD);
+          when 5 =>
+            log(ID_SEQUENCER, "\nDisabling bit rate checker.\n", C_SCOPE);
+            shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := false;
+          when others =>
+            shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD;
+        end case;
+
+        -- SBI send data to DUT
+        v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
+        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
+        -- Add time for UART to finish
+        insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
+
+        -- UART receive data from DUT
+        uart_receive(UART_VVCT, 1, RX, TO_SB, "UART RX");
+        await_completion(UART_VVCT, 1, RX, 16*C_BIT_PERIOD, "Waiting for UART RX to finish.");
+      end loop;
 
       -- Print report of Scoreboard counters
       shared_uart_sb.report_counters(VOID);
       -- Empty SB for next test
       shared_uart_sb.flush("Empty SB for next test");
+      shared_sbi_sb.flush("Empty SB for next test");
+
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_protocol_checker;
@@ -280,6 +317,7 @@ architecture func of uvvm_demo_tb is
     test_error_injection(VOID);
     test_randomise(VOID);
     test_functional_coverage(VOID);
+    test_protocol_checker(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

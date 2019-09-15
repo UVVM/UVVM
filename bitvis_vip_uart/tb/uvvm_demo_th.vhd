@@ -44,23 +44,29 @@ use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 -- Test harness entity
 entity uvvm_demo_th is
+  generic (
+  -- Clock and bit period settings
+    GC_CLK_PERIOD         : time := 10 ns;
+    GC_BIT_PERIOD         : time := 16 * GC_CLK_PERIOD;
+    -- DUT addresses
+    GC_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
+    GC_ADDR_RX_DATA_VALID : unsigned(2 downto 0) := "001";
+    GC_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
+    GC_ADDR_TX_READY      : unsigned(2 downto 0) := "011"
+  );
 end entity;
 
 -- Test harness architecture
 architecture struct of uvvm_demo_th is
 
-  -- Clock and bit period settings
-  constant C_CLK_PERIOD         : time := 10 ns;
-  constant C_BIT_PERIOD         : time := 16 * C_CLK_PERIOD;
-
-
-  constant C_DATA_WIDTH   : natural := 8;
-  constant C_ADDR_WIDTH   : natural := 3;
+  -- VVC idx
   constant C_SBI_VVC      : natural := 1;
   constant C_UART_TX_VVC  : natural := 1;
   constant C_UART_RX_VVC  : natural := 1;
 
-  constant C_ADDR_RX_DATA : unsigned(2 downto 0) := "000";
+  -- UART if
+  constant C_DATA_WIDTH   : natural := 8;
+  constant C_ADDR_WIDTH   : natural := 3;
 
 
   -- DSP interface and general control signals
@@ -151,7 +157,7 @@ begin
   ready <= '1';
 
   -- Toggle the reset after 5 clock periods
-  p_arst: arst <= '1', '0' after 5 *C_CLK_PERIOD;
+  p_arst: arst <= '1', '0' after 5 *GC_CLK_PERIOD;
 
 
   -----------------------------------------------------------------------------
@@ -229,9 +235,9 @@ begin
                 -- Add to UART scoreboard
                 shared_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
                 -- Wait for UART Transmit to finish
-                insert_delay(SBI_VVCT, 1, 12*C_BIT_PERIOD, "Wait for UART TX to finish");
+                insert_delay(SBI_VVCT, 1, 12*GC_BIT_PERIOD, "Wait for UART TX to finish");
                 -- Request SBI Read
-                sbi_read(SBI_VVCT, 1, C_ADDR_RX_DATA, TO_SB, "SBI_READ");
+                sbi_read(SBI_VVCT, 1, GC_ADDR_RX_DATA, TO_SB, "SBI_READ");
 
             end if;
 
@@ -254,8 +260,8 @@ begin
     generic map(
       GC_INSTANCE_IDX    => C_CLOCK_GEN,
       GC_CLOCK_NAME      => "Clock",
-      GC_CLOCK_PERIOD    => C_CLK_PERIOD,
-      GC_CLOCK_HIGH_TIME => C_CLK_PERIOD / 2
+      GC_CLOCK_PERIOD    => GC_CLK_PERIOD,
+      GC_CLOCK_HIGH_TIME => GC_CLK_PERIOD / 2
       )
     port map(
       clk => clk

@@ -388,6 +388,35 @@ begin
 --===============================================================================================
 
 
+
+ p_checker : process
+    alias bit_rate_checker        is vvc_config.bit_rate_checker;
+    -- helper variables
+    variable v_edge_time          : time;
+    variable v_previous_edge_time : time;
+    variable v_edge2edge_time     : time;
+
+  begin
+    wait until falling_edge(uart_vvc_rx);
+
+    v_edge_time := now;
+    if bit_rate_checker.enable = true then
+        loop
+          wait until uart_vvc_rx'event;
+            v_previous_edge_time := v_edge_time;
+            v_edge_time          := now;
+            v_edge2edge_time     := v_edge_time - v_previous_edge_time;
+
+            check_value(v_edge2edge_time >= bit_rate_checker.min_period, bit_rate_checker.alert_level, "Checking UART bit rate", C_SCOPE);
+
+            if bit_rate_checker.enable = false then
+              exit;
+            end if;
+
+       end loop;
+    end if;
+  end process p_checker;
+
 end behave;
 
 

@@ -244,7 +244,7 @@ architecture func of uvvm_demo_tb is
             log(ID_SEQUENCER, "\nDisabling bit rate checker.\n", C_SCOPE);
             shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := false;
           when others =>
-            shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD;
+            null;
         end case;
 
         -- SBI send data to DUT
@@ -313,11 +313,14 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
 
-
+    -----------------------------------------------------------------------------
+    -- Tests
+    -----------------------------------------------------------------------------
     test_error_injection(VOID);
     test_randomise(VOID);
     test_functional_coverage(VOID);
     test_protocol_checker(VOID);
+
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

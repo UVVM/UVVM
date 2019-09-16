@@ -84,22 +84,31 @@ architecture func of uvvm_demo_tb is
     procedure test_error_injection(void : t_void) is
       variable v_prob : real;
     begin
-      log(ID_LOG_HDR_XL, "Test error injection.", C_SCOPE);
-      -- Note:
-      -- SBI Read is requested by Model.
-      -- Results are checked in Scoreboard.
+      log(ID_LOG_HDR_XL, "Test error injection.\n"&
+                         "UART TX VVC is used to randomly send error injected data to DUT.", C_SCOPE);
+
+      -- Print info
+      log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
+
+      -- Set UART TX VVC error injection probability to 0%
       shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob := 0.0;
       shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob   := 0.0;
 
 
       log(ID_LOG_HDR, "Performing 10x SBI Write and UART Reveive with random parity bit error injection", C_SCOPE);
+      -- This test will use UART TX VVC to write data to DUT, with randomly inserted parity bit
+      --   error injection. The probability of error injection will increase with 10% for
+      --   each write access.
       for idx in 1 to 10 loop
+        -- Get write data and error injection probability
         v_data := std_logic_vector(to_unsigned(idx, v_data'length));
         v_prob := real(idx) / real(10);
 
+        -- Configure the parity bit error injection probability
         log(ID_SEQUENCER, "\nSetting parity error probability to " & to_string(v_prob) & "%", C_SCOPE);
         shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob := v_prob;
 
+        -- Request UART TX VVC write
         uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
         await_completion(UART_VVCT,1,TX,  16 * C_BIT_PERIOD);
         wait for 200 ns;  -- margin
@@ -107,17 +116,26 @@ architecture func of uvvm_demo_tb is
         insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
       end loop;
 
+      -- Set UART TX VVC parity bit error injection probability to 0%, i.e. off.
       log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
       shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.0;
 
 
+
       log(ID_LOG_HDR, "Performing 10x SBI Write and UART Reveive with random stop bit error injection", C_SCOPE);
+      -- This test will use UART TX VVC to write data to DUT, with randomly inserted stop bit
+      --   error injection. The probability of error injection will increase with 10% for
+      --   each write access.
       for idx in 1 to 10 loop
+        -- Get write data and error injection probability
         v_data := std_logic_vector(to_unsigned(idx, v_data'length));
         v_prob := real(idx) / real(10);
+
+        -- Configure the parity bit error injection probability
         log(ID_SEQUENCER, "\nSetting stop error probability to " & to_string(v_prob) & "%", C_SCOPE);
         shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob := v_prob;
 
+        -- Request UART TX VVC write
         uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
         await_completion(UART_VVCT,1,TX,  16 * C_BIT_PERIOD);
         wait for 200 ns;  -- margin
@@ -126,16 +144,16 @@ architecture func of uvvm_demo_tb is
       end loop;
 
 
+      -- Set UART TX VVC stop bit error injection probability to 0%, i.e. off.
       log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
       shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.0;
 
       -- Print report of Scoreboard counters
-      shared_uart_sb.report_counters(VOID);
       shared_sbi_sb.report_counters(VOID);
 
-      -- Empty SBI SB for next test
-      shared_uart_sb.flush("Empty SB for next test");
-      shared_sbi_sb.flush("Empty SB for next test");
+      -- Empty SB for next test
+      shared_sbi_sb.reset("Empty SB for next test");
+
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_error_injection;
@@ -144,14 +162,16 @@ architecture func of uvvm_demo_tb is
 
     procedure test_randomise(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test randomise.", C_SCOPE);
-      -- Note:
-      -- SBI Read is requested by Model.
-      -- Results are checked in Scoreboard.
+      log(ID_LOG_HDR_XL, "Test randomise data.\n"&
+                         "UART TX VVC is used to send randomised data to DUT.", C_SCOPE);
+
+      -- Print info
+      log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
 
       log(ID_LOG_HDR, "Check 1 byte random transmit", C_SCOPE);
-      -- This test will request the UART VVC using the TX
-      -- channel to send a random byte to the DUT.
+      -- This test will request the UART TX VVC to send a random byte to the DUT.
+      -- SBI_READ() is requested by Model and the randomised data is checked in SB.
+
       uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
       await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
       -- Add a delay for DUT to prepare for next transaction
@@ -159,8 +179,9 @@ architecture func of uvvm_demo_tb is
 
 
       log(ID_LOG_HDR, "Check 3 byte random transmit", C_SCOPE);
-      -- This test will request the UART VVC using the TX
-      -- channel to send 3 random bytes to the DUT.
+      -- This test will request the UART TX VVC to send 3 random bytes to the DUT.
+      -- SBI_READ() is requested by Model and the randomised data is checked in SB.
+
       uart_transmit(UART_VVCT, 1, TX, 3, RANDOM, "UART TX RANDOM");
       await_completion(UART_VVCT,1,TX,  3 * 13 * C_BIT_PERIOD);
 
@@ -170,8 +191,10 @@ architecture func of uvvm_demo_tb is
 
       -- Print report of Scoreboard counters
       shared_sbi_sb.report_counters(VOID);
+
       -- Empty SBI SB for next test
-      shared_sbi_sb.flush("Empty SB for next test");
+      shared_sbi_sb.reset("Empty SB for next test");
+
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_randomise;
@@ -181,36 +204,46 @@ architecture func of uvvm_demo_tb is
       constant C_NUM_BYTES  : natural := 100;
       constant C_TIMEOUT    : time := C_NUM_BYTES * 16 * C_BIT_PERIOD;
     begin
-      log(ID_LOG_HDR_XL, "Test functional coverage", C_SCOPE);
-      -- Note:
-      -- Results are checked in Scoreboard.
+      log(ID_LOG_HDR_XL, "Test functional coverage.\n"&
+                         "SBI VVC is used to send randomised data to DUT, while UART RX VVC read data from DUT\n"&
+                         "until full coverage is fulfilled.", C_SCOPE);
+
+      -- Print info
+      log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
 
       log(ID_LOG_HDR, "UART Receive full coverage from 0x0 to 0x7", C_SCOPE);
+      -- This test will request the SBI VVC to transmit lots of randomised data to the DUT.
+      --   The UART RX VVC is requested to read DUT data until full coverage is fulfilled.
+
+      -- Request UART RX VVC to read DUT data until full coverage is fulfilled (0x0 to 0xF)
       uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, TO_SB, "UART RX");
 
-      -- SBI Write random data to DUT
+      -- Request SBI VVC to transmit lots of randomised data from 0x0 to 0x10
       for idx in 1 to C_NUM_BYTES loop
+        -- Generate random data
         v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
+        -- SBI VVC write randomised data to DUT
         sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
         -- Add time for UART to finish
         insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
       end loop;
 
-      -- Wait for UART RX VVC to finish data readout
+      -- Wait for UART RX VVC to reach full coverage DUT data readout.
       await_completion(UART_VVCT, 1, RX, C_TIMEOUT, "Waiting for UART RX coverage.");
 
-      -- Terminate remaining SBI VVC commands
+      -- Terminate remaining SBI VVC commands.
       flush_command_queue(SBI_VVCT, 1);
 
       -- Print coverage results
-      log(ID_SEQUENCER, "Coverage results", C_SCOPE);
+      log(ID_SEQUENCER, "\nCoverage results", C_SCOPE);
       shared_uart_byte_coverage.writebin;
 
       -- Print report of Scoreboard counters
       shared_uart_sb.report_counters(VOID);
+
       -- Empty SB for next test
-      shared_uart_sb.flush("Empty SB for next test");
-      shared_sbi_sb.flush("Empty SB for next test");
+      shared_uart_sb.reset("Empty SB for next test");
+
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_functional_coverage;
@@ -218,18 +251,25 @@ architecture func of uvvm_demo_tb is
 
     procedure test_protocol_checker(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test protocol checker: bit rate checker", C_SCOPE);
-      -- Note:
-      -- Results are checked in Scoreboard.
+      log(ID_LOG_HDR_XL, "Test protocol checker.\n"&
+                          "UART RX VVC is configured with controlling of a bit rate checker,\n"&
+                          "witch is configured and tested with DUT readout data.", C_SCOPE);
 
+      -- Print info
+      log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
+
+      -- Bit rate checker will alert when bit rate is not as expected
       log(ID_SEQUENCER, "\nIncrease number of expected alerts with 3.", C_SCOPE);
       increment_expected_alerts(WARNING, 3);
 
+      -- Enable and configure bit rate checker
       log(ID_SEQUENCER, "\nEnable and configure bit rate checker.");
       shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := true;
       shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD;
 
 
+      -- Use SBI VVC to transmit 6 random bytes. Change the setting of bit rate checker
+      --   to test various settings.
       for idx in 1 to 6 loop
 
         -- Adjust bit rate period
@@ -260,9 +300,9 @@ architecture func of uvvm_demo_tb is
 
       -- Print report of Scoreboard counters
       shared_uart_sb.report_counters(VOID);
+
       -- Empty SB for next test
-      shared_uart_sb.flush("Empty SB for next test");
-      shared_sbi_sb.flush("Empty SB for next test");
+      shared_uart_sb.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -315,6 +355,7 @@ architecture func of uvvm_demo_tb is
 
     -----------------------------------------------------------------------------
     -- Tests
+    --   Comment out tests below to run a selection of tests.
     -----------------------------------------------------------------------------
     test_error_injection(VOID);
     test_randomise(VOID);

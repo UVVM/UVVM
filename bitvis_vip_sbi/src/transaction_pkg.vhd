@@ -71,14 +71,12 @@ package transaction_pkg is
     cmd_idx => -1
     );
 
-  -- Error info
-  type t_error_info is record
-    write_and_read_error  : boolean;
-  end record;
-
-  constant C_ERROR_INFO_DEFAULT : t_error_info := (
-    write_and_read_error  => false
-    );
+--  -- Error info
+--  type t_error_info is record
+--  end record;
+--
+--  constant C_ERROR_INFO_DEFAULT : t_error_info := (
+--    );
 
   -- Transaction
   type t_transaction is record
@@ -87,7 +85,7 @@ package transaction_pkg is
     data                : std_logic_vector(C_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
-    error_info          : t_error_info;
+    --error_info          : t_error_info;
   end record;
 
   constant C_TRANSACTION_INFO_SET_DEFAULT : t_transaction := (
@@ -95,8 +93,8 @@ package transaction_pkg is
     address             => (others => '0'),
     data                => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT,
-    error_info          => C_ERROR_INFO_DEFAULT
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    --error_info          => C_ERROR_INFO_DEFAULT
     );
 
   -- Transaction info group

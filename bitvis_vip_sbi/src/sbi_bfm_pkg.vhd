@@ -45,13 +45,11 @@ package sbi_bfm_pkg is
   end record;
 
 
-  type t_error_injection is record
-    write_and_read_error  : boolean;
-  end record t_error_injection;
-
-  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
-    write_and_read_error  => false
-  );
+--  type t_error_injection is record
+--  end record t_error_injection;
+--
+--  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+--  );
 
   -- Configuration record to be assigned in the test harness.
   type t_sbi_bfm_config is
@@ -71,7 +69,7 @@ package sbi_bfm_pkg is
     id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
     id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
     use_ready_signal            : boolean;        -- Whether or not to use the interface �ready� signal
-    error_injection             : t_error_injection;
+    --error_injection             : t_error_injection;
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (
@@ -87,8 +85,8 @@ package sbi_bfm_pkg is
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL,
-    use_ready_signal            => true,
-    error_injection             => C_ERROR_INJECTION_INACTIVE
+    use_ready_signal            => true
+    --error_injection             => C_ERROR_INJECTION_INACTIVE
     );
 
 
@@ -365,9 +363,6 @@ package body sbi_bfm_pkg is
     variable v_max_time           : time    := -1 ns;  -- max allowed clk low period
     variable v_start_time         : time    := -1 ns;  -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
-
-    alias write_and_read_error    is config.error_injection.write_and_read_error;
-
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -394,11 +389,6 @@ package body sbi_bfm_pkg is
     rena  <= '0';
     addr  <= v_normalised_addr;
     wdata <= v_normalised_data;
-
-    -- Set error injection
-    if write_and_read_error = true then
-      rena <= '1';
-    end if;
 
     if config.use_ready_signal then
       check_value(ready = '1' or ready = '0', failure, "Verifying that ready signal is set to either '1' or '0' when in use", scope, ID_NEVER, msg_id_panel);
@@ -485,9 +475,6 @@ package body sbi_bfm_pkg is
     variable v_max_time           : time  := -1 ns;   -- max allowed clk low period
     variable v_start_time         : time := -1 ns;    -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false; -- clk high/low status on BFM call
-
-    alias write_and_read_error    is config.error_injection.write_and_read_error;
-
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
@@ -520,11 +507,6 @@ package body sbi_bfm_pkg is
     wena <= '0';
     rena <= '1';
     addr <= v_normalised_addr;
-
-    -- Set error injection
-    if write_and_read_error = true then
-      wena <= '1';
-    end if;
 
     if config.use_ready_signal then
       check_value(ready = '1' or ready = '0', failure, "Verifying that ready signal is set to either '1' or '0' when in use", scope, ID_NEVER, msg_id_panel);

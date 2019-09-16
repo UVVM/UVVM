@@ -54,15 +54,11 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity  => WARNING
   );
 
-  type t_error_injection is record
-    delay_error_prob          : real;
-    write_and_read_error_prob : real;
-  end record t_error_injection;
-
-  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
-    delay_error_prob            => 0.0,
-    write_and_read_error_prob   => 0.0
-  );
+--  type t_error_injection is record
+--  end record t_error_injection;
+--
+--  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+--  );
 
   type t_vvc_config is
   record
@@ -75,7 +71,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;
     bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
-    error_injection_config                : t_error_injection;
+    --error_injection_config                : t_error_injection;
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -89,8 +85,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_SBI_BFM_CONFIG_DEFAULT,
-    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    error_injection_config                => C_ERROR_INJECTION_INACTIVE
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+    --error_injection_config                => C_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -418,7 +414,6 @@ package body vvc_methods_pkg is
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                         <= IN_PROGRESS;
-        dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when POLL_UNTIL =>
         dtt_group.ct.operation                                  <= vvc_cmd.operation;
@@ -427,7 +422,6 @@ package body vvc_methods_pkg is
         dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      <= vvc_cmd.msg;
         dtt_group.ct.vvc_meta.cmd_idx                           <= vvc_cmd.cmd_idx;
         dtt_group.ct.transaction_status                         <= IN_PROGRESS;
-        dtt_group.bt.error_info.write_and_read_error            <= vvc_config.bfm_config.error_injection.write_and_read_error;
 
       when others =>
         null;

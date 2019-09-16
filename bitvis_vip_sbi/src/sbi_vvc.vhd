@@ -194,6 +194,8 @@ begin
     variable v_prev_command_was_bfm_access           : boolean  := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+
+    variable v_error : boolean;
   begin
 
     -- 0. Initialize the process prior to first command
@@ -246,9 +248,6 @@ begin
           -- Loop the number of bytes to transmit
           for idx in 1 to v_cmd.num_bytes loop
 
-            -- Set BFM error injection
-            vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
-
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
@@ -278,18 +277,12 @@ begin
                       msg_id_panel => vvc_config.msg_id_panel,
                       config       => vvc_config.bfm_config);
 
-            -- Disable error injection
-            vvc_config.bfm_config.error_injection.write_and_read_error  := false;
-
             -- Set DTT back to default values
             restore_global_dtt(dtt_transaction_info, v_cmd);
           end loop;
 
 
         when READ =>
-          -- Set BFM error injection
-          vvc_config.bfm_config.error_injection.write_and_read_error  := decide_if_error_is_injected(vvc_config.error_injection_config.write_and_read_error_prob);
-
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
 
@@ -317,9 +310,6 @@ begin
             -- call SB check_actual
             shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           end if;
-
-          -- Disable error injection
-          vvc_config.bfm_config.error_injection.write_and_read_error  := false;
 
 
         when CHECK =>

@@ -199,14 +199,13 @@ begin
 
         case sbi_dtt.bt.operation is
           when WRITE =>
-            if (sbi_dtt.bt.error_info.write_and_read_error = false) then
+            --if (sbi_dtt.bt.error_info.NN = false) then
                 -- add to UART scoreboard
                 shared_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
-            end if;
+            --end if;
 
           when READ =>
-
-
+            null;
           when others =>
             null;
         end case;
@@ -229,6 +228,8 @@ begin
 
         case uart_tx_dtt.bt.operation is
           when TRANSMIT =>
+
+            -- Check if transaction is intended valid / free of error
             if  (uart_tx_dtt.bt.error_info.parity_bit_error = false) and
                 (uart_tx_dtt.bt.error_info.stop_bit_error = false) then
 

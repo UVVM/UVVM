@@ -390,31 +390,22 @@ begin
 
 
  p_checker : process
-    alias bit_rate_checker        is vvc_config.bit_rate_checker;
-    -- helper variables
-    variable v_edge_time          : time;
-    variable v_previous_edge_time : time;
+    variable v_edge_time          : time := - vvc_config.bit_rate_checker.min_period;
+    variable v_previous_edge_time : time := 0 ns;
     variable v_edge2edge_time     : time;
-
   begin
-    wait until falling_edge(uart_vvc_rx);
+    wait until uart_vvc_rx'event;
 
-    v_edge_time := now;
-    if bit_rate_checker.enable = true then
-        loop
-          wait until uart_vvc_rx'event;
-            v_previous_edge_time := v_edge_time;
-            v_edge_time          := now;
-            v_edge2edge_time     := v_edge_time - v_previous_edge_time;
+    if vvc_config.bit_rate_checker.enable = TRUE then
+      v_previous_edge_time := v_edge_time;
+      v_edge_time          := now;
+      v_edge2edge_time     := v_edge_time - v_previous_edge_time;
 
-            check_value(v_edge2edge_time >= bit_rate_checker.min_period, bit_rate_checker.alert_level, "Checking UART bit rate", C_SCOPE);
-
-            if bit_rate_checker.enable = false then
-              exit;
-            end if;
-
-       end loop;
+      -- add 1 ps to avoid rounding error
+      check_value(v_edge2edge_time >= vvc_config.bit_rate_checker.min_period - 1 ps, vvc_config.bit_rate_checker.alert_level, "Checking bit_rate minimum period: " & to_string(vvc_config.bit_rate_checker.min_period), C_SCOPE, ID_NEVER);
     end if;
+
+    wait for 0 ns;  -- I delta cycle delay to get away from the uart_vvc_rx'event
   end process p_checker;
 
 end behave;

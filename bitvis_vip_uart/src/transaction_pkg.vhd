@@ -55,7 +55,7 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS);
+  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
 
   constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
@@ -90,7 +90,7 @@ package transaction_pkg is
     error_info         : t_error_info;
   end record;
 
-  constant C_TRANSACTION_INFO_SET_DEFAULT : t_transaction := (
+  constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
     data                => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
@@ -99,26 +99,26 @@ package transaction_pkg is
     );
 
   -- Transaction info group
-  type t_transaction_info_group is record
+  type t_transaction_group is record
     bt : t_transaction;
     ct : t_transaction;
   end record;
 
-  constant C_TRANSACTION_INFO_GROUP_DEFAULT : t_transaction_info_group := (
-    bt => C_TRANSACTION_INFO_SET_DEFAULT,
-    ct => C_TRANSACTION_INFO_SET_DEFAULT
+  constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
+    bt => C_TRANSACTION_SET_DEFAULT,
+    ct => C_TRANSACTION_SET_DEFAULT
     );
 
 
   -- Transaction groups array
-  type t_uart_transaction_info_array is array (t_channel range <>, natural range <>) of t_transaction_info_group;
+  type t_uart_transaction_group_array is array (t_channel range <>, natural range <>) of t_transaction_group;
 
 
   -- Global DTT signals
-  signal global_uart_transaction_info : t_uart_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
-                                          (others => (others => C_TRANSACTION_INFO_GROUP_DEFAULT));
+  signal global_uart_transaction : t_uart_transaction_group_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
+                                          (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
-  signal global_uart_monitor_transaction_info : t_uart_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
-                                          (others => (others => C_TRANSACTION_INFO_GROUP_DEFAULT));
+  signal global_uart_monitor_transaction : t_uart_transaction_group_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
+                                          (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
 end package transaction_pkg;

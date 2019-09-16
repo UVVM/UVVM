@@ -54,10 +54,10 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity  => WARNING
   );
 
---  type t_error_injection is record
---  end record t_error_injection;
+--  type t_vvd_error_injection is record
+--  end record t_vvd_error_injection;
 --
---  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+--  constant C_VVC_ERROR_INJECTION_INACTIVE : t_vvc_error_injection := (
 --  );
 
   type t_vvc_config is
@@ -71,7 +71,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;
     bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
-    --error_injection_config                : t_error_injection;
+    --error_injection                       : t_vvc_error_injection;
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -86,7 +86,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_SBI_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
-    --error_injection_config                => C_ERROR_INJECTION_INACTIVE
+    --error_injection                       => C_VVC_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -203,13 +203,13 @@ package vvc_methods_pkg is
   -- Direct Transaction Transfer methods
   --==============================================================================
   procedure set_global_dtt(
-    signal dtt_group    : inout t_transaction_info_group ;
+    signal dtt_group    : inout t_transaction_group ;
     constant vvc_cmd    : in t_vvc_cmd_record;
     constant vvc_config : in t_vvc_config);
 
 
   procedure restore_global_dtt(
-    signal dtt_group : inout t_transaction_info_group ;
+    signal dtt_group : inout t_transaction_group ;
     constant vvc_cmd : in t_vvc_cmd_record);
 
 
@@ -402,7 +402,7 @@ package body vvc_methods_pkg is
   -- DTT procedures
   --==============================================================================
   procedure set_global_dtt(
-    signal dtt_group    : inout t_transaction_info_group ;
+    signal dtt_group    : inout t_transaction_group ;
     constant vvc_cmd    : in t_vvc_cmd_record;
     constant vvc_config : in t_vvc_config) is
   begin
@@ -432,14 +432,14 @@ package body vvc_methods_pkg is
 
 
   procedure restore_global_dtt(
-    signal dtt_group : inout t_transaction_info_group ;
+    signal dtt_group : inout t_transaction_group ;
     constant vvc_cmd : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | CHECK =>
-        dtt_group.bt <= C_TRANSACTION_INFO_SET_DEFAULT;
+        dtt_group.bt <= C_TRANSACTION_SET_DEFAULT;
       when POLL_UNTIL =>
-        dtt_group.ct <= C_TRANSACTION_INFO_SET_DEFAULT;
+        dtt_group.ct <= C_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;

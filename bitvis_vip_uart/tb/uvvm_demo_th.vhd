@@ -176,13 +176,13 @@ begin
   -----------------------------------------------------------------------------
   p_model: process
     -- SBI DTT
-    alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_info_group is
-      global_sbi_transaction_info(C_SBI_VVC);
+    alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
+      global_sbi_transaction(C_SBI_VVC);
     -- UART DTT
-    alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
-      global_uart_transaction_info(RX, C_UART_RX_VVC);
-    alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_info_group is
-      global_uart_transaction_info(TX, C_UART_TX_VVC);
+    alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
+      global_uart_transaction(RX, C_UART_RX_VVC);
+    alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
+      global_uart_transaction(TX, C_UART_TX_VVC);
 
   begin
 

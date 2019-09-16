@@ -55,12 +55,12 @@ package uart_bfm_pkg is
   type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_DATA_MAX_LENGTH-1 downto 0);
 
 
-  type t_error_injection is record
+  type t_bfm_error_injection is record
     parity_bit_error  : boolean;
     stop_bit_error    : boolean;
-  end record t_error_injection;
+  end record t_bfm_error_injection;
 
-  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+  constant C_BFM_ERROR_INJECTION_INACTIVE : t_bfm_error_injection := (
     parity_bit_error  => false,
     stop_bit_error    => false
   );
@@ -79,7 +79,7 @@ package uart_bfm_pkg is
     id_for_bfm_wait                           : t_msg_id;             -- The message ID used for logging waits in the UART BFM
     id_for_bfm_poll                           : t_msg_id;             -- The message ID used for logging polling in the UART BFM
     id_for_bfm_poll_summary                   : t_msg_id;             -- The message ID used for logging polling summary in the UART BFM
-    error_injection                           : t_error_injection;
+    error_injection                           : t_bfm_error_injection;
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
@@ -95,7 +95,7 @@ package uart_bfm_pkg is
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
     id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
-    error_injection                           => C_ERROR_INJECTION_INACTIVE
+    error_injection                           => C_BFM_ERROR_INJECTION_INACTIVE
     );
 
   ----------------------------------------------------

@@ -83,7 +83,7 @@ architecture behave of uart_rx_vvc is
   alias vvc_status              : t_vvc_status is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
   alias transaction_info        : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
   -- DTT
-  alias dtt_transaction_info    : t_transaction_info_group is global_uart_transaction_info(RX, GC_INSTANCE_IDX);
+  alias dtt_transaction_info    : t_transaction_group is global_uart_transaction(RX, GC_INSTANCE_IDX);
 
 begin
 

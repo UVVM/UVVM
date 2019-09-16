@@ -45,10 +45,10 @@ package sbi_bfm_pkg is
   end record;
 
 
---  type t_error_injection is record
---  end record t_error_injection;
+--  type t_bfm_error_injection is record
+--  end record t_bfm_error_injection;
 --
---  constant C_ERROR_INJECTION_INACTIVE : t_error_injection := (
+--  constant C_BFM_ERROR_INJECTION_INACTIVE : t_bfm_error_injection := (
 --  );
 
   -- Configuration record to be assigned in the test harness.
@@ -69,7 +69,7 @@ package sbi_bfm_pkg is
     id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
     id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
     use_ready_signal            : boolean;        -- Whether or not to use the interface �ready� signal
-    --error_injection             : t_error_injection;
+    --error_injection             : t_bfm_error_injection;
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (

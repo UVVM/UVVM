@@ -74,7 +74,7 @@ architecture behave of uart_tx_vvc is
   alias vvc_status              : t_vvc_status is shared_uart_vvc_status(TX, GC_INSTANCE_IDX);
   alias transaction_info        : t_transaction_info is shared_uart_transaction_info(TX, GC_INSTANCE_IDX);
   -- DTT
-  alias dtt_transaction_info    : t_transaction_info_group is global_uart_transaction_info(TX, GC_INSTANCE_IDX);
+  alias dtt_transaction_info    : t_transaction_group is global_uart_transaction(TX, GC_INSTANCE_IDX);
 
 
 begin
@@ -233,8 +233,8 @@ begin
           for idx in 1 to v_cmd.num_bytes loop
 
             -- Set error injection
-            vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection_config.parity_bit_error_prob);
-            vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection_config.stop_bit_error_prob);
+            vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_error_prob);
+            vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_error_prob);
 
             -- Randomise data if applicable
             case v_cmd.randomisation is

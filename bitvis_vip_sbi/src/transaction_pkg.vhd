@@ -43,7 +43,6 @@ package transaction_pkg is
     -- Transaction
     WRITE, READ, CHECK, POLL_UNTIL);
 
-  -- Note: need to evaluate names
   constant C_CMD_DATA_MAX_LENGTH   : natural := 32;
   constant C_CMD_ADDR_MAX_LENGTH   : natural := 32;
   constant C_CMD_STRING_MAX_LENGTH : natural := 300;
@@ -56,7 +55,7 @@ package transaction_pkg is
   --==========================================================================================
 
   -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS);
+  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
 
   constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
@@ -88,7 +87,7 @@ package transaction_pkg is
     --error_info          : t_error_info;
   end record;
 
-  constant C_TRANSACTION_INFO_SET_DEFAULT : t_transaction := (
+  constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
     address             => (others => '0'),
     data                => (others => '0'),
@@ -97,26 +96,26 @@ package transaction_pkg is
     --error_info          => C_ERROR_INFO_DEFAULT
     );
 
-  -- Transaction info group
-  type t_transaction_info_group is record
+  -- Transaction group
+  type t_transaction_group is record
     bt : t_transaction;
     ct : t_transaction;
   end record;
 
-  constant C_TRANSACTION_INFO_GROUP_DEFAULT : t_transaction_info_group := (
-    bt => C_TRANSACTION_INFO_SET_DEFAULT,
-    ct => C_TRANSACTION_INFO_SET_DEFAULT
+  constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
+    bt => C_TRANSACTION_SET_DEFAULT,
+    ct => C_TRANSACTION_SET_DEFAULT
     );
 
-  -- Transcation groups array
-  type t_sbi_transaction_info_array is array (natural range <>) of t_transaction_info_group;
+  -- Transaction groups array
+  type t_sbi_transaction_group_array is array (natural range <>) of t_transaction_group;
 
 
   -- Global DTT signals
-  signal global_sbi_transaction_info : t_sbi_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_INFO_GROUP_DEFAULT);
+  signal global_sbi_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
+    (others => C_TRANSACTION_GROUP_DEFAULT);
 
-  signal global_sbi_monitor_transaction_info : t_sbi_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_INFO_GROUP_DEFAULT);
+  signal global_sbi_monitor_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
+    (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

@@ -91,8 +91,8 @@ architecture func of uvvm_demo_tb is
       log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
 
       -- Set UART TX VVC error injection probability to 0%
-      shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob := 0.0;
-      shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob   := 0.0;
+      shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob := 0.0;
+      shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob   := 0.0;
 
 
       log(ID_LOG_HDR, "Performing 10x SBI Write and UART Reveive with random parity bit error injection", C_SCOPE);
@@ -106,7 +106,7 @@ architecture func of uvvm_demo_tb is
 
         -- Configure the parity bit error injection probability
         log(ID_SEQUENCER, "\nSetting parity error probability to " & to_string(v_prob) & "%", C_SCOPE);
-        shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob := v_prob;
+        shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob := v_prob;
 
         -- Request UART TX VVC write
         uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
@@ -118,7 +118,7 @@ architecture func of uvvm_demo_tb is
 
       -- Set UART TX VVC parity bit error injection probability to 0%, i.e. off.
       log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
-      shared_uart_vvc_config(TX,1).error_injection_config.parity_bit_error_prob    := 0.0;
+      shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob    := 0.0;
 
 
 
@@ -133,7 +133,7 @@ architecture func of uvvm_demo_tb is
 
         -- Configure the parity bit error injection probability
         log(ID_SEQUENCER, "\nSetting stop error probability to " & to_string(v_prob) & "%", C_SCOPE);
-        shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob := v_prob;
+        shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob := v_prob;
 
         -- Request UART TX VVC write
         uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
@@ -146,7 +146,7 @@ architecture func of uvvm_demo_tb is
 
       -- Set UART TX VVC stop bit error injection probability to 0%, i.e. off.
       log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
-      shared_uart_vvc_config(TX,1).error_injection_config.stop_bit_error_prob    := 0.0;
+      shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob    := 0.0;
 
       -- Print report of Scoreboard counters
       shared_sbi_sb.report_counters(VOID);

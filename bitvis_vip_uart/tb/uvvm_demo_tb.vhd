@@ -113,7 +113,7 @@ architecture func of uvvm_demo_tb is
         await_completion(UART_VVCT,1,TX,  16 * C_BIT_PERIOD);
         wait for 200 ns;  -- margin
         -- Add delay for DUT to prepare for next transaction
-        insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
+        insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert delay before next UART TX");
       end loop;
 
       -- Set UART TX VVC parity bit error injection probability to 0%, i.e. off.
@@ -140,7 +140,7 @@ architecture func of uvvm_demo_tb is
         await_completion(UART_VVCT,1,TX,  16 * C_BIT_PERIOD);
         wait for 200 ns;  -- margin
         -- Add delay for DUT to prepare for next transaction
-        insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
+        insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert delay before next UART TX");
       end loop;
 
 
@@ -175,7 +175,7 @@ architecture func of uvvm_demo_tb is
       uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
       await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
       -- Add a delay for DUT to prepare for next transaction
-      insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert 20 clock periods delay before next UART TX");
+      insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert delay before next UART TX");
 
 
       log(ID_LOG_HDR, "Check 3 byte random transmit", C_SCOPE);
@@ -225,7 +225,7 @@ architecture func of uvvm_demo_tb is
         -- SBI VVC write randomised data to DUT
         sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
         -- Add time for UART to finish
-        insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
+        insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert delay before next UART TX");
       end loop;
 
       -- Wait for UART RX VVC to reach full coverage DUT data readout.
@@ -258,9 +258,12 @@ architecture func of uvvm_demo_tb is
       -- Print info
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
 
+      -- Allow for some time to pass for bit rate checker calculations.
+      wait for C_BIT_PERIOD;
+
       -- Bit rate checker will alert when bit rate is not as expected
-      log(ID_SEQUENCER, "\nIncrease number of expected alerts with 3.", C_SCOPE);
-      increment_expected_alerts(WARNING, 3);
+      log(ID_SEQUENCER, "\nIncrease number of expected alerts with 5.", C_SCOPE);
+      increment_expected_alerts(WARNING, 5);
 
       -- Enable and configure bit rate checker
       log(ID_SEQUENCER, "\nEnable and configure bit rate checker.");
@@ -270,33 +273,27 @@ architecture func of uvvm_demo_tb is
 
       -- Use SBI VVC to transmit 6 random bytes. Change the setting of bit rate checker
       --   to test various settings.
-      for idx in 1 to 6 loop
+    for idx in 1 to 6 loop
+      log(ID_SEQUENCER, "\nRequest SBI VVC Write and UART RX VVC Expect, idx="&to_string(idx), C_SCOPE);
 
-        -- Adjust bit rate period
-        case idx is
-          when 3 =>
-            log(ID_SEQUENCER, "\nSetting bit rate 5% below bit period.\n", C_SCOPE);
-            shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := (0.95 * C_BIT_PERIOD);
-          when 4 =>
-            log(ID_SEQUENCER, "\nSetting bit rate 5% above bit period.\n", C_SCOPE);
-            shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := (1.05 * C_BIT_PERIOD);
-          when 5 =>
-            log(ID_SEQUENCER, "\nDisabling bit rate checker.\n", C_SCOPE);
-            shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := false;
-          when others =>
-            null;
-        end case;
+      v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
 
-        -- SBI send data to DUT
-        v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
-        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
-        -- Add time for UART to finish
-        insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert 20 clock periods delay before next UART TX");
+      if idx = 3 then
+        log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 0.95)&" (bit period="&to_string(C_BIT_PERIOD)&") OK.", C_SCOPE);
+        shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 0.95;  -- should be ok
+      elsif idx = 4 then
+        log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 1.05)&" (bit period="&to_string(C_BIT_PERIOD)&") FAIL.", C_SCOPE);
+        shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 1.05;  -- should fail
+      elsif idx = 5 then
+        log(ID_SEQUENCER, "Disable bit rate checker.", C_SCOPE);
+        shared_uart_vvc_config(RX, 1).bit_rate_checker.enable := false;
+      end if;
 
-        -- UART receive data from DUT
-        uart_receive(UART_VVCT, 1, RX, TO_SB, "UART RX");
-        await_completion(UART_VVCT, 1, RX, 16*C_BIT_PERIOD, "Waiting for UART RX to finish.");
-      end loop;
+      sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+      uart_expect(UART_VVCT, 1, RX, v_data, "UART TX");
+      await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
+    end loop;
+
 
       -- Print report of Scoreboard counters
       shared_uart_sb.report_counters(VOID);

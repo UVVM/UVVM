@@ -268,8 +268,9 @@ begin
 
             -- Set DTT back to default values
             restore_global_dtt(dtt_transaction_info, v_cmd);
-            wait for vvc_config.bfm_config.bit_time;
 
+            -- Add small delay as uvvm_demo_tb DUT do not accept back-to-back accesses
+            wait for vvc_config.bfm_config.bit_time;
           end loop;
 
 

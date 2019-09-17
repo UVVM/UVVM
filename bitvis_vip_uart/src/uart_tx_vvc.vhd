@@ -184,10 +184,6 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-
-    variable v_seed1 : positive := 1;
-    variable v_seed2 : positive := 5;
-
   begin
 
     -- 0. Initialize the process prior to first command

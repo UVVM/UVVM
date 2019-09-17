@@ -194,8 +194,6 @@ begin
     variable v_prev_command_was_bfm_access           : boolean  := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-
-    variable v_error : boolean;
   begin
 
     -- 0. Initialize the process prior to first command

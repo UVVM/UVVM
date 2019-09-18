@@ -404,7 +404,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     file_handle.write("      --    releases global semaphore\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, "+
-                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, shared_vvc_cmd, v_local_vvc_cmd);\n")
+                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);\n")
     file_handle.write("      v_cmd_has_been_acked := false; -- Clear flag\n")
     file_handle.write("      -- update shared_vvc_last_received_cmd_idx with received command index\n")
     if vvc_channel.name == "NA":
@@ -1157,10 +1157,10 @@ def add_methods_pkg_body(file_handle, vvc_name):
                       "vvc_instance_idx)  -- First part common for all\n")
     file_handle.write("  --            & \", \" & to_string(addr, HEX, AS_IS, INCL_RADIX) & \", \" & "
                       "to_string(data, HEX, AS_IS, INCL_RADIX) & \")\";\n")
-    file_handle.write("  --   constant v_normalised_addr    : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0) := \n"
+    file_handle.write("  --   variable v_normalised_addr    : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0) := \n"
                       "  --            normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", "
                       "proc_call & \" called with to wide addr. \" & msg);\n")
-    file_handle.write("  --   constant v_normalised_data    : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0) := \n"
+    file_handle.write("  --   variable v_normalised_data    : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0) := \n"
                       "  --            normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", "
                       "proc_call & \" called with to wide data. \" & msg);\n")
     file_handle.write("  -- begin\n")

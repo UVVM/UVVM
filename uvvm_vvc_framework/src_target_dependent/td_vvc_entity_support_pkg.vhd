@@ -111,6 +111,7 @@ package td_vvc_entity_support_pkg is
     variable output_vvc_cmd    : out t_vvc_cmd_record
     );
 
+  -- DEPRECATED
   procedure await_cmd_from_sequencer(
     constant vvc_labels        : in t_vvc_labels;
     constant vvc_config        : in t_vvc_config;
@@ -534,7 +535,7 @@ package body td_vvc_entity_support_pkg is
     log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received" & format_command_idx(output_vvc_cmd), vvc_labels.scope, vvc_config.msg_id_panel);    -- Get and ack the new command
   end procedure;
 
-  -- Overloading procedure
+  -- Overloading procedure - DEPRECATED
   procedure await_cmd_from_sequencer(
     constant vvc_labels        : in t_vvc_labels;
     constant vvc_config        : in t_vvc_config;
@@ -546,6 +547,7 @@ package body td_vvc_entity_support_pkg is
     variable output_vvc_cmd    : out t_vvc_cmd_record
     ) is
   begin
+    deprecate(get_procedure_name_from_instance_name(vvc_labels'instance_name), "shared_vvc_cmd parameter is no longer in use. Please call this procedure without the shared_vvc_cmd parameter.");
     await_cmd_from_sequencer(vvc_labels, vvc_config, VVCT, VVC_BROADCAST,
                             global_vvc_busy, vvc_ack, output_vvc_cmd);
   end procedure;

@@ -1,8 +1,0 @@
-From ubuntu/libero92:latest
-COPY ./ /uvvm/
-ENV PATH /usr/local/microsemi/Libero_v9.2/Model/modeltech/linuxacoem:$PATH
-ENV MODELSIM /usr/local/microsemi/Libero_v9.2/Model/modeltech/modelsim.ini
-ENV LM_LICENSE_FILE 27008@webserver1.bv
-WORKDIR /uvvm/bitvis_vip_i2c/sim/
-CMD ["bash", "-c", "python internal_run.py --clean --no-color --xunit-xml xunit-report.xml"]
-

@@ -245,18 +245,32 @@ package adaptations_pkg is
     others           => ENABLED
   );
 
-  type t_data_source is (     -- May add more types of random ++ later
+  -- Deprecated, will be removed.
+  type t_data_source is (
     NA,
     FROM_BUFFER,
     RANDOM,
     RANDOM_TO_BUFFER
   );
 
-  type t_error_injection is (  -- May add more controlled error injection later
+  -- Deprecated, will be removed.
+  type t_error_injection is (
     NA,
     RANDOM_BIT_ERROR,
     RANDOM_DATA_ERROR,
     RANDOM_ADDRESS_ERROR
+  );
+
+  type t_randomisation is (
+    NA,
+    RANDOM,
+    RANDOM_FAVOUR_EDGES
+  );
+
+  type t_coverage is (
+    NA,
+    COVERAGE_FULL,
+    COVERAGE_EDGES
   );
 
   constant C_CMD_IDX_PREFIX : string := " [";

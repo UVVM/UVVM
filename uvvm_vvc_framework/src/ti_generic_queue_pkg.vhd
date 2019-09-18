@@ -553,8 +553,10 @@ package body ti_generic_queue_pkg is
       if scope'length > C_LOG_SCOPE_WIDTH then
         vr_scope := (others => scope(1 to C_LOG_SCOPE_WIDTH));
       else
-        vr_scope(instance)                    := (others =>  NUL);
-        vr_scope(instance)(1 to scope'length) := scope;
+        for idx in vr_scope'range loop
+          vr_scope(idx)                     := (others => NUL);
+          vr_scope(idx)(1 to scope'length)  := scope;
+        end loop;
       end if;
       vr_scope_is_defined := (others => true);
     else

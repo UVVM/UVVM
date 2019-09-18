@@ -1,12 +1,20 @@
 # Ignore compiled libraries
-sim/vunit_out/*
+status.txt
+internal_script/vunit_out/*
+internal_script/__pycache__/*
 sim/*.txt
-sim/transcript
-sim/compile/*
-sim/library.cfg
-sim/vsim.wlf
-sim/xunit-report.xml
-sim/bitvis_vip_i2c/*
+# Modelsim files
 sim/modelsim.ini
-sim/*.do
-sim/ad/*
+sim/transcript
+sim/vsim.wlf
+sim/*.cr.mti
+sim/bitvis_vip_gpio/*
+# RivieraPro files
+sim/compile/*
+sim/dataset*
+sim/elaboration.log
+sim/library.cfg
+# Sigasi files
+.library_mapping.xml
+.project
+.settings/*

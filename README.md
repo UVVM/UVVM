@@ -5,18 +5,18 @@ Overview, Readability, Maintainability, Extensibility and Reuse are all vital fo
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
 
 UVVM consists currently of the following elements:
-- [Utility Library](https://github.com/UVVM/UVVM/blob/master/uvvm_util/README.md)
-- [VVC (VHDL Verification Component) Framework](https://github.com/UVVM/UVVM/blob/master/uvvm_vvc_framework/README.md)  - Including Utility Library
+- [Utility Library](./uvvm_util/README.md)
+- [VVC (VHDL Verification Component) Framework](./uvvm_vvc_framework/README.md)  - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 more to come...
 
 ## For starters
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
-Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](https://github.com/UVVM/UVVM/blob/master/uvvm_util/README.md) for an introduction.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction.
 The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
 
-Please also see Getting Started with UVVM: https://github.com/UVVM/UVVM/blob/master/GETTING_STARTED.md
+Please also see [Getting Started](./GETTING_STARTED.md) with UVVM.
 
 ## For what do I need this VVC Framework?
 UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level.
@@ -83,8 +83,8 @@ Python is required **if** you want to execute the VVC generation scripts
 ## Introduction to VVC Framework - including manuals
 All documents including powerpoint presentations are available in the *uvvm_vvc_framework/doc* directory on GitHub.
 These are just fast access links to some interesting info:
-- *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](https://github.com/UVVM/UVVM_All/blob/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
-- *['VVC Framework Manual'*  - The user manual](https://github.com/UVVM/UVVM_All/blob/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
+- *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](./uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
+- *['VVC Framework Manual'*  - The user manual](./uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
 
 
 ## License

@@ -1,20 +1,20 @@
 # Ignore compiled libraries
+status.txt
+internal_script/vunit_out/*
+internal_script/__pycache__/*
 sim/*.txt
-sim/vsim.wlf
-sim/transcript
-sim/uvvm_util/*
-sim/*.cr.mti
-sim/vunit_out/*
+# Modelsim files
 sim/modelsim.ini
-sim/sim.log
-
-# Ignore log from running split_vhdl.bat
-internal_script/log.txt
-
-# Ignore backup-files
-*.bak
-
-# Ignore Sigasi files
+sim/transcript
+sim/vsim.wlf
+sim/*.cr.mti
+sim/uvvm_util/*
+# RivieraPro files
+sim/compile/*
+sim/dataset*
+sim/elaboration.log
+sim/library.cfg
+# Sigasi files
 .library_mapping.xml
 .project
 .settings/*

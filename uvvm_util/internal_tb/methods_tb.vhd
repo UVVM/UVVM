@@ -247,6 +247,17 @@ begin
     alias mismatch_on_expected_simulation_warnings_or_worse is shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse;
     alias mismatch_on_expected_simulation_errors_or_worse   is shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse;
 
+    -- check_value() with t_slv_array, t_signed_array, t_unsigned_array
+    variable v_exp_slv_array          : t_slv_array(0 to 1)(0 to 3);
+    variable v_exp_slv_array_4        : t_slv_array(0 to 3)(0 to 3);
+    variable v_exp_slv_array_revers   : t_slv_array(1 downto 0)(0 to 3);
+    variable v_value_slv_array        : t_slv_array(2 to 3)(0 to 3);
+    variable v_exp_signed_array       : t_signed_array(0 to 1)(0 to 3);
+    variable v_value_signed_array     : t_signed_array(2 to 3)(0 to 3);
+    variable v_exp_unsigned_array     : t_unsigned_array(0 to 1)(0 to 3);
+    variable v_value_unsigned_array   : t_unsigned_array(2 to 3)(0 to 3);
+
+
 
     -- Check clock periods in clock_generator
     procedure test_clock_period(
@@ -785,6 +796,45 @@ begin
         check_value(std_logic_vector'("00110010"), std_logic_vector'("0010"), tb_warning, "Check padding of different check_value SLV lengths (actual>expected)");
         check_value(std_logic_vector'("1010"), std_logic_vector'("00110010"), tb_warning, "Check padding of different check_value SLV lengths (actual<expected)");
         check_value(std_logic_vector'("00001010"), std_logic_vector'("00110010"), tb_warning, "Check padding of different check_value SLV lengths (actual=expected)");
+
+        ----------------------------------------------------------------------------
+        -- Check value with unequal array indexes for t_slv/signed/unsigned_array
+        ----------------------------------------------------------------------------
+        -- Verify check_value array index conversion
+        v_exp_slv_array(0) := x"A";
+        v_exp_slv_array(1) := x"B";
+        v_value_slv_array(2) := x"A";
+        v_value_slv_array(3) := x"B";
+        check_value(v_value_slv_array, v_exp_slv_array, tb_warning, "check_value with t_slv_array of different array indexes");
+
+        v_exp_signed_array(0) := x"C";
+        v_exp_signed_array(1) := x"D";
+        v_value_signed_array(2) := x"C";
+        v_value_signed_array(3) := x"D";
+        check_value(v_value_signed_array, v_exp_signed_array, tb_warning, "check_value with t_signed_array of different array indexes");
+
+        v_exp_unsigned_array(0) := x"E";
+        v_exp_unsigned_array(1) := x"F";
+        v_value_unsigned_array(2) := x"E";
+        v_value_unsigned_array(3) := x"F";
+        check_value(v_value_unsigned_array, v_exp_unsigned_array, tb_warning, "check_value with t_unsigned_array of different array indexes");
+
+        -- Verify check_value with array conversion catch errors
+        increment_expected_alerts(tb_warning, 3);
+        v_exp_slv_array(1) := x"C";
+        v_exp_signed_array(1) := x"A";
+        v_exp_unsigned_array(1) := x"D";
+        check_value(v_value_slv_array, v_exp_slv_array, tb_warning, "check_value with t_slv_array of different array indexes");
+        check_value(v_value_signed_array, v_exp_signed_array, tb_warning, "check_value with t_signed_array of different array indexes");
+        check_value(v_value_unsigned_array, v_exp_unsigned_array, tb_warning, "check_value with t_unsigned_array of different array indexes");
+
+        -- verify warning with arrays of different directions and unequal lengths
+        v_exp_slv_array          := (others => "1010");
+        v_exp_slv_array_4        := (others => "1010");
+        v_exp_slv_array_revers   := (others => "1010");
+        increment_expected_alerts(warning, 2);
+        check_value(v_exp_slv_array, v_exp_slv_array_4, tb_warning, "check_value with different array lenghts");
+        check_value(v_exp_slv_array, v_exp_slv_array_4, tb_warning, "check_value with different array directions");
 
 
       elsif run("check_stable") then
@@ -2392,7 +2442,7 @@ begin
         v_slv_array(1) := "0110";
         v_slv_array(2) := "1010";
         v_slv32_array  := normalise(v_slv_array, v_slv32_array, ALLOW_NARROWER, "v_slv_array", "v_slv32_array", "");
-        check_value(v_slv32_array, v_slv_array, error, "", C_SCOPE);
+        check_value(v_slv32_array(2 downto 0), v_slv_array, error, "", C_SCOPE);
 
         log("\rCheck normalise and check_value for t_signed_array");
         v_signed32_array  := (others => (others => '0'));
@@ -2410,7 +2460,7 @@ begin
         v_unsigned_array(1) := "0110";
         v_unsigned_array(2) := "1010";
         v_unsigned32_array  := normalise(v_unsigned_array, v_unsigned32_array, ALLOW_NARROWER, "v_unsigned_array", "v_unsigned32_array", "");
-        check_value(v_unsigned32_array, v_unsigned_array, error, "", C_SCOPE);
+        check_value(v_unsigned32_array(2 downto 0), v_unsigned_array, error, "", C_SCOPE);
 
 
       elsif run("normalize_and_check") then

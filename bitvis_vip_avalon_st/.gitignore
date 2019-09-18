@@ -1,7 +1,20 @@
 # Ignore compiled libraries
-sim/bitvis_vip_avalon_st
-sim/_Alert.txt
-sim/_Log.txt
-sim/bitvis_vip_avalon_st.cr.mti
+status.txt
+internal_script/vunit_out/*
+internal_script/__pycache__/*
+sim/*.txt
+# Modelsim files
+sim/modelsim.ini
 sim/transcript
 sim/vsim.wlf
+sim/*.cr.mti
+sim/bitvis_vip_avalon_st/*
+# RivieraPro files
+sim/compile/*
+sim/dataset*
+sim/elaboration.log
+sim/library.cfg
+# Sigasi files
+.library_mapping.xml
+.project
+.settings/*

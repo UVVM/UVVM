@@ -22,6 +22,8 @@ use ieee.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+-- protected_types_pkg.all; -- vvc framework version
+
 package ti_vvc_framework_support_pkg is
 
   constant C_VVC_NAME_MAX_LENGTH : natural := 20;
@@ -314,11 +316,6 @@ package ti_vvc_framework_support_pkg is
 -- Activity Watchdog
 -- ============================================================================
 
-  shared variable shared_inactivity_watchdog : t_inactivity_watchdog;
-
-  signal global_trigger_testcase_inactivity_watchdog : std_logic := 0;
-
-
   procedure activity_watchdog(
     constant timeout      : time;
     constant alert_level  : t_alert_level := ERROR;
@@ -326,7 +323,7 @@ package ti_vvc_framework_support_pkg is
   );
 
 
-  type t_testcase_inactivity_watchdog is protected body
+  type t_inactivity_watchdog is protected
 
     function priv_are_all_vvc_inactive return boolean;
 
@@ -342,6 +339,10 @@ package ti_vvc_framework_support_pkg is
       constant last_executed_cmd_idx  : integer
     );
   end protected;
+
+
+
+  signal global_trigger_testcase_inactivity_watchdog : std_logic := '0';
 
 
 end package ti_vvc_framework_support_pkg;
@@ -682,7 +683,7 @@ package body ti_vvc_framework_support_pkg is
   begin
     wait for 0 ns;
 
-    log(ID_WATCHDOG, "Starting activity watchdog: " & to_string(timeout)". " & msg);
+    log("Starting activity watchdog: " & to_string(timeout) & ". " & msg);
     v_timeout       := timeout;
 
     loop
@@ -699,7 +700,7 @@ package body ti_vvc_framework_support_pkg is
 
 
 
-  type t_testcase_inactivity_watchdog is protected body
+  type t_inactivity_watchdog is protected body
 
     -- Array holding all registered VVCs
     type t_registered_vvc_array   is array (natural range <>) of t_vvc_item;
@@ -715,7 +716,6 @@ package body ti_vvc_framework_support_pkg is
           return false;
         end if;
       end loop;
-
       return true;
     end function priv_are_all_vvc_inactive;
 
@@ -727,14 +727,12 @@ package body ti_vvc_framework_support_pkg is
     begin
       -- Set registered VVC index
       priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
-
       -- Update register
       priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_id.name                      := name;
       priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_id.instance                  := instance;
       priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_id.channel                   := channel;
       priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_status.busy                  := false;
       priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_status.last_executed_cmd_idx := -1;
-
       -- Return index
       return priv_last_registered_vvc_idx;
     end function priv_register_vvc;
@@ -751,7 +749,7 @@ package body ti_vvc_framework_support_pkg is
       priv_wd_monitored_vvc(vvc_idx).vvc_status.last_executed_cmd_idx := last_executed_cmd_idx;
     end procedure priv_report_vvc_activity;
 
-  end protected testcase_inactivity_watchdog;
+  end protected t_inactivity_watchdog;
 
 
 

@@ -57,7 +57,7 @@ architecture func of uvvm_demo_tb is
   constant C_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
   constant C_ADDR_TX_READY      : unsigned(2 downto 0) := "011";
 
-
+  shared variable shared_inactivity_watchdog : t_inactivity_watchdog;
 
   begin
 
@@ -306,6 +306,20 @@ architecture func of uvvm_demo_tb is
     end procedure test_protocol_checker;
 
 
+    procedure test_activity_watchdog(void : t_void) is
+    begin
+      log(ID_LOG_HDR_XL, "Test activity watchdog.\n"&
+                          "", C_SCOPE);
+
+      -- Print info
+      log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
+
+
+      -- Add small delay before next test
+      wait for 3 * C_BIT_PERIOD;
+    end procedure test_activity_watchdog;
+
+
   begin
 
     -- Wait for UVVM to finish initialization
@@ -358,7 +372,7 @@ architecture func of uvvm_demo_tb is
     test_randomise(VOID);
     test_functional_coverage(VOID);
     test_protocol_checker(VOID);
-
+    test_activity_watchdog(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

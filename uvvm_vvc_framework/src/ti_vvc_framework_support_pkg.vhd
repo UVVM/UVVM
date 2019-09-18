@@ -590,5 +590,99 @@ package body ti_vvc_framework_support_pkg is
     end if;
   end function;
 
+
+
+-- ============================================================================
+-- Activity Watchdog
+-- ============================================================================
+type t_testcase_inactivity_watchdog is protected body
+
+  -- Record with all relevant VVC information
+  type t_wd_monitored_vvc is record
+    name      : string(1 to C_VVC_NAME_MAX_LENGTH); -- 20 in ti_vvc_framework_support_pkg
+    instance  : natural;
+    channel   : t_channel;
+    busy      : boolean;
+    cmd_idx   : integer;
+  end record;
+
+  constant C_WD_MONITORED_VVC_DEFAULT : t_wd_monitored_vvc := (
+    name <= (others => ' '),
+
+  )
+
+  type t_wd_monitored_vvc_array is array (natural range <>) of t_wd_monitored_vvc;
+
+  variable vr_wd_monitored_vvc : t_wd_monitored_vvc(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_WD_MONITORED_VVC_DEFAULT);
+
+  -- Initialize the activity watchdog
+  procedure start_inactivity_watchdog(constant max_time     : in time;
+                                      constant alert_level  : in t_alert_level;
+                                      constant msg          : in string
+  ) is
+
+    function no_active_vvc return boolean is
+    begin
+      -- loop array of registered VVCs and check "busy" entry
+    end function;
+
+  begin
+    -- Set timeout value, alert level and msg.
+    --    Need to be visible for global_trigger_testcase_inactivity_watchog
+
+    -- loop
+
+      wait on global_trigger_testcase_inactivity_watchdog;
+
+      -- #1 Check for inactive VVCs and start count down
+      -- #2 If new pulse, and active VVCs, abort count down
+      --    or, if new pulse, and inactive VVCs, continue count down
+      -- #3 If count down to zero, trigger alert.
+
+
+    -- end loop
+  end procedure;
+
+
+  -- inactivity loop process/procedure
+
+
+
+  -- Reconfigure the activity monitor
+  procedure set_testcase_inactivity_timeout(constant max_time     : in time;
+                                            constant alert_level  : in t_alert_level;
+                                            constant msg          : in string
+  ) is
+  begin
+    -- update start_inactivity_watchdog timeout value etc
+  end procedure;
+
+
+  -- Called first time the VVC interacts with activity watchdog.
+  --   VVC will receive an index wich it will use from now on
+  --   when connecting with the watchdog.
+  function register_active_vvc(  constant name     : in string;
+                              constant instance : in natural;
+                              constant channel  : in t_channel;
+                              constant busy     : in boolean;
+                              constant cmd_idx  : in integer
+  ) return natural is
+  begin
+    -- only method allowed to write to:  private_watchdog_monitored_vvc_array;
+
+  end procedure;
+
+
+  -- Used by VVC after receiving an index from function register_actuve_vvc
+  procedure set_vvc_activity( constant vvc_activity_index : natural;
+                              constant busy               : boolean
+  ) is
+  begin
+
+  end procedure;
+
+
+end protected testcase_inactivity_watchdog;
+
 end package body ti_vvc_framework_support_pkg;
 

@@ -1625,6 +1625,32 @@ package methods_pkg is
 end package methods_pkg;
 
 
+-- ============================================================================
+-- Activity Watchdog
+-- ============================================================================
+
+signal global_trigger_testcase_inactivity_wathdog : std_logic; -- kick wd timer reset
+
+procedure start_inactivity_watchdog(constant max_time     : in time;
+                                    constant alert_level  : in t_alert_level;
+                                    constant msg          : in string
+);
+
+
+procedure set_testcase_inactivity_timeout(constant max_time     : in time;
+                                          constant alert_level  : in t_alert_level;
+                                          constant msg          : in string
+);
+
+
+procedure set_vvc_activity( constant name     : in string;
+                            constant instance : in natural;
+                            constant channel  : in t_channel;
+                            constant busy     : in boolean;
+                            constant cmd_idx  : in integer
+);
+
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
@@ -6183,5 +6209,70 @@ package body methods_pkg is
   begin
     semaphore.release_semaphore;
   end procedure;
+
+
+
+-- ============================================================================
+-- Activity Watchdog
+-- ============================================================================
+
+--global_trigger_testcase_inactivity_wathdog : std_logic; -- kick wd timer reset
+
+
+
+procedure start_inactivity_watchdog(constant max_time     : in time;
+                                    constant alert_level  : in t_alert_level;
+                                    constant msg          : in string
+) is
+
+  function no_active_vvc return boolean is
+  begin
+    -- loop array of registered VVCs and check "busy" entry
+  end function;
+
+begin
+  -- Set timeout value, alert level and msg.
+  --    Need to be visible for global_trigger_testcase_inactivity_watchog
+
+  -- loop
+
+  wait on global_trigger_testcase_inactivity_watchdog for max_time;
+
+  -- check for still active VVCs
+  -- alert if any VVCs are active or loop if none
+
+  -- end loop
+end procedure;
+
+
+
+procedure set_testcase_inactivity_timeout(constant max_time     : in time;
+                                          constant alert_level  : in t_alert_level;
+                                          constant msg          : in string
+) is
+begin
+  -- update start_inactivity_watchdog timeout value etc
+end procedure;
+
+
+-- or should this be a function that returns the index
+procedure set_vvc_activity( constant name     : in string;
+                            constant instance : in natural;
+                            constant channel  : in t_channel;
+                            constant busy     : in boolean;
+                            constant cmd_idx  : in integer
+) is
+begin
+  -- only method allowed to write to:  private_watchdog_monitored_vvc_array;
+
+end procedure;
+
+
+-- if method above is function that returns an index
+-- procedure set_vvc_activity(constant vvc_activity_index : natural; busy : boolean);
+
+
+
+
 end package body methods_pkg;
 

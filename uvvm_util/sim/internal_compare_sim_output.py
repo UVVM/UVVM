@@ -1,18 +1,9 @@
 # Script for comparing the UVVM-Util testbench output files for log and alert tests
 
-import os
 import sys
 
 numb_folders_to_check = 21
 
-# Check which simulator generated the output files
-if os.path.isdir("vunit_out/modelsim"):
-  simulator = "modelsim"
-elif os.path.isdir("vunit_out/rivierapro"):
-  simulator = "rivierapro"
-else:
-  print("ERROR: Simulator output files not found!")
-  exit(1)
 
 #
 # Map hashed folder names with test output name
@@ -63,10 +54,7 @@ def map_folders(filename = "vunit_out/test_output/test_name_to_path_mapping.txt"
 #   might cause the file comparing to fail.
 #
 def cmp_files(folder, filename):
-  if simulator == "modelsim":
-    file1 = "golden_modelsim/" + folder[0] + "/" + filename
-  elif simulator == "rivierapro":
-    file1 = "golden_riviera_pro/" + folder[0] + "/" + filename
+  file1 = "golden/" + folder[0] + "/" + filename
   file2 = "vunit_out/test_output/" + folder[1] + "/" + filename
   l1 = l2 = ' '
   with open(file1, 'r') as f1, open(file2, 'r') as f2:
@@ -137,6 +125,6 @@ for folder in mapped_folders:
 if numb_folders < numb_folders_to_check:
   print("\nWARNING! Not all folders have been verified! %i of %i checked." %(numb_folders, numb_folders_to_check));
 else:
-  print("\nSUCCESS! All checked log and alert files were as expected in %i folders" %(numb_folders))
+  print("\nSUCESS! All checked log and alert files were as expected in %i folders" %(numb_folders))
 
 exit(0)

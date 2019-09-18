@@ -1625,31 +1625,6 @@ package methods_pkg is
 end package methods_pkg;
 
 
--- ============================================================================
--- Activity Watchdog
--- ============================================================================
-
-signal global_trigger_testcase_inactivity_wathdog : std_logic; -- kick wd timer reset
-
-procedure start_inactivity_watchdog(constant max_time     : in time;
-                                    constant alert_level  : in t_alert_level;
-                                    constant msg          : in string
-);
-
-
-procedure set_testcase_inactivity_timeout(constant max_time     : in time;
-                                          constant alert_level  : in t_alert_level;
-                                          constant msg          : in string
-);
-
-
-procedure set_vvc_activity( constant name     : in string;
-                            constant instance : in natural;
-                            constant channel  : in t_channel;
-                            constant busy     : in boolean;
-                            constant cmd_idx  : in integer
-);
-
 
 --=================================================================================================
 --=================================================================================================

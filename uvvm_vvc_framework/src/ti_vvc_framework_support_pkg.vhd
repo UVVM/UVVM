@@ -67,6 +67,41 @@ package ti_vvc_framework_support_pkg is
     gen_integer         => -1
   );
 
+
+  type t_vvc_id is record
+    name      : string(1 to C_VVC_NAME_MAX_LENGTH);
+    instance  : natural;
+    channel   : t_channel;
+  end record;
+
+  constant C_VVC_ID_DEFAULT : t_vvc_id := (
+    name      => (others => ' '),
+    instance  => 0,
+    channel   => NA
+  );
+
+  type t_vvc_status is record
+    busy      : boolean;
+    cmd_idx   : integer;
+  end record;
+
+  constant  C_VVC_STATUS_DEFAULT : t_vvc_status := (
+    busy    => falsem
+    cmd_idx => -1
+  );
+
+  -- VVC item
+  type t_vvc_item is record
+    vvc_id      : t_vvc_id;
+    vvc_status  : t_vvc_status;
+  end record;
+
+  constant C_VVC_ITEM_DEFAULT : t_vvc_item := (
+    vvc_id      => C_VVC_ID_DEFAULT,
+    vvc_status  => C_VVC_STATUS_DEFAULT
+  );
+
+
   ------------------------------------------------------------------------
   -- Common signals for acknowledging a pending command
   ------------------------------------------------------------------------
@@ -271,6 +306,52 @@ package ti_vvc_framework_support_pkg is
     constant vvc_name     : string;
     constant instance_idx : natural
   ) return string;
+
+
+
+
+-- ============================================================================
+-- Activity Watchdog
+-- ============================================================================
+
+type t_testcase_inactivity_watchdog is protected
+
+  -- Initialize and start inactivity watchdog
+  procedure start_inactivity_watchdog(
+    constant max_time     : in time;
+    constant alert_level  : in t_alert_level;
+    constant msg          : in string
+  );
+
+  -- Reconfigure inactivity watchdog
+  procedure set_testcase_inactivity_timeout(
+    constant max_time     : in time;
+    constant alert_level  : in t_alert_level;
+    constant msg          : in string
+  );
+
+  -- VVC constructor register VVC and receive unique index
+  function register_active_vvc(
+    constant name     : in string;
+    constant instance : in natural;
+    constant channel  : in t_channel;
+    constant busy     : in boolean;
+    constant cmd_idx  : in integer
+  ) return natural;
+
+  -- VVC update activity
+  procedure set_vvc_activity(
+    constant vvc_idx  : natural;
+    constant busy     : boolean
+  );
+
+end protected;
+
+
+-- For TB to initialize, and VVCs to register and update activity
+shared variable testcase_inactivity_watchdog : t_testcase_inactivity_watchdog;
+
+
 
 end package ti_vvc_framework_support_pkg;
 
@@ -595,30 +676,20 @@ package body ti_vvc_framework_support_pkg is
 -- ============================================================================
 -- Activity Watchdog
 -- ============================================================================
+
 type t_testcase_inactivity_watchdog is protected body
 
-  -- Record with all relevant VVC information
-  type t_wd_monitored_vvc is record
-    name      : string(1 to C_VVC_NAME_MAX_LENGTH); -- 20 in ti_vvc_framework_support_pkg
-    instance  : natural;
-    channel   : t_channel;
-    busy      : boolean;
-    cmd_idx   : integer;
-  end record;
-
-  constant C_WD_MONITORED_VVC_DEFAULT : t_wd_monitored_vvc := (
-    name <= (others => ' '),
-
-  )
-
+  -- Array holding all registered VVCs
   type t_wd_monitored_vvc_array is array (natural range <>) of t_wd_monitored_vvc;
-
   variable vr_wd_monitored_vvc : t_wd_monitored_vvc(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_WD_MONITORED_VVC_DEFAULT);
 
+  variable vr_num_registered_vvc : natural := 0;
+
   -- Initialize the activity watchdog
-  procedure start_inactivity_watchdog(constant max_time     : in time;
-                                      constant alert_level  : in t_alert_level;
-                                      constant msg          : in string
+  procedure start_inactivity_watchdog(
+    constant max_time     : in time;
+    constant alert_level  : in t_alert_level;
+    constant msg          : in string
   ) is
 
     function no_active_vvc return boolean is
@@ -649,9 +720,10 @@ type t_testcase_inactivity_watchdog is protected body
 
 
   -- Reconfigure the activity monitor
-  procedure set_testcase_inactivity_timeout(constant max_time     : in time;
-                                            constant alert_level  : in t_alert_level;
-                                            constant msg          : in string
+  procedure set_testcase_inactivity_timeout(
+    constant max_time     : in time;
+    constant alert_level  : in t_alert_level;
+    constant msg          : in string
   ) is
   begin
     -- update start_inactivity_watchdog timeout value etc
@@ -661,24 +733,47 @@ type t_testcase_inactivity_watchdog is protected body
   -- Called first time the VVC interacts with activity watchdog.
   --   VVC will receive an index wich it will use from now on
   --   when connecting with the watchdog.
-  function register_active_vvc(  constant name     : in string;
-                              constant instance : in natural;
-                              constant channel  : in t_channel;
-                              constant busy     : in boolean;
-                              constant cmd_idx  : in integer
+  function register_active_vvc(
+    constant name     : in string;
+    constant instance : in natural;
+    constant channel  : in t_channel;
+    constant busy     : in boolean;
+    constant cmd_idx  : in integer
   ) return natural is
-  begin
-    -- only method allowed to write to:  private_watchdog_monitored_vvc_array;
+    -- helper variables
+    variable v_new_vvc      : t_vvc_item := C_VVC_ITEM_DEFAULT;
+    variable v_new_vvc_idx  : natural := 0;
 
-  end procedure;
+  begin
+    for idx in 0 to vr_wd_monitored_vvc'length-1 loop
+      v_new_vvc_idx := idx;
+
+      -- Register VVC
+      if vr_wd_monitored_vvc(idx) = C_VVC_ITEM_DEFAULT then
+        vr_wd_monitored_vvc(idx).vvc_id.name        := name;
+        vr_wd_monitored_vvc(idx).vvc_id.instance    := instance;
+        vr_wd_monitored_vvc(idx).vvc_id.channel     := channel;
+        vr_wd_monitored_vvc(idx).vvc_status.busy    := busy;
+        vr_wd_monitored_vvc(idx).vvc_status.cmd_idx := idx;
+
+        vr_num_registered_vvc := vr_num_registered_vvc + 1;
+        exit;
+      end if;
+
+    end loop;
+
+    return v_new_vvc_idx;
+  end function;
 
 
   -- Used by VVC after receiving an index from function register_actuve_vvc
-  procedure set_vvc_activity( constant vvc_activity_index : natural;
-                              constant busy               : boolean
+  procedure set_vvc_activity(
+    constant vvc_idx : natural;
+    constant busy    : boolean
   ) is
   begin
-
+    -- Update VVC status
+    vr_wd_monitored_vvc(vvc_idx).vvc_status.busy := busy;
   end procedure;
 
 

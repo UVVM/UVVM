@@ -111,6 +111,11 @@ architecture behave of uart_monitor is
         if (interface_config.bit_time/2) > uart_line'last_event then
           wait for (interface_config.bit_time/2) - uart_line'last_event + interface_config.bit_time;
         else
+
+          log("--------->>> " & to_string (interface_config.bit_time - uart_line'last_event + (interface_config.bit_time/2)));
+          log("--->> " & to_string(interface_config.bit_time));
+          log("--->> " & to_string(uart_line'last_event));
+          log("--->> " & to_string(interface_config.bit_time/2));
           wait for interface_config.bit_time - uart_line'last_event + (interface_config.bit_time/2);
         end if;
       end if;
@@ -169,7 +174,7 @@ architecture behave of uart_monitor is
       wait for 0 ns;
 
       -- Await non-active line if no stop bit has been detected
-      if and(v_stop_bit_error) and uart_line /= '1' then
+      if or(v_stop_bit_error) and uart_line /= '1' then
         wait until uart_line = '1';
       elsif interface_config.num_stop_bits = STOP_BITS_ONE_AND_HALF then
         -- Bit after first stop bit is interpreted as start bit and we have

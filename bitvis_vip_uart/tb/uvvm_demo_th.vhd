@@ -53,7 +53,9 @@ entity uvvm_demo_th is
     GC_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
     GC_ADDR_RX_DATA_VALID : unsigned(2 downto 0) := "001";
     GC_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
-    GC_ADDR_TX_READY      : unsigned(2 downto 0) := "011"
+    GC_ADDR_TX_READY      : unsigned(2 downto 0) := "011";
+    -- Activity watchdog setting
+    GC_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * GC_BIT_PERIOD
   );
 end entity;
 
@@ -86,9 +88,6 @@ architecture struct of uvvm_demo_th is
   -- UART VVC signals
   signal uart_vvc_rx    : std_logic := '1';
   signal uart_vvc_tx    : std_logic := '1';
-
-  -- Activity Watchdog
-  constant C_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * GC_BIT_PERIOD;
 
 
   -- UART Monitor
@@ -196,7 +195,7 @@ begin
   -- Activity Watchdog
   -----------------------------------------------------------------------------
 
-  activity_watchdog(timeout     => C_ACTIVITY_WATCHDOG_TIMEOUT,
+  activity_watchdog(timeout     => GC_ACTIVITY_WATCHDOG_TIMEOUT,
                     alert_level => TB_ERROR,
                     msg         => "UVVM_DEMO" );
 

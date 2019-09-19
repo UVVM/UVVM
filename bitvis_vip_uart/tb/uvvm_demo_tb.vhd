@@ -57,6 +57,9 @@ architecture func of uvvm_demo_tb is
   constant C_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
   constant C_ADDR_TX_READY      : unsigned(2 downto 0) := "011";
 
+  -- Activity watchdog VVC inactivity timeout
+  constant C_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * C_BIT_PERIOD;
+
 
 
   begin
@@ -65,12 +68,13 @@ architecture func of uvvm_demo_tb is
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
   i_test_harness : entity work.uvvm_demo_th generic map(
-    GC_CLK_PERIOD         => C_CLK_PERIOD,
-    GC_BIT_PERIOD         => C_BIT_PERIOD,
-    GC_ADDR_RX_DATA       => C_ADDR_RX_DATA,
-    GC_ADDR_RX_DATA_VALID => C_ADDR_RX_DATA_VALID,
-    GC_ADDR_TX_DATA       => C_ADDR_TX_DATA,
-    GC_ADDR_TX_READY      => C_ADDR_TX_READY
+    GC_CLK_PERIOD                 => C_CLK_PERIOD,
+    GC_BIT_PERIOD                 => C_BIT_PERIOD,
+    GC_ADDR_RX_DATA               => C_ADDR_RX_DATA,
+    GC_ADDR_RX_DATA_VALID         => C_ADDR_RX_DATA_VALID,
+    GC_ADDR_TX_DATA               => C_ADDR_TX_DATA,
+    GC_ADDR_TX_READY              => C_ADDR_TX_READY,
+    GC_ACTIVITY_WATCHDOG_TIMEOUT  => C_ACTIVITY_WATCHDOG_TIMEOUT
   );
 
 
@@ -273,26 +277,25 @@ architecture func of uvvm_demo_tb is
 
       -- Use SBI VVC to transmit 6 random bytes. Change the setting of bit rate checker
       --   to test various settings.
-    for idx in 1 to 6 loop
-      log(ID_SEQUENCER, "\nRequest SBI VVC Write and UART RX VVC Receive, idx="&to_string(idx), C_SCOPE);
+      log(ID_SEQUENCER, "\nSBI Write 6 bytes to DUT, UART Receive 5 bytes from DUT. Change protocol checker min_period during sequence.\n", C_SCOPE);
+      for idx in 1 to 6 loop
+        v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
 
-      v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
+        if idx = 3 then
+          log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 0.95)&" (bit period="&to_string(C_BIT_PERIOD)&") OK.", C_SCOPE);
+          shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 0.95;  -- should be ok
+        elsif idx = 4 then
+          log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 1.05)&" (bit period="&to_string(C_BIT_PERIOD)&") FAIL.", C_SCOPE);
+          shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 1.05;  -- should fail
+        elsif idx = 5 then
+          log(ID_SEQUENCER, "Disable bit rate checker.", C_SCOPE);
+          shared_uart_vvc_config(RX, 1).bit_rate_checker.enable := false;
+        end if;
 
-      if idx = 3 then
-        log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 0.95)&" (bit period="&to_string(C_BIT_PERIOD)&") OK.", C_SCOPE);
-        shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 0.95;  -- should be ok
-      elsif idx = 4 then
-        log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 1.05)&" (bit period="&to_string(C_BIT_PERIOD)&") FAIL.", C_SCOPE);
-        shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 1.05;  -- should fail
-      elsif idx = 5 then
-        log(ID_SEQUENCER, "Disable bit rate checker.", C_SCOPE);
-        shared_uart_vvc_config(RX, 1).bit_rate_checker.enable := false;
-      end if;
-
-      sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
-      uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
-      await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
-    end loop;
+        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+        uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
+        await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
+      end loop;
 
 
       -- Print report of Scoreboard counters
@@ -304,6 +307,41 @@ architecture func of uvvm_demo_tb is
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_protocol_checker;
+
+
+    procedure test_activity_watchdog(void : t_void) is
+    begin
+      log(ID_LOG_HDR_XL, "Test activity watchdog.\n"&
+                          "", C_SCOPE);
+
+      -- Print info
+      log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
+
+      -- Activity Watchdog will alert when VVC inactivity cause timeout
+      log(ID_SEQUENCER, "\nIncrease number of expected alerts with 5 for activity watchdog testing.", C_SCOPE);
+      increment_expected_alerts(TB_ERROR, 5);
+
+
+      log(ID_SEQUENCER, "\nSBI Write 5 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);
+      for idx in 1 to 5 loop
+        v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
+        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+        uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
+        await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
+      end loop;
+
+
+
+
+      -- Print report of Scoreboard counters
+      shared_uart_sb.report_counters(VOID);
+
+      -- Empty SB for next test
+      shared_uart_sb.reset("Empty SB for next test");
+
+      -- Add small delay before next test
+      wait for 3 * C_BIT_PERIOD;
+  end procedure test_activity_watchdog;
 
 
   begin
@@ -364,7 +402,7 @@ architecture func of uvvm_demo_tb is
     test_randomise(VOID);
     test_functional_coverage(VOID);
     test_protocol_checker(VOID);
-
+    test_activity_watchdog(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

@@ -61,14 +61,14 @@ end entity;
 architecture struct of uvvm_demo_th is
 
   -- VVC idx
-  constant C_SBI_VVC      : natural := 1;
-  constant C_UART_TX_VVC  : natural := 1;
-  constant C_UART_RX_VVC  : natural := 1;
+  constant C_SBI_VVC        : natural := 1;
+  constant C_UART_TX_VVC    : natural := 1;
+  constant C_UART_RX_VVC    : natural := 1;
+  constant C_CLOCK_GEN_VVC  : natural := 1;
 
   -- UART if
   constant C_DATA_WIDTH   : natural := 8;
   constant C_ADDR_WIDTH   : natural := 3;
-
 
   -- DSP interface and general control signals
   signal clk            : std_logic  := '0';
@@ -87,7 +87,8 @@ architecture struct of uvvm_demo_th is
   signal uart_vvc_rx    : std_logic := '1';
   signal uart_vvc_tx    : std_logic := '1';
 
-  constant C_CLOCK_GEN  : natural := 1;
+  -- Activity Watchdog
+  constant C_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * GC_BIT_PERIOD;
 
 
   -- UART Monitor
@@ -141,7 +142,7 @@ begin
   generic map(
     GC_ADDR_WIDTH     => C_ADDR_WIDTH,
     GC_DATA_WIDTH     => C_DATA_WIDTH,
-    GC_INSTANCE_IDX   => 1
+    GC_INSTANCE_IDX   => C_SBI_VVC
   )
   port map(
     clk                         => clk,
@@ -191,7 +192,13 @@ begin
     );
 
 
+  -----------------------------------------------------------------------------
+  -- Activity Watchdog
+  -----------------------------------------------------------------------------
 
+  activity_watchdog(timeout     => C_ACTIVITY_WATCHDOG_TIMEOUT,
+                    alert_level => TB_ERROR,
+                    msg         => "UVVM_DEMO" );
 
 
 
@@ -283,7 +290,7 @@ begin
   -----------------------------------------------------------------------------
   i_clock_generator_vvc : entity bitvis_vip_clock_generator.clock_generator_vvc
     generic map(
-      GC_INSTANCE_IDX    => C_CLOCK_GEN,
+      GC_INSTANCE_IDX    => C_CLOCK_GEN_VVC,
       GC_CLOCK_NAME      => "Clock",
       GC_CLOCK_PERIOD    => GC_CLK_PERIOD,
       GC_CLOCK_HIGH_TIME => GC_CLK_PERIOD / 2

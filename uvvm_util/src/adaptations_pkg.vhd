@@ -305,6 +305,32 @@ package adaptations_pkg is
     others  => DISABLED
   );
 
+
+
+  --------------------------------------------------------------------------
+  -- WARNING! The following is not intended for user modifications!
+  --------------------------------------------------------------------------
+  type t_vvc_id is record
+    name      : string(1 to C_MAX_VVC_NAME_LENGTH);
+    instance  : natural;
+    channel   : t_channel;
+  end record;
+  constant C_VVC_ID_DEFAULT : t_vvc_id := (
+    name      => (others => NUL),
+    instance  => 0,
+    channel   => NA
+  );
+
+  type t_vvc_state is record
+    busy                  : boolean;
+    last_executed_cmd_idx : integer; -- last_executed_cmd
+  end record;
+  constant  C_VVC_STATUS_DEFAULT : t_vvc_state := (
+    busy                  => false,
+    last_executed_cmd_idx => -1
+  );
+
+
 end package adaptations_pkg;
 
 package body adaptations_pkg is

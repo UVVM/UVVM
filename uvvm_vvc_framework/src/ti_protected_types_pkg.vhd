@@ -55,34 +55,15 @@ package body ti_protected_types_pkg is
 
   type t_inactivity_watchdog is protected body
 
-    type t_vvc_id is record
-      name      : string(1 to C_MAX_VVC_NAME_LENGTH);
-      instance  : natural;
-      channel   : t_channel;
-    end record;
-    constant C_VVC_ID_DEFAULT : t_vvc_id := (
-      name      => (others => ' '),
-      instance  => 0,
-      channel   => NA
-    );
-
-    type t_vvc_status is record
-      busy                  : boolean;
-      last_executed_cmd_idx : integer; -- last_executed_cmd
-    end record;
-    constant  C_VVC_STATUS_DEFAULT : t_vvc_status := (
-      busy                  => false,
-      last_executed_cmd_idx => -1
-    );
-
     type t_vvc_item is record
       vvc_id      : t_vvc_id;
-      vvc_status  : t_vvc_status;
+      vvc_status  : t_vvc_state;
     end record;
     constant C_VVC_ITEM_DEFAULT : t_vvc_item := (
       vvc_id      => C_VVC_ID_DEFAULT,
       vvc_status  => C_VVC_STATUS_DEFAULT
     );
+
 
     -- Array holding all registered VVCs
     type t_registered_vvc_array   is array (natural range <>) of t_vvc_item;
@@ -112,7 +93,7 @@ package body ti_protected_types_pkg is
       -- Set registered VVC index
       priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
       -- Update register
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name                      := name;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)    := name;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                  := instance;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                   := channel;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_status.busy                  := false;

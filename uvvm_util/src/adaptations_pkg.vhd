@@ -323,11 +323,11 @@ package adaptations_pkg is
 
   type t_vvc_state is record
     busy                  : boolean;
-    last_executed_cmd_idx : integer; -- last_executed_cmd
+    last_cmd_idx_executed : integer;
   end record;
   constant  C_VVC_STATE_DEFAULT : t_vvc_state := (
     busy                  => false,
-    last_executed_cmd_idx => -1
+    last_cmd_idx_executed => -1
   );
 
 

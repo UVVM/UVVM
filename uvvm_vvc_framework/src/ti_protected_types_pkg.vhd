@@ -56,12 +56,12 @@ package body ti_protected_types_pkg is
   type t_inactivity_watchdog is protected body
 
     type t_vvc_item is record
-      vvc_id      : t_vvc_id;
-      vvc_status  : t_vvc_state;
+      vvc_id     : t_vvc_id;
+      vvc_state  : t_vvc_state;
     end record;
     constant C_VVC_ITEM_DEFAULT : t_vvc_item := (
-      vvc_id      => C_VVC_ID_DEFAULT,
-      vvc_status  => C_VVC_STATUS_DEFAULT
+      vvc_id     => C_VVC_ID_DEFAULT,
+      vvc_state  => C_VVC_STATE_DEFAULT
     );
 
 
@@ -77,7 +77,7 @@ package body ti_protected_types_pkg is
     impure function priv_are_all_vvc_inactive return boolean is
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_status.busy = true then
+        if priv_registered_vvc(idx).vvc_state.busy = true then
           return false;
         end if;
       end loop;
@@ -93,11 +93,11 @@ package body ti_protected_types_pkg is
       -- Set registered VVC index
       priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
       -- Update register
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)    := name;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                  := instance;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                   := channel;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_status.busy                  := false;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_status.last_executed_cmd_idx := -1;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)   := name;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                 := instance;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                  := channel;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.busy                  := false;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_executed_cmd_idx := -1;
       -- Return index
       return priv_last_registered_vvc_idx;
     end function priv_register_vvc;
@@ -110,8 +110,8 @@ package body ti_protected_types_pkg is
     ) is
     begin
       -- Update VVC status
-      priv_registered_vvc(vvc_idx).vvc_status.busy                  := busy;
-      priv_registered_vvc(vvc_idx).vvc_status.last_executed_cmd_idx := last_executed_cmd_idx;
+      priv_registered_vvc(vvc_idx).vvc_state.busy                  := busy;
+      priv_registered_vvc(vvc_idx).vvc_state.last_executed_cmd_idx := last_executed_cmd_idx;
     end procedure priv_report_vvc_activity;
 
   end protected body t_inactivity_watchdog;

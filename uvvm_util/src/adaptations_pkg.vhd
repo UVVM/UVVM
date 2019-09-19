@@ -325,7 +325,7 @@ package adaptations_pkg is
     busy                  : boolean;
     last_executed_cmd_idx : integer; -- last_executed_cmd
   end record;
-  constant  C_VVC_STATUS_DEFAULT : t_vvc_state := (
+  constant  C_VVC_STATE_DEFAULT : t_vvc_state := (
     busy                  => false,
     last_executed_cmd_idx => -1
   );

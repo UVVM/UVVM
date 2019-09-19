@@ -111,11 +111,6 @@ architecture behave of uart_monitor is
         if (interface_config.bit_time/2) > uart_line'last_event then
           wait for (interface_config.bit_time/2) - uart_line'last_event + interface_config.bit_time;
         else
-
-          log("--------->>> " & to_string (interface_config.bit_time - uart_line'last_event + (interface_config.bit_time/2)));
-          log("--->> " & to_string(interface_config.bit_time));
-          log("--->> " & to_string(uart_line'last_event));
-          log("--->> " & to_string(interface_config.bit_time/2));
           wait for interface_config.bit_time - uart_line'last_event + (interface_config.bit_time/2);
         end if;
       end if;

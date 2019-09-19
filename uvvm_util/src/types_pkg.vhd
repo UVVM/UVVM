@@ -115,6 +115,21 @@ package types_pkg is
 
   type t_sync_flag_record_array is array (natural range <>) of t_sync_flag_record;
 
+  type t_watchdog_ctrl is record
+    extend      : boolean;
+    restart     : boolean;
+    terminate   : boolean;
+    extension   : time;
+    new_timeout : time;
+  end record;
+
+  constant C_WATCHDOG_CTRL_DEFAULT : t_watchdog_ctrl := (
+    extend      => false,
+    restart     => false,
+    terminate   => false,
+    extension   => 0 ns,
+    new_timeout => 0 ns
+  );
 
   -- type for identifying VVC and command index finishing await_any_completion()
   type t_info_on_finishing_await_any_completion is record
@@ -144,6 +159,18 @@ package types_pkg is
   );
 
   type t_justify_center is (center);
+
+  type t_parity is (
+    PARITY_NONE,
+    PARITY_ODD,
+    PARITY_EVEN
+  );
+
+  type t_stop_bits is (
+    STOP_BITS_ONE,
+    STOP_BITS_ONE_AND_HALF,
+    STOP_BITS_TWO
+  );
 
   -------------------------------------
   -- BFMs and above

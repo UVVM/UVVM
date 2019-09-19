@@ -84,6 +84,7 @@ package adaptations_pkg is
     ID_CLOCK_GEN,             -- Used for logging when clock generators are enabled or disabled
     ID_GEN_PULSE,             -- Used for logging when a gen_pulse procedure starts pulsing a signal
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
+    ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
     ID_DATA,                  -- To write general handling of data
@@ -139,6 +140,9 @@ package adaptations_pkg is
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
+    -- Monitors
+    ID_MONITOR,               -- General monitor information
+    ID_MONITOR_ERROR,         -- General monitor errors
     -- Special purpose - Not really IDs
     ALL_MESSAGES              -- Applies to ALL message ID apart from ID_NEVER
     );

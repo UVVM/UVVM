@@ -38,7 +38,7 @@ package ti_protected_types_pkg is
     procedure priv_report_vvc_activity(
       constant vvc_idx                : natural;
       constant busy                   : boolean;
-      constant last_executed_cmd_idx  : integer
+      constant last_cmd_idx_executed  : integer
     );
 
   end protected;
@@ -76,6 +76,8 @@ package body ti_protected_types_pkg is
 
     impure function priv_are_all_vvc_inactive return boolean is
     begin
+      check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVC in activity watchdog register");
+
       for idx in 0 to priv_last_registered_vvc_idx loop
         if priv_registered_vvc(idx).vvc_state.busy = true then
           return false;
@@ -106,12 +108,12 @@ package body ti_protected_types_pkg is
     procedure priv_report_vvc_activity(
       constant vvc_idx                : natural;
       constant busy                   : boolean;
-      constant last_executed_cmd_idx  : integer
+      constant last_cmd_idx_executed  : integer
     ) is
     begin
       -- Update VVC status
       priv_registered_vvc(vvc_idx).vvc_state.busy                  := busy;
-      priv_registered_vvc(vvc_idx).vvc_state.last_executed_cmd_idx := last_executed_cmd_idx;
+      priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed := last_cmd_idx_executed;
     end procedure priv_report_vvc_activity;
 
   end protected body t_inactivity_watchdog;

@@ -1,4 +1,5 @@
 # library uvvm_vvc_framework
+../src/ti_protected_types_pkg.vhd
 ../src/ti_vvc_framework_support_pkg.vhd
 ../src/ti_generic_queue_pkg.vhd
 ../src/ti_data_queue_pkg.vhd

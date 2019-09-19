@@ -22,9 +22,14 @@ use ieee.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_protected_types_pkg.all;
+
+
 package ti_vvc_framework_support_pkg is
 
-  constant C_VVC_NAME_MAX_LENGTH : natural := 20;
+  --constant C_VVC_NAME_MAX_LENGTH : natural := 20;
+  constant C_VVC_NAME_MAX_LENGTH : natural := C_MAX_VVC_NAME_LENGTH;
 
   ------------------------------------------------------------------------
   -- Common support types for UVVM
@@ -66,6 +71,10 @@ package ti_vvc_framework_support_pkg is
     timeout             => 0 ns,
     gen_integer         => -1
   );
+
+
+
+
 
   ------------------------------------------------------------------------
   -- Common signals for acknowledging a pending command
@@ -271,6 +280,22 @@ package ti_vvc_framework_support_pkg is
     constant vvc_name     : string;
     constant instance_idx : natural
   ) return string;
+
+
+
+
+-- ============================================================================
+-- Activity Watchdog
+-- ============================================================================
+
+  procedure activity_watchdog(
+    constant timeout      : time;
+    constant alert_level  : t_alert_level := ERROR;
+    constant msg          : string := ""
+  );
+
+  signal global_trigger_testcase_inactivity_watchdog : std_logic := '0';
+  shared variable shared_inactivity_watchdog                  : t_inactivity_watchdog;
 
 end package ti_vvc_framework_support_pkg;
 
@@ -589,6 +614,41 @@ package body ti_vvc_framework_support_pkg is
 
     end if;
   end function;
+
+
+
+-- ============================================================================
+-- Activity Watchdog
+-- ============================================================================
+
+
+  -------------------------------------------------------------------------------
+  -- Activity watchdog:
+  -- Include this as a concurrent procedure from your testbench.
+  -------------------------------------------------------------------------------
+  procedure activity_watchdog(
+    constant timeout      : time;
+    constant alert_level  : t_alert_level := ERROR;
+    constant msg          : string := ""
+  ) is
+    variable v_timeout    : time;
+  begin
+    wait for 0 ns;
+
+    log("Starting activity watchdog: " & to_string(timeout) & ". " & msg);
+    v_timeout       := timeout;
+
+    loop
+      wait until global_trigger_testcase_inactivity_watchdog for v_timeout;
+
+      if not(global_trigger_testcase_inactivity_watchdog'event) and shared_inactivity_watchdog.priv_are_all_vvc_inactive then
+          alert(alert_level, "Watchdog timer ended! " & msg);
+      end if;
+
+    end loop;
+    wait;
+  end procedure activity_watchdog;
+
 
 end package body ti_vvc_framework_support_pkg;
 

@@ -207,10 +207,15 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     loop
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(false);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
+
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(executor_is_busy);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
@@ -259,8 +264,6 @@ begin
 
             -- Set DTT
             set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-            -- Notify activity watchdog
-            activity_watchdog_register_vvc_state(busy => true);
 
             -- Normalise address and data
             v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -278,8 +281,6 @@ begin
             vvc_config.bfm_config.error_injection.parity_bit_error  := false;
             vvc_config.bfm_config.error_injection.stop_bit_error    := false;
 
-            -- Notify activity watchdog
-            activity_watchdog_register_vvc_state(busy => false);
 
             -- Set DTT back to default values
             restore_global_dtt(dtt_transaction_info, v_cmd);

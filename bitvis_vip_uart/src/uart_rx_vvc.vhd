@@ -230,9 +230,15 @@ begin
 
     loop
 
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(false);
+
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
+
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(executor_is_busy);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
@@ -269,8 +275,6 @@ begin
             when NA =>
               -- Set DTT
               set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-              -- Notify activity watchdog
-              activity_watchdog_register_vvc_state(busy => true);
 
               transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
               -- Call the corresponding procedure in the BFM package.
@@ -293,8 +297,6 @@ begin
                 shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
               end if;
 
-              -- Notify activity watchdog
-              activity_watchdog_register_vvc_state(busy => false);
 
 
 
@@ -304,9 +306,6 @@ begin
               while not(v_coverage_ok) loop
                 -- Set DTT
                 set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-              -- Notify activity watchdog
-              activity_watchdog_register_vvc_state(busy => true);
-
 
                 transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
                 -- Call the corresponding procedure in the BFM package.
@@ -334,9 +333,6 @@ begin
                 shared_uart_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
                 -- Check if coverage is fulfilled
                 v_coverage_ok := shared_uart_byte_coverage.IsCovered;
-
-                -- Notify activity watchdog
-                activity_watchdog_register_vvc_state(busy => false);
               end loop;
 
             when COVERAGE_EDGES =>
@@ -349,9 +345,6 @@ begin
         when EXPECT =>
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-          -- Notify activity watchdog
-          activity_watchdog_register_vvc_state(busy => true);
-
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -368,8 +361,6 @@ begin
                       scope                 => C_SCOPE,
                       msg_id_panel          => vvc_config.msg_id_panel);
 
-          -- Notify activity watchdog
-          activity_watchdog_register_vvc_state(busy => false);
 
 
         when INSERT_DELAY =>

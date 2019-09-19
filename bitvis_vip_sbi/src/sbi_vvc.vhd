@@ -83,6 +83,8 @@ architecture behave of sbi_vvc is
   alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
   -- DTT
   alias dtt_transaction_info    : t_transaction_group is global_sbi_transaction(GC_INSTANCE_IDX);
+  -- Activity Watchdog
+  signal vvc_idx_for_activity_watchdog : integer;
 
 begin
 
@@ -111,6 +113,11 @@ begin
 
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
+
+    -- Register VVC in activity watchdog register
+    vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "SBI",
+                                                                                  instance  => GC_INSTANCE_IDX);
+
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
 
@@ -194,6 +201,15 @@ begin
     variable v_prev_command_was_bfm_access           : boolean  := false;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+
+    procedure activity_watchdog_register_vvc_state(busy : boolean) is
+    begin
+      shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                          busy                  => busy,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed);
+      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog");
+    end procedure;
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -258,6 +274,8 @@ begin
 
             -- Set DTT
             set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+            -- Notify activity watchdog
+            activity_watchdog_register_vvc_state(busy => true);
 
             -- Normalise address and data
             v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
@@ -277,12 +295,17 @@ begin
 
             -- Set DTT back to default values
             restore_global_dtt(dtt_transaction_info, v_cmd);
+            -- Notify activity watchdog
+            activity_watchdog_register_vvc_state(busy => false);
+
           end loop;
 
 
         when READ =>
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => true);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
@@ -309,10 +332,15 @@ begin
             shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           end if;
 
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => false);
+
 
         when CHECK =>
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => true);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
@@ -331,7 +359,15 @@ begin
                     msg_id_panel => vvc_config.msg_id_panel,
                     config       => vvc_config.bfm_config);
 
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => false);
+
         when POLL_UNTIL =>
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => true);
+
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with to wide data. " & v_cmd.msg);
@@ -351,6 +387,10 @@ begin
                          scope          => C_SCOPE,
                          msg_id_panel   => vvc_config.msg_id_panel,
                          config         => vvc_config.bfm_config);
+
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => false);
+
 
           -- UVVM common operations
           --===================================

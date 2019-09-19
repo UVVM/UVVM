@@ -318,12 +318,14 @@ architecture func of uvvm_demo_tb is
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
 
       -- Activity Watchdog will alert when VVC inactivity cause timeout
-      log(ID_SEQUENCER, "\nIncrease number of expected alerts with 5 for activity watchdog testing.", C_SCOPE);
-      increment_expected_alerts(TB_ERROR, 5);
+      log(ID_SEQUENCER, "\nIncrease number of expected alerts for activity watchdog testing.", C_SCOPE);
+      increment_expected_alerts(TB_ERROR, 1);
+      log(ID_SEQUENCER, "\nIncrease alert stop limit for activity watchdog testing.", C_SCOPE);
+      set_alert_stop_limit(TB_ERROR, 2);
 
 
-      log(ID_SEQUENCER, "\nSBI Write 5 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);
-      for idx in 1 to 5 loop
+      log(ID_SEQUENCER, "\nSBI Write 3 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);
+      for idx in 1 to 3 loop
         v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
         sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
         uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
@@ -331,6 +333,17 @@ architecture func of uvvm_demo_tb is
       end loop;
 
 
+      log(ID_SEQUENCER, "\nStalling TB to trigger inactivity watchdog timeout.\n", C_SCOPE);
+      wait for C_ACTIVITY_WATCHDOG_TIMEOUT + 1 ns;
+
+
+      log(ID_SEQUENCER, "\nSBI Write 3 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);
+      for idx in 1 to 3 loop
+        v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
+        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+        uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
+        await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
+      end loop;
 
 
       -- Print report of Scoreboard counters

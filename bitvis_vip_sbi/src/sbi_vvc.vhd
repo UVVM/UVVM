@@ -232,7 +232,7 @@ begin
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
       -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(executor_is_busy);
+      activity_watchdog_register_vvc_state(true);
 
 
       -- Set the transaction info for waveview

@@ -33,6 +33,7 @@ library bitvis_vip_uart;
 use bitvis_vip_uart.transaction_pkg.all;
 use bitvis_vip_uart.vvc_methods_pkg.all;
 use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
+use bitvis_vip_uart.monitor_cmd_pkg.all;
 
 library bitvis_uart;
 library bitvis_vip_clock_generator;
@@ -88,6 +89,21 @@ architecture struct of uvvm_demo_th is
 
   constant C_CLOCK_GEN  : natural := 1;
 
+
+  -- UART Monitor
+  constant C_UART_MONITOR_INTERFACE_CONFIG : t_uart_interface_config := (
+    bit_time         => GC_BIT_PERIOD,
+    num_data_bits    => 8,
+    parity           => PARITY_ODD,
+    num_stop_bits    => STOP_BITS_ONE
+    );
+
+  constant C_UART_MONITOR_CONFIG : t_uart_monitor_config := (
+    scope_name               => (1 to 12 => "UART Monitor", others => NUL),
+    msg_id_panel             => C_UART_MONITOR_MSG_ID_PANEL_DEFAULT,
+    interface_config         => C_UART_MONITOR_INTERFACE_CONFIG,
+    transaction_display_time => 0 ns
+    );
 
 
 begin
@@ -164,7 +180,15 @@ begin
   -- Monitor - UART
   -----------------------------------------------------------------------------
 
-
+  i1_uart_monitor : entity bitvis_vip_uart.uart_monitor
+    generic map(
+      GC_INSTANCE_IDX   => 1,
+      GC_MONITOR_CONFIG => C_UART_MONITOR_CONFIG
+    )
+    port map(
+      uart_dut_tx => uart_vvc_rx,
+      uart_dut_rx => uart_vvc_tx
+    );
 
 
 

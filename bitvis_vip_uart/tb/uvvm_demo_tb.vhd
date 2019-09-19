@@ -349,6 +349,12 @@ architecture func of uvvm_demo_tb is
     shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
+    shared_uart_vvc_config(RX,1).bfm_config.num_stop_bits := STOP_BITS_ONE;
+    shared_uart_vvc_config(TX,1).bfm_config.num_stop_bits := STOP_BITS_ONE;
+
+    shared_uart_vvc_config(RX,1).bfm_config.parity := PARITY_ODD;
+    shared_uart_vvc_config(TX,1).bfm_config.parity := PARITY_ODD;
+
 
     -----------------------------------------------------------------------------
     -- Tests

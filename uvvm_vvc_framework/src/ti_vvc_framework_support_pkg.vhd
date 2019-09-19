@@ -634,12 +634,10 @@ package body ti_vvc_framework_support_pkg is
     variable v_timeout    : time;
   begin
     wait for 0 ns;
-
     log("Starting activity watchdog: " & to_string(timeout) & ". " & msg);
-    v_timeout       := timeout;
 
     loop
-      wait until global_trigger_testcase_inactivity_watchdog for v_timeout;
+      wait on global_trigger_testcase_inactivity_watchdog for timeout;
 
       if not(global_trigger_testcase_inactivity_watchdog'event) and shared_inactivity_watchdog.priv_are_all_vvc_inactive then
           alert(alert_level, "Watchdog timer ended! " & msg);

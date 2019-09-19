@@ -84,6 +84,8 @@ architecture behave of uart_rx_vvc is
   alias transaction_info        : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
   -- DTT
   alias dtt_transaction_info    : t_transaction_group is global_uart_transaction(RX, GC_INSTANCE_IDX);
+  -- Activity Watchdog
+  signal vvc_idx_for_activity_watchdog : integer;
 
 begin
 
@@ -110,6 +112,12 @@ begin
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := 0;
+
+    -- Register VVC in activity watchdog register
+    vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "UART_RX",
+                                                                                  instance  => GC_INSTANCE_IDX,
+                                                                                  channel   => GC_CHANNEL);
+
 
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
@@ -196,6 +204,14 @@ begin
     -- Coverage
     variable v_coverage_ok                           : boolean                                    := false;
 
+    procedure activity_watchdog_register_vvc_state(busy : boolean) is
+    begin
+      shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                          busy                  => busy,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed);
+      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog");
+    end procedure;
+
   begin
 
     -- 0. Initialize the process prior to first command
@@ -253,6 +269,8 @@ begin
             when NA =>
               -- Set DTT
               set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+              -- Notify activity watchdog
+              activity_watchdog_register_vvc_state(busy => true);
 
               transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
               -- Call the corresponding procedure in the BFM package.
@@ -275,12 +293,20 @@ begin
                 shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
               end if;
 
+              -- Notify activity watchdog
+              activity_watchdog_register_vvc_state(busy => false);
+
+
+
             when COVERAGE_FULL =>
               v_coverage_ok := false;
 
               while not(v_coverage_ok) loop
                 -- Set DTT
                 set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+              -- Notify activity watchdog
+              activity_watchdog_register_vvc_state(busy => true);
+
 
                 transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
                 -- Call the corresponding procedure in the BFM package.
@@ -308,6 +334,9 @@ begin
                 shared_uart_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
                 -- Check if coverage is fulfilled
                 v_coverage_ok := shared_uart_byte_coverage.IsCovered;
+
+                -- Notify activity watchdog
+                activity_watchdog_register_vvc_state(busy => false);
               end loop;
 
             when COVERAGE_EDGES =>
@@ -320,6 +349,9 @@ begin
         when EXPECT =>
           -- Set DTT
           set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => true);
+
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -335,6 +367,9 @@ begin
                       config                => vvc_config.bfm_config,
                       scope                 => C_SCOPE,
                       msg_id_panel          => vvc_config.msg_id_panel);
+
+          -- Notify activity watchdog
+          activity_watchdog_register_vvc_state(busy => false);
 
 
         when INSERT_DELAY =>

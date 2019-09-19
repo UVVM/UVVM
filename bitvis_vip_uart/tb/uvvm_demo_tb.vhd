@@ -88,8 +88,9 @@ architecture func of uvvm_demo_tb is
     procedure test_error_injection(void : t_void) is
       variable v_prob : real;
     begin
-      log(ID_LOG_HDR_XL, "Test error injection.\n"&
-                         "UART TX VVC is used to randomly send error injected data to DUT.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test error injection.\n\n"&
+                         "UART TX VVC is used to randomly send error injected data to DUT.\n"&
+                         "The UART Monitor will report any transfer errors detected.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
@@ -166,7 +167,7 @@ architecture func of uvvm_demo_tb is
 
     procedure test_randomise(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test randomise data.\n"&
+      log(ID_LOG_HDR_XL, "Test randomise data.\n\n"&
                          "UART TX VVC is used to send randomised data to DUT.", C_SCOPE);
 
       -- Print info
@@ -208,9 +209,9 @@ architecture func of uvvm_demo_tb is
       constant C_NUM_BYTES  : natural := 100;
       constant C_TIMEOUT    : time := C_NUM_BYTES * 16 * C_BIT_PERIOD;
     begin
-      log(ID_LOG_HDR_XL, "Test functional coverage.\n"&
+      log(ID_LOG_HDR_XL, "Test functional coverage.\n\n"&
                          "SBI VVC is used to send randomised data to DUT, while UART RX VVC read data from DUT\n"&
-                         "until full coverage is fulfilled.", C_SCOPE);
+                         "until full coverage is fulfilled. SBI VVC command queue is flushed when coverage is reached.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
@@ -255,9 +256,9 @@ architecture func of uvvm_demo_tb is
 
     procedure test_protocol_checker(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test protocol checker.\n"&
-                          "UART RX VVC is configured with controlling of a bit rate checker,\n"&
-                          "witch is configured and tested with DUT readout data.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test protocol checker.\n\n"&
+                          "UART RX VVC is configured to control the bit rate checker,\n"&
+                          "which is will monitor the bit periods.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
@@ -277,22 +278,22 @@ architecture func of uvvm_demo_tb is
 
       -- Use SBI VVC to transmit 6 random bytes. Change the setting of bit rate checker
       --   to test various settings.
-      log(ID_SEQUENCER, "\nSBI Write 6 bytes to DUT, UART Receive 5 bytes from DUT. Change protocol checker min_period during sequence.\n", C_SCOPE);
+      log(ID_SEQUENCER, "\nSBI Write 6 bytes to DUT, UART Receive bytes from DUT. Changing protocol checker min_period during sequence.\n", C_SCOPE);
       for idx in 1 to 6 loop
         v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
 
         if idx = 3 then
-          log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 0.95)&" (bit period="&to_string(C_BIT_PERIOD)&") OK.", C_SCOPE);
+          log(ID_SEQUENCER, "\nSetting bit rate checker min_period="&to_string(C_BIT_PERIOD * 0.95)&" (bit period="&to_string(C_BIT_PERIOD)&") OK.", C_SCOPE);
           shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 0.95;  -- should be ok
         elsif idx = 4 then
-          log(ID_SEQUENCER, "Setting bit rate checker min_period="&to_string(C_BIT_PERIOD * 1.05)&" (bit period="&to_string(C_BIT_PERIOD)&") FAIL.", C_SCOPE);
+          log(ID_SEQUENCER, "\nSetting bit rate checker min_period="&to_string(C_BIT_PERIOD * 1.05)&" (bit period="&to_string(C_BIT_PERIOD)&") FAIL.", C_SCOPE);
           shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 1.05;  -- should fail
         elsif idx = 5 then
-          log(ID_SEQUENCER, "Disable bit rate checker.", C_SCOPE);
+          log(ID_SEQUENCER, "\nDisable bit rate checker.", C_SCOPE);
           shared_uart_vvc_config(RX, 1).bit_rate_checker.enable := false;
         end if;
 
-        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "SBI WRITE");
         uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
         await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
       end loop;
@@ -311,8 +312,10 @@ architecture func of uvvm_demo_tb is
 
     procedure test_activity_watchdog(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test activity watchdog.\n"&
-                          "", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test activity watchdog.\n\n"&
+                          "SBI VVC will transmit 3 bytes and UART RX VVC will receive 3 bytes,\n"&
+                          "before a pause of TB sequencer will make the activity watchdog\n"&
+                          "timeout and alert. Then a new 3 bytes transmit and receive sequence is performed.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);

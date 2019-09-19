@@ -99,7 +99,7 @@ package body ti_protected_types_pkg is
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                 := instance;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                  := channel;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.busy                  := false;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_executed_cmd_idx := -1;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_cmd_idx_executed := -1;
       -- Return index
       return priv_last_registered_vvc_idx;
     end function priv_register_vvc;

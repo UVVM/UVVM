@@ -274,7 +274,7 @@ architecture func of uvvm_demo_tb is
       -- Use SBI VVC to transmit 6 random bytes. Change the setting of bit rate checker
       --   to test various settings.
     for idx in 1 to 6 loop
-      log(ID_SEQUENCER, "\nRequest SBI VVC Write and UART RX VVC Expect, idx="&to_string(idx), C_SCOPE);
+      log(ID_SEQUENCER, "\nRequest SBI VVC Write and UART RX VVC Receive, idx="&to_string(idx), C_SCOPE);
 
       v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
 
@@ -290,7 +290,7 @@ architecture func of uvvm_demo_tb is
       end if;
 
       sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
-      uart_expect(UART_VVCT, 1, RX, v_data, "UART TX");
+      uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
       await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
     end loop;
 

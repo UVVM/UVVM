@@ -140,6 +140,9 @@ package adaptations_pkg is
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
+    -- Monitors
+    ID_MONITOR,               -- General monitor information
+    ID_MONITOR_ERROR,         -- General monitor errors
     -- Special purpose - Not really IDs
     ALL_MESSAGES              -- Applies to ALL message ID apart from ID_NEVER
     );

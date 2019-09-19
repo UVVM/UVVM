@@ -160,6 +160,18 @@ package types_pkg is
 
   type t_justify_center is (center);
 
+  type t_parity is (
+    PARITY_NONE,
+    PARITY_ODD,
+    PARITY_EVEN
+  );
+
+  type t_stop_bits is (
+    STOP_BITS_ONE,
+    STOP_BITS_ONE_AND_HALF,
+    STOP_BITS_TWO
+  );
+
   -------------------------------------
   -- BFMs and above
   -------------------------------------

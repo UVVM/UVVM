@@ -45,6 +45,13 @@ bitvis_vip_sbi_lib = ui.add_library('bitvis_vip_sbi')
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'bitvis_vip_sbi', 'src', '*.vhd'))
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
+#crfc_lib = ui.add_library('crfc')
+#crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', '*.vhd'))
+#
+#bitvis_vip_scoreboard_lib = ui.add_library('bitvis_vip_scoreboard')
+#bitvis_vip_scoreboard_lib.add_source_files(join(project_root, 'bitvis_vip_scoreboard', 'src', '*.vhd'))
+#bitvis_vip_scoreboard_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
+
 bitvis_vip_uart_lib = ui.add_library('bitvis_vip_uart')
 bitvis_vip_uart_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_uart_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))

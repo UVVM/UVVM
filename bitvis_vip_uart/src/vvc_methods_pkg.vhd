@@ -25,6 +25,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.uart_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
+use work.monitor_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
 
@@ -159,6 +160,8 @@ package vvc_methods_pkg is
   shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM)       := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
 
+  -- Monitor
+  shared variable shared_uart_monitor_config   : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_UART_MONITOR_CONFIG_DEFAULT));
   -- Scoreboard
   shared variable shared_uart_sb : t_generic_sb;
   -- Coverage
@@ -187,7 +190,7 @@ package vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
-    constant num_bytes          : in natural;
+    constant num_words          : in natural;
     constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
@@ -291,7 +294,7 @@ package body vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
-    constant num_bytes          : in natural;
+    constant num_words          : in natural;
     constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
@@ -307,7 +310,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.operation          := TRANSMIT;
     -- Randomisation spesific
     shared_vvc_cmd.randomisation      := randomisation;
-    shared_vvc_cmd.num_bytes          := num_bytes;
+    shared_vvc_cmd.num_words          := num_words;
     -- Send to VVC
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;

@@ -58,7 +58,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     data              : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     randomisation     : t_randomisation;
-    num_bytes         : natural;
+    num_words         : natural;
     coverage          : t_coverage;
     max_receptions    : integer;
   end record;
@@ -80,7 +80,7 @@ package vvc_cmd_pkg is
     delay             => 0 ns,
     quietness         => NON_QUIET,
     randomisation     => NA,
-    num_bytes         => 1,
+    num_words         => 1,
     coverage          => NA
     );
 

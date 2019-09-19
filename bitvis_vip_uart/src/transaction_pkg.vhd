@@ -121,4 +121,9 @@ package transaction_pkg is
   signal global_uart_monitor_transaction : t_uart_transaction_group_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
                                           (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
+
+  alias t_uart_operation   is t_operation;
+  alias t_uart_transaction is t_transaction;
+  alias C_UART_TRANSACTION_INFO_SET_DEFAULT is C_TRANSACTION_SET_DEFAULT;
+
 end package transaction_pkg;

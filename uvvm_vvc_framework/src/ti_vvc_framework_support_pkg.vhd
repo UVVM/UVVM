@@ -22,11 +22,14 @@ use ieee.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
--- protected_types_pkg.all; -- vvc framework version
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_protected_types_pkg.all;
+
 
 package ti_vvc_framework_support_pkg is
 
-  constant C_VVC_NAME_MAX_LENGTH : natural := 20;
+  --constant C_VVC_NAME_MAX_LENGTH : natural := 20;
+  constant C_VVC_NAME_MAX_LENGTH : natural := C_MAX_VVC_NAME_LENGTH;
 
   ------------------------------------------------------------------------
   -- Common support types for UVVM
@@ -70,37 +73,6 @@ package ti_vvc_framework_support_pkg is
   );
 
 
-  type t_vvc_id is record
-    name      : string(1 to C_VVC_NAME_MAX_LENGTH);
-    instance  : natural;
-    channel   : t_channel;
-  end record;
-
-  constant C_VVC_ID_DEFAULT : t_vvc_id := (
-    name      => (others => ' '),
-    instance  => 0,
-    channel   => NA
-  );
-
-  type t_vvc_status is record
-    busy      : boolean;
-    cmd_idx   : integer; -- last_executed_cmd
-  end record;
-
-  constant  C_VVC_STATUS_DEFAULT : t_vvc_status := (
-    busy    => false,
-    cmd_idx => -1
-  );
-
-  type t_vvc_item is record
-    vvc_id      : t_vvc_id;
-    vvc_status  : t_vvc_status;
-  end record;
-
-  constant C_VVC_ITEM_DEFAULT : t_vvc_item := (
-    vvc_id      => C_VVC_ID_DEFAULT,
-    vvc_status  => C_VVC_STATUS_DEFAULT
-  );
 
 
 
@@ -322,28 +294,8 @@ package ti_vvc_framework_support_pkg is
     constant msg          : string := ""
   );
 
-
-  type t_inactivity_watchdog is protected
-
-    function priv_are_all_vvc_inactive return boolean;
-
-    function priv_register_vvc(
-      constant name                   : in string;
-      constant instance               : in natural;
-      constant channel                : in t_channel
-    ) return integer;
-
-    procedure priv_report_vvc_activity(
-      constant vvc_idx                : natural;
-      constant busy                   : boolean;
-      constant last_executed_cmd_idx  : integer
-    );
-  end protected;
-
-
-
   signal global_trigger_testcase_inactivity_watchdog : std_logic := '0';
-
+  shared variable shared_inactivity_watchdog                  : t_inactivity_watchdog;
 
 end package ti_vvc_framework_support_pkg;
 
@@ -696,61 +648,6 @@ package body ti_vvc_framework_support_pkg is
     end loop;
     wait;
   end procedure activity_watchdog;
-
-
-
-
-  type t_inactivity_watchdog is protected body
-
-    -- Array holding all registered VVCs
-    type t_registered_vvc_array   is array (natural range <>) of t_vvc_item;
-    variable priv_registered_vvc  : t_registered_vvc_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_ITEM_DEFAULT);
-    -- Counter for the number of VVCs that has registered
-    variable priv_last_registered_vvc_idx : integer := -1;
-
-
-    function priv_are_all_vvc_inactive return boolean is
-    begin
-      for idx in 0 to priv_last_registered_vvc_idx loop
-        if v_wd_monitored_vvc(idx).vvc_status.busy = true then
-          return false;
-        end if;
-      end loop;
-      return true;
-    end function priv_are_all_vvc_inactive;
-
-    function priv_register_vvc(
-      constant name                   : in string;
-      constant instance               : in natural;
-      constant channel                : in t_channel
-    ) return integer is
-    begin
-      -- Set registered VVC index
-      priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
-      -- Update register
-      priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_id.name                      := name;
-      priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_id.instance                  := instance;
-      priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_id.channel                   := channel;
-      priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_status.busy                  := false;
-      priv_wd_monitored_vvc(priv_last_registered_vvc_idx).vvc_status.last_executed_cmd_idx := -1;
-      -- Return index
-      return priv_last_registered_vvc_idx;
-    end function priv_register_vvc;
-
-
-    procedure priv_report_vvc_activity(
-      constant vvc_idx                : natural;
-      constant busy                   : boolean;
-      constant last_executed_cmd_idx  : integer
-    ) is
-    begin
-      -- Update VVC status
-      priv_wd_monitored_vvc(vvc_idx).vvc_status.busy                  := busy;
-      priv_wd_monitored_vvc(vvc_idx).vvc_status.last_executed_cmd_idx := last_executed_cmd_idx;
-    end procedure priv_report_vvc_activity;
-
-  end protected t_inactivity_watchdog;
-
 
 
 end package body ti_vvc_framework_support_pkg;

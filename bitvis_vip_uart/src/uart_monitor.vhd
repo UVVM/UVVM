@@ -169,12 +169,8 @@ architecture behave of uart_monitor is
       wait for 0 ns;
 
       -- Await non-active line if no stop bit has been detected
-      if or(v_stop_bit_error) and uart_line /= '1' then
+      if (and(v_stop_bit_error) or (interface_config.num_stop_bits = STOP_BITS_ONE and v_stop_bit_error(0))) and uart_line /= '1' then
         wait until uart_line = '1';
-      elsif interface_config.num_stop_bits = STOP_BITS_ONE_AND_HALF then
-        -- Bit after first stop bit is interpreted as start bit and we have
-        -- to align to the middle of the bit
-        wait for interface_config.bit_time/4;
       end if;
 
     end loop;

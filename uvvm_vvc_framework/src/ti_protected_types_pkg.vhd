@@ -32,7 +32,7 @@ package ti_protected_types_pkg is
     impure function priv_register_vvc(
       constant name                   : in string;
       constant instance               : in natural;
-      constant channel                : in t_channel
+      constant channel                : in t_channel := NA
     ) return integer;
 
     procedure priv_report_vvc_activity(
@@ -89,7 +89,7 @@ package body ti_protected_types_pkg is
     impure function priv_register_vvc(
       constant name                   : in string;
       constant instance               : in natural;
-      constant channel                : in t_channel
+      constant channel                : in t_channel := NA
     ) return integer is
     begin
       -- Set registered VVC index

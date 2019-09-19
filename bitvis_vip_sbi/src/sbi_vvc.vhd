@@ -243,8 +243,8 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Loop the number of bytes to transmit
-          for idx in 1 to v_cmd.num_bytes loop
+          -- Loop the number of words to transmit
+          for idx in 1 to v_cmd.num_words loop
 
             -- Randomise data if applicable
             case v_cmd.randomisation is

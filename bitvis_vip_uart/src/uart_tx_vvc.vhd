@@ -225,8 +225,8 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when TRANSMIT =>
-          -- Loop the number of bytes to transmit
-          for idx in 1 to v_cmd.num_bytes loop
+          -- Loop the number of words to transmit
+          for idx in 1 to v_cmd.num_words loop
 
             -- Set error injection
             vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_error_prob);

@@ -190,7 +190,7 @@ package vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
-    constant num_bytes          : in natural;
+    constant num_words          : in natural;
     constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
@@ -294,7 +294,7 @@ package body vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
-    constant num_bytes          : in natural;
+    constant num_words          : in natural;
     constant randomisation      : in t_randomisation;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
@@ -310,7 +310,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.operation          := TRANSMIT;
     -- Randomisation spesific
     shared_vvc_cmd.randomisation      := randomisation;
-    shared_vvc_cmd.num_bytes          := num_bytes;
+    shared_vvc_cmd.num_words          := num_words;
     -- Send to VVC
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;

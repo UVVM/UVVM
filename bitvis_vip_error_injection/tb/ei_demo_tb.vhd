@@ -36,10 +36,14 @@ architecture func of ei_demo_tb is
 
   begin
 
+  -----------------------------------------------------------------------------
+  -- Instantiate the concurrent procedure that initializes UVVM
+  -----------------------------------------------------------------------------
+  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
 
   -----------------------------------------------------------------------------
-  -- Error injectors
+  -- Error injector
   -----------------------------------------------------------------------------
   error_injector_sl: entity work.error_injection_sl
     generic map (
@@ -70,17 +74,20 @@ architecture func of ei_demo_tb is
     variable v_valid_interval     : boolean := true;
 
 
-    procedure reset_config is
-    begin
-      shared_ei_config(C_SL_EI_IDX) := C_EI_CONFIG_DEFAULT;
-      shared_ei_config(C_SLV_EI_IDX) := C_EI_CONFIG_DEFAULT;
-    end procedure reset_config;
 
     procedure run_test(slv_value : integer) is
     begin
       input_slv <= std_logic_vector(to_unsigned(slv_value, C_DATA_WIDTH));
       gen_pulse(input_sl, C_PULSE_WIDTH, NON_BLOCKING, "pulsing SL");
     end procedure run_test;
+
+    procedure reset_config is
+    begin
+      shared_ei_config(C_SL_EI_IDX)   := C_EI_CONFIG_DEFAULT;
+      shared_ei_config(C_SLV_EI_IDX)  := C_EI_CONFIG_DEFAULT;
+      run_test(0);
+      wait for 100 ns;
+    end procedure reset_config;
 
 
     ------------------------------------------------------------------
@@ -733,7 +740,7 @@ architecture func of ei_demo_tb is
     log(ID_LOG_HDR, "Starting simulation of Error Injection TB.", C_SCOPE);
     --============================================================================================================
 
-    wait for 10 ns;
+    --wait for 10 ns;
 
     delay_test(VOID);
     jitter_test(VOID);

@@ -61,12 +61,14 @@ if { [info exists 1] } {
 # (Re-)Generate library and Compile source files
 #--------------------------------------------------
 quietly set uart_path "$root_path/bitvis_uart"
-do $uart_path/script/1_compile_src.do $uart_path
+do $uart_path/script/compile_src.do $uart_path
 
 # Compile UVVM (including bitvis_vip_spec_vs_verif)
 quietly set spec_vs_verif_path "$root_path/bitvis_vip_spec_vs_verif"
 do $spec_vs_verif_path/script/compile_lib.do uvvm_util
 do $spec_vs_verif_path/script/compile_lib.do uvvm_vvc_framework
+do $spec_vs_verif_path/script/compile_lib.do bitvis_vip_scoreboard
+do $spec_vs_verif_path/script/compile_lib.do xConstrRandFuncCov
 do $spec_vs_verif_path/script/compile_lib.do bitvis_vip_spec_vs_verif
 do $spec_vs_verif_path/script/compile_lib.do bitvis_vip_uart
 do $spec_vs_verif_path/script/compile_lib.do bitvis_vip_sbi

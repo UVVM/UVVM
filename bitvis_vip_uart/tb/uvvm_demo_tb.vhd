@@ -475,7 +475,7 @@ begin
 
 
 
-    log(ID_LOG_HDR, "Starting simulation of TB for UART using VVCs", C_SCOPE);
+    log(ID_LOG_HDR, "Starting simulation of UVVM DEMO TB using SBI and UART VVCs", C_SCOPE);
     --============================================================================================================
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD);

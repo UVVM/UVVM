@@ -47,6 +47,7 @@ package adaptations_pkg is
   constant C_USE_BACKSLASH_N_AS_LF : boolean := true; -- If true interprets '\n' as Line feed
   constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r'
                                                       -- is the first character of the string.
+                                                      -- All others '\r' will be printed as is.
 
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
@@ -86,48 +87,46 @@ package adaptations_pkg is
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     -- General
-    ID_POS_ACK,               -- To write a positive acknowledge on a check
-    ID_DATA,                  -- To write general handling of data
-    ID_CTRL,                  -- To write general control/config information
+    ID_POS_ACK,           -- To write a positive acknowledge on a check
     -- Directly inside test sequencers
-    ID_LOG_HDR,               -- ONLY allowed in test sequencer, Log section headers
-    ID_LOG_HDR_LARGE,         -- ONLY allowed in test sequencer, Large log section headers
-    ID_LOG_HDR_XL,            -- ONLY allowed in test sequencer, Extra large log section headers
-    ID_SEQUENCER,             -- ONLY allowed in test sequencer, Normal log (not log headers)
-    ID_SEQUENCER_SUB,         -- ONLY allowed in test sequencer, Subprograms defined in sequencer
+    ID_LOG_HDR,           -- ONLY allowed in test sequencer, Log section headers
+    ID_LOG_HDR_LARGE,     -- ONLY allowed in test sequencer, Large log section headers
+    ID_LOG_HDR_XL,        -- ONLY allowed in test sequencer, Extra large log section headers
+    ID_SEQUENCER,         -- ONLY allowed in test sequencer, Normal log (not log headers)
+    ID_SEQUENCER_SUB,     -- ONLY allowed in test sequencer, Subprograms defined in sequencer
     -- BFMs
-    ID_BFM,                   -- Used inside a BFM (to log BFM access)
-    ID_BFM_WAIT,              -- Used inside a BFM to indicate that it is waiting for something (e.g. for ready)
-    ID_BFM_POLL,              -- Used inside a BFM when polling until reading a given value. I.e. to show all reads until expected value found (e.g. for sbi_poll_until())
-    ID_BFM_POLL_SUMMARY,      -- Used inside a BFM when showing the summary of data that has been received while waiting for expected data.
-    ID_TERMINATE_CMD,         -- Typically used inside a loop in a procedure to end the loop (e.g. for sbi_poll_until() or any looped generation of random stimuli
+    ID_BFM,               -- Used inside a BFM (to log BFM access)
+    ID_BFM_WAIT,          -- Used inside a BFM to indicate that it is waiting for something (e.g. for ready)
+    ID_BFM_POLL,          -- Used inside a BFM when polling until reading a given value. I.e. to show all reads until expected value found (e.g. for sbi_poll_until())
+    ID_BFM_POLL_SUMMARY,  -- Used inside a BFM when showing the summary of data that has been received while waiting for expected data.
+    ID_TERMINATE_CMD,     -- Typically used inside a loop in a procedure to end the loop (e.g. for sbi_poll_until() or any looped generation of random stimuli
     -- Packet related data Ids with three levels of granularity, for differentiating between frames, packets and segments.
     -- Segment Ids, finest granularity of packet data
-    ID_SEGMENT_INITIATE,      -- Notify that a segment is about to be transmitted or received
-    ID_SEGMENT_COMPLETE,      -- Notify that a segment has been transmitted or received
-    ID_SEGMENT_HDR,           -- AS ID_SEGMENT_COMPLETE, but also writes header info
-    ID_SEGMENT_DATA,          -- AS ID_SEGMENT_COMPLETE, but also writes segment data (could be huge)
+    ID_SEGMENT_INITIATE,   -- Notify that a packet is about to be transmitted or received
+    ID_SEGMENT_COMPLETE,   -- Notify that a packet has been transmitted or received
+    ID_SEGMENT_HDR,        -- AS ID_SEGMENT_COMPLETE, but also writes header info
+    ID_SEGMENT_DATA,       -- AS ID_SEGMENT_COMPLETE, but also writes packet data (could be huge)
     -- Packet Ids, medium granularity of packet data
-    ID_PACKET_INITIATE,       -- Notify that a packet is about to be transmitted or received
-    ID_PACKET_COMPLETE,       -- Notify that a packet has been transmitted or received
-    ID_PACKET_HDR,            -- AS ID_PACKET_COMPLETED, but also writes header info
-    ID_PACKET_DATA,           -- AS ID_PACKET_COMPLETED, but also writes packet data (could be huge)
+    ID_PACKET_INITIATE,   -- Notify that a packet is about to be transmitted or received
+    ID_PACKET_COMPLETE,   -- Notify that a packet has been transmitted or received
+    ID_PACKET_HDR,        -- AS ID_PACKET_COMPLETED, but also writes header info
+    ID_PACKET_DATA,       -- AS ID_PACKET_COMPLETED, but also writes packet data (could be huge)
     -- Frame Ids, roughest granularity of packet data
-    ID_FRAME_INITIATE,        -- Notify that a frame is about to be transmitted or received
-    ID_FRAME_COMPLETE,        -- Notify that a frame has been transmitted or received
-    ID_FRAME_HDR,             -- AS ID_FRAME_COMPLETE, but also writes header info
-    ID_FRAME_DATA,            -- AS ID_FRAME_COMPLETE, but also writes frame data (could be huge)
+    ID_FRAME_INITIATE,     -- Notify that a packet is about to be transmitted or received
+    ID_FRAME_COMPLETE,    -- Notify that a packet has been transmitted or received
+    ID_FRAME_HDR,          -- AS ID_FRAME_COMPLETE, but also writes header info
+    ID_FRAME_DATA,         -- AS ID_FRAME_COMPLETE, but also writes packet data (could be huge)
     -- OSVVM Ids
-    ID_COVERAGE_MAKEBIN,      -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
-    ID_COVERAGE_ADDBIN,       -- Log messages from AddBin/AddCross
-    ID_COVERAGE_ICOVER,       -- ICover logging, NB: Very low level debugging. Can result in large amount of data.
-    ID_COVERAGE_CONFIG,       -- Logging of configuration in the coverage package
-    ID_COVERAGE_SUMMARY,      -- Report logging : Summary of coverage, with both covered bins and holes
-    ID_COVERAGE_HOLES,        -- Report logging : Holes only
+    ID_COVERAGE_MAKEBIN,  -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
+    ID_COVERAGE_ADDBIN,   -- Log messages from AddBin/AddCross
+    ID_COVERAGE_ICOVER,   -- ICover logging, NB: Very low level debugging. Can result in large amount of data.
+    ID_COVERAGE_CONFIG,   -- Logging of configuration in the coverage package
+    ID_COVERAGE_SUMMARY,  -- Report logging : Summary of coverage, with both covered bins and holes
+    ID_COVERAGE_HOLES,    -- Report logging : Holes only
     -- Distributed command systems
-    ID_UVVM_SEND_CMD,         -- Logs the commands sent to the VVC
-    ID_UVVM_CMD_ACK,          -- Logs the command's ACKs or timeouts from the VVC
-    ID_UVVM_CMD_RESULT,       -- Logs the fetched results from the VVC
+    ID_UVVM_SEND_CMD,
+    ID_UVVM_CMD_ACK,
+    ID_UVVM_CMD_RESULT,
     ID_CMD_INTERPRETER,       -- Message from VVC interpreter about correctly received and queued/issued command
     ID_CMD_INTERPRETER_WAIT,  -- Message from VVC interpreter that it is actively waiting for a command
     ID_IMMEDIATE_CMD,         -- Message from VVC interpreter that an IMMEDIATE command has been executed
@@ -143,8 +142,14 @@ package adaptations_pkg is
     -- Monitors
     ID_MONITOR,               -- General monitor information
     ID_MONITOR_ERROR,         -- General monitor errors
+    -- SB package
+    ID_DATA,
+    ID_CTRL,
+    -- Specification vs Verification IDs
+    ID_FILE_PARSER,           -- Id used in file parsers
+    ID_SPEC_VS_VERIF,         -- Messages from the specification vs verification methods
     -- Special purpose - Not really IDs
-    ALL_MESSAGES              -- Applies to ALL message ID apart from ID_NEVER
+    ALL_MESSAGES          -- Applies to ALL message ID apart from ID_NEVER
     );
   type  t_msg_id_panel is array (t_msg_id'left to t_msg_id'right) of t_enabled;
 
@@ -200,11 +205,6 @@ package adaptations_pkg is
                                                 (others => (others => 0)),
                                                 (others => 0),
                                                 (others => true));
-
-  -------------------------------------------------------------------------
-  -- Synchronisation
-  -------------------------------------------------------------------------
-  constant C_NUM_SYNC_FLAGS     : positive := 100; -- Maximum number of sync flags
 
   -------------------------------------------------------------------------
   -- Deprecate
@@ -330,6 +330,17 @@ package adaptations_pkg is
     last_cmd_idx_executed => -1
   );
 
+  ------------------------------------------------------------------------
+  -- Requirement vs Verification Matrix adaptations
+  ------------------------------------------------------------------------
+  constant C_REQ_TC_MISMATCH_SEVERITY   : t_alert_level := warning;
+  constant C_DEFAULT_RESULT_FILE_NAME   : string := "resultfile.csv";
+  constant C_CSV_DELIMITER              : character := ';';
+  constant C_MAX_NUM_REQUIREMENTS       : natural := 1000;
+  constant C_MAX_NUM_TC_PR_REQUIREMENT  : natural := 20;
+  constant C_CSV_FILE_MAX_LINE_LENGTH   : positive := 256;
+
+  shared variable shared_req_vs_cov_strict_testcase_checking : boolean := false;
 
 end package adaptations_pkg;
 

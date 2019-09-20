@@ -1,0 +1,4 @@
+--requirements ../demo/advanced_usage/req_to_test_map.csv
+--resultlistfile ../demo/advanced_usage/result_list_file.txt
+--output ../sim/advanced_usage_requirement_results.csv
+--subrequirements ../demo/advanced_usage/req_to_sub_req_map.csv

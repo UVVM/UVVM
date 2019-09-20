@@ -15,12 +15,12 @@ import os
 import subprocess
 
 # Compile
-subprocess.call(['vsim', '-c', '-do', 'do compile_demo.do ../ advanced' + ';exit'], stderr=subprocess.PIPE)
+subprocess.call(['vsim', '-c', '-do', 'do ../script/compile_demo.do ../ advanced' + ';exit'], stderr=subprocess.PIPE)
 
 # Run simulation
 C_NUM_TESTCASES = 4
 for i in range(C_NUM_TESTCASES):
-  script_call = 'do run_advanced_simulation.do ' + str(i)
+  script_call = 'do ../script/run_advanced_simulation.do ' + str(i)
   subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
 
 # Run the specification vs verification python script. Configuration of the script is read from file.

@@ -196,8 +196,8 @@ begin
   -----------------------------------------------------------------------------
 
   activity_watchdog(timeout     => GC_ACTIVITY_WATCHDOG_TIMEOUT,
-                    alert_level => TB_ERROR,
-                    msg         => "UVVM_DEMO" );
+                    alert_level => ERROR,
+                    msg         => "Activity Watchdog" );
 
 
 

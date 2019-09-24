@@ -295,7 +295,7 @@ package ti_vvc_framework_support_pkg is
   );
 
   signal global_trigger_testcase_inactivity_watchdog : std_logic := '0';
-  shared variable shared_inactivity_watchdog                  : t_inactivity_watchdog;
+  shared variable shared_inactivity_watchdog         : t_inactivity_watchdog;
 
 end package ti_vvc_framework_support_pkg;
 

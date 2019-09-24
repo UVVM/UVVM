@@ -537,7 +537,7 @@ architecture func of ei_demo_tb is
           check_value((now - v_timestamp_slv) = v_width, TB_ERROR, "verify pulse width");
 
         else
-          log(ID_SEQUENCER, "Verify non pulsed signal "&to_string(idx-2)&".\n", C_SCOPE);
+          log(ID_SEQUENCER, "Verify non pulsed signal "&to_string(idx-2)&".", C_SCOPE);
           check_value(input_sl = output_sl, TB_ERROR, "verify SL no pulse, high period");
           check_value(input_slv = output_slv, TB_ERROR, "verify SLV no pulse");
         end if;

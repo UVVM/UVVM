@@ -104,6 +104,19 @@ begin
     variable v_data       : std_logic_vector(7 downto 0);
 
 
+
+
+    -- Description:
+    --
+    --    1. UART TX VVC is configured with parity and stop bit error
+    --       probability from 0-100%, and transmits data to the DUT.
+    --    2. Model will put expected data on SBI Scoreboard.
+    --    3. Model will issue a SBI VVC read request.
+    --    4. SBI VVC will put actual data on SBI Scoreboard.
+    --    5. UART Monitor (and DUT) will alert when any illegal transaction
+    --       is detected.
+    --    6. Sequencer present SBI Scoreboard statistics.
+    --
     procedure test_error_injection(void : t_void) is
       variable v_prob : real;
     begin
@@ -183,7 +196,15 @@ begin
     end procedure test_error_injection;
 
 
-
+    -- Description:
+    --
+    --    1. UART TX VVC is instructed to send 1 and 3 randomised
+    --       data to DUT.
+    --    2. Model will put expected data on SBI Scoreboard.
+    --    3. Model will issue a SBI VVC read request.
+    --    4. SBI VVC will put actual data on SBI Scoreboard.
+    --    5. Sequencer present SBI Scoreboard statistics.
+    --
     procedure test_randomise(void : t_void) is
     begin
       log(ID_LOG_HDR_XL, "Test randomise data.\n\n"&
@@ -197,7 +218,7 @@ begin
       -- SBI_READ() is requested by Model and the randomised data is checked in SB.
 
       uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
-      await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
+      await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
       -- Add a delay for DUT to prepare for next transaction
       insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert delay before next UART TX");
 
@@ -224,6 +245,16 @@ begin
     end procedure test_randomise;
 
 
+    -- Description:
+    --
+    --  1. UART RX VVC is instructed to receive full coverage (0-15), and
+    --     put actual data on UART Scoreboard.
+    --  2. SBI VVC is set up to send 100 bytes of random data (0-16).
+    --  3. Model will put expected data on UART Scoreboard.
+    --  4. SBI VVC command queue is flushed when UART RX VVC is finished, i.e.
+    --     has achieved full coverage.
+    --  5. Sequencer present coverage results and UART Scoreboard statistics.
+    --
     procedure test_functional_coverage(void : t_void) is
       constant C_NUM_BYTES  : natural := 100;
       constant C_TIMEOUT    : time := C_NUM_BYTES * 16 * C_BIT_PERIOD;
@@ -276,6 +307,16 @@ begin
     end procedure test_functional_coverage;
 
 
+    -- Description:
+    --
+    --  1. UART RX VVC is configured with control of a protocol checker (bit rate).
+    --  2. 6 bytes are transmitted using SBI VVC.
+    --  3. Protocol checker is reconfigured during the transfer of the 6 bytes,
+    --     and will alert when bit rate is not within specs.
+    --  4. Model puts expected data on UART Scoreboard.
+    --  5. UART RX VVC receives data and puts actual data on UART Scoreboard.
+    --  6. Sequencer present UART Scoreboard statistics.
+    --
     procedure test_protocol_checker(void : t_void) is
     begin
       log(ID_LOG_HDR_XL, "Test protocol checker.\n\n"&
@@ -331,6 +372,18 @@ begin
     end procedure test_protocol_checker;
 
 
+    -- Description:
+    --
+    --   1. SBI VVC will send 3 bytes to the DUT.
+    --   2. Model will put expected data on UART Scoreboard.
+    --   3. UART RX VVC will read data from the DUT and put actual
+    --      data on the UART Scoreboard.
+    --   4. All activity is stalled and Activity Watchdog will start
+    --      timeout calculations.
+    --   5. Timeout is reached and Activity Watchdog alerts.
+    --   6. Step 1 to 3 is repeated.
+    --   7. Sequencer present UART Scoreboard statistics.
+    --
     procedure test_activity_watchdog(void : t_void) is
     begin
       log(ID_LOG_HDR_XL, "Test activity watchdog.\n\n"&
@@ -385,6 +438,14 @@ begin
   end procedure test_activity_watchdog;
 
 
+  -- Description:
+  --
+  --   1. Watchdog A-D is reconfigured with a smaller timeout value.
+  --   2. Terminating of watchdog A is tested.
+  --   3. Timeout of watchdog B is tested.
+  --   4. Extending watchdog C timeout is tested, and timeout is tested.
+  --   5. Reinitialization of watchdog D is tested, and timeout is tested.
+  --
   procedure test_simple_watchdog(void : t_void) is
   begin
       log(ID_LOG_HDR_XL, "Test simple watchdog.\n\n"&
@@ -451,6 +512,8 @@ begin
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
   end procedure test_simple_watchdog;
+
+
 
 
 

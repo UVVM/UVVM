@@ -72,7 +72,7 @@ architecture struct of uvvm_demo_th is
   constant C_DATA_WIDTH   : natural := 8;
   constant C_ADDR_WIDTH   : natural := 3;
 
-  -- DSP interface and general control signals
+  -- Clock and reset signals
   signal clk            : std_logic  := '0';
   signal arst           : std_logic  := '0';
 
@@ -172,12 +172,11 @@ begin
   -- Static '1' ready signal for the SBI VVC
   ready <= '1';
 
-  -- Toggle the reset after 5 clock periods
-  p_arst: arst <= '1', '0' after 5 *GC_CLK_PERIOD;
-
-
   -----------------------------------------------------------------------------
   -- Monitor - UART
+  --
+  --   Monitor and validate UART transactions.
+  --
   -----------------------------------------------------------------------------
 
   i1_uart_monitor : entity bitvis_vip_uart.uart_monitor
@@ -193,17 +192,27 @@ begin
 
   -----------------------------------------------------------------------------
   -- Activity Watchdog
+  --
+  --   Monitor VVC activity and alert if no VVC activity is
+  --   detected before timeout.
+  --
   -----------------------------------------------------------------------------
 
-  activity_watchdog(timeout     => GC_ACTIVITY_WATCHDOG_TIMEOUT,
-                    alert_level => ERROR,
-                    msg         => "Activity Watchdog" );
+  p_activity_watchdog:
+      activity_watchdog(timeout     => GC_ACTIVITY_WATCHDOG_TIMEOUT,
+                        alert_level => ERROR,
+                        msg         => "Activity Watchdog" );
 
 
 
   -----------------------------------------------------------------------------
   -- Model
+  --
+  --   Subscribe to SBI and UART DDTs, and send to Scoreboard or
+  --   send VVC commands based on DTT content.
+  --
   -----------------------------------------------------------------------------
+
   p_model: process
     -- SBI DTT
     alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
@@ -263,19 +272,18 @@ begin
             if  (uart_tx_dtt.bt.error_info.parity_bit_error = false) and
                 (uart_tx_dtt.bt.error_info.stop_bit_error = false) then
 
-                -- Add to UART scoreboard
+                -- Add to SBI scoreboard
                 shared_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
-                -- Wait for UART Transmit to finish
+                -- Wait for UART Transmit to finish before SBI VVC start
                 insert_delay(SBI_VVCT, 1, 12*GC_BIT_PERIOD, "Wait for UART TX to finish");
                 -- Request SBI Read
                 sbi_read(SBI_VVCT, 1, GC_ADDR_RX_DATA, TO_SB, "SBI_READ");
-
             end if;
 
           when others =>
             null;
-
         end case;
+
       end if;
 
     end loop;
@@ -287,6 +295,7 @@ begin
   -----------------------------------------------------------------------------
   -- Clock Generator VVC
   -----------------------------------------------------------------------------
+
   i_clock_generator_vvc : entity bitvis_vip_clock_generator.clock_generator_vvc
     generic map(
       GC_INSTANCE_IDX    => C_CLOCK_GEN_VVC,
@@ -297,6 +306,14 @@ begin
     port map(
       clk => clk
       );
+
+
+  -----------------------------------------------------------------------------
+  -- Reset
+  -----------------------------------------------------------------------------
+
+  -- Toggle the reset after 5 clock periods
+  p_arst: arst <= '1', '0' after 5 *GC_CLK_PERIOD;
 
 
 end struct;

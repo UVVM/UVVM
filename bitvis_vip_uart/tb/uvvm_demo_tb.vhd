@@ -46,6 +46,7 @@ end entity;
 architecture func of uvvm_demo_tb is
 
   constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
+  constant C_MONITOR_SCOPE      : string := "UART Monitor";
 
   -- Clock and bit period settings
   constant C_CLK_PERIOD         : time := 10 ns;
@@ -127,7 +128,10 @@ begin
       -- Print info
       log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
 
-      -- Set UART TX VVC error injection probability to 0%
+
+      -- Set UART TX VVC error injection probability to 0%.
+      -- Note that error injection is set to C_VVC_ERROR_INJECTION_INACTIVE in vvc_methods_pkg
+      -- when the VVCs are initialized.
       shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob := 0.0;
       shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob   := 0.0;
 
@@ -333,7 +337,9 @@ begin
       log(ID_SEQUENCER, "\nIncrease number of expected alerts with 5.", C_SCOPE);
       increment_expected_alerts(WARNING, 5);
 
-      -- Enable and configure bit rate checker
+      -- Enable and configure bit rate checker.
+      -- Note that protocol checker (bit rate checker) is set to C_BIT_RATE_CHECKER_DEFAULT in vvc_methods_pkg
+      -- when the VVCs are initilized.
       log(ID_SEQUENCER, "\nEnable and configure bit rate checker.");
       shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := true;          -- enable checker
       shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD;  -- set minimum alowed period
@@ -524,10 +530,8 @@ begin
 
     start_clock(CLOCK_GENERATOR_VVCT, 1, "Start clock generator");
 
-    -- Print the configuration to the log
-    report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
-
+    -- Set verbosity level
+    --============================================================================================================
     --enable_log_msg(ALL_MESSAGES);
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
@@ -539,13 +543,25 @@ begin
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     --enable_log_msg(SBI_VVCT, 1, ID_BFM);
-    enable_log_msg(SBI_VVCT, 1, ID_FINISH_OR_STOP);
+    --enable_log_msg(SBI_VVCT, 1, ID_FINISH_OR_STOP);
 
     disable_log_msg(UART_VVCT, 1, RX, ALL_MESSAGES);
     --enable_log_msg(UART_VVCT, 1, RX, ID_BFM);
 
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
     --enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
+
+
+    -- Print the configuration to the log
+    report_global_ctrl(VOID);
+    report_msg_id_panel(VOID);
+
+
+    log(ID_LOG_HDR, "Configure UART Monitor", C_SCOPE);
+    --============================================================================================================
+    -- UART Monitor is initialized with C_UART_MONITOR_CONFIG_DEFAULT in vvc_methods_pkg, setting scope.
+    shared_uart_monitor_config(TX, 1).scope_name(1 to C_MONITOR_SCOPE'length) := C_MONITOR_SCOPE;
+    shared_uart_monitor_config(RX, 1).scope_name(1 to C_MONITOR_SCOPE'length) := C_MONITOR_SCOPE;
 
 
 

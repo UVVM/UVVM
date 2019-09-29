@@ -36,7 +36,9 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
-
+-- Coverage
+library crfc;
+use crfc.Coveragepkg.all;
 
 -- Test bench entity
 entity uvvm_demo_tb is
@@ -274,6 +276,11 @@ begin
       -- This test will request the SBI VVC to transmit lots of randomised data to the DUT.
       --   The UART RX VVC is requested to read DUT data until full coverage is fulfilled.
 
+      log(ID_SEQUENCER, "Setting coverage requirement for UART RX.\n", C_SCOPE);
+      -- Setting requirement 0x0 to 0xF, one bin per bit.
+      shared_uart_byte_coverage.AddBins(GenBin(0, 7, 8));
+
+      log(ID_SEQUENCER, "UART Receive requesting full coverage.\n", C_SCOPE);
       -- Request UART RX VVC to read DUT data until full coverage is fulfilled (0x0 to 0xF)
       --   Note: UART_RECEIVE() is called with parameters "COVERAGE_FULL" and "TO_SB",
       --         requiring full coverage for UART VVC Receive to complete, and all

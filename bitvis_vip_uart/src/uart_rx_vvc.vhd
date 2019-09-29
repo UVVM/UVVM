@@ -225,7 +225,6 @@ begin
     shared_uart_sb.enable_log_msg(ID_DATA);
 
     -- Coverage
-    shared_uart_byte_coverage.AddBins(GenBin(0, 7, 8));
     shared_uart_byte_coverage.SetName("UATR Receive coverage");
 
     loop

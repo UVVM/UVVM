@@ -19,4 +19,4 @@ output = subprocess.run(['vsim', '-c', '-do', 'do compile_demo.do' + ';exit'], s
 
 # Run simulation if successful compile
 if output.returncode == 0:
-  subprocess.call(['vsim', '-gui', '-do', 'do run_simulation.do'], stderr=subprocess.PIPE)
+  subprocess.call(['vsim', '-c', '-do', 'do run_simulation.do'], stderr=subprocess.PIPE)

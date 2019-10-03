@@ -2,6 +2,7 @@
 status.txt
 internal_script/vunit_out/*
 internal_script/__pycache__/*
+sim/
 sim/*.txt
 script/vvc_generator/output/*
 script/vvc_name_modifier/vvc_to_be_modified/src/*.vhd

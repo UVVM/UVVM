@@ -44,6 +44,9 @@ architecture func of ethernet_sbi_sb_demo_tb is
   constant C_SCOPE        : string := "ETHERNET over SBI SB TB";
   alias i2_sbi_if is << signal .ethernet_sbi_sb_demo_tb.i_test_harness.i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0)) >>;
   alias clk       is << signal .ethernet_sbi_sb_demo_tb.i_test_harness.clk : std_logic >>;
+
+
+
 begin
 
   -----------------------------------------------------------------------------

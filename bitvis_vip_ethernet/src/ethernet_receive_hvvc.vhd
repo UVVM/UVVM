@@ -362,7 +362,7 @@ begin
           v_result.ethernet_frame                  := v_received_data;
           v_result.ethernet_frame_status.fcs_error := v_fcs_error;
 
-          if v_cmd.data_destination = TO_SB then
+          if v_cmd.data_routing = TO_SB then
             -- Send result to scoreboard
             shared_ethernet_sb.check_actual(GC_INSTANCE_IDX, v_result.ethernet_frame);
           else

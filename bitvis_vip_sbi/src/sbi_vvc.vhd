@@ -26,6 +26,9 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
 use work.sbi_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -228,8 +231,9 @@ begin
 
 
     -- Setup UART scoreboard
-    shared_sbi_sb.set_scope("SB SBI");
+    shared_sbi_sb.set_scope("SBI VVC");
     shared_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
+    shared_sbi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
     shared_sbi_sb.enable_log_msg(ID_DATA);
 
 
@@ -338,7 +342,6 @@ begin
                    config       => vvc_config.bfm_config);
 
           -- Request SB check result
-          check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for READ");
           if v_cmd.data_routing = TO_SB then
             -- call SB check_actual
             shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));

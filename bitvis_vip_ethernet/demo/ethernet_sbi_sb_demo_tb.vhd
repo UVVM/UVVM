@@ -112,22 +112,20 @@ begin
     disable_log_msg(ID_UVVM_DATA_QUEUE);
     disable_log_msg(ID_UVVM_CMD_ACK);
     disable_log_msg(ID_POS_ACK);
+    disable_log_msg(ID_GEN_PULSE);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
+    -- Configure Ethernet SB
     shared_ethernet_sb.set_scope("ETHERNET VVC");
     shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
     shared_ethernet_sb.enable(1);
     shared_ethernet_sb.config(2, C_SB_CONFIG_DEFAULT);
     shared_ethernet_sb.enable(2);
 
+    -- Configure of SBI SB is done in SBI VVC executor
 
-    shared_sbi_sb.set_scope("SBI VVC");
-    shared_sbi_sb.config(1, C_SB_CONFIG_DEFAULT);
-    shared_sbi_sb.enable(1);
-    shared_sbi_sb.config(2, C_SB_CONFIG_DEFAULT);
-    shared_sbi_sb.enable(2);
 
     log(ID_LOG_HDR_LARGE, "START SIMULATION OF ETHERNET VVC");
 
@@ -157,7 +155,8 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write byte " & to_string(i) & " to FIFO");
-      shared_sbi_sb.add_expected(2, to_sb_result(v_send_data(0)));
+      --shared_sbi_sb.add_expected(2, to_sb_result(v_send_data(0)));
+      shared_sbi_sb.add_expected(2, v_send_data(0));
       sbi_read(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_GET, 8), "Read byte " & to_string(i) & " from FIFO", TO_SB);
     end loop;
     shared_sbi_sb.report_counters(ALL_ENABLED_INSTANCES);
@@ -178,7 +177,8 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write data to FIFO");
-      shared_sbi_sb.add_expected(1, to_sb_result(v_send_data(0)));
+      --shared_sbi_sb.add_expected(1, to_sb_result(v_send_data(0)));
+      shared_sbi_sb.add_expected(1, v_send_data(0));
       sbi_read(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_GET, 8), "Read data from FIFO", TO_SB);
       await_completion(SBI_VVCT, 1, 2 us, "Wait for read to finish");
     end loop;
@@ -202,7 +202,8 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write data to FIFO");
-      shared_sbi_sb.add_expected(2, to_sb_result(v_send_data(0)));
+      --shared_sbi_sb.add_expected(2, to_sb_result(v_send_data(0)));
+      shared_sbi_sb.add_expected(2, v_send_data(0));
       sbi_read(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_GET, 8), "Read data from FIFO", TO_SB);
       await_completion(SBI_VVCT, 2, 1 us, "Wait for read to finish");
     end loop;
@@ -222,7 +223,8 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write data to FIFO");
-      shared_sbi_sb.add_expected(1, to_sb_result(v_send_data(0)));
+      --shared_sbi_sb.add_expected(1, to_sb_result(v_send_data(0)));
+      shared_sbi_sb.add_expected(1, v_send_data(0));
       sbi_read(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_GET, 8), "Read data from FIFO", TO_SB);
       await_completion(SBI_VVCT, 1, 1 us, "Wait for read to finish");
     end loop;

@@ -399,11 +399,11 @@ package body sbi_bfm_pkg is
     if v_clk_was_high then -- rising_edge to rising_edge
       v_min_time := v_start_time + config.clock_period - config.clock_period_margin;
       v_max_time := v_start_time + config.clock_period + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": checking clk period is within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": clk period not within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, proc_call);
     else -- falling_edge to rising_edge
       v_min_time := v_start_time + (config.clock_period/2) - config.clock_period_margin;
       v_max_time := v_start_time + (config.clock_period/2) + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": checking clk low period is within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": clk low period not within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, proc_call);
     end if;
 
     while (config.use_ready_signal and ready = '0') loop
@@ -517,11 +517,12 @@ package body sbi_bfm_pkg is
     if v_clk_was_high then -- rising_edge to rising_edge
       v_min_time := v_start_time + config.clock_period - config.clock_period_margin;
       v_max_time := v_start_time + config.clock_period + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": checking clk period is within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": clk period not within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, local_proc_call);
     else -- falling_edge to rising_edge
       v_min_time := v_start_time + (config.clock_period/2) - config.clock_period_margin;
       v_max_time := v_start_time + (config.clock_period/2) + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": checking clk low period is within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": clk low period not within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, local_proc_call);
     end if;
 
     if config.use_fixed_wait_cycles_read then
@@ -556,6 +557,9 @@ package body sbi_bfm_pkg is
     else
     -- Log will be handled by calling procedure (e.g. sbi_check)
     end if;
+
+    DEALLOCATE(v_proc_call);
+
   end procedure;
 
   procedure sbi_read (

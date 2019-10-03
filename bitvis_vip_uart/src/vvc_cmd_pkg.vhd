@@ -42,46 +42,51 @@ package vvc_cmd_pkg is
   --===============================================================================================
   type t_vvc_cmd_record is record
     -- Common VVC fields
-    operation         : t_operation;
-    proc_call         : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    msg               : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    data_routing      : t_data_routing;
-    cmd_idx           : natural;
-    command_type      : t_immediate_or_queued;
-    msg_id            : t_msg_id;
-    gen_integer_array : t_integer_array(0 to 1);  -- Increase array length if needed
-    gen_boolean       : boolean;        -- Generic boolean
-    timeout           : time;
-    alert_level       : t_alert_level;
-    delay             : time;
-    quietness         : t_quietness;
+    operation                 : t_operation;
+    proc_call                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    msg                       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    data_routing              : t_data_routing;
+    cmd_idx                   : natural;
+    command_type              : t_immediate_or_queued;
+    msg_id                    : t_msg_id;
+    gen_integer_array         : t_integer_array(0 to 1);  -- Increase array length if needed
+    gen_boolean               : boolean;        -- Generic boolean
+    timeout                   : time;
+    alert_level               : t_alert_level;
+    delay                     : time;
+    quietness                 : t_quietness;
+    use_provided_msg_id_panel : t_use_provided_msg_id_panel;
+    msg_id_panel              : t_msg_id_panel;
     -- VVC dedicated fields
-    data              : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    randomisation     : t_randomisation;
-    num_words         : natural;
-    coverage          : t_coverage;
-    max_receptions    : integer;
+    data                      : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    randomisation             : t_randomisation;
+    num_words                 : natural;
+    coverage                  : t_coverage;
+    max_receptions            : integer;
   end record;
 
+
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
-    operation         => FETCH_RESULT,  -- Default unless overwritten by a common operation
-    data              => (others => '0'),
-    max_receptions    => 1,
-    alert_level       => failure,
-    proc_call         => (others => NUL),
-    msg               => (others => NUL),
-    data_routing      => NA,
-    cmd_idx           => 0,
-    command_type      => NO_command_type,
-    msg_id            => NO_ID,
-    gen_integer_array => (others => -1),
-    gen_boolean       => false,
-    timeout           => 0 ns,
-    delay             => 0 ns,
-    quietness         => NON_QUIET,
-    randomisation     => NA,
-    num_words         => 1,
-    coverage          => NA
+    operation                 => FETCH_RESULT,  -- Default unless overwritten by a common operation
+    data                      => (others => '0'),
+    max_receptions            => 1,
+    alert_level               => failure,
+    proc_call                 => (others => NUL),
+    msg                       => (others => NUL),
+    data_routing              => NA,
+    cmd_idx                   => 0,
+    command_type              => NO_command_type,
+    msg_id                    => NO_ID,
+    gen_integer_array         => (others => -1),
+    gen_boolean               => false,
+    timeout                   => 0 ns,
+    delay                     => 0 ns,
+    quietness                 => NON_QUIET,
+    randomisation             => NA,
+    num_words                 => 1,
+    coverage                  => NA,
+    use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
+    msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
     );
 
   --===============================================================================================

@@ -35,10 +35,11 @@ package types_pkg is
 
   type t_natural_array  is array (natural range <>) of natural;
   type t_integer_array  is array (natural range <>) of integer;
-  type t_byte_array     is array (natural range <>) of std_logic_vector(7 downto 0);
   type t_slv_array      is array (natural range <>) of std_logic_vector;
   type t_signed_array   is array (natural range <>) of signed;
   type t_unsigned_array is array (natural range <>) of unsigned;
+
+  subtype t_byte_array  is t_slv_array(open)(7 downto 0);
 
   -- Additions to predefined vector types
   type natural_vector  is array (natural range <>) of natural;
@@ -201,8 +202,22 @@ package types_pkg is
   type t_void_bfm_config is (VOID);
   constant C_VOID_BFM_CONFIG : t_void_bfm_config := VOID;
 
+  type t_data_routing is (
+    NA,
+    TO_SB,
+    TO_BUFFER,
+    FROM_BUFFER,
+    TO_RECEIVE_BUFFER); -- TO_FILE and FROM_FILE may be added later on
 
-  type t_data_routing is (NA, TO_SB, TO_BUFFER, FROM_BUFFER); -- TO_FILE and FROM_FILE may be added later on
+  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+    NA,               -- When channel is not relevant
+    ALL_CHANNELS,     -- When command shall be received by all channels
+    RX,
+    TX
+  );
+
+  type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
+
 
   -------------------------------------
   -- SB

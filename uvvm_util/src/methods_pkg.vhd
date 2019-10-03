@@ -294,8 +294,8 @@ package methods_pkg is
 
   -- Matching if same width or only zeros in "extended width"
   function matching_widths(
-    value1: std_logic_vector;
-    value2: std_logic_vector
+    value1 : std_logic_vector;
+    value2 : std_logic_vector
     ) return boolean;
 
   function matching_widths(
@@ -981,6 +981,14 @@ package methods_pkg is
     constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
   ) return t_byte_array;
 
+  function reverse_vector(
+    constant value : std_logic_vector
+  ) return std_logic_vector;
+
+  impure function reverse_vectors_in_array(
+    constant value : t_slv_array
+  ) return t_slv_array;
+
 
   -- Warning! This function should NOT be used outside the UVVM library.
   --          Function is only included to support internal functionality.
@@ -1623,9 +1631,9 @@ package methods_pkg is
     variable semaphore : inout t_protected_semaphore
   );
 
--- ============================================================================
--- Watchdog-related
--- ============================================================================
+  -- ============================================================================
+  -- Watchdog-related
+  -- ============================================================================
   procedure watchdog_timer(
     signal watchdog_ctrl : in t_watchdog_ctrl;
     constant timeout     : time;
@@ -1646,6 +1654,34 @@ package methods_pkg is
   procedure terminate_watchdog(
     signal watchdog_ctrl : inout t_watchdog_ctrl
   );
+
+
+  -- ============================================================================
+  -- generate_crc
+  -- ============================================================================
+  --
+  -- This function generate the CRC based on the input values. CRC is generated
+  -- MSb first.
+  --
+  -- Input criteria:
+  --   - Inputs have to be decending (CRC generated from high to low)
+  --   - crc_in must be one bit shorter than polynomial
+  --
+  -- Return vector is one bit shorter than polynomial
+  --
+  ---------------------------------------------------------------------------------
+  impure function generate_crc(
+    constant data       : in std_logic_vector;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector;
+
+  -- slv array have to be acending
+  impure function generate_crc(
+    constant data       : in t_slv_array;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector;
 
 end package methods_pkg;
 
@@ -4278,6 +4314,28 @@ package body methods_pkg is
     end if;
   end function;
 
+  function reverse_vector(
+    constant value : std_logic_vector
+  ) return std_logic_vector is
+    variable return_val : std_logic_vector(value'range);
+  begin
+    for i in 0 to value'length-1 loop
+      return_val(value'low + i) := value(value'high - i);
+    end loop;
+    return return_val;
+  end function reverse_vector;
+
+  impure function reverse_vectors_in_array(
+    constant value : t_slv_array
+  ) return t_slv_array is
+    variable return_val : t_slv_array(value'range)(value(value'low)'range);
+  begin
+    for i in value'range loop
+      return_val(i) := reverse_vector(value(i));
+    end loop;
+    return return_val;
+  end function reverse_vectors_in_array;
+
 
 
 -- ============================================================================
@@ -6297,5 +6355,50 @@ package body methods_pkg is
     watchdog_ctrl.terminate <= true;
     wait for 0 ns; -- delta cycle to propagate signal
   end procedure;
+
+
+  -- ============================================================================
+  -- generate_crc
+  -- ============================================================================
+  impure function generate_crc(
+    constant data       : in std_logic_vector;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector is
+    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+  begin
+    -- Sanity checks
+    check_value(not data'ascending,    TB_FAILURE, "data have to be decending",    C_SCOPE, ID_NEVER);
+    check_value(not crc_in'ascending,  TB_FAILURE, "crc_in have to be decending",  C_SCOPE, ID_NEVER);
+    check_value(not polynomial'ascending, TB_FAILURE, "polynomial have to be decending", C_SCOPE, ID_NEVER);
+    check_value(crc_in'length, polynomial'length-1, TB_FAILURE, "crc_in have to be one bit shorter than polynomial", C_SCOPE, ID_NEVER);
+
+    for i in data'high downto data'low loop
+      if crc_out(crc_out'high) xor data(i) then
+        crc_out := crc_out sll 1;
+        crc_out := crc_out xor polynomial(polynomial'high-1 downto polynomial'low);
+      else
+        crc_out := crc_out sll 1;
+      end if;
+    end loop;
+    return crc_out;
+  end function generate_crc;
+
+  impure function generate_crc(
+    constant data       : in t_slv_array;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector is
+    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+  begin
+    -- Sanity checks
+    check_value(data'ascending, TB_FAILURE, "slv array have to be acending", C_SCOPE, ID_NEVER);
+
+    for i in data'low to data'high loop
+      crc_out := generate_crc(data(i), crc_out, polynomial);
+    end loop;
+    return crc_out;
+  end function generate_crc;
+
 
 end package body methods_pkg;

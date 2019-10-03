@@ -52,7 +52,8 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_TB_SCOPE_DEFAULT : string := "TB seq."; -- Default scope in test sequencer
+  constant C_TB_SCOPE_DEFAULT          : string := "TB seq."; -- Default scope in test sequencer
+  constant C_VVC_CMD_SCOPE_DEFAULT : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
@@ -279,11 +280,10 @@ package adaptations_pkg is
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
-  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
-    NA,               -- When channel is not relevant
-    ALL_CHANNELS,     -- When command shall be received by all channels
-    RX,
-    TX);
+  type t_vvc is record
+    instance  : integer;
+    channel   : t_channel;
+  end record t_vvc;
 
   constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
   constant ALL_ENABLED_INSTANCES : integer := -3;
@@ -341,6 +341,12 @@ package adaptations_pkg is
   constant C_CSV_FILE_MAX_LINE_LENGTH   : positive := 256;
 
   shared variable shared_req_vs_cov_strict_testcase_checking : boolean := false;
+
+
+  ------------------------------------------------------------------------
+  -- CRC32
+  ------------------------------------------------------------------------
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
 
 end package adaptations_pkg;
 

@@ -30,7 +30,7 @@ context bitvis_vip_sbi.vvc_context;
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 
---use work.uart_transaction_sb_pkg.all;
+use work.uart_transaction_sb_pkg.all;
 
 -- Test case entity
 entity uart_monitor_tb is
@@ -55,8 +55,8 @@ architecture func of uart_monitor_tb is
   constant C_ADDR_TX_DATA       : unsigned(3 downto 0) := x"2";
   constant C_ADDR_TX_READY      : unsigned(3 downto 0) := x"3";
 
-  shared variable tx_uart_monitor_sb : t_generic_sb;
-  shared variable rx_uart_monitor_sb : t_generic_sb;
+  shared variable tx_uart_monitor_sb : work.uart_transaction_sb_pkg.t_generic_sb;
+  shared variable rx_uart_monitor_sb : work.uart_transaction_sb_pkg.t_generic_sb;
 
   procedure check_transaction(
     constant transaction       : in t_uart_transaction;
@@ -153,7 +153,7 @@ architecture func of uart_monitor_tb is
     --enable_log_msg(UART_VVCT,1,RX,  ID_BFM_POLL_SUMMARY);
 
     disable_log_msg(UART_VVCT,1,TX,  ALL_MESSAGES);
-    --enable_log_msg(UART_VVCT,1,TX,  ID_BFM);
+    enable_log_msg(UART_VVCT,1,TX,  ID_BFM);
     --enable_log_msg(UART_VVCT,1,TX,  ID_BFM_WAIT);
     --enable_log_msg(UART_VVCT,1,TX,  ID_BFM_POLL);
     --enable_log_msg(UART_VVCT,1,TX,  ID_BFM_POLL_SUMMARY);
@@ -292,7 +292,7 @@ architecture func of uart_monitor_tb is
       uart_transmit(UART_VVCT, 1, TX, v_data_tx, "Sending " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
       insert_delay(SBI_VVCT, 1, 200 ns);
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, to_string(i) & ": check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
     end loop;
 
     wait for 500 ns;  -- margin
@@ -334,7 +334,7 @@ architecture func of uart_monitor_tb is
       uart_transmit(UART_VVCT, 1, TX, v_data_tx, "Sending " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
       insert_delay(SBI_VVCT, 1, 200 ns);
-      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, to_string(i) & ": check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
     end loop;
 
     wait for 500 ns;  -- margin

@@ -393,6 +393,9 @@ package body vvc_methods_pkg is
     constant alert_level      : in    t_alert_level := error;
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
+                                   & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.operation    := RECEIVE;

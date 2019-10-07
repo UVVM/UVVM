@@ -449,7 +449,7 @@ begin
       check_value(clk'last_event, 3 ns, ERROR, "Check hold time", C_SCOPE, ID_SEQUENCER);
 
     else
-      log(ID_LOG_HDR, "Unknown test", C_SCOPE);
+      alert(tb_error, "Unsupported test");
     end if;
 
 

@@ -24,12 +24,12 @@ num_tests_run = 0
 num_failing_tests = 0
 
 
-
 #=============================================================================================
 #
 # Methods
 #
 #=============================================================================================
+
 
 # Script arguments
 def check_arguments(args):
@@ -52,6 +52,7 @@ def compile(verbose=False):
 def clean_up(test):
   os.remove(test + "_Alert.txt")
   os.remove(test + "_Log.txt")
+  os.remove('transcript')
 
 
 # Check simulation results
@@ -63,9 +64,11 @@ def check_sim_result(filename):
 
 
 # Run simulations and check result
-def run_simulation(library, testbench, tests=[""], verbose=False):
+def run_simulation(library, testbench, tests, verbose=False):
   global num_tests_run
   global num_failing_tests
+
+  if len(tests) == 0: tests = ["undefined"]
 
   for test in tests:
     num_tests_run += 1
@@ -97,6 +100,7 @@ def run_simulation(library, testbench, tests=[""], verbose=False):
 
 
 def main(argv):
+  tests = []
   # Check verbosity
   verbose = check_arguments(argv)
   # Compile testbench, dependencies and DUT

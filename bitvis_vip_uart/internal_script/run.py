@@ -11,6 +11,7 @@
 #========================================================================================================================
 
 from os.path import join, dirname
+from itertools import product
 import os, sys, subprocess, pprint
 
 # Verbosity
@@ -47,13 +48,18 @@ def compile(verbose=False):
   else:
     subprocess.call(['vsim', '-c', '-do', 'do ../internal_script/compile_all.do' + ';exit'], stderr=subprocess.PIPE)
 
+# Run testbench simulation
+def simulate(script_call, verbose=False):
+  if verbose == False:
+    subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stdout=FNULL, stderr=subprocess.PIPE)
+  else:
+    subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
 
 # Clean-up
 def clean_up(test):
   os.remove(test + "_Alert.txt")
   os.remove(test + "_Log.txt")
   os.remove('transcript')
-
 
 # Check simulation results
 def check_sim_result(filename):
@@ -62,31 +68,30 @@ def check_sim_result(filename):
       return True
   return False
 
-
 # Run simulations and check result
-def run_simulation(library, testbench, tests, verbose=False):
+def run_simulation(library, testbench, tests, configs=[], verbose=False):
   global num_tests_run
   global num_failing_tests
 
   if len(tests) == 0: tests = ["undefined"]
+  if len(configs) == 0: configs = [""]
 
   for test in tests:
-    num_tests_run += 1
-    print(testbench + ":: " + test + ": ", end='')
 
-    script_call = 'do ../internal_script/run_simulation.do ' + library + ' ' + testbench + ' ' + test
-    if verbose == False:
-      subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stdout=FNULL, stderr=subprocess.PIPE)
-    else:
-      subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
+    for config in configs:
+      num_tests_run += 1
+      print("%s:: %s.config=%s : " % (testbench, test, config), end='')
 
-    if check_sim_result("transcript") == True:
-      print("PASS")
-      clean_up(test)
+      script_call = 'do ../internal_script/run_simulation.do ' + library + ' ' + testbench + ' ' + test + ' ' + config
+      simulate(script_call, verbose)
 
-    else:
-      print("FAILED")
-      num_failing_tests += 1
+      if check_sim_result("transcript") == True:
+        print("PASS")
+        clean_up(test)
+
+      else:
+        print("FAILED")
+        num_failing_tests += 1
 
 
 
@@ -99,16 +104,24 @@ def run_simulation(library, testbench, tests, verbose=False):
 #=============================================================================================
 
 
+# Create testbench configuration with TB generics
+def create_config(modes, data_widths, data_array_widths):
+  config = []
+  for mode, data_width, data_array_width in product(modes, data_widths, data_array_widths):
+    config.append(str(mode) + ' ' + str(data_width) + ' ' + str(data_array_width))
+
+  return config
+
+
 def main(argv):
   tests = []
+  configs = []
 
   # Check verbosity
   verbose = check_arguments(argv)
   # Compile testbench, dependencies and DUT
   compile(verbose)
 
-  # Configuration
-  script_folder = "../internal_script"
   # Set library for TB compilations
   library = "bitvis_vip_uart"
 
@@ -117,8 +130,7 @@ def main(argv):
   # Set testbench
   testbench = "uart_vvc_new_tb"
   # Run testbench with defined tests
-  run_simulation(library, testbench, tests, verbose)
-
+  run_simulation(library, testbench, tests, configs, verbose)
 
   ## Define tests
   #tests = []

@@ -23,18 +23,20 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.slv_sb_pkg.all;
+
+-- Coverage
+library crfc;
+use crfc.Coveragepkg.all;
+
 use work.uart_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.monitor_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
-
--- Coverage
-library crfc;
-use crfc.Coveragepkg.all;
 
 
 
@@ -224,6 +226,15 @@ package vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
+  procedure uart_receive(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    );
+
   procedure uart_expect(
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -403,6 +414,28 @@ package body vvc_methods_pkg is
                   alert_level       => alert_level,
                   scope             => scope);
   end procedure;
+
+  procedure uart_receive(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
+                                   & ")";
+  begin
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
+    shared_vvc_cmd.operation    := RECEIVE;
+    shared_vvc_cmd.alert_level  := alert_level;
+    shared_vvc_cmd.coverage     := NA;
+    shared_vvc_cmd.data_routing := NA;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+
 
   procedure uart_expect(
     signal VVCT               : inout t_vvc_target_record;

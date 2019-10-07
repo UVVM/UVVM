@@ -1,3 +1,4 @@
-#bitvis_vip_sbi
+bitvis_vip_sbi
 bitvis_vip_uart
+bitvis_vip_spi
 

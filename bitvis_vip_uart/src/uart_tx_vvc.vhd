@@ -298,7 +298,9 @@ begin
             restore_global_dtt(dtt_transaction_info, v_cmd);
 
             -- Add small delay as uvvm_demo_tb DUT do not accept back-to-back accesses
-            wait for vvc_config.bfm_config.bit_time;
+            if v_cmd.num_words > 1 then
+              wait for vvc_config.bfm_config.bit_time;
+            end if;
           end loop;
 
 

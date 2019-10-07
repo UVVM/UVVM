@@ -198,6 +198,15 @@ package vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    );
+
+  procedure uart_receive(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
     constant coverage         : in    t_coverage;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
@@ -375,6 +384,25 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
+  procedure uart_receive(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level   := error;
+    constant scope            : in    string          := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    ) is
+  begin
+    -- Call overloading procedure
+    uart_receive( VVCT              => VVCT,
+                  vvc_instance_idx  => vvc_instance_idx,
+                  channel           => channel,
+                  coverage          => NA,
+                  data_routing      => NA,
+                  msg               => msg,
+                  alert_level       => alert_level,
+                  scope             => scope);
+  end procedure;
 
   procedure uart_expect(
     signal VVCT               : inout t_vvc_target_record;

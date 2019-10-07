@@ -215,6 +215,15 @@ package vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
+  procedure uart_receive(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    );
+
   procedure uart_expect(
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
@@ -374,6 +383,25 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data_routing := data_routing;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
+
+
+  procedure uart_receive(
+    signal VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := error;
+    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    ) is
+  begin
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
+    shared_vvc_cmd.operation    := RECEIVE;
+    shared_vvc_cmd.alert_level  := alert_level;
+    shared_vvc_cmd.coverage     := NA;
+    shared_vvc_cmd.data_routing := NA;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
 
 
   procedure uart_expect(

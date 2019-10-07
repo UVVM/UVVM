@@ -10,11 +10,25 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-quietly set testcase 0
+quietly set library 0
+quietly set testbench 0
+quietly set run_test 0
+
 if { [info exists 1] } {
-  quietly set testcase "$1"
+  quietly set library "$1"
   unset 1
 }
 
-vsim -gGC_TESTCASE=$testcase bitvis_vip_sbi.sbi_tb
+if { [info exists 2] } {
+  quietly set testbench "$2"
+  unset 2
+}
+
+if { [info exists 3] } {
+  quietly set run_test "$3"
+  unset 3
+}
+
+vsim -gGC_TEST=$run_test $library.$testbench
+
 run -all

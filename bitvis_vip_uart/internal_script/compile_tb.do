@@ -15,16 +15,14 @@ echo "\n\n\n=== Compiling TB\n"
 
 echo "eval vcom  $compdirectives  $tb_path/uart_vip_th.vhd"
 eval vcom  $compdirectives  $tb_path/uart_vip_th.vhd
-
 echo "eval vcom  $compdirectives  $tb_path/uart_vip_tb.vhd"
 eval vcom  $compdirectives  $tb_path/uart_vip_tb.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/uart_vip_monitor_th.vhd"
-eval vcom  $compdirectives  $tb_path/uart_vip_monitor_th.vhd
-
-echo "eval vcom  $compdirectives  $tb_path/uart_transaction_sb_pkg.vhd"
-eval vcom  $compdirectives  $tb_path/uart_transaction_sb_pkg.vhd
-
-echo "eval vcom  $compdirectives  $tb_path/uart_vip_monitor_tb.vhd"
-eval vcom  $compdirectives  $tb_path/uart_vip_monitor_tb.vhd
+# The following TB is not compliant with UART Core functionallity, thus not simulated:
+#echo "eval vcom  $compdirectives  $tb_path/uart_vip_monitor_th.vhd"
+#eval vcom  $compdirectives  $tb_path/uart_vip_monitor_th.vhd
+#echo "eval vcom  $compdirectives  $tb_path/uart_transaction_sb_pkg.vhd"
+#eval vcom  $compdirectives  $tb_path/uart_transaction_sb_pkg.vhd
+#echo "eval vcom  $compdirectives  $tb_path/uart_vip_monitor_tb.vhd"
+#eval vcom  $compdirectives  $tb_path/uart_vip_monitor_tb.vhd
 

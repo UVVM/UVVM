@@ -23,10 +23,10 @@ use work.td_result_queue_pkg.all;
 --========================================================================================================================
 entity clock_generator_vvc is
   generic (
-    GC_INSTANCE_IDX                          : natural;
-    GC_CLOCK_NAME                            : string;
-    GC_CLOCK_PERIOD                          : time;
-    GC_CLOCK_HIGH_TIME                       : time;
+    GC_INSTANCE_IDX                          : natural       := 1;
+    GC_CLOCK_NAME                            : string        := "clk";
+    GC_CLOCK_PERIOD                          : time          := 10 ns;
+    GC_CLOCK_HIGH_TIME                       : time          := 5 ns;
     GC_CMD_QUEUE_COUNT_MAX                   : natural       := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := 950;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := WARNING;

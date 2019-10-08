@@ -178,18 +178,6 @@ def main(argv):
   run_simulation(library, testbench, tests, configs, verbose)
 
 
-#  # Setup testbench
-#  testbench = "axistream_vvc_slv_array_tb"
-#  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-
-
-#  # Setup testbench
-#  testbench = "axistream_vvc_simple_tb"
-#  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[False])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
 
 
   # Print simulation results

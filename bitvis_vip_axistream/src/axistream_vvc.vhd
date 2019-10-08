@@ -246,86 +246,100 @@ begin
             --===================================
 
             when TRANSMIT =>
-               check_value(GC_VVC_IS_MASTER, true, TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE, ID_NEVER);
-               -- Put in queue so that the monitor VVC knows what to expect
-               -- Needed when the sink is in Monitor Mode, as an alternative to calling lbusExpect() for each packet
-               transaction_info.numPacketsSent := transaction_info.numPacketsSent + 1;
+                if GC_VVC_IS_MASTER then
+                  -- Put in queue so that the monitor VVC knows what to expect
+                  -- Needed when the sink is in Monitor Mode, as an alternative to calling lbusExpect() for each packet
+                  transaction_info.numPacketsSent := transaction_info.numPacketsSent + 1;
 
-               -- Call the corresponding procedure in the BFM package.
-               axistream_transmit_bytes(
-                  data_array           => v_cmd.data_array(0 to v_cmd.data_array_length-1),
-                  user_array           => v_cmd.user_array(0 to v_cmd.user_array_length-1),
-                  strb_array           => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
-                  id_array             => v_cmd.id_array(0 to v_cmd.id_array_length-1),
-                  dest_array           => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
-                  msg                  => format_msg(v_cmd),
-                  clk                  => clk,
-                  -- Using the non-record version to avoid fatal error in Modelsim: (SIGSEGV) Bad handle or reference
-                  axistream_if_tdata  => axistream_vvc_if.tdata,
-                  axistream_if_tkeep  => axistream_vvc_if.tkeep,
-                  axistream_if_tuser  => axistream_vvc_if.tuser,
-                  axistream_if_tstrb  => axistream_vvc_if.tstrb,
-                  axistream_if_tid    => axistream_vvc_if.tid,
-                  axistream_if_tdest  => axistream_vvc_if.tdest,
-                  axistream_if_tvalid => axistream_vvc_if.tvalid,
-                  axistream_if_tlast  => axistream_vvc_if.tlast,
-                  axistream_if_tready => axistream_vvc_if.tready,
-                  scope               => C_SCOPE,
-                  msg_id_panel        => v_msg_id_panel,
-                  config              => vvc_config.bfm_config);
+                  -- Call the corresponding procedure in the BFM package.
+                  axistream_transmit_bytes(
+                     data_array           => v_cmd.data_array(0 to v_cmd.data_array_length-1),
+                     user_array           => v_cmd.user_array(0 to v_cmd.user_array_length-1),
+                     strb_array           => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
+                     id_array             => v_cmd.id_array(0 to v_cmd.id_array_length-1),
+                     dest_array           => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
+                     msg                  => format_msg(v_cmd),
+                     clk                  => clk,
+                     -- Using the non-record version to avoid fatal error in Modelsim: (SIGSEGV) Bad handle or reference
+                     axistream_if_tdata  => axistream_vvc_if.tdata,
+                     axistream_if_tkeep  => axistream_vvc_if.tkeep,
+                     axistream_if_tuser  => axistream_vvc_if.tuser,
+                     axistream_if_tstrb  => axistream_vvc_if.tstrb,
+                     axistream_if_tid    => axistream_vvc_if.tid,
+                     axistream_if_tdest  => axistream_vvc_if.tdest,
+                     axistream_if_tvalid => axistream_vvc_if.tvalid,
+                     axistream_if_tlast  => axistream_vvc_if.tlast,
+                     axistream_if_tready => axistream_vvc_if.tready,
+                     scope               => C_SCOPE,
+                     msg_id_panel        => v_msg_id_panel,
+                     config              => vvc_config.bfm_config);
+               else
+                  alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
+               end if;
 
             when RECEIVE =>
-               axistream_receive(data_array          => v_receive_as_slv, --v_result.data_array,
-                                 data_length         => v_result.data_length,
-                                 user_array          => v_result.user_array,
-                                 strb_array          => v_result.strb_array,
-                                 id_array            => v_result.id_array,
-                                 dest_array          => v_result.dest_array,
-                                 msg                 => format_msg(v_cmd),
-                                 clk                 => clk,
-                                 -- Using the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference
-                                 axistream_if_tdata  => axistream_vvc_if.tdata,
-                                 axistream_if_tkeep  => axistream_vvc_if.tkeep,
-                                 axistream_if_tuser  => axistream_vvc_if.tuser,
-                                 axistream_if_tstrb  => axistream_vvc_if.tstrb,
-                                 axistream_if_tid    => axistream_vvc_if.tid,
-                                 axistream_if_tdest  => axistream_vvc_if.tdest,
-                                 axistream_if_tvalid => axistream_vvc_if.tvalid,
-                                 axistream_if_tlast  => axistream_vvc_if.tlast,
-                                 axistream_if_tready => axistream_vvc_if.tready,
-                                 scope               => C_SCOPE,
-                                 msg_id_panel        => v_msg_id_panel,
-                                 config              => vvc_config.bfm_config);
-               -- Store the result
-               v_result.data_array := convert_slv_array_to_byte_array(v_receive_as_slv, true, v_byte_endianness);
-               work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
-                                                            cmd_idx      => v_cmd.cmd_idx,
-                                                            result       => v_result );
+               if not GC_VVC_IS_MASTER then
+
+                  axistream_receive(data_array          => v_receive_as_slv, --v_result.data_array,
+                                    data_length         => v_result.data_length,
+                                    user_array          => v_result.user_array,
+                                    strb_array          => v_result.strb_array,
+                                    id_array            => v_result.id_array,
+                                    dest_array          => v_result.dest_array,
+                                    msg                 => format_msg(v_cmd),
+                                    clk                 => clk,
+                                    -- Using the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference
+                                    axistream_if_tdata  => axistream_vvc_if.tdata,
+                                    axistream_if_tkeep  => axistream_vvc_if.tkeep,
+                                    axistream_if_tuser  => axistream_vvc_if.tuser,
+                                    axistream_if_tstrb  => axistream_vvc_if.tstrb,
+                                    axistream_if_tid    => axistream_vvc_if.tid,
+                                    axistream_if_tdest  => axistream_vvc_if.tdest,
+                                    axistream_if_tvalid => axistream_vvc_if.tvalid,
+                                    axistream_if_tlast  => axistream_vvc_if.tlast,
+                                    axistream_if_tready => axistream_vvc_if.tready,
+                                    scope               => C_SCOPE,
+                                    msg_id_panel        => v_msg_id_panel,
+                                    config              => vvc_config.bfm_config);
+                  -- Store the result
+                  v_result.data_array := convert_slv_array_to_byte_array(v_receive_as_slv, true, v_byte_endianness);
+                  work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
+                                                               cmd_idx      => v_cmd.cmd_idx,
+                                                               result       => v_result );
+               else
+                  alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
+               end if;
+
 
             when EXPECT =>
-               -- Call the corresponding procedure in the BFM package.
-               axistream_expect_bytes(
-                  exp_data_array      => v_cmd.data_array(0 to v_cmd.data_array_length-1),
-                  exp_user_array      => v_cmd.user_array(0 to v_cmd.user_array_length-1),
-                  exp_strb_array      => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
-                  exp_id_array        => v_cmd.id_array(0 to v_cmd.id_array_length-1),
-                  exp_dest_array      => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
-                  msg                 => format_msg(v_cmd),
-                  clk                 => clk,
-                  -- Using the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference
-                  axistream_if_tdata  => axistream_vvc_if.tdata,
-                  axistream_if_tkeep  => axistream_vvc_if.tkeep,
-                  axistream_if_tuser  => axistream_vvc_if.tuser,
-                  axistream_if_tstrb  => axistream_vvc_if.tstrb,
-                  axistream_if_tid    => axistream_vvc_if.tid,
-                  axistream_if_tdest  => axistream_vvc_if.tdest,
-                  axistream_if_tvalid => axistream_vvc_if.tvalid,
-                  axistream_if_tlast  => axistream_vvc_if.tlast,
-                  axistream_if_tready => axistream_vvc_if.tready,
-                  alert_level         => v_cmd.alert_level,
-                  scope               => C_SCOPE,
-                  msg_id_panel        => v_msg_id_panel,
-                  config              => vvc_config.bfm_config);
+               if not GC_VVC_IS_MASTER then
+
+                  -- Call the corresponding procedure in the BFM package.
+                  axistream_expect_bytes(
+                     exp_data_array      => v_cmd.data_array(0 to v_cmd.data_array_length-1),
+                     exp_user_array      => v_cmd.user_array(0 to v_cmd.user_array_length-1),
+                     exp_strb_array      => v_cmd.strb_array(0 to v_cmd.strb_array_length-1),
+                     exp_id_array        => v_cmd.id_array(0 to v_cmd.id_array_length-1),
+                     exp_dest_array      => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
+                     msg                 => format_msg(v_cmd),
+                     clk                 => clk,
+                     -- Using the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference
+                     axistream_if_tdata  => axistream_vvc_if.tdata,
+                     axistream_if_tkeep  => axistream_vvc_if.tkeep,
+                     axistream_if_tuser  => axistream_vvc_if.tuser,
+                     axistream_if_tstrb  => axistream_vvc_if.tstrb,
+                     axistream_if_tid    => axistream_vvc_if.tid,
+                     axistream_if_tdest  => axistream_vvc_if.tdest,
+                     axistream_if_tvalid => axistream_vvc_if.tvalid,
+                     axistream_if_tlast  => axistream_vvc_if.tlast,
+                     axistream_if_tready => axistream_vvc_if.tready,
+                     alert_level         => v_cmd.alert_level,
+                     scope               => C_SCOPE,
+                     msg_id_panel        => v_msg_id_panel,
+                     config              => vvc_config.bfm_config);
+               else
+                  alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
+               end if;
 
              -- UVVM common operations
              --===================================

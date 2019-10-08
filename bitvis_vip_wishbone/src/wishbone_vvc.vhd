@@ -136,7 +136,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
 
           when FETCH_RESULT =>
             work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
@@ -176,16 +176,21 @@ begin
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_msg_id_panel                          : t_msg_id_panel;
+
   begin
 
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
-    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
+    initialize_executor(terminate_current_cmd);
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
+
     loop
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
+      fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- Reset the transaction info for waveview
       transaction_info := C_TRANSACTION_INFO_DEFAULT;
@@ -201,11 +206,12 @@ begin
       end if;
 
       -- Insert delay if needed
-      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
-                                                                         command_is_bfm_access              => v_prev_command_was_bfm_access,
-                                                                         timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
-                                                                         timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                                                         scope                              => C_SCOPE);
+      insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
+                                          command_is_bfm_access              => v_prev_command_was_bfm_access,
+                                          timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
+                                          timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
+                                          scope                              => C_SCOPE,
+                                          msg_id_panel                       => v_msg_id_panel);
 
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
@@ -231,7 +237,7 @@ begin
                          clk           => clk,
                          wishbone_if   => wishbone_vvc_master_if,
                          scope         => C_SCOPE,
-                         msg_id_panel  => vvc_config.msg_id_panel,
+                         msg_id_panel  => v_msg_id_panel,
                          config        => vvc_config.bfm_config);
 
         when READ =>
@@ -246,7 +252,7 @@ begin
                         clk           => clk,
                         wishbone_if   => wishbone_vvc_master_if,
                         scope         => C_SCOPE,
-                        msg_id_panel  => vvc_config.msg_id_panel,
+                        msg_id_panel  => v_msg_id_panel,
                         config        => vvc_config.bfm_config);
        -- Store the result
           work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,
@@ -266,10 +272,10 @@ begin
                          data_exp            => v_normalised_data,
                          msg                 => format_msg(v_cmd),
                          clk                 => clk,
-                         wishbone_if        => wishbone_vvc_master_if,
+                         wishbone_if         => wishbone_vvc_master_if,
                          alert_level         => v_cmd.alert_level,
                          scope               => C_SCOPE,
-                         msg_id_panel        => vvc_config.msg_id_panel,
+                         msg_id_panel        => v_msg_id_panel,
                          config              => vvc_config.bfm_config);
 
 

@@ -128,55 +128,41 @@ def main(argv):
 
 
 
-#  # Setup testbench
-#  testbench = "axistream_bfm_slv_array_tb"
-#  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#  # Setup testbench
-#  testbench = "axistream_multiple_vvc_tb"
-#  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#  # Setup testbench
-#  testbench = "axistream_simple_tb"
-#  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#  # Setup testbench
-#  testbench = "axistream_vvc_slv_array_tb"
-#  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#  # Setup testbench
-#  testbench = "axistream_vvc_simple_tb"
-#  configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8], id_widths=[8], dest_widths=[4], include_tuser=[True])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#  # Setup testbench
-#  testbench = "axistream_vvc_simple_tb"
-#  configs = create_config(data_widths=[32], user_widths=[1, 5], id_widths=[3], dest_widths=[1], include_tuser=[True])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#  # Setup testbench
-#  testbench = "axistream_vvc_simple_tb"
-#  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[False])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
-#
-#
-#  # Setup testbench
-#  testbench = "axistream_multiple_vvc_tb"
-#  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[True])
-#  # Run testbench
-#  run_simulation(library, testbench, tests, configs, verbose)
+  # Setup testbench
+  testbench = "axistream_bfm_slv_array_tb"
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
 
+  # Setup testbench
+  testbench = "axistream_multiple_vvc_tb"
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
+
+  # Setup testbench
+  testbench = "axistream_simple_tb"
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
+
+  # Setup testbench
+  testbench = "axistream_vvc_slv_array_tb"
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
+
+  # Setup testbench
+  testbench = "axistream_vvc_simple_tb"
+  configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8], id_widths=[8], dest_widths=[4], include_tuser=[True])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
+
+  # Setup testbench
+  testbench = "axistream_vvc_simple_tb"
+  configs = create_config(data_widths=[32], user_widths=[1, 5], id_widths=[3], dest_widths=[1], include_tuser=[True])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
 
   # Setup testbench
   testbench = "axistream_vvc_simple_tb"
@@ -184,6 +170,26 @@ def main(argv):
   # Run testbench
   run_simulation(library, testbench, tests, configs, verbose)
 
+
+  # Setup testbench
+  testbench = "axistream_multiple_vvc_tb"
+  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[True])
+  # Run testbench
+  run_simulation(library, testbench, tests, configs, verbose)
+
+
+#  # Setup testbench
+#  testbench = "axistream_vvc_slv_array_tb"
+#  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
+#  # Run testbench
+#  run_simulation(library, testbench, tests, configs, verbose)
+
+
+#  # Setup testbench
+#  testbench = "axistream_vvc_simple_tb"
+#  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[False])
+#  # Run testbench
+#  run_simulation(library, testbench, tests, configs, verbose)
 
 
   # Print simulation results

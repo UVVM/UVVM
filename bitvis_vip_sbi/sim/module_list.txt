@@ -11,6 +11,7 @@ bitvis_vip_gpio
 bitvis_vip_gmii
 bitvis_vip_scoreboard
 bitvis_vip_spec_vs_verif
+bitvis_uart
 
 
 

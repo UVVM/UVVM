@@ -18,9 +18,6 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use IEEE.math_real.all;
 
-library vunit_lib;
-context vunit_lib.vunit_run_context;
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -32,7 +29,8 @@ use uvvm_vvc_framework.ti_data_stack_pkg.all;
 -- Test case entity
 entity simplified_data_queue_tb is
   generic (
-    runner_cfg : string := runner_cfg_default);
+    GC_TEST : string := "UVVM"
+    );
 end entity;
 
 -- Test case architecture
@@ -77,17 +75,11 @@ architecture func of simplified_data_queue_tb is
     variable vr_slv_max : std_logic_vector(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1 downto 0);
 
 
-    variable v_alert_num_mismatch : boolean := false;
   begin
-    -- Setup the VUnit runner with the input configuration.
-    test_runner_setup(runner, runner_cfg);
-
-    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
-    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
-
-    if not active_python_runner(runner_cfg) then
-      set_alert_stop_limit(ERROR, 0);
-    end if;
+    -- To avoid that log files from different test cases (run in separate
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TEST & "_Log.txt");
+    set_alert_file_name(GC_TEST & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -382,22 +374,16 @@ architecture func of simplified_data_queue_tb is
 
 
 
-    --==================================================================================================
+    -----------------------------------------------------------------------------
     -- Ending the simulation
-    --------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------
     wait for 1000 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
-    -- Check for mismatch in all alert levels except MANUAL_CHECK
-    for alert_level in NOTE to t_alert_level'right loop
-      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
-        v_alert_num_mismatch := true;
-      end if;
-    end loop;
-
-    test_runner_cleanup(runner, v_alert_num_mismatch);
-    wait;
+    -- Finish the simulation
+    std.env.stop;
+    wait;  -- to stop completely
 
   end process p_main;
 

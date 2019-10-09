@@ -22,9 +22,6 @@ use IEEE.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library vunit_lib;
-context vunit_lib.vunit_run_context;
-
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
@@ -42,10 +39,8 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 -- Test bench entity
 entity internal_vvc_tb is
   generic (
-    -- This generic is used to configure the testbench from run.py, e.g. what
-    -- test case to run. The default value is used when not running from script
-    -- and in that case all test cases are run.
-    runner_cfg : runner_cfg_t := runner_cfg_default);
+    GC_TEST : string := "UVVM"
+    );
 end entity;
 
 -- Test bench architecture
@@ -85,7 +80,8 @@ architecture func of internal_vvc_tb is
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
-    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY
+    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
+    error_injection                           => C_BFM_ERROR_INJECTION_INACTIVE
   );
 
   signal  clk  : std_logic := '0';
@@ -183,30 +179,15 @@ architecture func of internal_vvc_tb is
   ------------------------------------------------
   p_main: process
     constant C_SCOPE_MAIN : string := C_TB_SCOPE_DEFAULT & " Main";
-    variable v_alert_num_mismatch : boolean := false;
+
   begin
 
-      -- To avoid that log files from different test cases (run in separate
-    -- simulations) overwrite each other run.py provides separate test case
-    -- directories through the runner_cfg generic (<root>/vunit_out/tests/<test case
-    -- name>). When not using run.py the default path is the current directory
-    -- (<root>/vunit_out/<simulator>). These directories are used by VUnit
-    -- itself and these lines make sure that BVUL do to.
-    set_log_file_name(join(output_path(runner_cfg), "testlog.txt"));
-    set_alert_file_name(join(output_path(runner_cfg), "alertlog.txt"));
+    -- To avoid that log files from different test cases (run in separate
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TEST & "_Log.txt");
+    set_alert_file_name(GC_TEST & "_Alert.txt");
 
-    -- Setup the VUnit runner with the input configuration.
-    test_runner_setup(runner, runner_cfg);
-
-    -- The default behavior for VUnit is to stop the simulation on a failing
-    -- check when running from script but keep on running when running without
-    -- script. The rationale for this and how you can change that behavior is
-    -- described at the bottom of this file (see Stopping the Simulation on
-    -- Failing Checks). The following if statement causes BVUL checks to behave
-    -- in the same way.
-    if not active_python_runner(runner_cfg) then
-      set_alert_stop_limit(ERROR, 0);
-    end if;
+    set_alert_stop_limit(ERROR, 0);
 
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
@@ -226,55 +207,48 @@ architecture func of internal_vvc_tb is
     log("Wait 10 clock period for reset to be turned off", C_SCOPE_MAIN);
     wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
 
-    while test_suite loop
-      --------------------------------------------------------------------------------------
-      -- Verifying
-      --------------------------------------------------------------------------------------
-      if run("Testing 2 Sequencer Parallel using different types of VVCs") then
-        unblock_flag(C_FLAG_A, "Unblocking Flag_A -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-      elsif run("Testing 2 Sequencer Parallel using same types of VVCs but different instances") then
-        unblock_flag(C_FLAG_B, "Unblocking Flag_B -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-      elsif run("Testing 2 Sequencer Parallel using same instance of a VVC type but not at the same time") then
-        unblock_flag(C_FLAG_C, "Unblocking Flag_C -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-      elsif run("Testing get_last_received_cmd_idx") then
-        unblock_flag(C_FLAG_D, "Unblocking Flag_D -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-      elsif run("Testing differt accesses between two sequencer") then
-        unblock_flag(C_FLAG_E, "Unblocking Flag_E -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-      elsif run("Testing differt single sequencer access") then
-        unblock_flag(C_FLAG_F, "Unblocking Flag_F -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_f, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
-      elsif run("Testing shared_uvvm_status await_any_completion() info") then
-        unblock_flag(C_FLAG_G, "Unblocking Flag_G -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
-        await_barrier(barrier_g, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
-      end if;
-    end loop;
+    --------------------------------------------------------------------------------------
+    -- Verifying
+    --------------------------------------------------------------------------------------
+    if GC_TEST = "Testing_2_Sequencer_Parallel_using_different_types_of_VVCs" then
+      unblock_flag(C_FLAG_A, "Unblocking Flag_A -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_2_Sequencer_Parallel_using_same_types_of_VVCs_but_different_instances" then
+      unblock_flag(C_FLAG_B, "Unblocking Flag_B -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_but_not_at_the_same_time" then
+      unblock_flag(C_FLAG_C, "Unblocking Flag_C -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_get_last_received_cmd_idx" then
+      unblock_flag(C_FLAG_D, "Unblocking Flag_D -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_differt_accesses_between_two_sequencer" then
+      unblock_flag(C_FLAG_E, "Unblocking Flag_E -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_differt_single_sequencer_access" then
+      unblock_flag(C_FLAG_F, "Unblocking Flag_F -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_f, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_shared_uvvm_status_await_any_completion_info" then
+      unblock_flag(C_FLAG_G, "Unblocking Flag_G -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_g, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
+    else
+      alert(tb_error, "Unsupported test");
+    end if;
+
 
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    -- waiting for all VVCs to finish
-    await_completion(VVC_BROADCAST, 10 us, scope => C_SCOPE_MAIN);
     wait for 1000 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE_MAIN);
 
-    -- Check for mismatch in all alert levels except MANUAL_CHECK
-    for alert_level in NOTE to t_alert_level'right loop
-      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
-        v_alert_num_mismatch := true;
-      end if;
-    end loop;
-
-    test_runner_cleanup(runner, v_alert_num_mismatch);
-
     -- Finish the simulation
-    wait;
+    std.env.stop;
+    wait;  -- to stop completely
   end process p_main;
+
+
 
   p_main_a1: process
     constant C_SCOPE_A1 : string := C_TB_SCOPE_DEFAULT & " A1";

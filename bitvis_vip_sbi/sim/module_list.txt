@@ -6,5 +6,8 @@ bitvis_vip_avalon_mm
 bitvis_vip_axilite
 bitvis_vip_axistream
 bitvis_vip_clock_generator
+bitvis_vip_error_injection
+bitvis_vip_gpio
+
 
 

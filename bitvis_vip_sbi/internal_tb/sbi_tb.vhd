@@ -73,7 +73,6 @@ begin
       variable v_data               : work.vvc_cmd_pkg.t_vvc_result;
       variable v_is_ok              : boolean := false;
       variable v_timestamp          : time;
-      variable v_alert_num_mismatch : boolean := false;
 
       alias clk     is << signal i_test_harness.clk      : std_logic >>;
       alias sbi1_if is << signal i_test_harness.sbi_if_1 : t_sbi_if >>;

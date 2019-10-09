@@ -8,6 +8,8 @@ bitvis_vip_axistream
 bitvis_vip_clock_generator
 bitvis_vip_error_injection
 bitvis_vip_gpio
+bitvis_vip_gmii
+bitvis_vip_scoreboard
 
 
 

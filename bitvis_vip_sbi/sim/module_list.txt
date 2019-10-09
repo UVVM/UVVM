@@ -14,3 +14,4 @@ bitvis_vip_spec_vs_verif
 bitvis_uart
 bitvis_irqc
 uvvm_vvc_framework
+uvvm_util

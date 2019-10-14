@@ -10,7 +10,7 @@ proc set_compdirectives {library simulator version} {
 
 
   if { [string equal -nocase $simulator "modelsim"] } {
-    quietly set compdirectives "-quiet -suppress 1346,1236,1090 -$vhdl_ver -work $lib_name"
+    quietly set compdirectives "-quiet -suppress 1346,1236,1090 -novopt -$vhdl_ver -work $lib_name"
   } elseif { [string equal -nocase $simulator "rivierapro"] } {
     set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   }
@@ -30,16 +30,17 @@ eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo
 echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_xst_comp.vhd"
 eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_xst_comp.vhd
 
-#echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3.vhd"
-#eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3.vhd
-#echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_xst.vhd"
-#eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_xst.vhd
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3.vhd
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_xst.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_xst.vhd
 
 
 #==========================================================================================================
 # Xilinx "unisim" library
 #==========================================================================================================
 echo "\n\n\n=== Compiling Unisim library files"
+
 set_compdirectives "unisim" $simulator 2008
 
 echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_VCOMP.vhd"
@@ -48,13 +49,13 @@ echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/un
 eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_VPKG.vhd
 
 
-#set_compdirectives "unisim" $simulator 93
-#
-#quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master/xilinx/unisims/primitive" -- "*.vhd"]
-#foreach vhd_file $vhd_files {
-#  echo "eval vcom  $compdirectives $vhd_file"
-#  eval vcom  $compdirectives $vhd_file
-#}
+set_compdirectives "unisim" $simulator 93
+
+quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master/xilinx/unisims/primitive" -- "*.vhd"]
+foreach vhd_file $vhd_files {
+  echo "eval vcom  $compdirectives $vhd_file"
+  eval vcom  $compdirectives $vhd_file
+}
 
 
 
@@ -62,46 +63,99 @@ eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_V
 # Xilinx "mac_master" library
 #==========================================================================================================
 echo "\n\n\n=== Compiling Mac_Master library files"
+
 set_compdirectives "mac_master" $simulator 2008
 
-
-
-#vcom -just p *.vhd
-#vcom -just e *.vhd
-#vcom -just pb *.vhd
-#vcom -just a *.vhd
-#vcom -just c *.vhd
-
+# type files / ----------------------------------------------------------------------------------------
 quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master" -- "*_types.vhd"]
 foreach vhd_file $vhd_files {
   echo "eval vcom $compdirectives $vhd_file"
   eval vcom $compdirectives $vhd_file
 }
 
-echo "eval vcom -just p $compdirectives $tb_path/ethernet_mac-master/single_signal_synchronizer.vhd"
+# /xilinx/ip_core --------------------------------------------------------------------------------------------
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_mac_tx_fifo_xilinx.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_mac_tx_fifo_xilinx.vhd
+
+
+
+# / ---------------------------------------------------------------------------------------------------
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/single_signal_synchronizer.vhd"
 eval vcom $compdirectives $tb_path/ethernet_mac-master/single_signal_synchronizer.vhd
 
-echo "eval vcom -just p $compdirectives $tb_path/ethernet_mac-master/reset_generator.vhd"
-eval vcom $compdirectives $tb_path/ethernet_mac-master/single_signal_synchronizer.vhd
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/reset_generator.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/reset_generator.vhd
 
-quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master" -- "*.vhd"]
-foreach vhd_file $vhd_files {
-  echo "eval vcom $compdirectives $vhd_file"
-  eval vcom $compdirectives $vhd_file
-}
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/utility.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/utility.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/crc.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/crc.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/crc32.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/crc32.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/framing_common.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/framing_common.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/framing.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/framing.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/mii_gmii.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/mii_gmii.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/mii_gmii_io.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/mii_gmii_io.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/miim.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/miim.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/miim_registers.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/miim_registers.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/miim_control.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/miim_control.vhd
 
 
+# /xilinx ----------------------------------------------------------------------------------------------------
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/fixed_input_delay.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/fixed_input_delay.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/input_buffer.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/input_buffer.vhd
+
+#echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/mii_gmii_io_spartan6.vhd"
+#eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/mii_gmii_io_spartan6.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/output_buffer.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/output_buffer.vhd
+
+#echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/single_signal_synchronizer_spartan6.vhd"
+#eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/single_signal_synchronizer_spartan6.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/tx_fifo.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/tx_fifo.vhd
+
+
+# / ---------------------------------------------------------------------------------------------------
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/rx_fifo.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/rx_fifo.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/tx_fifo_adapter.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/tx_fifo_adapter.vhd
+
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet_with_fifos.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet_with_fifos.vhd
+
+
+
+# /generic ---------------------------------------------------------------------------------------------------
 echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/generic/single_signal_synchronizer_simple.vhd"
 eval vcom  $compdirectives  $tb_path/ethernet_mac-master/generic/single_signal_synchronizer_simple.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_max_tx_fifo_xilinx.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_max_tx_fifo_xilinx.vhd
-
-quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master/xilinx" -- "*.vhd"]
-foreach vhd_file $vhd_files {
-  echo "eval vcom  $compdirectives $vhd_file"
-  eval vcom  $compdirectives $vhd_file
-}
 
 
 
@@ -114,3 +168,24 @@ set_compdirectives "bitvis_vip_ethernet" $simulator 2008
 echo "eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd"
 eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd
 
+
+# TB packages
+quietly set vhd_files [glob -directory "$tb_path/" -- "*_pkg.vhd"]
+foreach vhd_file $vhd_files {
+  echo "eval vcom  $compdirectives $vhd_file"
+  eval vcom  $compdirectives $vhd_file
+}
+
+# Test harness
+quietly set vhd_files [glob -directory "$tb_path/" -- "*_th.vhd"]
+foreach vhd_file $vhd_files {
+  echo "eval vcom  $compdirectives $vhd_file"
+  eval vcom  $compdirectives $vhd_file
+}
+
+# Testbench
+quietly set vhd_files [glob -directory "$tb_path/" -- "*_tb.vhd"]
+foreach vhd_file $vhd_files {
+  echo "eval vcom  $compdirectives $vhd_file"
+  eval vcom  $compdirectives $vhd_file
+}

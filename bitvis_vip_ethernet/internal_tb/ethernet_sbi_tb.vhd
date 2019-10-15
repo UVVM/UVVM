@@ -76,7 +76,7 @@ begin
     await_uvvm_initialization(VOID);
 
     disable_log_msg(ID_UVVM_DATA_QUEUE);
-    disable_log_msg(ALL_MESSAGES);
+    --disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_SEQUENCER);
     enable_log_msg(ID_LOG_HDR);
 

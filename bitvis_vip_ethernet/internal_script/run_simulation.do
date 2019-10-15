@@ -13,6 +13,7 @@
 quietly set library 0
 quietly set testbench 0
 quietly set run_test 0
+quietly set data_width 0
 
 if { [info exists 1] } {
   quietly set library "$1"
@@ -29,6 +30,11 @@ if { [info exists 3] } {
   unset 3
 }
 
-vsim -gGC_TEST=$run_test $library.$testbench
+if { [info exists 4] } {
+  quietly set data_width "$4"
+  unset 4
+}
+
+vsim -gGC_TEST=$run_test -gGC_DATA_WIDTH=$data_width $library.$testbench
 
 run -all

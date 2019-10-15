@@ -1,5 +1,6 @@
 quietly set tb_path "$root_path/bitvis_vip_ethernet/internal_tb"
 
+
 proc set_compdirectives {library simulator version} {
   quietly set lib_name $library
   quietly set vhdl_ver $version
@@ -133,9 +134,6 @@ eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/output_buffer.vh
 #echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/single_signal_synchronizer_spartan6.vhd"
 #eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/single_signal_synchronizer_spartan6.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/tx_fifo.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/tx_fifo.vhd
-
 
 # / ---------------------------------------------------------------------------------------------------
 echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet.vhd"
@@ -146,6 +144,11 @@ eval vcom $compdirectives $tb_path/ethernet_mac-master/rx_fifo.vhd
 
 echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/tx_fifo_adapter.vhd"
 eval vcom $compdirectives $tb_path/ethernet_mac-master/tx_fifo_adapter.vhd
+
+# /xilinx ----------------------------------------------------------------------------------------------------
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/tx_fifo.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/tx_fifo.vhd
+
 
 echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet_with_fifos.vhd"
 eval vcom $compdirectives $tb_path/ethernet_mac-master/ethernet_with_fifos.vhd

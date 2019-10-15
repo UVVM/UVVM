@@ -38,8 +38,8 @@ class Testbench:
 
 
     def reset_counters(self):
-      self.num_tests_run = 0
-      self.num_failing_tests = 0
+      self._num_tests_run = 0
+      self._num_failing_tests = 0
 
     def get_counters(self):
       return self.num_tests_run, self.num_failing_tests
@@ -48,7 +48,7 @@ class Testbench:
       return self.num_tests_run
 
     def get_num_failing_tests(self):
-      return self.get_num_failing_tests
+      return self.num_failing_tests
 
 
     def set_tests(self, tests):
@@ -103,15 +103,23 @@ class Testbench:
       return False
 
 
+    def increment_num_tests(self):
+      self.num_tests_run += 1
+
+
+    def increment_num_failing_tests(self):
+      self.num_failing_tests += 1
+
+
     # Run simulations and check result
     def run_simulation(self):
       if len(self.tests) == 0: self.tests = ["ALL"]
-      if len(self.configs) == 0: self.configs = []
+      if len(self.configs) == 0: self.configs = [""]
 
       for test in self.tests:
       
         for config in self.configs:
-          self.num_tests_run += 1
+          self.increment_num_tests()
           print("[%s] test=%s, config=%s : " % (self.tb, test, config), end='')
 
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test + ' ' + config
@@ -122,8 +130,8 @@ class Testbench:
             self.clean_up(test)
           else:
             print("FAILED")
-            self.num_failing_tests += 1
+            self.increment_num_failing_tests()
 
 
     def print_statistics(self):
-      print("Results: " + str(self.num_failing_tests) + " out of " + str(self.num_tests_run) + " failed.\n")
+      print("Results: " + str(self.get_num_failing_tests()) + " out of " + str(self.get_num_tests_run()) + " failed.\n")

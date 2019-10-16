@@ -51,15 +51,26 @@ class Testbench:
       return self.num_failing_tests
 
 
-    def set_tests(self, tests):
-      self.tests = tests
+    def add_test(self, test):
+      self.tests.append(test.lower())
+
+    def add_tests(self, tests):
+      for test in tests:
+        self.tests.append(test.lower())
 
     def get_tests(self):
       return self.tests
 
+    def remove_tests(self):
+      self.tests = []
+
+
+    def add_config(self, config):
+      self.configs.append(config)
 
     def set_configs(self, configs):
-      self.configs = configs
+      for config in configs:
+        self.add_config(config)
 
     def get_configs(self):
       return self.configs
@@ -131,6 +142,8 @@ class Testbench:
           else:
             print("FAILED")
             self.increment_num_failing_tests()
+
+      self.remove_tests()
 
 
     def print_statistics(self):

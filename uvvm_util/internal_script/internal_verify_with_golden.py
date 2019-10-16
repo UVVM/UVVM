@@ -53,9 +53,12 @@ def main(args):
       print("Verify golden modelsim files")
       compare(modelsim = True)
 
-    elif ("vcom" or "riviera") in arg.lower():
+    elif ("vcom" or "riviera" or "rivierapro") in arg.lower():
       print("Verify golden riviera pro files")
       compare(riviera = True)
+
+    else:
+      print("Please specify simulator as argument: modelsim or riviera")
 
 
 if __name__ == "__main__":

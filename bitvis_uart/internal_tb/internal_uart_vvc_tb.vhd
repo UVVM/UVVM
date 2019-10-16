@@ -271,7 +271,9 @@ begin
       await_completion(SBI_VVCT, 1, 2*C_TIME_OF_ONE_UART_TX);
 
     else
-      alert(tb_error, "Unsupported test");
+      if GC_TEST /= "ALL" then
+        alert(tb_error, "Unsupported test");
+      end if;
     end if;
 
 

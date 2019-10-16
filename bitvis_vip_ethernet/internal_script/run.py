@@ -40,10 +40,7 @@ def create_config(data_widths):
 
 def main(argv):
   global num_failing_tests
-
-  tests = []
   configs = []
-
 
   tb = Testbench()
   tb.set_library("bitvis_vip_ethernet")
@@ -55,13 +52,13 @@ def main(argv):
   # Setup testbench and run
   configs = create_config([4, 8, 9, 12, 16])
   tb.set_tb_name("ethernet_sbi_tb")
-  tb.set_tests(tests)
   tb.set_configs(configs)
   tb.run_simulation()
 
 
   # Setup testbench and run
   tb.set_tb_name("ethernet_sbi_sb_tb")
+  tb.set_configs(configs)
   tb.run_simulation()
 
 

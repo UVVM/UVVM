@@ -1030,7 +1030,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 3, 50 ms);
 
     else
-      alert(tb_error, "Unsupported test");
+      alert(tb_error, "Unsupported test " & GC_TEST);
     end if;
 
     -- ****************** Simulation with multiple slave DUTs and a SLAVE VVC. *************

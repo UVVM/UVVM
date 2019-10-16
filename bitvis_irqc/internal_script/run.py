@@ -40,9 +40,6 @@ def create_config(data_widths):
 def main(argv):
   global num_failing_tests
 
-  tests = []
-  configs = []
-
   tb = Testbench()
   tb.set_library("bitvis_irqc")
   tb.check_arguments(argv)
@@ -52,8 +49,6 @@ def main(argv):
 
   # Setup testbench and run
   tb.set_tb_name("irqc_tb")
-  tb.set_configs(configs)
-
   tb.run_simulation()
 
   # Print simulation results

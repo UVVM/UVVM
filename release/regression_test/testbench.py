@@ -21,6 +21,7 @@ class Testbench:
       self.num_failing_tests = 0
       self.configs = []
       self.tests = []
+      self.do_cleanup = True
 
 
     def set_library(self, library):
@@ -35,6 +36,9 @@ class Testbench:
 
     def get_tb_name(self):
       return self.tb
+
+    def set_cleanup(self, mode):
+      self.do_cleanup = mode
 
 
     def reset_counters(self):
@@ -52,11 +56,11 @@ class Testbench:
 
 
     def add_test(self, test):
-      self.tests.append(test.lower())
+      self.tests.append(test)
 
     def add_tests(self, tests):
       for test in tests:
-        self.tests.append(test.lower())
+        self.tests.append(test)
 
     def get_tests(self):
       return self.tests
@@ -65,10 +69,14 @@ class Testbench:
       self.tests = []
 
 
+    def remove_configs(self):
+      self.configs = []
+
     def add_config(self, config):
       self.configs.append(config)
 
     def set_configs(self, configs):
+      self.remove_configs()
       for config in configs:
         self.add_config(config)
 
@@ -99,8 +107,8 @@ class Testbench:
 
 
     # Clean-up
-    def clean_up(self, test):
-      if test != None:
+    def cleanup(self, test):
+      if (test != None) & (self.do_cleanup == True):
         os.remove(test + "_Alert.txt")
         os.remove(test + "_Log.txt")
         os.remove('transcript')
@@ -138,7 +146,7 @@ class Testbench:
 
           if self.check_result("transcript") == True:
             print("PASS")
-            self.clean_up(test)
+            self.cleanup(test)
           else:
             print("FAILED")
             self.increment_num_failing_tests()

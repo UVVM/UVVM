@@ -12,88 +12,15 @@
 
 from os.path import join, dirname
 from itertools import product
-import os, sys, subprocess, pprint
+import os, sys, subprocess
 
-# Verbosity
-verbose = False
+sys.path.append("../../release/regression_test")
+from testbench import Testbench
 
-# Disable terminal output
-FNULL = open(os.devnull, 'w')
 
 # Counters
 num_tests_run = 0
 num_failing_tests = 0
-
-
-#=============================================================================================
-#
-# Methods
-#
-#=============================================================================================
-
-
-# Script arguments
-def check_arguments(args):
-  for arg in args:
-    if arg.upper() == '-V':
-      return True
-  return False
-
-# Compile DUT, testbench and dependencies
-def compile(verbose=False):
-  print("\nCompiling and running tests:")
-  if verbose == False:
-    subprocess.call(['vsim', '-c', '-do', 'do ../internal_script/compile_all.do' + ';exit'], stdout=FNULL, stderr=subprocess.PIPE)
-  else:
-    subprocess.call(['vsim', '-c', '-do', 'do ../internal_script/compile_all.do' + ';exit'], stderr=subprocess.PIPE)
-
-# Run testbench simulation
-def simulate(script_call, verbose=False):
-  if verbose == False:
-    subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stdout=FNULL, stderr=subprocess.PIPE)
-  else:
-    subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
-
-# Clean-up
-def clean_up(test):
-  os.remove(test + "_Alert.txt")
-  os.remove(test + "_Log.txt")
-  os.remove('transcript')
-
-# Check simulation results
-def check_sim_result(filename):
-  for line in open(filename, 'r'):
-    if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
-      return True
-  return False
-
-# Run simulations and check result
-def run_simulation(library, testbench, tests, configs , verbose=False):
-  global num_tests_run
-  global num_failing_tests
-
-  if len(tests) == 0: tests = ["undefined"]
-  if len(configs) == 0: configs = [""]
-
-  for test in tests:
-
-    for config in configs:
-      num_tests_run += 1
-      print("%s:: %s.config=%s : " % (testbench, test, config), end='')
-
-      script_call = 'do ../internal_script/run_simulation.do ' + library + ' ' + testbench + ' ' + test + ' ' + config
-      simulate(script_call, verbose)
-
-      if check_sim_result("transcript") == True:
-        print("PASS")
-        clean_up(test)
-
-      else:
-        print("FAILED")
-        num_failing_tests += 1
-
-
-
 
 
 #=============================================================================================
@@ -110,33 +37,30 @@ def create_config(modes):
 
 
 def main(argv):
-  tests = []
-  configs = []
-  # Check verbosity
-  verbose = check_arguments(argv)
-  # Compile testbench, dependencies and DUT
-  compile(verbose)
+  global num_failing_tests
 
-  # Set library for TB compilations
-  library = "bitvis_vip_axilite"
+  tb = Testbench()
+  tb.set_library("bitvis_vip_axilite")
+  tb.check_arguments(argv)
 
+  # Compile VIP, dependencies, DUTs, TBs etc
+  tb.compile()
 
 
-  # Set testbench
-  testbench = "axilite_simple_tb"
-  # Run testbench with defined tests
-  run_simulation(library, testbench, tests, configs, verbose)
+  # Set testbench, config and run
+  tb.set_tb_name("axilite_simple_tb")
+  tb.run_simulation()
 
-
-  # Set testbench
-  testbench = "axilite_vvc_simple_tb" #"avalon_mm_simple_tb"
-  # Run testbench with defined tests
-  run_simulation(library, testbench, tests, configs, verbose)
-
+  # Set testbench, config and run
+  tb.set_tb_name("axilite_vvc_simple_tb")
+  tb.run_simulation()
 
 
   # Print simulation results
-  print("Results: " + str(num_failing_tests) + " out of " + str(num_tests_run) + " failed.\n")
+  tb.print_statistics()
+
+  # Read number of failing tests for return value
+  num_failing_tests = tb.get_num_failing_tests()
 
 
 

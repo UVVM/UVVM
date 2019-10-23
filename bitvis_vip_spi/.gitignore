@@ -18,3 +18,5 @@ sim/library.cfg
 .library_mapping.xml
 .project
 .settings/*
+# OS
+.DS_Store

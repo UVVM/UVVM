@@ -17,4 +17,6 @@ sim/library.cfg
 # Sigasi files
 .library_mapping.xml
 .project
-.settings/*
+.settings/*s
+# OS
+.DS_Store

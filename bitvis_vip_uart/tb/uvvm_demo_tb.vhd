@@ -410,9 +410,9 @@ begin
       -- Activity Watchdog will alert when VVC inactivity cause timeout
       log(ID_SEQUENCER, "\nIncrease number of expected alerts for activity watchdog testing.", C_SCOPE);
       -- The activity watchdog timeout is tested, expect the number of alerts to increase.
-      increment_expected_alerts(ERROR, 1);
+      increment_expected_alerts(TB_ERROR, 1);
       -- To prevent activity watchdog from stopping the TB, increase the stop limit.
-      set_alert_stop_limit(ERROR, 2);
+      set_alert_stop_limit(TB_ERROR, 2);
 
 
       log(ID_SEQUENCER, "\nSBI Write 3 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);

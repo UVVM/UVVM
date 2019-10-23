@@ -199,9 +199,8 @@ begin
   -----------------------------------------------------------------------------
 
   p_activity_watchdog:
-      activity_watchdog(timeout     => GC_ACTIVITY_WATCHDOG_TIMEOUT,
-                        alert_level => ERROR,
-                        msg         => "Activity Watchdog" );
+      activity_watchdog(timeout       => GC_ACTIVITY_WATCHDOG_TIMEOUT,
+                        num_exp_vvc   => 3);
 
 
 

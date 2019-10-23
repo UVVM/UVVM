@@ -290,7 +290,8 @@ package ti_vvc_framework_support_pkg is
 
   procedure activity_watchdog(
     constant timeout      : time;
-    constant alert_level  : t_alert_level := ERROR;
+    constant num_exp_vvc  : natural;
+    constant alert_level  : t_alert_level := TB_ERROR;
     constant msg          : string := ""
   );
 
@@ -673,19 +674,34 @@ package body ti_vvc_framework_support_pkg is
   -------------------------------------------------------------------------------
   procedure activity_watchdog(
     constant timeout      : time;
-    constant alert_level  : t_alert_level := ERROR;
+    constant num_exp_vvc  : natural;
+    constant alert_level  : t_alert_level := TB_ERROR;
     constant msg          : string := ""
   ) is
     variable v_timeout    : time;
-  begin
+
+    begin
     wait for 0 ns;
-    log("Starting activity watchdog: " & to_string(timeout) & ". " & msg);
+    log(ID_WATCHDOG, "Starting activity watchdog , timeout=" & to_string(timeout, C_LOG_TIME_BASE) & ". " & msg);
+    wait for 0 ns;
+
+    -- Check if all expected VVCs are registered
+    if num_exp_vvc = shared_inactivity_watchdog.priv_get_num_registered_vvc then
+      log(ID_WATCHDOG, "Number of VVCs in activity watchdog is expected. " & msg);
+    else
+      shared_inactivity_watchdog.priv_list_registered_vvc(msg);
+      alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" & 
+                        to_string(shared_inactivity_watchdog.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ". " & msg);
+
+    end if;
+
+
 
     loop
       wait on global_trigger_testcase_inactivity_watchdog for timeout;
 
       if not(global_trigger_testcase_inactivity_watchdog'event) and shared_inactivity_watchdog.priv_are_all_vvc_inactive then
-          alert(alert_level, "Watchdog timer ended! " & msg);
+          alert(alert_level, "Activity watchdog timer ended after " & to_string(timeout, C_LOG_TIME_BASE) & "! " & msg);
       end if;
 
     end loop;

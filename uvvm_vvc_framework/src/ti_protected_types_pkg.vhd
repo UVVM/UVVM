@@ -41,6 +41,10 @@ package ti_protected_types_pkg is
       constant last_cmd_idx_executed  : integer
     );
 
+    impure function priv_get_num_registered_vvc return natural;
+
+    procedure priv_list_registered_vvc(msg : string);    
+
   end protected;
 
 
@@ -115,6 +119,35 @@ package body ti_protected_types_pkg is
       priv_registered_vvc(vvc_idx).vvc_state.busy                  := busy;
       priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed := last_cmd_idx_executed;
     end procedure priv_report_vvc_activity;
+
+
+    impure function priv_get_num_registered_vvc return natural is
+    begin
+      if priv_last_registered_vvc_idx = -1 then
+        return 0;
+      else
+        return priv_last_registered_vvc_idx + 1;
+      end if;
+    end function priv_get_num_registered_vvc;
+
+
+    procedure priv_list_registered_vvc(msg : string) is
+      variable v_vvc : t_vvc_id;
+    begin
+      log(ID_WATCHDOG, "Activity watchdog registered VVCs: " & msg);
+
+      for idx in 0 to priv_last_registered_vvc_idx loop
+        v_vvc := priv_registered_vvc(idx).vvc_id;
+
+        if v_vvc.channel = NA then
+          log(ID_WATCHDOG, to_string(idx+1) & ": " & v_vvc.name & " instance=" & to_string(v_vvc.instance));  
+        else
+          log(ID_WATCHDOG, to_string(idx+1) & ": " & v_vvc.name & " instance=" & to_string(v_vvc.instance) & ", channel=" & to_string(v_vvc.channel));            
+        end if;
+        
+      end loop;
+    end procedure priv_list_registered_vvc;
+
 
   end protected body t_inactivity_watchdog;
 

@@ -77,6 +77,8 @@ architecture behave of ethernet_transmit_vvc is
   alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(C_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(C_CHANNEL, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(C_CHANNEL, GC_INSTANCE_IDX);
+  -- Activity Watchdog
+  signal vvc_idx_for_activity_watchdog : integer;
 
 begin
 
@@ -115,9 +117,6 @@ begin
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
      variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
      variable v_msg_id_panel       : t_msg_id_panel;
-    -- Activity Watchdog
-    signal vvc_idx_for_activity_watchdog : integer;
-
   begin
 
     -- 0. Initialize the process prior to first command

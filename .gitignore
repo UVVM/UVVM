@@ -1,0 +1,5 @@
+# Mac OS index files
+.DS_Store
+
+# MS Word backup files
+~$*.doc*

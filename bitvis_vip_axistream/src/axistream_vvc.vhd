@@ -114,7 +114,7 @@ begin
       -- initialise shared_vvc_last_received_cmd_idx for channel and instance
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
       -- Register VVC in activity watchdog register
-      vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "SBI",
+      vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "Axistream",
                                                                                   instance  => GC_INSTANCE_IDX);
       -- Set initial value of v_msg_id_panel to msg_id_panel in config
       v_msg_id_panel := vvc_config.msg_id_panel;

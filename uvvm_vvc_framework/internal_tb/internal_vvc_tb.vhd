@@ -85,7 +85,8 @@ architecture func of internal_vvc_tb is
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
-    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY
+    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
+    error_injection                           => C_BFM_ERROR_INJECTION_INACTIVE
   );
 
   signal  clk  : std_logic := '0';

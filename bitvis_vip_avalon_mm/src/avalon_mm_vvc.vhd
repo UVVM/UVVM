@@ -22,6 +22,9 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
 use work.avalon_mm_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -86,6 +89,9 @@ architecture behave of avalon_mm_vvc is
                                                       byte_enable((GC_DATA_WIDTH/8)-1 downto 0),
                                                       writedata(GC_DATA_WIDTH-1 downto 0),
                                                       readdata(GC_DATA_WIDTH-1 downto 0)) := avalon_mm_vvc_master_if;
+  -- Activity Watchdog
+  signal vvc_idx_for_activity_watchdog : integer;
+
 begin
 
 
@@ -113,6 +119,9 @@ begin
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
+    -- Register VVC in activity watchdog register
+    vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "Avalon_mm",
+                                                                                  instance  => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -207,6 +216,15 @@ begin
     variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0)              := (others => '0');
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0)      := (others => '0');
     variable v_normalised_byte_ena                    : std_logic_vector((GC_DATA_WIDTH/8)-1 downto 0)  := (others => '0');
+
+    procedure activity_watchdog_register_vvc_state(busy : boolean) is
+      begin
+        shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                            busy                  => busy,
+                                                            last_cmd_idx_executed => last_cmd_idx_executed);
+        gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog");
+      end procedure;
+      
   begin
 
     -- 0. Initialize the process prior to first command
@@ -217,9 +235,15 @@ begin
 
     loop
 
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(false);
+
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
+
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(true);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;

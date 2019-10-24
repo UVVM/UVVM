@@ -25,7 +25,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
---use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 use work.transaction_pkg.all;
 use work.uart_bfm_pkg.all;

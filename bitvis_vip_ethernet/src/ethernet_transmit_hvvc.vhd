@@ -24,6 +24,9 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
 library bitvis_vip_hvvc_to_vvc_bridge;
 use bitvis_vip_hvvc_to_vvc_bridge.common_methods_pkg.all;
 
@@ -112,12 +115,18 @@ begin
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
      variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
      variable v_msg_id_panel       : t_msg_id_panel;
+    -- Activity Watchdog
+    signal vvc_idx_for_activity_watchdog : integer;
+
   begin
 
     -- 0. Initialize the process prior to first command
     initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := 0;
+    -- Register VVC in activity watchdog register
+    vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "Ethernet_transmit",
+                                                                                  instance  => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -210,6 +219,14 @@ begin
     variable v_cmd_idx                               : natural;
     variable v_ethernet_frame                        : t_ethernet_frame;
 
+    procedure activity_watchdog_register_vvc_state(busy : boolean) is
+    begin
+      shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                          busy                  => busy,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed);
+      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog");
+    end procedure;
+  
     -- Local overload
     procedure blocking_send_to_bridge(
       constant data_bytes                : in  t_byte_array;
@@ -222,9 +239,16 @@ begin
 
   begin
 
+    -- Notify activity watchdog
+    activity_watchdog_register_vvc_state(false);
+
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     initialize_executor(terminate_current_cmd);
+
+    -- Notify activity watchdog
+    activity_watchdog_register_vvc_state(true);
+
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 

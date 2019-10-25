@@ -217,8 +217,7 @@ begin
   -- Receive process
   ---------------------------------------------------------------------------
   uart_rx : process (clk, arst) is
-    variable vr_rx_data_idx   : unsigned(2 downto 0) := (others => '0');
-    variable v_error_detected : boolean := false;
+    variable vr_rx_data_idx : unsigned(2 downto 0) := (others => '0');
   begin  -- process uart_tx
     if arst = '1' then                  -- asynchronous reset (active high)
       rx_active         <= '0';
@@ -234,7 +233,6 @@ begin
       transient_err     <= '0';
       vr_rx_data_idx    := (others => '0');
       rx_data_full      <= '1';
-      v_error_detected  := false;
     elsif rising_edge(clk) then         -- rising clock edge
 
       -- Perform read.
@@ -264,12 +262,11 @@ begin
 
       if rx_active = '0' then
         -- defaults
-        stop_err          <= '0';
-        parity_err        <= '0';
-        transient_err     <= '0';
-        rx_clk_counter    <= (others => '0');
-        rx_bit_counter    <= (others => '0');
-        v_error_detected  := false;
+        stop_err       <= '0';
+        parity_err     <= '0';
+        transient_err  <= '0';
+        rx_clk_counter <= (others => '0');
+        rx_bit_counter <= (others => '0');
       else
         -- We could check when we first enter whether we find the full number
         -- of start samples and adjust the time we start rx_clk_counter by a
@@ -294,14 +291,12 @@ begin
           rx_bit_counter <= rx_bit_counter + 1;
 
           if transient_error(rx_bit_samples, GC_MIN_EQUAL_SAMPLES_PER_BIT) then
-            transient_err     <= '1';
-            v_error_detected  := true;
+            transient_err <= '1';
           end if;
 
           -- are we done? not counting the start bit
           if to_integer(rx_bit_counter) >= 9 then
             rx_active <= '0';
-            rx_bit_samples <= (others => '1');
           end if;
 
           case to_integer(rx_bit_counter) is
@@ -311,34 +306,23 @@ begin
             when 8 =>
               -- check parity
               if (odd_parity(rx_buffer) /= find_most_repeated_bit(rx_bit_samples)) then
-                parity_err        <= '1';
-                v_error_detected  := true;
+                parity_err <= '1';
               end if;
             when 9 =>
-              rx_data_valid <= '1';     -- ready for higher level protocol
-
               -- check stop bit, and end byte receive
               if find_most_repeated_bit(rx_bit_samples) /= GC_STOP_BIT then
-                stop_err          <= '1';
-                v_error_detected  := true;
+                stop_err <= '1';
               end if;
+              rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
+              rx_data_valid <= '1';     -- ready for higher level protocol
 
-              -- Data not valid on error
-              if v_error_detected then
-                rx_data_valid <= '0';
+              if vr_rx_data_idx < 3 then
+                vr_rx_data_idx := vr_rx_data_idx + 1;
               else
-                rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
-
-                if vr_rx_data_idx < 3 then
-                  vr_rx_data_idx := vr_rx_data_idx + 1;
-                else
-                  rx_data_full <= '1';
-                end if;
+                rx_data_full <= '1';
               end if;
-
             when others =>
               rx_active <= '0';
-              rx_bit_samples <= (others => '1');
 
           end case;
         end if;

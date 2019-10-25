@@ -20,9 +20,6 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-library vunit_lib;
-context vunit_lib.vunit_run_context;
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -35,10 +32,8 @@ use work.irqc_pif_pkg.all;
 -- Test case entity
 entity irqc_tb is
   generic (
-    -- This generic is used to configure the testbench from run.py, e.g. what
-    -- test case to run. The default value is used when not running from script
-    -- and in that case all test cases are run.
-    runner_cfg : runner_cfg_t := runner_cfg_default);
+    GC_TEST : string := "UVVM"
+    );
 end entity;
 
 -- Test case architecture
@@ -56,7 +51,7 @@ architecture func of irqc_tb is
   signal irq2cpu_ack   : std_logic := '0';
 
   signal clock_ena     : boolean   := false;
-  
+
   constant C_CLK_PERIOD : time := 10 ns;
 
   subtype t_irq_source is std_logic_vector(C_NUM_SOURCES-1 downto 0);
@@ -111,13 +106,13 @@ begin
 
   sbi_if.ready <= '1'; -- always ready in the same clock cycle.
 
-  
+
   -----------------------------------------------------------------------------
   -- Clock Generator
   -----------------------------------------------------------------------------
   clock_generator(clk, clock_ena, C_CLK_PERIOD, "IRQC TB clock");
 
-  
+
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
@@ -168,26 +163,9 @@ begin
   begin
 
     -- To avoid that log files from different test cases (run in separate
-    -- simulations) overwrite each other run.py provides separate test case
-    -- directories through the runner_cfg generic (<root>/vunit_out/tests/<test case
-    -- name>). When not using run.py the default path is the current directory
-    -- (<root>/vunit_out/<simulator>). These directories are used by VUnit
-    -- itself and these lines make sure that BVUL do to.
-    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
-    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
-
-    -- Setup the VUnit runner with the input configuration.
-    test_runner_setup(runner, runner_cfg);
-
-    -- The default behavior for VUnit is to stop the simulation on a failing
-    -- check when running from script but keep on running when running without
-    -- script. The rationale for this and how you can change that behavior is
-    -- described at the bottom of this file (see Stopping the Simulation on
-    -- Failing Checks). The following if statement causes BVUL checks to behave
-    -- in the same way.
-    if not active_python_runner(runner_cfg) then
-      set_alert_stop_limit(ERROR, 0);
-    end if;
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TEST & "_Log.txt");
+    set_alert_file_name(GC_TEST & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -398,25 +376,16 @@ begin
 
 
 
-    --==================================================================================================
+    -----------------------------------------------------------------------------
     -- Ending the simulation
-    --------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------
     wait for 1000 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
-    -- Cleanup VUnit. The UVVM-Util error status is imported into VUnit at this
-    -- point. This is neccessary when the UVVM-Util alert stop limit is set such that
-    -- UVVM-Util doesn't stop on the first error. In that case VUnit has no way of
-    -- knowing the error status unless you tell it.
-    for alert_level in NOTE to t_alert_level'right loop
-      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
-        v_alert_num_mismatch := true;
-      end if;
-    end loop;
-
-    test_runner_cleanup(runner, v_alert_num_mismatch);
-    wait;
+    -- Finish the simulation
+    std.env.stop;
+    wait;  -- to stop completely
 
   end process p_main;
 

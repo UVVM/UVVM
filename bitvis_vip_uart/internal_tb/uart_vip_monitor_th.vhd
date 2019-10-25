@@ -68,8 +68,8 @@ architecture struct of monitor_test_harness is
     id_for_bfm               => ID_BFM,
     id_for_bfm_wait          => ID_BFM_WAIT,
     id_for_bfm_poll          => ID_BFM_POLL,
-    use_ready_signal         => true,
-    error_injection          => C_ERROR_INJECTION_INACTIVE
+    use_ready_signal         => true
+    --error_injection          => C_ERROR_INJECTION_INACTIVE
     );
 
   constant C_UART_MONITOR_INTERFACE_CONFIG : t_uart_interface_config := (

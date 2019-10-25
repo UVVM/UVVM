@@ -397,7 +397,6 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
-
   procedure uart_receive(
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;

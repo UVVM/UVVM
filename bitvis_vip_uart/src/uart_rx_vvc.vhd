@@ -214,7 +214,7 @@ begin
       shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
                                                           busy                  => busy,
                                                           last_cmd_idx_executed => last_cmd_idx_executed);
-      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog");
+      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", C_SCOPE, ID_NEVER);
     end procedure;
 
   begin

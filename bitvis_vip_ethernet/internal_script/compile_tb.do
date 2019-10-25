@@ -1,19 +1,32 @@
-quietly set tb_path "$root_path/bitvis_vip_ethernet/internal_tb"
+set root_path "../.."
+set tb_path "$root_path/bitvis_vip_ethernet/internal_tb"
 
 
 proc set_compdirectives {library simulator version} {
-  quietly set lib_name $library
-  quietly set vhdl_ver $version
+  set lib_name $library
+  set vhdl_ver $version
   global compdirectives
 
   vlib $library
   vmap work $library
 
 
-  if { [string equal -nocase $simulator "modelsim"] } {
-    quietly set compdirectives "-quiet -suppress 1346,1236,1090 -novopt -$vhdl_ver -work $lib_name"
-  } elseif { [string equal -nocase $simulator "rivierapro"] } {
-    set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+
+  if { [info exists ::env(SIMULATOR)] } {
+    set simulator $::env(SIMULATOR)
+    puts "Simulator: $simulator"
+
+    if [string equal $simulator "MODELSIM"] {
+      set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
+    } elseif [string equal $simulator "RIVIERAPRO"] {
+      set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+    } else {
+      puts "No simulator! Trying with modelsim0"
+      set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+    }
+  } else {
+    puts "No simulator! Trying with modelsim0"
+    set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   }
 }
 
@@ -173,21 +186,21 @@ eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd
 
 
 # TB packages
-quietly set vhd_files [glob -directory "$tb_path/" -- "*_pkg.vhd"]
+set vhd_files [glob -directory "$tb_path/" -- "*_pkg.vhd"]
 foreach vhd_file $vhd_files {
   echo "eval vcom  $compdirectives $vhd_file"
   eval vcom  $compdirectives $vhd_file
 }
 
 # Test harness
-quietly set vhd_files [glob -directory "$tb_path/" -- "*_th.vhd"]
+set vhd_files [glob -directory "$tb_path/" -- "*_th.vhd"]
 foreach vhd_file $vhd_files {
   echo "eval vcom  $compdirectives $vhd_file"
   eval vcom  $compdirectives $vhd_file
 }
 
 # Testbench
-quietly set vhd_files [glob -directory "$tb_path/" -- "*_tb.vhd"]
+set vhd_files [glob -directory "$tb_path/" -- "*_tb.vhd"]
 foreach vhd_file $vhd_files {
   echo "eval vcom  $compdirectives $vhd_file"
   eval vcom  $compdirectives $vhd_file

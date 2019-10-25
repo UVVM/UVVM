@@ -10,6 +10,16 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
+#Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
+proc quietly { args } {
+  if {[llength $args] == 0} {
+    puts "quietly"
+  } else {
+    # this works since tcl prompt only prints the last command given. list prints "".
+    uplevel $args; list;
+  }
+}
+
 quietly set library 0
 quietly set testbench 0
 quietly set run_test 0

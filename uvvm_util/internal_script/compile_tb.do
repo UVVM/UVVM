@@ -1,15 +1,27 @@
-quietly set lib_name "uvvm_util"
+set lib_name "uvvm_util"
 
-if { [string equal -nocase $simulator "modelsim"] } {
-  quietly set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
-} elseif { [string equal -nocase $simulator "rivierapro"] } {
+if { [info exists ::env(SIMULATOR)] } {
+  set simulator $::env(SIMULATOR)
+  puts "Simulator: $simulator"
+
+  if [string equal $simulator "MODELSIM"] {
+    set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
+  } elseif [string equal $simulator "RIVIERAPRO"] {
+    set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+  } else {
+    puts "No simulator! Trying with modelsim0"
+    set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+  }
+} else {
+  puts "No simulator! Trying with modelsim0"
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
 
 #------------------------------------------------------
 # Compile tb files
 #------------------------------------------------------
-quietly set tb_path "$root_path/uvvm_util/internal_tb"
+set root_path "../.."
+set tb_path "$root_path/uvvm_util/internal_tb"
 echo "\n\n\n=== Compiling TB\n"
 
 echo "eval vcom  $compdirectives  $tb_path/methods_tb.vhd"

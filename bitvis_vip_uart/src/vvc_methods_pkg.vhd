@@ -24,8 +24,9 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
+--use bitvis_vip_scoreboard.slv_sb_pkg.all;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
+
 
 -- Coverage
 library crfc;
@@ -58,6 +59,16 @@ package vvc_methods_pkg is
     delay_in_time                       => 0 ns,
     inter_bfm_delay_violation_severity  => WARNING
   );
+
+  -- Scoreboard
+  package slv_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map ( t_expected_element       => std_logic_vector(7 downto 0),
+                  t_actual_element         => std_logic_vector(7 downto 0),
+                  match                    => std_match,
+                  expected_to_string       => to_string,
+                  actual_to_string         => to_string);
+  use slv_sb_pkg.all;                  
+
 
   type t_vvc_error_injection is record
     parity_bit_error_prob : real;
@@ -153,7 +164,7 @@ package vvc_methods_pkg is
   -- Monitor
   shared variable shared_uart_monitor_config   : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_UART_MONITOR_CONFIG_DEFAULT));
   -- Scoreboard
-  shared variable shared_uart_sb : t_generic_sb;
+  shared variable shared_uart_sb : slv_sb_pkg.t_generic_sb;
   -- Coverage
   shared variable shared_uart_byte_coverage : covPtype;
 

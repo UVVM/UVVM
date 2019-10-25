@@ -25,6 +25,13 @@ class Testbench:
       self.simulator = "MODELSIM"
       self.env_var = os.environ.copy()
 
+    def print_help(self):
+      print("\nTestbench arguments:")
+      print("-V enable terminal output")
+      print("-MODELSIM set modelsim simulator (default)")
+      print("-RIVIERA set Aldec Riviera Pro simulator\n")
+      sys.exit(0)
+
 
     def set_library(self, library):
       self.library = library.lower()
@@ -90,19 +97,17 @@ class Testbench:
 
     # Script arguments
     def check_arguments(self, args):
-      print("------->>> " + str(args))
-      print([arg.upper() for arg in args])
-      if '-V' in [arg.upper() for arg in args]:
-        self.verbose = True
-      if '-MODELSIM' in [arg.upper() for arg in args]:
+      for arg in args:
+        arg = arg.upper().split()
+
+        if '-V' in arg:
+          self.verbose = True
+        if ('-ALDEC' or '-RIVIERA' or '-RIVIERAPRO' in arg):
+          self.simulator = 'RIVIERAPRO'
+        if ('-MODELSIM') in arg:
           self.simulator = 'MODELSIM'
-      if '-RIVIERAPRO' in [arg.upper() for arg in args]:
-          self.simulator = 'RIVIERAPRO'
-      if '-ALDEC' in [arg.upper() for arg in args]:
-          self.simulator = 'RIVIERAPRO'
-
-
-        
+        if ('-?' or '?' or '-H' or '-HELP' in arg):
+          self.print_help()        
 
 
     def set_simulator_variable(self):

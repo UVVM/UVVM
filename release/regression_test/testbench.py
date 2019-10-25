@@ -22,6 +22,8 @@ class Testbench:
       self.configs = []
       self.tests = []
       self.do_cleanup = True
+      self.simulator = "MODELSIM"
+      self.env_var = os.environ.copy()
 
 
     def set_library(self, library):
@@ -30,6 +32,8 @@ class Testbench:
     def get_library(self):
       return self.library
 
+    def set_simulator(self, simulator):
+      self.simulator = simulator.upper()
 
     def set_tb_name(self, tb):
       self.tb = tb.lower()
@@ -86,24 +90,57 @@ class Testbench:
 
     # Script arguments
     def check_arguments(self, args):
-      for arg in args:
-        if arg.upper() == '-V':
-          self.verbose = True
+      print("------->>> " + str(args))
+      print([arg.upper() for arg in args])
+      if '-V' in [arg.upper() for arg in args]:
+        self.verbose = True
+      if '-MODELSIM' in [arg.upper() for arg in args]:
+          self.simulator = 'MODELSIM'
+      if '-RIVIERAPRO' in [arg.upper() for arg in args]:
+          self.simulator = 'RIVIERAPRO'
+      if '-ALDEC' in [arg.upper() for arg in args]:
+          self.simulator = 'RIVIERAPRO'
+
+
+        
+
+
+    def set_simulator_variable(self):
+      print("Setting environment SIMULATOR=%s" %(self.simulator))
+      self.env_var = os.environ.copy()
+      self.env_var["SIMULATOR"] = self.simulator
+
+    def get_simulator(self):
+      return self.simulator
 
 
     # Activate simulator with call
     def simulator_call(self, simulator_call):
-      if self.verbose == False:
-        subprocess.call(['vsim', '-c', '-do', simulator_call + ';exit'], stdout=FNULL, stderr=subprocess.PIPE)
+      if self.env_var["SIMULATOR"] == "MODELSIM":
+        cmd = "vsim"
+      elif self.env_var["SIMULATOR"] == "RIVIERAPRO":
+        cmd = "vsimsa"
       else:
-        subprocess.call(['vsim', '-c', '-do', simulator_call + ';exit'], stderr=subprocess.PIPE)
+        print("Missing simulator!")
+        print(self.env_var)
+        sys.exit(1)
+
+      if self.verbose == False:
+        subprocess.call([cmd, '-c', '-do', simulator_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
+      else:
+        subprocess.call([cmd, '-c', '-do', simulator_call + ';exit'], env=self.env_var, stderr=subprocess.PIPE)
 
 
     # Compile DUT, testbench and dependencies
     def compile(self):
-      print("\nCompiling and running tests:")
-      simulator_call = 'do ../internal_script/compile_all.do'
-      self.simulator_call(simulator_call)
+      self.set_simulator_variable()
+      print("\nCompiling dependenies, src and TB:")
+      #simulator_call = 'do ../internal_script/compile_all.do'
+      #self.simulator_call(simulator_call)
+      self.simulator_call("do ../internal_script/compile_dependencies.do")
+      self.simulator_call("do ../script/compile_src.do")
+      self.simulator_call("do ../internal_script/compile_tb.do")
+
 
 
     # Clean-up
@@ -111,7 +148,10 @@ class Testbench:
       if (test != None) & (self.do_cleanup == True):
         os.remove(test + "_Alert.txt")
         os.remove(test + "_Log.txt")
-        os.remove('transcript')
+        if os.path.isfile('transcript'):
+          os.remove('transcript')
+
+
 
 
     # Check simulation results
@@ -144,7 +184,7 @@ class Testbench:
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test + ' ' + config
           self.simulator_call(script_call)
 
-          if self.check_result("transcript") == True:
+          if self.check_result("%s_Log.txt" %(test)) == True:
             print("PASS")
             self.cleanup(test)
           else:
@@ -155,4 +195,7 @@ class Testbench:
 
 
     def print_statistics(self):
-      print("Results: " + str(self.get_num_failing_tests()) + " out of " + str(self.get_num_tests_run()) + " failed.\n")
+      total = self.get_num_tests_run()
+      failed = self.get_num_failing_tests()
+      passed = (total - failed)
+      print("Simulations done. Pass=%i, Fail=%i, Total=%i" %(passed, failed, total))

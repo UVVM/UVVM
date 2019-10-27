@@ -53,6 +53,8 @@ architecture behave of clock_generator_vvc is
   signal last_cmd_idx_executed  : natural        := 0;
   signal terminate_current_cmd  : t_flag_record;
   signal clock_ena              : boolean        := false;
+  -- Activity Watchdog
+  signal vvc_idx_for_activity_watchdog : integer;  
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -130,6 +132,9 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+     -- Register VVC in activity watchdog register
+     vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc( name => "CLOCK_GENERATOR",
+                                                                                    instance  => GC_INSTANCE_IDX);
       -- Update v_msg_id_panel
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
@@ -200,6 +205,15 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_msg_id_panel                           : t_msg_id_panel;
+
+    procedure activity_watchdog_register_vvc_state(busy : boolean) is
+      begin
+        shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                            busy                  => busy,
+                                                            last_cmd_idx_executed => last_cmd_idx_executed);
+        gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", C_SCOPE, ID_NEVER);
+      end procedure;
+  
   begin
 
     -- 0. Initialize the process prior to first command
@@ -210,9 +224,15 @@ begin
 
     loop
 
+      -- Notify activity watchdog - Clock Generator VVC will not register activity
+      -- activity_watchdog_register_vvc_state(false);
+
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
+
+      -- Notify activity watchdog - Clock Generator VVC will not register activity
+      -- activity_watchdog_register_vvc_state(false);
 
       -- Update v_msg_id_panel
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);

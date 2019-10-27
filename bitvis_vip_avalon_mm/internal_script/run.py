@@ -39,6 +39,8 @@ def create_config(modes):
 def main(argv):
   global num_failing_tests
 
+  os.environ["QUARTUS_ROOTDIR"] = "C:/intelFPGA_pro"
+
   tb = Testbench()
   tb.set_library("bitvis_vip_avalon_mm")
   tb.check_arguments(argv)

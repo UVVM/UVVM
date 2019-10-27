@@ -10,52 +10,52 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-quietly set library 0
-quietly set testbench 0
-quietly set run_test 0
-quietly set data_width 0
-quietly set user_width 0
-quietly set id_width 0
-quietly set dest_width 0
-quietly set include_tuser 0
+set library 0
+set testbench 0
+set run_test 0
+set data_width 0
+set user_width 0
+set id_width 0
+set dest_width 0
+set include_tuser 0
 
 if { [info exists 1] } {
-  quietly set library "$1"
+  set library "$1"
   unset 1
 }
 
 if { [info exists 2] } {
-  quietly set testbench "$2"
+  set testbench "$2"
   unset 2
 }
 
 if { [info exists 3] } {
-  quietly set run_test "$3"
+  set run_test "$3"
   unset 3
 }
 
 if { [info exists 4] } {
-  quietly set data_width "$4"
+  set data_width "$4"
   unset 4
 }
 
 if { [info exists 5] } {
-  quietly set user_width "$5"
+  set user_width "$5"
   unset 5
 }
 
 if { [info exists 6] } {
-  quietly set id_width "$6"
+  set id_width "$6"
   unset 6
 }
 
 if { [info exists 7] } {
-  quietly set dest_width "$7"
+  set dest_width "$7"
   unset 7
 }
 
 if { [info exists 8] } {
-  quietly set include_tuser "$8"
+  set include_tuser "$8"
   unset 8
 }
 

@@ -10,22 +10,22 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-quietly set library 0
-quietly set testbench 0
-quietly set run_test 0
+set library 0
+set testbench 0
+set run_test 0
 
 if { [info exists 1] } {
-  quietly set library "$1"
+  set library "$1"
   unset 1
 }
 
 if { [info exists 2] } {
-  quietly set testbench "$2"
+  set testbench "$2"
   unset 2
 }
 
 if { [info exists 3] } {
-  quietly set run_test "$3"
+  set run_test "$3"
   unset 3
 }
 

@@ -10,43 +10,43 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-quietly set library 0
-quietly set testbench 0
-quietly set run_test 0
+set library 0
+set testbench 0
+set run_test 0
 
 if { [info exists 1] } {
-  quietly set library "$1"
+  set library "$1"
   unset 1
 }
 
 if { [info exists 2] } {
-  quietly set testbench "$2"
+  set testbench "$2"
   unset 2
 }
 
 if { [info exists 3] } {
-  quietly set run_test "$3"
+  set run_test "$3"
   unset 3
 }
 
 
 # TB spesific
-quietly set spi_mode 0
-quietly set data_width 32
-quietly set data_array_width 8
+set spi_mode 0
+set data_width 32
+set data_array_width 8
 
 if { [info exists 4] } {
-  quietly set spi_mode "$4"
+  set spi_mode "$4"
   unset 4
 }
 
 if { [info exists 5] } {
-  quietly set data_width "$5"
+  set data_width "$5"
   unset 5
 }
 
 if { [info exists 6] } {
-  quietly set data_array_width "$6"
+  set data_array_width "$6"
   unset 6
 }
 

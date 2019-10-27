@@ -102,12 +102,12 @@ class Testbench:
 
         if '-V' in arg:
           self.verbose = True
-        if ('-ALDEC' or '-RIVIERA' or '-RIVIERAPRO' in arg):
+        if ('-ALDEC' or '-RIVIERA' or '-RIVIERAPRO') in arg:
           self.simulator = 'RIVIERAPRO'
         if ('-MODELSIM') in arg:
           self.simulator = 'MODELSIM'
-        if ('-?' or '?' or '-H' or '-HELP' in arg):
-          self.print_help()        
+        #if ('-?' or '?' or '-H' or '-HELP' in arg):
+        #  self.print_help()        
 
 
     def set_simulator_variable(self):
@@ -120,7 +120,7 @@ class Testbench:
 
 
     # Activate simulator with call
-    def simulator_call(self, simulator_call):
+    def simulator_call(self, script_call):
       if self.env_var["SIMULATOR"] == "MODELSIM":
         cmd = "vsim"
       elif self.env_var["SIMULATOR"] == "RIVIERAPRO":
@@ -131,19 +131,26 @@ class Testbench:
         sys.exit(1)
 
       if self.verbose == False:
-        subprocess.call([cmd, '-c', '-do', simulator_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
+        subprocess.call([cmd, '-c', '-do', script_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
       else:
-        subprocess.call([cmd, '-c', '-do', simulator_call + ';exit'], env=self.env_var, stderr=subprocess.PIPE)
+        subprocess.call([cmd, '-c', '-do', script_call + ';exit'], env=self.env_var, stderr=subprocess.PIPE)
 
+
+    # Set compile directives
+    def set_compile_directives(self, comdir):
+      self.compdir = compdir
+
+    def get_compile_directives(self):
+      return self.compdir
 
     # Compile DUT, testbench and dependencies
     def compile(self):
       self.set_simulator_variable()
-      print("\nCompiling dependenies, src and TB:")
-      #simulator_call = 'do ../internal_script/compile_all.do'
-      #self.simulator_call(simulator_call)
+      print("\nCompiling dependenies.")
       self.simulator_call("do ../internal_script/compile_dependencies.do")
+      print("Compiling src.")
       self.simulator_call("do ../script/compile_src.do")
+      print("Compiling testbench.")
       self.simulator_call("do ../internal_script/compile_tb.do")
 
 
@@ -177,7 +184,7 @@ class Testbench:
 
     # Run simulations and check result
     def run_simulation(self):
-      if len(self.tests) == 0: self.tests = ["ALL"]
+      if len(self.tests) == 0: self.tests = ["All"]
       if len(self.configs) == 0: self.configs = [""]
 
       for test in self.tests:

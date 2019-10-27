@@ -34,6 +34,9 @@ def create_config(spi_modes, data_widths, data_array_widths):
   config = []
   for spi_mode, data_width, data_array_width in product(spi_modes, data_widths, data_array_widths):
     config.append(str(spi_mode) + ' ' + str(data_width) + ' ' + str(data_array_width))
+    #config.append("-gGC_SPI_MODE=" + str(spi_mode) + ' ' + 
+    #              "-GC_DATA_WIDTH=" + str(data_width) + ' ' + 
+    #              "gGC_DATA_ARRAY_WIDTH=" + str(data_array_width))
 
   return config
 

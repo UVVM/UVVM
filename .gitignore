@@ -3,3 +3,6 @@
 
 # MS Word backup files
 ~$*.doc*
+
+# python
+release/regression_test/__pycache__/

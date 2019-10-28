@@ -46,6 +46,9 @@ def present_results(num_failing_tests):
 
 
 def main():
+  if sys.version_info[0] < 3:
+    raise Exception("Python version 3 is required to run this script!")
+
   modules = get_module_list()
   num_failing_tests = 0
 

@@ -9,12 +9,12 @@ if { [info exists ::env(SIMULATOR)] } {
   } elseif [string equal $simulator "RIVIERAPRO"] {
     set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   } else {
-    puts "No simulator! Trying with modelsim0"
-    set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+    puts "No simulator! Trying with modelsim"
+    quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
   }
 } else {
-  puts "No simulator! Trying with modelsim0"
-  set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+  puts "No simulator! Trying with modelsim"
+  quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
 }
 
 #------------------------------------------------------

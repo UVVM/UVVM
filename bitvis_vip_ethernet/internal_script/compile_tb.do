@@ -24,7 +24,7 @@ proc set_compdirectives {library version} {
     set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   } else {
     puts "No simulator! Trying with modelsim"
-    set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+    quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
   }
   puts "Setting compdirectives: $compdirectives"
 

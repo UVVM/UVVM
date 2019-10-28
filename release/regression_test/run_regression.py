@@ -54,7 +54,7 @@ def main():
 
   for module in modules:
     cd_to_module(module)
-    simulate_module(module)
+    num_failing_tests += simulate_module(module)
 
   present_results(num_failing_tests)
 

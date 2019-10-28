@@ -238,24 +238,24 @@ begin
 
   begin
 
-    -- Notify activity watchdog
-    activity_watchdog_register_vvc_state(false);
-
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     initialize_executor(terminate_current_cmd);
-
-    -- Notify activity watchdog
-    activity_watchdog_register_vvc_state(true);
 
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     loop
 
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(false);
+
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
+
+      -- Notify activity watchdog
+      activity_watchdog_register_vvc_state(true);
 
       -- Reset the transaction info for waveview
       transaction_info := C_TRANSACTION_INFO_DEFAULT;

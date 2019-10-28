@@ -2,7 +2,7 @@ set root_path "../.."
 set tb_path "$root_path/bitvis_vip_ethernet/internal_tb"
 
 
-proc set_compdirectives {library simulator version} {
+proc set_compdirectives {library version} {
   set lib_name $library
   set vhdl_ver $version
   global compdirectives
@@ -10,24 +10,24 @@ proc set_compdirectives {library simulator version} {
   vlib $library
   vmap work $library
 
-
-
   if { [info exists ::env(SIMULATOR)] } {
     set simulator $::env(SIMULATOR)
     puts "Simulator: $simulator"
-
-    if [string equal $simulator "MODELSIM"] {
-      set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
-    } elseif [string equal $simulator "RIVIERAPRO"] {
-      set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
-    } else {
-      puts "No simulator! Trying with modelsim0"
-      set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
-    }
   } else {
-    puts "No simulator! Trying with modelsim0"
-    set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+    puts "No simulator! Trying with modelsim"
+    set simulator "MODELSIM"
   }
+
+  if [string equal $simulator "MODELSIM"] {
+    set compdirectives "-quiet -suppress 1346,1236,1090 -$vhdl_ver -work $lib_name"
+  } elseif [string equal $simulator "RIVIERAPRO"] {
+    set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+  } else {
+    puts "No simulator! Trying with modelsim"
+    set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+  }
+  puts "Setting compdirectives: $compdirectives"
+
 }
 
 
@@ -36,7 +36,7 @@ proc set_compdirectives {library simulator version} {
 # Xilinx "XilinixCoreLib" library
 #==========================================================================================================
 echo "\n\n\n=== Compiling XilinxCoreLib library files"
-set_compdirectives "xilinxcorelib" $simulator 2008
+set_compdirectives "xilinxcorelib" 2008
 
 echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_comp.vhd"
 eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo_generator_v9_3_comp.vhd
@@ -55,7 +55,7 @@ eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/XilinxCoreLib/fifo
 #==========================================================================================================
 echo "\n\n\n=== Compiling Unisim library files"
 
-set_compdirectives "unisim" $simulator 2008
+set_compdirectives "unisim" 2008
 
 echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_VCOMP.vhd"
 eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_VCOMP.vhd
@@ -63,7 +63,7 @@ echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/un
 eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_VPKG.vhd
 
 
-set_compdirectives "unisim" $simulator 93
+set_compdirectives "unisim" 93
 
 quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master/xilinx/unisims/primitive" -- "*.vhd"]
 foreach vhd_file $vhd_files {
@@ -78,7 +78,7 @@ foreach vhd_file $vhd_files {
 #==========================================================================================================
 echo "\n\n\n=== Compiling Mac_Master library files"
 
-set_compdirectives "mac_master" $simulator 2008
+set_compdirectives "mac_master" 2008
 
 # type files / ----------------------------------------------------------------------------------------
 quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master" -- "*_types.vhd"]
@@ -88,8 +88,8 @@ foreach vhd_file $vhd_files {
 }
 
 # /xilinx/ip_core --------------------------------------------------------------------------------------------
-echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_mac_tx_fifo_xilinx.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_mac_tx_fifo_xilinx.vhd
+echo "eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_mac_tx_fifo_xilinx.vhd"
+eval vcom $compdirectives $tb_path/ethernet_mac-master/xilinx/ipcore_dir/ethernet_mac_tx_fifo_xilinx.vhd
 
 
 
@@ -179,7 +179,7 @@ eval vcom  $compdirectives  $tb_path/ethernet_mac-master/generic/single_signal_s
 # Compile tb files
 #==========================================================================================================
 echo "\n\n\n=== Compiling TB\n"
-set_compdirectives "bitvis_vip_ethernet" $simulator 2008
+set_compdirectives "bitvis_vip_ethernet" 2008
 
 echo "eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd"
 eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd

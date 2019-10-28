@@ -1,7 +1,7 @@
-#bitvis_vip_sbi
-#bitvis_vip_uart
-#bitvis_vip_spi
-#bitvis_vip_i2c
+bitvis_vip_sbi
+bitvis_vip_uart
+bitvis_vip_spi
+bitvis_vip_i2c
 bitvis_vip_avalon_mm
 bitvis_vip_axilite
 bitvis_vip_axistream
@@ -15,5 +15,5 @@ bitvis_uart
 bitvis_irqc
 uvvm_vvc_framework
 uvvm_util
-#bitvis_vip_ethernet
+bitvis_vip_ethernet
 #bitvis_vip_hvvc_to_vvc_bridge

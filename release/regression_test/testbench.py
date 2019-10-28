@@ -199,7 +199,10 @@ class Testbench:
 
     def get_configs(self):
       """
-      To-do!
+      Get a list of all configurations
+
+      Return:
+        list: a list of all applied configuratoins.
       """
       return self.configs
 
@@ -224,15 +227,25 @@ class Testbench:
 
     def set_simulator_variable(self):
       """
-      To-do!
+      Set environment simulator variable for compile scripts.
       """
       self.env_var = os.environ.copy()
       self.env_var["SIMULATOR"] = self.simulator
 
 
+    def select_simulator(self, simulator_name):
+      """
+      Select environment variable simulator for compile scripts.
+      """
+      self.simulator = simulator_name.upper()
+
+
     def get_simulator(self):
       """
-      To-do!
+      Get environment simulator variable for compile scripts.
+
+      Return:
+        str : simulator name
       """
       return self.simulator
 
@@ -261,13 +274,16 @@ class Testbench:
 
 
     # Set compile directives
-    def set_compile_directives(self, comdir):
+    def set_compile_directives(self, compile_directives):
       """
       Set the simulator compilation directives
 
       To-do! Not implemented
+      
+      Args:
+        compile_directives (list): strings of simulator compile directives
       """
-      self.compdir = compdir
+      self.compile_directives = compile_directives
 
 
     def get_compile_directives(self):
@@ -275,21 +291,24 @@ class Testbench:
       Get the simulator compilation directives
 
       To-do! Not implemented
+
+      Return:
+        list: simulator compile dircetives
       """
-      return self.compdir
+      return self.compile_directives
 
 
     # Compile DUT, testbench and dependencies
     def compile(self):
       """
-      To-do!
+      Compile dependencie files, src files and testbench files
       """
       self.set_simulator_variable()
-      print("\nCompiling dependenies.")
+      print("\nCompiling dependencies...")
       self.simulator_call("do ../internal_script/compile_dependencies.do")
-      print("Compiling src.")
+      print("Compiling src...")
       self.simulator_call("do ../script/compile_src.do")
-      print("Compiling testbench.")
+      print("Compiling testbench...")
       self.simulator_call("do ../internal_script/compile_tb.do")
 
 

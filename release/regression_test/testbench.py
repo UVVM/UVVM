@@ -1,5 +1,5 @@
 from os.path import join, dirname
-import os, sys, subprocess
+import os, sys, subprocess, glob
 
 # Disable terminal output
 FNULL = open(os.devnull, 'w')
@@ -12,8 +12,19 @@ FNULL = open(os.devnull, 'w')
 #=============================================================================================
 
 class Testbench:
+    """
+    Testbench class
+
+    Testbench is used for building a simulation environment which will 
+    run a testbench with defined tests and configurations.
+    """
+
 
     def __init__(self):
+      """
+      Initializes the testbench object.
+
+      """
       self.library  = None
       self.tb       = None
       self.verbose  = False
@@ -25,7 +36,11 @@ class Testbench:
       self.simulator = "MODELSIM"
       self.env_var = os.environ.copy()
 
+
     def print_help(self):
+      """
+      Prints a short usage description with command line arguments.
+      """
       print("\nTestbench arguments:")
       print("-V enable terminal output")
       print("-MODELSIM set modelsim simulator (default)")
@@ -34,47 +49,114 @@ class Testbench:
 
 
     def set_library(self, library):
+      """
+      Sets the library name where the testbench is compiled to.
+
+      Args:
+        library (str): name of library
+      """
       self.library = library.lower()
 
     def get_library(self):
+      """
+      Returns the library name where the testbench is compiled to.
+
+      Returns:
+        string: name of library
+      """
       return self.library
 
+
     def set_simulator(self, simulator):
+      """
+      Sets the simulator used for running the testbench simulations.
+
+      Args:
+        simulator (str): name of simulator (modelsim, rivierapro)
+      """
       self.simulator = simulator.upper()
 
+
     def set_tb_name(self, tb):
+      """
+      Sets the testbench entity name.
+
+      Args:
+        tb (str): testbench entity
+      """
       self.tb = tb.lower()
 
+
     def get_tb_name(self):
+      """
+      Returns the testbench entity name.
+
+      Returns:
+        string: testbench entity name
+      """
       return self.tb
 
-    def set_cleanup(self, mode):
-      self.do_cleanup = mode
+
+    def set_cleanup(self, perform_cleanup):
+      """
+      Specifies if testbench object shall remove generated files.
+
+      Args:
+        perform_cleanup (bool): remove generated files selection
+      """
+      self.do_cleanup = perform_cleanup
 
 
     def reset_counters(self):
+      """ 
+      Reset number of run and failed tests.
+      """
       self._num_tests_run = 0
       self._num_failing_tests = 0
 
+
     def get_counters(self):
+      """
+      Return the number of run and failing tests.
+
+      Returns:
+        list: the number of run tests and failing tests
+      """
       return self.num_tests_run, self.num_failing_tests
 
+
     def get_num_tests_run(self):
+      """
+      Return the number of run tests
+
+      Returns:
+        int : the number of tests run.
+      """
       return self.num_tests_run
 
+
     def get_num_failing_tests(self):
+      """
+      Return the number of failing tests
+
+      Returns:
+        int : the number of failing run.
+      """
       return self.num_failing_tests
 
 
     def add_test(self, test):
       self.tests.append(test)
 
+
     def add_tests(self, tests):
       for test in tests:
         self.tests.append(test)
 
+
     def get_tests(self):
       return self.tests
+
 
     def remove_tests(self):
       self.tests = []
@@ -83,13 +165,16 @@ class Testbench:
     def remove_configs(self):
       self.configs = []
 
+
     def add_config(self, config):
       self.configs.append(config)
+
 
     def set_configs(self, configs):
       self.remove_configs()
       for config in configs:
         self.add_config(config)
+
 
     def get_configs(self):
       return self.configs
@@ -138,10 +223,22 @@ class Testbench:
 
     # Set compile directives
     def set_compile_directives(self, comdir):
+      """
+      Set the simulator compilation directives
+
+      To-do!
+      """
       self.compdir = compdir
 
+
     def get_compile_directives(self):
+      """
+      Get the simulator compilation directives
+
+      To-do!
+      """
       return self.compdir
+
 
     # Compile DUT, testbench and dependencies
     def compile(self):
@@ -155,11 +252,20 @@ class Testbench:
 
 
 
+    def find_generated_test_files(self, test_name, pre_pattern="", post_pattern="", file_type=".txt"):
+      search_string = pre_pattern + test_name + post_pattern + file_type
+      files = glob.glob(pre_pattern + test_name + post_pattern + file_type)
+      return files
+
+
     # Clean-up
-    def cleanup(self, test):
-      if (test != None) & (self.do_cleanup == True):
-        os.remove(test + "_Alert.txt")
-        os.remove(test + "_Log.txt")
+    def cleanup(self, test_name):
+      if (test_name != None) & (self.do_cleanup == True):
+        remove_files = self.find_generated_test_files(test_name, post_pattern="*")
+        for item in remove_files:
+          if 'alert' or 'log' in item.lower():
+            os.remove(item)
+            
         if os.path.isfile('transcript'):
           os.remove('transcript')
 
@@ -167,15 +273,17 @@ class Testbench:
 
 
     # Check simulation results
-    def check_result(self, filename):
-      try:
-        for line in open(filename, 'r'):
-          if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
-            return True
-        return False
-      except:
-        print("Unable to find test result file %s! Aborting."  %(filename))
-        return False
+    def check_result(self, test_name):
+      check_files = self.find_generated_test_files(test_name, post_pattern="*Log*")
+      for item in check_files:
+        try:
+          for line in open(item, 'r'):
+            if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
+              return True
+          return False
+        except:
+          print("Unable to find test result file: %s."  %(item))
+          return False
 
 
 
@@ -192,18 +300,18 @@ class Testbench:
       if len(self.tests) == 0: self.tests = ["All"]
       if len(self.configs) == 0: self.configs = [""]
 
-      for test in self.tests:
+      for test_name in self.tests:
       
         for config in self.configs:
           self.increment_num_tests()
-          print("[%s] test=%s, config=%s : " % (self.tb, test, config), end='')
+          print("[%s] test=%s, config=%s : " % (self.tb, test_name, config), end='')
 
-          script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test + ' ' + config
+          script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call)
 
-          if self.check_result("%s_Log.txt" %(test)) == True:
+          if self.check_result(test_name) == True:
             print("PASS")
-            self.cleanup(test)
+            self.cleanup(test_name)
           else:
             print("FAILED")
             self.increment_num_failing_tests()

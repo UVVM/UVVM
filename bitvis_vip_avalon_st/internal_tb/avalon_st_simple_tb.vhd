@@ -21,6 +21,19 @@
 -- Description   : See dedicated powerpoint presentation and README-file(s)
 ------------------------------------------------------------------------------------------
 
+-- *******************************************************************************************
+--
+-- Example of wrapper around this generic package with channel width 32 and data width 64.
+-- This needs to be in the very top of e.g. a test bench file, before all other library
+-- and use clauses.
+-- 
+-- package avalon_st_bfm_c32_d64_pkg is new bitvis_vip_avalon_st.avalon_st_bfm_generic_pkg
+--    generic map(GC_AVALON_ST_CHAN_WIDTH => 32,
+--                GC_AVALON_ST_DATA_WIDTH => 64);
+-- 
+-- use work.avalon_st_bfm_c32_d64_pkg.all;
+--
+-- *******************************************************************************************
 library bitvis_vip_avalon_st;
 package avalon_st_bfm_c32_d72_pkg is new bitvis_vip_avalon_st.avalon_st_bfm_generic_pkg
                                        generic map(GC_AVALON_ST_CHAN_WIDTH => 32,

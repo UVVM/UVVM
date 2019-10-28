@@ -146,42 +146,69 @@ class Testbench:
 
 
     def add_test(self, test):
+      """
+      To-do!
+      """
       self.tests.append(test)
 
 
     def add_tests(self, tests):
+      """
+      To-do!
+      """
       for test in tests:
         self.tests.append(test)
 
 
     def get_tests(self):
+      """
+      To-do!
+      """
       return self.tests
 
 
     def remove_tests(self):
+      """
+      To-do!
+      """
       self.tests = []
 
 
     def remove_configs(self):
+      """
+      To-do!
+      """
       self.configs = []
 
 
     def add_config(self, config):
+      """
+      To-do!
+      """
       self.configs.append(config)
 
 
     def set_configs(self, configs):
+      """
+      To-do!
+      """
       self.remove_configs()
       for config in configs:
         self.add_config(config)
 
 
     def get_configs(self):
+      """
+      To-do!
+      """
       return self.configs
 
 
     # Script arguments
     def check_arguments(self, args):
+      """
+      To-do!
+      """
       for arg in args:
         arg = arg.upper().split()
 
@@ -196,16 +223,28 @@ class Testbench:
 
 
     def set_simulator_variable(self):
-      print("Setting environment SIMULATOR=%s" %(self.simulator))
+      """
+      To-do!
+      """
       self.env_var = os.environ.copy()
       self.env_var["SIMULATOR"] = self.simulator
 
+
     def get_simulator(self):
+      """
+      To-do!
+      """
       return self.simulator
 
 
     # Activate simulator with call
     def simulator_call(self, script_call):
+      """
+      Invoke simulator with given script call, and set environment variable for simulator selection.
+
+      Args:
+        script_call (str): argument to pass on with simulator call
+      """
       if self.env_var["SIMULATOR"] == "MODELSIM":
         cmd = "vsim"
       elif self.env_var["SIMULATOR"] == "RIVIERAPRO":
@@ -226,7 +265,7 @@ class Testbench:
       """
       Set the simulator compilation directives
 
-      To-do!
+      To-do! Not implemented
       """
       self.compdir = compdir
 
@@ -235,13 +274,16 @@ class Testbench:
       """
       Get the simulator compilation directives
 
-      To-do!
+      To-do! Not implemented
       """
       return self.compdir
 
 
     # Compile DUT, testbench and dependencies
     def compile(self):
+      """
+      To-do!
+      """
       self.set_simulator_variable()
       print("\nCompiling dependenies.")
       self.simulator_call("do ../internal_script/compile_dependencies.do")
@@ -252,20 +294,38 @@ class Testbench:
 
 
 
-    def find_generated_test_files(self, test_name, pre_pattern="", post_pattern="", file_type=".txt"):
-      search_string = pre_pattern + test_name + post_pattern + file_type
+    def find_generated_test_files(self, test_name, pre_pattern="", post_pattern="", file_type="txt"):
+      """
+      Find files with specified file pattern
+
+      Args:
+        test_name (str): name of testbench test
+        pre_pattern (str): any wildcard pattern to be included in front of test_name
+        post_pattern (str): any wildcard pattern to be included after test_name
+        file_type (str): type of file
+
+      Return:
+        list: matching file names as strings
+      """
+      search_string = pre_pattern + test_name + post_pattern + "." + file_type
       files = glob.glob(pre_pattern + test_name + post_pattern + file_type)
       return files
 
 
     # Clean-up
     def cleanup(self, test_name):
+      """
+      Remove generated files from test in testbench
+
+      Args:
+        test_name (str): name of test run in testbench
+      """
       if (test_name != None) & (self.do_cleanup == True):
         remove_files = self.find_generated_test_files(test_name, post_pattern="*")
         for item in remove_files:
           if 'alert' or 'log' in item.lower():
             os.remove(item)
-            
+
         if os.path.isfile('transcript'):
           os.remove('transcript')
 
@@ -274,6 +334,12 @@ class Testbench:
 
     # Check simulation results
     def check_result(self, test_name):
+      """
+      Verify test result by examining the log file
+
+      Args:
+        test_name (str): name of test run in testbench
+      """
       check_files = self.find_generated_test_files(test_name, post_pattern="*Log*")
       for item in check_files:
         try:
@@ -288,15 +354,24 @@ class Testbench:
 
 
     def increment_num_tests(self):
+      """
+      Increment the internal counter for number of run tests
+      """
       self.num_tests_run += 1
 
 
     def increment_num_failing_tests(self):
+      """
+      Increment the internal counter for number of failing tests
+      """
       self.num_failing_tests += 1
 
 
     # Run simulations and check result
     def run_simulation(self):
+      """
+      Run testbench simulations with all specified tests and configurations.
+      """
       if len(self.tests) == 0: self.tests = ["All"]
       if len(self.configs) == 0: self.configs = [""]
 
@@ -320,6 +395,9 @@ class Testbench:
 
 
     def print_statistics(self):
+      """
+      Print the simulation result statistics
+      """
       total = self.get_num_tests_run()
       failed = self.get_num_failing_tests()
       passed = (total - failed)

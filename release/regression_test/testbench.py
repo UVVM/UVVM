@@ -168,10 +168,15 @@ class Testbench:
 
     # Check simulation results
     def check_result(self, filename):
-      for line in open(filename, 'r'):
-        if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
-          return True
-      return False
+      try:
+        for line in open(filename, 'r'):
+          if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
+            return True
+        return False
+      except:
+        print("Unable to find test result file %s! Aborting."  %(filename))
+        return False
+
 
 
     def increment_num_tests(self):

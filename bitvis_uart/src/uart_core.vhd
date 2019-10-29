@@ -21,6 +21,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
 use work.uart_pif_pkg.all;
 use work.uart_pkg.all;
 
@@ -254,12 +257,12 @@ begin
 
       -- always shift in new synchronized serial data
       rx_bit_samples <= rx_bit_samples(GC_CLOCKS_PER_BIT-2 downto 0) & rx_s(1);
-
+    
       -- look for enough GC_START_BITs in rx_bit_samples vector
       if rx_active = '0' and
-        (find_num_hits(rx_bit_samples, GC_START_BIT) >= GC_CLOCKS_PER_BIT-1) then
-        rx_active      <= '1';
-        rx_just_active <= true;
+         (find_num_hits(rx_bit_samples, GC_START_BIT) >= GC_CLOCKS_PER_BIT-1) then
+          rx_active      <= '1';
+          rx_just_active <= true;
       end if;
 
       if rx_active = '0' then
@@ -290,7 +293,7 @@ begin
         end if;
 
         -- shift in data, check for consistency and forward
-        if rx_clk_counter >= GC_CLOCKS_PER_BIT - 1 then
+        if rx_clk_counter >= GC_CLOCKS_PER_BIT - 1 then         
           rx_bit_counter <= rx_bit_counter + 1;
 
           if transient_error(rx_bit_samples, GC_MIN_EQUAL_SAMPLES_PER_BIT) then
@@ -301,7 +304,6 @@ begin
           -- are we done? not counting the start bit
           if to_integer(rx_bit_counter) >= 9 then
             rx_active <= '0';
-            rx_bit_samples <= (others => '1');
           end if;
 
           case to_integer(rx_bit_counter) is

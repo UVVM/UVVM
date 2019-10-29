@@ -692,7 +692,7 @@ package body ti_vvc_framework_support_pkg is
       shared_inactivity_watchdog.priv_list_registered_vvc(msg);
       alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" & 
                         to_string(shared_inactivity_watchdog.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" & 
-                        "Note that channels are counted individually. " & msg);
+                        "Note that leaf VVCs (e.g. channels) are counted individually. " & msg);
 
     end if;
 

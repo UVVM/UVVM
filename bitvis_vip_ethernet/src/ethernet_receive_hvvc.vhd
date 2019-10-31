@@ -78,7 +78,6 @@ architecture behave of ethernet_receive_vvc is
   alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(C_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(C_CHANNEL, GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(C_CHANNEL, GC_INSTANCE_IDX);
-  --alias sb               : t_generic_sb       is shared_ethernet_sb;
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 

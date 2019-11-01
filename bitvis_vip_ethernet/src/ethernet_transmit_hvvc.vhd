@@ -217,14 +217,6 @@ begin
     variable v_crc_32                                : std_logic_vector(31 downto 0);
     variable v_cmd_idx                               : natural;
     variable v_ethernet_frame                        : t_ethernet_frame;
-
-    procedure activity_watchdog_register_vvc_state(busy : boolean) is
-    begin
-      shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                          busy                  => busy,
-                                                          last_cmd_idx_executed => last_cmd_idx_executed);
-      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog");
-    end procedure;
   
     -- Local overload
     procedure blocking_send_to_bridge(
@@ -248,14 +240,14 @@ begin
     loop
 
       -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(false);
+      activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(true);
+      activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);
 
       -- Reset the transaction info for waveview
       transaction_info := C_TRANSACTION_INFO_DEFAULT;

@@ -326,6 +326,16 @@ package vvc_methods_pkg is
     );
 
 
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
+                                                  constant busy                                      : boolean;
+                                                  constant vvc_idx_for_activity_watchdog             : integer;
+                                                  constant last_cmd_idx_executed                     : natural;
+                                                  constant scope                                     : string := "vvc_register");
+                                                  
+                                                  
 end package vvc_methods_pkg;
 
 
@@ -785,6 +795,22 @@ package body vvc_methods_pkg is
   begin
     -- Use another overload to fill in the rest: strb_array, id_array, dest_array
     axistream_expect(VVCT, vvc_instance_idx, data_array, c_user_array, msg, alert_level, scope);
+  end procedure;
+
+
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
+                                                  constant busy                                      : boolean;
+                                                  constant vvc_idx_for_activity_watchdog             : integer;
+                                                  constant last_cmd_idx_executed                     : natural;
+                                                  constant scope                                     : string := "vvc_register") is
+  begin
+    shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                        busy                  => busy,
+                                                        last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", scope, ID_NEVER);
   end procedure;
 
 

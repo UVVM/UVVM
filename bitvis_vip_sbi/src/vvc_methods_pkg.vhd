@@ -225,6 +225,16 @@ package vvc_methods_pkg is
 
 
   --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
+                                                  constant busy                                      : boolean;
+                                                  constant vvc_idx_for_activity_watchdog             : integer;
+                                                  constant last_cmd_idx_executed                     : natural;
+                                                  constant scope                                     : string := "vvc_register");
+                                                  
+                                                  
+  --==============================================================================
   -- Error Injection methods
   --==============================================================================
   impure function decide_if_error_is_injected(
@@ -490,6 +500,22 @@ package body vvc_methods_pkg is
 
     wait for 0 ns;
   end procedure restore_global_dtt;
+
+
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
+                                                  constant busy                                      : boolean;
+                                                  constant vvc_idx_for_activity_watchdog             : integer;
+                                                  constant last_cmd_idx_executed                     : natural;
+                                                  constant scope                                     : string := "vvc_register") is
+  begin
+    shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                        busy                  => busy,
+                                                        last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", scope, ID_NEVER);
+  end procedure;
 
 
   --==============================================================================

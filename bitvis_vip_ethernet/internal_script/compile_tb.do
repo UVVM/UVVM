@@ -24,7 +24,7 @@ proc set_compdirectives {library version} {
     set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   } else {
     puts "No simulator! Trying with modelsim"
-    set compdirectives "-$vhdl_ver -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
+    quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
   }
   puts "Setting compdirectives: $compdirectives"
 
@@ -65,7 +65,7 @@ eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/unisims/unisim_V
 
 set_compdirectives "unisim" 93
 
-quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master/xilinx/unisims/primitive" -- "*.vhd"]
+set vhd_files [glob -directory "$tb_path/ethernet_mac-master/xilinx/unisims/primitive" -- "*.vhd"]
 foreach vhd_file $vhd_files {
   echo "eval vcom  $compdirectives $vhd_file"
   eval vcom  $compdirectives $vhd_file
@@ -81,7 +81,7 @@ echo "\n\n\n=== Compiling Mac_Master library files"
 set_compdirectives "mac_master" 2008
 
 # type files / ----------------------------------------------------------------------------------------
-quietly set vhd_files [glob -directory "$tb_path/ethernet_mac-master" -- "*_types.vhd"]
+set vhd_files [glob -directory "$tb_path/ethernet_mac-master" -- "*_types.vhd"]
 foreach vhd_file $vhd_files {
   echo "eval vcom $compdirectives $vhd_file"
   eval vcom $compdirectives $vhd_file

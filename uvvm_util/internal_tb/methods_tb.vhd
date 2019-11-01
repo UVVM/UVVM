@@ -3201,20 +3201,23 @@ begin
         increment_expected_alerts(warning, 2);
       end if;
 
-      set_log_file_name(GC_TEST & "_testlog2.txt");
-      set_alert_file_name(GC_TEST & "_alertlog2.txt");
-      --set_log_file_name(join(output_path(runner_cfg), "testlog2.txt"));
-      --set_alert_file_name(join(output_path(runner_cfg), "alertlog2.txt"));
+      set_log_file_name(GC_TEST & "_testLog2.txt");
+      set_alert_file_name(GC_TEST & "_alertLog2.txt");
+      --set_log_file_name(join(output_path(runner_cfg), "testLog2.txt"));
+      --set_alert_file_name(join(output_path(runner_cfg), "alertLog2.txt"));
 
-      log("This string should be written to testlog2.txt");
-      log("This string should also be written to testlog2.txt");
+      log("This string should be written to testLog2.txt");
+      log("This string should also be written to testLog2.txt");
       increment_expected_alerts(TB_WARNING);
-      alert(TB_WARNING, "This alert should be written to alertlog2.txt");
+      alert(TB_WARNING, "This alert should be written to alertLog2.txt");
 
-      set_log_file_name(GC_TEST & "_testlog3.txt", ID_SEQUENCER);
-      set_alert_file_name(GC_TEST & "_alertlog3.txt", ID_SEQUENCER);
-      --set_log_file_name(join(output_path(runner_cfg), "testlog3.txt"), ID_SEQUENCER);
-      --set_alert_file_name(join(output_path(runner_cfg), "alertlog3.txt"), ID_SEQUENCER);
+      set_log_file_name(GC_TEST & "_testLog3.txt", ID_SEQUENCER);
+      set_alert_file_name(GC_TEST & "_alertLog3.txt", ID_SEQUENCER);
+      --set_log_file_name(join(output_path(runner_cfg), "testLog3.txt"), ID_SEQUENCER);
+      --set_alert_file_name(join(output_path(runner_cfg), "alertLog3.txt"), ID_SEQUENCER);
+
+      set_log_file_name(GC_TEST & "_Log.txt");
+      set_alert_file_name(GC_TEST & "_Alert.txt"); 
 
     elsif GC_TEST = "synchronization_methods" then
       log(ID_LOG_HDR, "Testing await_unblock_flag with KEEP_UNBLOCKED.", C_SCOPE);

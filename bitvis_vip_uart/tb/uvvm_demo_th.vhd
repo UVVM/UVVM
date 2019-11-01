@@ -200,7 +200,7 @@ begin
 
   p_activity_watchdog:
       activity_watchdog(timeout       => GC_ACTIVITY_WATCHDOG_TIMEOUT,
-                        num_exp_vvc   => 3);
+                        num_exp_vvc   => 4);
 
 
 

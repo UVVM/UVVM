@@ -46,12 +46,15 @@ def present_results(num_failing_tests):
 
 
 def main():
+  if sys.version_info[0] < 3:
+    raise Exception("Python version 3 is required to run this script!")
+
   modules = get_module_list()
   num_failing_tests = 0
 
   for module in modules:
     cd_to_module(module)
-    simulate_module(module)
+    num_failing_tests += simulate_module(module)
 
   present_results(num_failing_tests)
 

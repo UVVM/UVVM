@@ -17,9 +17,6 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-library vunit_lib;
-context vunit_lib.vunit_run_context;
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -35,10 +32,8 @@ use bitvis_vip_sbi.sbi_bfm_pkg.all;
 -- Test case entity
 entity sbi_tb_multi_cycle_read is
   generic (
-    -- This generic is used to configure the testbench from run.py, e.g. what
-    -- test case to run. The default value is used when not running from script
-    -- and in that case all test cases are run.
-    runner_cfg : runner_cfg_t := runner_cfg_default);
+    GC_TEST : string := "UVVM"
+    );
 end entity;
 
 -- Test case architecture
@@ -115,28 +110,9 @@ begin
   begin
 
     -- To avoid that log files from different test cases (run in separate
-    -- simulations) overwrite each other run.py provides separate test case
-    -- directories through the runner_cfg generic (<root>/vunit_out/tests/<test case
-    -- name>). When not using run.py the default path is the current directory
-    -- (<root>/vunit_out/<simulator>). These directories are used by VUnit
-    -- itself and these lines make sure that BVUL do to.
-    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
-    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
-
-    -- Setup the VUnit runner with the input configuration.
-    test_runner_setup(runner, runner_cfg);
-
-
-
-    -- The default behavior for VUnit is to stop the simulation on a failing
-    -- check when running from script but keep on running when running without
-    -- script. The rationale for this and how you can change that behavior is
-    -- described at the bottom of this file (see Stopping the Simulation on
-    -- Failing Checks). The following if statement causes BVUL checks to behave
-    -- in the same way.
-    if not active_python_runner(runner_cfg) then
-      set_alert_stop_limit(ERROR, 0);
-    end if;
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TEST & "_Log.txt");
+    set_alert_file_name(GC_TEST & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
 
@@ -166,72 +142,62 @@ begin
     -- release reset to DUT
     rst <= '0';
 
-    while test_suite loop
-      --------------------------------------------------------------------------------------
-      -- Verifying
-      --------------------------------------------------------------------------------------
-      if run("fixed_wait_read_test") then
-
-        log(ID_LOG_HDR, "Check that the fixed wait cycles are working correct");
-
-        enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
-
-        -- Fill FIFO 1
-        sbi_write(SBI_VVCT,1, x"00", x"01", "Set Register 0");
-        await_completion(SBI_VVCT,C_VVCT_ALL_INSTANCES, 1000 ns, "Await execution for both VVCs");
-
-        wait until rising_edge(clk);
-        v_timestamp := now;
-        sbi_read(SBI_VVCT,1, x"00", "Reading from Register 0");
-        v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 1);
-        await_completion(SBI_VVCT,1, 100 ns, "Await execution");
-        fetch_result(SBI_VVCT, 1, NA, v_cmd_idx, v_result_from_fetch, "Fetch result using the simple fetch_result overload");
-        check_value(((now - v_timestamp) = C_CLK_PERIOD*3.25), ERROR, "Checking that timing was upheld");
-        report(to_string(v_result_from_fetch(7 downto 0)));
-        check_value(x"01" , v_result_from_fetch(7 downto 0), ERROR, "checking read value");
-
-        shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read := 1; -- setting fixed_wait_cycles_read to one leading to wrong data
-        sbi_write(SBI_VVCT,1, x"00", x"55", "Set Register 0 to a new value");
-        await_completion(SBI_VVCT,1, 1000 ns, "Await execution of VVC");
-
-        wait until rising_edge(clk);
-        v_timestamp := now;
-        sbi_read(SBI_VVCT,1, x"00", "Reading from Register 0");
-        v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 1);
-        await_completion(SBI_VVCT,1, 100 ns, "Await execution");
-        fetch_result(SBI_VVCT, 1, NA, v_cmd_idx, v_result_from_fetch, "Fetch result using the simple fetch_result overload");
-        increment_expected_alerts(warning, 2);
-        check_value(((now - v_timestamp) = C_CLK_PERIOD*3.25), WARNING, "The read should only take 2.25 clk_periods and therefore throw a warning");
-        check_value(v_result_from_fetch(7 downto 0), x"55" , WARNING, "checking read value should lead to a warning");
-
-        check_value(((now - v_timestamp) = C_CLK_PERIOD*2.25), ERROR, "Checking that the read took 2.25 clk_periods");
-        check_value(v_result_from_fetch(7 downto 0), x"00" , ERROR, "Reading to fast should return 00");
-
-
-        shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read := 2; -- setting fixed_wait_cycles_read to one leading to wrong data
-
-
-      end if;
-    end loop;
-    --==================================================================================================
-    -- Ending the simulation
     --------------------------------------------------------------------------------------
-    wait for 1000 ns;  -- to allow some time for completion
-    report_alert_counters(VOID);
-    log(ID_LOG_HDR, "SIMULATION COMPLETED");
+    -- Verifying
+    --------------------------------------------------------------------------------------
+    if GC_TEST = "fixed_wait_read_test" then
+      log(ID_LOG_HDR, "Check that the fixed wait cycles are working correct");
 
-    -- Cleanup VUnit. The UVVM-Util error status is imported into VUnit at this
-    -- point. This is neccessary when the UVVM-Util alert stop limit is set such that
-    -- UVVM-Util doesn't stop on the first error. In that case VUnit has no way of
-    -- knowing the error status unless you tell it.
-    for alert_level in NOTE to t_alert_level'right loop
-      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
-        v_alert_num_mismatch := true;
-      end if;
-    end loop;
+      enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
 
-    test_runner_cleanup(runner, v_alert_num_mismatch);
-    wait;
+      -- Fill FIFO 1
+      sbi_write(SBI_VVCT,1, x"00", x"01", "Set Register 0");
+      await_completion(SBI_VVCT,C_VVCT_ALL_INSTANCES, 1000 ns, "Await execution for both VVCs");
+
+      wait until rising_edge(clk);
+      v_timestamp := now;
+      sbi_read(SBI_VVCT,1, x"00", "Reading from Register 0");
+      v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 1);
+      await_completion(SBI_VVCT,1, 100 ns, "Await execution");
+      fetch_result(SBI_VVCT, 1, NA, v_cmd_idx, v_result_from_fetch, "Fetch result using the simple fetch_result overload");
+      check_value(((now - v_timestamp) = C_CLK_PERIOD*3.25), ERROR, "Checking that timing was upheld");
+      report(to_string(v_result_from_fetch(7 downto 0)));
+      check_value(x"01" , v_result_from_fetch(7 downto 0), ERROR, "checking read value");
+
+      shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read := 1; -- setting fixed_wait_cycles_read to one leading to wrong data
+      sbi_write(SBI_VVCT,1, x"00", x"55", "Set Register 0 to a new value");
+      await_completion(SBI_VVCT,1, 1000 ns, "Await execution of VVC");
+
+      wait until rising_edge(clk);
+      v_timestamp := now;
+      sbi_read(SBI_VVCT,1, x"00", "Reading from Register 0");
+      v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 1);
+      await_completion(SBI_VVCT,1, 100 ns, "Await execution");
+      fetch_result(SBI_VVCT, 1, NA, v_cmd_idx, v_result_from_fetch, "Fetch result using the simple fetch_result overload");
+      increment_expected_alerts(warning, 2);
+      check_value(((now - v_timestamp) = C_CLK_PERIOD*3.25), WARNING, "The read should only take 2.25 clk_periods and therefore throw a warning");
+      check_value(v_result_from_fetch(7 downto 0), x"55" , WARNING, "checking read value should lead to a warning");
+
+      check_value(((now - v_timestamp) = C_CLK_PERIOD*2.25), ERROR, "Checking that the read took 2.25 clk_periods");
+      check_value(v_result_from_fetch(7 downto 0), x"00" , ERROR, "Reading to fast should return 00");
+
+      shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read := 2; -- setting fixed_wait_cycles_read to one leading to wrong data
+
+    else
+      log(ID_LOG_HDR, "Unknown test", C_SCOPE);
+    end if;
+
+
+    -----------------------------------------------------------------------------
+    -- Ending the simulation
+    -----------------------------------------------------------------------------
+    wait for 1000 ns;             -- to allow some time for completion
+    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
+
+    -- Finish the simulation
+    std.env.stop;
+    wait;  -- to stop completely
 
   end process p_main;
 

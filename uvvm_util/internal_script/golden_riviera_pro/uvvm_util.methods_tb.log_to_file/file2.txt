@@ -1,0 +1,2 @@
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Line to specified file and console
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Line to specified file and console, append

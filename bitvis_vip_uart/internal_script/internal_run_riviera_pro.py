@@ -45,9 +45,32 @@ bitvis_vip_sbi_lib = ui.add_library('bitvis_vip_sbi')
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'bitvis_vip_sbi', 'src', '*.vhd'))
 bitvis_vip_sbi_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
+
+# Libraries required for ESA 2 extensions of UVVM (crfc and Bitvis VIP Scoreboard)
+crfc_lib = ui.add_library('crfc')
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'AlertLogPkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'CoveragePkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'MessagePkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'NamePkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'OsvvmGlobalPkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'RandomBasePkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'RandomPkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'SortListPkg_int.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'TextUtilPkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'TranscriptPkg.vhd'))
+crfc_lib.add_source_files(join(project_root, 'xConstrRandFuncCov', 'src', 'VendorCovApiPkg.vhd'))
+
+bitvis_vip_scoreboard_lib = ui.add_library('bitvis_vip_scoreboard')
+bitvis_vip_scoreboard_lib.add_source_files(join(project_root, 'bitvis_vip_scoreboard', 'src', '*.vhd'))
+
+
 bitvis_vip_uart_lib = ui.add_library('bitvis_vip_uart')
 bitvis_vip_uart_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_uart_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
+
+bitvis_vip_clock_generator = ui.add_library('bitvis_vip_clock_generator')
+bitvis_vip_clock_generator.add_source_files(join(root, '../../bitvis_vip_clock_generator', 'src', '*.vhd'))
+bitvis_vip_clock_generator.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))
 
 # Add all testbenches to lib
 bitvis_vip_uart_lib.add_source_files(join(root, '..', 'internal_tb', '*.vhd'))

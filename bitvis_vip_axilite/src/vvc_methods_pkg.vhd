@@ -172,6 +172,15 @@ package vvc_methods_pkg is
     constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
+                                                  constant busy                                      : in    boolean;
+                                                  constant vvc_idx_for_activity_watchdog             : in    integer;
+                                                  constant last_cmd_idx_executed                     : in    natural;
+                                                  constant scope                                     : in    string := "vvc_register");  
+
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -286,6 +295,21 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data                               := v_normalised_data;
     shared_vvc_cmd.alert_level                        := alert_level;
     send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
+                                                  constant busy                                      : in    boolean;
+                                                  constant vvc_idx_for_activity_watchdog             : in    integer;
+                                                  constant last_cmd_idx_executed                     : in    natural;
+                                                  constant scope                                     : in    string := "vvc_register") is
+  begin
+    shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                        busy                  => busy,
+                                                        last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", scope, ID_NEVER);
   end procedure;
 
 

@@ -294,8 +294,8 @@ package methods_pkg is
 
   -- Matching if same width or only zeros in "extended width"
   function matching_widths(
-    value1: std_logic_vector;
-    value2: std_logic_vector
+    value1 : std_logic_vector;
+    value2 : std_logic_vector
     ) return boolean;
 
   function matching_widths(
@@ -981,6 +981,14 @@ package methods_pkg is
     constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
   ) return t_byte_array;
 
+  function reverse_vector(
+    constant value : std_logic_vector
+  ) return std_logic_vector;
+
+  impure function reverse_vectors_in_array(
+    constant value : t_slv_array
+  ) return t_slv_array;
+
 
   -- Warning! This function should NOT be used outside the UVVM library.
   --          Function is only included to support internal functionality.
@@ -1569,10 +1577,10 @@ package methods_pkg is
     signal   clock_high_percentage : in    natural range 0 to 100
   );
 
-
   procedure deallocate_line_if_exists(
      variable line_to_be_deallocated      : inout line
   );
+
 -- ============================================================================
 -- Synchronization methods
 -- ============================================================================
@@ -1622,7 +1630,61 @@ package methods_pkg is
   procedure release_semaphore(
     variable semaphore : inout t_protected_semaphore
   );
+
+  -- ============================================================================
+  -- Watchdog-related
+  -- ============================================================================
+  procedure watchdog_timer(
+    signal watchdog_ctrl : in t_watchdog_ctrl;
+    constant timeout     : time;
+    constant alert_level : t_alert_level := ERROR;
+    constant msg         : string := ""
+  );
+
+  procedure extend_watchdog(
+    signal watchdog_ctrl : inout t_watchdog_ctrl;
+    constant time_extend : time := 0 ns
+  );
+
+  procedure reinitialize_watchdog(
+    signal watchdog_ctrl : inout t_watchdog_ctrl;
+    constant timeout     : time
+  );
+
+  procedure terminate_watchdog(
+    signal watchdog_ctrl : inout t_watchdog_ctrl
+  );
+
+
+  -- ============================================================================
+  -- generate_crc
+  -- ============================================================================
+  --
+  -- This function generate the CRC based on the input values. CRC is generated
+  -- MSb first.
+  --
+  -- Input criteria:
+  --   - Inputs have to be decending (CRC generated from high to low)
+  --   - crc_in must be one bit shorter than polynomial
+  --
+  -- Return vector is one bit shorter than polynomial
+  --
+  ---------------------------------------------------------------------------------
+  impure function generate_crc(
+    constant data       : in std_logic_vector;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector;
+
+  -- slv array have to be acending
+  impure function generate_crc(
+    constant data       : in t_slv_array;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector;
+
 end package methods_pkg;
+
 
 
 --=================================================================================================
@@ -4252,6 +4314,28 @@ package body methods_pkg is
     end if;
   end function;
 
+  function reverse_vector(
+    constant value : std_logic_vector
+  ) return std_logic_vector is
+    variable return_val : std_logic_vector(value'range);
+  begin
+    for i in 0 to value'length-1 loop
+      return_val(value'low + i) := value(value'high - i);
+    end loop;
+    return return_val;
+  end function reverse_vector;
+
+  impure function reverse_vectors_in_array(
+    constant value : t_slv_array
+  ) return t_slv_array is
+    variable return_val : t_slv_array(value'range)(value(value'low)'range);
+  begin
+    for i in value'range loop
+      return_val(i) := reverse_vector(value(i));
+    end loop;
+    return return_val;
+  end function reverse_vectors_in_array;
+
 
 
 -- ============================================================================
@@ -5973,10 +6057,6 @@ package body methods_pkg is
     end loop;
   end procedure;
 
-
-
-
-
   -- ============================================================================
   -- Synchronization methods
   -- ============================================================================
@@ -6183,5 +6263,142 @@ package body methods_pkg is
   begin
     semaphore.release_semaphore;
   end procedure;
-end package body methods_pkg;
 
+
+  -- ============================================================================
+  -- Watchdog-related
+  -- ============================================================================
+  -------------------------------------------------------------------------------
+  -- Watchdog timer:
+  -- Include this as a concurrent procedure from your testbench.
+  -- Use extend_watchdog(), reinitialize_watchdog() or terminate_watchdog() to
+  -- modify the watchdog timer from the test sequencer.
+  -------------------------------------------------------------------------------
+  procedure watchdog_timer(
+    signal watchdog_ctrl : in t_watchdog_ctrl;
+    constant timeout     : time;
+    constant alert_level : t_alert_level := ERROR;
+    constant msg         : string := ""
+  ) is
+    variable v_timeout      : time;
+    variable v_prev_timeout : time;
+  begin
+    -- This delta cycle is needed due to a problem with external tools that
+    -- without it, they wouldn't print the first log message.
+    wait for 0 ns;
+
+    log(ID_WATCHDOG, "Starting watchdog: " & to_string(timeout) & ". " & msg);
+    v_prev_timeout := 0 ns;
+    v_timeout      := timeout;
+
+    loop
+      wait until (watchdog_ctrl.extend or watchdog_ctrl.restart or watchdog_ctrl.terminate) for v_timeout;
+      -- Watchdog was extended
+      if watchdog_ctrl.extend then
+        if watchdog_ctrl.extension = 0 ns then
+          log(ID_WATCHDOG, "Extending watchdog by default value: " & to_string(timeout) & ". " & msg);
+          v_timeout := (v_prev_timeout + v_timeout - now) + timeout;
+        else
+          log(ID_WATCHDOG, "Extending watchdog by " & to_string(watchdog_ctrl.extension) & ". " & msg);
+          v_timeout := (v_prev_timeout + v_timeout - now) + watchdog_ctrl.extension;
+        end if;
+        v_prev_timeout := now;
+      -- Watchdog was reinitialized
+      elsif watchdog_ctrl.restart then
+          log(ID_WATCHDOG, "Reinitializing watchdog: " & to_string(watchdog_ctrl.new_timeout) & ". " & msg);
+          v_timeout := watchdog_ctrl.new_timeout;
+          v_prev_timeout := now;
+      else
+        -- Watchdog was terminated
+        if watchdog_ctrl.terminate then
+          log(ID_WATCHDOG, "Terminating watchdog. " & msg);
+        -- Watchdog has timed out
+        else
+          alert(alert_level, "Watchdog timer ended! " & msg);
+        end if;
+        exit;
+      end if;
+    end loop;
+    wait;
+  end procedure;
+
+  procedure extend_watchdog(
+    signal watchdog_ctrl : inout t_watchdog_ctrl;
+    constant time_extend : time := 0 ns
+  ) is
+  begin
+    if not watchdog_ctrl.terminate then
+      watchdog_ctrl.extension <= time_extend;
+      watchdog_ctrl.extend <= true;
+      wait for 0 ns; -- delta cycle to propagate signal
+      watchdog_ctrl.extend <= false;
+    end if;
+  end procedure;
+
+  procedure reinitialize_watchdog(
+    signal watchdog_ctrl : inout t_watchdog_ctrl;
+    constant timeout     : time
+  ) is
+  begin
+    if not watchdog_ctrl.terminate then
+      watchdog_ctrl.new_timeout <= timeout;
+      watchdog_ctrl.restart <= true;
+      wait for 0 ns; -- delta cycle to propagate signal
+      watchdog_ctrl.restart <= false;
+    end if;
+  end procedure;
+
+  procedure terminate_watchdog(
+    signal watchdog_ctrl : inout t_watchdog_ctrl
+  ) is
+  begin
+    watchdog_ctrl.terminate <= true;
+    wait for 0 ns; -- delta cycle to propagate signal
+  end procedure;
+
+
+  -- ============================================================================
+  -- generate_crc
+  -- ============================================================================
+  impure function generate_crc(
+    constant data       : in std_logic_vector;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector is
+    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+  begin
+    -- Sanity checks
+    check_value(not data'ascending,    TB_FAILURE, "data have to be decending",    C_SCOPE, ID_NEVER);
+    check_value(not crc_in'ascending,  TB_FAILURE, "crc_in have to be decending",  C_SCOPE, ID_NEVER);
+    check_value(not polynomial'ascending, TB_FAILURE, "polynomial have to be decending", C_SCOPE, ID_NEVER);
+    check_value(crc_in'length, polynomial'length-1, TB_FAILURE, "crc_in have to be one bit shorter than polynomial", C_SCOPE, ID_NEVER);
+
+    for i in data'high downto data'low loop
+      if crc_out(crc_out'high) xor data(i) then
+        crc_out := crc_out sll 1;
+        crc_out := crc_out xor polynomial(polynomial'high-1 downto polynomial'low);
+      else
+        crc_out := crc_out sll 1;
+      end if;
+    end loop;
+    return crc_out;
+  end function generate_crc;
+
+  impure function generate_crc(
+    constant data       : in t_slv_array;
+    constant crc_in     : in std_logic_vector;
+    constant polynomial : in std_logic_vector
+  ) return std_logic_vector is
+    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+  begin
+    -- Sanity checks
+    check_value(data'ascending, TB_FAILURE, "slv array have to be acending", C_SCOPE, ID_NEVER);
+
+    for i in data'low to data'high loop
+      crc_out := generate_crc(data(i), crc_out, polynomial);
+    end loop;
+    return crc_out;
+  end function generate_crc;
+
+
+end package body methods_pkg;

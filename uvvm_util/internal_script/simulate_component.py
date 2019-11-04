@@ -40,6 +40,14 @@ def simulate(log_to_transcript):
     sim_log.log("\nModelsim : FAILED")
     sim_log.log("\n" + sim.stderr)
 
+  # Compare logs with Golden reference
+  sim = subprocess.run(["py", "internal_compare_sim_output.py", "-p8"], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  if sim.returncode == 0:
+    sim_log.log("\nGolden reference: PASS")
+  else:
+    sim_log.log("\nGolden reference: FAILED")
+    sim_log.log("\n" + sim.stderr)
+
   # Delete compiled libraries and simulations
   if os.path.exists("vunit_out"):
     shutil.rmtree("vunit_out")

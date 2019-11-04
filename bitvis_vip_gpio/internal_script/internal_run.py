@@ -39,6 +39,9 @@ uvvm_util_lib.add_source_files(join(project_root, 'uvvm_util', 'src', '*.vhd'))
 uvvm_vvc_framework_lib = ui.add_library('uvvm_vvc_framework')
 uvvm_vvc_framework_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src', '*.vhd'))
 
+bitvis_vip_scoreboard_lib = ui.add_library('bitvis_vip_scoreboard')
+bitvis_vip_scoreboard_lib.add_source_files(join(project_root, 'bitvis_vip_scoreboard', 'src', '*.vhd'))
+
 bitvis_vip_gpio_lib = ui.add_library('bitvis_vip_gpio')
 bitvis_vip_gpio_lib.add_source_files(join(root, '..', 'src', '*.vhd'))
 bitvis_vip_gpio_lib.add_source_files(join(project_root, 'uvvm_vvc_framework', 'src_target_dependent', '*.vhd'))

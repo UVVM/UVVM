@@ -241,13 +241,6 @@ package string_methods_pkg is
     ) return string;
 
   function to_string(
-    val     : t_byte_array;
-    radix   : t_radix        := HEX_BIN_IF_INVALID;
-    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
-    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
-    ) return string;
-
-  function to_string(
     val     : t_slv_array;
     radix   : t_radix        := HEX_BIN_IF_INVALID;
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
@@ -668,6 +661,7 @@ package body string_methods_pkg is
       write(v_msg_line, string'(" "));
     end if;
     bitvis_assert(v_line'length > 0, ERROR, "No procedure name found. " & v_msg_line.all, "get_procedure_name_from_instance_name()");
+    DEALLOCATE(v_msg_line);
     return v_line.all;
   end;
 
@@ -1175,50 +1169,6 @@ package body string_methods_pkg is
 
     else -- No decimal convertion: May be treated as slv, so use the slv overload
       return to_string(std_logic_vector(val), radix, format, prefix);
-    end if;
-  end;
-
-  function to_string(
-    val     : t_byte_array;
-    radix   : t_radix        := HEX_BIN_IF_INVALID;
-    format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
-    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
-    ) return string is
-    variable v_line         : line;
-    variable v_result       : string(1 to 2 +              -- parentheses
-                                     2*(val'length - 1) +  -- commas
-                                     26 * val'length);     -- 26 is max length of returned value from slv to_string()
-    variable v_width        : natural;
-  begin
-    if val'length = 0 then
-      -- Value length is zero,
-      -- return empty string.
-      return "";
-    elsif val'length = 1 then
-      -- Value length is 1
-      -- Return the single value it contains
-      return to_string(val(val'low), radix, format, prefix);
-    else
-      -- Value length more than 1
-      -- Comma-separate all array members and return
-      write(v_line, string'("("));
-
-      for i in val'range loop
-        write(v_line, to_string(val(i), radix, format, prefix));
-
-        if i < val'right and val'ascending then
-          write(v_line, string'(", "));
-        elsif i > val'right and not val'ascending then
-          write(v_line, string'(", "));
-        end if;
-      end loop;
-
-      write(v_line, string'(")"));
-
-      v_width := v_line'length;
-      v_result(1 to v_width) := v_line.all;
-      deallocate(v_line);
-      return v_result(1 to v_width);
     end if;
   end;
 

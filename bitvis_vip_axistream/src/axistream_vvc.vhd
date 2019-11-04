@@ -107,6 +107,7 @@ begin
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
      variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
      variable v_msg_id_panel       : t_msg_id_panel;
+
    begin
 
       -- 0. Initialize the process prior to first command
@@ -202,7 +203,6 @@ begin
       variable v_prev_command_was_bfm_access            : boolean := false;
       variable v_msg_id_panel                           : t_msg_id_panel;
 
-     
    begin
 
       -- 0. Initialize the process prior to first command
@@ -212,7 +212,7 @@ begin
       v_msg_id_panel := vvc_config.msg_id_panel;
 
       loop
-
+         
          -- Notify activity watchdog
          activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);
          
@@ -273,10 +273,10 @@ begin
                      dest_array           => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
                      msg                  => format_msg(v_cmd),
                      clk                  => clk,
-                     axistream_if => axistream_vvc_if,
-                     scope               => C_SCOPE,
-                     msg_id_panel        => v_msg_id_panel,
-                     config              => vvc_config.bfm_config);
+                     axistream_if         => axistream_vvc_if,
+                     scope                => C_SCOPE,
+                     msg_id_panel         => v_msg_id_panel,
+                     config               => vvc_config.bfm_config);
                else
                   alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
                end if;
@@ -292,7 +292,7 @@ begin
                                     dest_array          => v_result.dest_array,
                                     msg                 => format_msg(v_cmd),
                                     clk                 => clk,
-                                    axistream_if => axistream_vvc_if,
+                                    axistream_if        => axistream_vvc_if,
                                     scope               => C_SCOPE,
                                     msg_id_panel        => v_msg_id_panel,
                                     config              => vvc_config.bfm_config);
@@ -317,7 +317,7 @@ begin
                      exp_dest_array      => v_cmd.dest_array(0 to v_cmd.dest_array_length-1),
                      msg                 => format_msg(v_cmd),
                      clk                 => clk,
-                     axistream_if => axistream_vvc_if,
+                     axistream_if        => axistream_vvc_if,
                      alert_level         => v_cmd.alert_level,
                      scope               => C_SCOPE,
                      msg_id_panel        => v_msg_id_panel,

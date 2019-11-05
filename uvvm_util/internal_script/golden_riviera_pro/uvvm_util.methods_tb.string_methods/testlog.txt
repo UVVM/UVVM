@@ -84,6 +84,16 @@ UVVM:                ID_CONSTRUCTOR               : ENABLED
 UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
+<<<<<<< HEAD
+<<<<<<< HEAD:uvvm_util/internal_script/golden_riviera_pro/uvvm_util.methods_tb.string_methods/testlog.txt
+=======
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 100000000 ps. Watchdog D
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 5300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 5200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 5100000 ps. Watchdog A
+>>>>>>> merge_branch:uvvm_util/internal_script/golden_modelsim/uvvm_util.methods_tb.string_methods/testlog.txt
+=======
+>>>>>>> merge_branch
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Valid hex, no radix
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '17'. 'to_string x"17", HEX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '00010111'. 'to_string x"17", BIN'

@@ -52,8 +52,8 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_TB_SCOPE_DEFAULT          : string := "TB seq."; -- Default scope in test sequencer
-  constant C_VVC_CMD_SCOPE_DEFAULT : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
+  constant C_TB_SCOPE_DEFAULT         : string := "TB seq."; -- Default scope in test sequencer
+  constant C_VVC_CMD_SCOPE_DEFAULT    : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
@@ -88,7 +88,7 @@ package adaptations_pkg is
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     -- General
-    ID_POS_ACK,           -- To write a positive acknowledge on a check
+    ID_POS_ACK,               -- To write a positive acknowledge on a check
     -- Directly inside test sequencers
     ID_LOG_HDR,           -- ONLY allowed in test sequencer, Log section headers
     ID_LOG_HDR_LARGE,     -- ONLY allowed in test sequencer, Large log section headers
@@ -144,8 +144,8 @@ package adaptations_pkg is
     ID_MONITOR,               -- General monitor information
     ID_MONITOR_ERROR,         -- General monitor errors
     -- SB package
-    ID_DATA,
-    ID_CTRL,
+    ID_DATA,                  -- To write general handling of data
+    ID_CTRL,                  -- To write general control/config information
     -- Specification vs Verification IDs
     ID_FILE_PARSER,           -- Id used in file parsers
     ID_SPEC_VS_VERIF,         -- Messages from the specification vs verification methods

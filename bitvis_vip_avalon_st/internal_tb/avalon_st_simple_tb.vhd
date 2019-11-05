@@ -31,8 +31,8 @@ use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 entity avalon_st_simple_tb is
   generic(
     GC_TEST          : string  := "UVVM";
-    GC_CHANNEL_WIDTH : natural := 32;
-    GC_DATA_WIDTH    : natural := 72;
+    GC_CHANNEL_WIDTH : natural := 8;
+    GC_DATA_WIDTH    : natural := 32;
     GC_ERROR_WIDTH   : natural := 1;
     GC_EMPTY_WIDTH   : natural := 1
   );
@@ -134,9 +134,9 @@ begin
   --------------------------------------------------------------------------------
   p_main : process
     variable avl_st_bfm_config : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    variable data_array  : t_slv_array(0 to 8)(7 downto 0);
-    variable recv_array  : t_slv_array(0 to 8)(7 downto 0);
-    variable exp_array   : t_slv_array(0 to 8)(7 downto 0);
+    variable data_array  : t_slv_array(0 to 7)(7 downto 0);
+    variable recv_array  : t_slv_array(0 to 7)(7 downto 0);
+    variable exp_array   : t_slv_array(0 to 7)(7 downto 0);
 
     --------------------------------------------
     -- Overloads for this testbench
@@ -174,17 +174,16 @@ begin
     await_uvvm_initialization(VOID);
 
     -- Override default config with settings for this testbench
-    avl_st_bfm_config.max_wait_cycles            := 1000;
-    avl_st_bfm_config.max_wait_cycles_severity   := error;
-    avl_st_bfm_config.clock_period               := C_CLK_PERIOD;
+    avl_st_bfm_config.max_wait_cycles          := 1000;
+    avl_st_bfm_config.max_wait_cycles_severity := error;
+    avl_st_bfm_config.clock_period             := C_CLK_PERIOD;
     --avl_st_bfm_config.clock_period_margin      := -- Input clock period margin to specified clock_period
     --avl_st_bfm_config.clock_margin_severity    := -- The above margin will have this severity
-    avl_st_bfm_config.setup_time                 := C_CLK_PERIOD/4;
-    avl_st_bfm_config.hold_time                  := C_CLK_PERIOD/4;
-    avl_st_bfm_config.bits_per_symbol            := 8;
-    avl_st_bfm_config.symbols_per_beat           := 9;
-    avl_st_bfm_config.first_symbol_in_msb        := false;
-    avl_st_bfm_config.max_channel                := 1;
+    avl_st_bfm_config.setup_time               := C_CLK_PERIOD/4;
+    avl_st_bfm_config.hold_time                := C_CLK_PERIOD/4;
+    avl_st_bfm_config.symbol_width             := 8;
+    avl_st_bfm_config.first_symbol_in_msb      := false;
+    avl_st_bfm_config.max_channel              := 1;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -217,7 +216,7 @@ begin
     log(ID_LOG_HDR, "Transmit some data to FIFO and receive output, but with too small receive buffer");
     avalon_st_transmit(data_array, 0);
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_receive(recv_array(0 to 7), 0);
+    avalon_st_receive(recv_array(0 to recv_array'length-2), 0);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

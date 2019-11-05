@@ -450,6 +450,13 @@ package td_vvc_framework_common_methods_pkg is
     constant scope              : in string    := C_VVC_CMD_SCOPE_DEFAULT
   ) return natural;
 
+  impure function get_last_received_cmd_idx(
+    signal   vvc_target         : in  t_vvc_target_record;
+    constant vvc_instance_idx   : in  integer;
+    constant vvc_channel        : in  t_channel := NA;
+    constant scope              : in  string    := C_VVC_CMD_SCOPE_DEFAULT
+  ) return natural;
+
 end package td_vvc_framework_common_methods_pkg;
 
 
@@ -1021,5 +1028,15 @@ package body td_vvc_framework_common_methods_pkg is
       return 0;
     end if;
   end function;
-end package body td_vvc_framework_common_methods_pkg;
 
+  impure function get_last_received_cmd_idx(
+    signal   vvc_target         : in  t_vvc_target_record;
+    constant vvc_instance_idx   : in  integer;
+    constant vvc_channel        : in  t_channel := NA;
+    constant scope              : in  string    := C_VVC_CMD_SCOPE_DEFAULT
+  ) return natural is
+  begin
+    return get_last_received_cmd_idx(vvc_target, vvc_instance_idx, vvc_channel, "", scope);
+  end function;
+
+end package body td_vvc_framework_common_methods_pkg;

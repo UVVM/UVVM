@@ -443,14 +443,6 @@ package td_vvc_framework_common_methods_pkg is
 
   -- Returns the index of the last queued command
   impure function get_last_received_cmd_idx(
-    signal   vvc_target         : in t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant vvc_channel        : in t_channel := NA;
-    constant msg                : in string    := "";
-    constant scope              : in string    := C_VVC_CMD_SCOPE_DEFAULT
-  ) return natural;
-
-  impure function get_last_received_cmd_idx(
     signal   vvc_target         : in  t_vvc_target_record;
     constant vvc_instance_idx   : in  integer;
     constant vvc_channel        : in  t_channel := NA;
@@ -1009,13 +1001,12 @@ package body td_vvc_framework_common_methods_pkg is
   end procedure;
 
 
-  -- Returns the index of the last queued command
+  ---- Returns the index of the last queued command
   impure function get_last_received_cmd_idx(
-    signal   vvc_target        : in  t_vvc_target_record;
-    constant vvc_instance_idx  : in  integer;
-    constant vvc_channel       : in  t_channel := NA;
-    constant msg               : in  string    := "";
-    constant scope             : in  string    := C_VVC_CMD_SCOPE_DEFAULT
+    signal   vvc_target         : in  t_vvc_target_record;
+    constant vvc_instance_idx   : in  integer;
+    constant vvc_channel        : in  t_channel := NA;
+    constant scope              : in  string    := C_VVC_CMD_SCOPE_DEFAULT
   ) return natural is
     variable v_cmd_idx : integer := -1;
   begin
@@ -1027,16 +1018,6 @@ package body td_vvc_framework_common_methods_pkg is
       -- return 0 in case of failure
       return 0;
     end if;
-  end function;
-
-  impure function get_last_received_cmd_idx(
-    signal   vvc_target         : in  t_vvc_target_record;
-    constant vvc_instance_idx   : in  integer;
-    constant vvc_channel        : in  t_channel := NA;
-    constant scope              : in  string    := C_VVC_CMD_SCOPE_DEFAULT
-  ) return natural is
-  begin
-    return get_last_received_cmd_idx(vvc_target, vvc_instance_idx, vvc_channel, "", scope);
   end function;
 
 end package body td_vvc_framework_common_methods_pkg;

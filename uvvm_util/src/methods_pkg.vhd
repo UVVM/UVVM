@@ -2447,7 +2447,7 @@ package body methods_pkg is
           if (get_alert_stop_limit(alert_level) /= 0) then
             if (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
               if C_USE_STD_STOP_ON_ALERT_STOP_LIMIT then
-                std.env.stop;
+                std.env.stop(1);
               else
                 assert false report "This single Failure line has been provoked to stop the simulation. See alert-message above" severity failure;
               end if;

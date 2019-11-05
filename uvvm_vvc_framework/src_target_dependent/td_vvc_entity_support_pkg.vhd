@@ -968,8 +968,8 @@ package body td_vvc_entity_support_pkg is
     constant scope                                : in string := C_SCOPE
   ) is
   begin
-    procedure insert_inter_bfm_delay_if_requested(vvc_config, command_is_bfm_access, timestamp_start_of_last_bfm_access,
-                                                  timestamp_end_of_last_bfm_access, vvc_config.msg_id_panel, scope);
+    insert_inter_bfm_delay_if_requested(vvc_config, command_is_bfm_access, timestamp_start_of_last_bfm_access,
+                                        timestamp_end_of_last_bfm_access, vvc_config.msg_id_panel, scope);
   end procedure;
 
 end package body td_vvc_entity_support_pkg;

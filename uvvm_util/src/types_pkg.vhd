@@ -28,7 +28,6 @@ package types_pkg is
   file LOG_FILE : text;
 
   constant C_LOG_HDR_FOR_WAVEVIEW_WIDTH : natural := 100; -- For string in waveview indicating last log header
-  constant C_NUM_SYNC_FLAGS     : positive := 10;
   constant C_FLAG_NAME_LENGTH   : positive := 20;
 
   type t_void is (VOID);

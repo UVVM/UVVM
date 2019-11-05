@@ -129,31 +129,34 @@ begin
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
-    -- BFM config
     variable avl_st_bfm_config : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    variable data_array  : t_slv_array(0 to 8)(7 downto 0);
+    variable recv_array  : t_slv_array(0 to 8)(7 downto 0);
+    variable exp_array   : t_slv_array(0 to 8)(7 downto 0);
 
-    variable data_buffer : std_logic_vector(71 downto 0);
-    variable exp_buffer  : std_logic_vector(63 downto 0);
-
-    -- overload for this testbench
+    --------------------------------------------
+    -- Overloads for this testbench
+    --------------------------------------------
     procedure avalon_st_transmit (
-      data_value : in std_logic_vector) is
+      data_array : in t_slv_array;
+      channel    : in natural) is
     begin
-      avalon_st_transmit(to_unsigned(0, 32), data_value, "", clk, avalon_st_master_if, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+      avalon_st_transmit(to_unsigned(channel, GC_CHANNEL_WIDTH), data_array, "", clk, avalon_st_master_if, C_SCOPE,
+        shared_msg_id_panel, avl_st_bfm_config);
     end;
-
-    -- overload for this testbench
     procedure avalon_st_receive (
-      data_value : out std_logic_vector) is
+      data_array : out t_slv_array;
+      channel    : in natural) is
     begin
-      avalon_st_receive(to_unsigned(0, 32), data_value, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+      avalon_st_receive(to_unsigned(channel, GC_CHANNEL_WIDTH), data_array, "", clk, avalon_st_slave_if, C_SCOPE,
+        shared_msg_id_panel, avl_st_bfm_config);
     end;
-
-    -- overload for this testbench
     procedure avalon_st_expect (
-      data_exp : in std_logic_vector) is
+      exp_array : in t_slv_array;
+      channel   : in natural) is
     begin
-      avalon_st_expect(to_unsigned(0, 32), data_exp, "", clk, avalon_st_slave_if, error, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+      avalon_st_expect(to_unsigned(channel, GC_CHANNEL_WIDTH), exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE,
+        shared_msg_id_panel, avl_st_bfm_config);
     end;
 
   begin
@@ -167,18 +170,17 @@ begin
     await_uvvm_initialization(VOID);
 
     -- Override default config with settings for this testbench
-    --avl_st_bfm_config.max_wait_cycles          := 1000;
-    --avl_st_bfm_config.max_wait_cycles_severity := error;
+    avl_st_bfm_config.max_wait_cycles            := 1000;
+    avl_st_bfm_config.max_wait_cycles_severity   := error;
     avl_st_bfm_config.clock_period               := C_CLK_PERIOD;
     --avl_st_bfm_config.clock_period_margin      := -- Input clock period margin to specified clock_period
     --avl_st_bfm_config.clock_margin_severity    := -- The above margin will have this severity
-    --avl_st_bfm_config.setup_time               := C_CLK_PERIOD/4;
-    --avl_st_bfm_config.hold_time                := C_CLK_PERIOD/4;
-    --avl_st_bfm_config.byte_endianness          := t_byte_endianness; -- Byte ordering from left (big-endian) or right (little-endian)
-    --avl_st_bfm_config.uses_channels            := -- does this Streaming interface use channels?
-    avl_st_bfm_config.bits_per_clock             := 8;
-    --avl_st_bfm_config.ready_latency            := -- OPTIONAL: The number of cycles from the time that ready is asserted until
-    avl_st_bfm_config.received_too_much_severity := WARNING;
+    avl_st_bfm_config.setup_time                 := C_CLK_PERIOD/4;
+    avl_st_bfm_config.hold_time                  := C_CLK_PERIOD/4;
+    avl_st_bfm_config.bits_per_symbol            := 8;
+    avl_st_bfm_config.symbols_per_beat           := 9;
+    avl_st_bfm_config.first_symbol_in_msb        := false;
+    avl_st_bfm_config.max_channel                := 1;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -186,8 +188,6 @@ begin
 
     -- Verbosity control
     enable_log_msg(ALL_MESSAGES);
-    --disable_log_msg(ALL_MESSAGES);
-    --enable_log_msg(ID_LOG_HDR);
 
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Avalon-ST");
@@ -197,19 +197,27 @@ begin
 
     wait for 10*C_CLK_PERIOD;
 
-    log("Stream some data to FIFO, and read out again");
-    data_buffer := random(72);
-    avalon_st_transmit(data_buffer);
-    log("Read back and check what was sent");
-    avalon_st_expect(data_buffer);
+    for i in data_array'range loop
+      data_array(i) := random(data_array(0)'length);
+      if i mod 9 = 0 then
+        exp_array(i) := data_array(i);
+      else
+        exp_array(i) := x"--";
+      end if;
+    end loop;
 
-    log("Stream some more data to FIFO, and read out again");
-    data_buffer := random(72);
-    avalon_st_transmit(data_buffer);
-    exp_buffer(63 downto 0) := data_buffer(71 downto 8);
-    log("Read back and check what was sent, but with too small receive buffer");
-    increment_expected_alerts(warning, 1);
-    avalon_st_expect(exp_buffer);
+    log(ID_LOG_HDR, "Transmit some data to FIFO and receive output");
+    avalon_st_transmit(data_array, 0);
+    avalon_st_receive(recv_array, 0);
+
+    log(ID_LOG_HDR, "Transmit some data to FIFO and check expected output");
+    avalon_st_transmit(data_array, 1);
+    avalon_st_expect(exp_array, 1);
+
+    log(ID_LOG_HDR, "Transmit some data to FIFO and receive output, but with too small receive buffer");
+    avalon_st_transmit(data_array, 0);
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    avalon_st_receive(recv_array(0 to 7), 0);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

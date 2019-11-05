@@ -104,25 +104,29 @@ begin
   --------------------------------------------------------------------------------
   -- Instantiate DUT
   --------------------------------------------------------------------------------
-  i_sc_fifo : entity work.sc_fifo
+  i_avalon_st_fifo : entity work.avalon_st_fifo
+    generic map (
+      GC_DATA_WIDTH    => GC_DATA_WIDTH,
+      GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
+      GC_FIFO_DEPTH    => 256
+    )
     port map (
-      clk               => clk,
-      csr_address       => (others => '0'),
-      csr_read          => '0',
-      csr_readdata      => open,
-      csr_write         => '0',
-      csr_writedata     => (others => '0'),
-      in_data           => avalon_st_master_if.data(7 downto 0),
-      in_endofpacket    => avalon_st_master_if.end_of_packet,
-      in_ready          => avalon_st_master_if.ready,
-      in_startofpacket  => avalon_st_master_if.start_of_packet,
-      in_valid          => avalon_st_master_if.valid,
-      out_data          => avalon_st_slave_if.data(7 downto 0),
-      out_endofpacket   => avalon_st_slave_if.end_of_packet,
-      out_ready         => avalon_st_slave_if.ready,
-      out_startofpacket => avalon_st_slave_if.start_of_packet,
-      out_valid         => avalon_st_slave_if.valid,
-      reset             => areset
+      clk_i            => clk,
+      reset_i          => areset,
+      -- Slave stream interface
+      slave_data_i     => avalon_st_master_if.data,
+      slave_channel_i  => avalon_st_master_if.channel,
+      slave_valid_i    => avalon_st_master_if.valid,
+      slave_sop_i      => avalon_st_master_if.start_of_packet,
+      slave_eop_i      => avalon_st_master_if.end_of_packet,
+      slave_ready_o    => avalon_st_master_if.ready,
+      -- Master stream interface
+      master_data_o    => avalon_st_slave_if.data,
+      master_channel_o => avalon_st_slave_if.channel,
+      master_valid_o   => avalon_st_slave_if.valid,
+      master_sop_o     => avalon_st_slave_if.start_of_packet,
+      master_eop_o     => avalon_st_slave_if.end_of_packet,
+      master_ready_i   => avalon_st_slave_if.ready
     );
 
   --------------------------------------------------------------------------------
@@ -199,11 +203,7 @@ begin
 
     for i in data_array'range loop
       data_array(i) := random(data_array(0)'length);
-      if i mod 9 = 0 then
-        exp_array(i) := data_array(i);
-      else
-        exp_array(i) := x"--";
-      end if;
+      exp_array(i)  := data_array(i);
     end loop;
 
     log(ID_LOG_HDR, "Transmit some data to FIFO and receive output");

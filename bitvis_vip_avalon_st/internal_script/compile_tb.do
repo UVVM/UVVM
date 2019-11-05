@@ -26,9 +26,8 @@ echo "\n\n\n=== Compiling TB\n"
 
 
 # TB - DUTs
-echo "eval vcom  $compdirectives  $tb_path/sc_fifo.vhd"
-eval vcom  $compdirectives  $tb_path/sc_fifo.vhd
-
+echo "eval vcom  $compdirectives  $tb_path/avalon_st_fifo.vhd"
+eval vcom  $compdirectives  $tb_path/avalon_st_fifo.vhd
 
 
 # TBs

@@ -116,6 +116,17 @@ package td_vvc_entity_support_pkg is
     constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
     );
 
+  -- DEPRECATED
+  procedure await_cmd_from_sequencer(
+    constant vvc_labels        : in t_vvc_labels;
+    constant vvc_config        : in t_vvc_config;
+    signal VVCT                : in t_vvc_target_record;
+    signal VVC_BROADCAST       : inout std_logic;
+    signal global_vvc_busy     : inout std_logic;
+    signal vvc_ack             : out std_logic;
+    constant shared_vvc_cmd    : in t_vvc_cmd_record;
+    variable output_vvc_cmd    : out t_vvc_cmd_record
+    );
 
   -------------------------------------------
   -- put_command_on_queue
@@ -196,7 +207,8 @@ package td_vvc_entity_support_pkg is
     constant command              : in t_vvc_cmd_record;
     constant vvc_config           : in t_vvc_config;
     constant vvc_labels           : in t_vvc_labels;
-    signal terminate_current_cmd  : inout t_flag_record
+    signal terminate_current_cmd  : inout t_flag_record;
+    constant executor_is_busy     : in boolean := true
     );
 
 
@@ -306,7 +318,8 @@ package td_vvc_entity_support_pkg is
 
 
   procedure populate_shared_vvc_cmd_with_broadcast (
-    variable output_vvc_cmd   : out t_vvc_cmd_record
+    variable output_vvc_cmd   : out t_vvc_cmd_record;
+    constant scope            : in  string := C_SCOPE
   );
 
 end package td_vvc_entity_support_pkg;
@@ -452,14 +465,14 @@ package body td_vvc_entity_support_pkg is
   end function;
 
   procedure populate_shared_vvc_cmd_with_broadcast (
-    variable output_vvc_cmd   : out t_vvc_cmd_record
+    variable output_vvc_cmd   : out t_vvc_cmd_record;
+    constant scope            : in  string := C_SCOPE
   ) is
   begin
 
     -- Increment the shared command index. This is normally done in the CDM, but for broadcast commands it is done by the VVC itself.
     check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", C_SCOPE, ID_NEVER);
     await_semaphore_in_delta_cycles(protected_broadcast_semaphore);
-    shared_cmd_idx := shared_cmd_idx + 1;
 
     -- Populate the shared VVC command record
     output_vvc_cmd.operation    := broadcast_cmd_to_shared_cmd(shared_vvc_broadcast_cmd.operation);
@@ -474,11 +487,11 @@ package body td_vvc_entity_support_pkg is
     output_vvc_cmd.command_type := get_command_type_from_operation(shared_vvc_broadcast_cmd.operation);
 
     if global_show_msg_for_uvvm_cmd then
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_cmd.msg)) & "."
-          & format_command_idx(shared_cmd_idx), C_SCOPE);
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_broadcast_cmd.msg))
+          & format_command_idx(shared_cmd_idx), scope);
     else
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call)
-          & format_command_idx(shared_cmd_idx), C_SCOPE);
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call)
+          & format_command_idx(shared_cmd_idx), scope);
     end if;
     release_semaphore(protected_broadcast_semaphore);
 
@@ -520,7 +533,7 @@ package body td_vvc_entity_support_pkg is
       if VVC_BROADCAST'event and VVC_BROADCAST = '1' then
         v_was_broadcast := true;
         VVC_BROADCAST <= '1';
-        populate_shared_vvc_cmd_with_broadcast(output_vvc_cmd);
+        populate_shared_vvc_cmd_with_broadcast(output_vvc_cmd, vvc_labels.scope);
       else
         -- set VVC_BROADCAST to 0 to force a broadcast to wait for that VVC
         VVC_BROADCAST <= '0';

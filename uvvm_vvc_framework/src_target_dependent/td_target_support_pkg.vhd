@@ -87,7 +87,7 @@ package td_target_support_pkg is
   procedure send_command_to_vvc(                  -- VVC dedicated shared command used  shared_vvc_cmd
     signal   vvc_target   : inout t_vvc_target_record;
     constant timeout      : in    time                 := std.env.resolution_limit;
-    constant scope        : in    string               := C_VVC_CMD_SCOPE_DEFAULT;
+    constant scope        : in    string               := C_TB_SCOPE_DEFAULT & "(uvvm)";
     constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   );
 
@@ -97,7 +97,8 @@ package td_target_support_pkg is
   -------------------------------------------
   -- Returns a vvc target record with vvc_name and values specified in C_VVC_TARGET_RECORD_DEFAULT
   function set_vvc_target_defaults (
-    constant  vvc_name  : in string
+    constant  vvc_name  : in string;
+    constant  scope     : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) return t_vvc_target_record;
 
 
@@ -178,7 +179,7 @@ package body td_target_support_pkg is
         v_instance_string(1 to v_width) := v_line.all;
       end if;
       deallocate(v_line);
-      check_value(v_cnt < 2, TB_FAILURE, "Arbitration mechanism failed. Check VVC " & to_string(v_result.vvc_name) & " implementation and semaphore handling. Crashing instances with numbers " & v_instance_string(1 to v_width), C_SCOPE, ID_NEVER);
+      check_value(v_cnt < 2, TB_FAILURE, "Arbitration mechanism failed. Check VVC " & to_string(v_result.vvc_name) & " implementation and semaphore handling. Crashing instances with numbers " & v_instance_string(1 to v_width), "Multiple scopes", ID_NEVER);
       return v_result;
     end if;
   end resolved;
@@ -220,12 +221,13 @@ package body td_target_support_pkg is
 
 
   function set_vvc_target_defaults (
-    constant  vvc_name  : in string
+    constant  vvc_name  : in string;
+    constant  scope     : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) return t_vvc_target_record is
     variable v_rec : t_vvc_target_record := C_VVC_TARGET_RECORD_DEFAULT;
   begin
     if vvc_name'length > C_MAX_VVC_NAME_LENGTH then
-      alert(TB_FAILURE, "vvc_name is too long. Shorten name or set C_MAX_VVC_NAME_LENGTH in adaptation_pkg to desired length.", C_SCOPE);
+      alert(TB_FAILURE, "vvc_name is too long. Shorten name or set C_MAX_VVC_NAME_LENGTH in adaptation_pkg to desired length.", scope);
     end if;
     v_rec.vvc_name  := (others => NUL);
     v_rec.vvc_name(1 to vvc_name'length) := vvc_name;
@@ -278,7 +280,7 @@ package body td_target_support_pkg is
   procedure send_command_to_vvc(
     signal   vvc_target   : inout t_vvc_target_record;
     constant timeout      : in    time                 := std.env.resolution_limit;
-    constant scope        : in    string               := C_VVC_CMD_SCOPE_DEFAULT;
+    constant scope        : in    string               := C_TB_SCOPE_DEFAULT & "(uvvm)";
     constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   ) is
     constant C_CMD_INFO      : string := "uvvm cmd " & format_command_idx(shared_cmd_idx+1) & ": ";
@@ -321,7 +323,7 @@ package body td_target_support_pkg is
     vvc_target.trigger    <= '1';
     wait for 0 ns;
     -- the default value of vvc_target drives trigger to 'L' again
-    vvc_target <= set_vvc_target_defaults(vvc_target.vvc_name);
+    vvc_target <= set_vvc_target_defaults(vvc_target.vvc_name, scope);
 
     while v_ack_cmd_idx /= v_local_cmd_idx loop
       wait until global_vvc_ack = '1' for ((v_start_time + timeout) - now);

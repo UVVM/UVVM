@@ -31,10 +31,9 @@ use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 entity avalon_st_simple_tb is
   generic(
     GC_TEST          : string  := "UVVM";
-    GC_CHANNEL_WIDTH : natural := 8;
     GC_DATA_WIDTH    : natural := 32;
-    GC_ERROR_WIDTH   : natural := 1;
-    GC_EMPTY_WIDTH   : natural := 1
+    GC_CHANNEL_WIDTH : natural := 8;
+    GC_ERROR_WIDTH   : natural := 1
   );
 end entity;
 
@@ -43,8 +42,9 @@ architecture func of avalon_st_simple_tb is
   --------------------------------------------------------------------------------
   -- Types and constants declarations
   --------------------------------------------------------------------------------
-  constant C_CLK_PERIOD : time   := 10 ns;
-  constant C_SCOPE      : string := C_TB_SCOPE_DEFAULT;
+  constant C_CLK_PERIOD   : time   := 10 ns;
+  constant C_SCOPE        : string := C_TB_SCOPE_DEFAULT;
+  constant C_SYMBOL_WIDTH : natural := 8;
 
   --------------------------------------------------------------------------------
   -- Signal declarations
@@ -58,36 +58,11 @@ architecture func of avalon_st_simple_tb is
   signal avalon_st_master_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
                                               data(GC_DATA_WIDTH-1 downto 0),
                                               data_error(GC_ERROR_WIDTH-1 downto 0),
-                                              empty(GC_EMPTY_WIDTH-1 downto 0));
+                                              empty(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH)-1 downto 0));
   signal avalon_st_slave_if  : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
                                               data(GC_DATA_WIDTH-1 downto 0),
                                               data_error(GC_ERROR_WIDTH-1 downto 0),
-                                              empty(GC_EMPTY_WIDTH-1 downto 0));
-
-  --------------------------------------------------------------------------------
-  -- Component declarations
-  --------------------------------------------------------------------------------
-  -- sc_fifo generated with Quartus Qsys system
-  component sc_fifo is
-    port (
-      clk               : in  std_logic;
-      csr_address       : in  std_logic_vector(2 downto 0);
-      csr_read          : in  std_logic;
-      csr_readdata      : out std_logic_vector(31 downto 0);
-      csr_write         : in  std_logic;
-      csr_writedata     : in  std_logic_vector(31 downto 0);
-      in_data           : in  std_logic_vector(7 downto 0);
-      in_endofpacket    : in  std_logic;
-      in_ready          : out std_logic;
-      in_startofpacket  : in  std_logic;
-      in_valid          : in  std_logic;
-      out_data          : out std_logic_vector(7 downto 0);
-      out_endofpacket   : out std_logic;
-      out_ready         : in  std_logic;
-      out_startofpacket : out std_logic;
-      out_valid         : out std_logic;
-      reset             : in  std_logic);
-  end component sc_fifo;
+                                              empty(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH)-1 downto 0));
 
 begin
 
@@ -108,6 +83,8 @@ begin
     generic map (
       GC_DATA_WIDTH    => GC_DATA_WIDTH,
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
+      GC_EMPTY_WIDTH   => log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH),
+      GC_ERROR_WIDTH   => GC_ERROR_WIDTH,
       GC_FIFO_DEPTH    => 256
     )
     port map (
@@ -116,6 +93,8 @@ begin
       -- Slave stream interface
       slave_data_i     => avalon_st_master_if.data,
       slave_channel_i  => avalon_st_master_if.channel,
+      slave_empty_i    => avalon_st_master_if.empty,
+      slave_error_i    => avalon_st_master_if.data_error,
       slave_valid_i    => avalon_st_master_if.valid,
       slave_sop_i      => avalon_st_master_if.start_of_packet,
       slave_eop_i      => avalon_st_master_if.end_of_packet,
@@ -123,6 +102,8 @@ begin
       -- Master stream interface
       master_data_o    => avalon_st_slave_if.data,
       master_channel_o => avalon_st_slave_if.channel,
+      master_empty_o   => avalon_st_slave_if.empty,
+      master_error_o   => avalon_st_slave_if.data_error,
       master_valid_o   => avalon_st_slave_if.valid,
       master_sop_o     => avalon_st_slave_if.start_of_packet,
       master_eop_o     => avalon_st_slave_if.end_of_packet,
@@ -134,34 +115,44 @@ begin
   --------------------------------------------------------------------------------
   p_main : process
     variable avl_st_bfm_config : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    variable data_array  : t_slv_array(0 to 7)(7 downto 0);
-    variable recv_array  : t_slv_array(0 to 7)(7 downto 0);
-    variable exp_array   : t_slv_array(0 to 7)(7 downto 0);
+    variable data_packet    : t_slv_array(0 to 99)(7 downto 0);
+    variable data_packet_1B : t_slv_array(0 to 0)(7 downto 0);
+    variable data_packet_2B : t_slv_array(0 to 1)(7 downto 0);
+    variable data_packet_3B : t_slv_array(0 to 2)(7 downto 0);
+    variable data_packet_4B : t_slv_array(0 to 3)(7 downto 0);
 
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
     procedure avalon_st_transmit (
       data_array : in t_slv_array;
-      channel    : in natural) is
+      channel    : in natural := 0) is
     begin
       avalon_st_transmit(to_unsigned(channel, GC_CHANNEL_WIDTH), data_array, "", clk, avalon_st_master_if, C_SCOPE,
         shared_msg_id_panel, avl_st_bfm_config);
-    end;
+    end procedure;
     procedure avalon_st_receive (
       data_array : out t_slv_array;
-      channel    : in natural) is
+      channel    : in natural := 0) is
     begin
       avalon_st_receive(to_unsigned(channel, GC_CHANNEL_WIDTH), data_array, "", clk, avalon_st_slave_if, C_SCOPE,
         shared_msg_id_panel, avl_st_bfm_config);
-    end;
+    end procedure;
     procedure avalon_st_expect (
       exp_array : in t_slv_array;
-      channel   : in natural) is
+      channel   : in natural := 0) is
     begin
       avalon_st_expect(to_unsigned(channel, GC_CHANNEL_WIDTH), exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE,
         shared_msg_id_panel, avl_st_bfm_config);
-    end;
+    end procedure;
+
+    procedure new_random_array (
+      data_array : inout t_slv_array) is
+    begin
+      for i in data_array'range loop
+        data_array(i) := random(data_array(0)'length);
+      end loop;
+    end procedure;
 
   begin
 
@@ -181,7 +172,7 @@ begin
     --avl_st_bfm_config.clock_margin_severity    := -- The above margin will have this severity
     avl_st_bfm_config.setup_time               := C_CLK_PERIOD/4;
     avl_st_bfm_config.hold_time                := C_CLK_PERIOD/4;
-    avl_st_bfm_config.symbol_width             := 8;
+    avl_st_bfm_config.symbol_width             := C_SYMBOL_WIDTH;
     avl_st_bfm_config.first_symbol_in_msb      := false;
     avl_st_bfm_config.max_channel              := 1;
 
@@ -197,26 +188,48 @@ begin
     --------------------------------------------------------------------------------
     clock_ena <= true; -- start clock generator
     gen_pulse(areset, 10*C_CLK_PERIOD, "Pulsing reset for 10 clock periods");
-
     wait for 10*C_CLK_PERIOD;
 
-    for i in data_array'range loop
-      data_array(i) := random(data_array(0)'length);
-      exp_array(i)  := data_array(i);
+    --------------------------------------------------------------------------------
+    log(ID_LOG_HDR_LARGE, "Simulating packet-based data");
+    --------------------------------------------------------------------------------
+    -- Generate random data
+    new_random_array(data_packet);
+    new_random_array(data_packet_1B);
+    new_random_array(data_packet_2B);
+    new_random_array(data_packet_3B);
+    new_random_array(data_packet_4B);
+
+    log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
+    avalon_st_transmit(data_packet(2 to 6));
+    avalon_st_receive(data_packet(2 to 6));
+    avalon_st_transmit(data_packet(3 to 8));
+    avalon_st_expect(data_packet(3 to 8));
+
+    log(ID_LOG_HDR, "Testing shortest packets possible");
+    for i in 0 to 3 loop
+      for j in 0 to i loop
+        avalon_st_transmit(data_packet_1B);
+      end loop;
+      for j in 0 to i loop
+        avalon_st_expect(data_packet_1B);
+      end loop;
     end loop;
 
-    log(ID_LOG_HDR, "Transmit some data to FIFO and receive output");
-    avalon_st_transmit(data_array, 0);
-    avalon_st_receive(recv_array, 0);
+    log(ID_LOG_HDR, "Testing different packet sizes");
+    avalon_st_transmit(data_packet_2B);
+    avalon_st_transmit(data_packet_3B);
+    avalon_st_transmit(data_packet_4B);
+    avalon_st_transmit(data_packet);
+    avalon_st_expect(data_packet_2B);
+    avalon_st_expect(data_packet_3B);
+    avalon_st_expect(data_packet_4B);
+    avalon_st_expect(data_packet);
 
-    log(ID_LOG_HDR, "Transmit some data to FIFO and check expected output");
-    avalon_st_transmit(data_array, 1);
-    avalon_st_expect(exp_array, 1);
-
-    log(ID_LOG_HDR, "Transmit some data to FIFO and receive output, but with too small receive buffer");
-    avalon_st_transmit(data_array, 0);
+    log(ID_LOG_HDR, "Transmit receive() with too small buffer");
+    avalon_st_transmit(data_packet);
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_receive(recv_array(0 to recv_array'length-2), 0);
+    avalon_st_receive(data_packet(0 to data_packet'length-2));
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

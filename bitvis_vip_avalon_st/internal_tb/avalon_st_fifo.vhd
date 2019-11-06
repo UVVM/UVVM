@@ -6,6 +6,8 @@ entity avalon_st_fifo is
    generic (
       GC_DATA_WIDTH    : natural := 8;
       GC_CHANNEL_WIDTH : natural := 1;
+      GC_EMPTY_WIDTH   : natural := 1;
+      GC_ERROR_WIDTH   : natural := 1;
       GC_FIFO_DEPTH    : natural := 256
    );
    port (
@@ -14,6 +16,8 @@ entity avalon_st_fifo is
       -- Slave stream interface: data in
       slave_data_i     : in  std_logic_vector(GC_DATA_WIDTH-1 downto 0);
       slave_channel_i  : in  std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0);
+      slave_empty_i    : in  std_logic_vector(GC_EMPTY_WIDTH-1 downto 0);
+      slave_error_i    : in  std_logic_vector(GC_ERROR_WIDTH-1 downto 0);
       slave_valid_i    : in  std_logic;
       slave_sop_i      : in  std_logic; 
       slave_eop_i      : in  std_logic; 
@@ -21,6 +25,8 @@ entity avalon_st_fifo is
       -- Master stream interface: data out
       master_data_o    : out std_logic_vector(GC_DATA_WIDTH-1 downto 0);
       master_channel_o : out std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0);
+      master_empty_o   : out std_logic_vector(GC_EMPTY_WIDTH-1 downto 0);
+      master_error_o   : out std_logic_vector(GC_ERROR_WIDTH-1 downto 0);
       master_valid_o   : out std_logic := '0';
       master_sop_o     : out std_logic;
       master_eop_o     : out std_logic;
@@ -41,6 +47,12 @@ begin
 
       type t_channel_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0);
       variable v_channel_mem : t_channel_mem;
+
+      type t_empty_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_EMPTY_WIDTH-1 downto 0);
+      variable v_empty_mem : t_empty_mem;
+
+      type t_error_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_ERROR_WIDTH-1 downto 0);
+      variable v_error_mem : t_error_mem;
 
       type t_sop_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic;
       variable v_sop_mem : t_sop_mem;
@@ -81,6 +93,8 @@ begin
             -- FIFO output 
             master_data_o    <= v_data_mem(v_RdPtr);
             master_channel_o <= v_channel_mem(v_RdPtr);
+            master_empty_o   <= v_empty_mem(v_RdPtr);
+            master_error_o   <= v_error_mem(v_RdPtr);
             master_sop_o     <= v_sop_mem(v_RdPtr);
             master_eop_o     <= v_eop_mem(v_RdPtr);
 
@@ -91,6 +105,8 @@ begin
                   -- Write Data to Memory
                   v_data_mem(v_WrPtr)    := slave_data_i;
                   v_channel_mem(v_WrPtr) := slave_channel_i;
+                  v_empty_mem(v_WrPtr)   := slave_empty_i;
+                  v_error_mem(v_WrPtr)   := slave_error_i;
                   v_sop_mem(v_WrPtr)     := slave_sop_i;
                   v_eop_mem(v_WrPtr)     := slave_eop_i;
 

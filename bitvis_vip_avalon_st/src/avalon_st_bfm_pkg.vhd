@@ -220,8 +220,7 @@ package body avalon_st_bfm_pkg is
     ) is
 
     constant proc_name : string := "avalon_st_transmit";
-    constant proc_call : string := "avalon_st_transmit(Channel:" & to_string(channel_value, HEX, AS_IS, INCL_RADIX) &
-                                   ", " & to_string(data_array, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " sym)";
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
 
@@ -277,6 +276,9 @@ package body avalon_st_bfm_pkg is
       else
         avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width) <= v_normalized_data(symbol);
       end if;
+      log(ID_PACKET_DATA, proc_call & "=> ch:" & to_string(channel_value, DEC, AS_IS) & ", "
+        & to_string(v_normalized_data(symbol), HEX, AS_IS, INCL_RADIX) & " (symbol# " & to_string(symbol) & "). " &
+        add_msg_delimiter(msg), scope, msg_id_panel);
       -- Set packet transfer signals
       avalon_st_if.start_of_packet <= '1' when symbol/c_symbols_per_beat = 0 else '0';
       if symbol = v_normalized_data'high then
@@ -313,7 +315,7 @@ package body avalon_st_bfm_pkg is
     end loop;
 
     -- Done
-    log(ID_PACKET_COMPLETE, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(ID_PACKET_COMPLETE, proc_call & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure avalon_st_transmit;
 
   ---------------------------------------------------------------------------------------------
@@ -334,8 +336,7 @@ package body avalon_st_bfm_pkg is
     ) is  
 
     constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call : string := local_proc_name & "(Channel:" & to_string(channel_value, HEX, AS_IS, INCL_RADIX) &
-                                         ")"; -- Internal proc_call; Used if called from sequencer or VVC
+    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " sym)"; -- Internal proc_call; Used if called from sequencer or VVC
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
 
@@ -430,6 +431,9 @@ package body avalon_st_bfm_pkg is
 
         -- Sample data
         v_normalized_data(v_sym_cnt) := avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width);
+        log(ID_PACKET_DATA, v_proc_call.all & "=> ch:" & to_string(channel_value, DEC, AS_IS) & ", "  &
+          to_string(v_normalized_data(v_sym_cnt), HEX, AS_IS, INCL_RADIX) & " (symbol# " & to_string(v_sym_cnt) & "). " &
+          add_msg_delimiter(msg), scope, msg_id_panel);
 
         -- Check for packet transfer signals
         if v_sym_cnt/c_symbols_per_beat = 0 and avalon_st_if.start_of_packet = '0' then
@@ -499,8 +503,7 @@ package body avalon_st_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " &
         add_msg_delimiter(msg), scope);
     else
-      log(ID_PACKET_COMPLETE, v_proc_call.all & "=> " & to_string(data_array, HEX, SKIP_LEADING_0, INCL_RADIX) & " completed. " &
-        add_msg_delimiter(msg), scope, msg_id_panel);
+      log(ID_PACKET_COMPLETE, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure avalon_st_receive;
 
@@ -520,8 +523,7 @@ package body avalon_st_bfm_pkg is
     ) is
 
     constant proc_name : string := "avalon_st_expect";
-    constant proc_call : string := "avalon_st_expect(Channel:" & to_string(channel_value, HEX, AS_IS, INCL_RADIX) &
-                                   ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym)";
     -- Helper variables
     variable v_normalized_exp     : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
     variable v_rx_data_array      : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0);
@@ -530,7 +532,7 @@ package body avalon_st_bfm_pkg is
 
   begin
     -- Receive data
-    avalon_st_receive(channel_value, v_rx_data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, proc_name);
+    avalon_st_receive(channel_value, v_rx_data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, proc_call);
 
     -- Check if each received bit matches the expected.
     -- Report the first wrong symbol (iterate from the last to the first)
@@ -553,10 +555,8 @@ package body avalon_st_bfm_pkg is
         to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) &
         ". Expected " & to_string(v_normalized_exp(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_exp, HEX, SKIP_LEADING_0, INCL_RADIX) &
-        ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      --log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "B. " & add_msg_delimiter(msg),
-      --  scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " symbols. " &
+        add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure avalon_st_expect;
 

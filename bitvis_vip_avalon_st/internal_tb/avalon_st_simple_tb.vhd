@@ -174,7 +174,7 @@ begin
     avl_st_bfm_config.hold_time                := C_CLK_PERIOD/4;
     avl_st_bfm_config.symbol_width             := C_SYMBOL_WIDTH;
     avl_st_bfm_config.first_symbol_in_msb      := false;
-    avl_st_bfm_config.max_channel              := 1;
+    avl_st_bfm_config.max_channel              := 64;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -182,6 +182,7 @@ begin
 
     -- Verbosity control
     enable_log_msg(ALL_MESSAGES);
+    disable_log_msg(ID_PACKET_DATA);
 
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Avalon-ST");
@@ -216,20 +217,34 @@ begin
       end loop;
     end loop;
 
-    log(ID_LOG_HDR, "Testing different packet sizes");
-    avalon_st_transmit(data_packet_2B);
-    avalon_st_transmit(data_packet_3B);
-    avalon_st_transmit(data_packet_4B);
-    avalon_st_transmit(data_packet);
-    avalon_st_expect(data_packet_2B);
-    avalon_st_expect(data_packet_3B);
-    avalon_st_expect(data_packet_4B);
-    avalon_st_expect(data_packet);
+    log(ID_LOG_HDR, "Testing different packet sizes and channels");
+    avalon_st_transmit(data_packet_2B, 2);
+    avalon_st_transmit(data_packet_3B, 3);
+    avalon_st_transmit(data_packet_4B, 4);
+    avalon_st_transmit(data_packet, 50);
+    avalon_st_expect(data_packet_2B, 2);
+    avalon_st_expect(data_packet_3B, 3);
+    avalon_st_expect(data_packet_4B, 4);
+    avalon_st_expect(data_packet, 50);
 
-    log(ID_LOG_HDR, "Transmit receive() with too small buffer");
-    avalon_st_transmit(data_packet);
+    log(ID_LOG_HDR, "Testing error case: receive() with missing start of packet");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_receive(data_packet(0 to data_packet'length-2));
+    << signal i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';
+    avalon_st_transmit(data_packet_2B);
+    avalon_st_receive(data_packet_2B);
+    << signal i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+
+    log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    << signal i_avalon_st_fifo.master_eop_o : std_logic >> <= force '0';
+    avalon_st_transmit(data_packet);
+    avalon_st_receive(data_packet);
+    << signal i_avalon_st_fifo.master_eop_o : std_logic >> <= release;
+
+    log(ID_LOG_HDR, "Testing error case: receive() timeout");
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    avalon_st_receive(data_packet);
+    new_random_array(data_packet); -- Overwrite invalid data array after error
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

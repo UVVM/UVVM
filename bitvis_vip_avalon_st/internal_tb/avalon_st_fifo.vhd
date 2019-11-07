@@ -43,22 +43,22 @@ begin
    -- Memory Pointer Process
    p_main : process (clk_i)
       type t_data_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_DATA_WIDTH-1 downto 0);
-      variable v_data_mem : t_data_mem;
+      variable v_data_mem : t_data_mem := (others => (others => '0'));
 
       type t_channel_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0);
-      variable v_channel_mem : t_channel_mem;
+      variable v_channel_mem : t_channel_mem := (others => (others => '0'));
 
       type t_empty_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_EMPTY_WIDTH-1 downto 0);
-      variable v_empty_mem : t_empty_mem;
+      variable v_empty_mem : t_empty_mem := (others => (others => '0'));
 
       type t_error_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic_vector(GC_ERROR_WIDTH-1 downto 0);
-      variable v_error_mem : t_error_mem;
+      variable v_error_mem : t_error_mem := (others => (others => '0'));
 
       type t_sop_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic;
-      variable v_sop_mem : t_sop_mem;
+      variable v_sop_mem : t_sop_mem := (others => '0');
 
       type t_eop_mem is array (0 to GC_FIFO_DEPTH-1) of std_logic;
-      variable v_eop_mem : t_eop_mem;
+      variable v_eop_mem : t_eop_mem := (others => '0');
 
       variable v_WrPtr  : natural range 0 to GC_FIFO_DEPTH-1 := 0; -- Write pointer
       variable v_RdPtr  : natural range 0 to GC_FIFO_DEPTH-1 := 0; -- Read pointer

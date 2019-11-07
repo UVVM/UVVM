@@ -220,7 +220,8 @@ package body avalon_st_bfm_pkg is
     ) is
 
     constant proc_name : string := "avalon_st_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " sym)";
+    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " sym, ch:" &
+                                   to_string(channel_value, DEC, AS_IS) & ")";
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
 
@@ -234,14 +235,14 @@ package body avalon_st_bfm_pkg is
     variable v_wait_for_transfer : boolean := false;
 
   begin
-    check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_ERROR, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(c_symbols_per_beat <= C_MAX_SYMBOLS_PER_BEAT, TB_ERROR, "Sanity check: Check that c_symbols_per_beat doesn't exceed C_MAX_SYMBOLS_PER_BEAT.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(to_integer(v_normalized_chan) <= config.max_channel, TB_ERROR, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_ERROR, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_ERROR, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(data_array(data_array'low)'length = c_sym_width, TB_ERROR, "Sanity check: Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(data_array'ascending, TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.clock_period /= 0 ns, TB_ERROR, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_FAILURE, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(c_symbols_per_beat <= C_MAX_SYMBOLS_PER_BEAT, TB_FAILURE, "Sanity check: Check that c_symbols_per_beat doesn't exceed C_MAX_SYMBOLS_PER_BEAT.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(to_integer(v_normalized_chan) <= config.max_channel, TB_FAILURE, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_FAILURE, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -276,9 +277,8 @@ package body avalon_st_bfm_pkg is
       else
         avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width) <= v_normalized_data(symbol);
       end if;
-      log(ID_PACKET_DATA, proc_call & "=> ch:" & to_string(channel_value, DEC, AS_IS) & ", "
-        & to_string(v_normalized_data(symbol), HEX, AS_IS, INCL_RADIX) & " (symbol# " & to_string(symbol) & "). " &
-        add_msg_delimiter(msg), scope, msg_id_panel);
+      log(ID_PACKET_DATA, proc_call & "=> " & to_string(v_normalized_data(symbol), HEX, AS_IS, INCL_RADIX) & " (symbol# " &
+        to_string(symbol) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
       -- Set packet transfer signals
       avalon_st_if.start_of_packet <= '1' when symbol/c_symbols_per_beat = 0 else '0';
       if symbol = v_normalized_data'high then
@@ -336,7 +336,8 @@ package body avalon_st_bfm_pkg is
     ) is  
 
     constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " sym)"; -- Internal proc_call; Used if called from sequencer or VVC
+    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " sym, ch:" &
+                                         to_string(channel_value, DEC, AS_IS) & ")"; -- Internal proc_call; Used if called from sequencer or VVC
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
 
@@ -363,14 +364,14 @@ package body avalon_st_bfm_pkg is
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
-    check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_ERROR, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(c_symbols_per_beat <= C_MAX_SYMBOLS_PER_BEAT, TB_ERROR, "Sanity check: Check that c_symbols_per_beat doesn't exceed C_MAX_SYMBOLS_PER_BEAT.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(to_integer(v_normalized_chan) <= config.max_channel, TB_ERROR, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_ERROR, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_ERROR, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(data_array(data_array'low)'length = c_sym_width, TB_ERROR, "Sanity check: Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(data_array'ascending, TB_ERROR, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.clock_period /= 0 ns, TB_ERROR, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_FAILURE, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(c_symbols_per_beat <= C_MAX_SYMBOLS_PER_BEAT, TB_FAILURE, "Sanity check: Check that c_symbols_per_beat doesn't exceed C_MAX_SYMBOLS_PER_BEAT.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(to_integer(v_normalized_chan) <= config.max_channel, TB_FAILURE, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_FAILURE, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -431,13 +432,12 @@ package body avalon_st_bfm_pkg is
 
         -- Sample data
         v_normalized_data(v_sym_cnt) := avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width);
-        log(ID_PACKET_DATA, v_proc_call.all & "=> ch:" & to_string(channel_value, DEC, AS_IS) & ", "  &
-          to_string(v_normalized_data(v_sym_cnt), HEX, AS_IS, INCL_RADIX) & " (symbol# " & to_string(v_sym_cnt) & "). " &
-          add_msg_delimiter(msg), scope, msg_id_panel);
+        log(ID_PACKET_DATA, v_proc_call.all & "=> "  & to_string(v_normalized_data(v_sym_cnt), HEX, AS_IS, INCL_RADIX) &
+          " (symbol# " & to_string(v_sym_cnt) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
 
-        -- Check for packet transfer signals
-        if v_sym_cnt/c_symbols_per_beat = 0 and avalon_st_if.start_of_packet = '0' then
-          alert(error, v_proc_call.all & "=> Failed. Start of packet not set for first valid transfer.");
+        -- Check that start of packet is received
+        if v_sym_cnt = 0 and avalon_st_if.start_of_packet = '0' then
+          alert(error, v_proc_call.all & "=> Failed. Start of packet not set for first valid transfer." & add_msg_delimiter(msg), scope);
         end if;
         if c_symbols_per_beat > 1 then
           v_empty_symbols := to_integer(unsigned(avalon_st_if.empty));
@@ -461,11 +461,18 @@ package body avalon_st_bfm_pkg is
         -- Counter for symbol index in data array
         v_sym_cnt := v_sym_cnt + 1;
 
-        -- Check that received data fits in the data array
-        if (v_sym_cnt > v_normalized_data'length) or ((v_sym_cnt = v_normalized_data'length) and v_done = false) then
-          alert(error, v_proc_call.all & "=> Failed. Received more data than expected.");
+        -- Check that end of packet is received
+        if v_sym_cnt = v_normalized_data'length and v_done = false then
+          alert(error, v_proc_call.all & "=> Failed. End of packet not received, expected at symbol#" & to_string(v_sym_cnt) &
+            ". " & add_msg_delimiter(msg), scope);
           v_done := true;
         end if;
+
+        -- Check that received data fits in the data array
+        --if v_sym_cnt > v_normalized_data'length then
+        --  alert(error, v_proc_call.all & "=> Failed. Received more data than expected. " & add_msg_delimiter(msg), scope);
+        --  v_done := true;
+        --end if;
 
         --log("v_sym_cnt: " & to_string(v_sym_cnt));
         --log("v_sym_in_beat: " & to_string(v_sym_in_beat));
@@ -523,7 +530,8 @@ package body avalon_st_bfm_pkg is
     ) is
 
     constant proc_name : string := "avalon_st_expect";
-    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym)";
+    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym, ch:" &
+                                   to_string(channel_value, DEC, AS_IS) & ")";
     -- Helper variables
     variable v_normalized_exp     : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
     variable v_rx_data_array      : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0);

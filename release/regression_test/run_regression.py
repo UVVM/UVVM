@@ -53,7 +53,7 @@ def main():
   num_failing_tests = 0
 
   for module in modules:
-    print("Starting %s. %i failing tests up to now" %(module, num_failing_tests))
+    print("Starting %s. Total number of failing tests: %i." %(module, num_failing_tests))
     cd_to_module(module)
     num_failing_tests += simulate_module(module)
 

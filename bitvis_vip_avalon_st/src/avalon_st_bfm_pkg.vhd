@@ -61,10 +61,9 @@ package avalon_st_bfm_pkg is
     symbol_width                : natural;       -- Number of data bits sent per symbol.
     first_symbol_in_msb         : boolean;       -- Symbol ordering. When true, first-order symbol is in most significant bits.
     max_channel                 : natural;       -- Maximum number of channels the interface supports.
+    use_packet_transfer         : boolean;       -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
     -- Common
     id_for_bfm                  : t_msg_id;      -- The message ID used as a general message ID in the BFM
-    --id_for_bfm_wait             : t_msg_id;      -- The message ID used for logging waits in the BFM
-    --id_for_bfm_poll             : t_msg_id;      -- The message ID used for logging polling in the BFM
   end record;
 
   -- Define the default value for the BFM config
@@ -79,17 +78,13 @@ package avalon_st_bfm_pkg is
     symbol_width                => 8,
     first_symbol_in_msb         => true,
     max_channel                 => 0,
+    use_packet_transfer         => true,
     id_for_bfm                  => ID_BFM
-    --id_for_bfm_wait             => ID_BFM_WAIT,
-    --id_for_bfm_poll             => ID_BFM_POLL
   );
 
   --==========================================================================================
   -- BFM procedures
   --==========================================================================================
-  -- This function returns the log2 of a positive number.
-  function log2(num : positive) return natural;
-
   -- This function returns an Avalon-ST interface with initialized signals.
   -- All input signals are initialized to 0
   -- All output signals are initialized to Z
@@ -156,15 +151,6 @@ end package avalon_st_bfm_pkg;
 --================================================================================================================================
 package body avalon_st_bfm_pkg is
 
-  function log2(num : positive) return natural is
-    variable ret : natural := 0;
-  begin
-    while (2**ret < num) and (ret < 31) loop
-      ret := ret + 1;
-    end loop;
-    return ret;
-  end function;
-
   function init_avalon_st_if_signals(
     is_master        : boolean; -- When true, this BFM drives data signals
     channel_width    : natural;
@@ -225,13 +211,15 @@ package body avalon_st_bfm_pkg is
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
 
-    -- Normalize to the DUT chan/data widths
+    -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : unsigned(channel_value'length-1 downto 0) :=
       normalize_and_check(channel_value, unsigned(avalon_st_if.channel), ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0) := data_array;
 
     -- Helper variables
+    variable v_symbol_array      : t_slv_array_ptr;
     variable v_sym_in_beat       : natural := 0;
+    variable v_data_offset       : natural := 0;
     variable v_wait_for_transfer : boolean := false;
 
   begin
@@ -240,13 +228,35 @@ package body avalon_st_bfm_pkg is
     check_value(to_integer(v_normalized_chan) <= config.max_channel, TB_FAILURE, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_FAILURE, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
+    if config.use_packet_transfer then
+      check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: (Packet mode) Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
+    else
+      check_value(data_array(data_array'low)'length = avalon_st_if.data'length, TB_FAILURE, "Sanity check: (Stream mode) Check that data_array elements have the size of the data bus.", scope, ID_NEVER, msg_id_panel, proc_call);
+    end if;
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
+
+    -- Create a symbol array to make it easier to iterate through the data
+    if config.use_packet_transfer then
+      v_symbol_array := new t_slv_array(0 to v_normalized_data'length-1)(c_sym_width-1 downto 0);
+      v_symbol_array.all := v_normalized_data;
+    else
+      v_symbol_array := new t_slv_array(0 to v_normalized_data'length*c_symbols_per_beat-1)(c_sym_width-1 downto 0);
+      for i in 0 to v_normalized_data'length-1 loop
+        for j in 0 to c_symbols_per_beat-1 loop
+          if config.first_symbol_in_msb then
+            v_data_offset := (c_symbols_per_beat-1-j)*c_sym_width;
+          else
+            v_data_offset := j*c_sym_width;
+          end if;
+          v_symbol_array(i*c_symbols_per_beat+j) := v_normalized_data(i)(v_data_offset+c_sym_width-1 downto v_data_offset);
+        end loop;
+      end loop;
+    end if;
 
     avalon_st_if <= init_avalon_st_if_signals(is_master        => true, -- this BFM drives data signals
                                               channel_width    => avalon_st_if.channel'length,
@@ -264,29 +274,31 @@ package body avalon_st_bfm_pkg is
     log(ID_PACKET_INITIATE, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     ------------------------------------------------------------
-    -- Send all the symbols in the data_array
+    -- Send all the symbols in the symbol array
     ------------------------------------------------------------
-    for symbol in 0 to v_normalized_data'high loop
+    for symbol in 0 to v_symbol_array'high loop
       v_wait_for_transfer := false;
 
       -- Set basic interface signals
       avalon_st_if.valid   <= '1';
       avalon_st_if.channel <= std_logic_vector(v_normalized_chan);
+      -- Insert the symbols into the data bus according to the configured order
       if config.first_symbol_in_msb then
-        --avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width) <= v_normalized_data(symbol);
+        v_data_offset := (c_symbols_per_beat-1-v_sym_in_beat)*c_sym_width;
       else
-        avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width) <= v_normalized_data(symbol);
+        v_data_offset := v_sym_in_beat*c_sym_width;
       end if;
-      log(ID_PACKET_DATA, proc_call & "=> " & to_string(v_normalized_data(symbol), HEX, AS_IS, INCL_RADIX) & " (symbol# " &
+      avalon_st_if.data(v_data_offset+c_sym_width-1 downto v_data_offset) <= v_symbol_array(symbol);
+      log(ID_PACKET_DATA, proc_call & "=> " & to_string(v_symbol_array(symbol), HEX, AS_IS, INCL_RADIX) & " (symbol# " &
         to_string(symbol) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+
       -- Set packet transfer signals
-      avalon_st_if.start_of_packet <= '1' when symbol/c_symbols_per_beat = 0 else '0';
-      if symbol = v_normalized_data'high then
-        avalon_st_if.end_of_packet <= '1';
-        v_wait_for_transfer := true;
-      end if;
-      if c_symbols_per_beat > 1 then
-        avalon_st_if.empty <= std_logic_vector(to_unsigned(c_symbols_per_beat-1-v_sym_in_beat, avalon_st_if.empty'length));
+      if config.use_packet_transfer then
+        avalon_st_if.start_of_packet <= '1' when symbol/c_symbols_per_beat = 0 else '0';
+        avalon_st_if.end_of_packet   <= '1' when symbol = v_symbol_array'high else '0';
+        if c_symbols_per_beat > 1 then
+          avalon_st_if.empty <= std_logic_vector(to_unsigned(c_symbols_per_beat-1-v_sym_in_beat, avalon_st_if.empty'length));
+        end if;
       end if;
 
       -- Counter for the symbol index within the current cycle
@@ -295,6 +307,11 @@ package body avalon_st_bfm_pkg is
         v_wait_for_transfer := true;
       else
         v_sym_in_beat       := v_sym_in_beat + 1;
+      end if;
+
+      -- Always transfer the data in the last cycle
+      if symbol = v_symbol_array'high then
+        v_wait_for_transfer := true;
       end if;
 
       if v_wait_for_transfer then
@@ -341,12 +358,13 @@ package body avalon_st_bfm_pkg is
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
 
-    -- Normalize to the DUT chan/data widths
+    -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : unsigned(channel_value'length-1 downto 0) :=
       normalize_and_check(channel_value, unsigned(avalon_st_if.channel), ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0);
 
     -- Helper variables
+    variable v_symbol_array      : t_slv_array_ptr;
     variable v_proc_call         : line; -- Current proc_call, external or local
     variable v_sym_in_beat       : natural := 0;
     variable v_sym_cnt           : integer := 0;  -- # symbols received
@@ -354,6 +372,7 @@ package body avalon_st_bfm_pkg is
     variable v_done              : boolean := false;
     variable v_timeout           : boolean := false;
     variable v_empty_symbols     : natural := 0;
+    variable v_data_offset       : natural := 0;
 
   begin
     -- If called from sequencer/VVC, show 'avalon_st_receive()...' in log
@@ -369,13 +388,24 @@ package body avalon_st_bfm_pkg is
     check_value(to_integer(v_normalized_chan) <= config.max_channel, TB_FAILURE, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_FAILURE, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if config.use_packet_transfer then
+      check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: (Packet mode) Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    else
+      check_value(data_array(data_array'low)'length = avalon_st_if.data'length, TB_FAILURE, "Sanity check: (Stream mode) Check that data_array elements have the size of the data bus.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    end if;
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+
+    -- Create a symbol array to make it easier to iterate through the data
+    if config.use_packet_transfer then
+      v_symbol_array := new t_slv_array(0 to v_normalized_data'length-1)(c_sym_width-1 downto 0);
+    else
+      v_symbol_array := new t_slv_array(0 to v_normalized_data'length*c_symbols_per_beat-1)(c_sym_width-1 downto 0);
+    end if;
 
     avalon_st_if <= init_avalon_st_if_signals(is_master        => false,
                                               channel_width    => avalon_st_if.channel'length,
@@ -409,7 +439,7 @@ package body avalon_st_bfm_pkg is
             else
               -- Valid and Ready are high but it's already past the rising edge of the
               -- clock so the data must be sampled on the next cycle
-              --v_sample_on_next_cycle := true;
+              --v_sample_on_next_cycle := true; ***
             end if;
           else
             -- Valid timed out
@@ -430,53 +460,64 @@ package body avalon_st_bfm_pkg is
       if avalon_st_if.valid = '1' and avalon_st_if.ready = '1' then
         v_invalid_count := 0;
 
-        -- Sample data
-        v_normalized_data(v_sym_cnt) := avalon_st_if.data(v_sym_in_beat*c_sym_width+c_sym_width-1 downto v_sym_in_beat*c_sym_width);
-        log(ID_PACKET_DATA, v_proc_call.all & "=> "  & to_string(v_normalized_data(v_sym_cnt), HEX, AS_IS, INCL_RADIX) &
+        -- Sample the symbols from the data bus according to the configured order
+        if config.first_symbol_in_msb then
+          v_data_offset := (c_symbols_per_beat-1-v_sym_in_beat)*c_sym_width;
+        else
+          v_data_offset := v_sym_in_beat*c_sym_width;
+        end if;
+        v_symbol_array(v_sym_cnt) := avalon_st_if.data(v_data_offset+c_sym_width-1 downto v_data_offset);
+        log(ID_PACKET_DATA, v_proc_call.all & "=> "  & to_string(v_symbol_array(v_sym_cnt), HEX, AS_IS, INCL_RADIX) &
           " (symbol# " & to_string(v_sym_cnt) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
 
-        -- Check that start of packet is received
-        if v_sym_cnt = 0 and avalon_st_if.start_of_packet = '0' then
-          alert(error, v_proc_call.all & "=> Failed. Start of packet not set for first valid transfer." & add_msg_delimiter(msg), scope);
-        end if;
-        if c_symbols_per_beat > 1 then
-          v_empty_symbols := to_integer(unsigned(avalon_st_if.empty));
+        -- Sample the packet transfer signals
+        if config.use_packet_transfer then
+          -- Check that start of packet is received only on the first data transfer
+          if v_sym_cnt = 0 and avalon_st_if.start_of_packet = '0' then
+            alert(error, v_proc_call.all & "=> Failed. Start of packet not set at first valid transfer. " & add_msg_delimiter(msg), scope);
+          elsif v_sym_cnt/c_symbols_per_beat > 0 and v_sym_in_beat = 0 and avalon_st_if.start_of_packet = '1' then
+            alert(error, v_proc_call.all & "=> Failed. Start of packet set at symbol #" & to_string(v_sym_cnt) & ". " & add_msg_delimiter(msg), scope);
+          end if;
+          -- Check the number of empty symbols on the last data transfer
+          if c_symbols_per_beat > 1 then
+            v_empty_symbols := to_integer(unsigned(avalon_st_if.empty));
+          end if;
+          -- Check that end of packet is received only on the last data transfer
+          if v_sym_cnt = v_symbol_array'length-1 and avalon_st_if.end_of_packet = '0' then
+            alert(error, v_proc_call.all & "=> Failed. End of packet not set at last valid transfer. " & add_msg_delimiter(msg), scope);
+            v_done := true;
+          -- Check that end of packet is not received too early
+          elsif v_sym_cnt/c_symbols_per_beat < v_symbol_array'length/c_symbols_per_beat-1 and v_sym_in_beat = 0 and avalon_st_if.end_of_packet = '1' then
+            alert(error, v_proc_call.all & "=> Failed. End of packet set at symbol #" & to_string(v_sym_cnt) & ". " & add_msg_delimiter(msg), scope);
+            v_done := true;
+          end if;
         end if;
 
-        -- Finish receiving data when end of packet is asserted
-        if avalon_st_if.end_of_packet = '1' and v_sym_in_beat = c_symbols_per_beat-1-v_empty_symbols then
+        -- Finish receiving data when the symbol array ends
+        if v_sym_cnt = v_symbol_array'length-1 then
           v_done := true;
+          -- Check that empty signal is set on the last data transfer
+          if v_sym_in_beat /= c_symbols_per_beat-1-v_empty_symbols then
+            alert(error, v_proc_call.all & "=> Failed. Empty signal not set correctly for the last transfer. " & add_msg_delimiter(msg), scope);
+          end if;
         end if;
 
         -- Counter for the symbol index within the current cycle
         if v_sym_in_beat = c_symbols_per_beat-1 then
           v_sym_in_beat := 0;
           -- Don't wait on the last cycle
-          if avalon_st_if.end_of_packet = '0' then
+          if v_sym_cnt < v_symbol_array'length-1 then
             wait for config.clock_period;
           end if;
         else
           v_sym_in_beat := v_sym_in_beat + 1;
         end if;
-        -- Counter for symbol index in data array
+        -- Counter for symbol index in symbol array
         v_sym_cnt := v_sym_cnt + 1;
-
-        -- Check that end of packet is received
-        if v_sym_cnt = v_normalized_data'length and v_done = false then
-          alert(error, v_proc_call.all & "=> Failed. End of packet not received, expected at symbol#" & to_string(v_sym_cnt) &
-            ". " & add_msg_delimiter(msg), scope);
-          v_done := true;
-        end if;
-
-        -- Check that received data fits in the data array
-        --if v_sym_cnt > v_normalized_data'length then
-        --  alert(error, v_proc_call.all & "=> Failed. Received more data than expected. " & add_msg_delimiter(msg), scope);
-        --  v_done := true;
-        --end if;
 
         --log("v_sym_cnt: " & to_string(v_sym_cnt));
         --log("v_sym_in_beat: " & to_string(v_sym_in_beat));
-        --log("v_normalized_data'length: " & to_string(v_normalized_data'length));
+        --log("v_symbol_array'length: " & to_string(v_symbol_array'length));
       ------------------------------------------------------------
       -- Data couldn't be sampled, wait until next cycle
       ------------------------------------------------------------
@@ -493,12 +534,26 @@ package body avalon_st_bfm_pkg is
 
     end loop;
 
+    -- Send the data with the matching the interface width
+    if config.use_packet_transfer then
+      v_normalized_data := v_symbol_array.all;
+    else
+      for i in 0 to v_normalized_data'length-1 loop
+        for j in 0 to c_symbols_per_beat-1 loop
+          if config.first_symbol_in_msb then
+            v_data_offset := (c_symbols_per_beat-1-j)*c_sym_width;
+          else
+            v_data_offset := j*c_sym_width;
+          end if;
+          v_normalized_data(i)(v_data_offset+c_sym_width-1 downto v_data_offset) := v_symbol_array(i*c_symbols_per_beat+j);
+        end loop;
+      end loop;
+    end if;
     data_array := v_normalized_data;
+
     -- Set the number of symbols received ***
     --data_length := v_sym_cnt;
 
-    --wait until rising_edge(clk);
-    --wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
     avalon_st_if <= init_avalon_st_if_signals(is_master        => false,
                                               channel_width    => avalon_st_if.channel'length,
                                               data_width       => avalon_st_if.data'length,

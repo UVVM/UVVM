@@ -38,6 +38,10 @@ use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
 
+-- Randomisation
+library crfc;
+use crfc.Randompkg.all;
+
 --=================================================================================================
 entity sbi_vvc is
   generic (
@@ -212,6 +216,7 @@ begin
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH-1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
     variable v_msg_id_panel                          : t_msg_id_panel;
+    variable v_random                                : RandomPType;
 
   begin
 
@@ -228,6 +233,8 @@ begin
     shared_sbi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
     shared_sbi_sb.enable_log_msg(ID_DATA);
 
+    -- Setup randomisation
+    v_random.InitSeed ("SBI_VVC")  ; 
 
     loop
 
@@ -283,7 +290,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data := std_logic_vector(to_unsigned(random(0, 16), v_cmd.data'length)); -- Hard coded for TB example
+                v_cmd.data := std_logic_vector(to_unsigned(v_random.RandInt(0, 16), v_cmd.data'length)); -- Hard coded for TB example
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA

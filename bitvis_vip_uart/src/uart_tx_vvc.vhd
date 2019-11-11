@@ -35,6 +35,9 @@ use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
+-- Randomisation
+library crfc;
+use crfc.Randompkg.all;
 
 --=================================================================================================
 entity uart_tx_vvc is
@@ -199,15 +202,8 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_msg_id_panel                           : t_msg_id_panel;
-    variable v_normalised_data    : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-
-    procedure activity_watchdog_register_vvc_state(busy : boolean) is
-    begin
-      shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                          busy                  => busy,
-                                                          last_cmd_idx_executed => last_cmd_idx_executed);
-      gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", C_SCOPE, ID_NEVER);
-    end procedure;
+    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_random                                 : RandomPType;
 
   begin
 
@@ -217,6 +213,11 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+
+    -- Setup randomisation
+    v_random.InitSeed ("UART_VVC")  ; 
+    
+    
     loop
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);
@@ -272,7 +273,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data := random(v_cmd.data'length);
+                v_cmd.data := v_random.RandSlv(0, v_cmd.data'length, v_cmd.data'length); -- Hard coded for TB example
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA

@@ -26,7 +26,7 @@ def simulate(log_to_transcript):
   sim_log.log("\n" + component)
   sim_log.log("\n" + separation_line)
 
-  os.chdir("sim")
+  os.chdir("internal_script")
 
   # Delete old compiled libraries and simulations if any
   if os.path.exists("vunit_out"):
@@ -57,12 +57,22 @@ def simulate(log_to_transcript):
     shutil.rmtree("vunit_out")
 
   os.chdir("../script")
-  sim = subprocess.run(["py", "run_demo.py"], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_simulate.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+
+  demo_pass = False
   if sim.returncode == 0:
+    # Check transcript for any errors
+    with open("transcript", "r") as transcript:
+      lines = transcript.read().splitlines()
+      last_line = lines[-1]
+      if "Errors: 0" in last_line.strip():
+        demo_pass = True
+
+  if demo_pass:
     sim_log.log("\nDemo : PASS")
   else:
     sim_log.log("\nDemo : FAILED")
-    sim_log.log("\n" + sim.stderr)
+    sim_log.log(sim.stderr)
 
   # Delete compiled libraries and transcripts
   if os.path.exists("modelsim.ini"):

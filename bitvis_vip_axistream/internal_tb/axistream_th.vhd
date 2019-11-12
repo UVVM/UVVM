@@ -34,34 +34,27 @@ entity test_harness is
     signal areset       : in std_logic;
 
     -- BFM
-    signal axistream_if_m_VVC2FIFO : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0), 
+    signal axistream_if_m_VVC2FIFO : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0),
                                                 tkeep( (GC_DATA_WIDTH/8)-1 downto 0),
                                                 tuser(  GC_USER_WIDTH   -1 downto 0),
-                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0), 
-                                                tid(    GC_ID_WIDTH     -1 downto 0), 
-                                                tdest(  GC_DEST_WIDTH   -1 downto 0) 
+                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0),
+                                                tid(    GC_ID_WIDTH     -1 downto 0),
+                                                tdest(  GC_DEST_WIDTH   -1 downto 0)
                                               );
-    signal axistream_if_s_FIFO2VVC : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0), 
+    signal axistream_if_s_FIFO2VVC : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0),
                                                 tkeep( (GC_DATA_WIDTH/8)-1 downto 0),
-                                                tuser(  GC_USER_WIDTH   -1 downto 0), 
-                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0), 
-                                                tid(    GC_ID_WIDTH     -1 downto 0), 
-                                                tdest(  GC_DEST_WIDTH   -1 downto 0) 
+                                                tuser(  GC_USER_WIDTH   -1 downto 0),
+                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0),
+                                                tid(    GC_ID_WIDTH     -1 downto 0),
+                                                tdest(  GC_DEST_WIDTH   -1 downto 0)
                                               );
 
-    signal axistream_if_m_VVC2VVC : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0), 
+    signal axistream_if_m_VVC2VVC : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0),
                                                 tkeep( (GC_DATA_WIDTH/8)-1 downto 0),
-                                                tuser(  GC_USER_WIDTH   -1 downto 0), 
-                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0), 
-                                                tid(    GC_ID_WIDTH     -1 downto 0), 
-                                                tdest(  GC_DEST_WIDTH   -1 downto 0) 
-                                              );
-    signal axistream_if_s_VVC2VVC : inout t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0), 
-                                                tkeep( (GC_DATA_WIDTH/8)-1 downto 0),
-                                                tuser(  GC_USER_WIDTH   -1 downto 0), 
-                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0), 
-                                                tid(    GC_ID_WIDTH     -1 downto 0), 
-                                                tdest(  GC_DEST_WIDTH   -1 downto 0) 
+                                                tuser(  GC_USER_WIDTH   -1 downto 0),
+                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0),
+                                                tid(    GC_ID_WIDTH     -1 downto 0),
+                                                tdest(  GC_DEST_WIDTH   -1 downto 0)
                                               )
   );
 
@@ -70,56 +63,87 @@ end entity test_harness;
 --=================================================================================================
 architecture struct_simple of test_harness is
 
+  signal s_axis_tready  :  std_logic;
+  signal s_axis_tvalid  :  std_logic;
+  signal s_axis_tdata   :  std_logic_vector (GC_DATA_WIDTH   - 1 downto 0);
+  signal s_axis_tuser   :  std_logic_vector (GC_USER_WIDTH   - 1 downto 0);
+  signal s_axis_tkeep   :  std_logic_vector (GC_DATA_WIDTH/8 - 1 downto 0);
+  signal s_axis_tlast   :  std_logic;
 
+  signal m_axis_tready  : std_logic;
+  signal m_axis_tvalid  : std_logic;
+  signal m_axis_tdata   : std_logic_vector (GC_DATA_WIDTH   - 1 downto 0);
+  signal m_axis_tuser   : std_logic_vector (GC_USER_WIDTH   - 1 downto 0);
+  signal m_axis_tkeep   : std_logic_vector (GC_DATA_WIDTH/8 - 1 downto 0);
+  signal m_axis_tlast   : std_logic;
 
 begin
+
+
+  -- Mapping of interface to signals is done to make TB run in Riviera Pro.
+  -- Values are not propagated when interface elements are mapped directly
+  -- to ports. Riviera-PRO version 2018.10.137.7135
+  axistream_if_m_VVC2FIFO.tready <= s_axis_tready;
+  s_axis_tvalid                  <= axistream_if_m_VVC2FIFO.tvalid;
+  s_axis_tdata                   <= axistream_if_m_VVC2FIFO.tdata;
+  s_axis_tuser                   <= axistream_if_m_VVC2FIFO.tuser;
+  s_axis_tkeep                   <= axistream_if_m_VVC2FIFO.tkeep;
+  s_axis_tlast                   <= axistream_if_m_VVC2FIFO.tlast;
+
+  m_axis_tready                  <= axistream_if_s_FIFO2VVC.tready;
+  axistream_if_s_FIFO2VVC.tvalid <= m_axis_tvalid;
+  axistream_if_s_FIFO2VVC.tdata  <= m_axis_tdata;
+  axistream_if_s_FIFO2VVC.tuser  <= m_axis_tuser;
+  axistream_if_s_FIFO2VVC.tkeep  <= m_axis_tkeep;
+  axistream_if_s_FIFO2VVC.tlast  <= m_axis_tlast;
+
   -----------------------------
-  -- Instantiate a DUT model : a self-made AXI-Stream FIFO 
+  -- Instantiate a DUT model : a self-made AXI-Stream FIFO
   -- (I tried using a Xilinx FIFO IP between the BFMs but could only get verilog files, causing Modelsim licencing issues)
   -----------------------------
    i_axis_fifo : entity work.axis_fifo
    generic map (
-      GC_DATA_WIDTH => GC_DATA_WIDTH , 
-      GC_USER_WIDTH => GC_USER_WIDTH , 
+      GC_DATA_WIDTH => GC_DATA_WIDTH ,
+      GC_USER_WIDTH => GC_USER_WIDTH ,
       GC_FIFO_DEPTH => GC_DUT_FIFO_DEPTH
    )
    PORT MAP (
      rst     => areset,
-     clk        => clk, 
-     s_axis_tready      => axistream_if_m_VVC2FIFO.tready,
-     s_axis_tvalid      => axistream_if_m_VVC2FIFO.tvalid,
-     s_axis_tdata       => axistream_if_m_VVC2FIFO.tdata,
-     s_axis_tuser       => axistream_if_m_VVC2FIFO.tuser,
-     s_axis_tkeep       => axistream_if_m_VVC2FIFO.tkeep,
-     s_axis_tlast       => axistream_if_m_VVC2FIFO.tlast,
-     m_axis_tready      => axistream_if_s_FIFO2VVC.tready,
-     m_axis_tvalid      => axistream_if_s_FIFO2VVC.tvalid,
-     m_axis_tdata       => axistream_if_s_FIFO2VVC.tdata,
-     m_axis_tuser       => axistream_if_s_FIFO2VVC.tuser,
-     m_axis_tkeep       => axistream_if_s_FIFO2VVC.tkeep,
-     m_axis_tlast       => axistream_if_s_FIFO2VVC.tlast,
+     clk        => clk,
+     s_axis_tready      => s_axis_tready,
+     s_axis_tvalid      => s_axis_tvalid,
+     s_axis_tdata       => s_axis_tdata,
+     s_axis_tuser       => s_axis_tuser,
+     s_axis_tkeep       => s_axis_tkeep,
+     s_axis_tlast       => s_axis_tlast,
+     m_axis_tready      => m_axis_tready,
+     m_axis_tvalid      => m_axis_tvalid,
+     m_axis_tdata       => m_axis_tdata,
+     m_axis_tuser       => m_axis_tuser,
+     m_axis_tkeep       => m_axis_tkeep,
+     m_axis_tlast       => m_axis_tlast,
      empty              => open
    );
 
 end struct_simple;
-  
+
 --=================================================================================================
 architecture struct_vvc of test_harness is
 
 begin
   -----------------------------
-  -- Instantiate a DUT model : a self-made AXI-Stream FIFO 
+  -- Instantiate a DUT model : a self-made AXI-Stream FIFO
   -- (I tried using a Xilinx FIFO IP between the BFMs but could only get verilog files, causing Modelsim licencing issues)
   -----------------------------
    i_axis_fifo : entity work.axis_fifo
    generic map (
-      GC_DATA_WIDTH => GC_DATA_WIDTH , 
-      GC_USER_WIDTH => GC_USER_WIDTH , 
+      GC_DATA_WIDTH => GC_DATA_WIDTH ,
+      GC_USER_WIDTH => GC_USER_WIDTH ,
       GC_FIFO_DEPTH => GC_DUT_FIFO_DEPTH
    )
    PORT MAP (
      rst     => areset,
-     clk        => clk, 
+     clk        => clk,
      s_axis_tready      => axistream_if_m_VVC2FIFO.tready,
      s_axis_tvalid      => axistream_if_m_VVC2FIFO.tvalid,
      s_axis_tdata       => axistream_if_m_VVC2FIFO.tdata,
@@ -136,12 +160,12 @@ begin
    );
 
    -- This is not necessary, the BFM can receive 'U' without problems
-   -- axistream_if_s_FIFO2VVC.tstrb   <= (others => '0'); 
-   -- axistream_if_s_FIFO2VVC.tid   <= (others => '0'); 
-   -- axistream_if_s_FIFO2VVC.tdest   <= (others => '0'); 
+   -- axistream_if_s_FIFO2VVC.tstrb   <= (others => '0');
+   -- axistream_if_s_FIFO2VVC.tid   <= (others => '0');
+   -- axistream_if_s_FIFO2VVC.tdest   <= (others => '0');
    -- g_Not_Include_tuser: if (not GC_INCLUDE_TUSER) generate
-   --    axistream_if_s_FIFO2VVC.tuser <= (others => '0'); 
-   -- end generate; 
+   --    axistream_if_s_FIFO2VVC.tuser <= (others => '0');
+   -- end generate;
 
   -----------------------------
   -- vvc/executors
@@ -152,10 +176,12 @@ begin
       GC_VVC_IS_MASTER => true,
       GC_DATA_WIDTH   => GC_DATA_WIDTH,
       GC_USER_WIDTH   => GC_USER_WIDTH,
+      GC_ID_WIDTH     => GC_ID_WIDTH,
+      GC_DEST_WIDTH   => GC_DEST_WIDTH,
       GC_INSTANCE_IDX => 0
       )
     port map(
-      clk               => clk, 
+      clk               => clk,
       axistream_vvc_if  => axistream_if_m_VVC2FIFO
       );
 
@@ -165,11 +191,13 @@ begin
       GC_VVC_IS_MASTER => false,
       GC_DATA_WIDTH   => GC_DATA_WIDTH,
       GC_USER_WIDTH   => GC_USER_WIDTH,
+      GC_ID_WIDTH     => GC_ID_WIDTH,
+      GC_DEST_WIDTH   => GC_DEST_WIDTH,
       GC_INSTANCE_IDX => 1
       )
     port map(
-      clk              => clk, 
-      axistream_vvc_if => axistream_if_s_FIFO2VVC 
+      clk              => clk,
+      axistream_vvc_if => axistream_if_s_FIFO2VVC
     );
 
   --------------------------------------------------------------------
@@ -180,10 +208,12 @@ begin
       GC_VVC_IS_MASTER => true,
       GC_DATA_WIDTH   => GC_DATA_WIDTH,
       GC_USER_WIDTH   => GC_USER_WIDTH,
+      GC_ID_WIDTH     => GC_ID_WIDTH,
+      GC_DEST_WIDTH   => GC_DEST_WIDTH,
       GC_INSTANCE_IDX => 2
       )
     port map(
-      clk               => clk, 
+      clk               => clk,
       axistream_vvc_if  => axistream_if_m_VVC2VVC
       );
 
@@ -193,12 +223,14 @@ begin
       GC_VVC_IS_MASTER => false,
       GC_DATA_WIDTH   => GC_DATA_WIDTH,
       GC_USER_WIDTH   => GC_USER_WIDTH,
+      GC_ID_WIDTH     => GC_ID_WIDTH,
+      GC_DEST_WIDTH   => GC_DEST_WIDTH,
       GC_INSTANCE_IDX => 3
       )
     port map(
-      clk              => clk, 
+      clk              => clk,
       axistream_vvc_if => axistream_if_m_VVC2VVC
-    ); 
+    );
 
 end struct_vvc;
 
@@ -208,25 +240,27 @@ begin
   -- Multiple VVCs just to test await_any_completion
   -----------------------------
   gen_axistream_vvc_master : for i in 0 to 7 generate
-    signal axistream_if_m_local : t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0), 
+    signal axistream_if_m_local : t_axistream_if( tdata(  GC_DATA_WIDTH   -1 downto 0),
                                                 tkeep( (GC_DATA_WIDTH/8)-1 downto 0),
                                                 tuser(  GC_USER_WIDTH   -1 downto 0),
-                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0), 
-                                                tid(    GC_ID_WIDTH     -1 downto 0), 
-                                                tdest(  GC_DEST_WIDTH   -1 downto 0) 
+                                                tstrb(  GC_DATA_WIDTH/8 -1 downto 0),
+                                                tid(    GC_ID_WIDTH     -1 downto 0),
+                                                tdest(  GC_DEST_WIDTH   -1 downto 0)
                                               );
   begin
-    axistream_if_m_local.tready <= '1'; 
+    axistream_if_m_local.tready <= '1';
 
     i_axistream_vvc_master : entity work.axistream_vvc
       generic map(
         GC_VVC_IS_MASTER => true,
         GC_DATA_WIDTH    => GC_DATA_WIDTH,
         GC_USER_WIDTH    => GC_USER_WIDTH,
+        GC_ID_WIDTH      => GC_ID_WIDTH,
+        GC_DEST_WIDTH    => GC_DEST_WIDTH,
         GC_INSTANCE_IDX  => i
         )
       port map(
-        clk               => clk, 
+        clk               => clk,
         axistream_vvc_if  => axistream_if_m_local
         );
   end generate gen_axistream_vvc_master;

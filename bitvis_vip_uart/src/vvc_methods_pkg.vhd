@@ -111,20 +111,22 @@ package vvc_methods_pkg is
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
   
 
-  --==============================================================================
-  -- Methods dedicated to this VVC
-  -- - These procedures are called from the testbench in order to queue BFM calls 
-  --   in the VVC command queue. The VVC will store and forward these calls to the 
-  --   UART BFM when the command is at the from of the VVC command queue. 
-  -- - For details on how the BFM procedures work, see uart_bfm_pkg.vhd.
-  --==============================================================================
+  --==========================================================================================
+  -- Methods dedicated to this VVC 
+  -- - These procedures are called from the testbench in order for the VVC to execute
+  --   BFM calls towards the given interface. The VVC interpreter will queue these calls
+  --   and then the VVC executor will fetch the commands from the queue and handle the
+  --   actual BFM execution.
+  --   For details on how the BFM procedures work, see the QuickRef.
+  --==========================================================================================
 
   procedure uart_transmit(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
     constant data               : in std_logic_vector;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   procedure uart_receive(
@@ -132,7 +134,8 @@ package vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
     constant msg                : in string;
-    constant alert_level        : in t_alert_level := ERROR
+    constant alert_level        : in t_alert_level := ERROR;
+    constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   procedure uart_expect(
@@ -143,7 +146,8 @@ package vvc_methods_pkg is
     constant msg                : in string;
     constant max_receptions     : in natural       := 1;
     constant timeout            : in time          := -1 ns;
-    constant alert_level        : in t_alert_level := ERROR
+    constant alert_level        : in t_alert_level := ERROR;
+    constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
 end package vvc_methods_pkg;
@@ -155,7 +159,8 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
     constant data               : in std_logic_vector;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
@@ -169,7 +174,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.operation                     := TRANSMIT;
     shared_vvc_cmd.data                          := v_normalised_data;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure uart_receive(
@@ -177,7 +182,8 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant channel            : in t_channel;
     constant msg                : in string;
-    constant alert_level        : in t_alert_level := ERROR
+    constant alert_level        : in t_alert_level := ERROR;
+    constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
@@ -189,7 +195,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.operation     := RECEIVE;
     shared_vvc_cmd.alert_level   := alert_level;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
   procedure uart_expect(
@@ -200,7 +206,8 @@ package body vvc_methods_pkg is
     constant msg                : in string;
     constant max_receptions     : in natural       := 1;
     constant timeout            : in time          := -1 ns;
-    constant alert_level        : in t_alert_level := ERROR
+    constant alert_level        : in t_alert_level := ERROR;
+    constant scope              : in string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
@@ -221,7 +228,7 @@ package body vvc_methods_pkg is
     else
       shared_vvc_cmd.timeout                     := timeout;
     end if;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
 end package body vvc_methods_pkg;

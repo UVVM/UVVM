@@ -26,9 +26,38 @@ def simulate(log_to_transcript):
   sim_log.log("\n" + component)
   sim_log.log("\n" + separation_line)
 
-  os.chdir("script")
+  os.chdir("internal_script")
 
-  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_sim_uart_vvc_tb.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  # Delete old compiled libraries and simulations if any
+  if os.path.exists("vunit_out"):
+    shutil.rmtree("vunit_out")
+
+  # Simulate in modelsim
+  sim = subprocess.run(["py", "internal_run.py", "-p8"], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  if sim.returncode == 0:
+    sim_log.log("\nModelsim : PASS")
+  else:
+    sim_log.log("\nModelsim : FAILED")
+    sim_log.log("\n" + sim.stderr)
+
+  # Delete compiled libraries and simulations
+  if os.path.exists("vunit_out"):
+    shutil.rmtree("vunit_out")
+
+  # Simulate in Riviera Pro
+  sim = subprocess.run(["py", "internal_run_riviera_pro.py"], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  if sim.returncode == 0:
+    sim_log.log("\nRiviera Pro : PASS")
+  else:
+    sim_log.log("\nRiviera Pro : FAILED")
+    sim_log.log("\n" + sim.stderr)
+
+  # Delete compiled libraries and simulations
+  if os.path.exists("vunit_out"):
+    shutil.rmtree("vunit_out")
+
+  os.chdir("../script")
+  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_simulate.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
 
   demo_pass = False
   if sim.returncode == 0:
@@ -70,8 +99,11 @@ def simulate(log_to_transcript):
   if os.path.exists("../../bitvis_vip_sbi/sim/bitvis_vip_sbi"):
     shutil.rmtree("../../bitvis_vip_sbi/sim/bitvis_vip_sbi")
 
-  if os.path.exists("../../bitvis_vip_sbi/sim/bitvis_vip_uart"):
-    shutil.rmtree("../../bitvis_vip_sbi/sim/bitvis_vip_uart")
+  if os.path.exists("../../bitvis_vip_uart/sim/bitvis_vip_uart"):
+    shutil.rmtree("../../bitvis_vip_uart/sim/bitvis_vip_uart")
+
+  if os.path.exists("../../bitvis_vip_clock_generator/sim/bitvis_vip_clock_generator"):
+    shutil.rmtree("../../bitvis_vip_clock_generator/sim/bitvis_vip_clock_generator")
 
   # Return to main component directory
   os.chdir("..")

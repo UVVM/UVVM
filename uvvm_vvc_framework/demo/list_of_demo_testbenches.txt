@@ -1,7 +1,0 @@
------------------------------------------------------------
--- List of demo testbenches                              -- 
------------------------------------------------------------
-
- - /bitvis_uart/tb
-    - Navigate to /bitvis_uart/sim
-    - Open "bitvis_uart.mpf" or run "vsim -c -do ../script/compile_all_and_sim_uart_vvc_tb.do"

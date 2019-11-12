@@ -152,7 +152,8 @@ package ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
-    constant quietness          : in t_quietness := NON_QUIET
+    constant quietness          : in t_quietness := NON_QUIET;
+    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -163,7 +164,8 @@ package ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
-    constant quietness          : in t_quietness := NON_QUIET
+    constant quietness          : in t_quietness := NON_QUIET;
+    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -172,7 +174,8 @@ package ti_vvc_framework_support_pkg is
   -- Flushes the command queue for all VVCs
   procedure flush_command_queue(
     signal VVC_BROADCAST        : inout std_logic;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -182,7 +185,8 @@ package ti_vvc_framework_support_pkg is
   procedure insert_delay(
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in natural;  -- in clock cycles
-    constant msg                : in string  := ""
+    constant msg                : in string  := "";
+    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -192,7 +196,8 @@ package ti_vvc_framework_support_pkg is
   procedure insert_delay(
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in time;
-    constant msg                : in string  := ""
+    constant msg                : in string  := "";
+    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -202,7 +207,8 @@ package ti_vvc_framework_support_pkg is
   procedure await_completion(
     signal VVC_BROADCAST        : inout std_logic;
     constant timeout            : in time;
-    constant msg                : in string  := ""
+    constant msg                : in string  := "";
+    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -211,7 +217,8 @@ package ti_vvc_framework_support_pkg is
   -- terminates all current tasks
   procedure terminate_current_command(
     signal VVC_BROADCAST        : inout std_logic;
-    constant msg                : in string  := ""
+    constant msg                : in string  := "";
+    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -220,7 +227,8 @@ package ti_vvc_framework_support_pkg is
   -- terminates all tasks
   procedure terminate_all_commands(
     signal VVC_BROADCAST        : inout std_logic;
-    constant msg                : in string  := ""
+    constant msg                : in string  := "";
+    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
   -------------------------------------------
   -- transmit_broadcast
@@ -235,7 +243,8 @@ package ti_vvc_framework_support_pkg is
     constant quietness          : in t_quietness  := NON_QUIET;
     constant delay              : in time         := 0 ns;
     constant delay_int          : in integer      := -1;
-    constant timeout            : in time         := std.env.resolution_limit
+    constant timeout            : in time         := std.env.resolution_limit;
+    constant scope              : in string       := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   -------------------------------------------
@@ -329,12 +338,13 @@ package body ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
-    constant quietness          : in t_quietness := NON_QUIET
+    constant quietness          : in t_quietness := NON_QUIET;
+    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "enable_log_msg";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_upper(to_string(msg_id)) & ")";
   begin
-    transmit_broadcast(VVC_BROADCAST, ENABLE_LOG_MSG, proc_call, msg_id, msg, quietness);
+    transmit_broadcast(VVC_BROADCAST, ENABLE_LOG_MSG, proc_call, msg_id, msg, quietness, scope => scope);
   end procedure;
 
 
@@ -342,79 +352,86 @@ package body ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
-    constant quietness          : in t_quietness := NON_QUIET
+    constant quietness          : in t_quietness := NON_QUIET;
+    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "disable_log_msg";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_upper(to_string(msg_id)) & ")";
   begin
-    transmit_broadcast(VVC_BROADCAST, DISABLE_LOG_MSG, proc_call, msg_id, msg, quietness);
+    transmit_broadcast(VVC_BROADCAST, DISABLE_LOG_MSG, proc_call, msg_id, msg, quietness, scope => scope);
   end procedure;
 
 
   procedure flush_command_queue(
     signal VVC_BROADCAST        : inout std_logic;
-    constant msg                : in string := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "flush_command_queue";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
   begin
-    transmit_broadcast(VVC_BROADCAST, FLUSH_COMMAND_QUEUE, proc_call, NO_ID, msg);
+    transmit_broadcast(VVC_BROADCAST, FLUSH_COMMAND_QUEUE, proc_call, NO_ID, msg, scope => scope);
   end procedure;
 
 
   procedure insert_delay(
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in natural;  -- in clock cycles
-    constant msg                : in string  := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "insert_delay";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_string(delay) & ")";
   begin
-    transmit_broadcast(VVC_BROADCAST, FLUSH_COMMAND_QUEUE, proc_call, NO_ID, msg, NON_QUIET, 0 ns, delay);
+    transmit_broadcast(VVC_BROADCAST, FLUSH_COMMAND_QUEUE, proc_call, NO_ID, msg, NON_QUIET, 0 ns, delay, scope => scope);
   end procedure;
 
 
   procedure insert_delay(
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in time;
-    constant msg                : in string  := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "insert_delay";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_string(delay) & ")";
   begin
-    transmit_broadcast(VVC_BROADCAST, INSERT_DELAY, proc_call, NO_ID, msg, NON_QUIET, delay);
+    transmit_broadcast(VVC_BROADCAST, INSERT_DELAY, proc_call, NO_ID, msg, NON_QUIET, delay, scope => scope);
   end procedure;
 
   procedure await_completion(
     signal VVC_BROADCAST        : inout std_logic;
     constant timeout            : in time;
-    constant msg                : in string  := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
   begin
-    transmit_broadcast(VVC_BROADCAST, AWAIT_COMPLETION, proc_call, NO_ID, msg, NON_QUIET, 0 ns, -1, timeout);
+    transmit_broadcast(VVC_BROADCAST, AWAIT_COMPLETION, proc_call, NO_ID, msg, NON_QUIET, 0 ns, -1, timeout, scope);
   end procedure;
 
   procedure terminate_current_command(
     signal VVC_BROADCAST        : inout std_logic;
-    constant msg                : in string  := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "terminate_current_command";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
   begin
-    transmit_broadcast(VVC_BROADCAST, TERMINATE_CURRENT_COMMAND, proc_call, NO_ID, msg);
+    transmit_broadcast(VVC_BROADCAST, TERMINATE_CURRENT_COMMAND, proc_call, NO_ID, msg, scope => scope);
   end procedure;
 
   procedure terminate_all_commands(
     signal VVC_BROADCAST        : inout std_logic;
-    constant msg                : in string  := ""
+    constant msg                : in string := "";
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "terminate_all_commands";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
   begin
     flush_command_queue(VVC_BROADCAST, msg);
-    terminate_current_command(VVC_BROADCAST, msg);
+    terminate_current_command(VVC_BROADCAST, msg, scope => scope);
   end procedure;
 
   procedure transmit_broadcast(
@@ -426,9 +443,21 @@ package body ti_vvc_framework_support_pkg is
     constant quietness          : in t_quietness  := NON_QUIET;
     constant delay              : in time         := 0 ns;
     constant delay_int          : in integer      := -1;
-    constant timeout            : in time         := std.env.resolution_limit) is
+    constant timeout            : in time         := std.env.resolution_limit;
+    constant scope              : in string       := C_TB_SCOPE_DEFAULT & "(uvvm)") is
   begin
     await_semaphore_in_delta_cycles(protected_semaphore);
+
+    -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
+    shared_cmd_idx := shared_cmd_idx + 1;
+
+    if global_show_msg_for_uvvm_cmd then
+      log(ID_UVVM_SEND_CMD, to_string(proc_call) & ": " & add_msg_delimiter(to_string(msg))
+          & format_command_idx(shared_cmd_idx), scope);
+    else
+      log(ID_UVVM_SEND_CMD, to_string(proc_call)
+          & format_command_idx(shared_cmd_idx), scope);
+    end if;
 
     shared_vvc_broadcast_cmd.operation   := operation;
     shared_vvc_broadcast_cmd.msg_id      := msg_id;
@@ -454,9 +483,9 @@ package body ti_vvc_framework_support_pkg is
 
     wait until VVC_BROADCAST = 'L' for timeout;  -- Wait for executor
     if not (VVC_BROADCAST'event) and VVC_BROADCAST /= 'L' then            -- Indicates timeout
-      tb_error("Timeout while waiting for the broadcast command to be ACK'ed", C_SCOPE);
+      tb_error("Timeout while waiting for the broadcast command to be ACK'ed", scope);
     else
-      log(ID_UVVM_CMD_ACK, "ACK received for broadcast command", C_SCOPE);
+      log(ID_UVVM_CMD_ACK, "ACK received for broadcast command" & format_command_idx(shared_cmd_idx), scope);
     end if;
 
     shared_vvc_broadcast_cmd  := C_VVC_BROADCAST_CMD_DEFAULT;
@@ -487,7 +516,7 @@ package body ti_vvc_framework_support_pkg is
   begin
 
     if (C_MINIMUM_VVC_NAME_SCOPE_WIDTH + C_MINIMUM_CHANNEL_SCOPE_WIDTH + C_INSTANCE_IDX_STR'length + 2) >  C_LOG_SCOPE_WIDTH then -- +2 because of the two added commas
-      alert(TB_WARNING, "The combined width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH and C_MINIMUM_CHANNEL_SCOPE_WIDTH cannot be greather than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 2.", C_SCOPE);
+      alert(TB_WARNING, "The combined width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH and C_MINIMUM_CHANNEL_SCOPE_WIDTH cannot be greater than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 2.", C_SCOPE);
     end if;
 
     -- If C_SCOPE_LENGTH is not greater than allowed width, return scope
@@ -547,7 +576,7 @@ package body ti_vvc_framework_support_pkg is
   begin
 
     if (C_MINIMUM_VVC_NAME_SCOPE_WIDTH + C_INSTANCE_IDX_STR'length + 1) >  C_LOG_SCOPE_WIDTH then -- +1 because of the added comma
-      alert(TB_WARNING, "The width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH cannot be greather than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 1.", C_SCOPE);
+      alert(TB_WARNING, "The width of C_MINIMUM_VVC_NAME_SCOPE_WIDTH cannot be greater than C_LOG_SCOPE_WIDTH - (number of characters in instance) - 1.", C_SCOPE);
     end if;
 
     -- If C_SCOPE_LENGTH is not greater than allowed width, return scope

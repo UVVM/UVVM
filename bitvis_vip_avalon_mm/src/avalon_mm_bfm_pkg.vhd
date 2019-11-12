@@ -373,7 +373,7 @@ package body avalon_mm_bfm_pkg is
         if avalon_mm_if.waitrequest = '1' then
           wait until rising_edge(clk);
           -- check if clk period since last rising edge is within specifications and take a new time stamp
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
           v_last_rising_edge := now; -- time stamp for clk period checking
         else
           exit;
@@ -392,7 +392,7 @@ package body avalon_mm_bfm_pkg is
       for cycle in 1 to config.num_wait_states_write loop
         wait until rising_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
         v_last_rising_edge := now; -- time stamp for clk period checking
       end loop;
     end if;
@@ -554,7 +554,7 @@ package body avalon_mm_bfm_pkg is
         if is_waitrequest_active(avalon_mm_if, config) then
           wait until rising_edge(clk);
           -- check if clk period since last rising edge is within specifications and take a new time stamp
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
           v_last_rising_edge := now; -- time stamp for clk period checking
         else
           exit;
@@ -573,7 +573,7 @@ package body avalon_mm_bfm_pkg is
       for cycle in 1 to config.num_wait_states_read loop
         wait until rising_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
         v_last_rising_edge := now; -- time stamp for clk period checking
       end loop;
     end if;
@@ -624,7 +624,7 @@ package body avalon_mm_bfm_pkg is
           wait until rising_edge(clk);
           -- check if clk period since last rising edge is within specifications and take a new time stamp
           if v_last_rising_edge > -1 ns then
-            check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "clk period not within requirement.");
+            check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
           end if;
           v_last_rising_edge := now; -- take a new time stamp for clk period checking
         end if;

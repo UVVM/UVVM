@@ -37,12 +37,15 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 -- Include Verification IPs
 library bitvis_vip_i2c;
 context bitvis_vip_i2c.vvc_context;
+use bitvis_vip_i2c.i2c_bfm_pkg.all;
 
 library bitvis_vip_wishbone;
 context bitvis_vip_wishbone.vvc_context;
+use bitvis_vip_wishbone.wishbone_bfm_pkg.all;
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
+use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 -- Vunit library
 library vunit_lib;

@@ -113,37 +113,43 @@ package vvc_methods_pkg is
   shared variable shared_clock_generator_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
 
-  --========================================================================================================================
-  -- Methods dedicated to this VVC
-  -- - These procedures are called from the testbench in order to executor BFM calls
-  --   in the VVC command executor. The VVC will store and forward these calls to the
-  --   CLOCK_GENERATOR BFM when the command is at the from of the VVC command executor.
-  --========================================================================================================================
+  --==========================================================================================
+  -- Methods dedicated to this VVC 
+  -- - These procedures are called from the testbench in order for the VVC to execute
+  --   BFM calls towards the given interface. The VVC interpreter will queue these calls
+  --   and then the VVC executor will fetch the commands from the queue and handle the
+  --   actual BFM execution.
+  --   For details on how the BFM procedures work, see the QuickRef.
+  --==========================================================================================
 
   procedure start_clock(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   procedure stop_clock(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   procedure set_clock_period(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant clock_period       : in time;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
   procedure set_clock_high_time(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in integer;
-    constant clock_high_time  : in time;
-    constant msg              : in string
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant clock_high_time    : in time;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
 end package vvc_methods_pkg;
@@ -159,34 +165,37 @@ package body vvc_methods_pkg is
   procedure start_clock(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "start_clock";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
              & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, START_CLOCK);
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure start_clock;
 
   procedure stop_clock(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "stop_clock";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
              & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, STOP_CLOCK);
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure stop_clock;
 
   procedure set_clock_period(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant clock_period       : in time;
-    constant msg                : in string
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "set_clock_period";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -194,14 +203,15 @@ package body vvc_methods_pkg is
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SET_CLOCK_PERIOD);
     shared_vvc_cmd.clock_period := clock_period;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure set_clock_period;
 
   procedure set_clock_high_time(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in integer;
     constant clock_high_time  : in time;
-    constant msg              : in string
+    constant msg              : in string;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "set_clock_high_time";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -209,7 +219,7 @@ package body vvc_methods_pkg is
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SET_CLOCK_HIGH_TIME);
     shared_vvc_cmd.clock_high_time := clock_high_time;
-    send_command_to_vvc(VVCT);
+    send_command_to_vvc(VVCT, scope => scope);
   end procedure set_clock_high_time;
 
 end package body vvc_methods_pkg;

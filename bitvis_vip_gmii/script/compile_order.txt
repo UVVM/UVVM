@@ -1,0 +1,3 @@
+# library bitvis_vip_gmii
+../src/gmii_bfm_pkg.vhd
+../src/gmii_global_signals.vhd

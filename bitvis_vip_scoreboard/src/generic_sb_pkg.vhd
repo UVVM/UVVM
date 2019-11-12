@@ -30,12 +30,10 @@ use work.generic_sb_support_pkg.all;
 
 package generic_sb_pkg is
 
-  generic (type t_expected_element;
-           type t_actual_element;
-           function match(expected_element : t_expected_element;
-                          actual_element   : t_actual_element) return boolean;
-           function expected_to_string(expected_element : t_expected_element) return string;
-           function actual_to_string(    actual_element : t_actual_element) return string;
+  generic (type t_element;
+           function element_match(received_element : t_element;
+                                  expected_element : t_element) return boolean;
+           function to_string_element(element : t_element) return string;
            constant sb_config_default        : t_sb_config := C_SB_CONFIG_DEFAULT;
            constant GC_QUEUE_COUNT_MAX       : natural := 1000;
            constant GC_QUEUE_COUNT_THRESHOLD : natural := 950);
@@ -80,53 +78,53 @@ package generic_sb_pkg is
 
     procedure add_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := "";
+      constant source           : in string := "";
       constant ext_proc_call    : in string := "");
 
     procedure add_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := "");
+      constant source           : in string := "");
 
     procedure add_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := "");
+      constant source           : in string := "");
 
     procedure add_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := "");
+      constant source           : in string := "");
 
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_actual_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := "";
-      constant ext_proc_call  : in string := "");
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := "";
+      constant ext_proc_call    : in string := "");
 
-    procedure check_actual(
-      constant actual_element : in t_actual_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := "");
+    procedure check_received(
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := "");
 
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_actual_element;
-      constant msg            : in string := "");
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant msg              : in string := "");
 
-    procedure check_actual(
-      constant actual_element : in t_actual_element;
-      constant msg            : in string := "");
+    procedure check_received(
+      constant received_element : in t_element;
+      constant msg              : in string := "");
 
     procedure flush(
       constant instance      : in integer;
@@ -237,43 +235,43 @@ package generic_sb_pkg is
       constant instance          : in integer;
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive;
-      constant expected_element  : in t_expected_element;
+      constant expected_element  : in t_element;
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := "";
+      constant source            : in string := "";
       constant ext_proc_call     : in string := "");
 
     procedure insert_expected(
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive;
-      constant expected_element  : in t_expected_element;
+      constant expected_element  : in t_element;
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := "");
+      constant source            : in string := "");
 
     procedure delete_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
       constant ext_proc_call    : in string := "");
 
     procedure delete_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "");
 
     procedure delete_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := "");
 
     procedure delete_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := "");
 
     procedure delete_expected(
@@ -318,21 +316,21 @@ package generic_sb_pkg is
 
     impure function find_expected_entry_num(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string) return integer;
 
     impure function find_expected_entry_num(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string) return integer;
 
     impure function find_expected_entry_num(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element) return integer;
+      constant expected_element : in t_element) return integer;
 
     impure function find_expected_entry_num(
-      constant expected_element : in t_expected_element) return integer;
+      constant expected_element : in t_element) return integer;
 
     impure function find_expected_entry_num(
       constant instance         : in integer;
@@ -345,21 +343,21 @@ package generic_sb_pkg is
 
     impure function find_expected_position(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string) return integer;
 
     impure function find_expected_position(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string) return integer;
 
     impure function find_expected_position(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element) return integer;
+      constant expected_element : in t_element) return integer;
 
     impure function find_expected_position(
-      constant expected_element : in t_expected_element) return integer;
+      constant expected_element : in t_element) return integer;
 
     impure function find_expected_position(
       constant instance         : in integer;
@@ -373,17 +371,17 @@ package generic_sb_pkg is
     impure function peek_expected(
       constant instance          : integer;
       constant identifier_option : t_identifier_option;
-      constant identifier        : positive) return t_expected_element;
+      constant identifier        : positive) return t_element;
 
     impure function peek_expected(
       constant identifier_option : t_identifier_option;
-      constant identifier        : positive) return t_expected_element;
+      constant identifier        : positive) return t_element;
 
     impure function peek_expected(
-      constant instance          : integer) return t_expected_element;
+      constant instance          : integer) return t_element;
 
     impure function peek_expected(
-      constant void : t_void) return t_expected_element;
+      constant void : t_void) return t_element;
 
     impure function peek_source(
       constant instance          : integer;
@@ -420,22 +418,22 @@ package generic_sb_pkg is
       constant identifier_option : t_identifier_option;
       constant identifier        : positive;
       constant msg               : string := "";
-      constant ext_proc_call     : string := "") return t_expected_element;
+      constant ext_proc_call     : string := "") return t_element;
 
     impure function fetch_expected(
       constant identifier_option : t_identifier_option;
       constant identifier        : positive;
-      constant msg               : string := "") return t_expected_element;
+      constant msg               : string := "") return t_element;
 
     impure function fetch_expected(
       constant instance          : integer;
-      constant msg               : string := "") return t_expected_element;
+      constant msg               : string := "") return t_element;
 
     impure function fetch_expected(
-      constant msg : string) return t_expected_element;
+      constant msg : string) return t_element;
 
     impure function fetch_expected(
-      constant void : t_void) return t_expected_element;
+      constant void : t_void) return t_element;
 
     impure function fetch_source(
       constant instance          : integer;
@@ -483,12 +481,12 @@ package generic_sb_pkg is
 
     impure function exists(
       constant instance         : integer;
-      constant expected_element : t_expected_element;
+      constant expected_element : t_element;
       constant tag_usage        : t_tag_usage := NO_TAG;
       constant tag              : string      := "") return boolean;
 
     impure function exists(
-      constant expected_element : t_expected_element;
+      constant expected_element : t_element;
       constant tag_usage        : t_tag_usage := NO_TAG;
       constant tag              : string      := "") return boolean;
 
@@ -513,7 +511,7 @@ package body generic_sb_pkg is
 
   -- SB type declaration
   type t_sb_entry is record
-    expected_element : t_expected_element;
+    expected_element : t_element;
     source           : string(1 to C_SB_SOURCE_WIDTH);
     tag              : string(1 to C_SB_TAG_WIDTH);
     entry_time       : time;
@@ -535,21 +533,21 @@ package body generic_sb_pkg is
     -- Variables
     ----------------------------------------------------------------------------------------------------
     variable vr_scope            : string(1 to C_LOG_SCOPE_WIDTH) := (1 to 4 => "?_SB", others => NUL);
-    variable vr_config           : t_sb_config_array(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => sb_config_default);
-    variable vr_instance_enabled : boolean_vector(1 to C_MAX_QUEUE_INSTANCE_NUM)    := (others => false);
+    variable vr_config           : t_sb_config_array(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => sb_config_default);
+    variable vr_instance_enabled : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM)    := (others => false);
     variable vr_sb_queue         : sb_queue_pkg.t_generic_queue;
 
-    type t_msg_id_panel_array is array(1 to C_MAX_QUEUE_INSTANCE_NUM) of t_msg_id_panel;
+    type t_msg_id_panel_array is array(0 to C_MAX_QUEUE_INSTANCE_NUM) of t_msg_id_panel;
     variable vr_msg_id_panel_array : t_msg_id_panel_array := (others => C_SB_MSG_ID_PANEL_DEFAULT);
 
     -- Counters
-    variable vr_entered_cnt         : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_match_cnt           : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_mismatch_cnt        : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_drop_cnt            : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_initial_garbage_cnt : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_delete_cnt          : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_overdue_check_cnt   : integer_vector(1 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_entered_cnt         : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_match_cnt           : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_mismatch_cnt        : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_drop_cnt            : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_initial_garbage_cnt : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_delete_cnt          : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_overdue_check_cnt   : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
 
 
 
@@ -560,8 +558,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) is
     begin
-      check_value_in_range(instance, 1, C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
-          "Instance must be within range 1 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
+      check_value_in_range(instance, 0, C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
+          "Instance must be within range 0 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
     end procedure check_instance_in_range;
 
     procedure check_instance_enabled(
@@ -572,7 +570,7 @@ package body generic_sb_pkg is
     end procedure check_instance_enabled;
 
     procedure check_queue_empty(
-      constant instance : in positive
+      constant instance : in natural
     ) is
     begin
       check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "The queue is empty", vr_scope, ID_NEVER);
@@ -588,25 +586,9 @@ package body generic_sb_pkg is
         "overdue_check_time_limit cannot be less than 0 ns.", vr_scope, ID_NEVER);
     end procedure;
 
-    impure function entry_match_actual (
-      constant sb_entry       : in t_sb_entry;
-      constant actual_element : in t_actual_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string
-    ) return boolean is
-    begin
-      -- If TAG then check if tag match
-      if tag_usage = uvvm_util.types_pkg.TAG then
-        if pad_string(tag, NUL, C_SB_TAG_WIDTH) /= sb_entry.tag then
-          return false;
-        end if;
-      end if;
-      return match(sb_entry.expected_element, actual_element);
-    end function entry_match_actual;
-
-    impure function entry_match_expected (
+    impure function match_received_vs_entry (
+      constant received_element : in t_element;
       constant sb_entry         : in t_sb_entry;
-      constant expected_element : in t_expected_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string
     ) return boolean is
@@ -617,11 +599,27 @@ package body generic_sb_pkg is
           return false;
         end if;
       end if;
-      return sb_entry.expected_element = expected_element;
-    end function entry_match_expected;
+      return element_match(received_element, sb_entry.expected_element);
+    end function match_received_vs_entry;
+
+    impure function match_expected_vs_entry (
+      constant expected_element : in t_element;
+      constant sb_entry         : in t_sb_entry;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string
+    ) return boolean is
+    begin
+      -- If TAG then check if tag match
+      if tag_usage = uvvm_util.types_pkg.TAG then
+        if pad_string(tag, NUL, C_SB_TAG_WIDTH) /= sb_entry.tag then
+          return false;
+        end if;
+      end if;
+      return expected_element = sb_entry.expected_element;
+    end function match_expected_vs_entry;
 
     procedure log(
-      instance : positive;
+      instance : natural;
       msg_id   : t_msg_id;
       msg      : string;
       scope    : string
@@ -652,8 +650,8 @@ package body generic_sb_pkg is
     begin
 
       -- Check if range is within limits
-      check_value(sb_config_array'low > 0 and sb_config_array'high <= C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
-        "Configuration array must be within range 1 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
+      check_value(sb_config_array'low >= 0 and sb_config_array'high <= C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
+        "Configuration array must be within range 0 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
 
       -- Apply config to the defined range
       for i in sb_config_array'low to sb_config_array'high loop
@@ -730,7 +728,7 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         vr_instance_enabled := (others => true);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_entered_cnt(i) = -1 then
             vr_entered_cnt(i)         := 0;
             vr_match_cnt(i)           := 0;
@@ -835,11 +833,11 @@ package body generic_sb_pkg is
     ----------------------------------------------------------------------------------------------------
     procedure add_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := "";
+      constant source           : in string := "";
       constant ext_proc_call    : in string := ""
     ) is
       constant proc_name  : string := "add_expected";
@@ -852,7 +850,7 @@ package body generic_sb_pkg is
                      entry_time       => now);
 
       if instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- add entry
             vr_sb_queue.add(i, v_sb_entry);
@@ -860,10 +858,10 @@ package body generic_sb_pkg is
             vr_entered_cnt(i) := vr_entered_cnt(i)+1;
 
             if tag_usage = NO_TAG then
-              log(i, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & expected_to_string(expected_element) &
+              log(i, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) &
                 ".  " & add_msg_delimiter(msg), vr_scope);
             else
-              log(i, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & expected_to_string(expected_element) & ", tag: " & to_string(tag) &
+              log(i, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) &
               ".  " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
@@ -880,10 +878,10 @@ package body generic_sb_pkg is
 
         if ext_proc_call = "" then
           if tag_usage = NO_TAG then
-            log(instance, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & expected_to_string(expected_element) &
+            log(instance, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) &
               ".  " & add_msg_delimiter(msg), vr_scope);
           else
-            log(instance, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & expected_to_string(expected_element) & ", tag: " & to_string(tag) &
+            log(instance, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) &
               ".  " & add_msg_delimiter(msg), vr_scope);
           end if;
         else
@@ -894,34 +892,34 @@ package body generic_sb_pkg is
     end procedure add_expected;
 
     procedure add_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
-      constant source   : in string := ""
+      constant source           : in string := ""
     ) is
     begin
       if tag_usage = NO_TAG then
-        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & expected_to_string(expected_element) & ".  ");
+        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & to_string_element(expected_element) & ".  ");
       else
-        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & expected_to_string(expected_element) & ", tag: " & to_string(tag) & ".  ");
+        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ".  ");
       end if;
     end procedure add_expected;
 
     procedure add_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := ""
+      constant source           : in string := ""
     ) is
     begin
       add_expected(instance, expected_element, NO_TAG, "", msg, source);
     end procedure add_expected;
 
     procedure add_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := "";
-      constant source   : in string := ""
+      constant source           : in string := ""
     ) is
     begin
       add_expected(expected_element, NO_TAG, "", msg, source);
@@ -931,21 +929,21 @@ package body generic_sb_pkg is
 
     ----------------------------------------------------------------------------------------------------
     --
-    --  check_actual
+    --  check_received
     --
-    --    Checks actual against expected. Updates counters acording to match/mismatch and configuration.
+    --    Checks received against expected. Updates counters acording to match/mismatch and configuration.
     --
     ----------------------------------------------------------------------------------------------------
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_actual_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := "";
-      constant ext_proc_call  : in string := ""
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := "";
+      constant ext_proc_call    : in string := ""
     ) is
 
-      constant proc_name : string := "check_actual";
+      constant proc_name : string := "check_received";
 
       procedure check_pending_exists(
         constant instance : in integer
@@ -954,7 +952,7 @@ package body generic_sb_pkg is
         check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "instance " & to_string(instance) & ": no pending entries to check.", vr_scope, ID_NEVER);
       end procedure check_pending_exists;
 
-      procedure check_actual_instance(
+      procedure check_received_instance(
         constant instance : in integer
       ) is
         variable v_matched     : boolean := false;
@@ -969,7 +967,7 @@ package body generic_sb_pkg is
           -- Loop through entries in queue until match
           for i in 1 to get_pending_count(instance) loop
             v_entry := vr_sb_queue.peek(instance, POSITION, i);
-            if entry_match_actual(v_entry, actual_element, tag_usage, tag) then
+            if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete entry
@@ -985,7 +983,7 @@ package body generic_sb_pkg is
           -- Loop through entries in queue until match
           for i in 1 to get_pending_count(instance) loop
             v_entry := vr_sb_queue.peek(instance, POSITION, i);
-            if entry_match_actual(v_entry, actual_element, tag_usage, tag) then
+            if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete matching entry and preceding entries
@@ -1000,7 +998,7 @@ package body generic_sb_pkg is
         -- Not OOB or LOSSY
         else
           v_entry := vr_sb_queue.peek(instance);
-          if entry_match_actual(v_entry, actual_element, tag_usage, tag) then
+          if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
             v_matched := true;
             -- delete entry
             vr_sb_queue.delete(instance, POSITION, 1, SINGLE);
@@ -1037,41 +1035,41 @@ package body generic_sb_pkg is
         if v_matched then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, proc_name & "() instance " & to_string(instance) & " => MATCH, for value: " & expected_to_string(v_entry.expected_element) &
+              log(instance, ID_DATA, proc_name & "() instance " & to_string(instance) & " => MATCH, for value: " & to_string_element(v_entry.expected_element) &
                 ".  " & add_msg_delimiter(msg), vr_scope);
             else
-              log(instance, ID_DATA, proc_name & "() instance " & to_string(instance) & " => MATCH, for value: " & expected_to_string(v_entry.expected_element) &
+              log(instance, ID_DATA, proc_name & "() instance " & to_string(instance) & " => MATCH, for value: " & to_string_element(v_entry.expected_element) &
                 ". tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           -- Called from other SB method
           else
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for actual: " & actual_to_string(actual_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ".  " & add_msg_delimiter(msg), vr_scope);
             else
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for actual: " & actual_to_string(actual_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
         -- Initial garbage
         elsif not(vr_match_cnt(instance) = 0 and vr_config(instance).ignore_initial_garbage) then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: "  & expected_to_string(v_entry.expected_element) &
-                               "; actual: " & actual_to_string(actual_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: "  & to_string_element(v_entry.expected_element) &
+                               "; received: " & to_string_element(received_element) & ".  " & add_msg_delimiter(msg), vr_scope);
             else
-              alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: " & expected_to_string(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) &
-                "'; actual: " & actual_to_string(actual_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) &
+                "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           else
             if tag_usage = NO_TAG then
-              alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & expected_to_string(v_entry.expected_element) &
-                "; actual: " & actual_to_string(actual_element) & add_msg_delimiter(msg), vr_scope);
+              alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) &
+                "; received: " & to_string_element(received_element) & add_msg_delimiter(msg), vr_scope);
             else
-              alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & expected_to_string(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) &
-                "; actual: " & actual_to_string(actual_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) &
+                "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
         end if;
-      end procedure check_actual_instance;
+      end procedure check_received_instance;
 
     begin
 
@@ -1081,44 +1079,44 @@ package body generic_sb_pkg is
       end if;
 
       if instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
-            check_actual_instance(i);
+            check_received_instance(i);
           end if;
         end loop;
       else
         check_instance_enabled(instance);
-        check_actual_instance(instance);
+        check_received_instance(instance);
       end if;
 
-    end procedure check_actual;
+    end procedure check_received;
 
-    procedure check_actual(
-      constant actual_element : in t_actual_element;
-      constant tag_usage      : in t_tag_usage;
-      constant tag            : in string;
-      constant msg            : in string := ""
+    procedure check_received(
+      constant received_element : in t_element;
+      constant tag_usage        : in t_tag_usage;
+      constant tag              : in string;
+      constant msg              : in string := ""
     ) is
     begin
-      check_actual(1, actual_element, tag_usage, tag, msg, "check_actual()");
-    end procedure check_actual;
+      check_received(1, received_element, tag_usage, tag, msg, "check_received()");
+    end procedure check_received;
 
-    procedure check_actual(
-      constant instance       : in integer;
-      constant actual_element : in t_actual_element;
-      constant msg            : in string := ""
+    procedure check_received(
+      constant instance         : in integer;
+      constant received_element : in t_element;
+      constant msg              : in string := ""
     ) is
     begin
-      check_actual(instance, actual_element, NO_TAG, "", msg);
-    end procedure check_actual;
+      check_received(instance, received_element, NO_TAG, "", msg);
+    end procedure check_received;
 
-    procedure check_actual(
-      constant actual_element : in t_actual_element;
-      constant msg            : in string := ""
+    procedure check_received(
+      constant received_element : in t_element;
+      constant msg              : in string := ""
     ) is
     begin
-      check_actual(actual_element, NO_TAG, "", msg);
-    end procedure check_actual;
+      check_received(received_element, NO_TAG, "", msg);
+    end procedure check_received;
 
 
 
@@ -1138,7 +1136,7 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_DATA, proc_name & ": flushing all instances." & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           -- update counters
           vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
           -- flush queue
@@ -1146,7 +1144,7 @@ package body generic_sb_pkg is
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
         log(ID_DATA, proc_name & ": flushing all enabled instances." & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- update counters
             vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
@@ -1200,28 +1198,31 @@ package body generic_sb_pkg is
       constant proc_name : string := "reset";
 
       procedure reset_instance(
-        constant instance : positive
+        constant instance : natural
       ) is
       begin
-        vr_sb_queue.reset(instance);
-        vr_entered_cnt(instance)         := 0;
-        vr_match_cnt(instance)           := 0;
-        vr_mismatch_cnt(instance)        := 0;
-        vr_drop_cnt(instance)            := 0;
-        vr_initial_garbage_cnt(instance) := 0;
-        vr_delete_cnt(instance)          := 0;
-        vr_overdue_check_cnt(instance)   := 0;
+        -- reset instance 0 only if it is used
+        if not(vr_sb_queue.is_empty(0)) or (instance > 0) then
+            vr_sb_queue.reset(instance);
+            vr_entered_cnt(instance)         := 0;
+            vr_match_cnt(instance)           := 0;
+            vr_mismatch_cnt(instance)        := 0;
+            vr_drop_cnt(instance)            := 0;
+            vr_initial_garbage_cnt(instance) := 0;
+            vr_delete_cnt(instance)          := 0;
+            vr_overdue_check_cnt(instance)   := 0;
+        end if;
       end procedure reset_instance;
 
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & ": reseting all instances.  " & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
             reset_instance(i);
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
         log(ID_CTRL, proc_name & ": reseting all enabled instances.  " & add_msg_delimiter(msg), vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             reset_instance(i);
           end if;
@@ -1333,7 +1334,7 @@ package body generic_sb_pkg is
     --
     --  get_match_count
     --
-    --    Returns number of entries checked and matched against an actual.
+    --    Returns number of entries checked and matched against a received.
     --
     ----------------------------------------------------------------------------------------------------
     impure function get_match_count(
@@ -1356,7 +1357,7 @@ package body generic_sb_pkg is
     --
     --  get_mismatch_count
     --
-    --    Returns number of entries checked and not matched against an actual.
+    --    Returns number of entries checked and not matched against a received.
     --
     ----------------------------------------------------------------------------------------------------
     impure function get_mismatch_count(
@@ -1403,7 +1404,7 @@ package body generic_sb_pkg is
     --
     --  get_initial_garbage_count
     --
-    --    Returns number of actuals checked before first match.
+    --    Returns number of received checked before first match.
     --    Only relevant when allow_initial_garbage is enabled.
     --
     ----------------------------------------------------------------------------------------------------
@@ -1451,7 +1452,7 @@ package body generic_sb_pkg is
     --
     --  get_overdue_check_count
     --
-    --    Returns number of actuals checked when time limit is overdue.
+    --    Returns number of received checked when time limit is overdue.
     --    Only relevant when overdue_check_time_limit is set.
     --
     ----------------------------------------------------------------------------------------------------
@@ -1510,7 +1511,7 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " enabled for all instances", vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           vr_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
       else
@@ -1548,7 +1549,7 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " disabled for all instances", vr_scope);
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           vr_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
       else
@@ -1588,94 +1589,98 @@ package body generic_sb_pkg is
       variable v_mismatch        : boolean  := false;
       constant C_HEADER          : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
       constant prefix            : string   := C_LOG_PREFIX & "     ";
-      constant log_counter_width : positive := 15;
+      constant log_counter_width : positive := 8; -- shouldn't be smaller than 8 due to the counters names
+      variable v_log_extra_space : integer  := 0;
+
+        -- add simulation time stamp to scoreboard report header
+        impure function timestamp_header(value : time; txt : string) return string is
+            variable v_line             : line;
+            variable v_delimiter_pos    : natural;
+            variable v_timestamp_width  : natural;
+            variable v_result           : string(1 to 50);
+            variable v_return           : string(1 to txt'length) := txt;
+          begin
+            -- get a time stamp
+            write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
+            v_timestamp_width := v_line'length;
+            v_result(1 to v_timestamp_width) := v_line.all;
+            deallocate(v_line);
+            v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
+
+            -- truncate decimals and add units
+            if C_LOG_TIME_BASE = ns then
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ns ";
+            else
+              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ps ";
+            end if;
+            v_timestamp_width := v_delimiter_pos + 5;
+
+            -- add time string to return string
+            v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
+            return v_return(1 to txt'length);
+          end function timestamp_header;
+
     begin
+      -- Calculate how much space we can insert between the columns of the report
+      v_log_extra_space := (C_LOG_LINE_WIDTH - prefix'length - 20 - log_counter_width*6 - 15 - 13)/8;
+      if v_log_extra_space < 1 then
+        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small, the report will not be properly aligned.", vr_scope);
+        v_log_extra_space := 1;
+      end if;
+
       write(v_line,
-          LF &
-          fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-          justify(C_HEADER, center, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-          fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
+            timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - prefix'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+
       write(v_line,
         justify(
-          justify("ENTERED",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("PENDING",         center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("MATCH",           center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("MISMATCH",        center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("DROP",            center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("DELETE",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-          justify("OVERDUE CHECK",          center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
-        center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          fill_string(' ', 16) &
+          justify("ENTERED"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("PENDING"        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("MATCH"          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("MISMATCH"       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("DROP"           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("INITIAL_GARBAGE", center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("DELETE"         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify("OVERDUE_CHECK"  , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+          left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      if instance = ALL_INSTANCES then
+      if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
         for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
-          write(v_line,
-            justify(
-              fill_string(' ', 4) &
-              "instance: " &
-              justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
+          if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
             write(v_line,
             justify(
-              fill_string(' ', 4) &
               "instance: " &
               justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
               fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  i)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+              justify(to_string(get_entered_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_pending_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_match_count(i))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_mismatch_count(i))       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_drop_count(i))           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_initial_garbage_count(i)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_delete_count(i))         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_overdue_check_count(i))  , center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
-      elsif ext_proc_call = "" then
-        write(v_line,
-            justify(
-              fill_string(' ', 4) &
-              "instance: " &
-              justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
-              justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_mismatch_count(       instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20),
-            center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       else
         write(v_line,
           justify(
-            justify(to_string(get_entered_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_pending_count(        instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_match_count(          instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_mismatch_count(       instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_drop_count(           instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_initial_garbage_count(instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_delete_count(         instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            justify(to_string(get_overdue_check_count(  instance)), center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE),
-          center, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+            "instance: " &
+            justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+            fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
+            justify(to_string(get_entered_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_pending_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_match_count(instance))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_mismatch_count(instance))       , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_drop_count(instance))           , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_initial_garbage_count(instance)), center, 15, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_delete_count(instance))         , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_overdue_check_count(instance))  , center, 13, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end if;
 
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
@@ -1683,7 +1688,9 @@ package body generic_sb_pkg is
       prefix_lines(v_line, prefix);
 
       -- Write the info string to transcript
+      write (v_line_copy, v_line.all);  -- copy line
       writeline(OUTPUT, v_line);
+      writeline(LOG_FILE, v_line_copy);
     end procedure report_counters;
 
     procedure report_counters(
@@ -1710,11 +1717,11 @@ package body generic_sb_pkg is
       constant instance          : in integer;
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive;
-      constant expected_element  : in t_expected_element;
+      constant expected_element  : in t_element;
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := "";
+      constant source            : in string := "";
       constant ext_proc_call     : in string := ""
     ) is
       constant proc_name : string := "insert_expected";
@@ -1731,7 +1738,7 @@ package body generic_sb_pkg is
                      entry_time       => now);
 
       if instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- Check that instance is enabled
             check_queue_empty(instance);
@@ -1758,18 +1765,18 @@ package body generic_sb_pkg is
           if identifier_option = POSITION then
             if tag_usage = NO_TAG then
               log(instance, ID_DATA, proc_name & "() inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "
-                & expected_to_string(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+                & to_string_element(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
             else
               log(instance, ID_DATA, proc_name & "() inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "
-                & expected_to_string(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+                & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           else
             if tag_usage = NO_TAG then
               log(instance, ID_DATA, proc_name & "() inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: "
-                & expected_to_string(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+                & to_string_element(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
             else
               log(instance, ID_DATA, proc_name & "() inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: "
-                & expected_to_string(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+                & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
         else
@@ -1781,9 +1788,9 @@ package body generic_sb_pkg is
         end if;
       else
         if tag_usage = NO_TAG then
-          log(instance, ID_DATA, ext_proc_call & " Expected: " & expected_to_string(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
         else
-          log(instance, ID_DATA, ext_proc_call & " Expected: " & expected_to_string(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
         end if;
       end if;
     end procedure insert_expected;
@@ -1791,11 +1798,11 @@ package body generic_sb_pkg is
      procedure insert_expected(
       constant identifier_option : in t_identifier_option;
       constant identifier        : in positive;
-      constant expected_element  : in t_expected_element;
+      constant expected_element  : in t_element;
       constant tag_usage         : in t_tag_usage;
       constant tag               : in string;
       constant msg               : in string := "";
-      constant source    : in string := ""
+      constant source            : in string := ""
     ) is
     begin
       if identifier_option = POSITION then
@@ -1816,7 +1823,7 @@ package body generic_sb_pkg is
     ----------------------------------------------------------------------------------------------------
     impure function find_expected_entry_num(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string
     ) return integer is
@@ -1832,7 +1839,7 @@ package body generic_sb_pkg is
         v_sb_entry := vr_sb_queue.peek(instance, POSITION, i);
 
         -- check if match
-        if entry_match_expected(v_sb_entry, expected_element, tag_usage, tag) then
+        if match_expected_vs_entry(expected_element, v_sb_entry, tag_usage, tag) then
           return vr_sb_queue.get_entry_num(instance, i);
         end if;
       end loop;
@@ -1841,7 +1848,7 @@ package body generic_sb_pkg is
     end function find_expected_entry_num;
 
     impure function find_expected_entry_num(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string
     ) return integer is
@@ -1851,14 +1858,14 @@ package body generic_sb_pkg is
 
     impure function find_expected_entry_num(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element
+      constant expected_element : in t_element
     ) return integer is
     begin
       return find_expected_entry_num(instance, expected_element, NO_TAG, "");
     end function find_expected_entry_num;
 
     impure function find_expected_entry_num(
-      constant expected_element : in t_expected_element
+      constant expected_element : in t_element
     ) return integer is
     begin
       return find_expected_entry_num(1, expected_element, NO_TAG, "");
@@ -1908,7 +1915,7 @@ package body generic_sb_pkg is
     ----------------------------------------------------------------------------------------------------
     impure function find_expected_position(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string
     ) return integer is
@@ -1924,7 +1931,7 @@ package body generic_sb_pkg is
         v_sb_entry := vr_sb_queue.peek(instance, POSITION, i);
 
         -- check if match
-        if entry_match_expected(v_sb_entry, expected_element, tag_usage, tag) then
+        if match_expected_vs_entry(expected_element, v_sb_entry, tag_usage, tag) then
           return i;
         end if;
       end loop;
@@ -1933,7 +1940,7 @@ package body generic_sb_pkg is
     end function find_expected_position;
 
     impure function find_expected_position(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string
     ) return integer is
@@ -1943,14 +1950,14 @@ package body generic_sb_pkg is
 
     impure function find_expected_position(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element
+      constant expected_element : in t_element
     ) return integer is
     begin
       return find_expected_position(instance, expected_element, NO_TAG, "");
     end function find_expected_position;
 
     impure function find_expected_position(
-      constant expected_element : in t_expected_element
+      constant expected_element : in t_element
     ) return integer is
     begin
       return find_expected_position(1, expected_element, NO_TAG, "");
@@ -2000,7 +2007,7 @@ package body generic_sb_pkg is
     ----------------------------------------------------------------------------------------------------
     procedure delete_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := "";
@@ -2019,7 +2026,7 @@ package body generic_sb_pkg is
         vr_delete_cnt(instance) := vr_delete_cnt(instance) + 1;
 
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", value: " & expected_to_string(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
         end if;
@@ -2029,30 +2036,30 @@ package body generic_sb_pkg is
     end procedure delete_expected;
 
     procedure delete_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant tag_usage        : in t_tag_usage;
       constant tag              : in string;
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(1, expected_element, tag_usage, tag, msg, "delete_expected: value: " & expected_to_string(expected_element) & ", tag: '" & to_string(tag) & "'.  ");
+      delete_expected(1, expected_element, tag_usage, tag, msg, "delete_expected: value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  ");
     end procedure delete_expected;
 
     procedure delete_expected(
       constant instance         : in integer;
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(instance, expected_element, NO_TAG, "", msg, "delete_expected: instance " & to_string(instance) & ", value: " & expected_to_string(expected_element) & ".  ");
+      delete_expected(instance, expected_element, NO_TAG, "", msg, "delete_expected: instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ".  ");
     end procedure delete_expected;
 
     procedure delete_expected(
-      constant expected_element : in t_expected_element;
+      constant expected_element : in t_element;
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(1, expected_element, NO_TAG, "", msg, "delete_expected: instance value: " & expected_to_string(expected_element) & ".  ");
+      delete_expected(1, expected_element, NO_TAG, "", msg, "delete_expected: instance value: " & to_string_element(expected_element) & ".  ");
     end procedure delete_expected;
 
     procedure delete_expected(
@@ -2226,7 +2233,7 @@ package body generic_sb_pkg is
       constant instance          : integer;
       constant identifier_option : t_identifier_option;
       constant identifier        : positive
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return peek_entry(instance, identifier_option, identifier).expected_element;
     end function peek_expected;
@@ -2234,21 +2241,21 @@ package body generic_sb_pkg is
     impure function peek_expected(
       constant identifier_option : t_identifier_option;
       constant identifier        : positive
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return peek_entry(1, identifier_option, identifier).expected_element;
     end function peek_expected;
 
     impure function peek_expected(
       constant instance          : integer
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return peek_entry(instance, POSITION, 1).expected_element;
     end function peek_expected;
 
     impure function peek_expected(
       constant void : t_void
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return peek_entry(1, POSITION, 1).expected_element;
     end function peek_expected;
@@ -2372,7 +2379,7 @@ package body generic_sb_pkg is
       constant identifier        : positive;
       constant msg               : string := "";
       constant ext_proc_call     : string := ""
-    ) return t_expected_element is
+    ) return t_element is
       constant proc_name : string := "fetch_expected";
     begin
       -- Sanity checks in fetch entry
@@ -2390,7 +2397,7 @@ package body generic_sb_pkg is
       constant identifier_option : t_identifier_option;
       constant identifier        : positive;
       constant msg               : string := ""
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return fetch_expected(1, identifier_option, identifier, msg, "fetch_expected: fetching expected by " &
         to_string(identifier_option) & " " & to_string(identifier) & ".  ");
@@ -2399,21 +2406,21 @@ package body generic_sb_pkg is
     impure function fetch_expected(
       constant instance          : integer;
       constant msg               : string := ""
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return fetch_expected(instance, POSITION, 1, msg);
     end function fetch_expected;
 
     impure function fetch_expected(
       constant msg : string
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return fetch_expected(POSITION, 1, msg);
     end function fetch_expected;
 
     impure function fetch_expected(
       constant void : t_void
-    ) return t_expected_element is
+    ) return t_element is
     begin
       return fetch_expected(POSITION, 1);
     end function fetch_expected;
@@ -2551,7 +2558,7 @@ package body generic_sb_pkg is
     ----------------------------------------------------------------------------------------------------
     impure function exists(
       constant instance         : integer;
-      constant expected_element : t_expected_element;
+      constant expected_element : t_element;
       constant tag_usage        : t_tag_usage := NO_TAG;
       constant tag              : string      := ""
     ) return boolean is
@@ -2560,7 +2567,7 @@ package body generic_sb_pkg is
     end function exists;
 
     impure function exists(
-      constant expected_element : t_expected_element;
+      constant expected_element : t_element;
       constant tag_usage        : t_tag_usage := NO_TAG;
       constant tag              : string      := ""
     ) return boolean is

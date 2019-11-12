@@ -27,6 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_axistream;
 context bitvis_vip_axistream.vvc_context;
+use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
 -- Test case entity
 entity axistream_bfm_slv_array_tb is
@@ -210,6 +211,10 @@ begin
     report_msg_id_panel(VOID);
 
     enable_log_msg(ALL_MESSAGES);
+    disable_log_msg(ID_UTIL_SETUP);
+    disable_log_msg(ID_POS_ACK);
+    disable_log_msg(ID_BFM);
+    disable_log_msg(ID_PACKET_DATA);
 
     log(ID_LOG_HDR, "Start Simulation of TB for AXISTREAM 1", C_SCOPE);
     ------------------------------------------------------------
@@ -221,7 +226,7 @@ begin
     -- Directly assign arguments in BFM procedure using slv
     --
     ---------------------------------------------------------------
-    log("TC: BFM axistream transmits short slv packet: ");
+    log(ID_LOG_HDR, "TC: BFM axistream transmits short slv packet: ");
     v_data_array_as_slv(31 downto 0) := x"AABBCCDD"; -- 4 bytes
     -- transmit 0xAA
     axistream_transmit(v_data_array_as_slv(31 downto 24), "Directly assign args, transmitting " & to_string(v_data_array_as_slv(31 downto 24), HEX), clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
@@ -238,7 +243,7 @@ begin
     -- Directly assign arguments in BFM procedure usint t_slv_array
     --
     ---------------------------------------------------------------
-    log("TC: BFM axistream transmits short packet: ");
+    log(ID_LOG_HDR, "TC: BFM axistream transmits short packet: ");
 
     -- TC: Directly assigning args
     v_cnt := 0;
@@ -292,7 +297,7 @@ begin
     end loop;
 
 
-    log("TC: BFM transmit verify alert if data_array don't consist of N*bytes: ");
+    log(ID_LOG_HDR, "TC: BFM transmit verify alert if data_array don't consist of N*bytes: ");
     for bytes_in_word in 1 to C_MAX_BYTES_IN_WORD loop
       v_numBytes := 8;
       v_numWords := integer(ceil(real(v_numBytes*bytes_in_word)/(real(GC_DATA_WIDTH)/8.0)));
@@ -306,6 +311,24 @@ begin
       BFM_transmit_wrong_size(v_numBytes, bytes_in_word, v_user_array(0 to v_numWords-1));
     end loop;
 
+
+    log(ID_LOG_HDR, "TC: Testing BFM receive and expect check the correct number of bytes in the last word: ");
+    if GC_DATA_WIDTH > 8 then
+      axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+      axistream_transmit(v_data_array_1_byte(0 to 3), "transmit 4 bytes", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    end if;
+
+
+    log(ID_LOG_HDR, "TC: Testing BFM transmit, receive and expect with non-normalized slv_array: ");
+    v_data_array_1_byte(1 to 4) := (x"00",x"01",x"02",x"03");
+    axistream_transmit(v_data_array_1_byte(1 to 4), "transmit bytes 1 to 4", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    axistream_transmit(v_data_array_1_byte(1 to 4), "transmit bytes 1 to 4", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+
+
+    await_barrier(global_barrier, 1 us, "Synchronizing master");
+    log(ID_LOG_HDR, "TC: Testing BFM receive() timeouts at max_wait_cycles: ");
+    wait for (axistream_bfm_config.max_wait_cycles)*C_CLK_PERIOD;
+    wait for (axistream_bfm_config.max_wait_cycles)*C_CLK_PERIOD;
 
     --==================================================================================================
     -- Ending the simulation
@@ -467,18 +490,18 @@ begin
       if bytes_in_word = 1 then
         -- Test the overload without exp_user_array, exp_strb_array etc
         axistream_expect(get_slv_array(v_numBytes, bytes_in_word),
-                          "ready_low_at_word_num = " & to_string(axistream_bfm_config.ready_low_at_word_num) &
-                          "ready_low_duration = " & to_string(axistream_bfm_config.ready_low_duration) &
-                          "ready_default_value = " & to_string(axistream_bfm_config.ready_default_value) &
-                          "bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
+                          "ready_low_at_word_num=" & to_string(axistream_bfm_config.ready_low_at_word_num) &
+                          ", ready_low_duration=" & to_string(axistream_bfm_config.ready_low_duration) &
+                          ", ready_default_value=" & to_string(axistream_bfm_config.ready_default_value) &
+                          ", bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
       else
         -- Test the overload without exp_strb_array, exp_id_array, exp_dest_array
         -- More tstrb, tid, tdest tests in axistream_vvc_simple_tb.
         axistream_expect(get_slv_array(v_numBytes, bytes_in_word), v_user_array(0 to v_numWords-1),
-                          "ready_low_at_word_num = " & to_string(axistream_bfm_config.ready_low_at_word_num) &
-                          "ready_low_duration = " & to_string(axistream_bfm_config.ready_low_duration) &
-                          "ready_default_value = " & to_string(axistream_bfm_config.ready_default_value) &
-                          "bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
+                          "ready_low_at_word_num=" & to_string(axistream_bfm_config.ready_low_at_word_num) &
+                          ", ready_low_duration=" & to_string(axistream_bfm_config.ready_low_duration) &
+                          ", ready_default_value=" & to_string(axistream_bfm_config.ready_default_value) &
+                          ", bytes_in_word="&to_string(bytes_in_word), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);  --
       end if;
     end loop;
 
@@ -497,6 +520,30 @@ begin
       BFM_expect_wrong_size(v_numBytes, bytes_in_word, v_user_array(0 to v_numWords-1));
     end loop;
 
+
+    -- TC: Testing BFM receive and expect check the correct number of bytes in the last word
+    if GC_DATA_WIDTH > 8 then
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      axistream_receive(v_data_array_1_byte(0 to 1), v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "receiving 2 bytes", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      axistream_expect(v_data_array_1_byte(0 to 1), "expecting 2 bytes", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    end if;
+
+
+    -- TC: Testing BFM transmit, receive and expect with non-normalized slv_array
+    v_data_array_1_byte(1 to 4) := (x"00",x"01",x"02",x"03");
+    axistream_receive(v_data_array_1_byte(1 to 4), v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "receiving bytes 1 to 4", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    axistream_expect(v_data_array_1_byte(1 to 4), "expecting bytes 1 to 4", clk, axistream_if_s, TB_ERROR, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+
+
+    await_barrier(global_barrier, 1 us, "Synchronizing slave");
+    -- TC: Testing BFM receive() timeouts at max_wait_cycles
+    axistream_bfm_config.ready_low_at_word_num := 0;
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    axistream_receive(v_data_array, v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "invalid receive", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
+    axistream_bfm_config.ready_low_at_word_num := 1;
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    axistream_receive(v_data_array, v_numBytes, v_user_array, v_strb_array, v_id_array, v_dest_array, "invalid receive", clk, axistream_if_s, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
 
     wait;
   end process p_slave;

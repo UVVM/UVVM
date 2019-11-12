@@ -109,7 +109,6 @@ package methods_pkg is
     variable my_line      : inout line
   );
 
-  -- Enable and Disable do not have a Scope parameter as they are only allowed from main test sequencer
   procedure enable_log_msg(
     constant msg_id         : t_msg_id;
     variable msg_id_panel   : inout t_msg_id_panel;
@@ -121,12 +120,14 @@ package methods_pkg is
   procedure enable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) ;
 
   procedure enable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) ;
 
   procedure disable_log_msg(
@@ -140,12 +141,14 @@ package methods_pkg is
   procedure disable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     );
 
   procedure disable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     );
 
   impure function is_log_msg_enabled(
@@ -1602,7 +1605,8 @@ package methods_pkg is
     signal   barrier_signal   : inout std_logic;
     constant timeout          : in time;
     constant msg              : in string;
-    constant timeout_severity : in t_alert_level := ERROR
+    constant timeout_severity : in t_alert_level := ERROR;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT
   );
   -------------------------------------------
   -- await_semaphore_in_delta_cycles
@@ -1920,6 +1924,8 @@ package body methods_pkg is
     variable v_log_msg_id        : string(1 to C_LOG_MSG_ID_WIDTH);
     variable v_log_scope         : string(1 to C_LOG_SCOPE_WIDTH);
     variable v_log_pre_msg_width : natural;
+    variable v_idx                : natural := 1;
+
   begin
     -- Check if message ID is enabled
     if (msg_id_panel(msg_id) = ENABLED) then
@@ -1943,13 +1949,21 @@ package body methods_pkg is
       v_log_pre_msg_width := v_info'length;      -- Width of string preceeding the actual message
       -- Handle \r as potential initial open line
       if msg'length > 1 then
-        if C_USE_BACKSLASH_R_AS_LF and (msg(1 to 2) = "\r") then
-          write(v_info_final, LF);  -- Start transcript with an empty line
-          write(v_msg, remove_initial_chars(msg, 2));
+        if C_USE_BACKSLASH_R_AS_LF then
+          loop
+            if (msg(v_idx to v_idx+1) = "\r") then
+              write(v_info_final, LF);  -- Start transcript with an empty line
+              v_idx := v_idx + 2;
+            else
+              write(v_msg, remove_initial_chars(msg, v_idx-1));
+              exit;
+            end if;
+          end loop;
         else
           write(v_msg, msg);
         end if;
       end if;
+
 
       -- Handle dedicated ID indentation.
       write(v_msg_indent, to_string(C_MSG_ID_INDENT(msg_id)));
@@ -2197,18 +2211,20 @@ package body methods_pkg is
   procedure enable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    enable_log_msg(msg_id, shared_msg_id_panel, msg, C_TB_SCOPE_DEFAULT, quietness);
+    enable_log_msg(msg_id, shared_msg_id_panel, msg, scope, quietness);
   end;
 
   procedure enable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    enable_log_msg(msg_id, shared_msg_id_panel, "", C_TB_SCOPE_DEFAULT, quietness);
+    enable_log_msg(msg_id, shared_msg_id_panel, "", scope, quietness);
   end;
 
   procedure disable_log_msg(
@@ -2239,18 +2255,20 @@ package body methods_pkg is
   procedure disable_log_msg(
     msg_id         : t_msg_id;
     msg            : string;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    disable_log_msg(msg_id, shared_msg_id_panel, msg, C_TB_SCOPE_DEFAULT, quietness);
+    disable_log_msg(msg_id, shared_msg_id_panel, msg, scope, quietness);
   end;
 
   procedure disable_log_msg(
     msg_id         : t_msg_id;
-    quietness      : t_quietness := NON_QUIET
+    quietness      : t_quietness := NON_QUIET;
+    scope          : string      := C_TB_SCOPE_DEFAULT
     ) is
   begin
-    disable_log_msg(msg_id, shared_msg_id_panel, "", C_TB_SCOPE_DEFAULT, quietness);
+    disable_log_msg(msg_id, shared_msg_id_panel, "", scope, quietness);
   end;
 
   impure function is_log_msg_enabled(
@@ -2367,7 +2385,7 @@ package body methods_pkg is
           if (get_alert_stop_limit(alert_level) /= 0) then
             if (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
               if C_USE_STD_STOP_ON_ALERT_STOP_LIMIT then
-                std.env.stop;
+                std.env.stop(1);
               else
                 assert false report "This single Failure line has been provoked to stop the simulation. See alert-message above" severity failure;
               end if;
@@ -2506,12 +2524,12 @@ package body methods_pkg is
         fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
         "***  REPORT OF GLOBAL CTRL ***" & LF &
         fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
-        "                          IGNORE    STOP_LIMIT                      " & LF);
+        "                          IGNORE    STOP_LIMIT" & LF);
     for i in NOTE to t_alert_level'right loop
       write(v_line, "          " & to_upper(to_string(i, 13, LEFT)) & ": ");          -- Severity
 
       write(v_line, to_string(get_alert_attention(i),      7, RIGHT) & "    ");       -- column 1
-      write(v_line, to_string(integer'(get_alert_stop_limit(i)), 6, RIGHT, KEEP_LEADING_SPACE) & "    " & LF);  -- column 2
+      write(v_line, to_string(integer'(get_alert_stop_limit(i)), 6, RIGHT, KEEP_LEADING_SPACE) & LF);  -- column 2
     end loop;
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
 
@@ -2541,7 +2559,7 @@ package body methods_pkg is
       for i in t_msg_id'left to t_msg_id'right loop
         if ((i /= ALL_MESSAGES) and ((i /= NO_ID) and (i /= ID_NEVER))) then  -- report all but ID_NEVER, NO_ID and ALL_MESSAGES
         write(v_line, "          " & to_upper(to_string(i, C_LOG_MSG_ID_WIDTH+5, LEFT)) & ": ");  -- MSG_ID
-        write(v_line,to_upper(to_string(shared_msg_id_panel(i))) & "    " & LF); -- Enabled/disabled
+        write(v_line,to_upper(to_string(shared_msg_id_panel(i))) & LF); -- Enabled/disabled
         end if;
       end loop;
       write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
@@ -3459,11 +3477,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_slv_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(value(idx + v_adj_idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   procedure check_value(
@@ -3479,11 +3506,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_signed_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   procedure check_value(
@@ -3499,11 +3535,20 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_unsigned_array"
     ) is
-    variable v_check_ok  : boolean;
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    for idx in exp'range loop
-      v_check_ok := check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-    end loop;
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+      end loop;
+    end if;
   end;
 
   ------------------------------------------------------------------------
@@ -4155,29 +4200,32 @@ package body methods_pkg is
     constant ascending        : boolean           := false;
     constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
   ) return t_byte_array is
-    variable v_bytes_in_word      : integer := (slv_array(0)'length/8);
+    variable v_bytes_in_word      : integer := (slv_array(slv_array'low)'length/8);
     variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
     variable v_ascending_array    : t_byte_array(0 to v_byte_array_length-1);
     variable v_descending_array   : t_byte_array(v_byte_array_length-1 downto 0);
     variable v_ascending_vector   : boolean := false;
     variable v_byte_number        : integer := 0;
+    variable v_offset             : natural := 0;
   begin
     -- The ascending parameter should match the array direction. We could also just remove the ascending
     -- parameter and use the t'ascending attribute.
     bitvis_assert((slv_array'ascending and ascending) or (not(slv_array'ascending) and not(ascending)), ERROR,
       "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
 
-    v_ascending_vector := slv_array(0)'ascending;
+    v_ascending_vector := slv_array(slv_array'low)'ascending;
+    -- Use this offset in case the slv_array doesn't start at 0
+    v_offset := slv_array'low;
 
     if byte_endianness = FIRST_BYTE_LEFT then
       for slv_idx in 0 to slv_array'length-1 loop
         for byte in v_bytes_in_word downto 1 loop
           if v_ascending_vector then
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
           else -- SLV vector is descending
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
           end if;
           v_byte_number := v_byte_number + 1;
         end loop;
@@ -4186,11 +4234,11 @@ package body methods_pkg is
       for slv_idx in 0 to slv_array'length-1 loop
         for byte in 1 to v_bytes_in_word loop
           if v_ascending_vector then
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
           else -- SLV vector is descending
-            v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
-            v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
           end if;
           v_byte_number := v_byte_number + 1;
         end loop;
@@ -5940,7 +5988,7 @@ package body methods_pkg is
   end record;
 
   -- Local function used in synchronization methods to search through shared_flag_array for flag_name or available index
-  -- Returns: 
+  -- Returns:
   --          Flag index in the shared array
   --          If the flag is new or already in the array
   --          If the array is full, and the flag can not be added (alerts an error).
@@ -5966,30 +6014,30 @@ package body methods_pkg is
     end loop;
     return (v_idx, v_is_new, v_is_array_full);
   end;
-  
+
   procedure block_flag(
     constant flag_name                : in string;
     constant msg                      : in string;
-    constant already_blocked_severity : in t_alert_level := WARNING; 
+    constant already_blocked_severity : in t_alert_level := WARNING;
     constant scope                    : in string := C_TB_SCOPE_DEFAULT
   ) is
     variable v_idx            : integer := 0;
     variable v_is_new         : boolean := false;
     variable v_is_array_full  : boolean := true;
   begin
-    -- Find flag, or add a new provided the array is not full. 
+    -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
     if (v_is_array_full = true) then
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else -- Block flag
       if (v_is_new = true) then
-        log(ID_BLOCKING, "New blocked synchronization flag addded: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. " & add_msg_delimiter(msg), scope);
       else
         -- Check if the flag to be blocked already is blocked
         if (shared_flag_array(v_idx).is_blocked = true) then
-          alert(already_blocked_severity, "The flag " & flag_name & " already was blocked. " & add_msg_delimiter(msg), scope);
+          alert(already_blocked_severity, "The flag " & flag_name & " was already blocked. " & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, "Blocking flag: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Blocking flag. " & add_msg_delimiter(msg), scope);
         end if;
       end if;
       shared_flag_array(v_idx).is_blocked := true;
@@ -6012,15 +6060,15 @@ package body methods_pkg is
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else -- Unblock flag
       if (v_is_new = true) then
-        log(ID_BLOCKING, "New unblocked synchronization flag addded: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": New unblocked synchronization flag added. " & add_msg_delimiter(msg), scope);
       else
-        log(ID_BLOCKING, "Unblocking flag: " & flag_name & ". " & add_msg_delimiter(msg), scope);
+        log(ID_BLOCKING, flag_name & ": Unblocking flag. " & add_msg_delimiter(msg), scope);
       end if;
       shared_flag_array(v_idx).is_blocked := false;
       -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
       gen_pulse(trigger, 0 ns, "pulsing global_trigger. " & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
     end if;
-  end procedure; 
+  end procedure;
 
   procedure await_unblock_flag(
     constant flag_name        : in string;
@@ -6043,20 +6091,20 @@ package body methods_pkg is
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else -- Waits only if the flag is found and is blocked. Will wait when a new flag is added, as it is default blocked.
       v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
-      if (v_flag_is_blocked = false) then 
+      if (v_flag_is_blocked = false) then
         if (flag_returning = RETURN_TO_BLOCK) then
           -- wait for all sequencer that are waiting for that flag before reseting it
           wait for 0 ns;
           shared_flag_array(v_idx).is_blocked := true;
-          log(ID_BLOCKING, flag_name & " already was unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Was already unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, flag_name & " already was unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Was already unblocked. " & add_msg_delimiter(msg), scope);
         end if;
       else -- Flag is blocked (or a new flag was added), starts waiting. log before while loop. Otherwise the message will be printed everytime the global_trigger was triggered.
         if (v_is_new = true) then
-          log(ID_BLOCKING, "New blocked synchronization flag addded: " & flag_name & ". Waiting for this flag to be unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": New blocked synchronization flag added. Waiting to be unblocked. " & add_msg_delimiter(msg), scope);
         else
-          log(ID_BLOCKING, "Waiting for: " & flag_name & " to be unblocked. " & add_msg_delimiter(msg), scope);
+          log(ID_BLOCKING, flag_name & ": Waiting to be unblocked. " & add_msg_delimiter(msg), scope);
         end if;
       end if;
 
@@ -6064,7 +6112,7 @@ package body methods_pkg is
       while v_flag_is_blocked = true loop
         if (timeout /= 0 ns) then
           wait until rising_edge(global_trigger) for ((start_time + timeout) - now);
-          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out" & add_msg_delimiter(msg), scope, ID_NEVER);
+          check_value(global_trigger = '1', timeout_severity, flag_name & " timed out. " & add_msg_delimiter(msg), scope, ID_NEVER);
           if global_trigger /= '1' then
             exit;
           end if;
@@ -6074,8 +6122,10 @@ package body methods_pkg is
 
         v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
         if (v_flag_is_blocked = false) then
-          log(ID_BLOCKING, flag_name & " was unblocked. " & add_msg_delimiter(msg), scope);
-          if flag_returning = RETURN_TO_BLOCK then
+          if flag_returning = KEEP_UNBLOCKED then
+            log(ID_BLOCKING, flag_name & ": Has been unblocked. ", scope);
+          else
+            log(ID_BLOCKING, flag_name & ": Has been unblocked. Returned to blocked. ", scope);
             -- wait for all sequencer that are waiting for that flag before reseting it
             wait for 0 ns;
             shared_flag_array(v_idx).is_blocked := true;
@@ -6090,12 +6140,13 @@ package body methods_pkg is
     signal   barrier_signal   : inout std_logic;
     constant timeout          : in time;
     constant msg              : in string;
-    constant timeout_severity : in t_alert_level := ERROR
+    constant timeout_severity : in t_alert_level := ERROR;
+    constant scope            : in string := C_TB_SCOPE_DEFAULT
   )is
   begin
     -- set barrier signal to 0
     barrier_signal <= '0';
-    log(ID_BLOCKING, "Waiting for barrier. " & add_msg_delimiter(msg), C_SCOPE);
+    log(ID_BLOCKING, "Waiting for barrier. " & add_msg_delimiter(msg), scope);
     -- wait until all sequencer using that barrier_signal wait for it
     if timeout = 0 ns then
       wait until barrier_signal = '0';
@@ -6104,9 +6155,9 @@ package body methods_pkg is
     end if;
     if barrier_signal /= '0' then
       -- timeout
-      alert(timeout_severity, "Timeout while waiting for barrier signal. " & add_msg_delimiter(msg), C_SCOPE);
+      alert(timeout_severity, "Timeout while waiting for barrier signal. " & add_msg_delimiter(msg), scope);
     else
-      log(ID_BLOCKING, "Barrier received. " & add_msg_delimiter(msg), C_SCOPE);
+      log(ID_BLOCKING, "Barrier received. " & add_msg_delimiter(msg), scope);
     end if;
     barrier_signal <= '1';
   end procedure;

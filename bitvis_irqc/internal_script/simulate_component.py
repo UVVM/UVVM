@@ -26,7 +26,7 @@ def simulate(log_to_transcript):
   sim_log.log("\n" + component)
   sim_log.log("\n" + separation_line)
 
-  os.chdir("sim")
+  os.chdir("internal_script")
 
   # Delete old compiled libraries and simulations if any
   if os.path.exists("vunit_out"):
@@ -57,7 +57,7 @@ def simulate(log_to_transcript):
     shutil.rmtree("vunit_out")
 
   os.chdir("../script")
-  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_and_sim_all.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  sim = subprocess.run(['vsim', '-c',  '-do', 'do compile_all_and_simulate.do' + ';exit'], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
 
   demo_pass = False
   if sim.returncode == 0:
@@ -92,6 +92,9 @@ def simulate(log_to_transcript):
 
   if os.path.exists("../../uvvm_util/sim/uvvm_util"):
     shutil.rmtree("../../uvvm_util/sim/uvvm_util")
+
+  if os.path.exists("../../uvvm_vvc_framework/sim/uvvm_vvc_framework"):
+    shutil.rmtree("../../uvvm_vvc_framework/sim/uvvm_vvc_framework")
 
   if os.path.exists("../../bitvis_vip_sbi/sim/bitvis_vip_sbi"):
     shutil.rmtree("../../bitvis_vip_sbi/sim/bitvis_vip_sbi")

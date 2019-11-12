@@ -26,7 +26,7 @@ def simulate(log_to_transcript):
   sim_log.log("\n" + component)
   sim_log.log("\n" + separation_line)
 
-  os.chdir("sim")
+  os.chdir("internal_script")
 
   # Delete old compiled libraries and simulations if any
   if os.path.exists("vunit_out"):
@@ -50,6 +50,14 @@ def simulate(log_to_transcript):
     sim_log.log("\nRiviera Pro : PASS")
   else:
     sim_log.log("\nRiviera Pro : FAILED")
+    sim_log.log("\n" + sim.stderr)
+
+  # Compare logs with Golden reference
+  sim = subprocess.run(["py", "internal_compare_sim_output.py", "-p8"], stdout=subprocess.PIPE, stderr= subprocess.PIPE, text=True)
+  if sim.returncode == 0:
+    sim_log.log("\nGolden reference: PASS")
+  else:
+    sim_log.log("\nGolden reference: FAILED")
     sim_log.log("\n" + sim.stderr)
 
   # Delete compiled libraries and simulations

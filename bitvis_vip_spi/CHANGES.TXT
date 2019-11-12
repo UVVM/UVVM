@@ -1,6 +1,12 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.3.0
+----------
+Released: 2019-06-06
+- Added optional scope to all CDMs.
+- Updated documentation.
+
 v3.2.2
 ----------
 Released: 2018-12-03

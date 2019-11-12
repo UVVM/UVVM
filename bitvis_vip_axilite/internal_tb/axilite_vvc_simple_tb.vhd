@@ -28,6 +28,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_axilite;
 context bitvis_vip_axilite.vvc_context;
+use bitvis_vip_axilite.axilite_bfm_pkg.all;
 
 -- Test case entity
 entity axilite_vvc_simple_tb is
@@ -248,18 +249,18 @@ begin
     log(ID_LOG_HDR, "Test with byte enable", C_SCOPE);
 
     axilite_write(AXILITE_VVCT,1, x"0006000", x"0","Clearing register");
-    axilite_write(AXILITE_VVCT,1, x"0006000", x"dada1960", "0011", "Write to only byte 0 and 1");
+    axilite_write(AXILITE_VVCT,1, x"0006000", x"dada1960", std_logic_vector'("0011"), "Write to only byte 0 and 1");
     axilite_check(AXILITE_VVCT,1, x"0006000", x"00001960","Checking that only byte 0 and 1 were set");
     axilite_write(AXILITE_VVCT,1, x"0006000", x"0","Clearing register");
-    axilite_write(AXILITE_VVCT,1, x"0006000", x"dada1960", "1100", "Write to only byte 2 and 3");
+    axilite_write(AXILITE_VVCT,1, x"0006000", x"dada1960", std_logic_vector'("1100"), "Write to only byte 2 and 3");
     axilite_check(AXILITE_VVCT,1, x"0006000", x"dada0000","Checking that only byte 2 and 3 were set");
 
 
     axilite_write(AXILITE_VVCT,2, x"0000040", x"0","Clearing register");
-    axilite_write(AXILITE_VVCT,2, x"0000040", x"abba1972", "00000011", "Write to only byte 0 and 1");
+    axilite_write(AXILITE_VVCT,2, x"0000040", x"abba1972", std_logic_vector'("00000011"), "Write to only byte 0 and 1");
     axilite_check(AXILITE_VVCT,2, x"0000040", x"00001972","Checking that only byte 0 and 1 were set");
     axilite_write(AXILITE_VVCT,2, x"0000040", x"0","Clearing register");
-    axilite_write(AXILITE_VVCT,2, x"0000040", x"abba1972", "00001100", "Write to only byte 2 and 3");
+    axilite_write(AXILITE_VVCT,2, x"0000040", x"abba1972", std_logic_vector'("00001100"), "Write to only byte 2 and 3");
     axilite_check(AXILITE_VVCT,2, x"0000040", x"abba0000","Checking that only byte 2 and 3 were set");
 
 

@@ -36,8 +36,8 @@ use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
 -- Coverage
-library crfc;
-use crfc.Coveragepkg.all;
+--fc library crfc;
+--fc use crfc.Coveragepkg.all;
 
 
 --=================================================================================================
@@ -206,7 +206,7 @@ begin
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
     variable v_msg_id_panel                          : t_msg_id_panel;
     -- Coverage
-    variable v_coverage_ok                           : boolean                                    := false;
+    --fc variable v_coverage_ok                           : boolean                                    := false;
 
   begin
 
@@ -225,7 +225,7 @@ begin
 
 
     -- Coverage
-    shared_uart_byte_coverage.SetName("UATR Receive coverage");
+    --fc shared_uart_byte_coverage.SetName("UATR Receive coverage");
 
     loop
 
@@ -308,46 +308,50 @@ begin
 
 
             when COVERAGE_FULL =>
-              v_coverage_ok := false;
-
-              while not(v_coverage_ok) loop
-                -- Set DTT
-                set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-
-                transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
-                -- Call the corresponding procedure in the BFM package.
-                uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                              msg                   => format_msg(v_cmd),
-                              rx                    => uart_vvc_rx,
-                              terminate_loop        => terminate_current_cmd.is_active,
-                              config                => vvc_config.bfm_config,
-                              scope                 => C_SCOPE,
-                              msg_id_panel          => v_msg_id_panel);
-
-                -- Store the result
-                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                            cmd_idx      => v_cmd.cmd_idx,
-                                                            result       => v_read_data);
-
-                -- Request SB check result
-                if v_cmd.data_routing = TO_SB then
-                  -- call SB check_actual
-                  shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
-                else
-                  work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                               cmd_idx     => v_cmd.cmd_idx,
-                                                               result      => v_read_data);
-                end if;
-
-                -- Update coverage
-                shared_uart_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
-                -- Check if coverage is fulfilled
-                v_coverage_ok := shared_uart_byte_coverage.IsCovered;
-              end loop;
+              alert(tb_error,"To use coverage uncomment --fc in executor process for UART_RX_VVC");
+              
+              --fc v_coverage_ok := false;
+              --fc 
+              --fc while not(v_coverage_ok) loop
+              --fc   -- Set DTT
+              --fc   set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+              --fc 
+              --fc   transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
+              --fc   -- Call the corresponding procedure in the BFM package.
+              --fc   uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+              --fc                 msg                   => format_msg(v_cmd),
+              --fc                 rx                    => uart_vvc_rx,
+              --fc                 terminate_loop        => terminate_current_cmd.is_active,
+              --fc                 config                => vvc_config.bfm_config,
+              --fc                 scope                 => C_SCOPE,
+              --fc                 msg_id_panel          => v_msg_id_panel);
+              --fc 
+              --fc   -- Store the result
+              --fc   work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+              --fc                                               cmd_idx      => v_cmd.cmd_idx,
+              --fc                                               result       => v_read_data);
+              --fc 
+              --fc   -- Request SB check result
+              --fc   if v_cmd.data_routing = TO_SB then
+              --fc     -- call SB check_actual
+              --fc     shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+              --fc   else
+              --fc     work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+              --fc                                                  cmd_idx     => v_cmd.cmd_idx,
+              --fc                                                  result      => v_read_data);
+              --fc   end if;
+              --fc 
+              --fc   -- Update coverage
+              --fc   shared_uart_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
+              --fc   -- Check if coverage is fulfilled
+              --fc   v_coverage_ok := shared_uart_byte_coverage.IsCovered;
+              --fc end loop;
 
             when COVERAGE_EDGES =>
+              alert(tb_error,"To use coverage uncomment --fc in executor process for UART_RX_VVC");
               null; -- Not implemented yet
             when others =>
+              alert(tb_error,"To use coverage uncomment --fc in executor process for UART_RX_VVC");
               null;
           end case;
 

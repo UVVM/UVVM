@@ -13,6 +13,14 @@
 #-----------------------------------------------------------------------
 # Run simulation
 #-----------------------------------------------------------------------
+<<<<<<< HEAD
 vsim bitvis_irqc.irqc_demo_tb
+=======
+<<<<<<< HEAD:bitvis_uart/script/simulate_demo_tb.do
+vsim bitvis_uart.uart_vvc_demo_tb
+=======
+vsim bitvis_irqc.irqc_demo_tb
+>>>>>>> public:bitvis_irqc/script/simulate_demo_tb.do
+>>>>>>> public
 do wave.do
 run -all

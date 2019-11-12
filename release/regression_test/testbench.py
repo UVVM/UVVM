@@ -327,8 +327,8 @@ class Testbench:
         list: matching file names as strings
       """
       search_string = pre_pattern + test_name + post_pattern + "." + file_type
-      files = glob.glob(pre_pattern + test_name + post_pattern + file_type)
-      return files
+      #files = glob.glob(pre_pattern + test_name + post_pattern + file_type)
+      return glob.glob(search_string)
 
 
     # Clean-up

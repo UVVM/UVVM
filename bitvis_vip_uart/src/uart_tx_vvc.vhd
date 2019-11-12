@@ -273,7 +273,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data := v_random.RandSlv(0, v_cmd.data'length, v_cmd.data'length); -- Hard coded for TB example
+                v_cmd.data := std_logic_vector(to_unsigned(random(0, 16), v_cmd.data'length)); -- Hard coded for TB example
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA

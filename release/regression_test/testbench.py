@@ -178,14 +178,11 @@ class Testbench:
       return self.tests
 
 
-    def remove_tests(self, test):
+    def remove_tests(self):
       """
-      Remove a test defined to be run in testbench sequencer.
-
-      Args:
-        test (str): name of test defined in testbench sequencer.
+      Empty list of defined tests. 
       """
-      self.tests.remove(test)
+      self.tests = []
 
 
     def remove_configs(self):

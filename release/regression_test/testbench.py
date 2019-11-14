@@ -147,14 +147,22 @@ class Testbench:
 
     def add_test(self, test):
       """
-      To-do!
+      Add a test defined in testbench. This test parameter will have to 
+      mach a GC_TEST if statement in the testbench sequencer.
+
+      Args:
+        test (str): name of test 
       """
       self.tests.append(test)
 
 
     def add_tests(self, tests):
       """
-      To-do!
+      Add several tests defined in testbench. The tests in the tests parameter will
+      have to mach the GC_TEST if statemens in the testbench sequncer.
+
+      Ags:
+        tests (list of str): name of tests
       """
       for test in tests:
         self.tests.append(test)
@@ -162,35 +170,47 @@ class Testbench:
 
     def get_tests(self):
       """
-      To-do!
+      Return the defined tests to be run in testsbench sequencer.
+
+      Returns:
+        list: the name of defined tests
       """
       return self.tests
 
 
-    def remove_tests(self):
+    def remove_tests(self, test):
       """
-      To-do!
+      Remove a test defined to be run in testbench sequencer.
+
+      Args:
+        test (str): name of test defined in testbench sequencer.
       """
-      self.tests = []
+      self.tests.remove(test)
 
 
     def remove_configs(self):
       """
-      To-do!
+      Remove all defined testbench configurations.
       """
       self.configs = []
 
 
     def add_config(self, config):
       """
-      To-do!
+      Adds a testbench configuration, i.e. generics.
+
+      Args:
+        config (list): testbench configuration.
       """
       self.configs.append(config)
 
 
     def set_configs(self, configs):
       """
-      To-do!
+      Adds a set of testbench configurations, i.e. generics.
+
+      Args:
+        configs (list): testbench configurations.
       """
       self.remove_configs()
       for config in configs:
@@ -210,7 +230,11 @@ class Testbench:
     # Script arguments
     def check_arguments(self, args):
       """
-      To-do!
+      Check script calling arguments and set simulation
+      behaviour, i.e. simulator, verbosity.
+
+      Args:
+        args (list): list of strings with arguments.
       """
       for arg in args:
         arg = arg.upper().split()

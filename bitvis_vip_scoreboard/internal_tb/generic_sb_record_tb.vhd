@@ -34,28 +34,38 @@ end entity generic_sb_record_tb;
 -- Test case architecture
 architecture func of generic_sb_record_tb is
 
-  type t_record is record
+  type t_input is record
     address : std_logic_vector(7 downto 0);
     data_1  : std_logic_vector(7 downto 0);
     data_2  : std_logic_vector(7 downto 0);
-  end record t_record;
+  end record t_input;
+
+  type t_output is record
+    address : std_logic_vector( 7 downto 0);
+    data    : std_logic_vector(15 downto 0);
+  end record t_output;
 
   function data_match(
-    constant output_data : in t_record;
-    constant input_data  : in t_record
+    constant input_data  : in t_input;
+    constant output_data : in t_output
   ) return boolean is
   begin
-    return (output_data.address = input_data.address) and (output_data.data_1 = input_data.data_1) and
-           (output_data.data_2 = input_data.data_2);
+    return (input_data.address = output_data.address) and (input_data.data_1 & input_data.data_2 = output_data.data);
   end function data_match;
 
-  function record_to_string(
-    constant rec_data : t_record
+  function input_to_string(
+    constant input_data : t_input
   ) return string is
   begin
-    return "address: " & to_string(rec_data.address) & ", data_1: " & to_string(rec_data.data_1) &
-           ", data_2: " & to_string(rec_data.data_2);
-  end function record_to_string;
+    return "address: " & to_string(input_data.address) & ", data_1: " & to_string(input_data.data_1) & ", data_2: " & to_string(input_data.data_2);
+  end function input_to_string;
+
+  function output_to_string(
+    constant output_data : t_output
+  ) return string is
+  begin
+    return "address: " & to_string(output_data.address) & ", data: " & to_string(output_data.data);
+  end function output_to_string;
 
   constant C_RECORD_SB_CONFIG_DEFAULT : t_sb_config := (mismatch_alert_level      => NO_ALERT,
                                                         allow_lossy               => false,
@@ -65,11 +75,13 @@ architecture func of generic_sb_record_tb is
                                                         ignore_initial_garbage    => false);
 
   -- Package declaration
-  package record_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_element         => t_record,
-               element_match     => data_match,
-               to_string_element => record_to_string,
-               sb_config_default => C_RECORD_SB_CONFIG_DEFAULT);
+  package record_sb_pkg is new work.generic_sb_pkg
+  generic map (t_expected_element       => t_input,
+               t_actual_element         => t_output,
+               match                    => data_match,
+               expected_to_string       => input_to_string,
+               actual_to_string         => output_to_string,
+               sb_config_default        => C_RECORD_SB_CONFIG_DEFAULT);
 
   use record_sb_pkg.all;
 
@@ -88,7 +100,7 @@ architecture func of generic_sb_record_tb is
     procedure add_100_expected_elements_with_same_tag(
       constant scope : string
     ) is
-      variable v_input : t_record;
+      variable v_input : t_input;
     begin
       log(ID_SEQUENCER, "adding 100 expected elements with same tag", scope);
       for i in 1 to 100 loop
@@ -104,7 +116,7 @@ architecture func of generic_sb_record_tb is
     procedure add_100_expected_elements_with_different_tag(
       constant scope : string
     ) is
-      variable v_input : t_record;
+      variable v_input : t_input;
     begin
       log(ID_SEQUENCER, "adding 100 expected elements with different tag", scope);
       for i in 1 to 100 loop
@@ -136,20 +148,19 @@ architecture func of generic_sb_record_tb is
 
 
 
-    procedure test_check_received is
-      constant scope    : string := "TB: check_received";
-      variable v_output : t_record;
+    procedure test_check_actual is
+      constant scope    : string := "TB: check_actual";
+      variable v_output : t_output;
     begin
 
-      log(ID_LOG_HDR_LARGE, "Test check_received", scope);
+      log(ID_LOG_HDR_LARGE, "Test check_actual", scope);
 
-      log(ID_LOG_HDR, "checking received data vs expected data", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data", scope);
       add_100_expected_elements_with_same_tag(scope);
       for i in 1 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",   scope);
@@ -159,19 +170,17 @@ architecture func of generic_sb_record_tb is
 
       sb_under_test.reset(VOID);
 
-      log(ID_LOG_HDR, "checking received data vs expected data with wrong tag", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data with wrong tag", scope);
       add_100_expected_elements_with_same_tag(scope);
       for i in 1 to 50 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       for i in 51 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "wrong tag", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "wrong tag", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",    scope);
@@ -182,17 +191,17 @@ architecture func of generic_sb_record_tb is
 
       sb_under_test.reset(VOID);
 
-    end procedure test_check_received;
+    end procedure test_check_actual;
 
 
 
-    procedure test_check_received_out_of_order is
-      constant scope : string := "TB: check_received OOO";
+    procedure test_check_actual_out_of_order is
+      constant scope : string := "TB: check_actual OOO";
       variable v_config : t_sb_config;
-      variable v_output : t_record;
+      variable v_output : t_output;
     begin
 
-      log(ID_LOG_HDR_LARGE, "Test check_received with out of order", scope);
+      log(ID_LOG_HDR_LARGE, "Test check_actual with out of order", scope);
 
       v_config := C_SB_CONFIG_DEFAULT;
       v_config.allow_out_of_order := true;
@@ -203,12 +212,11 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "adding expected data", scope);
       add_100_expected_elements_with_same_tag(scope);
 
-      log(ID_LOG_HDR, "checking received data vs expected data", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data", scope);
       for i in 100 downto 1 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",    scope);
@@ -219,17 +227,17 @@ architecture func of generic_sb_record_tb is
 
       sb_under_test.reset(VOID);
 
-    end procedure test_check_received_out_of_order;
+    end procedure test_check_actual_out_of_order;
 
 
 
-    procedure test_check_received_lossy is
-      constant scope    : string := "TB: check_received lossy";
+    procedure test_check_actual_lossy is
+      constant scope    : string := "TB: check_actual lossy";
       variable v_config : t_sb_config;
-      variable v_output : t_record;
+      variable v_output : t_output;
     begin
 
-      log(ID_LOG_HDR_LARGE, "Test check_received with lossy", scope);
+      log(ID_LOG_HDR_LARGE, "Test check_actual with lossy", scope);
 
       v_config := C_SB_CONFIG_DEFAULT;
       v_config.allow_lossy := true;
@@ -240,12 +248,11 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "adding expected data", scope);
       add_100_expected_elements_with_same_tag(scope);
 
-      log(ID_LOG_HDR, "checking received data vs expected data", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data", scope);
       for i in 51 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",    scope);
@@ -256,14 +263,14 @@ architecture func of generic_sb_record_tb is
 
       sb_under_test.reset(VOID);
 
-    end procedure test_check_received_lossy;
+    end procedure test_check_actual_lossy;
 
 
 
     procedure test_initial_garbage is
       variable scope    : string(1 to 26);
       variable v_config : t_sb_config;
-      variable v_output : t_record;
+      variable v_output : t_output;
     begin
 
       sb_under_test.enable_log_msg(ID_CTRL);
@@ -294,9 +301,8 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "checking initial garbage", scope);
       for i in 2 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "initial garbage");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "initial garbage");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -309,12 +315,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  99, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 1 to 50 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -327,12 +332,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  99, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 52 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "check received expect mismatch");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "check actual expect mismatch");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -345,11 +349,10 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  99, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       v_output.address := std_logic_vector(to_unsigned(100, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(100, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(101, 8));
-      sb_under_test.check_received(v_output, "checking received");
+      v_output.data    := std_logic_vector(to_unsigned(100, 8)) & std_logic_vector(to_unsigned(101, 8));
+      sb_under_test.check_actual(v_output, "checking actual");
 
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -394,9 +397,8 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "checking initial garbage", scope);
       for i in 101 to 150 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "initial garbage");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "initial garbage");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -409,12 +411,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 50 downto 1 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received OOO");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual OOO");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -427,12 +428,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received mismatch", scope);
+      log(ID_LOG_HDR, "checking actual mismatch", scope);
       for i in 50 downto 1 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received OOO expect mismatch");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual OOO expect mismatch");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -445,12 +445,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 100 downto 51 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received OOO");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual OOO");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -495,9 +494,8 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "checking initial garbage", scope);
       for i in 101 to 150 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "initial garbage");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "initial garbage");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -510,11 +508,10 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       v_output.address := std_logic_vector(to_unsigned(50, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(50, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(51, 8));
-      sb_under_test.check_received(v_output, "checking received lossy");
+      v_output.data    := std_logic_vector(to_unsigned(50, 8)) & std_logic_vector(to_unsigned(51, 8));
+      sb_under_test.check_actual(v_output, "checking actual lossy");
 
       log(ID_LOG_HDR, "check counters", scope);
       check_value(sb_under_test.is_empty(VOID),                false, ERROR, "verify SB is not empty",       scope);
@@ -526,12 +523,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 49 downto 1 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received lossy");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual lossy");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -544,12 +540,11 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 51 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received lossy");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual lossy");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -573,8 +568,8 @@ architecture func of generic_sb_record_tb is
     procedure test_overdue_time_limit is
       constant scope    : string := "TB: overdue check";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
-      variable v_output : t_record;
+      variable v_input  : t_input;
+      variable v_output : t_output;
     begin
 
       sb_under_test.enable_log_msg(ID_CTRL);
@@ -605,12 +600,11 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "wait 9 ns", scope);
       wait for 9 ns;
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 1 to 10 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -644,12 +638,11 @@ architecture func of generic_sb_record_tb is
       log(ID_LOG_HDR, "wait 1 ns", scope);
       wait for 1 ns;
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 11 to 80 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -669,18 +662,16 @@ architecture func of generic_sb_record_tb is
 
       set_alert_stop_limit(ERROR, 6);
       increment_expected_alerts(ERROR, 5);
-      log(ID_LOG_HDR, "checking received, expecting 5 ERRORs", scope);
+      log(ID_LOG_HDR, "checking actual, expecting 5 ERRORs", scope);
       for i in 81 to 85 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual");
       end loop;
       v_output.address := x"AA";
-      v_output.data_1  := x"55";
-      v_output.data_2  := x"66";
+      v_output.data    := x"5566";
       for i in 86 to 90 loop
-        sb_under_test.check_received(v_output, "checking received inserted");
+        sb_under_test.check_actual(v_output, "checking actual inserted");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -703,15 +694,14 @@ architecture func of generic_sb_record_tb is
       v_config.overdue_check_time_limit  := 10 ns;
       sb_under_test.config(v_config);
 
-      log(ID_LOG_HDR, "checking received, expecting 20 overdue checks", scope);
+      log(ID_LOG_HDR, "checking actual, expecting 20 overdue checks", scope);
       for i in 91 to 95 loop
-        sb_under_test.check_received(v_output, "checking received inserted");
+        sb_under_test.check_actual(v_output, "checking actual inserted");
       end loop;
       for i in 86 to 100 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, "checking received");
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -736,10 +726,10 @@ architecture func of generic_sb_record_tb is
     procedure test_find is
       constant scope    : string := "TB: find";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
+      variable v_input : t_input;
 
       procedure add_data is
-        variable v_input : t_record;
+        variable v_input : t_input;
       begin
         for i in 1 to 10 loop
         v_input.address := std_logic_vector(to_unsigned(i, 8));
@@ -762,12 +752,12 @@ architecture func of generic_sb_record_tb is
           v_input.address := std_logic_vector(to_unsigned(21, 8));
           v_input.data_1  := std_logic_vector(to_unsigned(21, 8));
           v_input.data_2  := std_logic_vector(to_unsigned(22, 8));
-          sb_under_test.add_expected(v_input, TAG, "tag " & to_string(i), "Add expected " & to_string_element(v_input) & " with tag 'tag " & to_string(i) & "'"); -- entry num 21 to 30
+          sb_under_test.add_expected(v_input, TAG, "tag " & to_string(i), "Add expected " & expected_to_string(v_input) & " with tag 'tag " & to_string(i) & "'"); -- entry num 21 to 30
         end loop;
       end procedure add_data;
 
       procedure check_position is
-        variable v_input : t_record;
+        variable v_input : t_input;
       begin
         v_input.address := std_logic_vector(to_unsigned(1, 8));
         v_input.data_1  := std_logic_vector(to_unsigned(1, 8));
@@ -935,7 +925,7 @@ architecture func of generic_sb_record_tb is
     procedure test_peek is
       constant scope    : string := "TB: peek";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
+      variable v_input  : t_input;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test peek", scope);
@@ -964,14 +954,14 @@ architecture func of generic_sb_record_tb is
       v_input.address := std_logic_vector(to_unsigned(1, 8));
       v_input.data_1  := std_logic_vector(to_unsigned(1, 8));
       v_input.data_2  := std_logic_vector(to_unsigned(2, 8));
-      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       check_value(sb_under_test.peek_source(VOID), "source 1", ERROR, "source 1", scope);
       check_value(sb_under_test.peek_tag(VOID), "tag 1", ERROR, "tag 1", scope);
       for i in 1 to 100 loop
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.peek_expected(POSITION, i) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.peek_expected(POSITION, i) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
         check_value(sb_under_test.peek_source(POSITION, i), "source " & to_string(i), ERROR, "source " & to_string(i), scope);
         check_value(sb_under_test.peek_tag(POSITION, i), "tag " & to_string(i), ERROR, "tag " & to_string(i), scope);
       end loop;
@@ -980,14 +970,14 @@ architecture func of generic_sb_record_tb is
       v_input.address := std_logic_vector(to_unsigned(1, 8));
       v_input.data_1  := std_logic_vector(to_unsigned(1, 8));
       v_input.data_2  := std_logic_vector(to_unsigned(2, 8));
-      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       check_value(sb_under_test.peek_source(VOID), "source 1", ERROR, "source 1", scope);
       check_value(sb_under_test.peek_tag(VOID), "tag 1", ERROR, "tag 1", scope);
       for i in 1 to 100 loop
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.peek_expected(ENTRY_NUM, i) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.peek_expected(ENTRY_NUM, i) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
         check_value(sb_under_test.peek_source(ENTRY_NUM, i), "source " & to_string(i), ERROR, "source " & to_string(i), scope);
         check_value(sb_under_test.peek_tag(ENTRY_NUM, i), "tag " & to_string(i), ERROR, "tag " & to_string(i), scope);
       end loop;
@@ -1021,14 +1011,14 @@ architecture func of generic_sb_record_tb is
       v_input.address := std_logic_vector(to_unsigned(1, 8));
       v_input.data_1  := std_logic_vector(to_unsigned(1, 8));
       v_input.data_2  := std_logic_vector(to_unsigned(2, 8));
-      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       check_value(sb_under_test.peek_source(VOID), "source 1", ERROR, "source 1", scope);
       check_value(sb_under_test.peek_tag(VOID), "tag 1", ERROR, "tag 1", scope);
       for i in 1 to 100 loop
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.peek_expected(POSITION, i) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.peek_expected(POSITION, i) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
         check_value(sb_under_test.peek_source(POSITION, i), "source " & to_string(i), ERROR, "source " & to_string(i), scope);
         check_value(sb_under_test.peek_tag(POSITION, i), "tag " & to_string(i), ERROR, "tag " & to_string(i), scope);
       end loop;
@@ -1037,14 +1027,14 @@ architecture func of generic_sb_record_tb is
       v_input.address := std_logic_vector(to_unsigned(1, 8));
       v_input.data_1  := std_logic_vector(to_unsigned(1, 8));
       v_input.data_2  := std_logic_vector(to_unsigned(2, 8));
-      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+      check_value(sb_under_test.peek_expected(VOID) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       check_value(sb_under_test.peek_source(VOID), "source 1", ERROR, "source 1", scope);
       check_value(sb_under_test.peek_tag(VOID), "tag 1", ERROR, "tag 1", scope);
       for i in 1 to 100 loop
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.peek_expected(ENTRY_NUM, 100+i) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.peek_expected(ENTRY_NUM, 100+i) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
         check_value(sb_under_test.peek_source(ENTRY_NUM, 100+i), "source " & to_string(i), ERROR, "source " & to_string(i), scope);
         check_value(sb_under_test.peek_tag(ENTRY_NUM, 100+i), "tag " & to_string(i), ERROR, "tag " & to_string(i), scope);
       end loop;
@@ -1068,7 +1058,7 @@ architecture func of generic_sb_record_tb is
     procedure test_fetch is
       constant scope    : string := "TB: fetch";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
+      variable v_input  : t_input;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test fetch", scope);
@@ -1102,7 +1092,7 @@ architecture func of generic_sb_record_tb is
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.fetch_expected("fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.fetch_expected("fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       end loop;
 
       log(ID_LOG_HDR, "check counters after fetch", scope);
@@ -1193,7 +1183,7 @@ architecture func of generic_sb_record_tb is
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.fetch_expected(POSITION, i, "fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.fetch_expected(POSITION, i, "fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       end loop;
 
       log(ID_LOG_HDR, "check counters after fetch", scope);
@@ -1284,7 +1274,7 @@ architecture func of generic_sb_record_tb is
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.fetch_expected(ENTRY_NUM, 600+i, "fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.fetch_expected(ENTRY_NUM, 600+i, "fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       end loop;
 
       log(ID_LOG_HDR, "check counters after fetch", scope);
@@ -1375,7 +1365,7 @@ architecture func of generic_sb_record_tb is
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.fetch_expected(ENTRY_NUM, 900+i, "fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & to_string_element(v_input), scope);
+        check_value(sb_under_test.fetch_expected(ENTRY_NUM, 900+i, "fetch nr. " & to_string(i)) = v_input, ERROR, "expect " & expected_to_string(v_input), scope);
       end loop;
 
       log(ID_LOG_HDR, "check counters after fetch", scope);
@@ -1455,8 +1445,8 @@ architecture func of generic_sb_record_tb is
     procedure test_insert_expected is
       constant scope    : string := "TB: insert_expected";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
-      variable v_output : t_record;
+      variable v_input  : t_input;
+      variable v_output : t_output;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test insert_expected", scope);
@@ -1506,37 +1496,30 @@ architecture func of generic_sb_record_tb is
 
       log(ID_LOG_HDR, "check expected", scope);
       v_output.address := std_logic_vector(to_unsigned(1, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(1, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(2, 8));
-      sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(1));
+      v_output.data    := std_logic_vector(to_unsigned(1, 8)) & std_logic_vector(to_unsigned(2, 8));
+      sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(1));
       v_output.address := x"AA";
-      v_output.data_1  := x"AA";
-      v_output.data_2  := x"BB";
-      sb_under_test.check_received(v_output, TAG, "inserted, 1", "check received: inserted element 1");
+      v_output.data    := x"AABB";
+      sb_under_test.check_actual(v_output, TAG, "inserted, 1", "check actual: inserted element 1");
       for i in 2 to 50 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       v_output.address := x"BB";
-      v_output.data_1  := x"BB";
-      v_output.data_2  := x"CC";
-      sb_under_test.check_received(v_output, TAG, "inserted, 2", "check received: inserted element 2");
+      v_output.data    := x"BBCC";
+      sb_under_test.check_actual(v_output, TAG, "inserted, 2", "check actual: inserted element 2");
       for i in 51 to 99 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(i));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       v_output.address := x"CC";
-      v_output.data_1  := x"CC";
-      v_output.data_2  := x"DD";
-      sb_under_test.check_received(v_output, TAG, "inserted, 3", "check received: inserted element 3");
+      v_output.data    := x"CCDD";
+      sb_under_test.check_actual(v_output, TAG, "inserted, 3", "check actual: inserted element 3");
       v_output.address := std_logic_vector(to_unsigned(100, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(100, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(101, 8));
-      sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string(100));
+      v_output.data    := std_logic_vector(to_unsigned(100, 8)) & std_logic_vector(to_unsigned(101, 8));
+      sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & to_string(100));
 
       log(ID_LOG_HDR, "check counters after check_expected", scope);
       check_value(sb_under_test.is_empty(VOID),                      ERROR, "verify SB is empty",           scope);
@@ -1558,8 +1541,8 @@ architecture func of generic_sb_record_tb is
     procedure test_delete_expected is
       constant scope    : string := "TB: delete_expected";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
-      variable v_output : t_record;
+      variable v_input  : t_input;
+      variable v_output : t_output;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test delete_expected", scope);
@@ -1641,54 +1624,44 @@ architecture func of generic_sb_record_tb is
 
       log(ID_LOG_HDR, "check expected", scope);
       v_output.address := std_logic_vector(to_unsigned(3, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(3, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(4, 8));
-      sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+      v_output.data    := std_logic_vector(to_unsigned(3, 8)) & std_logic_vector(to_unsigned(4, 8));
+      sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       v_output.address := std_logic_vector(to_unsigned(4, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(4, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(5, 8));
-      sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+      v_output.data    := std_logic_vector(to_unsigned(4, 8)) & std_logic_vector(to_unsigned(5, 8));
+      sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       v_output.address := std_logic_vector(to_unsigned(6, 8));
-      v_output.data_1  := std_logic_vector(to_unsigned(6, 8));
-      v_output.data_2  := std_logic_vector(to_unsigned(7, 8));
-      sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+      v_output.data    := std_logic_vector(to_unsigned(6, 8)) & std_logic_vector(to_unsigned(7, 8));
+      sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       v_output.address := x"AA";
-      v_output.data_1  := x"AA";
-      v_output.data_2  := x"BB";
-      sb_under_test.check_received(v_output, TAG, "inserted 1", "check received: xAA, inserted 1");
+      v_output.data    := x"AABB";
+      sb_under_test.check_actual(v_output, TAG, "inserted 1", "check actual: xAA, inserted 1");
       for i in 7 to 34 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       end loop;
       v_output.address := x"BB";
-      v_output.data_1  := x"BB";
-      v_output.data_2  := x"CC";
-      sb_under_test.check_received(v_output, TAG, "inserted 2", "check received: xBB, inserted 2");
+      v_output.data    := x"BBCC";
+      sb_under_test.check_actual(v_output, TAG, "inserted 2", "check actual: xBB, inserted 2");
       for i in 35 to 75 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       end loop;
       for i in 77 to 82 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       end loop;
       for i in 88 to 90 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       end loop;
       for i in 96 to 99 loop
         v_output.address := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-        v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        sb_under_test.check_received(v_output, TAG, "tag added", "check received: " & to_string_element(v_output));
+        v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+        sb_under_test.check_actual(v_output, TAG, "tag added", "check actual: " & actual_to_string(v_output));
       end loop;
 
       log(ID_LOG_HDR, "check counters after check", scope);
@@ -1712,7 +1685,7 @@ architecture func of generic_sb_record_tb is
     procedure test_exists is
       constant scope    : string := "TB: exists";
       variable v_config : t_sb_config;
-      variable v_input  : t_record;
+      variable v_input  : t_input;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test exists", scope);
@@ -1742,7 +1715,7 @@ architecture func of generic_sb_record_tb is
         v_input.address := std_logic_vector(to_unsigned(i,   8));
         v_input.data_1  := std_logic_vector(to_unsigned(i,   8));
         v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-        check_value(sb_under_test.exists(v_input, TAG, "tag added"), ERROR, "with value " & to_string_element(v_input) & " and tag 'tag added'");
+        check_value(sb_under_test.exists(v_input, TAG, "tag added"), ERROR, "with value " & expected_to_string(v_input) & " and tag 'tag added'");
       end loop;
 
       for i in 101 to 150 loop
@@ -1768,8 +1741,8 @@ architecture func of generic_sb_record_tb is
     procedure test_multiple_instances is
       constant scope          : string := "TB: multiple instances";
       variable v_config_array : t_sb_config_array(1 to 100) := (others => C_SB_CONFIG_DEFAULT);
-      variable v_input        : t_record;
-      variable v_output       : t_record;
+      variable v_input        : t_input;
+      variable v_output       : t_output;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test multiple instances", scope);
@@ -1860,13 +1833,12 @@ architecture func of generic_sb_record_tb is
       end loop;
 
 
-      log(ID_LOG_HDR_LARGE, "check_received", scope);
+      log(ID_LOG_HDR_LARGE, "check_actual", scope);
       for instance in 1 to 100 loop
         for i in 1 to 101-instance loop
           v_output.address := std_logic_vector(to_unsigned(i, 8));
-          v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-          v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-          sb_under_test.check_received(instance, v_output, TAG, "tag added");
+          v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+          sb_under_test.check_actual(instance, v_output, TAG, "tag added");
         end loop;
       end loop;
 
@@ -1895,8 +1867,8 @@ architecture func of generic_sb_record_tb is
     procedure test_instance_index_0 is
       constant scope          : string := "TB: instance index 0";
       variable v_config_array : t_sb_config_array(0 to 100) := (others => C_SB_CONFIG_DEFAULT);
-      variable v_input        : t_record;
-      variable v_output       : t_record;
+      variable v_input        : t_input;
+      variable v_output       : t_output;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test instance index 0", scope);
@@ -1987,13 +1959,12 @@ architecture func of generic_sb_record_tb is
       end loop;
 
 
-      log(ID_LOG_HDR_LARGE, "check_received", scope);
+      log(ID_LOG_HDR_LARGE, "check_actual", scope);
       for instance in 0 to 100 loop
         for i in 0 to 100-instance loop
           v_output.address := std_logic_vector(to_unsigned(i, 8));
-          v_output.data_1  := std_logic_vector(to_unsigned(i, 8));
-          v_output.data_2  := std_logic_vector(to_unsigned(i+1, 8));
-          sb_under_test.check_received(instance, v_output, TAG, "tag added");
+          v_output.data    := std_logic_vector(to_unsigned(i, 8)) & std_logic_vector(to_unsigned(i+1, 8));
+          sb_under_test.check_actual(instance, v_output, TAG, "tag added");
         end loop;
       end loop;
 
@@ -2046,9 +2017,9 @@ architecture func of generic_sb_record_tb is
     sb_under_test.enable("Enable SB");
 
     test_add_expected;
-    test_check_received;
-    test_check_received_out_of_order;
-    test_check_received_lossy;
+    test_check_actual;
+    test_check_actual_out_of_order;
+    test_check_actual_lossy;
     test_initial_garbage;
     test_overdue_time_limit;
     test_find;

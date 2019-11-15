@@ -40,11 +40,13 @@ architecture func of generic_sb_slv_tb is
                                                      overdue_check_time_limit  => 0 ns,
                                                      ignore_initial_garbage    => false);
 
-  package slv_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_element         => std_logic_vector(7 downto 0),
-               element_match     => std_match,
-               to_string_element => to_string,
-               sb_config_default => C_SLV_SB_CONFIG_DEFAULT);
+  package slv_sb_pkg is new work.generic_sb_pkg
+  generic map (t_expected_element       => std_logic_vector(7 downto 0),
+               t_actual_element         => std_logic_vector(7 downto 0),
+               match                    => std_match,
+               expected_to_string       => to_string,
+               actual_to_string         => to_string,
+               sb_config_default        => C_SLV_SB_CONFIG_DEFAULT);
 
 
   use slv_sb_pkg.all;
@@ -104,16 +106,16 @@ architecture func of generic_sb_slv_tb is
 
 
 
-    procedure test_check_received is
-      constant scope : string := "TB: check_received";
+    procedure test_check_actual is
+      constant scope : string := "TB: check_actual";
     begin
 
-      log(ID_LOG_HDR_LARGE, "Test check_received", scope);
+      log(ID_LOG_HDR_LARGE, "Test check_actual", scope);
 
-      log(ID_LOG_HDR, "checking received data vs expected data", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data", scope);
       add_100_expected_elements_with_same_tag(scope);
       for i in 1 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",   scope);
@@ -123,13 +125,13 @@ architecture func of generic_sb_slv_tb is
 
       sb_under_test.reset(VOID);
 
-      log(ID_LOG_HDR, "checking received data vs expected data with wrong tag", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data with wrong tag", scope);
       add_100_expected_elements_with_same_tag(scope);
       for i in 1 to 50 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       for i in 51 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "wrong tag", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "wrong tag", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",    scope);
@@ -140,16 +142,16 @@ architecture func of generic_sb_slv_tb is
 
       sb_under_test.reset(VOID);
 
-    end procedure test_check_received;
+    end procedure test_check_actual;
 
 
 
-    procedure test_check_received_out_of_order is
-      constant scope : string := "TB: check_received OOO";
+    procedure test_check_actual_out_of_order is
+      constant scope : string := "TB: check_actual OOO";
       variable v_config : t_sb_config;
     begin
 
-      log(ID_LOG_HDR_LARGE, "Test check_received with out of order", scope);
+      log(ID_LOG_HDR_LARGE, "Test check_actual with out of order", scope);
 
       v_config := C_SB_CONFIG_DEFAULT;
       v_config.allow_out_of_order := true;
@@ -160,9 +162,9 @@ architecture func of generic_sb_slv_tb is
       log(ID_LOG_HDR, "adding expected data", scope);
       add_100_expected_elements_with_same_tag(scope);
 
-      log(ID_LOG_HDR, "checking received data vs expected data", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data", scope);
       for i in 100 downto 1 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",    scope);
@@ -173,16 +175,16 @@ architecture func of generic_sb_slv_tb is
 
       sb_under_test.reset(VOID);
 
-    end procedure test_check_received_out_of_order;
+    end procedure test_check_actual_out_of_order;
 
 
 
-    procedure test_check_received_lossy is
-      constant scope    : string := "TB: check_received lossy";
+    procedure test_check_actual_lossy is
+      constant scope    : string := "TB: check_actual lossy";
       variable v_config : t_sb_config;
     begin
 
-      log(ID_LOG_HDR_LARGE, "Test check_received with lossy", scope);
+      log(ID_LOG_HDR_LARGE, "Test check_actual with lossy", scope);
 
       v_config := C_SB_CONFIG_DEFAULT;
       v_config.allow_lossy := true;
@@ -193,9 +195,9 @@ architecture func of generic_sb_slv_tb is
       log(ID_LOG_HDR, "adding expected data", scope);
       add_100_expected_elements_with_same_tag(scope);
 
-      log(ID_LOG_HDR, "checking received data vs expected data", scope);
+      log(ID_LOG_HDR, "checking actual data vs expected data", scope);
       for i in 51 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       check_value(sb_under_test.is_empty(VOID),               ERROR, "verify SB is empty",    scope);
@@ -206,7 +208,7 @@ architecture func of generic_sb_slv_tb is
 
       sb_under_test.reset(VOID);
 
-    end procedure test_check_received_lossy;
+    end procedure test_check_actual_lossy;
 
 
 
@@ -242,7 +244,7 @@ architecture func of generic_sb_slv_tb is
 
       log(ID_LOG_HDR, "checking initial garbage", scope);
       for i in 2 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "initial garbage");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "initial garbage");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -255,9 +257,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  99, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 1 to 50 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -270,9 +272,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  99, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 52 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "check received expect mismatch");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "check actual expect mismatch");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -285,8 +287,8 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  99, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
-      sb_under_test.check_received(std_logic_vector(to_unsigned(100, 8)), "checking received");
+      log(ID_LOG_HDR, "checking actual", scope);
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(100, 8)), "checking actual");
 
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -330,7 +332,7 @@ architecture func of generic_sb_slv_tb is
 
       log(ID_LOG_HDR, "checking initial garbage", scope);
       for i in 101 to 150 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "initial garbage");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "initial garbage");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -343,9 +345,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 50 downto 1 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received OOO");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual OOO");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -358,9 +360,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received mismatch", scope);
+      log(ID_LOG_HDR, "checking actual mismatch", scope);
       for i in 50 downto 1 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received OOO expect mismatch");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual OOO expect mismatch");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -373,9 +375,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 100 downto 51 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received OOO");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual OOO");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -419,7 +421,7 @@ architecture func of generic_sb_slv_tb is
 
       log(ID_LOG_HDR, "checking initial garbage", scope);
       for i in 101 to 150 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "initial garbage");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "initial garbage");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -432,8 +434,8 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
-      sb_under_test.check_received(std_logic_vector(to_unsigned(50, 8)), "checking received lossy");
+      log(ID_LOG_HDR, "checking actual", scope);
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(50, 8)), "checking actual lossy");
 
       log(ID_LOG_HDR, "check counters", scope);
       check_value(sb_under_test.is_empty(VOID),                false, ERROR, "verify SB is not empty",       scope);
@@ -445,9 +447,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 49 downto 1 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received lossy");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual lossy");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -460,9 +462,9 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  50, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),            0, ERROR, "verify delete count",          scope);
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 51 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received lossy");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual lossy");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -516,9 +518,9 @@ architecture func of generic_sb_slv_tb is
       log(ID_LOG_HDR, "wait 9 ns", scope);
       wait for 9 ns;
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 1 to 10 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -549,9 +551,9 @@ architecture func of generic_sb_slv_tb is
       log(ID_LOG_HDR, "wait 1 ns", scope);
       wait for 1 ns;
 
-      log(ID_LOG_HDR, "checking received", scope);
+      log(ID_LOG_HDR, "checking actual", scope);
       for i in 11 to 80 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -571,12 +573,12 @@ architecture func of generic_sb_slv_tb is
 
 
       increment_expected_alerts(TB_WARNING, 5);
-      log(ID_LOG_HDR, "checking received, expecting 5 TB_WARNINGs", scope);
+      log(ID_LOG_HDR, "checking actual, expecting 5 TB_WARNINGs", scope);
       for i in 81 to 85 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual");
       end loop;
       for i in 86 to 90 loop
-        sb_under_test.check_received(x"AA", "checking received inserted");
+        sb_under_test.check_actual(x"AA", "checking actual inserted");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -595,12 +597,12 @@ architecture func of generic_sb_slv_tb is
       set_alert_stop_limit(TB_WARNING, 27);
       increment_expected_alerts(TB_WARNING, 20);
 
-      log(ID_LOG_HDR, "checking received, expecting 20 TB_WARNINGs", scope);
+      log(ID_LOG_HDR, "checking actual, expecting 20 TB_WARNINGs", scope);
       for i in 91 to 95 loop
-        sb_under_test.check_received(x"AA", "checking received inserted");
+        sb_under_test.check_actual(x"AA", "checking actual inserted");
       end loop;
       for i in 86 to 100 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "checking received");
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), "checking actual");
       end loop;
 
       log(ID_LOG_HDR, "check counters", scope);
@@ -1293,17 +1295,17 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
 
       log(ID_LOG_HDR, "check expected", scope);
-      sb_under_test.check_received(std_logic_vector(to_unsigned(1, 8)), TAG, "tag added", "check received: " & to_string(1));
-      sb_under_test.check_received(x"AA", TAG, "inserted, 1", "check received: inserted element 1");
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(1, 8)), TAG, "tag added", "check actual: " & to_string(1));
+      sb_under_test.check_actual(x"AA", TAG, "inserted, 1", "check actual: inserted element 1");
       for i in 2 to 50 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
-      sb_under_test.check_received(x"BB", TAG, "inserted, 2", "check received: inserted element 2");
+      sb_under_test.check_actual(x"BB", TAG, "inserted, 2", "check actual: inserted element 2");
       for i in 51 to 99 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
-      sb_under_test.check_received(x"CC", TAG, "inserted, 3", "check received: inserted element 3");
-      sb_under_test.check_received(std_logic_vector(to_unsigned(100, 8)), TAG, "tag added", "check received: " & to_string(100));
+      sb_under_test.check_actual(x"CC", TAG, "inserted, 3", "check actual: inserted element 3");
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(100, 8)), TAG, "tag added", "check actual: " & to_string(100));
 
       log(ID_LOG_HDR, "check counters after check_expected", scope);
       check_value(sb_under_test.is_empty(VOID),                      ERROR, "verify SB is empty",           scope);
@@ -1390,25 +1392,25 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_delete_count(VOID),          16, ERROR, "verify delete count",          scope);
 
       log(ID_LOG_HDR, "check expected", scope);
-      sb_under_test.check_received(std_logic_vector(to_unsigned(3, 8)), TAG, "tag added", "check received: " & to_string(3));
-      sb_under_test.check_received(std_logic_vector(to_unsigned(4, 8)), TAG, "tag added", "check received: " & to_string(4));
-      sb_under_test.check_received(std_logic_vector(to_unsigned(6, 8)), TAG, "tag added", "check received: " & to_string(6));
-      sb_under_test.check_received(x"AA", TAG, "inserted 1", "check received: xAA, inserted 1");
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(3, 8)), TAG, "tag added", "check actual: " & to_string(3));
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(4, 8)), TAG, "tag added", "check actual: " & to_string(4));
+      sb_under_test.check_actual(std_logic_vector(to_unsigned(6, 8)), TAG, "tag added", "check actual: " & to_string(6));
+      sb_under_test.check_actual(x"AA", TAG, "inserted 1", "check actual: xAA, inserted 1");
       for i in 7 to 34 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
-      sb_under_test.check_received(x"BB", TAG, "inserted 2", "check received: xBB, inserted 2");
+      sb_under_test.check_actual(x"BB", TAG, "inserted 2", "check actual: xBB, inserted 2");
       for i in 35 to 75 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       for i in 77 to 82 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       for i in 88 to 90 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
       for i in 96 to 99 loop
-        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check received: " & to_string(i));
+        sb_under_test.check_actual(std_logic_vector(to_unsigned(i, 8)), TAG, "tag added", "check actual: " & to_string(i));
       end loop;
 
       log(ID_LOG_HDR, "check counters after check", scope);
@@ -1532,11 +1534,11 @@ architecture func of generic_sb_slv_tb is
       end loop;
 
 
-      log(ID_LOG_HDR_LARGE, "check_received", scope);
+      log(ID_LOG_HDR_LARGE, "check_actual", scope);
       for instance in 1 to 100 loop
         for i in 1 to 101-instance loop
           --log(ID_SEQUENCER, "instance: " & to_string(instance) & ", i: " & to_string(i) & ", get_pending_count:" & to_string(sb_under_test.get_pending_count(instance)));
-          sb_under_test.check_received(instance, std_logic_vector(to_unsigned(i, 8)), TAG, "tag added");
+          sb_under_test.check_actual(instance, std_logic_vector(to_unsigned(i, 8)), TAG, "tag added");
         end loop;
       end loop;
 
@@ -1622,11 +1624,11 @@ architecture func of generic_sb_slv_tb is
       end loop;
 
 
-      log(ID_LOG_HDR_LARGE, "check_received", scope);
+      log(ID_LOG_HDR_LARGE, "check_actual", scope);
       for instance in 0 to 100 loop
         for i in 0 to 100-instance loop
           --log(ID_SEQUENCER, "instance: " & to_string(instance) & ", i: " & to_string(i) & ", get_pending_count:" & to_string(sb_under_test.get_pending_count(instance)));
-          sb_under_test.check_received(instance, std_logic_vector(to_unsigned(i, 8)), TAG, "tag added");
+          sb_under_test.check_actual(instance, std_logic_vector(to_unsigned(i, 8)), TAG, "tag added");
         end loop;
       end loop;
 
@@ -1679,9 +1681,9 @@ architecture func of generic_sb_slv_tb is
     sb_under_test.enable("Enable SB");
 
     test_add_expected;
-    test_check_received;
-    test_check_received_out_of_order;
-    test_check_received_lossy;
+    test_check_actual;
+    test_check_actual_out_of_order;
+    test_check_actual_lossy;
     test_initial_garbage;
     test_overdue_time_limit;
     test_find;

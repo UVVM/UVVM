@@ -51,9 +51,6 @@ architecture func of gpio_vip_tb is
   signal gpio_1_input  : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
   signal gpio_2_output : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
 
-  signal gpio_output_downto : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
-  signal gpio_output_to     : std_logic_vector(0 to C_GPIO_WIDTH-1);
-
   procedure set_gpio(
     signal pins   : out std_logic_vector;
     constant data :     std_logic_vector;
@@ -111,9 +108,6 @@ begin
     variable v_cmd_idx            : natural;
     variable v_is_ok              : boolean;
 
-    variable v_set_data_to        : std_logic_vector(0 to C_GPIO_WIDTH-1);
-    variable v_set_data_downto    : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
-
 
   begin
 
@@ -158,40 +152,13 @@ begin
     --
     check_value(gpio_2_output, "00000000", error, "Checking initial value of GPIO VVC 2");
 
-    --------------------------------------------------------------------------------------
-    --
-    -- Test of GPIO BFM Set method
-    --
-    --------------------------------------------------------------------------------------
-    log(ID_LOG_HDR, "Test of GPIO BFM Set", C_SCOPE);
-
-    for idx in 0 to (C_GPIO_WIDTH-1) loop
-      log(ID_SEQUENCER, "Testing GPIO Set with ascending and descending vectors, setting bit " & to_string(idx) & " high.", C_SCOPE);
-
-      v_set_data_to     := (idx => '1', others => '0');
-      v_set_data_downto := (idx => '1', others => '0');
-
-      gpio_set(v_set_data_to, "Setting bit " & to_string(idx) & " high. Ascending input, acsending output.", gpio_output_to);
-      gpio_set(v_set_data_downto, "Setting bit " & to_string(idx) & " high. Descending input, descending output.", gpio_output_downto);
-      wait for C_CLK_PERIOD;
-      check_value(v_set_data_to, gpio_output_to, error, "verify ascending input and ascending output vectors");
-      check_value(v_set_data_downto, gpio_output_downto, error, "verify descending input and descending output vectors");
-
-      wait for C_CLK_PERIOD;
-      gpio_set(v_set_data_to, "Setting bit " & to_string(idx) & " high. Ascending input, descending output.", gpio_output_downto);
-      gpio_set(v_set_data_downto, "Setting bit " & to_string(idx) & " high. Descending input, ascending output.", gpio_output_to);
-      wait for C_CLK_PERIOD;
-      check_value(v_set_data_to, gpio_output_downto, error, "verify ascending input and descending output vectors");
-      check_value(v_set_data_downto, gpio_output_to, error, "verify descending input and ascending output vectors");
-    end loop;
-
 
     --------------------------------------------------------------------------------------
     --
     -- Test of GPIO VVC Set method
     --
     --------------------------------------------------------------------------------------
-    log(ID_LOG_HDR, "Test of GPIO VVC Set", C_SCOPE);
+    log(ID_LOG_HDR, "Test of GPIO Set", C_SCOPE);
 
     --
     -- Set GPIO setting to 0xAA. Check GPIO setting

@@ -1,0 +1,23 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    set_alert_stop_limit not allowed for alert_level NO_ALERT (stop limit always 0).
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    set_alert_attention not allowed for alert_level NO_ALERT (always IGNORE).
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    increment_expected_alerts not allowed for alert_level NO_ALERT. 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #1  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. Boolean was false. 'Cause TB_FAILURE trigger'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

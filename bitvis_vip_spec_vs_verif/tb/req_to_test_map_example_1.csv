@@ -1,0 +1,4 @@
+FPGA_SPEC_1;Check of default registers
+FPGA_SPEC_2;UART TX
+FPGA_SPEC_3;UART RX
+FPGA_SPEC_4;Simultaneous operation

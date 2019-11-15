@@ -1,0 +1,8 @@
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This string should be written to testLog2.txt
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This string should also be written to testLog2.txt
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    This alert should be written to alertLog2.txt
+UVVM: 

@@ -95,6 +95,10 @@ package td_vvc_entity_support_pkg is
     signal global_awaiting_completion : out std_logic_vector(C_MAX_NUM_SEQUENCERS-1 downto 0)
     );
 
+  function get_msg_id_panel(
+    constant command    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config
+  ) return t_msg_id_panel;
 
   -------------------------------------------
   -- await_cmd_from_sequencer
@@ -102,13 +106,14 @@ package td_vvc_entity_support_pkg is
   -- Waits for a command from the central sequencer. Continues on matching VVC, Instance, Name and Channel (unless channel = NA)
   -- - Log at start using ID_CMD_INTERPRETER_WAIT and at the end using ID_CMD_INTERPRETER
   procedure await_cmd_from_sequencer(
-    constant vvc_labels        : in t_vvc_labels;
-    constant vvc_config        : in t_vvc_config;
-    signal VVCT                : in t_vvc_target_record;
+    constant vvc_labels        : in    t_vvc_labels;
+    constant vvc_config        : in    t_vvc_config;
+    signal VVCT                : in    t_vvc_target_record;
     signal VVC_BROADCAST       : inout std_logic;
     signal global_vvc_busy     : inout std_logic;
-    signal vvc_ack             : out std_logic;
-    variable output_vvc_cmd    : out t_vvc_cmd_record
+    signal vvc_ack             : out   std_logic;
+    variable output_vvc_cmd    : out   t_vvc_cmd_record;
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
     );
 
   -- DEPRECATED
@@ -242,6 +247,17 @@ package td_vvc_entity_support_pkg is
   -- - Log using ID_CMD_EXECUTOR_WAIT if queue is empty
   -- - Sets relevant flags
   procedure fetch_command_and_prepare_executor(
+    variable command             : inout t_vvc_cmd_record;
+    variable command_queue       : inout work.td_cmd_queue_pkg.t_generic_queue;
+    constant vvc_config          : in    t_vvc_config;
+    variable vvc_status          : inout t_vvc_status;
+    signal   queue_is_increasing : in    boolean;
+    signal   executor_is_busy    : inout boolean;
+    constant vvc_labels          : in    t_vvc_labels;
+    constant msg_id_panel        : in    t_msg_id_panel
+    );
+
+  procedure fetch_command_and_prepare_executor(
     variable command              : inout t_vvc_cmd_record;
     variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
     constant vvc_config           : in t_vvc_config;
@@ -250,7 +266,6 @@ package td_vvc_entity_support_pkg is
     signal executor_is_busy       : inout boolean;
     constant vvc_labels           : in t_vvc_labels
     );
-
 
   -------------------------------------------
   -- store_result
@@ -262,7 +277,7 @@ package td_vvc_entity_support_pkg is
   procedure store_result(
     variable result_queue  : inout work.td_result_queue_pkg.t_generic_queue;
     constant cmd_idx       : in natural;
-    constant result          : in t_vvc_result
+    constant result        : in t_vvc_result
     );
 
 
@@ -275,6 +290,15 @@ package td_vvc_entity_support_pkg is
   -- - Both timestamps are not set to 0 ns.
   -- A log message with ID ID_CMD_EXECUTOR is issued when the delay begins and
   -- when it has finished delaying.
+  procedure insert_inter_bfm_delay_if_requested(
+    constant vvc_config                         : in t_vvc_config;
+    constant command_is_bfm_access              : in boolean;
+    constant timestamp_start_of_last_bfm_access : in time;
+    constant timestamp_end_of_last_bfm_access   : in time;
+    constant msg_id_panel                       : in t_msg_id_panel;
+    constant scope                              : in string          := C_SCOPE
+  );
+
   procedure insert_inter_bfm_delay_if_requested(
     constant vvc_config                           : in t_vvc_config;
     constant command_is_bfm_access                : in boolean;
@@ -446,6 +470,7 @@ package body td_vvc_entity_support_pkg is
   ) is
   begin
 
+    -- Increment the shared command index. This is normally done in the CDM, but for broadcast commands it is done by the VVC itself.
     check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", C_SCOPE, ID_NEVER);
     await_semaphore_in_delta_cycles(protected_broadcast_semaphore);
 
@@ -472,20 +497,34 @@ package body td_vvc_entity_support_pkg is
 
   end procedure;
 
+  function get_msg_id_panel(
+    constant command    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config
+  ) return t_msg_id_panel is
+  begin
+    if command.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+      return command.msg_id_panel;
+    else
+      return vvc_config.msg_id_panel;
+    end if;
+  end function;
+
   procedure await_cmd_from_sequencer(
-    constant vvc_labels        : in t_vvc_labels;
-    constant vvc_config        : in t_vvc_config;
-    signal VVCT                : in t_vvc_target_record;
-    signal VVC_BROADCAST       : inout std_logic;
-    signal global_vvc_busy     : inout std_logic;
-    signal vvc_ack             : out std_logic;
-    variable output_vvc_cmd    : out t_vvc_cmd_record
+    constant vvc_labels        : in    t_vvc_labels;
+    constant vvc_config        : in    t_vvc_config;
+    signal   VVCT              : in    t_vvc_target_record;
+    signal   VVC_BROADCAST     : inout std_logic;
+    signal   global_vvc_busy   : inout std_logic;
+    signal   vvc_ack           : out   std_logic;
+    variable output_vvc_cmd    : out   t_vvc_cmd_record;
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
     ) is
-    variable v_was_broadcast : boolean := false;
+    variable v_was_broadcast : boolean         := false;
+    variable v_msg_id_panel  : t_msg_id_panel;
   begin
     vvc_ack <= 'Z';  -- Do not contribute to the acknowledge unless selected
     -- Wait for a new command
-    log(ID_CMD_INTERPRETER_WAIT, "Interpreter: Waiting for command", to_string(vvc_labels.scope) , vvc_config.msg_id_panel);
+    log(ID_CMD_INTERPRETER_WAIT, "Interpreter: Waiting for command", to_string(vvc_labels.scope), msg_id_panel);
 
     loop
       VVC_BROADCAST <= 'Z';
@@ -532,7 +571,8 @@ package body td_vvc_entity_support_pkg is
       release_semaphore(protected_semaphore);
     end if;
 
-    log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received" & format_command_idx(output_vvc_cmd), vvc_labels.scope, vvc_config.msg_id_panel);    -- Get and ack the new command
+    v_msg_id_panel := get_msg_id_panel(output_vvc_cmd, vvc_config);
+    log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received " & format_command_idx(output_vvc_cmd), vvc_labels.scope, v_msg_id_panel);    -- Get and ack the new command
   end procedure;
 
   -- Overloading procedure - DEPRECATED
@@ -567,25 +607,26 @@ package body td_vvc_entity_support_pkg is
     queue_is_increasing <= false;
   end procedure;
 
-
   procedure interpreter_await_completion(
-    constant command              : in t_vvc_cmd_record;
-    variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config           : in t_vvc_config;
-    signal executor_is_busy       : in boolean;
-    constant vvc_labels           : in t_vvc_labels;
-    signal last_cmd_idx_executed  : in natural;
-    constant await_completion_pending_msg_id      : in t_msg_id := ID_IMMEDIATE_CMD_WAIT;
-    constant await_completion_finished_msg_id     : in t_msg_id := ID_IMMEDIATE_CMD
-    ) is
+    constant command                          : in    t_vvc_cmd_record;
+    variable command_queue                    : inout work.td_cmd_queue_pkg.t_generic_queue;
+    constant vvc_config                       : in    t_vvc_config;
+    signal   executor_is_busy                 : in    boolean;
+    constant vvc_labels                       : in    t_vvc_labels;
+    signal   last_cmd_idx_executed            : in    natural;
+    constant await_completion_pending_msg_id  : in    t_msg_id := ID_IMMEDIATE_CMD_WAIT;
+    constant await_completion_finished_msg_id : in    t_msg_id := ID_IMMEDIATE_CMD
+  ) is
 
-    alias wanted_idx              : integer is command.gen_integer_array(0); -- generic integer used as wanted command idx to wait for
+    alias wanted_idx        : integer is command.gen_integer_array(0); -- generic integer used as wanted command idx to wait for
+
+    constant C_MSG_ID_PANEL : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
 
   begin
     if wanted_idx = -1 then
       -- await completion of all commands
       if not command_queue.is_empty(VOID) or executor_is_busy then
-        log(await_completion_pending_msg_id, "await_completion() - Pending completion " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
+        log(await_completion_pending_msg_id, "await_completion() - Pending completion " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL);    -- Get and ack the new command
         loop
           if command.timeout = 0 ns then
             wait until executor_is_busy = false;
@@ -597,11 +638,11 @@ package body td_vvc_entity_support_pkg is
           end if;
         end loop;
       end if;
-      log(await_completion_finished_msg_id, "await_completion()  => Finished. " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
+      log(await_completion_finished_msg_id, "await_completion()  => Finished. " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL);    -- Get and ack the new command
 
     else -- await specific instruction
       if last_cmd_idx_executed < wanted_idx then
-        log(await_completion_pending_msg_id, "await_completion(" & to_string(wanted_idx) & ") - Pending selected " & to_string(command.msg) & " "  & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
+        log(await_completion_pending_msg_id, "await_completion(" & to_string(wanted_idx) & ") - Pending selected " & to_string(command.msg) & " "  & format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL);    -- Get and ack the new command
         loop
           if command.timeout = 0 ns then
             wait until executor_is_busy = false;
@@ -613,7 +654,7 @@ package body td_vvc_entity_support_pkg is
           end if;
         end loop;
       end if;
-      log(await_completion_finished_msg_id, "await_completion(" & to_string(wanted_idx) & ") => Finished. " & to_string(command.msg) & " " &  format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel); -- Get & ack the new command
+      log(await_completion_finished_msg_id, "await_completion(" & to_string(wanted_idx) & ") => Finished. " & to_string(command.msg) & " " &  format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get & ack the new command
     end if;
   end procedure;
 
@@ -623,19 +664,21 @@ package body td_vvc_entity_support_pkg is
   --   until global_awaiting_completion /= '1' (any of the other involved VVCs completed).
   ------------------------------------------------------------------------------------------
   procedure interpreter_await_any_completion(
-    constant command                              : in t_vvc_cmd_record;
+    constant command                              : in    t_vvc_cmd_record;
     variable command_queue                        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config                           : in t_vvc_config;
-    signal executor_is_busy                       : in boolean;
-    constant vvc_labels                           : in t_vvc_labels;
-    signal last_cmd_idx_executed                  : in natural;
-    signal global_awaiting_completion             : inout std_logic_vector; -- Handshake from other VVCs performing await_any_completion
-    constant await_completion_pending_msg_id      : in t_msg_id := ID_IMMEDIATE_CMD_WAIT;
-    constant await_completion_finished_msg_id     : in t_msg_id := ID_IMMEDIATE_CMD
+    constant vvc_config                           : in    t_vvc_config;
+    signal   executor_is_busy                     : in    boolean;
+    constant vvc_labels                           : in    t_vvc_labels;
+    signal   last_cmd_idx_executed                : in    natural;
+    signal   global_awaiting_completion           : inout std_logic_vector; -- Handshake from other VVCs performing await_any_completion
+    constant await_completion_pending_msg_id      : in    t_msg_id := ID_IMMEDIATE_CMD_WAIT;
+    constant await_completion_finished_msg_id     : in    t_msg_id := ID_IMMEDIATE_CMD
     ) is
 
     alias wanted_idx              : integer is command.gen_integer_array(0); -- generic integer used as wanted command idx to wait for
     alias awaiting_completion_idx : integer is command.gen_integer_array(1); -- generic integer used as awaiting_completion_idx
+
+    constant C_MSG_ID_PANEL       : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
 
     variable v_done               : boolean := false; -- Whether we're done waiting
 
@@ -687,13 +730,13 @@ package body td_vvc_entity_support_pkg is
 
     if not v_done then
       -- Start waiting for the first of this VVC or other VVC
-      log(await_completion_pending_msg_id, to_string(command.proc_call) & " - Pending completion " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+      log(await_completion_pending_msg_id, to_string(command.proc_call) & " - Pending completion " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
 
       loop
         wait until ((executor_is_busy = false) or (global_awaiting_completion(awaiting_completion_idx) /= '1')) for command.timeout;
 
         if this_vvc_completed(VOID) then                   -- This VVC is done
-          log(await_completion_finished_msg_id, "This VVC initiated completion of " & to_string(command.proc_call), to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+          log(await_completion_finished_msg_id, "This VVC initiated completion of " & to_string(command.proc_call), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
 
           -- update shared_uvvm_status with the VVC name and cmd index that initiated the completion
           shared_uvvm_status.info_on_finishing_await_any_completion.vvc_name(1 to vvc_labels.vvc_name'length) := vvc_labels.vvc_name;
@@ -730,7 +773,7 @@ package body td_vvc_entity_support_pkg is
 
       global_awaiting_completion(awaiting_completion_idx) <= 'Z'; -- Idle
 
-      log(await_completion_finished_msg_id, to_string(command.proc_call) & "=> Finished. " & format_msg(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel); -- Get & ack the new command
+      log(await_completion_finished_msg_id, to_string(command.proc_call) & "=> Finished. " & format_msg(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get & ack the new command
 
   end procedure;
 
@@ -740,9 +783,10 @@ package body td_vvc_entity_support_pkg is
     constant vvc_config         : in t_vvc_config;
     variable vvc_status         : inout t_vvc_status;
     constant vvc_labels         : in t_vvc_labels
-    ) is
+  ) is
+    constant C_MSG_ID_PANEL : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
   begin
-    log(ID_IMMEDIATE_CMD, "Flushing command queue (" & to_string(shared_vvc_cmd.gen_integer_array(0)) & ") " & format_command_idx(shared_vvc_cmd), to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+    log(ID_IMMEDIATE_CMD, "Flushing command queue (" & to_string(shared_vvc_cmd.gen_integer_array(0)) & ") " & format_command_idx(shared_vvc_cmd), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
     command_queue.flush(VOID);
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
   end;
@@ -754,10 +798,11 @@ package body td_vvc_entity_support_pkg is
     constant vvc_labels           : in t_vvc_labels;
     signal terminate_current_cmd  : inout t_flag_record;
     constant executor_is_busy     : in boolean := true
-    ) is
+  ) is
+    constant C_MSG_ID_PANEL : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
   begin
     if executor_is_busy then
-      log(ID_IMMEDIATE_CMD, "Terminating command in executor", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+      log(ID_IMMEDIATE_CMD, "Terminating command in executor", to_string(vvc_labels.scope), C_MSG_ID_PANEL);
       set_flag(terminate_current_cmd);
     end if;
   end procedure;
@@ -770,6 +815,7 @@ package body td_vvc_entity_support_pkg is
     constant last_cmd_idx_executed  : in natural;
     variable shared_vvc_response    : inout work.vvc_cmd_pkg.t_vvc_response
     ) is
+    constant C_MSG_ID_PANEL       : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
     variable v_current_element    : work.vvc_cmd_pkg.t_vvc_result_queue_element;
     variable v_local_result_queue : work.td_result_queue_pkg.t_generic_queue;
   begin
@@ -790,7 +836,7 @@ package body td_vvc_entity_support_pkg is
         if v_current_element.cmd_idx = command.gen_integer_array(0) then
           shared_vvc_response.fetch_is_accepted := true;
           shared_vvc_response.result              := v_current_element.result;
-          log(ID_IMMEDIATE_CMD, to_string(command.proc_call) & " Requested result is found" & ". " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel); -- Get and ack the new command
+          log(ID_IMMEDIATE_CMD, to_string(command.proc_call) & " Requested result is found" & ". " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get and ack the new command
           exit;
         else
           -- No match for element: put in local result queue
@@ -811,7 +857,6 @@ package body td_vvc_entity_support_pkg is
     end if;
   end procedure;
 
-
   procedure initialize_executor (
     signal terminate_current_cmd  : inout t_flag_record
     ) is
@@ -824,19 +869,21 @@ package body td_vvc_entity_support_pkg is
   procedure fetch_command_and_prepare_executor(
     variable command              : inout t_vvc_cmd_record;
     variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config           : in t_vvc_config;
+    constant vvc_config           : in    t_vvc_config;
     variable vvc_status           : inout t_vvc_status;
-    signal   queue_is_increasing  : in boolean;
-    signal executor_is_busy       : inout boolean;
-    constant vvc_labels           : in t_vvc_labels
-    ) is
+    signal   queue_is_increasing  : in    boolean;
+    signal   executor_is_busy     : inout boolean;
+    constant vvc_labels           : in    t_vvc_labels;
+    constant msg_id_panel         : in    t_msg_id_panel
+  ) is
+    variable v_msg_id_panel : t_msg_id_panel;
   begin
     executor_is_busy            <= false;
     vvc_status.previous_cmd_idx := command.cmd_idx;
 
     wait for 0 ns;  -- to allow delta updates in other processes.
     if command_queue.is_empty(VOID) then
-      log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
+      log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), msg_id_panel);
       wait until queue_is_increasing;
     end if;
 
@@ -844,17 +891,34 @@ package body td_vvc_entity_support_pkg is
     executor_is_busy  <= true;
     wait until executor_is_busy;
     command := command_queue.get(VOID);
-    log(ID_CMD_EXECUTOR, to_string(command.proc_call) & " - Will be executed " & format_command_idx(command), to_string(vvc_labels.scope), vvc_config.msg_id_panel);    -- Get and ack the new command
+
+    v_msg_id_panel := get_msg_id_panel(command, vvc_config);
+    log(ID_CMD_EXECUTOR, to_string(command.proc_call) & " - Will be executed " & format_command_idx(command), to_string(vvc_labels.scope), v_msg_id_panel);    -- Get and ack the new command
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     vvc_status.current_cmd_idx := command.cmd_idx;
   end procedure;
+
+  procedure fetch_command_and_prepare_executor(
+    variable command              : inout t_vvc_cmd_record;
+    variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
+    constant vvc_config           : in t_vvc_config;
+    variable vvc_status           : inout t_vvc_status;
+    signal   queue_is_increasing  : in boolean;
+    signal executor_is_busy       : inout boolean;
+    constant vvc_labels           : in t_vvc_labels
+    ) is
+  begin
+    fetch_command_and_prepare_executor( command, command_queue, vvc_config, vvc_status, queue_is_increasing,
+                                        executor_is_busy, vvc_labels, vvc_config.msg_id_panel);
+  end procedure;
+
 
   -- The result_queue is used so that whatever type defined in the VVC can be stored,
   -- and later fetched with fetch_result()
   procedure store_result(
     variable result_queue  : inout work.td_result_queue_pkg.t_generic_queue;
     constant cmd_idx       : in natural;
-    constant result          : in t_vvc_result
+    constant result        : in t_vvc_result
     ) is
     variable v_result_queue_element : t_vvc_result_queue_element;
   begin
@@ -864,11 +928,12 @@ package body td_vvc_entity_support_pkg is
   end procedure;
 
   procedure insert_inter_bfm_delay_if_requested(
-    constant vvc_config                           : in t_vvc_config;
-    constant command_is_bfm_access                : in boolean;
-    constant timestamp_start_of_last_bfm_access   : in time;
-    constant timestamp_end_of_last_bfm_access     : in time;
-    constant scope                                : in string := C_SCOPE
+    constant vvc_config                         : in t_vvc_config;
+    constant command_is_bfm_access              : in boolean;
+    constant timestamp_start_of_last_bfm_access : in time;
+    constant timestamp_end_of_last_bfm_access   : in time;
+    constant msg_id_panel                       : in t_msg_id_panel;
+    constant scope                              : in string          := C_SCOPE
   ) is
   begin
     -- If both timestamps are at 0 ns we interpret this as the first BFM access, hence no delay shall be applied.
@@ -879,22 +944,32 @@ package body td_vvc_entity_support_pkg is
         when TIME_FINISH2START =>
           if now < (timestamp_end_of_last_bfm_access + vvc_config.inter_bfm_delay.delay_in_time) then
             log(ID_INSERTED_DELAY, "Delaying BFM access until time " & to_string(timestamp_end_of_last_bfm_access + vvc_config.inter_bfm_delay.delay_in_time)
-                & ".", scope, vvc_config.msg_id_panel);
+                & ".", scope, msg_id_panel);
             wait for (timestamp_end_of_last_bfm_access + vvc_config.inter_bfm_delay.delay_in_time - now);
           end if;
         when TIME_START2START =>
           if now < (timestamp_start_of_last_bfm_access + vvc_config.inter_bfm_delay.delay_in_time) then
             log(ID_INSERTED_DELAY, "Delaying BFM access until time " & to_string(timestamp_start_of_last_bfm_access + vvc_config.inter_bfm_delay.delay_in_time)
-                & ".", scope, vvc_config.msg_id_panel);
+                & ".", scope, msg_id_panel);
             wait for (timestamp_start_of_last_bfm_access + vvc_config.inter_bfm_delay.delay_in_time - now);
           end if;
         when others =>
-          tb_error("Delay type " & to_upper(to_string(vvc_config.inter_bfm_delay.delay_type)) & " not supported for this VVC.", C_SCOPE);
+          tb_error("Delay type " & to_upper(to_string(vvc_config.inter_bfm_delay.delay_type)) & " not supported for this VVC.", scope);
       end case;
-      log(ID_INSERTED_DELAY, "Finished delaying BFM access", scope, vvc_config.msg_id_panel);
+      log(ID_INSERTED_DELAY, "Finished delaying BFM access", scope, msg_id_panel);
     end if;
   end procedure;
 
+  procedure insert_inter_bfm_delay_if_requested(
+    constant vvc_config                           : in t_vvc_config;
+    constant command_is_bfm_access                : in boolean;
+    constant timestamp_start_of_last_bfm_access   : in time;
+    constant timestamp_end_of_last_bfm_access     : in time;
+    constant scope                                : in string := C_SCOPE
+  ) is
+  begin
+    insert_inter_bfm_delay_if_requested(vvc_config, command_is_bfm_access, timestamp_start_of_last_bfm_access,
+                                        timestamp_end_of_last_bfm_access, vvc_config.msg_id_panel, scope);
+  end procedure;
+
 end package body td_vvc_entity_support_pkg;
-
-

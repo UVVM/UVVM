@@ -59,9 +59,11 @@ use work.local_pkg.all;
 --
 ------------------------------------------------------------------------------------------
 package slv_sb_pkg is new work.generic_sb_pkg
-  generic map (t_element         => std_logic_vector(C_SB_SLV_WIDTH-1 downto 0),
-               element_match     => std_match,
-               to_string_element => slv_to_string);
+  generic map (t_expected_element       => std_logic_vector(C_SB_SLV_WIDTH-1 downto 0),
+               t_actual_element         => std_logic_vector(C_SB_SLV_WIDTH-1 downto 0),
+               match                    => std_match,
+               expected_to_string       => slv_to_string,
+               actual_to_string         => slv_to_string);
 
 
 
@@ -74,6 +76,8 @@ package slv_sb_pkg is new work.generic_sb_pkg
 --
 ------------------------------------------------------------------------------------------
 package int_sb_pkg is new work.generic_sb_pkg
-  generic map (t_element         => integer,
-               element_match     => "=",
-               to_string_element => to_string);
+  generic map (t_expected_element       => integer,
+               t_actual_element         => integer,
+               match                    => "=",
+               expected_to_string       => to_string,
+               actual_to_string         => to_string);

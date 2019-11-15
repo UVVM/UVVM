@@ -1,0 +1,315 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:           161 ns   TB seq
+UVVM:                    await_stable(boolean, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event
+UVVM:                    = 0 ns. 'bol: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:           161 ns   TB seq
+UVVM:                    await_stable(boolean, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'bol: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:           301 ns   TB seq
+UVVM:                    await_stable(boolean, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event
+UVVM:                    = 0 ns. 'bol: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:           401 ns   TB seq
+UVVM:                    await_stable(boolean, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'bol: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:           661 ns   TB seq
+UVVM:                    await_stable(boolean, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'bol: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:           821 ns   TB seq
+UVVM:                    await_stable(std_logic, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last
+UVVM:                    event = 0 ns. 'sl: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:           821 ns   TB seq
+UVVM:                    await_stable(std_logic, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'sl: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #8  ***
+UVVM:           961 ns   TB seq
+UVVM:                    await_stable(std_logic, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last
+UVVM:                    event = 0 ns. 'sl: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #9  ***
+UVVM:          1061 ns   TB seq
+UVVM:                    await_stable(std_logic, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'sl: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #10  ***
+UVVM:          1321 ns   TB seq
+UVVM:                    await_stable(std_logic, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'sl: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #11  ***
+UVVM:          1481 ns   TB seq
+UVVM:                    await_stable(std_logic_vector, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since
+UVVM:                    last event = 0 ns. 'slv8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #12  ***
+UVVM:          1481 ns   TB seq
+UVVM:                    await_stable(std_logic_vector, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'slv8: Timeout
+UVVM:                    before stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #13  ***
+UVVM:          1621 ns   TB seq
+UVVM:                    await_stable(std_logic_vector, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since
+UVVM:                    last event = 0 ns. 'slv8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #14  ***
+UVVM:          1721 ns   TB seq
+UVVM:                    await_stable(std_logic_vector, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'slv8:
+UVVM:                    FROM_NOW, FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #15  ***
+UVVM:          1981 ns   TB seq
+UVVM:                    await_stable(std_logic_vector, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'slv8:
+UVVM:                    Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #16  ***
+UVVM:          2141 ns   TB seq
+UVVM:                    await_stable(unsigned, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last
+UVVM:                    event = 0 ns. 'u8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #17  ***
+UVVM:          2141 ns   TB seq
+UVVM:                    await_stable(unsigned, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'u8: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #18  ***
+UVVM:          2281 ns   TB seq
+UVVM:                    await_stable(unsigned, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last
+UVVM:                    event = 0 ns. 'u8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #19  ***
+UVVM:          2381 ns   TB seq
+UVVM:                    await_stable(unsigned, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'u8: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #20  ***
+UVVM:          2641 ns   TB seq
+UVVM:                    await_stable(unsigned, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'u8: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #21  ***
+UVVM:          2801 ns   TB seq
+UVVM:                    await_stable(signed, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event
+UVVM:                    = 0 ns. 's8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #22  ***
+UVVM:          2801 ns   TB seq
+UVVM:                    await_stable(signed, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 's8: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #23  ***
+UVVM:          2941 ns   TB seq
+UVVM:                    await_stable(signed, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event
+UVVM:                    = 0 ns. 's8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #24  ***
+UVVM:          3041 ns   TB seq
+UVVM:                    await_stable(signed, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 's8: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #25  ***
+UVVM:          3301 ns   TB seq
+UVVM:                    await_stable(signed, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 's8: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #26  ***
+UVVM:          3461 ns   TB seq
+UVVM:                    await_stable(integer, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event
+UVVM:                    = 0 ns. 'i: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #27  ***
+UVVM:          3461 ns   TB seq
+UVVM:                    await_stable(integer, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'i: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #28  ***
+UVVM:          3601 ns   TB seq
+UVVM:                    await_stable(integer, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event
+UVVM:                    = 0 ns. 'i: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #29  ***
+UVVM:          3701 ns   TB seq
+UVVM:                    await_stable(integer, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'i: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #30  ***
+UVVM:          3961 ns   TB seq
+UVVM:                    await_stable(integer, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'i: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #31  ***
+UVVM:          4121 ns   TB seq
+UVVM:                    await_stable(real, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event =
+UVVM:                    0 ns. 'r: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #32  ***
+UVVM:          4121 ns   TB seq
+UVVM:                    await_stable(real, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'r: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #33  ***
+UVVM:          4261 ns   TB seq
+UVVM:                    await_stable(real, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event =
+UVVM:                    0 ns. 'r: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #34  ***
+UVVM:          4361 ns   TB seq
+UVVM:                    await_stable(real, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'r: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #35  ***
+UVVM:          4621 ns   TB seq
+UVVM:                    await_stable(real, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'r: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

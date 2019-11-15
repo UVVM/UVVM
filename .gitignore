@@ -1,0 +1,8 @@
+# Mac OS index files
+.DS_Store
+
+# MS Word backup files
+~$*.doc*
+
+# python
+release/regression_test/__pycache__/

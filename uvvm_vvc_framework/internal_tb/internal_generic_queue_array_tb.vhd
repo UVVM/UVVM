@@ -33,13 +33,11 @@ use IEEE.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library vunit_lib;
-context vunit_lib.vunit_run_context;
-
 -- Test case entity
 entity generic_queue_array_tb is
   generic (
-    runner_cfg : string := runner_cfg_default);
+    GC_TEST : string := "UVVM"
+    );
 end entity;
 
 -- Test case architecture
@@ -57,9 +55,6 @@ architecture func of generic_queue_array_tb is
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
-
-    variable v_alert_num_mismatch : boolean := false;
-
 
     --------------------------------------------------------------------------------------
     -- String compare with error logging
@@ -157,15 +152,10 @@ architecture func of generic_queue_array_tb is
 
 
   begin
-    -- Setup the VUnit runner with the input configuration.
-    test_runner_setup(runner, runner_cfg);
-
-    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
-    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
-
-    if not active_python_runner(runner_cfg) then
-      set_alert_stop_limit(ERROR, 0);
-    end if;
+    -- To avoid that log files from different test cases (run in separate
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TEST & "_Log.txt");
+    set_alert_file_name(GC_TEST & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -182,22 +172,16 @@ architecture func of generic_queue_array_tb is
     setup_and_initial_check_of_queue(VOID);
     test_of_insert(VOID);
 
-    --==================================================================================================
+    -----------------------------------------------------------------------------
     -- Ending the simulation
-    --------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------
     wait for 1000 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
-    -- Check for mismatch in all alert levels except MANUAL_CHECK
-    for alert_level in NOTE to t_alert_level'right loop
-      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
-        v_alert_num_mismatch := true;
-      end if;
-    end loop;
-
-    test_runner_cleanup(runner, v_alert_num_mismatch);
-    wait;
+    -- Finish the simulation
+    std.env.stop;
+    wait;  -- to stop completely
 
   end process p_main;
 

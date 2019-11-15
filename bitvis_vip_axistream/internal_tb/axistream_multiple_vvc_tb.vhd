@@ -16,9 +16,6 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use IEEE.math_real.all;
 
-library vunit_lib;
-context vunit_lib.vunit_run_context;
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -32,15 +29,13 @@ use bitvis_vip_axistream.axistream_bfm_pkg.all;
 -- Test case entity
 entity axistream_multiple_vvc_tb is
   generic (
-    GC_DATA_WIDTH    : natural := 32;  -- number of bits in the AXI-Stream IF data vector
-    GC_USER_WIDTH    : natural := 1;  -- number of bits in the AXI-Stream IF tuser vector
-    GC_ID_WIDTH      : natural := 1;  -- number of bits in AXI-Stream IF tID
-    GC_DEST_WIDTH    : natural := 1;  -- number of bits in AXI-Stream IF tDEST
-    GC_INCLUDE_TUSER : boolean := true; -- If tuser is included in DUT's AXI interface
-    -- This generic is used to configure the testbench from run.py, e.g. what
-    -- test case to run. The default value is used when not running from script
-    -- and in that case all test cases are run.
-    runner_cfg    : runner_cfg_t := runner_cfg_default);
+    GC_TEST           : string := "UVVM";
+    GC_DATA_WIDTH     : natural := 32;  -- number of bits in the AXI-Stream IF data vector
+    GC_USER_WIDTH     : natural := 1;  -- number of bits in the AXI-Stream IF tuser vector
+    GC_ID_WIDTH       : natural := 1;  -- number of bits in AXI-Stream IF tID
+    GC_DEST_WIDTH     : natural := 1;  -- number of bits in AXI-Stream IF tDEST
+    GC_INCLUDE_TUSER  : boolean := true -- If tuser is included in DUT's AXI interface
+  );
 end entity;
 
 -- Test case architecture
@@ -133,31 +128,14 @@ begin
     variable v_fetch_is_accepted : boolean;
     variable v_result_from_fetch : bitvis_vip_axistream.vvc_cmd_pkg.t_vvc_result;
 
-    variable v_alert_num_mismatch : boolean := false;
-
   begin
 
     -- To avoid that log files from different test cases (run in separate
-    -- simulations) overwrite each other run.py provides separate test case
-    -- directories through the runner_cfg generic (<root>/vunit_out/tests/<test case
-    -- name>). When not using run.py the default path is the current directory
-    -- (<root>/vunit_out/<simulator>). These directories are used by VUnit
-    -- itself and these lines make sure that BVUL do to.
-    set_log_file_name(join(output_path(runner_cfg), "_Log.txt"));
-    set_alert_file_name(join(output_path(runner_cfg), "_Alert.txt"));
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TEST & "_Log.txt");
+    set_alert_file_name(GC_TEST & "_Alert.txt");
 
-    -- Setup the VUnit runner with the input configuration.
-    test_runner_setup(runner, runner_cfg);
 
-    -- The default behavior for VUnit is to stop the simulation on a failing
-    -- check when running from script but keep on running when running without
-    -- script. The rationale for this and how you can change that behavior is
-    -- described at the bottom of this file (see Stopping the Simulation on
-    -- Failing Checks). The following if statement causes BVUL checks to behave
-    -- in the same way.
-    if not active_python_runner(runner_cfg) then
-      set_alert_stop_limit(error, 0);
-    end if;
     set_alert_stop_limit(TB_ERROR, 3); -- Don't stop at Timeout tests
 
     await_uvvm_initialization(VOID);
@@ -559,28 +537,16 @@ begin
 
 
 
-    --==================================================================================================
+    -----------------------------------------------------------------------------
     -- Ending the simulation
-    --------------------------------------------------------------------------------------
-    -- allow some time for completion
-    for i in 0 to 10 loop
-      wait until rising_edge(clk);
-    end loop;
-    report_alert_counters(VOID);  -- Report final counters and print conclusion for simulation (Success/Fail)
-    log("SIMULATION COMPLETED");
+    -----------------------------------------------------------------------------
+    wait for 1000 ns;             -- to allow some time for completion
+    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
-    -- Cleanup VUnit. The UVVM-Util error status is imported into VUnit at this
-    -- point. This is neccessary when the UVVM-Util alert stop limit is set such that
-    -- UVVM-Util doesn't stop on the first error. In that case VUnit has no way of
-    -- knowing the error status unless you tell it.
-    for alert_level in note to t_alert_level'right loop
-      if alert_level /= MANUAL_CHECK and get_alert_counter(alert_level, REGARD) /= get_alert_counter(alert_level, EXPECT) then
-        v_alert_num_mismatch := true;
-      end if;
-    end loop;
-
-    test_runner_cleanup(runner, v_alert_num_mismatch);
-    wait;
+    -- Finish the simulation
+    std.env.stop;
+    wait;  -- to stop completely
 
   end process p_main;
 end func;

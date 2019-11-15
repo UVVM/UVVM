@@ -1,0 +1,5 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    This alert should be written to alertLog2.txt
+UVVM: 

@@ -1,0 +1,3 @@
+# library bitvis_vip_spec_vs_verif
+../src/csv_file_reader_pkg.vhd
+../src/spec_vs_verif_methods.vhd

@@ -29,8 +29,6 @@ use work.ethernet_bfm_pkg.all;
 --========================================================================================================================
 
 package ethernet_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_expected_element       => t_ethernet_frame,
-               t_actual_element         => t_ethernet_frame,
-               match                    => ethernet_match,
-               expected_to_string       => complete_to_string,
-               actual_to_string         => complete_to_string);
+  generic map ( t_element         => t_ethernet_frame,
+                element_match     => ethernet_match,
+                to_string_element => complete_to_string);

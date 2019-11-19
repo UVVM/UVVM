@@ -377,7 +377,7 @@ begin
 
           if v_cmd.data_routing = TO_SB then
             -- Send result to scoreboard
-            shared_ethernet_sb.check_actual(GC_INSTANCE_IDX, v_result.ethernet_frame);
+            shared_ethernet_sb.check_received(GC_INSTANCE_IDX, v_result.ethernet_frame);
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,

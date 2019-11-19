@@ -334,8 +334,8 @@ begin
 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
-            -- call SB check_actual
-            shared_sbi_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            -- call SB check_recevide
+            shared_sbi_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,

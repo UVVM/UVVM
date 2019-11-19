@@ -297,8 +297,8 @@ begin
               -- Request SB check result
               check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
               if v_cmd.data_routing = TO_SB then
-                -- call SB check_actual
-                shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+                -- call SB check_received
+                shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
               else
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                              cmd_idx     => v_cmd.cmd_idx,
@@ -333,8 +333,8 @@ begin
               --fc 
               --fc   -- Request SB check result
               --fc   if v_cmd.data_routing = TO_SB then
-              --fc     -- call SB check_actual
-              --fc     shared_uart_sb.check_actual(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+              --fc     -- call SB check_received
+              --fc     shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
               --fc   else
               --fc     work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
               --fc                                                  cmd_idx     => v_cmd.cmd_idx,

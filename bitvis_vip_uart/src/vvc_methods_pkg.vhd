@@ -29,8 +29,8 @@ use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 
 -- Coverage
-library crfc;
-use crfc.Coveragepkg.all;
+--fc library crfc;
+--fc use crfc.Coveragepkg.all;
 
 use work.uart_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -156,7 +156,7 @@ package vvc_methods_pkg is
   -- Scoreboard
   shared variable shared_uart_sb : t_generic_sb;
   -- Coverage
-  shared variable shared_uart_byte_coverage : covPtype;
+  --fc shared variable shared_uart_byte_coverage : covPtype;
 
 
   --==========================================================================================

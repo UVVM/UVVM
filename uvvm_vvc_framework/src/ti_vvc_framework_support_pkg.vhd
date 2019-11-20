@@ -289,8 +289,8 @@ package ti_vvc_framework_support_pkg is
   -- ============================================================================
 
   procedure activity_watchdog(
-    constant timeout      : time;
     constant num_exp_vvc  : natural;
+    constant timeout      : time;
     constant alert_level  : t_alert_level := TB_ERROR;
     constant msg          : string := "AW_1"
   );
@@ -673,8 +673,8 @@ package body ti_vvc_framework_support_pkg is
   -- Include this as a concurrent procedure from your testbench.
   -------------------------------------------------------------------------------
   procedure activity_watchdog(
-    constant timeout      : time;
     constant num_exp_vvc  : natural;
+    constant timeout      : time;
     constant alert_level  : t_alert_level := TB_ERROR;
     constant msg          : string := "AW_1"
   ) is

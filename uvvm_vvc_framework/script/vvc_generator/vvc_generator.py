@@ -1,6 +1,6 @@
 __author__ = 'Bitvis AS'
 __copyright__ = "Copyright 2017, Bitvis AS"
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 __email__ = "support@bitvis.no"
 
 import os
@@ -217,6 +217,9 @@ def add_leaf_includes(file_handle, vvc_name):
     print_linefeed(file_handle)
     file_handle.write("library uvvm_vvc_framework;\n")
     file_handle.write("use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;\n")
+    print_linefeed(file_handle)
+    file_handle.write("library bitvis_vip_scoreboard;\n")
+    file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
     print_linefeed(file_handle)
     file_handle.write("use work."+vvc_name.lower()+"_bfm_pkg.all;\n")
     file_handle.write("use work.vvc_methods_pkg.all;\n")
@@ -520,6 +523,13 @@ def add_vvc_executor(file_handle, vvc_channel):
 	file_handle.write("    -- 0. Initialize the process prior to first command\n")
 	file_handle.write("    -------------------------------------------------------------------------\n")
 	file_handle.write("    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);\n")
+	print_linefeed(file_handle)
+	file_handle.write("    -- Setup "+vvc_name.upper()+" scoreboard\n")
+	file_handle.write("    shared_"+vvc_name.lower()+"_sb.set_scope(\""+vvc_name.upper()+" VVC\");\n")
+	file_handle.write("    shared_"+vvc_name.lower()+"_sb.enable(GC_INSTANCE_IDX, \"SB "+vvc_name.upper()+" Enabled\");\n")
+	file_handle.write("    shared_"+vvc_name.lower()+"_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);\n")
+	file_handle.write("    shared_"+vvc_name.lower()+"_sb.enable_log_msg(ID_DATA);\n")
+	print_linefeed(file_handle)
 	file_handle.write("    loop\n")
 	print_linefeed(file_handle)
 	file_handle.write("      -- Notify activity watchdog\n")
@@ -579,12 +589,12 @@ def add_vvc_executor(file_handle, vvc_channel):
 	file_handle.write("        --   when WRITE =>\n")
 	file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
 	file_handle.write("        --     v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", \""+vvc_name.lower()+"_write() called with to wide data. \" & v_cmd.msg);\n")
-	file_handle.write("        --  -- Add info to the transaction_for_waveview_struct if needed\n")
+	file_handle.write("        --     -- Add info to the transaction_for_waveview_struct if needed\n")
 	file_handle.write("        --     transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := "
                       "v_normalised_data;\n")
 	file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
                       "v_normalised_addr;\n")
-	file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
+	file_handle.write("        --     -- Call the corresponding procedure in the BFM package.\n")
 	file_handle.write("        --     "+vvc_name.lower()+"_write(addr_value    => v_normalised_addr,\n")
 	file_handle.write("        --               data_value    => v_normalised_data,\n")
 	file_handle.write("        --               msg           => format_msg(v_cmd),\n")
@@ -603,10 +613,10 @@ def add_vvc_executor(file_handle, vvc_channel):
 
 	file_handle.write("        --   when READ =>\n")
 	file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
-	file_handle.write("        --  -- Add info to the transaction_for_waveview_struct if needed\n")
+	file_handle.write("        --     -- Add info to the transaction_for_waveview_struct if needed\n")
 	file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
 					  "v_normalised_addr;\n")
-	file_handle.write("        --  -- Call the corresponding procedure in the BFM package.\n")
+	file_handle.write("        --     -- Call the corresponding procedure in the BFM package.\n")
 
 	if number_of_executors > 1:
 		file_handle.write("        --     if vvc_config.use_read_pipeline then\n")
@@ -632,10 +642,17 @@ def add_vvc_executor(file_handle, vvc_channel):
 		file_handle.write("        --                       scope               => C_SCOPE,\n")
 		file_handle.write("        --                       msg_id_panel        => vvc_config.msg_id_panel,\n")
 		file_handle.write("        --                       config              => vvc_config.bfm_config);\n")
+		print_linefeed(file_handle)
+		file_handle.write("        --     -- Request SB check result\n")
+		file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
+		file_handle.write("        --       -- call SB check_receive\n")
+		file_handle.write("        --       shared_"+vvc_name.lower()+"_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));\n")
+		file_handle.write("        --     else\n")
 		file_handle.write("        --       -- Store the result\n")
-		file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,\n")
-		file_handle.write("        --                                                cmd_idx      => v_cmd.cmd_idx,\n")
-		file_handle.write("        --							                     result       => v_read_data );\n")
+		file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
+		file_handle.write("        --                                         cmd_idx       => v_cmd.cmd_idx,\n")
+		file_handle.write("        --                                         result          => v_read_data);\n")
+		file_handle.write("        --     end if;\n")
 		file_handle.write("        --  end if;\n")
 
 	else:
@@ -647,10 +664,17 @@ def add_vvc_executor(file_handle, vvc_channel):
 		file_handle.write("        --              scope         => C_SCOPE,\n")
 		file_handle.write("        --              msg_id_panel  => vvc_config.msg_id_panel,\n")
 		file_handle.write("        --              config        => vvc_config.bfm_config);\n")
-		file_handle.write("        --  -- Store the result\n")
-		file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
-		file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
-		file_handle.write("        --                                       result          => v_read_data);\n")
+		print_linefeed(file_handle)
+		file_handle.write("        --     -- Request SB check result\n")
+		file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
+		file_handle.write("        --       -- call SB check_receive\n")
+		file_handle.write("        --       shared_"+vvc_name.lower()+"_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));\n")
+		file_handle.write("        --     else\n")
+		file_handle.write("        --       -- Store the result\n")
+		file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
+		file_handle.write("        --                                                   cmd_idx       => v_cmd.cmd_idx,\n")
+		file_handle.write("        --                                                   result        => v_read_data);\n")
+		file_handle.write("        --     end if;\n")
 
 	print_linefeed(file_handle)
 	print_linefeed(file_handle)
@@ -892,6 +916,7 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("    operation             : t_operation;\n")
     file_handle.write("    proc_call             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);\n")
     file_handle.write("    msg                   : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);\n")
+    file_handle.write("    data_routing          : t_data_routing;\n")
     file_handle.write("    cmd_idx               : natural;\n")
     file_handle.write("    command_type          : t_immediate_or_queued;\n")
     file_handle.write("    msg_id                : t_msg_id;\n")
@@ -914,6 +939,7 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("    operation             => NO_OPERATION,\n")
     file_handle.write("    proc_call             => (others => NUL),\n")
     file_handle.write("    msg                   => (others => NUL),\n")
+    file_handle.write("    data_routing          => NA,\n")
     file_handle.write("    cmd_idx               => 0,\n")
     file_handle.write("    command_type          => NO_COMMAND_TYPE,\n")
     file_handle.write("    msg_id                => NO_ID,\n")
@@ -989,6 +1015,10 @@ def add_methods_pkg_includes(file_handle, vvc_name):
     print_linefeed(file_handle)
     file_handle.write("library uvvm_vvc_framework;\n")
     file_handle.write("use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;\n")
+    print_linefeed(file_handle)
+    file_handle.write("library bitvis_vip_scoreboard;\n")
+    file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
+    file_handle.write("use bitvis_vip_scoreboard.slv_sb_pkg.all;\n")
     print_linefeed(file_handle)
     file_handle.write("use work."+vvc_name.lower()+"_bfm_pkg.all;\n")
     file_handle.write("use work.vvc_cmd_pkg.all;\n")
@@ -1117,6 +1147,9 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels):
         file_handle.write("  shared variable shared_"+vvc_name.lower()+"_transaction_info : "
                           "t_transaction_info_array(t_channel'left to t_channel'right, 0 to "
                           "C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));\n")
+    print_linefeed(file_handle)
+    file_handle.write("  -- Scoreboard\n")
+    file_handle.write("  shared variable shared_"+vvc_name.lower()+"_sb : t_generic_sb;\n") 
     print_linefeed(file_handle)
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")

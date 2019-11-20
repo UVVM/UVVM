@@ -54,12 +54,6 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity  => WARNING
   );
 
---  type t_vvd_error_injection is record
---  end record t_vvd_error_injection;
---
---  constant C_VVC_ERROR_INJECTION_INACTIVE : t_vvc_error_injection := (
---  );
-
   type t_vvc_config is
   record
     inter_bfm_delay                       : t_inter_bfm_delay;-- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
@@ -71,7 +65,6 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;
     bfm_config                            : t_sbi_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
-    --error_injection                       : t_vvc_error_injection;
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -87,7 +80,6 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_SBI_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
-    --error_injection                       => C_VVC_ERROR_INJECTION_INACTIVE
     );
 
   type t_vvc_status is
@@ -232,14 +224,6 @@ package vvc_methods_pkg is
                                                   constant vvc_idx_for_activity_watchdog             : in    integer;
                                                   constant last_cmd_idx_executed                     : in    natural;
                                                   constant scope                                     : in    string := "vvc_register");
-                                                  
-                                                  
-  --==============================================================================
-  -- Error Injection methods
-  --==============================================================================
-  impure function decide_if_error_is_injected(
-    constant probability  : in real
-  ) return boolean;
 
 
   --==============================================================================
@@ -516,19 +500,6 @@ package body vvc_methods_pkg is
                                                         last_cmd_idx_executed => last_cmd_idx_executed);
     gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", scope, ID_NEVER);
   end procedure;
-
-
-  --==============================================================================
-  -- Error Injection methods
-  --==============================================================================
-  impure function decide_if_error_is_injected(
-    constant probability  : in real
-  ) return boolean is
-  begin
-    check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0");
-
-    return (random(0.0, 1.0) <= probability);
-  end function decide_if_error_is_injected;
 
 
 end package body vvc_methods_pkg;

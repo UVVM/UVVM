@@ -35,9 +35,6 @@ use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
--- Randomisation
-library crfc;
-use crfc.Randompkg.all;
 
 --=================================================================================================
 entity uart_tx_vvc is
@@ -203,7 +200,6 @@ begin
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_msg_id_panel                           : t_msg_id_panel;
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
-    variable v_random                                 : RandomPType;
 
   begin
 
@@ -212,12 +208,7 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
-
-
-    -- Setup randomisation
-    v_random.InitSeed ("UART_VVC")  ; 
-    
-    
+   
     loop
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);

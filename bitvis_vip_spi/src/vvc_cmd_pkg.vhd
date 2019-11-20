@@ -70,6 +70,7 @@ package vvc_cmd_pkg is
     operation                    : t_operation;
     proc_call                    : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     msg                          : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    data_routing                 : t_data_routing;
     cmd_idx                      : natural;
     command_type                 : t_immediate_or_queued;  -- QUEUED/IMMEDIATE
     msg_id                       : t_msg_id;
@@ -95,6 +96,7 @@ package vvc_cmd_pkg is
     operation                    => NO_OPERATION,
     proc_call                    => (others => NUL),
     msg                          => (others => NUL),
+    data_routing                 => NA,
     cmd_idx                      => 0,
     command_type                 => NO_COMMAND_TYPE,
     msg_id                       => NO_ID,

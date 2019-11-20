@@ -222,8 +222,8 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
 
-    -- Setup UART scoreboard
-    shared_sbi_sb.set_scope("SBI VVC");
+    -- Setup SBI scoreboard
+    shared_sbi_sb.set_scope("SBI_VVC");
     shared_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
     shared_sbi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
     shared_sbi_sb.enable_log_msg(ID_DATA);

@@ -202,6 +202,11 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+      -- Setup GMII scoreboard
+      shared_gmii_sb.set_scope("GMII_VVC");
+      shared_gmii_sb.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
+      shared_gmii_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+      shared_gmii_sb.enable_log_msg(ID_DATA);
 
     loop
 
@@ -262,11 +267,18 @@ begin
                     scope            => C_SCOPE,
                     msg_id_panel     => v_msg_id_panel,
                     config           => vvc_config.bfm_config);
-          -- Store the result
-          store_result(result_queue => result_queue,
-                       cmd_idx      => v_cmd.cmd_idx,
-                       result       => v_read_data);
 
+          -- Request SB check result
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_received
+            alert(tb_warning, "Scoreboard type for GMII READ data not implemented");
+            --shared_gmii_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); -- SB type not implemented
+          else                            
+            -- Store the result
+            store_result(result_queue => result_queue,
+                         cmd_idx      => v_cmd.cmd_idx,
+                         result       => v_read_data);
+          end if;
 
         -- UVVM common operations
         --===================================

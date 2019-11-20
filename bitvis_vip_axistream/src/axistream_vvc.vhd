@@ -211,6 +211,12 @@ begin
       -- Set initial value of v_msg_id_panel to msg_id_panel in config
       v_msg_id_panel := vvc_config.msg_id_panel;
 
+      -- Setup AXIStream scoreboard
+      shared_axistream_sb.set_scope("AXISTREAM_VVC");
+      shared_axistream_sb.enable(GC_INSTANCE_IDX, "SB AXISTREAM Enabled");
+      shared_axistream_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+      shared_axistream_sb.enable_log_msg(ID_DATA);
+
       loop
          
          -- Notify activity watchdog
@@ -296,10 +302,18 @@ begin
                                     scope               => C_SCOPE,
                                     msg_id_panel        => v_msg_id_panel,
                                     config              => vvc_config.bfm_config);
-                  -- Store the result
-                  work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
-                                                               cmd_idx      => v_cmd.cmd_idx,
-                                                               result       => v_result );
+
+                  -- Request SB check result
+                  if v_cmd.data_routing = TO_SB then
+                    -- call SB check_received
+                    alert(tb_warning, "Scoreboard type for AXIStream RECEIVE data not implemented");
+                    --shared_axistream_sb.check_received(GC_INSTANCE_IDX, v_result.data_array(GC_DATA_WIDTH-1 downto 0)); -- SB type not implemented
+                  else                            
+                     -- Store the result
+                     work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
+                                                                  cmd_idx      => v_cmd.cmd_idx,
+                                                                  result       => v_result );
+                  end if;
                else
                   alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
                end if;

@@ -195,6 +195,14 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+
+    -- Setup WISHBONE scoreboard
+    shared_wishbone_sb.set_scope("WISHBONE_VVC");
+    shared_wishbone_sb.enable(GC_INSTANCE_IDX, "SB WISHBONE Enabled");
+    shared_wishbone_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    shared_wishbone_sb.enable_log_msg(ID_DATA);
+
+
     loop
 
       -- Notify activity watchdog
@@ -269,11 +277,18 @@ begin
                         scope         => C_SCOPE,
                         msg_id_panel  => v_msg_id_panel,
                         config        => vvc_config.bfm_config);
-       -- Store the result
-          work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,
-                                                       cmd_idx                      => v_cmd.cmd_idx,
-                                                       result                       => v_read_data);
 
+          -- Request SB check result
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_received
+            shared_wishbone_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH - 1 downto 0)); 
+          else                            
+            -- Store the result
+            work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,
+                                                         cmd_idx                      => v_cmd.cmd_idx,
+                                                         result                       => v_read_data);
+          end if;
+          
         when CHECK =>
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_check() called with to wide address. " & v_cmd.msg);

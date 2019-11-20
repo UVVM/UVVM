@@ -203,6 +203,12 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+    -- Setup I2C scoreboard
+    shared_i2c_sb.set_scope("I2C_VVC");
+    shared_i2c_sb.enable(GC_INSTANCE_IDX, "SB I2C Enabled");
+    shared_i2c_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    shared_i2c_sb.enable_log_msg(ID_DATA);
+
     while true loop
 
       -- Notify activity watchdog
@@ -290,10 +296,17 @@ begin
                                msg_id_panel                 => v_msg_id_panel,
                                config                       => vvc_config.bfm_config);
 
-            -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_read_data);
+            -- Request SB check result
+            if v_cmd.data_routing = TO_SB then
+              -- call SB check_received
+              alert(tb_warning, "Scoreboard type for I2C MASTER_RECEIVE data not implemented");
+              --shared_i2c_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+            else                            
+              -- Store the result
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_read_data);
+            end if;
           else  -- attempted master receive when in slave mode
             alert(error, "Master receive called when VVC is in slave mode.", C_SCOPE);
           end if;
@@ -366,10 +379,17 @@ begin
                               msg_id_panel => v_msg_id_panel,
                               config       => vvc_config.bfm_config);
 
-            -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                        cmd_idx      => v_cmd.cmd_idx,
-                                                        result       => v_read_data);
+                                          -- Request SB check result
+            if v_cmd.data_routing = TO_SB then
+              -- call SB check_received
+              alert(tb_warning, "Scoreboard type for I2C SLAVE_RECEIVE data not implemented");
+              --shared_i2c_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+            else                            
+              -- Store the result
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_read_data);
+            end if;
           else                          -- wrong mode
             alert(error, "Slave receive called when VVC is in master mode.", C_SCOPE);
           end if;

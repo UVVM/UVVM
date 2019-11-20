@@ -215,6 +215,12 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+    -- Setup SPI scoreboard
+    shared_spi_sb.set_scope("SPI_VVC");
+    shared_spi_sb.enable(GC_INSTANCE_IDX, "SB SPI Enabled");
+    shared_spi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    shared_spi_sb.enable_log_msg(ID_DATA);
+
     loop
 
       -- Notify activity watchdog
@@ -302,11 +308,18 @@ begin
                                               config                       => vvc_config.bfm_config);
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
+
             -- Store the result
             for i in 0 to v_num_words-1 loop
-              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                          cmd_idx      => v_cmd.cmd_idx,
-                                                          result       => v_result(i));
+              -- Request SB check result
+              if v_cmd.data_routing = TO_SB then
+                -- call SB check_received
+                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+              else                            
+                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                            cmd_idx      => v_cmd.cmd_idx,
+                                                            result       => v_result(i));
+              end if;
             end loop;
           else  -- attempted master transmit and receive when in slave mode
             alert(error, "Master transmit and receive called when VVC is in slave mode.", C_SCOPE);
@@ -399,9 +412,15 @@ begin
             end if;
             -- Store the result
             for i in 0 to v_num_words-1 loop
-              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                          cmd_idx      => v_cmd.cmd_idx,
-                                                          result       => v_result(i));
+              -- Request SB check result
+              if v_cmd.data_routing = TO_SB then
+                -- call SB check_received
+                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+              else                            
+                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                            cmd_idx      => v_cmd.cmd_idx,
+                                                            result       => v_result(i));
+              end if;
             end loop;
 
           else  -- attempted master receive when in slave mode
@@ -467,9 +486,15 @@ begin
             end if;
             -- Store the result
             for i in 0 to v_num_words-1 loop
-              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                          cmd_idx      => v_cmd.cmd_idx,
-                                                          result       => v_result(i));
+              -- Request SB check result
+              if v_cmd.data_routing = TO_SB then
+                -- call SB check_received
+                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+              else                            
+                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                            cmd_idx      => v_cmd.cmd_idx,
+                                                            result       => v_result(i));
+              end if;
             end loop;
           else  -- attempted slave transmit when in master mode
             alert(note, "Slave transmit and receive called when VVC is in master mode.", C_SCOPE);
@@ -558,9 +583,15 @@ begin
             end if;
             -- Store the result
             for i in 0 to v_num_words-1 loop
-              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                          cmd_idx      => v_cmd.cmd_idx,
-                                                          result       => v_result(i));
+              -- Request SB check result
+              if v_cmd.data_routing = TO_SB then
+                -- call SB check_received
+                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+              else                            
+                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                            cmd_idx      => v_cmd.cmd_idx,
+                                                            result       => v_result(i));
+              end if;
             end loop;
 
           else  -- attempted slave receive when in master mode

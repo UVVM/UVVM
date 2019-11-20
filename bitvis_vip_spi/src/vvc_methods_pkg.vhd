@@ -23,6 +23,10 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.slv_sb_pkg.all;
+
 use work.spi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_vvc_framework_common_methods_pkg.all;
@@ -119,6 +123,10 @@ package vvc_methods_pkg is
   shared variable shared_spi_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM)       := (others => C_SPI_VVC_CONFIG_DEFAULT);
   shared variable shared_spi_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_spi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
+  
+  -- Scoreboard
+  shared variable shared_spi_sb : t_generic_sb;
+
 
   --==========================================================================================
   -- Methods dedicated to this VVC 

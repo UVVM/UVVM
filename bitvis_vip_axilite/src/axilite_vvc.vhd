@@ -210,6 +210,12 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+    -- Setup AXILite scoreboard
+    shared_axilite_sb.set_scope("AXILITE_VVC");
+    shared_axilite_sb.enable(GC_INSTANCE_IDX, "SB AXILITE Enabled");
+    shared_axilite_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    shared_axilite_sb.enable_log_msg(ID_DATA);
+
     loop
 
       -- Notify activity watchdog
@@ -289,10 +295,18 @@ begin
                    scope              => C_SCOPE,
                    msg_id_panel       => v_msg_id_panel,
                    config             => vvc_config.bfm_config);
-          -- Store the result
-          work.td_vvc_entity_support_pkg.store_result( result_queue  => result_queue,
-                                             cmd_idx       => v_cmd.cmd_idx,
-                                             result        => v_read_data);
+
+          -- Request SB check result
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_received
+            shared_axilite_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+          else                            
+            -- Store the result
+            work.td_vvc_entity_support_pkg.store_result( result_queue  => result_queue,
+                                               cmd_idx       => v_cmd.cmd_idx,
+                                               result        => v_read_data);
+          end if;
+
 
         when CHECK =>
           -- Normalise address and data

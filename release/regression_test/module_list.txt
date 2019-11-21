@@ -15,5 +15,5 @@ bitvis_uart
 bitvis_irqc
 uvvm_vvc_framework
 uvvm_util
-bitvis_vip_ethernet
+#bitvis_vip_ethernet
 #bitvis_vip_hvvc_to_vvc_bridge

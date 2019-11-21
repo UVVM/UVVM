@@ -1,6 +1,13 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.3.0
+----------
+Released: 2019-11-21
+- Added activity watchdog to VVC.
+- Added scoreboard to VVC.
+- Updated LICENSE.TXT
+
 v4.2.0
 ----------
 Released: 2019-09-02

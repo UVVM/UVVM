@@ -44,6 +44,13 @@ package sbi_bfm_pkg is
     rdata : std_logic_vector;           -- from dut
   end record;
 
+
+--  type t_bfm_error_injection is record
+--  end record t_bfm_error_injection;
+--
+--  constant C_BFM_ERROR_INJECTION_INACTIVE : t_bfm_error_injection := (
+--  );
+
   -- Configuration record to be assigned in the test harness.
   type t_sbi_bfm_config is
   record
@@ -62,6 +69,7 @@ package sbi_bfm_pkg is
     id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
     id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
     use_ready_signal            : boolean;        -- Whether or not to use the interface �ready� signal
+    --error_injection             : t_bfm_error_injection;
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (
@@ -78,6 +86,7 @@ package sbi_bfm_pkg is
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL,
     use_ready_signal            => true
+    --error_injection             => C_ERROR_INJECTION_INACTIVE
     );
 
 
@@ -354,7 +363,6 @@ package body sbi_bfm_pkg is
     variable v_max_time           : time    := -1 ns;  -- max allowed clk low period
     variable v_start_time         : time    := -1 ns;  -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
-
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -391,11 +399,11 @@ package body sbi_bfm_pkg is
     if v_clk_was_high then -- rising_edge to rising_edge
       v_min_time := v_start_time + config.clock_period - config.clock_period_margin;
       v_max_time := v_start_time + config.clock_period + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": checking clk period is within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": clk period not within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, proc_call);
     else -- falling_edge to rising_edge
       v_min_time := v_start_time + (config.clock_period/2) - config.clock_period_margin;
       v_max_time := v_start_time + (config.clock_period/2) + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": checking clk low period is within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, proc_name & ": clk low period not within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, proc_call);
     end if;
 
     while (config.use_ready_signal and ready = '0') loop
@@ -467,7 +475,6 @@ package body sbi_bfm_pkg is
     variable v_max_time           : time  := -1 ns;   -- max allowed clk low period
     variable v_start_time         : time := -1 ns;    -- time of previoud clock edge
     variable v_clk_was_high       : boolean := false; -- clk high/low status on BFM call
-
   begin
     -- setup_time and hold_time checking
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
@@ -510,11 +517,12 @@ package body sbi_bfm_pkg is
     if v_clk_was_high then -- rising_edge to rising_edge
       v_min_time := v_start_time + config.clock_period - config.clock_period_margin;
       v_max_time := v_start_time + config.clock_period + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": checking clk period is within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": clk period not within requirement (rising_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, local_proc_call);
     else -- falling_edge to rising_edge
       v_min_time := v_start_time + (config.clock_period/2) - config.clock_period_margin;
       v_max_time := v_start_time + (config.clock_period/2) + config.clock_period_margin;
-      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": checking clk low period is within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel);
+      check_value_in_range(now, v_min_time, v_max_time, config.clock_margin_severity, local_proc_name & ": clk low period not within requirement (falling_edge to rising_edge).", scope, ID_NEVER, msg_id_panel, local_proc_call);
     end if;
 
     if config.use_fixed_wait_cycles_read then
@@ -549,6 +557,9 @@ package body sbi_bfm_pkg is
     else
     -- Log will be handled by calling procedure (e.g. sbi_check)
     end if;
+
+    DEALLOCATE(v_proc_call);
+
   end procedure;
 
   procedure sbi_read (

@@ -26,6 +26,9 @@ context uvvm_util.uvvm_util_context;
 library STD;
 use std.textio.all;
 
+use work.transaction_pkg.all;
+
+
 --=================================================================================================
 package uart_bfm_pkg is
 
@@ -35,21 +38,20 @@ package uart_bfm_pkg is
 
   constant C_SCOPE : string := "UART BFM";
 
-  -- Configuration record to be assigned in the test harness.
-  type t_parity is (
-    PARITY_NONE,
-    PARITY_ODD,
-    PARITY_EVEN
-  );
-  type t_stop_bits is (
-    STOP_BITS_ONE,
-    STOP_BITS_ONE_AND_HALF,
-    STOP_BITS_TWO
-  );
-
-  constant C_DATA_MAX_LENGTH                        : natural := 8;
+  constant C_DATA_MAX_LENGTH                        : natural := C_CMD_DATA_MAX_LENGTH;
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR  : string := "; ";
   type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_DATA_MAX_LENGTH-1 downto 0);
+
+
+  type t_bfm_error_injection is record
+    parity_bit_error  : boolean;
+    stop_bit_error    : boolean;
+  end record t_bfm_error_injection;
+
+  constant C_BFM_ERROR_INJECTION_INACTIVE : t_bfm_error_injection := (
+    parity_bit_error  => false,
+    stop_bit_error    => false
+  );
 
   type t_uart_bfm_config is
   record
@@ -65,6 +67,7 @@ package uart_bfm_pkg is
     id_for_bfm_wait                           : t_msg_id;             -- The message ID used for logging waits in the UART BFM
     id_for_bfm_poll                           : t_msg_id;             -- The message ID used for logging polling in the UART BFM
     id_for_bfm_poll_summary                   : t_msg_id;             -- The message ID used for logging polling summary in the UART BFM
+    error_injection                           : t_bfm_error_injection;
   end record;
 
   constant C_UART_BFM_CONFIG_DEFAULT : t_uart_bfm_config := (
@@ -79,7 +82,8 @@ package uart_bfm_pkg is
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
-    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY
+    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
+    error_injection                           => C_BFM_ERROR_INJECTION_INACTIVE
     );
 
   ----------------------------------------------------
@@ -92,12 +96,12 @@ package uart_bfm_pkg is
   -- - This procedure transmits data 'data_value' to the UART DUT
   -- - The TX configuration can be set in the config parameter
   procedure uart_transmit (
-    constant data_value    : in  std_logic_vector;
-    constant msg           : in  string;
-    signal tx              : inout std_logic;
-    constant config        : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope         : in  string             := C_SCOPE;
-    constant msg_id_panel  : in  t_msg_id_panel     := shared_msg_id_panel
+    constant data_value         : in  std_logic_vector;
+    constant msg                : in  string;
+    signal tx                   : inout std_logic;
+    constant config             : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope              : in  string             := C_SCOPE;
+    constant msg_id_panel       : in  t_msg_id_panel     := shared_msg_id_panel
     );
 
 
@@ -107,14 +111,14 @@ package uart_bfm_pkg is
   -- - This procedure reads data from the UART DUT and returns it in 'data_value'
   -- - The RX configuration can be set in the config parameter
   procedure uart_receive (
-    variable data_value   : out std_logic_vector;
-    constant msg          : in  string;
-    signal rx             : in  std_logic;
-    signal terminate_loop : in  std_logic;
-    constant config       : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope        : in  string            := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel    := shared_msg_id_panel;
-    constant ext_proc_call: in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
+    variable data_value         : out std_logic_vector;
+    constant msg                : in  string;
+    signal rx                   : in  std_logic;
+    signal terminate_loop       : in  std_logic;
+    constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope              : in  string            := C_SCOPE;
+    constant msg_id_panel       : in  t_msg_id_panel    := shared_msg_id_panel;
+    constant ext_proc_call      : in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
     );
 
 
@@ -133,16 +137,16 @@ package uart_bfm_pkg is
   -- - If 'max_receptions' is set to 0, it will be interpreted as no limitation on number of reads
   -- - The RX configuration can be set in the config parameter
   procedure uart_expect (
-    constant data_exp        : in std_logic_vector;
-    constant msg             : in string;
-    signal rx                : in std_logic;
-    signal terminate_loop    : in std_logic;
-    constant max_receptions  : in natural           := 1;
-    constant timeout         : in time              := -1 ns;
-    constant alert_level     : in t_alert_level     := ERROR;
-    constant config          : in t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope           : in string            := C_SCOPE;
-    constant msg_id_panel    : in t_msg_id_panel    := shared_msg_id_panel
+    constant data_exp           : in std_logic_vector;
+    constant msg                : in string;
+    signal rx                   : in std_logic;
+    signal terminate_loop       : in std_logic;
+    constant max_receptions     : in natural           := 1;
+    constant timeout            : in time              := -1 ns;
+    constant alert_level        : in t_alert_level     := ERROR;
+    constant config             : in t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope              : in string            := C_SCOPE;
+    constant msg_id_panel       : in t_msg_id_panel    := shared_msg_id_panel
     );
 
 
@@ -177,15 +181,19 @@ package body uart_bfm_pkg is
   -- uart_transmit
   ---------------------------------------------------------------------------------
   procedure uart_transmit (
-    constant data_value    : in  std_logic_vector;
-    constant msg           : in  string;
-    signal tx              : inout std_logic;
-    constant config        : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope         : in  string             := C_SCOPE;
-    constant msg_id_panel  : in  t_msg_id_panel     := shared_msg_id_panel
+    constant data_value     : in  std_logic_vector;
+    constant msg            : in  string;
+    signal tx               : inout std_logic;
+    constant config         : in  t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope          : in  string             := C_SCOPE;
+    constant msg_id_panel   : in  t_msg_id_panel     := shared_msg_id_panel
     ) is
-    constant proc_name    : string := "uart_transmit";
-    constant proc_call    : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+    constant proc_name      : string := "uart_transmit";
+    constant proc_call      : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
+
+    alias stop_bit_error    is config.error_injection.stop_bit_error;
+    alias parity_bit_error  is config.error_injection.parity_bit_error;
+
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
@@ -202,17 +210,34 @@ package body uart_bfm_pkg is
       wait for config.bit_time;
     end loop;
 
-    -- parity?
+    -- Set parity bit
     if (config.parity = PARITY_ODD) then
       tx <= odd_parity(data_value);
-      wait for config.bit_time;
     elsif(config.parity = PARITY_EVEN) then
-      tx <= not odd_parity(data_value);
-      wait for config.bit_time;
+      tx <= not(odd_parity(data_value));
     end if;
 
-    -- stop bits
-    tx <= config.idle_state;
+    -- Invert parity bit if error injection is requested
+    if parity_bit_error = true then
+      if (config.parity = PARITY_ODD) then
+        tx <= not(odd_parity(data_value));
+      elsif(config.parity = PARITY_EVEN) then
+        tx <= odd_parity(data_value);
+      end if;
+    end if;
+    wait for config.bit_time;
+
+
+    -- Set stop bits
+    if stop_bit_error = false then
+      tx <= config.idle_state;
+    else
+      -- Invert stop bit if error injection is requested
+      tx <= not(config.idle_state);
+      --Will return to idle/normal stop bit after 1 bit time
+      tx <= transport config.idle_state after config.bit_time;
+    end if;
+
     wait for config.bit_time;
     if (config.num_stop_bits = STOP_BITS_ONE_AND_HALF) then
       wait for config.bit_time/2;
@@ -229,14 +254,14 @@ package body uart_bfm_pkg is
   ---------------------------------------------------------------------------------
   -- Perform a receive operation
   procedure uart_receive (
-    variable data_value   : out std_logic_vector;
-    constant msg          : in  string;
-    signal rx             : in  std_logic;
-    signal terminate_loop : in  std_logic;
-    constant config       : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope        : in  string            := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel    := shared_msg_id_panel;
-    constant ext_proc_call: in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
+    variable data_value         : out std_logic_vector;
+    constant msg                : in  string;
+    signal rx                   : in  std_logic;
+    signal terminate_loop       : in  std_logic;
+    constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope              : in  string            := C_SCOPE;
+    constant msg_id_panel       : in  t_msg_id_panel    := shared_msg_id_panel;
+    constant ext_proc_call      : in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
     ) is
     constant start_time       : time := now;
 
@@ -370,7 +395,7 @@ package body uart_bfm_pkg is
       if ext_proc_call = "" then
         log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-      -- Log will be handled by calling procedure (e.g. uart_expect)
+        -- Will be andled by calling procedure (e.g. uart_expect)
       end if;
     end if;
   end procedure;
@@ -380,16 +405,16 @@ package body uart_bfm_pkg is
   ----------------------------------------------------------------------------------------
   -- Perform a receive operation, then compare the received value to the expected value.
   procedure uart_expect (
-    constant data_exp               : in std_logic_vector;
-    constant msg                    : in string;
-    signal rx                       : in std_logic;
-    signal terminate_loop           : in  std_logic;
-    constant max_receptions         : in natural            := 1;     -- 0 = any occurrence before timeout
-    constant timeout                : in time               := -1 ns;
-    constant alert_level            : in t_alert_level      := ERROR;
-    constant config                 : in t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
-    constant scope                  : in string             := C_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel     := shared_msg_id_panel
+    constant data_exp           : in std_logic_vector;
+    constant msg                : in string;
+    signal rx                   : in std_logic;
+    signal terminate_loop       : in  std_logic;
+    constant max_receptions     : in natural            := 1;     -- 0 = any occurrence before timeout
+    constant timeout            : in time               := -1 ns;
+    constant alert_level        : in t_alert_level      := ERROR;
+    constant config             : in t_uart_bfm_config  := C_UART_BFM_CONFIG_DEFAULT;
+    constant scope              : in string             := C_SCOPE;
+    constant msg_id_panel       : in t_msg_id_panel     := shared_msg_id_panel
     ) is
     constant proc_name                      : string  := "uart_expect";
     constant proc_call                      : string  := proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
@@ -404,7 +429,6 @@ package body uart_bfm_pkg is
     variable v_received_data_fifo_write_idx : natural := 0;
     variable v_received_output_line         : line;
     variable v_internal_timeout             : time;
-
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
@@ -449,7 +473,7 @@ package body uart_bfm_pkg is
       uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
       for i in 0 to v_config.num_data_bits-1 loop
         if (data_exp(i) = '-' or
-            v_data_value(i) = data_exp(i)) then
+          v_data_value(i) = data_exp(i)) then
           v_check_ok := true;
         else
           v_check_ok := false;

@@ -34,10 +34,11 @@ package types_pkg is
 
   type t_natural_array  is array (natural range <>) of natural;
   type t_integer_array  is array (natural range <>) of integer;
-  type t_byte_array     is array (natural range <>) of std_logic_vector(7 downto 0);
   type t_slv_array      is array (natural range <>) of std_logic_vector;
   type t_signed_array   is array (natural range <>) of signed;
   type t_unsigned_array is array (natural range <>) of unsigned;
+
+  subtype t_byte_array  is t_slv_array(open)(7 downto 0);
 
   -- Additions to predefined vector types
   type natural_vector  is array (natural range <>) of natural;
@@ -112,9 +113,24 @@ package types_pkg is
     flag_name   => (others => NUL),
     is_blocked  => true
   );
-  
+
   type t_sync_flag_record_array is array (natural range <>) of t_sync_flag_record;
 
+  type t_watchdog_ctrl is record
+    extend      : boolean;
+    restart     : boolean;
+    terminate   : boolean;
+    extension   : time;
+    new_timeout : time;
+  end record;
+
+  constant C_WATCHDOG_CTRL_DEFAULT : t_watchdog_ctrl := (
+    extend      => false,
+    restart     => false,
+    terminate   => false,
+    extension   => 0 ns,
+    new_timeout => 0 ns
+  );
 
   -- type for identifying VVC and command index finishing await_any_completion()
   type t_info_on_finishing_await_any_completion is record
@@ -145,6 +161,18 @@ package types_pkg is
 
   type t_justify_center is (center);
 
+  type t_parity is (
+    PARITY_NONE,
+    PARITY_ODD,
+    PARITY_EVEN
+  );
+
+  type t_stop_bits is (
+    STOP_BITS_ONE,
+    STOP_BITS_ONE_AND_HALF,
+    STOP_BITS_TWO
+  );
+
   -------------------------------------
   -- BFMs and above
   -------------------------------------
@@ -173,6 +201,23 @@ package types_pkg is
   type t_void_bfm_config is (VOID);
   constant C_VOID_BFM_CONFIG : t_void_bfm_config := VOID;
 
+  type t_data_routing is (
+    NA,
+    TO_SB,
+    TO_BUFFER,
+    FROM_BUFFER,
+    TO_RECEIVE_BUFFER); -- TO_FILE and FROM_FILE may be added later on
+
+  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+    NA,               -- When channel is not relevant
+    ALL_CHANNELS,     -- When command shall be received by all channels
+    RX,
+    TX
+  );
+
+  type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
+
+
   -------------------------------------
   -- SB
   -------------------------------------
@@ -187,6 +232,8 @@ package types_pkg is
   type t_range_option is (SINGLE, AND_LOWER, AND_HIGHER);
 
   type t_tag_usage is (TAG, NO_TAG);
+
+
 
 end package types_pkg;
 

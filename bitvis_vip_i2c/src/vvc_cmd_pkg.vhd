@@ -68,6 +68,7 @@ package vvc_cmd_pkg is
     operation                    : t_operation;
     proc_call                    : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     msg                          : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    data_routing                 : t_data_routing;
     cmd_idx                      : natural;
     command_type                 : t_immediate_or_queued;  -- QUEUED/IMMEDIATE
     msg_id                       : t_msg_id;
@@ -77,6 +78,8 @@ package vvc_cmd_pkg is
     alert_level                  : t_alert_level;
     delay                        : time;
     quietness                    : t_quietness;
+    use_provided_msg_id_panel    : t_use_provided_msg_id_panel;
+    msg_id_panel                 : t_msg_id_panel;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -90,6 +93,7 @@ package vvc_cmd_pkg is
     operation                    => NO_OPERATION,
     proc_call                    => (others => NUL),
     msg                          => (others => NUL),
+    data_routing                 => NA,
     cmd_idx                      => 0,
     command_type                 => NO_COMMAND_TYPE,
     msg_id                       => NO_ID,
@@ -98,7 +102,9 @@ package vvc_cmd_pkg is
     timeout                      => 0 ns,
     alert_level                  => failure,
     delay                        => 0 ns,
-    quietness                    => NON_QUIET
+    quietness                    => NON_QUIET,
+    use_provided_msg_id_panel    => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
+    msg_id_panel                 => C_VVC_MSG_ID_PANEL_DEFAULT
     );
 
   --===============================================================================================

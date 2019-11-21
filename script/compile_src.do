@@ -91,14 +91,24 @@ quietly vmap $lib_name $target_path/$lib_name
 # These two core libraries are needed by every VIP (except the IRQC and UART demos),
 # therefore we should map them in case they were compiled from different directories
 # which would cause the references to be in a different file.
+# First check if the libraries are in the specified target path, if not, then look
+# in the default UVVM structure.
 if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart"} {
   echo "Mapping uvvm_util and uvvm_vvc_framework"
-  quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
-  quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework
+  if {[file exists $target_path/uvvm_util]} {
+    quietly vmap uvvm_util $target_path/uvvm_util
+  } else {
+    quietly vmap uvvm_util $source_path/../uvvm_util/sim/uvvm_util
+  }
+  if {[file exists $target_path/uvvm_vvc_framework]} {
+    quietly vmap uvvm_vvc_framework $target_path/uvvm_vvc_framework
+  } else {
+    quietly vmap uvvm_vvc_framework $source_path/../uvvm_vvc_framework/sim/uvvm_vvc_framework
+  }
 }
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
+  quietly set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }

@@ -85,9 +85,10 @@ package td_target_support_pkg is
   -- - Logs with ID_UVVM_SEND_CMD when sending to VVC
   -- - Logs with ID_UVVM_CMD_ACK when ACK or timeout occurs
   procedure send_command_to_vvc(                  -- VVC dedicated shared command used  shared_vvc_cmd
-    signal   vvc_target    : inout t_vvc_target_record;
-    constant timeout       : in time   := std.env.resolution_limit;
-    constant scope         : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   vvc_target   : inout t_vvc_target_record;
+    constant timeout      : in    time                 := std.env.resolution_limit;
+    constant scope        : in    string               := C_TB_SCOPE_DEFAULT & "(uvvm)";
+    constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   );
 
 
@@ -277,9 +278,10 @@ package body td_target_support_pkg is
   end;
 
   procedure send_command_to_vvc(
-    signal   vvc_target    : inout t_vvc_target_record;
-    constant timeout       : in time   := std.env.resolution_limit;
-    constant scope         : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   vvc_target   : inout t_vvc_target_record;
+    constant timeout      : in    time                 := std.env.resolution_limit;
+    constant scope        : in    string               := C_TB_SCOPE_DEFAULT & "(uvvm)";
+    constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   ) is
     constant C_CMD_INFO      : string := "uvvm cmd " & format_command_idx(shared_cmd_idx+1) & ": ";
     variable v_ack_cmd_idx   : integer := -1;
@@ -288,19 +290,19 @@ package body td_target_support_pkg is
     variable v_local_cmd_idx : integer;
     variable v_was_multicast : boolean := false;
   begin
-    check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", scope, ID_NEVER);
+    check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", scope, ID_NEVER, msg_id_panel);
 
     -- increment shared_cmd_inx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
     shared_cmd_idx := shared_cmd_idx + 1;
 
-    shared_vvc_cmd.cmd_idx    := shared_cmd_idx;
+    shared_vvc_cmd.cmd_idx := shared_cmd_idx;
 
     if global_show_msg_for_uvvm_cmd then
       log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_cmd.msg)) & "."
-          & format_command_idx(shared_cmd_idx), scope);
+          & format_command_idx(shared_cmd_idx), scope, msg_id_panel);
     else
       log(ID_UVVM_SEND_CMD, to_string(shared_vvc_cmd.proc_call)
-          & format_command_idx(shared_cmd_idx), scope);
+          & format_command_idx(shared_cmd_idx), scope, msg_id_panel);
     end if;
     wait for 0 ns;
     if (vvc_target.vvc_instance_idx = ALL_INSTANCES) then
@@ -344,7 +346,7 @@ package body td_target_support_pkg is
       release_semaphore(protected_multicast_semaphore);
     end if;
 
-    log(ID_UVVM_CMD_ACK, "ACK received.  " & format_command_idx(v_local_cmd_idx), scope);
+    log(ID_UVVM_CMD_ACK, "ACK received.  " & format_command_idx(v_local_cmd_idx), scope, msg_id_panel);
 
     -- clean up and prepare for next
     wait for 0 ns;  -- wait for executor to stop driving global_vvc_ack
@@ -368,5 +370,3 @@ package body td_target_support_pkg is
   end procedure;
 
 end package body td_target_support_pkg;
-
-

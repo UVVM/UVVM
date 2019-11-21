@@ -3,6 +3,12 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.10.0
+----------
+Released: 2019-11-21
+- Added timeout watchdog. See UVVM Util quick reference for more information.
+- Updated LICENSE.TXT
+
 v2.9.0
 ----------
 Released: 2019-09-02

@@ -9,6 +9,12 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2019.XX.XX
+--------------------
+Released: 2019-XX-XX
+- Fixed compile_scr.do script not finding util and framework libraries when specifying
+  a different target directory.
+
 v2019.09.02
 --------------------
 Released: 2019-09-02

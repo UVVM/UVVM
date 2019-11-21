@@ -3,6 +3,13 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.6.0
+----------
+Released: 2019-11-21
+- Added VVC activity watchdog. All Bitvis VVCs now support activity watchdog functionality.
+  See UVVM Essential Mechanisms and VVC quick references for more information.
+- Updated LICENSE.TXT
+
 v2.5.0
 ----------
 Released: 2019-09-02

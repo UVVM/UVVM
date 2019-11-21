@@ -47,11 +47,13 @@ package adaptations_pkg is
   constant C_USE_BACKSLASH_N_AS_LF : boolean := true; -- If true interprets '\n' as Line feed
   constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r'
                                                       -- is the first character of the string.
+                                                      -- All others '\r' will be printed as is.
 
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_TB_SCOPE_DEFAULT : string := "TB seq."; -- Default scope in test sequencer
+  constant C_TB_SCOPE_DEFAULT         : string := "TB seq."; -- Default scope in test sequencer
+  constant C_VVC_CMD_SCOPE_DEFAULT    : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
@@ -84,10 +86,9 @@ package adaptations_pkg is
     ID_CLOCK_GEN,             -- Used for logging when clock generators are enabled or disabled
     ID_GEN_PULSE,             -- Used for logging when a gen_pulse procedure starts pulsing a signal
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
+    ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
-    ID_DATA,                  -- To write general handling of data
-    ID_CTRL,                  -- To write general control/config information
     -- Directly inside test sequencers
     ID_LOG_HDR,               -- ONLY allowed in test sequencer, Log section headers
     ID_LOG_HDR_LARGE,         -- ONLY allowed in test sequencer, Large log section headers
@@ -139,6 +140,15 @@ package adaptations_pkg is
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
+    -- Monitors
+    ID_MONITOR,               -- General monitor information
+    ID_MONITOR_ERROR,         -- General monitor errors
+    -- SB package
+    ID_DATA,                  -- To write general handling of data
+    ID_CTRL,                  -- To write general control/config information
+    -- Specification vs Verification IDs
+    ID_FILE_PARSER,           -- Id used in file parsers
+    ID_SPEC_VS_VERIF,         -- Messages from the specification vs verification methods
     -- Special purpose - Not really IDs
     ALL_MESSAGES              -- Applies to ALL message ID apart from ID_NEVER
     );
@@ -244,28 +254,41 @@ package adaptations_pkg is
     others           => ENABLED
   );
 
-  type t_data_source is (     -- May add more types of random ++ later
+  -- Deprecated, will be removed.
+  type t_data_source is (
     NA,
     FROM_BUFFER,
     RANDOM,
     RANDOM_TO_BUFFER
   );
 
-  type t_error_injection is (  -- May add more controlled error injection later
+  -- Deprecated, will be removed.
+  type t_error_injection is (
     NA,
     RANDOM_BIT_ERROR,
     RANDOM_DATA_ERROR,
     RANDOM_ADDRESS_ERROR
   );
 
+  type t_randomisation is (
+    NA,
+    RANDOM,
+    RANDOM_FAVOUR_EDGES
+  );
+
+  type t_coverage is (
+    NA,
+    COVERAGE_FULL,
+    COVERAGE_EDGES
+  );
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
-  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
-    NA,               -- When channel is not relevant
-    ALL_CHANNELS,     -- When command shall be received by all channels
-    RX,
-    TX);
+  type t_vvc is record
+    instance  : integer;
+    channel   : t_channel;
+  end record t_vvc;
 
   constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
   constant ALL_ENABLED_INSTANCES : integer := -3;
@@ -286,6 +309,49 @@ package adaptations_pkg is
     ID_DATA => DISABLED,
     others  => DISABLED
   );
+
+
+
+  --------------------------------------------------------------------------
+  -- WARNING! The following is not intended for user modifications!
+  --------------------------------------------------------------------------
+  type t_vvc_id is record
+    name      : string(1 to C_MAX_VVC_NAME_LENGTH);
+    instance  : natural;
+    channel   : t_channel;
+  end record;
+  constant C_VVC_ID_DEFAULT : t_vvc_id := (
+    name      => (others => NUL),
+    instance  => 0,
+    channel   => NA
+  );
+
+  type t_vvc_state is record
+    busy                  : boolean;
+    last_cmd_idx_executed : integer;
+  end record;
+  constant  C_VVC_STATE_DEFAULT : t_vvc_state := (
+    busy                  => false,
+    last_cmd_idx_executed => -1
+  );
+
+  ------------------------------------------------------------------------
+  -- Requirement vs Verification Matrix adaptations
+  ------------------------------------------------------------------------
+  constant C_REQ_TC_MISMATCH_SEVERITY   : t_alert_level := warning;
+  constant C_DEFAULT_RESULT_FILE_NAME   : string := "resultfile.csv";
+  constant C_CSV_DELIMITER              : character := ';';
+  constant C_MAX_NUM_REQUIREMENTS       : natural := 1000;
+  constant C_MAX_NUM_TC_PR_REQUIREMENT  : natural := 20;
+  constant C_CSV_FILE_MAX_LINE_LENGTH   : positive := 256;
+
+  shared variable shared_req_vs_cov_strict_testcase_checking : boolean := false;
+
+
+  ------------------------------------------------------------------------
+  -- CRC32
+  ------------------------------------------------------------------------
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
 
 end package adaptations_pkg;
 

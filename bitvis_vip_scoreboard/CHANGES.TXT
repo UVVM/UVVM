@@ -1,6 +1,11 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.0.1
+----------
+Released: 2019-11-21
+- Update LICENSE.TXT
+
 v2.0.0
 ----------
 Released: 2019-09-02

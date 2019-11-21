@@ -1,6 +1,14 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.4.0
+----------
+Released: 2019-11-21
+- Fixed an issue where vector direction could be changed.
+- Added scoreboard to VVC.
+- Added activity watchdog to VVC.
+- Updated LICENSE.TXT
+
 v1.3.0
 ----------
 Released: 2019-06-06

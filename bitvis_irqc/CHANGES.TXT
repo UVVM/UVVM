@@ -1,6 +1,11 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.9
+----------
+Released: 2019-11-21
+- Update LICENSE.TXT
+
 v1.0.8
 ----------
 Released: 2019-06-06

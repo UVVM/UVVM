@@ -1,6 +1,13 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.5
+----------
+Released: 2019-11-21
+- Fixed an issue when receiving back-to-back transactions 
+  could cause the DUT to issue an alert.
+- Updated LICENSE.TXT
+
 v1.1.4
 ----------
 Released: 2019-06-06

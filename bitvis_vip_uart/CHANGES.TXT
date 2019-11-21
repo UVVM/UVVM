@@ -1,6 +1,14 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.3.0
+----------
+Released: 2019-11-21
+- Added activity watchdog to VVC.
+- Added scoreboard to VVC.
+- Added transaction package.
+- Updated LICENSE.TXT
+
 v2.2.0
 ----------
 Released: 2019-06-06

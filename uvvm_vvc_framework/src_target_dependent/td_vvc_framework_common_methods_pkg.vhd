@@ -487,8 +487,8 @@ package body td_vvc_framework_common_methods_pkg is
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
     shared_vvc_cmd.gen_integer_array(0)      := -1;  -- All commands must be completed (i.e. not just a selected command index)
     shared_vvc_cmd.timeout                   := timeout;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, timeout, scope, msg_id_panel);
   end procedure;
 
@@ -526,8 +526,8 @@ package body td_vvc_framework_common_methods_pkg is
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
     shared_vvc_cmd.gen_integer_array(0)      := wanted_idx;
     shared_vvc_cmd.timeout                   := timeout;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, timeout, scope, msg_id_panel);
   end procedure;
 
@@ -568,8 +568,8 @@ package body td_vvc_framework_common_methods_pkg is
     shared_vvc_cmd.gen_integer_array(0)      := -1;                       -- All commands must be completed (i.e. not just a selected command index)
     shared_vvc_cmd.gen_integer_array(1)      := awaiting_completion_idx;
     shared_vvc_cmd.timeout                   := timeout;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     if lastness = LAST then
       shared_vvc_cmd.gen_boolean := true; -- LAST
     else
@@ -618,8 +618,8 @@ package body td_vvc_framework_common_methods_pkg is
     shared_vvc_cmd.gen_integer_array(0)      := wanted_idx;
     shared_vvc_cmd.gen_integer_array(1)      := awaiting_completion_idx;
     shared_vvc_cmd.timeout                   := timeout;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     if lastness = LAST then
       -- LAST
       shared_vvc_cmd.gen_boolean := true;
@@ -668,8 +668,8 @@ package body td_vvc_framework_common_methods_pkg is
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, DISABLE_LOG_MSG);
     shared_vvc_cmd.msg_id                    := msg_id;
     shared_vvc_cmd.quietness                 := quietness;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
@@ -708,8 +708,8 @@ package body td_vvc_framework_common_methods_pkg is
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, ENABLE_LOG_MSG);
     shared_vvc_cmd.msg_id                    := msg_id;
     shared_vvc_cmd.quietness                 := quietness;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
@@ -743,8 +743,8 @@ package body td_vvc_framework_common_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, FLUSH_COMMAND_QUEUE);
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
@@ -786,8 +786,8 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, FETCH_RESULT);
     shared_vvc_cmd.gen_integer_array(0)      := wanted_idx;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
     -- Post process
     result  := shared_vvc_response.result;
@@ -875,8 +875,8 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, QUEUED, INSERT_DELAY);
     shared_vvc_cmd.gen_integer_array(0)      := delay;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
@@ -913,8 +913,8 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, QUEUED, INSERT_DELAY);
     shared_vvc_cmd.delay                     := delay;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 
@@ -949,8 +949,8 @@ package body td_vvc_framework_common_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, TERMINATE_CURRENT_COMMAND);
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
+    --shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
+    --shared_vvc_cmd.msg_id_panel              := msg_id_panel;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, msg_id_panel);
   end procedure;
 

@@ -502,11 +502,12 @@ package body td_vvc_entity_support_pkg is
     constant vvc_config : in t_vvc_config
   ) return t_msg_id_panel is
   begin
-    if command.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
-      return command.msg_id_panel;
-    else
-      return vvc_config.msg_id_panel;
-    end if;
+    --if command.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
+    --  return command.msg_id_panel;
+    --else
+    --  return vvc_config.msg_id_panel;
+    --end if;
+    return vvc_config.msg_id_panel;
   end function;
 
   procedure await_cmd_from_sequencer(

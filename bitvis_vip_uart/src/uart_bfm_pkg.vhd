@@ -26,8 +26,6 @@ context uvvm_util.uvvm_util_context;
 library STD;
 use std.textio.all;
 
-use work.transaction_pkg.all;
-
 
 --=================================================================================================
 package uart_bfm_pkg is

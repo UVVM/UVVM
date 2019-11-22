@@ -36,7 +36,7 @@ package uart_bfm_pkg is
 
   constant C_SCOPE : string := "UART BFM";
 
-  constant C_DATA_MAX_LENGTH                        : natural := C_CMD_DATA_MAX_LENGTH;
+  constant C_DATA_MAX_LENGTH                        : natural := 8; --C_CMD_DATA_MAX_LENGTH;
   constant C_EXPECT_RECEIVED_DATA_STRING_SEPARATOR  : string := "; ";
   type uart_expect_received_data_array is array (natural range<>) of std_logic_vector(C_DATA_MAX_LENGTH-1 downto 0);
 

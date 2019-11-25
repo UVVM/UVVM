@@ -85,8 +85,6 @@ use work.transaction_pkg.all;
 --
 ------------------------------------------------------------------------------------------
 package uart_transaction_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_expected_element => t_transaction,
-               t_actual_element   => t_transaction,
-               match              => uart_transaction_match,
-               expected_to_string => uart_transaction_to_string,
-               actual_to_string   => uart_transaction_to_string);
+  generic map ( t_element         => t_transaction,
+                element_match     => uart_transaction_match,
+                to_string_element => uart_transaction_to_string);

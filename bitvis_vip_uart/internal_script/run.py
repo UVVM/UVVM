@@ -54,6 +54,11 @@ def main(argv):
   tb.set_tb_name("uart_vvc_new_tb")
   tb.run_simulation()
 
+  # Setup testbench and run
+  tb.set_tb_name("uart_monitor_tb")
+  tb.run_simulation()
+
+
 
   # Print simulation results
   tb.print_statistics()

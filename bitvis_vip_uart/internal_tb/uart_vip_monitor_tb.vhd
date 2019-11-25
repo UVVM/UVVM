@@ -416,7 +416,7 @@ architecture func of uart_monitor_tb is
   begin
     wait until (global_uart_monitor_transaction(TX, 1).bt.transaction_status = SUCCEEDED or global_uart_monitor_transaction(TX, 1).bt.transaction_status = FAILED);
     v_transaction := global_uart_monitor_transaction(TX, 1).bt;
-    tx_uart_monitor_sb.check_actual(v_transaction);
+    tx_uart_monitor_sb.check_received(v_transaction);
   end process p_monitor_tx;
 
 
@@ -429,7 +429,7 @@ architecture func of uart_monitor_tb is
   begin
     wait until (global_uart_monitor_transaction(RX, 1).bt.transaction_status = SUCCEEDED or global_uart_monitor_transaction(RX, 1).bt.transaction_status = FAILED);
     v_transaction := global_uart_monitor_transaction(RX, 1).bt;
-    rx_uart_monitor_sb.check_actual(v_transaction);
+    rx_uart_monitor_sb.check_received(v_transaction);
   end process p_monitor_rx;
 
 end func;

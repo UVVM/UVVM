@@ -1,6 +1,11 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.3.1
+----------
+Released: 2019-11-25
+- Fixed issue with compile script failing. 
+
 v2.3.0
 ----------
 Released: 2019-11-21

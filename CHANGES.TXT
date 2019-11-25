@@ -9,11 +9,28 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2019.XX.XX
+v2019.11.25
 --------------------
-Released: 2019-XX-XX
+Released: 2019-11-25
+- Fixed issue with compile script failing.
+- Fixed an issue where vector direction could be changed in GPIO VIP.
+- Fixed missing changes update in CHANGES.TXT for UVVM.
+- Updated LICENSE.TXT
+
+v2019.11.21
+--------------------
+Released: 2019-11-21
 - Fixed compile_scr.do script not finding util and framework libraries when specifying
   a different target directory.
+- Changed to relative links in MD files.
+- Added transaction package to Bitvis VIP SBI and Bitvis VIP UART.
+- Added timeout watchdog. See UVVM Util quick reference for more information.
+- Added VVC activity watchdog. All Bitvis VVCs now support activity watchdog functionality.
+  See UVVM Essential Mechanisms and VVC quick references for more information.
+- Added scoreboard to VVC.
+- Updated Scoreboard QR.
+- Fixed an issue with clock generator VVC documentation 
+  not matching implementation.
 
 v2019.09.02
 --------------------
@@ -25,9 +42,7 @@ Released: 2019-09-02
 - Minor fixes in vvc_generator.py
 - Bug fix for std.env.stop return value when UVVM stop simulations if stop-limit is
   reached for a given alert.
-- Major changes in generics used in the Scoreboard VIP.
-- Updated Scoreboard QR.
-  
+- Major changes in generics used in the Scoreboard VIP.  
 
 v2019.06.06
 --------------------

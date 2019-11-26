@@ -20,6 +20,8 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+use work.uart_bfm_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
@@ -43,7 +45,7 @@ package transaction_pkg is
     TRANSMIT, RECEIVE, EXPECT);
 
 
-  constant C_CMD_DATA_MAX_LENGTH   : natural := 8;
+  alias C_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_DATA_MAX_LENGTH;
   constant C_CMD_STRING_MAX_LENGTH : natural := 300;
 
 

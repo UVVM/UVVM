@@ -112,7 +112,7 @@ package transaction_pkg is
 
 
   -- Global DTT signals
-  signal global_sbi_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
+  signal global_sbi_vvc_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
     (others => C_TRANSACTION_GROUP_DEFAULT);
 
   signal global_sbi_monitor_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=

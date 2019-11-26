@@ -26,15 +26,16 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.vvc_methods_pkg.all;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_uart;
-use bitvis_vip_uart.vvc_methods_pkg.all;
-use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_uart.vvc_context;
+use bitvis_vip_uart.monitor_cmd_pkg.all;
 
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
+
+
 
 -- Coverage
 library crfc;
@@ -278,7 +279,7 @@ begin
 
       log(ID_SEQUENCER, "Setting coverage requirement for UART RX.\n", C_SCOPE);
       -- Setting requirement 0x0 to 0xF, one bin per bit.
-      shared_uart_byte_coverage.AddBins(GenBin(0, 7, 8));
+      shared_uart_vvc_byte_coverage.AddBins(GenBin(0, 7, 8));
 
       log(ID_SEQUENCER, "UART Receive requesting full coverage.\n", C_SCOPE);
       -- Request UART RX VVC to read DUT data until full coverage is fulfilled (0x0 to 0xF)
@@ -305,7 +306,7 @@ begin
 
       -- Print coverage results
       log(ID_SEQUENCER, "\nCoverage results", C_SCOPE);
-      shared_uart_byte_coverage.writebin;
+      shared_uart_vvc_byte_coverage.writebin;
 
       -- Print report of Scoreboard counters
       shared_uart_sb.report_counters(VOID);

@@ -87,7 +87,7 @@ architecture behave of sbi_vvc is
   alias vvc_status       : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
   -- DTT
-  alias dtt_transaction_info    : t_transaction_group is global_sbi_transaction(GC_INSTANCE_IDX);
+  alias dtt_transaction_info    : t_transaction_group is global_sbi_vvc_transaction(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 

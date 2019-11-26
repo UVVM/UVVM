@@ -115,8 +115,8 @@ package transaction_pkg is
 
 
   -- Global DTT signals
-  signal global_uart_transaction : t_uart_transaction_group_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
-                                          (others => (others => C_TRANSACTION_GROUP_DEFAULT));
+  signal global_uart_vvc_transaction : t_uart_transaction_group_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
+                                       (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
   signal global_uart_monitor_transaction : t_uart_transaction_group_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) :=
                                           (others => (others => C_TRANSACTION_GROUP_DEFAULT));

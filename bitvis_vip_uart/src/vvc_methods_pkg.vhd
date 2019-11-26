@@ -154,7 +154,7 @@ package vvc_methods_pkg is
   -- Scoreboard
   shared variable shared_uart_sb : t_generic_sb;
   -- Coverage
-  shared variable shared_uart_byte_coverage : covPtype;
+  shared variable shared_uart_vvc_byte_coverage : covPtype;
 
 
   --==========================================================================================

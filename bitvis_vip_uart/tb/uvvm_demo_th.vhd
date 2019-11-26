@@ -25,14 +25,10 @@ library uvvm_util;
 context uvvm_util.uvvm_util_context;    -- t_channel (RX/TX)
 
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.transaction_pkg.all;
-use bitvis_vip_sbi.vvc_methods_pkg.all;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_uart;
-use bitvis_vip_uart.transaction_pkg.all;
-use bitvis_vip_uart.vvc_methods_pkg.all;
-use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_uart.vvc_context;
 use bitvis_vip_uart.monitor_cmd_pkg.all;
 
 library bitvis_uart;
@@ -215,12 +211,12 @@ begin
   p_model: process
     -- SBI DTT
     alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
-      global_sbi_transaction(C_SBI_VVC);
+      global_sbi_vvc_transaction(C_SBI_VVC);
     -- UART DTT
     alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
-      global_uart_transaction(RX, C_UART_RX_VVC);
+      global_uart_vvc_transaction(RX, C_UART_RX_VVC);
     alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
-      global_uart_transaction(TX, C_UART_TX_VVC);
+      global_uart_vvc_transaction(TX, C_UART_TX_VVC);
 
   begin
 

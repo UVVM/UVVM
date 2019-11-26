@@ -31,6 +31,7 @@ library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 
 use work.uart_transaction_sb_pkg.all;
+use work.monitor_cmd_pkg.all;
 
 -- Test case entity
 entity uart_monitor_tb is
@@ -79,6 +80,7 @@ architecture func of uart_monitor_tb is
       log(ID_SEQUENCER_SUB, "Monitor transaction read: ERROR", scope);
     end if;
   end procedure check_transaction;
+
 
 
   begin

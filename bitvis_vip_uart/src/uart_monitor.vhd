@@ -50,7 +50,7 @@ architecture behave of uart_monitor is
   signal tx_i : std_logic;
   signal rx_i : std_logic;
 
-
+  
   procedure monitor_uart_line(
     constant operation      : in    t_operation;
     constant C_LOG_PREFIX   : in    string;

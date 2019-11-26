@@ -29,8 +29,8 @@ use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 
 -- Coverage
---fc library crfc;
---fc use crfc.Coveragepkg.all;
+library crfc;
+use crfc.Coveragepkg.all;
 
 use work.uart_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -151,12 +151,10 @@ package vvc_methods_pkg is
   shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM)       := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
 
-  -- Monitor
-  shared variable shared_uart_monitor_config   : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_UART_MONITOR_CONFIG_DEFAULT));
   -- Scoreboard
   shared variable shared_uart_sb : t_generic_sb;
   -- Coverage
-  --fc shared variable shared_uart_byte_coverage : covPtype;
+  shared variable shared_uart_byte_coverage : covPtype;
 
 
   --==========================================================================================

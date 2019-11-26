@@ -23,7 +23,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
-
+use bitvis_vip_avalon_mm.transaction_pkg.all;
 
 -- Test case entity
 entity avalon_mm_vvc_tb is
@@ -54,7 +54,7 @@ begin
     -- Sequencer constants and variables
     constant C_SCOPE      : string             := C_TB_SCOPE_DEFAULT;
     variable v_cmd_idx    : natural;
-    variable v_data       : t_vvc_result; -- std_logic_vector(255 downto 0);
+    variable v_data       : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     variable v_is_ok      : boolean;
     variable v_timestamp  : time;
 

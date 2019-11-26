@@ -43,8 +43,9 @@ package transaction_pkg is
     TRANSMIT, RECEIVE, EXPECT);
 
 
-  alias C_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_DATA_MAX_LENGTH;
-  constant C_CMD_STRING_MAX_LENGTH : natural := 300;
+  alias C_VVC_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_DATA_MAX_LENGTH;
+
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
 
 
@@ -61,7 +62,7 @@ package transaction_pkg is
 
   -- VVC Meta
   type t_vvc_meta is record
-    msg     : string(1 to C_CMD_STRING_MAX_LENGTH);
+    msg     : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     cmd_idx : integer;
   end record;
 
@@ -84,7 +85,7 @@ package transaction_pkg is
   -- Transaction
   type t_transaction is record
     operation          : t_operation;
-    data               : std_logic_vector(C_CMD_DATA_MAX_LENGTH-1 downto 0);
+    data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta           : t_vvc_meta;
     transaction_status : t_transaction_status;
     error_info         : t_error_info;

@@ -33,10 +33,6 @@ package vvc_cmd_pkg is
 
   alias t_operation is work.transaction_pkg.t_operation;
 
-  alias C_VVC_CMD_DATA_MAX_LENGTH is work.uart_bfm_pkg.C_DATA_MAX_LENGTH;
-
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_CMD_STRING_MAX_LENGTH;
-
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC

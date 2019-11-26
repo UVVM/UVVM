@@ -27,9 +27,7 @@ use work.td_vvc_framework_common_methods_pkg.all;
 
 -- Include Verification IPs
 library bitvis_vip_gpio;
-use bitvis_vip_gpio.vvc_methods_pkg.all;
-use bitvis_vip_gpio.td_vvc_framework_common_methods_pkg.all;
-use bitvis_vip_gpio.td_target_support_pkg.all;
+context bitvis_vip_gpio.vvc_context;
 use bitvis_vip_gpio.gpio_bfm_pkg.all;
 
 

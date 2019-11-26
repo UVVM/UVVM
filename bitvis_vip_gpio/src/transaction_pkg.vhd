@@ -25,10 +25,10 @@ context uvvm_util.uvvm_util_context;
 --=================================================================================================
 package transaction_pkg is
 
-  --===============================================================================================
+  --========================================================================================================================
   -- t_operation
-  -- - Bitvis defined operations
-  --===============================================================================================
+  -- - VVC and BFM operations
+  --========================================================================================================================
   type t_operation is (
     -- UVVM common
     NO_OPERATION,
@@ -40,12 +40,12 @@ package transaction_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    -- Transaction
-    WRITE, READ, CHECK, POLL_UNTIL);
+    -- VVC local
+    SET, GET, CHECK, EXPECT
+    );
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
 
 
   --==========================================================================================
@@ -70,30 +70,19 @@ package transaction_pkg is
     cmd_idx => -1
     );
 
---  -- Error info
---  type t_error_info is record
---  end record;
---
---  constant C_ERROR_INFO_DEFAULT : t_error_info := (
---    );
-
   -- Transaction
   type t_transaction is record
     operation           : t_operation;
-    address             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
-    --error_info          : t_error_info;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
-    address             => (others => '0'),
     data                => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    --error_info          => C_ERROR_INFO_DEFAULT
     );
 
   -- Transaction group
@@ -108,14 +97,12 @@ package transaction_pkg is
     );
 
   -- Transaction groups array
-  type t_sbi_transaction_group_array is array (natural range <>) of t_transaction_group;
+  type t_gpio_transaction_group_array is array (natural range <>) of t_transaction_group;
 
 
   -- Global DTT signals
-  signal global_sbi_vvc_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
+  signal global_gpio_vvc_transaction : t_gpio_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
     (others => C_TRANSACTION_GROUP_DEFAULT);
 
-  signal global_sbi_monitor_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

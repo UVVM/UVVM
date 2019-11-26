@@ -381,7 +381,7 @@ begin  -- architecture behav
     variable slave_tx_data_word         : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable master_tx_data_word        : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable master_tx_slv_word         : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0);
-    variable result                     : t_vvc_result;
+    variable result                     : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     variable v_cmd_idx                  : natural;
     variable v_inter_bfm_delay          : time    := 0 ns;
     variable v_vvc_delay                : integer := 0;

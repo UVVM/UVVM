@@ -26,6 +26,8 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_axilite;
 context bitvis_vip_axilite.vvc_context;
 use bitvis_vip_axilite.axilite_bfm_pkg.all;
+use bitvis_vip_axilite.transaction_pkg.all;
+
 
 -- Test case entity
 entity axilite_vvc_simple_tb is

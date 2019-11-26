@@ -31,7 +31,7 @@ use work.spi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_vvc_framework_common_methods_pkg.all;
 use work.td_target_support_pkg.all;
-
+use work.transaction_pkg.all;
 
 --=================================================================================================
 --=================================================================================================

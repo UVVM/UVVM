@@ -16,7 +16,6 @@
 context vvc_context is
   library bitvis_vip_uart;
   use bitvis_vip_uart.transaction_pkg.all;
-  use bitvis_vip_uart.vvc_cmd_pkg.all;
   use bitvis_vip_uart.vvc_methods_pkg.all;
   use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 end context;

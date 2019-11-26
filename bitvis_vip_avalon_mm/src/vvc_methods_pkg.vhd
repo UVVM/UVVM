@@ -30,7 +30,7 @@ use bitvis_vip_scoreboard.slv_sb_pkg.all;
 use work.avalon_mm_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
-
+use work.transaction_pkg.all;
 
 --=================================================================================================
 --=================================================================================================

@@ -5,6 +5,8 @@ v3.x.x
 ----------
 Released: 2019-xx-xx
 - Added transaction package. 
+- Updated with activity watchdog name changes.
+
 
 v3.4.0
 ----------

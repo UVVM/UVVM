@@ -6,6 +6,7 @@ v2.x.x
 ----------
 Released: 2019-xx-xx
 - Added transaction package.
+- Updated with activity watchdog name changes.
 
 v2.3.0
 ----------

@@ -295,8 +295,8 @@ package ti_vvc_framework_support_pkg is
     constant msg          : string := "AW_1"
   );
 
-  signal global_trigger_testcase_inactivity_watchdog : std_logic := '0';
-  shared variable shared_inactivity_watchdog         : t_inactivity_watchdog;
+  signal global_trigger_activity_watchdog  : std_logic := '0';
+  shared variable shared_activity_watchdog : t_activity_watchdog;
 
   -- ============================================================================
   -- Hierarchical VVC (HVVC)
@@ -686,12 +686,12 @@ package body ti_vvc_framework_support_pkg is
     wait for 0 ns;
 
     -- Check if all expected VVCs are registered
-    if num_exp_vvc = shared_inactivity_watchdog.priv_get_num_registered_vvc then
+    if num_exp_vvc = shared_activity_watchdog.priv_get_num_registered_vvc then
       log(ID_WATCHDOG, "Number of VVCs in activity watchdog is expected. " & msg);
     else
-      shared_inactivity_watchdog.priv_list_registered_vvc(msg);
+      shared_activity_watchdog.priv_list_registered_vvc(msg);
       alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" &
-                        to_string(shared_inactivity_watchdog.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &
+                        to_string(shared_activity_watchdog.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &
                         "Note that leaf VVCs (e.g. channels) are counted individually. " & msg);
 
     end if;
@@ -699,9 +699,9 @@ package body ti_vvc_framework_support_pkg is
 
 
     loop
-      wait on global_trigger_testcase_inactivity_watchdog for timeout;
+      wait on global_trigger_activity_watchdog for timeout;
 
-      if not(global_trigger_testcase_inactivity_watchdog'event) and shared_inactivity_watchdog.priv_are_all_vvc_inactive then
+      if not(global_trigger_activity_watchdog'event) and shared_activity_watchdog.priv_are_all_vvc_inactive then
           alert(alert_level, "Activity watchdog timer ended after " & to_string(timeout, C_LOG_TIME_BASE) & "! " & msg);
       end if;
 

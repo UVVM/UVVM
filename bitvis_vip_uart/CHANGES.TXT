@@ -1,6 +1,12 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.x.x
+----------
+Released: 2019-xx-xx
+- Updated with activity watchdog name changes.
+
+
 v2.3.1
 ----------
 Released: 2019-11-25

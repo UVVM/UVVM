@@ -1,6 +1,11 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.x.x
+----------
+Released: 2019-xx-xx
+- 
+
 v2.3.0
 ----------
 Released: 2019-11-21

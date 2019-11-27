@@ -1,6 +1,11 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.x.x
+----------
+Released: 2019-xx-xx
+- Added transaction package. 
+
 v3.4.0
 ----------
 Released: 2019-11-21

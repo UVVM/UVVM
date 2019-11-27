@@ -2,6 +2,11 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
+v2.x.x
+----------
+Released: 2019-xx-xx
+- Added transaction package.
+
 v2.3.0
 ----------
 Released: 2019-11-21

@@ -5,6 +5,10 @@ v2.x.x
 ----------
 Released: 2019-xx-xx
 - Updated with activity watchdog name changes.
+- Coverage is defined locally in vvc_cmd_pkg, with reference
+  from vvc_methods_pkg.
+  Restructured coverage sampling in RX VVC to allow for cross coverage 
+  and defining various coverage profiles.
 
 
 v2.3.1

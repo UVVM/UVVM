@@ -273,84 +273,42 @@ begin
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
 
-          case v_cmd.coverage is
-
-            when NA =>
-              -- Set DTT
-              set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-
-              transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
-              -- Call the corresponding procedure in the BFM package.
-              uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                            msg                   => format_msg(v_cmd),
-                            rx                    => uart_vvc_rx,
-                            terminate_loop        => terminate_current_cmd.is_active,
-                            config                => vvc_config.bfm_config,
-                            scope                 => C_SCOPE,
-                            msg_id_panel          => v_msg_id_panel);
-              -- Store the result
+          v_coverage_ok := false;
+          while not(v_coverage_ok) loop
+            -- Set DTT
+            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+           
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
+            -- Call the corresponding procedure in the BFM package.
+            uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                          msg                   => format_msg(v_cmd),
+                          rx                    => uart_vvc_rx,
+                          terminate_loop        => terminate_current_cmd.is_active,
+                          config                => vvc_config.bfm_config,
+                          scope                 => C_SCOPE,
+                          msg_id_panel          => v_msg_id_panel);
+                
+            -- Request SB check result
+            if v_cmd.data_routing = TO_SB then
+              -- call SB check_received
+              shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            else
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                          cmd_idx      => v_cmd.cmd_idx,
-                                                          result       => v_read_data);
+                                                           cmd_idx     => v_cmd.cmd_idx,
+                                                           result      => v_read_data);
+            end if;
+                
+            if v_cmd.coverage = COV_BYTE then
+              -- Update coverage
+              shared_uart_vvc_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
+              -- Check if coverage is fulfilled
+              v_coverage_ok := shared_uart_vvc_byte_coverage.IsCovered;
 
-              -- Request SB check result
-              check_value((v_cmd.data_routing = NA) or (v_cmd.data_routing = TO_SB), TB_ERROR, "Unsupported data rounting for RECEIVE");
-              if v_cmd.data_routing = TO_SB then
-                -- call SB check_received
-                shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
-              else
-                work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                             cmd_idx     => v_cmd.cmd_idx,
-                                                             result      => v_read_data);
-              end if;
-
-
-
-            when COVERAGE_FULL =>             
-               v_coverage_ok := false;
-               
-               while not(v_coverage_ok) loop
-               -- Set DTT
-               set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
-               
-               transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
-               -- Call the corresponding procedure in the BFM package.
-               uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                             msg                   => format_msg(v_cmd),
-                             rx                    => uart_vvc_rx,
-                             terminate_loop        => terminate_current_cmd.is_active,
-                             config                => vvc_config.bfm_config,
-                             scope                 => C_SCOPE,
-                             msg_id_panel          => v_msg_id_panel);
-               
-               -- Store the result
-               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                           cmd_idx      => v_cmd.cmd_idx,
-                                                           result       => v_read_data);
-               
-               -- Request SB check result
-               if v_cmd.data_routing = TO_SB then
-                 -- call SB check_received
-                 shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
-               else
-                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                              cmd_idx     => v_cmd.cmd_idx,
-                                                              result      => v_read_data);
-               end if;
-               
-               -- Update coverage
-               shared_uart_vvc_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
-               -- Check if coverage is fulfilled
-               v_coverage_ok := shared_uart_vvc_byte_coverage.IsCovered;
-               end loop;
-
-            when COVERAGE_EDGES =>
-              alert(tb_error,"To use coverage uncomment  in executor process for UART_RX_VVC");
-              null; -- Not implemented yet
-            when others =>
-              alert(tb_error,"To use coverage uncomment  in executor process for UART_RX_VVC");
-              null;
-          end case;
+            elsif v_cmd.coverage = NA then
+              v_coverage_ok := true;
+            end if;
+            
+          end loop;
 
 
         when EXPECT =>

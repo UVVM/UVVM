@@ -51,7 +51,9 @@ package vvc_methods_pkg is
 
   signal UART_VVCT : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias THIS_VVCT  : t_vvc_target_record is UART_VVCT;
-  alias t_bfm_config is t_uart_bfm_config;
+
+  alias t_bfm_config  is t_uart_bfm_config;
+  alias t_coverage    is work.vvc_cmd_pkg.t_coverage;
 
   -- Type found in UVVM-Util types_pkg
   constant C_UART_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
@@ -153,10 +155,11 @@ package vvc_methods_pkg is
 
   -- Scoreboard
   shared variable shared_uart_sb : t_generic_sb;
+
   -- Coverage
   shared variable shared_uart_vvc_byte_coverage : covPtype;
 
-
+  
   --==========================================================================================
   -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute

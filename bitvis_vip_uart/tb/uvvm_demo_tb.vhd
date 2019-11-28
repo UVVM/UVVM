@@ -286,7 +286,7 @@ begin
       --   Note: UART_RECEIVE() is called with parameters "COVERAGE_FULL" and "TO_SB",
       --         requiring full coverage for UART VVC Receive to complete, and all
       --         received data to be sent to scoreboard for checking.
-      uart_receive(UART_VVCT, 1, RX, COVERAGE_FULL, TO_SB, "UART RX");
+      uart_receive(UART_VVCT, 1, RX, COV_BYTE, TO_SB, "UART RX");
 
       -- Request SBI VVC to transmit lots of randomised data from 0x0 to 0x10
       for idx in 1 to C_NUM_BYTES loop

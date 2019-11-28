@@ -33,6 +33,10 @@ package vvc_cmd_pkg is
 
   alias t_operation is work.transaction_pkg.t_operation;
 
+
+  type t_coverage is (COV_BYTE, NA);
+  
+
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC

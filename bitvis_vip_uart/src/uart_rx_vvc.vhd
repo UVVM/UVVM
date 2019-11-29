@@ -35,10 +35,6 @@ use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
--- Coverage
-library crfc;
-use crfc.Coveragepkg.all;
-
 
 --=================================================================================================
 entity uart_rx_vvc is
@@ -205,9 +201,8 @@ begin
     variable v_prev_command_was_bfm_access           : boolean                                    := false;
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
     variable v_msg_id_panel                          : t_msg_id_panel;
-    -- Coverage
-    variable v_coverage_ok                           : boolean                                    := false;
 
+    
   begin
 
     -- 0. Initialize the process prior to first command
@@ -223,9 +218,6 @@ begin
     shared_uart_sb.enable_log_msg(ID_DATA);
     shared_uart_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
 
-
-    -- Coverage
-    shared_uart_vvc_byte_coverage.SetName("UATR Receive coverage");
 
     loop
 
@@ -272,44 +264,29 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
-
-          v_coverage_ok := false;
-          while not(v_coverage_ok) loop
-            -- Set DTT
-            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          -- Set DTT
+          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
            
-            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
-            -- Call the corresponding procedure in the BFM package.
-            uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                          msg                   => format_msg(v_cmd),
-                          rx                    => uart_vvc_rx,
-                          terminate_loop        => terminate_current_cmd.is_active,
-                          config                => vvc_config.bfm_config,
-                          scope                 => C_SCOPE,
-                          msg_id_panel          => v_msg_id_panel);
+          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
+          -- Call the corresponding procedure in the BFM package.
+          uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                        msg                   => format_msg(v_cmd),
+                        rx                    => uart_vvc_rx,
+                        terminate_loop        => terminate_current_cmd.is_active,
+                        config                => vvc_config.bfm_config,
+                        scope                 => C_SCOPE,
+                        msg_id_panel          => v_msg_id_panel);
                 
-            -- Request SB check result
-            if v_cmd.data_routing = TO_SB then
-              -- call SB check_received
-              shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
-            else
-              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                           cmd_idx     => v_cmd.cmd_idx,
-                                                           result      => v_read_data);
-            end if;
-                
-            if v_cmd.coverage = COV_BYTE then
-              -- Update coverage
-              shared_uart_vvc_byte_coverage.ICover(TO_INTEGER(UNSIGNED(v_read_data(GC_DATA_WIDTH-1 downto 0))));
-              -- Check if coverage is fulfilled
-              v_coverage_ok := shared_uart_vvc_byte_coverage.IsCovered;
-
-            elsif v_cmd.coverage = NA then
-              v_coverage_ok := true;
-            end if;
-            
-          end loop;
-
+          -- Request SB check result
+          if v_cmd.data_routing = TO_SB then
+            -- call SB check_received
+            shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+          else
+            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                         cmd_idx     => v_cmd.cmd_idx,
+                                                         result      => v_read_data);
+          end if;
+              
 
         when EXPECT =>
           -- Set DTT

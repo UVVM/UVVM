@@ -37,10 +37,6 @@ context bitvis_vip_clock_generator.vvc_context;
 
 
 
--- Coverage
-library crfc;
-use crfc.Coveragepkg.all;
-
 -- Test bench entity
 entity uvvm_demo_tb is
 end entity;
@@ -250,73 +246,6 @@ begin
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_randomise;
-
-
-    -- Description:
-    --
-    --  1. UART RX VVC is instructed to receive full coverage (0-15), and
-    --     put actual data on UART Scoreboard.
-    --  2. SBI VVC is set up to send 100 bytes of random data (0-16).
-    --  3. Model will put expected data on UART Scoreboard.
-    --  4. SBI VVC command queue is flushed when UART RX VVC is finished, i.e.
-    --     has achieved full coverage.
-    --  5. Sequencer present coverage results and UART Scoreboard statistics.
-    --
-    procedure test_functional_coverage(void : t_void) is
-      constant C_NUM_BYTES  : natural := 100;
-      constant C_TIMEOUT    : time := C_NUM_BYTES * 16 * C_BIT_PERIOD;
-    begin
-      log(ID_LOG_HDR_XL, "Test functional coverage.\n\n"&
-                         "SBI VVC is used to send randomised data to DUT, while UART RX VVC read data from DUT\n"&
-                         "until full coverage is fulfilled. SBI VVC command queue is flushed when coverage is reached.", C_SCOPE);
-
-      -- Print info
-      log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
-
-      log(ID_LOG_HDR, "UART Receive full coverage from 0x0 to 0x7", C_SCOPE);
-      -- This test will request the SBI VVC to transmit lots of randomised data to the DUT.
-      --   The UART RX VVC is requested to read DUT data until full coverage is fulfilled.
-
-      log(ID_SEQUENCER, "Setting coverage requirement for UART RX.\n", C_SCOPE);
-      -- Setting requirement 0x0 to 0xF, one bin per bit.
-      shared_uart_vvc_byte_coverage.AddBins(GenBin(0, 7, 8));
-
-      log(ID_SEQUENCER, "UART Receive requesting full coverage.\n", C_SCOPE);
-      -- Request UART RX VVC to read DUT data until full coverage is fulfilled (0x0 to 0xF)
-      --   Note: UART_RECEIVE() is called with parameters "COVERAGE_FULL" and "TO_SB",
-      --         requiring full coverage for UART VVC Receive to complete, and all
-      --         received data to be sent to scoreboard for checking.
-      uart_receive(UART_VVCT, 1, RX, COV_BYTE, TO_SB, "UART RX");
-
-      -- Request SBI VVC to transmit lots of randomised data from 0x0 to 0x10
-      for idx in 1 to C_NUM_BYTES loop
-        -- Generate random data
-        v_data := std_logic_vector(to_unsigned(random(0, 16), v_data'length));
-        -- SBI VVC write randomised data to DUT
-        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "UART Write 0x" & to_string(v_data, HEX));
-        -- Add time for UART to finish
-        insert_delay(SBI_VVCT, 1, 13*C_BIT_PERIOD, "Insert delay before next UART TX");
-      end loop;
-
-      -- Wait for UART RX VVC to reach full coverage DUT data readout.
-      await_completion(UART_VVCT, 1, RX, C_TIMEOUT, "Waiting for UART RX coverage.");
-
-      -- Terminate remaining SBI VVC commands.
-      flush_command_queue(SBI_VVCT, 1);
-
-      -- Print coverage results
-      log(ID_SEQUENCER, "\nCoverage results", C_SCOPE);
-      shared_uart_vvc_byte_coverage.writebin;
-
-      -- Print report of Scoreboard counters
-      shared_uart_sb.report_counters(VOID);
-
-      -- Empty SB for next test
-      shared_uart_sb.reset("Empty SB for next test");
-
-      -- Add small delay before next test
-      wait for 3 * C_BIT_PERIOD;
-    end procedure test_functional_coverage;
 
 
     -- Description:
@@ -597,7 +526,6 @@ begin
     -----------------------------------------------------------------------------
     test_error_injection(VOID);
     test_randomise(VOID);
-    test_functional_coverage(VOID);
     test_protocol_checker(VOID);
     test_activity_watchdog(VOID);
     test_simple_watchdog(VOID);

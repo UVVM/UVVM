@@ -54,8 +54,6 @@ architecture func of avalon_st_simple_tb is
   signal areset    : std_logic := '0';
   signal clock_ena : boolean   := false;
 
-  -- The avalon_st interface is gathered in a record, so procedures that use the
-  -- avalon_st interface have less arguments
   signal avalon_st_master_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
                                               data(GC_DATA_WIDTH-1 downto 0),
                                               data_error(GC_ERROR_WIDTH-1 downto 0),
@@ -119,32 +117,7 @@ begin
     variable data_packet       : t_slv_array(0 to 99)(C_SYMBOL_WIDTH-1 downto 0);
     variable data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH-1 downto 0);
 
-    --------------------------------------------
-    -- Overloads for this testbench
-    --------------------------------------------
-    procedure avalon_st_transmit (
-      data_array : in t_slv_array;
-      channel    : in natural := 0) is
-    begin
-      avalon_st_transmit(to_unsigned(channel, GC_CHANNEL_WIDTH), data_array, "", clk, avalon_st_master_if, C_SCOPE,
-        shared_msg_id_panel, avl_st_bfm_config);
-    end procedure;
-    procedure avalon_st_receive (
-      data_array : out t_slv_array;
-      channel    : in natural := 0) is
-    begin
-      avalon_st_receive(to_unsigned(channel, GC_CHANNEL_WIDTH), data_array, "", clk, avalon_st_slave_if, C_SCOPE,
-        shared_msg_id_panel, avl_st_bfm_config);
-    end procedure;
-    procedure avalon_st_expect (
-      exp_array : in t_slv_array;
-      channel   : in natural := 0) is
-    begin
-      avalon_st_expect(to_unsigned(channel, GC_CHANNEL_WIDTH), exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE,
-        shared_msg_id_panel, avl_st_bfm_config);
-    end procedure;
-
-    procedure new_random_array (
+    procedure new_random_data (
       data_array : inout t_slv_array) is
     begin
       for i in data_array'range loop
@@ -152,10 +125,55 @@ begin
       end loop;
     end procedure;
 
+    --------------------------------------------
+    -- Overloads for this testbench
+    --------------------------------------------
+    procedure avalon_st_transmit (
+      data_array : in t_slv_array;
+      channel    : in natural) is
+    begin
+      avalon_st_transmit(std_logic_vector(to_unsigned(channel, GC_CHANNEL_WIDTH)), data_array, "", clk, avalon_st_master_if, C_SCOPE,
+        shared_msg_id_panel, avl_st_bfm_config);
+    end procedure;
+
+    procedure avalon_st_transmit (
+      data_array : in t_slv_array) is
+    begin
+      avalon_st_transmit(data_array, "", clk, avalon_st_master_if, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+    end procedure;
+
+    procedure avalon_st_receive (
+      data_array : out t_slv_array;
+      channel    : out natural) is
+      variable v_channel : std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0);
+    begin
+      avalon_st_receive(v_channel, data_array, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+      channel := to_integer(unsigned(v_channel));
+    end procedure;
+
+    procedure avalon_st_receive (
+      data_array : out t_slv_array) is
+    begin
+      avalon_st_receive(data_array, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+    end procedure;
+
+    procedure avalon_st_expect (
+      exp_array : in t_slv_array;
+      channel   : in natural) is
+    begin
+      avalon_st_expect(std_logic_vector(to_unsigned(channel, GC_CHANNEL_WIDTH)), exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE,
+        shared_msg_id_panel, avl_st_bfm_config);
+    end procedure;
+
+    procedure avalon_st_expect (
+      exp_array : in t_slv_array) is
+    begin
+      avalon_st_expect(exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE, shared_msg_id_panel, avl_st_bfm_config);
+    end procedure;
+
   begin
 
-    -- To avoid that log files from different test cases (run in separate
-    -- simulations) overwrite each other.
+    -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TEST & "_Log.txt");
     set_alert_file_name(GC_TEST & "_Alert.txt");
 
@@ -192,7 +210,7 @@ begin
     log(ID_LOG_HDR_LARGE, "Simulating packet-based data");
     --------------------------------------------------------------------------------
     avl_st_bfm_config.use_packet_transfer := true;
-    new_random_array(data_packet); -- Generate random data
+    new_random_data(data_packet); -- Generate random data
 
     log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
     avl_st_bfm_config.first_symbol_in_msb := true;
@@ -261,7 +279,7 @@ begin
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     avalon_st_transmit(data_packet(0 to 1*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
     avalon_st_receive(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-    new_random_array(data_packet); -- Overwrite invalid data array after receive error
+    new_random_data(data_packet); -- Overwrite invalid data array after receive error
 
     if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
       log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
@@ -275,18 +293,23 @@ begin
     log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     avalon_st_receive(data_packet);
-    new_random_array(data_packet); -- Overwrite invalid data array after receive error
+    new_random_data(data_packet); -- Overwrite invalid data array after receive error
 
     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     avalon_st_transmit(data_packet(0 to 10));
     avalon_st_expect(data_packet(10 to 20));
 
+    log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    avalon_st_transmit(data_packet, 1);
+    avalon_st_expect(data_packet, 5);
+
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet)");
     --------------------------------------------------------------------------------
     avl_st_bfm_config.use_packet_transfer := false;
-    new_random_array(data_stream); -- Generate random data
+    new_random_data(data_stream); -- Generate random data
 
     log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
     avl_st_bfm_config.first_symbol_in_msb := true;
@@ -333,18 +356,23 @@ begin
     log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     avalon_st_receive(data_stream);
-    new_random_array(data_stream); -- Overwrite invalid data array after error
+    new_random_data(data_stream); -- Overwrite invalid data array after error
 
     log(ID_LOG_HDR, "Testing error case: receive() timeout - not enough data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     avalon_st_transmit(data_stream(0 to 1));
     avalon_st_receive(data_stream);
-    new_random_array(data_stream); -- Overwrite invalid data array after error
+    new_random_data(data_stream); -- Overwrite invalid data array after error
 
     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     avalon_st_transmit(data_stream(0 to 10));
     avalon_st_expect(data_stream(10 to 20));
+
+    log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
+    increment_expected_alerts_and_stop_limit(ERROR, 1);
+    avalon_st_transmit(data_stream, 1);
+    avalon_st_expect(data_stream, 5);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

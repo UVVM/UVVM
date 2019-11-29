@@ -54,8 +54,8 @@ package avalon_st_bfm_pkg is
                                                  -- waiting for ready or valid signals from the DUT.
     max_wait_cycles_severity    : t_alert_level; -- Severity if max_wait_cycles expires.
     clock_period                : time;          -- Period of the clock signal.
-    --clock_period_margin         : time;          -- Input clock period margin to specified clock_period
-    --clock_margin_severity       : t_alert_level; -- The above margin will have this severity
+    clock_period_margin         : time;          -- Input clock period margin to specified clock_period
+    clock_margin_severity       : t_alert_level; -- The above margin will have this severity
     setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
     hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
     symbol_width                : natural;       -- Number of data bits per symbol.
@@ -70,8 +70,8 @@ package avalon_st_bfm_pkg is
     max_wait_cycles             => 100,
     max_wait_cycles_severity    => ERROR,
     clock_period                => 0 ns,
-    --clock_period_margin         => 0 ns,
-    --clock_margin_severity       => TB_ERROR,
+    clock_period_margin         => 0 ns,
+    clock_margin_severity       => TB_ERROR,
     setup_time                  => 0 ns,
     hold_time                   => 0 ns,
     symbol_width                => 8,
@@ -245,7 +245,10 @@ package body avalon_st_bfm_pkg is
     variable v_symbol_array      : t_slv_array_ptr;
     variable v_sym_in_beat       : natural := 0;
     variable v_data_offset       : natural := 0;
+    variable v_last_rising_edge  : time    := -1 ns;
     variable v_wait_for_transfer : boolean := false;
+    variable v_wait_count        : natural := 0;
+    variable v_timeout           : boolean := false;
   begin
 
     check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_FAILURE, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -336,12 +339,41 @@ package body avalon_st_bfm_pkg is
       end if;
 
       if v_wait_for_transfer then
-        -- check for ready ***
+        -- Check if clk period since last rising edge is within specifications and take a new timestamp
         wait until rising_edge(clk);
-        -- check clock margin? ***
-
+        if v_last_rising_edge > -1 ns then
+          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin,
+            config.clock_period + config.clock_period_margin, config.clock_margin_severity,
+            "Checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel, proc_call);
+        end if;
+        v_last_rising_edge := now;
         -- Wait hold time specified in config record
         wait_until_given_time_after_rising_edge(clk, config.hold_time);
+
+        v_wait_count := 0;
+        -- Check ready signal is asserted
+        while avalon_st_if.ready = '0' loop
+          -- Check if clk period since last rising edge is within specifications and take a new timestamp
+          wait until rising_edge(clk);
+          if v_last_rising_edge > -1 ns then
+            check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin,
+              config.clock_period + config.clock_period_margin, config.clock_margin_severity,
+              "Checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel, proc_call);
+          end if;
+          v_last_rising_edge := now;
+          -- Wait hold time specified in config record
+          wait_until_given_time_after_rising_edge(clk, config.hold_time);
+
+          v_wait_count := v_wait_count + 1;
+          -- If timeout then exit procedure
+          if v_wait_count > config.max_wait_cycles then
+            v_timeout := true;
+            exit;
+          end if;
+        end loop;
+        if v_timeout then
+          exit;
+        end if;
 
         -- Default values for the next clk cycle
         avalon_st_if <= init_avalon_st_if_signals(is_master        => true, -- this BFM drives data signals
@@ -352,8 +384,13 @@ package body avalon_st_bfm_pkg is
       end if;
     end loop;
 
-    -- Done
-    log(ID_PACKET_COMPLETE, proc_call & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    -- Done. Check if there was a timeout or it was successful
+    if v_timeout then
+      alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout while waiting for ready. " &
+        add_msg_delimiter(msg), scope);
+    else
+      log(ID_PACKET_COMPLETE, proc_call & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    end if;
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -400,8 +437,8 @@ package body avalon_st_bfm_pkg is
     variable v_proc_call         : line; -- Current proc_call, external or local
     variable v_symbol_array      : t_slv_array_ptr;
     variable v_sym_in_beat       : natural := 0;
-    variable v_sym_cnt           : integer := 0;
-    variable v_invalid_count     : integer := 0;  -- # cycles without valid being asserted
+    variable v_sym_cnt           : natural := 0;
+    variable v_invalid_count     : natural := 0;  -- # cycles without valid being asserted
     variable v_done              : boolean := false;
     variable v_timeout           : boolean := false;
     variable v_empty_symbols     : natural := 0;
@@ -632,6 +669,7 @@ package body avalon_st_bfm_pkg is
     variable v_normalized_exp     : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
     variable v_rx_channel         : std_logic_vector(channel_exp'length-1 downto 0);
     variable v_rx_data_array      : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0);
+    variable v_channel_error      : boolean := false;
     variable v_data_error_cnt     : natural := 0;
     variable v_first_wrong_symbol : natural;
   begin
@@ -639,10 +677,9 @@ package body avalon_st_bfm_pkg is
     -- Receive data
     avalon_st_receive(v_rx_channel, v_rx_data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, proc_call);
 
-    -- Check channel
+    -- Check the received channel
     if v_rx_channel /= channel_exp then
-      alert(alert_level, proc_call & "=> Failed. Wrong channel. Was " & to_string(v_rx_channel, HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(channel_exp, HEX, AS_IS, INCL_RADIX) & ". " & msg, scope);
+      v_channel_error := true;
     end if;
 
     -- Check if each received bit matches the expected.
@@ -665,6 +702,9 @@ package body avalon_st_bfm_pkg is
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in symbol# " &
         to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) &
         ". Expected " & to_string(v_normalized_exp(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    elsif v_channel_error then
+      alert(alert_level, proc_call & "=> Failed. Wrong channel. Was " & to_string(v_rx_channel, HEX, AS_IS, INCL_RADIX) &
+        ". Expected " & to_string(channel_exp, HEX, AS_IS, INCL_RADIX) & ". " & msg, scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " symbols. " &
         add_msg_delimiter(msg), scope, msg_id_panel);

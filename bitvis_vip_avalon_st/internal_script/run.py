@@ -27,11 +27,11 @@ num_failing_tests = 0
 #=============================================================================================
 
 # Create testbench configuration with TB generics
-def create_config(channel_widths, data_widths, error_widths, empty_widths):
+def create_config(channel_widths, data_widths, error_widths):
   config = []
 
-  for channel_width, data_width, error_width, empty_width in product(channel_widths, data_widths, error_widths, empty_widths):
-    config.append(str(channel_width) + ' ' + str(data_width) + ' ' + str(error_width) + ' ' + str(empty_width))
+  for channel_width, data_width, error_width in product(channel_widths, data_widths, error_widths):
+    config.append(str(channel_width) + ' ' + str(data_width) + ' ' + str(error_width))
 
   return config
 
@@ -50,11 +50,19 @@ def main(argv):
 
   # Set testbench, config and run
   tb.set_tb_name("avalon_st_simple_tb")
-  configs = create_config(channel_widths=[1], data_widths=[8], error_widths=[1], empty_widths=[1])
+  configs = create_config(channel_widths=[8], data_widths=[8], error_widths=[1])
   tb.set_configs(configs)
   tb.run_simulation()
 
+  tb.set_tb_name("avalon_st_simple_tb")
+  configs = create_config(channel_widths=[8], data_widths=[16], error_widths=[1])
+  tb.set_configs(configs)
+  tb.run_simulation()
 
+  tb.set_tb_name("avalon_st_simple_tb")
+  configs = create_config(channel_widths=[8], data_widths=[32], error_widths=[1])
+  tb.set_configs(configs)
+  tb.run_simulation()
 
   # Print simulation results
   tb.print_statistics()

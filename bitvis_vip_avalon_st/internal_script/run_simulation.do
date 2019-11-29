@@ -16,7 +16,6 @@ set run_test 0
 set channel_width 0
 set data_width 0
 set error_width 0
-set empty_width 0
 
 if { [info exists 1] } {
   set library "$1"
@@ -48,13 +47,8 @@ if { [info exists 6] } {
   unset 6
 }
 
-if { [info exists 7] } {
-  set empty_width "$7"
-  unset 7
-}
 
 
-
-vsim -gGC_TEST=$run_test -gGC_CHANNEL_WIDTH=$channel_width -gGC_DATA_WIDTH=$data_width -gGC_DATA_ERROR_WIDTH=$error_width -gGC_EMPTY_WIDTH=$empty_width $library.$testbench
+vsim -gGC_TEST=$run_test -gGC_CHANNEL_WIDTH=$channel_width -gGC_DATA_WIDTH=$data_width -gGC_DATA_ERROR_WIDTH=$error_width $library.$testbench
 
 run -all

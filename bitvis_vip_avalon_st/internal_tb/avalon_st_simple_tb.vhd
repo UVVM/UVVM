@@ -84,7 +84,7 @@ begin
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
       GC_EMPTY_WIDTH   => log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH),
       GC_ERROR_WIDTH   => GC_ERROR_WIDTH,
-      GC_FIFO_DEPTH    => 256
+      GC_FIFO_DEPTH    => 512
     )
     port map (
       clk_i            => clk,
@@ -245,10 +245,10 @@ begin
     end loop;
 
     log(ID_LOG_HDR, "Testing different packet sizes and channels");
-    for i in 0 to 3 loop
+    for i in 0 to 30 loop
       avalon_st_transmit(data_packet(0 to i), i);
     end loop;
-    for i in 0 to 3 loop
+    for i in 0 to 30 loop
       avalon_st_expect(data_packet(0 to i), i);
     end loop;
     avalon_st_transmit(data_packet, C_MAX_CHANNEL);
@@ -344,10 +344,10 @@ begin
     end loop;
 
     log(ID_LOG_HDR, "Testing different stream sizes and channels");
-    for i in 0 to 3 loop
+    for i in 0 to 15 loop
       avalon_st_transmit(data_stream(0 to i), i);
     end loop;
-    for i in 0 to 3 loop
+    for i in 0 to 15 loop
       avalon_st_expect(data_stream(0 to i), i);
     end loop;
     avalon_st_transmit(data_stream, C_MAX_CHANNEL);

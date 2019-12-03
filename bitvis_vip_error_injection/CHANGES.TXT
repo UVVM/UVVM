@@ -1,7 +1,7 @@
 Bitvis VIP Error Injection - Overview on Versions and Changes
 ==============================================================
 
-v1.0.0
+v0.1.0
 ----------
 Released:
-Initial version of Error Injection VIP
+- Initial version of Error Injection VIP

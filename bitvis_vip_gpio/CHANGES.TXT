@@ -1,11 +1,11 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
-v1.x.x
+v1.5.0
 ----------
 Released: 2019-xx-xx
 - Added transaction package
-- Updated with activity watchdog name changes.
+- Updated VVC src and quick reference with activity watchdog name changes.
 
 
 v1.4.0

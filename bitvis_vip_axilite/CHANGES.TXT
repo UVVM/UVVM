@@ -1,11 +1,11 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.4.0
 ----------
 Released: 2019-xx-xx
 - Added transaction package
-- Updated with activity watchdog name changes.
+- Updated VVC src and quick reference with activity watchdog name changes.
 
 v2.3.0
 ----------

@@ -1,11 +1,11 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
-v3.x.x
+v3.5.0
 ----------
 Released: 2019-xx-xx
 - Added transaction package. 
-- Updated with activity watchdog name changes.
+- Updated VVC src and quick reference with activity watchdog name changes.
 
 
 v3.4.0

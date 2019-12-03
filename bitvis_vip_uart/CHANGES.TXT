@@ -1,14 +1,12 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.4.0
 ----------
 Released: 2019-xx-xx
-- Updated with activity watchdog name changes.
-- Coverage is defined locally in vvc_cmd_pkg, with reference
-  from vvc_methods_pkg.
-  Restructured coverage sampling in RX VVC to allow for cross coverage 
-  and defining various coverage profiles.
+- Updated VVC src and quick reference with activity watchdog name changes.
+- Added several new functions to VVC, see quick reference for more details.
+- Added UART Monitor
 
 
 v2.3.1

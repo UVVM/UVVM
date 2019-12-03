@@ -1,10 +1,11 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.4.0
 ----------
 Released: 2019-xx-xx
-- Updated with activity watchdog name changes.
+- Updated VVC src and quick reference with activity watchdog name changes.
+- Added several new functions to VVC, see quick reference for more details.
  
 
 v2.3.0

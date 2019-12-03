@@ -16,6 +16,5 @@
 set root_path "../.."
 #do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
 #do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
-#do $root_path/script/compile_src.do $root_path/xConstrRandFuncCov $root_path/xConstrRandFuncCov/sim
 #do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
 

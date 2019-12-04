@@ -24,39 +24,14 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.axistream_bfm_pkg.all;
+use work.transaction_pkg.all;
+
 --========================================================================================================================
 --========================================================================================================================
 package vvc_cmd_pkg is
 
-  --===============================================================================================
-  -- t_operation
-  -- - Bitvis defined BFM operations
-  --===============================================================================================
-  type t_operation is (
-    -- UVVM common
-    NO_OPERATION,
-    AWAIT_COMPLETION,
-    AWAIT_ANY_COMPLETION,
-    ENABLE_LOG_MSG,
-    DISABLE_LOG_MSG,
-    FLUSH_COMMAND_QUEUE,
-    FETCH_RESULT,
-    INSERT_DELAY,
-    TERMINATE_CURRENT_COMMAND,
-    -- VVC local
-    TRANSMIT,
-    RECEIVE,
-    EXPECT
-  );
 
-  -- Constants for the maximum sizes to use in this VVC.
-  -- You can create VVCs with smaller sizes than these constants, but not larger.
-
-  -- Create constants for the maximum sizes to use in this VVC.
-  constant C_VVC_CMD_DATA_MAX_BYTES           : natural := 16*1024;
-  constant C_VVC_CMD_MAX_WORD_LENGTH          : natural := 32;      -- 4 bytes
-  constant C_VVC_CMD_DATA_MAX_WORDS           : natural := C_VVC_CMD_DATA_MAX_BYTES;
-  constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := 300;
+  alias t_operation is work.transaction_pkg.t_operation;
 
 
   --===============================================================================================

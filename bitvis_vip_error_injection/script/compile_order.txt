@@ -1,0 +1,4 @@
+# library bitvis_vip_error_injection
+../src/error_injection_pkg.vhd
+../src/error_injection_slv.vhd
+../src/error_injection_sl.vhd

@@ -1,6 +1,15 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.4.0
+----------
+Released: 2019-12-04
+- Updated VVC src and quick reference with activity watchdog name changes.
+- Added several new functions to VVC, see quick reference and 
+  UVVM VVC Framework Essential Mechanisms document for more details.
+- Added UART Monitor (beta)
+- Corrected parameters in QR for UART BFM calls.
+
 v2.3.1
 ----------
 Released: 2019-11-25

@@ -15,7 +15,7 @@
 
 context vvc_context is
   library bitvis_vip_axilite;
-  use bitvis_vip_axilite.vvc_cmd_pkg.all;
+  use bitvis_vip_axilite.transaction_pkg.all;
   use bitvis_vip_axilite.vvc_methods_pkg.all;
   use bitvis_vip_axilite.td_vvc_framework_common_methods_pkg.all;
 end context;

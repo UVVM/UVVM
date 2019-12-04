@@ -23,34 +23,14 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.transaction_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
 package vvc_cmd_pkg is
 
-  --===============================================================================================
-  -- t_operation
-  -- - Bitvis defined BFM operations
-  --===============================================================================================
-  type t_operation is (
-    -- UVVM common
-    NO_OPERATION,
-    AWAIT_COMPLETION,
-    AWAIT_ANY_COMPLETION,
-    ENABLE_LOG_MSG,
-    DISABLE_LOG_MSG,
-    FLUSH_COMMAND_QUEUE,
-    FETCH_RESULT,
-    INSERT_DELAY,
-    TERMINATE_CURRENT_COMMAND,
-    -- VVC local
-    MASTER_TRANSMIT_AND_RECEIVE, MASTER_TRANSMIT_AND_CHECK, MASTER_TRANSMIT_ONLY, MASTER_RECEIVE_ONLY, MASTER_CHECK_ONLY,
-    SLAVE_TRANSMIT_AND_RECEIVE, SLAVE_TRANSMIT_AND_CHECK, SLAVE_TRANSMIT_ONLY, SLAVE_RECEIVE_ONLY, SLAVE_CHECK_ONLY);
-
-
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_MAX_WORDS         : natural := 8;
+  alias t_operation is work.transaction_pkg.t_operation;
 
 
   --===============================================================================================

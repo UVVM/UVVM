@@ -9,6 +9,27 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2019.12.04
+--------------------
+Released: 2019-12-04
+- Added transaction_pkg to all VVCs.
+- Added direct transaction transfer (DTT)
+- Added UART Monitor (beta)
+- Added Bitvis VIP Error Injection
+- Added UART protocol aware error injection (beta)
+- Added possible randomised data transfer from UART and SBI VVCs (beta)
+- Added scoreboarding to VVCs.
+- Added property checkers to UART VVC (beta)
+- Added demostration testbench to Bitvis VIP UART for demonstrating 
+  several new mechanisms to the UVVM VVC Framework and VVCs.
+- See UVVM VVC Framework Essential Mechanisms for an extended listing of
+  many new features in this release.
+- Corrected QR parameters for UART BFM calls.
+- Renamed UVVM Essential Mechanisms to UVVM VVC Framework Essential Mechanisms.
+- Updated vvc_generator.py to create transaction_pkg and activity watchdog code.
+- Reordered activity watchdog parameters and updated signal names.
+- Removed t_coverage from adaptation_pkg.
+
 v2019.11.25
 --------------------
 Released: 2019-11-25

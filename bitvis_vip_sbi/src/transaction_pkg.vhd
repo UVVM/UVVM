@@ -43,9 +43,9 @@ package transaction_pkg is
     -- Transaction
     WRITE, READ, CHECK, POLL_UNTIL);
 
-  constant C_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_CMD_ADDR_MAX_LENGTH   : natural := 32;
-  constant C_CMD_STRING_MAX_LENGTH : natural := 300;
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
 
   --==========================================================================================
@@ -61,7 +61,7 @@ package transaction_pkg is
 
   -- VVC Meta
   type t_vvc_meta is record
-    msg     : string(1 to C_CMD_STRING_MAX_LENGTH);
+    msg     : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     cmd_idx : integer;
   end record;
 
@@ -80,8 +80,8 @@ package transaction_pkg is
   -- Transaction
   type t_transaction is record
     operation           : t_operation;
-    address             : unsigned(C_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
-    data                : std_logic_vector(C_CMD_DATA_MAX_LENGTH-1 downto 0);
+    address             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
+    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
     --error_info          : t_error_info;
@@ -112,7 +112,7 @@ package transaction_pkg is
 
 
   -- Global DTT signals
-  signal global_sbi_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
+  signal global_sbi_vvc_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
     (others => C_TRANSACTION_GROUP_DEFAULT);
 
   signal global_sbi_monitor_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=

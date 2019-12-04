@@ -15,7 +15,7 @@
 
 context vvc_context is
   library bitvis_vip_gpio;
-  use bitvis_vip_gpio.vvc_cmd_pkg.all;
+  use bitvis_vip_gpio.transaction_pkg.all;
   use bitvis_vip_gpio.vvc_methods_pkg.all;
   use bitvis_vip_gpio.td_vvc_framework_common_methods_pkg.all;
 end context;

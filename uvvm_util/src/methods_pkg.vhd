@@ -3095,13 +3095,20 @@ package body methods_pkg is
     else
       v_trigger_alert := true; -- alert and log
     end if;
-
     -- trigger alert and log message
     if v_trigger_alert then
       if v_value_str'length > v_exp_str'length then
-        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & pad_short_string(v_exp_str,v_value_str) & "." & LF & msg, scope);
+        if radix = HEX_BIN_IF_INVALID then
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
+        else
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & pad_short_string(v_exp_str,v_value_str) & "." & LF & msg, scope);
+        end if;
       elsif v_value_str'length < v_exp_str'length then
-        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & pad_short_string(v_value_str,v_exp_str) & ". Expected " & v_exp_str & "." & LF & msg, scope);
+        if radix = HEX_BIN_IF_INVALID then
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
+        else
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & pad_short_string(v_value_str,v_exp_str) & ". Expected " & v_exp_str & "." & LF & msg, scope);
+        end if;
       else
         alert(alert_level, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
       end if;

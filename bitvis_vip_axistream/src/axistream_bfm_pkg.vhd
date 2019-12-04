@@ -901,7 +901,7 @@ package body axistream_bfm_pkg is
     variable v_byte_endianness  : t_byte_endianness := config.byte_endianness;
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte", scope, ID_NEVER, msg_id_panel);
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
       v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending
@@ -930,7 +930,7 @@ package body axistream_bfm_pkg is
     variable v_data_array : t_slv_array(0 to 0)(data_array'length-1 downto 0);
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(data_array'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    v_check_ok := check_value(data_array'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte", scope, ID_NEVER, msg_id_panel);
     if v_check_ok then
       v_data_array(0) := data_array;
       -- call t_slv_array overloaded procedure
@@ -1465,7 +1465,7 @@ package body axistream_bfm_pkg is
 
         -- Check tlast='1' at expected last byte
         if v_byte_cnt = data_array'high then
-          check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope);
+          check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
           v_done := true;  -- Stop sampling data when we have filled the data_array
         end if;
 
@@ -1893,7 +1893,7 @@ package body axistream_bfm_pkg is
 
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array is N*byte");
+    v_check_ok := check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array is N*byte", scope, ID_NEVER, msg_id_panel);
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
@@ -1937,7 +1937,7 @@ package body axistream_bfm_pkg is
     variable v_check_ok       : boolean := false;
   begin
     -- t_slv_array sanity check
-    v_check_ok := check_value(exp_data_array'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array word is N*byte");
+    v_check_ok := check_value(exp_data_array'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array word is N*byte", scope, ID_NEVER, msg_id_panel);
 
     if v_check_ok then
       v_exp_data_array(0) := exp_data_array;

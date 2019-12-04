@@ -276,12 +276,6 @@ package adaptations_pkg is
     RANDOM_FAVOUR_EDGES
   );
 
-  type t_coverage is (
-    NA,
-    COVERAGE_FULL,
-    COVERAGE_EDGES
-  );
-
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 

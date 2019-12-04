@@ -1,6 +1,12 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.3.0
+----------
+Released: 2019-12-04
+- Updated VVC src and quick reference with activity watchdog name changes.
+- Added a set of new features, see UVVM VVC Framework Essential Mechanisms document.
+
 v1.2.0
 ----------
 Released: 2019-11-21

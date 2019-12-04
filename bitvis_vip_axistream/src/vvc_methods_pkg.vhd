@@ -27,6 +27,7 @@ use bitvis_vip_scoreboard.slv_sb_pkg.all;
 use work.axistream_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
+use work.transaction_pkg.all;
 
 --========================================================================================================================
 --========================================================================================================================
@@ -335,11 +336,11 @@ package vvc_methods_pkg is
   --==============================================================================
   -- Activity Watchdog
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
-                                                  constant busy                                      : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog             : in    integer;
-                                                  constant last_cmd_idx_executed                     : in    natural;
-                                                  constant scope                                     : in    string := "vvc_register");
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
+                                                  constant busy                           : in    boolean;
+                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
+                                                  constant last_cmd_idx_executed          : in    natural;
+                                                  constant scope                          : in    string := "AXIStream_VVC");
                                                   
                                                   
 end package vvc_methods_pkg;
@@ -807,16 +808,16 @@ package body vvc_methods_pkg is
   --==============================================================================
   -- Activity Watchdog
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
-                                                  constant busy                                      : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog             : in    integer;
-                                                  constant last_cmd_idx_executed                     : in    natural;
-                                                  constant scope                                     : in    string := "vvc_register") is
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
+                                                  constant busy                           : in    boolean;
+                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
+                                                  constant last_cmd_idx_executed          : in    natural;
+                                                  constant scope                          : in    string := "AXIStream_VVC") is
   begin
-    shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                        busy                  => busy,
-                                                        last_cmd_idx_executed => last_cmd_idx_executed);
-    gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", scope, ID_NEVER);
+    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                      busy                  => busy,
+                                                      last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
   end procedure;
 
 

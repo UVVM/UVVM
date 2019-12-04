@@ -28,12 +28,9 @@ use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 
--- Coverage
---fc library crfc;
---fc use crfc.Coveragepkg.all;
-
 use work.uart_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
+use work.monitor_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
 
@@ -50,7 +47,8 @@ package vvc_methods_pkg is
 
   signal UART_VVCT : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias THIS_VVCT  : t_vvc_target_record is UART_VVCT;
-  alias t_bfm_config is t_uart_bfm_config;
+
+  alias t_bfm_config  is t_uart_bfm_config;
 
   -- Type found in UVVM-Util types_pkg
   constant C_UART_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
@@ -152,10 +150,8 @@ package vvc_methods_pkg is
 
   -- Scoreboard
   shared variable shared_uart_sb : t_generic_sb;
-  -- Coverage
-  --fc shared variable shared_uart_byte_coverage : covPtype;
 
-
+  
   --==========================================================================================
   -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
@@ -188,27 +184,6 @@ package vvc_methods_pkg is
     signal VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
-    );
-
-  procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant coverage         : in    t_coverage;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
-    );
-
-  procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant coverage         : in    t_coverage;
     constant data_routing     : in    t_data_routing;
     constant msg              : in    string;
     constant alert_level      : in    t_alert_level := error;
@@ -252,11 +227,11 @@ package vvc_methods_pkg is
   --==============================================================================
   -- Activity Watchdog
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
-                                                  constant busy                                      : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog             : in    integer;
-                                                  constant last_cmd_idx_executed                     : in    natural;
-                                                  constant scope                                     : in    string := "vvc_register");
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
+                                                  constant busy                           : in    boolean;
+                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
+                                                  constant last_cmd_idx_executed          : in    natural;
+                                                  constant scope                          : in    string := "UART_VVC");
 
   --==============================================================================
   -- Error Injection methods
@@ -343,54 +318,6 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
-  procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant coverage         : in    t_coverage;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
-    ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-                                   & ")";
-  begin
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation    := RECEIVE;
-    shared_vvc_cmd.alert_level  := alert_level;
-    shared_vvc_cmd.coverage     := coverage;
-    send_command_to_vvc(VVCT, scope => scope);
-  end procedure;
-
-
-  procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant coverage         : in    t_coverage;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
-    ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-                                   & ")";
-  begin
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation    := RECEIVE;
-    shared_vvc_cmd.alert_level  := alert_level;
-    shared_vvc_cmd.coverage     := coverage;
-    shared_vvc_cmd.data_routing := data_routing;
-    send_command_to_vvc(VVCT, scope => scope);
-  end procedure;
 
   procedure uart_receive(
     signal VVCT               : inout t_vvc_target_record;
@@ -407,7 +334,6 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.operation    := RECEIVE;
     shared_vvc_cmd.alert_level  := alert_level;
-    shared_vvc_cmd.coverage     := NA;
     shared_vvc_cmd.data_routing := NA;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
@@ -500,16 +426,16 @@ package body vvc_methods_pkg is
   --==============================================================================
   -- Activity Watchdog
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_testcase_inactivity_watchdog : inout std_logic;
-                                                  constant busy                                      : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog             : in    integer;
-                                                  constant last_cmd_idx_executed                     : in    natural;
-                                                  constant scope                                     : in    string := "vvc_register") is
+  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
+                                                  constant busy                           : in    boolean;
+                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
+                                                  constant last_cmd_idx_executed          : in    natural;
+                                                  constant scope                          : in    string := "UART_VVC") is
   begin
-    shared_inactivity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                        busy                  => busy,
-                                                        last_cmd_idx_executed => last_cmd_idx_executed);
-    gen_pulse(global_trigger_testcase_inactivity_watchdog, 0 ns, "pulsing global trigger for inactivity watchdog", scope, ID_NEVER);
+    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                      busy                  => busy,
+                                                      last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
   end procedure;
 
 

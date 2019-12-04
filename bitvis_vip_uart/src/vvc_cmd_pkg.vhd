@@ -33,9 +33,6 @@ package vvc_cmd_pkg is
 
   alias t_operation is work.transaction_pkg.t_operation;
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_CMD_DATA_MAX_LENGTH;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_CMD_STRING_MAX_LENGTH;
-
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC
@@ -61,7 +58,6 @@ package vvc_cmd_pkg is
     data                      : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     randomisation             : t_randomisation;
     num_words                 : natural;
-    coverage                  : t_coverage;
     max_receptions            : integer;
   end record;
 
@@ -84,7 +80,6 @@ package vvc_cmd_pkg is
     quietness                 => NON_QUIET,
     randomisation             => NA,
     num_words                 => 1,
-    coverage                  => NA,
     use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
     msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
     );

@@ -360,13 +360,13 @@ UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    check_value() => Failed. slv  Was x"32". Expected x"02".
+UVVM:                    check_value() => Failed. slv  Was x"32". Expected x"2".
 UVVM:                    Check padding of different check_value SLV lengths (actual>expected)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    check_value() => Failed. slv  Was x"0A". Expected x"32".
+UVVM:                    check_value() => Failed. slv  Was x"A". Expected x"32".
 UVVM:                    Check padding of different check_value SLV lengths (actual<expected)
 UVVM: 
 UVVM: 

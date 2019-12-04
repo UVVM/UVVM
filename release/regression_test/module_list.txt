@@ -8,12 +8,12 @@ bitvis_vip_axistream
 bitvis_vip_clock_generator
 bitvis_vip_error_injection
 bitvis_vip_gpio
-bitvis_vip_gmii
 bitvis_vip_scoreboard
-bitvis_vip_spec_vs_verif
 bitvis_uart
 bitvis_irqc
 uvvm_vvc_framework
 uvvm_util
+#bitvis_vip_spec_vs_verif
+#bitvis_vip_gmii
 #bitvis_vip_ethernet
 #bitvis_vip_hvvc_to_vvc_bridge

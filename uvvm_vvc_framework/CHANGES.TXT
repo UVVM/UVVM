@@ -5,7 +5,7 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 v2.7.0
 ----------
-Released: 2019-xx-xx
+Released: 2019-12-04
 - Changed activity watchdog type name to t_activity_watchdog, 
   changed shared_inactivity_watchdog to shared_activity_watchdog,
   and changed global_trigger_testcase_inactivity_watchdog to global_trigger_activity_watchdog.

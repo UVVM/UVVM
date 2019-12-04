@@ -3,10 +3,10 @@ Bitvis VIP I2C - Overview on Versions and Changes
 
 v2.4.0
 ----------
-Released: 2019-xx-xx
+Released: 2019-12-04
 - Added transaction package.
 - Updated VVC src and quick reference with activity watchdog name changes.
-
+- Added a set of new features, see UVVM VVC Framework Essential Mechanisms document.
 
 v2.3.0
 ----------

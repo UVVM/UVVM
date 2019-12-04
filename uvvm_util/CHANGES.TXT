@@ -5,7 +5,7 @@ UVVM Utility Library - Overview on Versions and Changes
 
 v2.10.1
 ----------
-Released: 2019-xx-xx
+Released: 2019-12-04
 - Removed t_coverage from adaptation_pkg
 
 v2.10.0

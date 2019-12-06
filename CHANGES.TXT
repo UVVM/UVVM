@@ -9,6 +9,12 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v20XX.XX.XX
+--------------------
+Released: 20XX-XX-XX
+- Fixed an issue with clock generator VIP would use one clock period
+  of the default clock period setting before using the configured setting.
+
 v2019.12.04
 --------------------
 Released: 2019-12-04

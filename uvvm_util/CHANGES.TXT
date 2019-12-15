@@ -3,16 +3,24 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+vX.XX.X
+----------
+Released: 20XX-XX-XX
+- Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
+
+
 v2.10.1
 ----------
 Released: 2019-12-04
 - Removed t_coverage from adaptation_pkg
+
 
 v2.10.0
 ----------
 Released: 2019-11-21
 - Added timeout watchdog. See UVVM Util quick reference for more information.
 - Updated LICENSE.TXT
+
 
 v2.9.0
 ----------

@@ -14,6 +14,7 @@ v20XX.XX.XX
 Released: 20XX-XX-XX
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.
+- Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
 
 v2019.12.04
 --------------------

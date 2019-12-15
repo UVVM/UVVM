@@ -235,6 +235,7 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_THRESHOLD            : natural       := 18;
   constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 20;
   constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers
+  constant C_MAX_TB_VVC_NUM                          : natural       := 20; -- Max number of VVCs in testbench (including all channels)
 
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH                     : positive      := 20;

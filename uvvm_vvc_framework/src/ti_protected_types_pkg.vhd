@@ -72,7 +72,7 @@ package body ti_protected_types_pkg is
     -- Array holding all registered VVCs
     type t_registered_vvc_array   is array (natural range <>) of t_vvc_item;
 
-    variable priv_registered_vvc  : t_registered_vvc_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_ITEM_DEFAULT);
+    variable priv_registered_vvc  : t_registered_vvc_array(0 to C_MAX_TB_VVC_NUM) := (others => C_VVC_ITEM_DEFAULT);
 
     -- Counter for the number of VVCs that has registered
     variable priv_last_registered_vvc_idx : integer := -1;
@@ -96,6 +96,11 @@ package body ti_protected_types_pkg is
       constant channel                : in t_channel := NA
     ) return integer is
     begin
+      if C_MAX_TB_VVC_NUM <= priv_last_registered_vvc_idx then
+        alert(tb_error, "Number of registered VVCs exceed C_MAX_TB_VVC_NUM.\n"&
+                         "Increase C_MAX_TB_VVC_NUM in adaptations package.");
+      end if;
+
       -- Set registered VVC index
       priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
       -- Update register

@@ -92,13 +92,11 @@ package transaction_pkg is
 
   -- Transaction group
   type t_transaction_group is record
-    bt : t_transaction;
-    ct : t_transaction;
+    bt : t_transaction
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT,
-    ct => C_TRANSACTION_SET_DEFAULT
+    bt => C_TRANSACTION_SET_DEFAULT
     );
 
   -- Transaction groups array

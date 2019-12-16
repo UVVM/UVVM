@@ -116,10 +116,9 @@ package vvc_methods_pkg is
   );
 
 
-  shared variable shared_vvc_config : t_vvc_config_full_array(NA to NA)(0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => C_SBI_VVC_CONFIG_DEFAULT));
-  alias shared_sbi_vvc_config : t_vvc_config_array is shared_vvc_config(NA);
-  shared variable shared_sbi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
+  shared variable shared_sbi_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM-1)             := (others => C_SBI_VVC_CONFIG_DEFAULT);
+  shared variable shared_sbi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM-1)             := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
   shared variable shared_sbi_sb : t_generic_sb;

@@ -415,7 +415,9 @@ package body td_vvc_entity_support_pkg is
         wait for 0 ns;
         v_delta_cycle_counter := v_delta_cycle_counter + 1;
         exit when shared_uvvm_state = PHASE_A;
-        check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without intitalize_uvvm instantiated as a concurrent procedure in the test harness", scope);
+        if shared_uvvm_state /= IDLE then
+          alert(TB_FAILURE, "UVVM will not work without entity ti_uvvm_engine instantiated in the testbench or test harness.");
+        end if;       
       end loop;
     end if;
 

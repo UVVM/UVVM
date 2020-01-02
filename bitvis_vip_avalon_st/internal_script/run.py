@@ -49,17 +49,17 @@ def main(argv):
 
 
   # Set testbench, config and run
-  tb.set_tb_name("avalon_st_simple_tb")
+  tb.set_tb_name("avalon_st_bfm_tb")
   configs = create_config(channel_widths=[8], data_widths=[8], error_widths=[1])
   tb.set_configs(configs)
   tb.run_simulation()
 
-  tb.set_tb_name("avalon_st_simple_tb")
+  tb.set_tb_name("avalon_st_bfm_tb")
   configs = create_config(channel_widths=[8], data_widths=[16], error_widths=[1])
   tb.set_configs(configs)
   tb.run_simulation()
 
-  tb.set_tb_name("avalon_st_simple_tb")
+  tb.set_tb_name("avalon_st_bfm_tb")
   configs = create_config(channel_widths=[8], data_widths=[32], error_widths=[1])
   tb.set_configs(configs)
   tb.run_simulation()

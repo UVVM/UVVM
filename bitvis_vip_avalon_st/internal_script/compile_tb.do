@@ -34,5 +34,5 @@ eval vcom  $compdirectives  $tb_path/avalon_st_fifo.vhd
 echo "eval vcom  $compdirectives  $tb_path/avalon_st_th.vhd"
 eval vcom  $compdirectives  $tb_path/avalon_st_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/avalon_st_simple_tb.vhd"
-eval vcom  $compdirectives  $tb_path/avalon_st_simple_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/avalon_st_bfm_tb.vhd"
+eval vcom  $compdirectives  $tb_path/avalon_st_bfm_tb.vhd

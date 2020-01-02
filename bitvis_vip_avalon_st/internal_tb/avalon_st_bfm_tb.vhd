@@ -28,7 +28,7 @@ use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 
 
 -- Test case entity
-entity avalon_st_simple_tb is
+entity avalon_st_bfm_tb is
   generic(
     GC_TEST          : string  := "UVVM";
     GC_DATA_WIDTH    : natural := 32;
@@ -38,7 +38,7 @@ entity avalon_st_simple_tb is
 end entity;
 
 -- Test case architecture
-architecture func of avalon_st_simple_tb is
+architecture func of avalon_st_bfm_tb is
   --------------------------------------------------------------------------------
   -- Types and constants declarations
   --------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ begin
   --------------------------------------------------------------------------------
   -- Instantiate test harness
   --------------------------------------------------------------------------------
-  i_avalon_st_test_harness : entity bitvis_vip_avalon_st.test_harness(struct_simple)
+  i_avalon_st_test_harness : entity bitvis_vip_avalon_st.test_harness(struct_bfm)
     generic map (
       GC_DATA_WIDTH    => GC_DATA_WIDTH,
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,

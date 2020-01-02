@@ -51,7 +51,7 @@ end entity;
 --=================================================================================================
 -- Test harness architectures
 --=================================================================================================
-architecture struct_simple of test_harness is
+architecture struct_bfm of test_harness is
 begin
   --------------------------------------------------------------------------------
   -- Instantiate DUT
@@ -86,4 +86,4 @@ begin
       master_eop_o     => avalon_st_slave_if.end_of_packet,
       master_ready_i   => avalon_st_slave_if.ready
     );
-end struct_simple;
+end struct_bfm;

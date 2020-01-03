@@ -50,7 +50,7 @@ def main(argv):
 
   # Set testbench, config and run
   tb.set_tb_name("avalon_st_bfm_tb")
-  configs = create_config(channel_widths=[8], data_widths=[8], error_widths=[1])
+  configs = create_config(channel_widths=[7], data_widths=[8], error_widths=[1])
   tb.set_configs(configs)
   tb.run_simulation()
 
@@ -60,6 +60,21 @@ def main(argv):
   tb.run_simulation()
 
   tb.set_tb_name("avalon_st_bfm_tb")
+  configs = create_config(channel_widths=[8], data_widths=[32], error_widths=[1])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  tb.set_tb_name("avalon_st_vvc_tb")
+  configs = create_config(channel_widths=[7], data_widths=[8], error_widths=[1])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  tb.set_tb_name("avalon_st_vvc_tb")
+  configs = create_config(channel_widths=[8], data_widths=[16], error_widths=[1])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  tb.set_tb_name("avalon_st_vvc_tb")
   configs = create_config(channel_widths=[8], data_widths=[32], error_widths=[1])
   tb.set_configs(configs)
   tb.run_simulation()

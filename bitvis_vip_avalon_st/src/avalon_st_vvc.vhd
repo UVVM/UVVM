@@ -198,6 +198,7 @@ begin
     variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
+    variable v_data_array_ptr                         : t_slv_array_ptr;
 
   begin
 
@@ -262,14 +263,19 @@ begin
             --transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
             -- Call the corresponding procedure in the BFM package.
-            avalon_st_transmit(channel_value => v_cmd.channel_value,
-                               data_array    => v_cmd.data_array,
+            v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
+            for i in 0 to v_cmd.data_array_length-1 loop
+              v_data_array_ptr(i) := v_cmd.data_array(i)(v_cmd.data_array_word_size-1 downto 0);
+            end loop;
+            avalon_st_transmit(channel_value => v_cmd.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
+                               data_array    => v_data_array_ptr.all,
                                msg           => format_msg(v_cmd),
                                clk           => clk,
                                avalon_st_if  => avalon_st_vvc_if,
                                scope         => C_SCOPE,
                                msg_id_panel  => vvc_config.msg_id_panel,
                                config        => vvc_config.bfm_config);
+            deallocate(v_data_array_ptr);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
           end if;
@@ -283,14 +289,21 @@ begin
             -- Add info to the transaction_for_waveview_struct if needed
             --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
             -- Call the corresponding procedure in the BFM package.
-            avalon_st_receive(channel_value => v_result.channel_value,
-                              data_array    => v_result.data_array,
+            v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
+            avalon_st_receive(channel_value => v_result.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
+                              data_array    => v_data_array_ptr.all,
                               msg           => format_msg(v_cmd),
                               clk           => clk,
                               avalon_st_if  => avalon_st_vvc_if,
                               scope         => C_SCOPE,
                               msg_id_panel  => vvc_config.msg_id_panel,
                               config        => vvc_config.bfm_config);
+            for i in 0 to v_cmd.data_array_length-1 loop
+              v_result.data_array(i)(v_cmd.data_array_word_size-1 downto 0) := v_data_array_ptr(i);
+            end loop;
+            v_result.data_array_length    := v_cmd.data_array_length;
+            v_result.data_array_word_size := v_cmd.data_array_word_size;
+            deallocate(v_data_array_ptr);
 
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
@@ -315,8 +328,12 @@ begin
             -- Add info to the transaction_for_waveview_struct if needed
             --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
             -- Call the corresponding procedure in the BFM package.
-            avalon_st_expect(channel_exp  => v_cmd.channel_value,
-                             data_exp     => v_cmd.data_array,
+            v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
+            for i in 0 to v_cmd.data_array_length-1 loop
+              v_data_array_ptr(i) := v_cmd.data_array(i)(v_cmd.data_array_word_size-1 downto 0);
+            end loop;
+            avalon_st_expect(channel_exp  => v_cmd.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
+                             data_exp     => v_data_array_ptr.all,
                              msg          => format_msg(v_cmd),
                              clk          => clk,
                              avalon_st_if => avalon_st_vvc_if,
@@ -324,6 +341,7 @@ begin
                              scope        => C_SCOPE,
                              msg_id_panel => vvc_config.msg_id_panel,
                              config       => vvc_config.bfm_config);
+            deallocate(v_data_array_ptr);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
           end if;

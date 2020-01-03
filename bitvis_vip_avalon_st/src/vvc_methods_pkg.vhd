@@ -159,16 +159,8 @@ package vvc_methods_pkg is
   procedure avalon_st_receive (
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
-    variable channel_value    : out   std_logic_vector;
-    variable data_array       : out   t_slv_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
-  );
-
-  procedure avalon_st_receive (
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    variable data_array       : out   t_slv_array;
+    constant data_array_len   : in    natural;
+    constant data_word_size   : in    natural;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -238,16 +230,21 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_st_transmit";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
               & ", " & to_string(data_array'length) & " sym, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
+    constant c_data_word_size  : natural := data_array(data_array'low)'length;
     variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) :=
       normalize_and_check(channel_value, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", proc_call & ". " & msg);
-    variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0) := data_array;
+    variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0) := data_array;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.channel_value                           := v_normalized_chan;
-    shared_vvc_cmd.data_array(0 to v_normalized_data'high) := v_normalized_data;
+    shared_vvc_cmd.channel_value        := v_normalized_chan;
+    for i in 0 to v_normalized_data'high loop
+      shared_vvc_cmd.data_array(i)(c_data_word_size-1 downto 0) := v_normalized_data(i);
+    end loop;
+    shared_vvc_cmd.data_array_length    := v_normalized_data'length;
+    shared_vvc_cmd.data_array_word_size := c_data_word_size;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 
@@ -269,8 +266,8 @@ package body vvc_methods_pkg is
   procedure avalon_st_receive (
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
-    variable channel_value    : out   std_logic_vector;
-    variable data_array       : out   t_slv_array;
+    constant data_array_len   : in    natural;
+    constant data_word_size   : in    natural;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
@@ -282,19 +279,9 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, RECEIVE);
+    shared_vvc_cmd.data_array_length    := data_array_len;
+    shared_vvc_cmd.data_array_word_size := data_word_size;
     send_command_to_vvc(VVCT, scope => scope);
-  end procedure;
-
-  procedure avalon_st_receive (
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    variable data_array       : out   t_slv_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
-  ) is
-    variable v_channel_value  : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) := (others => '0');
-  begin
-    avalon_st_receive(VVCT, vvc_instance_idx, v_channel_value, data_array, msg, scope);
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -312,17 +299,22 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_st_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
               & ", " & to_string(data_exp'length) & " sym, ch:" & to_string(channel_exp, DEC, AS_IS) & ")";
+    constant c_data_word_size  : natural := data_exp(data_exp'low)'length;
     variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) :=
       normalize_and_check(channel_exp, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", proc_call & ". " & msg);
-    variable v_normalized_data : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
+    variable v_normalized_data : t_slv_array(0 to data_exp'length-1)(c_data_word_size-1 downto 0) := data_exp;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, EXPECT);
-    shared_vvc_cmd.channel_value                           := v_normalized_chan;
-    shared_vvc_cmd.data_array(0 to v_normalized_data'high) := v_normalized_data;
-    shared_vvc_cmd.alert_level                             := alert_level;
+    shared_vvc_cmd.channel_value        := v_normalized_chan;
+    for i in 0 to v_normalized_data'high loop
+      shared_vvc_cmd.data_array(i)(c_data_word_size-1 downto 0) := v_normalized_data(i);
+    end loop;
+    shared_vvc_cmd.data_array_length    := v_normalized_data'length;
+    shared_vvc_cmd.data_array_word_size := c_data_word_size;
+    shared_vvc_cmd.alert_level          := alert_level;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure;
 

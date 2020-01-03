@@ -238,7 +238,7 @@ package body avalon_st_bfm_pkg is
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
     -- Normalize to the DUT channel/data widths
-    variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0) :=
+    variable v_normalized_chan : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0) := data_array;
     -- Helper variables
@@ -431,7 +431,7 @@ package body avalon_st_bfm_pkg is
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
     -- Normalize to the DUT channel/data widths
-    variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0);
+    variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0) := (others => '0');
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0);
     -- Helper variables
     variable v_proc_call         : line; -- Current proc_call, external or local
@@ -666,8 +666,10 @@ package body avalon_st_bfm_pkg is
     constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym, ch:" &
                                    to_string(channel_exp, DEC, AS_IS) & ")";
     -- Helper variables
-    variable v_normalized_exp     : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
-    variable v_rx_channel         : std_logic_vector(channel_exp'length-1 downto 0);
+    variable v_normalized_chan    : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
+      normalize_and_check(channel_exp, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
+    variable v_normalized_data    : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
+    variable v_rx_channel         : std_logic_vector(v_normalized_chan'length-1 downto 0);
     variable v_rx_data_array      : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0);
     variable v_channel_error      : boolean := false;
     variable v_data_error_cnt     : natural := 0;
@@ -678,7 +680,7 @@ package body avalon_st_bfm_pkg is
     avalon_st_receive(v_rx_channel, v_rx_data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, proc_call);
 
     -- Check the received channel
-    if v_rx_channel /= channel_exp then
+    if v_rx_channel /= v_normalized_chan then
       v_channel_error := true;
     end if;
 
@@ -687,7 +689,7 @@ package body avalon_st_bfm_pkg is
     for symbol in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(symbol)'range loop
         -- Expected set to don't care or received value matches expected
-        if (v_normalized_exp(symbol)(i) = '-') or (v_rx_data_array(symbol)(i) = v_normalized_exp(symbol)(i)) then
+        if (v_normalized_data(symbol)(i) = '-') or (v_rx_data_array(symbol)(i) = v_normalized_data(symbol)(i)) then
           -- Check is OK
         else
           -- Received symbol doesn't match
@@ -701,10 +703,10 @@ package body avalon_st_bfm_pkg is
     if v_data_error_cnt /= 0 then
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in symbol# " &
         to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(v_normalized_exp(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        ". Expected " & to_string(v_normalized_data(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_channel_error then
       alert(alert_level, proc_call & "=> Failed. Wrong channel. Was " & to_string(v_rx_channel, HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(channel_exp, HEX, AS_IS, INCL_RADIX) & ". " & msg, scope);
+        ". Expected " & to_string(v_normalized_chan, HEX, AS_IS, INCL_RADIX) & ". " & msg, scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " symbols. " &
         add_msg_delimiter(msg), scope, msg_id_panel);

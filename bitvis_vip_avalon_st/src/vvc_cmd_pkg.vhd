@@ -24,7 +24,6 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.transaction_pkg.all;
-use work.avalon_st_bfm_pkg.all;
 
 --================================================================================================================================
 --================================================================================================================================
@@ -39,7 +38,9 @@ package vvc_cmd_pkg is
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
     channel_value         : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
-    data_array            : t_slv_array(0 to C_MAX_SYMBOLS_PER_BEAT-1)(C_MAX_BITS_PER_SYMBOL-1 downto 0);
+    data_array            : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1)(C_VVC_CMD_WORD_MAX_LENGTH-1 downto 0);
+    data_array_length     : natural;
+    data_array_word_size  : natural;
     -- Common VVC fields
     operation             : t_operation;
     proc_call             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -59,6 +60,8 @@ package vvc_cmd_pkg is
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
     channel_value         => (others => '0'),
     data_array            => (others => (others => '0')),
+    data_array_length     => 0,
+    data_array_word_size  => 0,
     -- Common VVC fields
     operation             => NO_OPERATION,
     proc_call             => (others => NUL),
@@ -91,8 +94,10 @@ package vvc_cmd_pkg is
   --   be defined as a record if multiple values shall be transported from the BFM
   --==========================================================================================
   type t_vvc_result is record
-    channel_value : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
-    data_array    : t_slv_array(0 to C_MAX_SYMBOLS_PER_BEAT-1)(C_MAX_BITS_PER_SYMBOL-1 downto 0);
+    channel_value        : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
+    data_array           : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1)(C_VVC_CMD_WORD_MAX_LENGTH-1 downto 0);
+    data_array_length    : natural;
+    data_array_word_size : natural;
   end record;
 
   type t_vvc_result_queue_element is record

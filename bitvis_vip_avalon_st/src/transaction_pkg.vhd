@@ -47,7 +47,9 @@ package transaction_pkg is
 
   -- Constants for the maximum sizes to use in this VVC.
   -- You can create VVCs with smaller sizes than these constants, but not larger.
-  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := 128;
+  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
+  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
+  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := 16384;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
 

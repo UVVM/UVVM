@@ -385,7 +385,7 @@ package body axilite_bfm_pkg is
     constant proc_call : string := "axilite_write(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
                                    ", " & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
 
-    constant max_pipe_stages : integer := maximum(config.num_w_pipe_stages, config.num_aw_pipe_stages);
+    constant max_pipe_stages : integer := maximum(maximum(config.num_w_pipe_stages, config.num_aw_pipe_stages), config.num_b_pipe_stages);
     variable v_await_awready : boolean := true;
     variable v_await_wready  : boolean := true;
     variable v_await_bvalid  : boolean := true;
@@ -458,8 +458,6 @@ package body axilite_bfm_pkg is
     -- Wait setup_time specified in config record
     wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
 
-    axilite_if.write_response_channel.bready <= '1';
-
     for cycle in 0 to config.max_wait_cycles loop
 
       wait until rising_edge(clk);
@@ -469,7 +467,12 @@ package body axilite_bfm_pkg is
       end if;
       v_last_rising_edge := now; -- time stamp for clk period checking
 
-      if axilite_if.write_response_channel.bvalid = '1' then
+      -- Add support for num_b_pipe_stages
+      if cycle = config.num_b_pipe_stages then
+          axilite_if.write_response_channel.bready <= '1';
+      end if;
+
+      if axilite_if.write_response_channel.bvalid = '1' and cycle > config.num_b_pipe_stages then
 
         check_value(axilite_if.write_response_channel.bresp, to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
@@ -540,12 +543,15 @@ package body axilite_bfm_pkg is
     -- Wait setup_time specified in config record
     wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
 
-    axilite_if.read_address_channel.araddr  <= v_normalized_addr;
-    axilite_if.read_address_channel.arvalid <= '1';
-
     for cycle in 0 to config.max_wait_cycles loop
 
-      if axilite_if.read_address_channel.arready = '1' and cycle > 0 then
+      -- Add support for num_ar_pipe_stages
+      if cycle = config.num_ar_pipe_stages then
+        axilite_if.read_address_channel.araddr  <= v_normalized_addr;
+        axilite_if.read_address_channel.arvalid <= '1';
+      end if;
+
+      if axilite_if.read_address_channel.arready = '1' and cycle > config.num_ar_pipe_stages then
         axilite_if.read_address_channel.arvalid <= '0';
         axilite_if.read_address_channel.araddr(axilite_if.read_address_channel.araddr'length-1 downto 0)  <= (others => '0');
         axilite_if.read_address_channel.arprot <= to_slv(config.protection_setting);
@@ -569,10 +575,13 @@ package body axilite_bfm_pkg is
     -- Wait setup_time specified in config record
     wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
 
-    axilite_if.read_data_channel.rready <= '1';
-
     for cycle in 0 to config.max_wait_cycles loop
-      if axilite_if.read_data_channel.rvalid = '1' and cycle > 0 then
+      -- Add support for num_r_pipe_stages
+      if cycle = config.num_r_pipe_stages then
+        axilite_if.read_data_channel.rready <= '1';
+      end if;
+
+      if axilite_if.read_data_channel.rvalid = '1' and cycle > config.num_r_pipe_stages then
         v_await_rvalid := false;
 
         check_value(axilite_if.read_data_channel.rresp, to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);

@@ -249,6 +249,7 @@ package body avalon_st_bfm_pkg is
     variable v_wait_for_transfer : boolean := false;
     variable v_wait_count        : natural := 0;
     variable v_timeout           : boolean := false;
+    variable v_ready             : std_logic; -- Sampled ready for the current clock cycle
   begin
 
     check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_FAILURE, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -347,12 +348,13 @@ package body avalon_st_bfm_pkg is
             "Checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel, proc_call);
         end if;
         v_last_rising_edge := now;
+        v_ready := avalon_st_if.ready;
         -- Wait hold time specified in config record
         wait_until_given_time_after_rising_edge(clk, config.hold_time);
 
         v_wait_count := 0;
-        -- Check ready signal is asserted
-        while avalon_st_if.ready = '0' loop
+        -- Check ready signal is asserted (sampled at rising_edge)
+        while v_ready = '0' loop
           -- Check if clk period since last rising edge is within specifications and take a new timestamp
           wait until rising_edge(clk);
           if v_last_rising_edge > -1 ns then
@@ -361,6 +363,7 @@ package body avalon_st_bfm_pkg is
               "Checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel, proc_call);
           end if;
           v_last_rising_edge := now;
+          v_ready := avalon_st_if.ready;
           -- Wait hold time specified in config record
           wait_until_given_time_after_rising_edge(clk, config.hold_time);
 
@@ -500,10 +503,6 @@ package body avalon_st_bfm_pkg is
             if clk = '0' then
               -- Align sampling of the data with the rising edge of the clock
               wait until clk = '1';
-            else
-              -- Valid and Ready are high but it's already past the rising edge of the
-              -- clock so the data must be sampled on the next cycle
-              --v_sample_on_next_cycle := true; ***
             end if;
           else
             -- Valid timed out

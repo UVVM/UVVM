@@ -39,6 +39,7 @@ def create_config(channel_widths, data_widths, error_widths):
 def main(argv):
   global num_failing_tests
   configs = []
+  tests = []
 
   tb = Testbench()
   tb.set_library("bitvis_vip_avalon_st")
@@ -47,36 +48,45 @@ def main(argv):
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
+  # Define tests
+  tests = [ "test_packet_data",
+            "test_stream_data"]
 
   # Set testbench, config and run
   tb.set_tb_name("avalon_st_bfm_tb")
   configs = create_config(channel_widths=[7], data_widths=[8], error_widths=[1])
   tb.set_configs(configs)
+  tb.add_tests(tests)
   tb.run_simulation()
 
   tb.set_tb_name("avalon_st_bfm_tb")
   configs = create_config(channel_widths=[8], data_widths=[16], error_widths=[1])
   tb.set_configs(configs)
+  tb.add_tests(tests)
   tb.run_simulation()
 
   tb.set_tb_name("avalon_st_bfm_tb")
   configs = create_config(channel_widths=[8], data_widths=[32], error_widths=[1])
   tb.set_configs(configs)
+  tb.add_tests(tests)
   tb.run_simulation()
 
   tb.set_tb_name("avalon_st_vvc_tb")
   configs = create_config(channel_widths=[7], data_widths=[8], error_widths=[1])
   tb.set_configs(configs)
+  tb.add_tests(tests)
   tb.run_simulation()
 
   tb.set_tb_name("avalon_st_vvc_tb")
   configs = create_config(channel_widths=[8], data_widths=[16], error_widths=[1])
   tb.set_configs(configs)
+  tb.add_tests(tests)
   tb.run_simulation()
 
   tb.set_tb_name("avalon_st_vvc_tb")
   configs = create_config(channel_widths=[8], data_widths=[32], error_widths=[1])
   tb.set_configs(configs)
+  tb.add_tests(tests)
   tb.run_simulation()
 
   # Print simulation results

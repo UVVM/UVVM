@@ -125,9 +125,9 @@ package vvc_cmd_pkg is
   --==========================================================================================
   shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => -1));
 
-  --===============================================================================================
+  --==========================================================================================
   -- Procedures
-  --===============================================================================================
+  --==========================================================================================
   function to_string(
     result : t_vvc_result
   ) return string;
@@ -137,7 +137,7 @@ end package vvc_cmd_pkg;
 
 package body vvc_cmd_pkg is
 
-  -- Custom to_string overload needed when result is of a type that haven't got one already
+  -- Custom to_string overload needed when result is of a record type
   function to_string(
     result : t_vvc_result
   ) return string is

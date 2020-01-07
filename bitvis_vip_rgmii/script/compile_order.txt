@@ -1,0 +1,2 @@
+# library bitvis_vip_rgmii
+../src/rgmii_bfm_pkg.vhd

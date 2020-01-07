@@ -997,6 +997,13 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx"
                       "(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => -1));\n")
     print_linefeed(file_handle)
+    file_handle.write("  "+division_line+"\n")
+    file_handle.write("  -- Procedures\n")
+    file_handle.write("  "+division_line+"\n")
+    file_handle.write("  --function to_string(\n")
+    file_handle.write("  --  result : t_vvc_result\n")
+    file_handle.write("  --) return string;\n")
+    print_linefeed(file_handle)
     file_handle.write("end package vvc_cmd_pkg;\n")
     print_linefeed(file_handle)
 
@@ -1004,6 +1011,17 @@ def add_vvc_cmd_pkg_header(file_handle):
 def add_vvc_cmd_pkg_body(file_handle):
     print_linefeed(file_handle)
     file_handle.write("package body vvc_cmd_pkg is\n")
+    print_linefeed(file_handle)
+    file_handle.write("  -- Custom to_string overload needed when result is of a record type\n")
+    file_handle.write("  --function to_string(\n")
+    file_handle.write("  --  result : t_vvc_result\n")
+    file_handle.write("  --) return string;\n")
+    file_handle.write("  --begin\n")
+    file_handle.write("  --  <USER_INPUT> Set the record fields from the t_vvc_result here\n")
+    file_handle.write("  --   Example:\n")
+    file_handle.write("  --   return to_string(result.data_array'length) & \" Words\";\n")
+    file_handle.write("  --end;\n")
+    print_linefeed(file_handle)
     file_handle.write("end package body vvc_cmd_pkg;\n")
     print_linefeed(file_handle)
 

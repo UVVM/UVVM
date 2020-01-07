@@ -190,7 +190,22 @@ package ti_data_fifo_pkg is
     buffer_idx      : natural
   ) return boolean;
 
+    ------------------------------------------
+    -- deallocate_buffer
+    ------------------------------------------
+    -- This procedure resets the entire FIFO and all, 
+    -- effectively removing all queues.
+    --
+    --  - Parameters:
+    --        - dummy - VOID
+    --
+    --
+    procedure uvvm_fifo_deallocate_buffer(
+      dummy : t_void
+      );
+
 end package ti_data_fifo_pkg;
+
 
 package body ti_data_fifo_pkg is
 
@@ -260,6 +275,13 @@ package body ti_data_fifo_pkg is
   begin
     return shared_data_fifo.get_queue_is_full(buffer_idx);
   end function;
+
+  procedure uvvm_fifo_deallocate_buffer(
+    dummy : t_void
+    ) is
+  begin
+    shared_data_fifo.deallocate_buffer(dummy);
+  end procedure;
 
 end package body ti_data_fifo_pkg;
 

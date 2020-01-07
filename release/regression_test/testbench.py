@@ -1,5 +1,6 @@
 from os.path import join, dirname
 import os, sys, subprocess, glob
+import logging
 
 # Disable terminal output
 FNULL = open(os.devnull, 'w')
@@ -272,7 +273,7 @@ class Testbench:
 
 
     # Activate simulator with call
-    def simulator_call(self, script_call):
+    def simulator_call(self, script_call, gui=False):
       """
       Invoke simulator with given script call, and set environment variable for simulator selection.
 
@@ -288,10 +289,12 @@ class Testbench:
         print(self.env_var)
         sys.exit(1)
 
+      terminal_run = '-c' if not(gui) else ''
+
       if self.verbose == False:
-        subprocess.call([cmd, '-c', '-do', script_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
+        subprocess.call([cmd, terminal_run, '-do', script_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
       else:
-        subprocess.call([cmd, '-c', '-do', script_call + ';exit'], env=self.env_var, stderr=subprocess.PIPE)
+        subprocess.call([cmd, terminal_run, '-do', script_call + ';exit'], env=self.env_var, stderr=subprocess.PIPE)
 
 
     # Set compile directives
@@ -407,27 +410,35 @@ class Testbench:
 
 
     # Run simulations and check result
-    def run_simulation(self):
+    def run_simulation(self, gui=False):
       """
       Run testbench simulations with all specified tests and configurations.
       """
       if len(self.tests) == 0: self.tests = ["All"]
       if len(self.configs) == 0: self.configs = [""]
 
+      logging.basicConfig(level=logging.INFO, format='%(message)s')
+
       for test_name in self.tests:
       
         for config in self.configs:
           self.increment_num_tests()
-          print("[%s] test=%s, config=%s : " % (self.tb, test_name, config), end='')
+          if config:
+            test_string = "[" +  self.tb + "] test=" + test_name + ", config=" + config + " : "
+          else:
+            test_string = "[" +  self.tb + "] test=" + test_name + " : "
 
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
-          self.simulator_call(script_call)
+          self.simulator_call(script_call, gui)
 
           if self.check_result(test_name) == True:
-            print("PASS")
+            test_string += "PASS"
+            logging.info(test_string)
             self.cleanup(test_name)
+            
           else:
-            print("FAILED")
+            test_string += "FAILED"
+            logging.warning(test_string)
             self.increment_num_failing_tests()
 
       self.remove_tests()

@@ -185,6 +185,15 @@ architecture func of simplified_data_queue_tb is
       check_value(uvvm_fifo_get(C_BUFFER_INDEX_1, C_ENTRY_SIZE_1) = std_logic_vector(to_unsigned(i,C_ENTRY_SIZE_1)), TB_ERROR, "uvvm_fifo_get should be " & to_string(std_logic_vector(to_unsigned(i,C_ENTRY_SIZE_1)),HEX) & ".",C_SCOPE,ID_SEQUENCER);
     end loop;
 
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Test of FIFO deallocate procedure", C_SCOPE);
+    ------------------------------------------------------------
+    uvvm_fifo_deallocate(VOID);
+    increment_expected_alerts(TB_ERROR,1);
+    uvvm_fifo_put(C_BUFFER_INDEX_1,std_logic_vector(to_unsigned(1,C_ENTRY_SIZE_1)));
+    -- Re-initialize the fifo since it's used in another test
+    uvvm_fifo_init(C_BUFFER_INDEX_1, C_BUFFER_SIZE_1);
+
 
     log(ID_LOG_HDR_LARGE, "Test of Data Stack package", C_SCOPE);
     ------------------------------------------------------------

@@ -6,11 +6,6 @@ import logging
 FNULL = open(os.devnull, 'w')
 
 
-#=============================================================================================
-#
-# Methods
-#
-#=============================================================================================
 
 class Testbench:
     """
@@ -421,6 +416,8 @@ class Testbench:
       self.num_failing_tests += 1
 
 
+
+
     # Run simulations and check result
     def run_simulation(self, gui=False):
       """
@@ -463,4 +460,4 @@ class Testbench:
       total = self.get_num_tests_run()
       failed = self.get_num_failing_tests()
       passed = (total - failed)
-      print("Simulations done. Pass=%i, Fail=%i, Total=%i" %(passed, failed, total))
+      print("Simulations done. Pass=%i, Fail=%i, Total=%i\n" %(passed, failed, total))

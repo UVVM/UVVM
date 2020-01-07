@@ -215,13 +215,10 @@ package types_pkg is
     -- UVVM predefined channels.
     RX, TX
     -- User add more channels if needed below.
-    
+
   );
 
   type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
-
-  -- VVC trigger signal for global DTT
-  type t_transaction_trigger_array is array (natural range <>) of std_logic;
 
   -------------------------------------
   -- SB

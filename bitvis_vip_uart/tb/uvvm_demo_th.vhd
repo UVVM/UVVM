@@ -210,33 +210,37 @@ begin
 
   p_model: process
     -- SBI DTT
-    alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
-      global_sbi_vvc_transaction(C_SBI_VVC);
+    alias sbi_dtt_trigger     : std_logic is 
+                                global_sbi_vvc_transaction_trigger(C_SBI_VVC);
+    alias sbi_dtt_info        : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
+                                shared_sbi_vvc_transaction_info(C_SBI_VVC);
     -- UART DTT
-    alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
-      global_uart_vvc_transaction(RX, C_UART_RX_VVC);
-    alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
-      global_uart_vvc_transaction(TX, C_UART_TX_VVC);
+    alias uart_rx_dtt_trigger : std_logic is
+                                global_uart_vvc_transaction_trigger(RX, C_UART_RX_VVC);
+    alias uart_rx_dtt_info    : bitvis_vip_uart.transaction_pkg.t_transaction_group is
+                                shared_uart_vvc_transaction_info(RX, C_UART_RX_VVC);
 
+    alias uart_tx_dtt_trigger : std_logic is
+                                global_uart_vvc_transaction_trigger(TX, C_UART_TX_VVC);
+    alias uart_tx_dtt_info    : bitvis_vip_uart.transaction_pkg.t_transaction_group is
+                                shared_uart_vvc_transaction_info(TX, C_UART_TX_VVC);
+  
   begin
 
     while true loop
 
       -- Wait for DTT trigger
-      wait on sbi_dtt, uart_rx_dtt, uart_tx_dtt;
-
+      wait until (sbi_dtt_trigger = '1') or (uart_rx_dtt_trigger = '1') or (uart_tx_dtt_trigger = '1');
 
       -------------------------------
       -- SBI DTT
       -------------------------------
-      if sbi_dtt.bt'event then
+      if sbi_dtt_trigger'event then
 
-        case sbi_dtt.bt.operation is
+        case sbi_dtt_info.bt.operation is
           when WRITE =>
-            --if (sbi_dtt.bt.error_info.NN = false) then
-                -- add to UART scoreboard
-                shared_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
-            --end if;
+              -- add to UART scoreboard
+              shared_uart_sb.add_expected(sbi_dtt_info.bt.data(C_DATA_WIDTH-1 downto 0));
 
           when READ =>
             null;
@@ -249,7 +253,7 @@ begin
       -------------------------------
       -- UART RX DTT
       -------------------------------
-      if uart_rx_dtt.bt'event then
+      if uart_rx_dtt_trigger'event then
         -- Send to SB is handled by RX VVC.
         null;
       end if;
@@ -258,17 +262,17 @@ begin
       -------------------------------
       -- UART TX DTT
       -------------------------------
-      if uart_tx_dtt.bt'event then
+      if uart_tx_dtt_trigger'event then
 
-        case uart_tx_dtt.bt.operation is
+        case uart_tx_dtt_info.bt.operation is
           when TRANSMIT =>
 
             -- Check if transaction is intended valid / free of error
-            if  (uart_tx_dtt.bt.error_info.parity_bit_error = false) and
-                (uart_tx_dtt.bt.error_info.stop_bit_error = false) then
+            if  (uart_tx_dtt_info.bt.error_info.parity_bit_error = false) and
+                (uart_tx_dtt_info.bt.error_info.stop_bit_error = false) then
 
                 -- Add to SBI scoreboard
-                shared_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
+                shared_sbi_sb.add_expected(uart_tx_dtt_info.bt.data(C_DATA_WIDTH-1 downto 0));
                 -- Wait for UART Transmit to finish before SBI VVC start
                 insert_delay(SBI_VVCT, 1, 12*GC_BIT_PERIOD, "Wait for UART TX to finish");
                 -- Request SBI Read

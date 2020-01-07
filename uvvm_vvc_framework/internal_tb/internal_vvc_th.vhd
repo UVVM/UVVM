@@ -208,11 +208,11 @@ begin
     sbi_vvc_master_if.rdata     => uart_1_rdata
   );
 
-  i_sbi_vvc_3: entity bitvis_vip_sbi.sbi_vvc
+  i_sbi_vvc_2: entity bitvis_vip_sbi.sbi_vvc
   generic map(
     GC_ADDR_WIDTH     => 3,
     GC_DATA_WIDTH     => 8,
-    GC_INSTANCE_IDX   => 3
+    GC_INSTANCE_IDX   => 2
   )
   port map(
     clk                         => clk,
@@ -225,11 +225,11 @@ begin
     sbi_vvc_master_if.rdata     => uart_3_rdata
   );
 
-  i_sbi_vvc_4: entity bitvis_vip_sbi.sbi_vvc
+  i_sbi_vvc_3: entity bitvis_vip_sbi.sbi_vvc
   generic map(
     GC_ADDR_WIDTH     => 3,
     GC_DATA_WIDTH     => 8,
-    GC_INSTANCE_IDX   => 4
+    GC_INSTANCE_IDX   => 3
   )
   port map(
     clk                         => clk,
@@ -246,30 +246,30 @@ begin
   -----------------------------------------------------------------------------
   -- UART VVC
   -----------------------------------------------------------------------------  
-  i_uart_vvc_2: entity bitvis_vip_uart.uart_vvc
+  i_uart_vvc_1: entity bitvis_vip_uart.uart_vvc
   generic map(
     GC_DATA_WIDTH     => 8,
-    GC_INSTANCE_IDX   => 2
+    GC_INSTANCE_IDX   => 1
   )
   port map(
     uart_vvc_tx         => uart_2_rx_a,
     uart_vvc_rx         => uart_2_tx
   );
 
-  i_uart_vvc_3: entity bitvis_vip_uart.uart_vvc
+  i_uart_vvc_2: entity bitvis_vip_uart.uart_vvc
   generic map(
     GC_DATA_WIDTH     => 8,
-    GC_INSTANCE_IDX   => 3
+    GC_INSTANCE_IDX   => 2
   )
   port map(
     uart_vvc_tx         => uart_3_rx_a,
     uart_vvc_rx         => uart_3_tx
   );
 
-  i_uart_vvc_4: entity bitvis_vip_uart.uart_vvc
+  i_uart_vvc_3: entity bitvis_vip_uart.uart_vvc
   generic map(
     GC_DATA_WIDTH     => 8,
-    GC_INSTANCE_IDX   => 4
+    GC_INSTANCE_IDX   => 3
   )
   port map(
     uart_vvc_tx         => uart_4_rx_a,

@@ -294,14 +294,14 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_A, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_A2);
 
-    log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_A2);
+    log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE_A2);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,2).bfm_config.bit_time := 160 ns;
+    shared_uart_vvc_config(RX,1).bfm_config.bit_time := 160 ns;
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_A2);
     sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
-    uart_expect(UART_VVCT, 2, RX, x"55", "out of UART 2 TX", scope => C_SCOPE_A2);
-    await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_A2);
+    uart_expect(UART_VVCT, 1, RX, x"55", "out of UART 2 TX", scope => C_SCOPE_A2);
+    await_completion(UART_VVCT, 1, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_A2);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
@@ -319,15 +319,15 @@ architecture func of internal_vvc_tb is
     wait for 1 ns;
 
 
-    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_B1);
+    log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_B1);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
-    enable_log_msg(UART_VVCT, 4, RX, ALL_MESSAGES, scope => C_SCOPE_B1);
+    shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD; --- RX 3?
+    enable_log_msg(UART_VVCT, 2, RX, ALL_MESSAGES, scope => C_SCOPE_B1);
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_B1);
-    sbi_write(SBI_VVCT,3,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_B1);
-    uart_expect(UART_VVCT, 3, RX, x"55", "out of UART 3 TX", scope => C_SCOPE_B1);
-    await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_B1);
+    sbi_write(SBI_VVCT, 2,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_B1);
+    uart_expect(UART_VVCT, 2, RX, x"55", "out of UART 3 TX", scope => C_SCOPE_B1);
+    await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_B1);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
@@ -344,16 +344,16 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_B, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_B2);
     wait for 1 ns;
 
-    log(ID_LOG_HDR, "Configure UART VVC 4", C_SCOPE_B2);
+    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_B2);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,4).bfm_config.bit_time := C_BIT_PERIOD;
-    enable_log_msg(SBI_VVCT, 4, ALL_MESSAGES, scope => C_SCOPE_B2);
+    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+    enable_log_msg(SBI_VVCT, 3, ALL_MESSAGES, scope => C_SCOPE_B2);
 
     -- send x"AA" from sbi interface to UART 3
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_B2);
-    sbi_write(SBI_VVCT,4,  C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_B2);
-    uart_expect(UART_VVCT, 4, RX, x"AA", "out of UART 4 TX", scope => C_SCOPE_B2);
-    await_completion(UART_VVCT, 4, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_B2);
+    sbi_write(SBI_VVCT,3,  C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_B2);
+    uart_expect(UART_VVCT, 3, RX, x"AA", "out of UART 4 TX", scope => C_SCOPE_B2);
+    await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_B2);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
@@ -369,15 +369,15 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_C, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_C1);
 
-    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_C1);
+    log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_C1);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
 
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_C1);
-    sbi_write(SBI_VVCT,3,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_C1);
-    uart_expect(UART_VVCT, 3, RX, x"55", "out of UART 3 TX", scope => C_SCOPE_C1);
-    await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_C1);
+    sbi_write(SBI_VVCT, 2,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_C1);
+    uart_expect(UART_VVCT, 2, RX, x"55", "out of UART 2 TX", scope => C_SCOPE_C1);
+    await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_C1);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
@@ -393,18 +393,18 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_C, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_C2);
 
-    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_C2);
+    log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_C2);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
 
 
     wait for 2 * C_FRAME_PERIOD;
 
-    -- send x"AA" from sbi interface to UART 3
+    -- send x"AA" from sbi interface to UART 2
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_C2);
-    sbi_write(SBI_VVCT,3,  C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_C2);
-    uart_expect(UART_VVCT, 3, RX, x"AA", "out of UART 3 TX", scope => C_SCOPE_C2);
-    await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_C2);
+    sbi_write(SBI_VVCT, 2,  C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_C2);
+    uart_expect(UART_VVCT, 2, RX, x"AA", "out of UART 2 TX", scope => C_SCOPE_C2);
+    await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_C2);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
@@ -423,17 +423,17 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_D, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_D1);
 
-    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_D1);
+    log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_D1);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
 
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_D1);
-    sbi_write(SBI_VVCT,3,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_D1);
-    uart_receive(UART_VVCT, 3, RX, "reading out of UART 3 TX", scope => C_SCOPE_D1);
-    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, RX);
-    await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_D1);
-    fetch_result(UART_VVCT, 3, RX, v_cmd_idx, v_result_from_fetch, "Fetch result from uart_receive using the simple fetch_result overload", scope => C_SCOPE_D1);
+    sbi_write(SBI_VVCT, 2, C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_D1);
+    uart_receive(UART_VVCT, 2, RX, "reading out of UART 2 TX", scope => C_SCOPE_D1);
+    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 2, RX);
+    await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_D1);
+    fetch_result(UART_VVCT, 2, RX, v_cmd_idx, v_result_from_fetch, "Fetch result from uart_receive using the simple fetch_result overload", scope => C_SCOPE_D1);
     check_value(v_result_from_fetch, x"55", error, "Verifying data", C_SCOPE_D1);
 
 
@@ -453,30 +453,30 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_D, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_D2);
 
-    log(ID_LOG_HDR, "Configure UART VVC 4", C_SCOPE_D2);
+    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_D2);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,4).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(TX,2).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,3).bfm_config.bit_time := C_BIT_PERIOD;
-    shared_uart_vvc_config(TX,4).bfm_config.bit_time := C_BIT_PERIOD;
 
 
     log(ID_LOG_HDR, "Check simple transmit and readback with 2 sequencer parallel", C_SCOPE_D2);
-    sbi_write(SBI_VVCT,4,  C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_D2);
-    uart_receive(UART_VVCT, 4, RX, "reading out of UART 4 TX", scope => C_SCOPE_D2);
-    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, RX);
-    await_completion(UART_VVCT, 4, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_D2);
-    fetch_result(UART_VVCT, 4, RX, v_cmd_idx, v_result_from_fetch, "Fetch result from uart_receive using the simple fetch_result overload", scope => C_SCOPE_D2);
+    sbi_write(SBI_VVCT, 3,  C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_D2);
+    uart_receive(UART_VVCT, 3, RX, "reading out of UART 3 TX", scope => C_SCOPE_D2);
+    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, RX);
+    await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_D2);
+    fetch_result(UART_VVCT, 3, RX, v_cmd_idx, v_result_from_fetch, "Fetch result from uart_receive using the simple fetch_result overload", scope => C_SCOPE_D2);
     check_value(v_result_from_fetch, x"33", error, "Verifying data", C_SCOPE_D2);
 
-    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, TX);
-    uart_transmit(UART_VVCT,3,  TX, x"33", "Sending data on VVC 3 should not change the last received cmd index on VVC 4", C_SCOPE_D2);
-    check_value(v_cmd_idx = get_last_received_cmd_idx(UART_VVCT, 4, TX), error, "The command index must not change", C_SCOPE_D2);
-    uart_transmit(UART_VVCT,4,  TX, x"55", "Sending data on VVC 4 should change the last received cmd index on VVC 4", C_SCOPE_D2);
-    check_value(v_cmd_idx /= get_last_received_cmd_idx(UART_VVCT, 4, TX), error, "The command index must have been changed", C_SCOPE_D2);
+    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, TX);
+    uart_transmit(UART_VVCT, 2,  TX, x"33", "Sending data on VVC 2 should not change the last received cmd index on VVC 3", C_SCOPE_D2);
+    check_value(v_cmd_idx = get_last_received_cmd_idx(UART_VVCT, 3, TX), error, "The command index must not change", C_SCOPE_D2);
+    uart_transmit(UART_VVCT, 3,  TX, x"55", "Sending data on VVC 3 should change the last received cmd index on VVC 3", C_SCOPE_D2);
+    check_value(v_cmd_idx /= get_last_received_cmd_idx(UART_VVCT, 3, TX), error, "The command index must have been changed", C_SCOPE_D2);
 
     log(ID_SEQUENCER, "testing a not supported channel should result in a tb_error", C_SCOPE_D2);
     increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_D2);
-    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, NA, C_SCOPE_D2);
+    v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, NA, C_SCOPE_D2);
 
 
 
@@ -495,7 +495,7 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_E, 0 us, "SEQUENCER 1: waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_E1);
 
-    shared_uart_vvc_config(TX,3).bfm_config.bit_time := 160 ns;
+    shared_uart_vvc_config(TX,2).bfm_config.bit_time := 160 ns;
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending 2 Broadcasts at the same time", C_SCOPE_E1);
     enable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
@@ -541,12 +541,12 @@ architecture func of internal_vvc_tb is
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 6", scope => C_SCOPE_E1);
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending two Multicast simultaniously to different VVCs", C_SCOPE_E1);
-    uart_transmit(UART_VVCT,3,  TX, x"33", "SEQUENCER 1: Sending data on VVC 3", C_SCOPE_E1);
+    uart_transmit(UART_VVCT, 2,  TX, x"33", "SEQUENCER 1: Sending data on VVC 2", C_SCOPE_E1);
     await_completion(UART_VVCT, ALL_INSTANCES, TX, 100 us, scope => C_SCOPE_E1);
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 7", scope => C_SCOPE_E1);
 
     log(ID_LOG_HDR, "SEQUENCER 1: Sending await_completion Multicast on one sequencer and on the other a non time consuming cmd", C_SCOPE_E1);
-    uart_transmit(UART_VVCT,3,  TX, x"33", "SEQUENCER 1: Sending data on VVC 3", C_SCOPE_E1);
+    uart_transmit(UART_VVCT, 2,  TX, x"33", "SEQUENCER 1: Sending data on VVC 2", C_SCOPE_E1);
     await_completion(UART_VVCT, ALL_INSTANCES, TX, 100 us, scope => C_SCOPE_E1);
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 8", scope => C_SCOPE_E1);
 
@@ -611,7 +611,7 @@ architecture func of internal_vvc_tb is
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 1", scope => C_SCOPE_E2);
 
     log(ID_LOG_HDR, "SEQUENCER 2: Sending Broadcast and simple command at the same time", C_SCOPE_E2);
-    enable_log_msg(SBI_VVCT,3,ALL_MESSAGES, scope => C_SCOPE_E2);
+    enable_log_msg(SBI_VVCT, 2,ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 2", scope => C_SCOPE_E2);
 
@@ -619,26 +619,26 @@ architecture func of internal_vvc_tb is
     for i in 0 to 5 loop
       wait for 0 ns;
     end loop;
-    enable_log_msg(SBI_VVCT,3,ALL_MESSAGES, scope => C_SCOPE_E2);
+    enable_log_msg(SBI_VVCT, 2,ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 3", scope => C_SCOPE_E2);
 
     log(ID_LOG_HDR, "SEQUENCER 2: Sending first simple command and afterwards Broadcast with some delta cycle delay", C_SCOPE_E2);
-    enable_log_msg(SBI_VVCT,3,ALL_MESSAGES, scope => C_SCOPE_E2);
+    enable_log_msg(SBI_VVCT, 2,ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 4", scope => C_SCOPE_E2);
     log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Broadcast", C_SCOPE_E2);
-    sbi_write(SBI_VVCT,4,  C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
-    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 5", scope => C_SCOPE_E2);
     log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Multicast", C_SCOPE_E2);
-    sbi_write(SBI_VVCT,4,  C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
-    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 6", scope => C_SCOPE_E2);
     log(ID_LOG_HDR, "SEQUENCER 2: Sending two Multicast simultaniously to different VVCs", C_SCOPE_E2);
-    sbi_write(SBI_VVCT,4,  C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
     await_completion(SBI_VVCT, ALL_INSTANCES, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 7", scope => C_SCOPE_E2);
@@ -648,18 +648,18 @@ architecture func of internal_vvc_tb is
       wait for 0 ns;
     end loop;
     v_timestamp := now;
-    enable_log_msg(SBI_VVCT, 4, ALL_MESSAGES, scope => C_SCOPE_E2);
+    enable_log_msg(SBI_VVCT, 3, ALL_MESSAGES, scope => C_SCOPE_E2);
     check_value(((now - v_timestamp) = 0 ns), ERROR, "SEQUENCER 2: Checking that no time has passed", C_SCOPE_E2);
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 8", scope => C_SCOPE_E2);
 
     log(ID_LOG_HDR, "SEQUENCER 2: Sending Brodcast while Multicast is running", C_SCOPE_E2);
     enable_log_msg(SBI_VVCT, ALL_INSTANCES, ALL_MESSAGES, scope => C_SCOPE_E2);
+    check_log(shared_sbi_vvc_config(2).msg_id_panel, ENABLED);
     check_log(shared_sbi_vvc_config(3).msg_id_panel, ENABLED);
-    check_log(shared_sbi_vvc_config(4).msg_id_panel, ENABLED);
     wait for 1 ns;
     -- log messages should be disabled of broadcast
+    check_log(shared_sbi_vvc_config(2).msg_id_panel, DISABLED);
     check_log(shared_sbi_vvc_config(3).msg_id_panel, DISABLED);
-    check_log(shared_sbi_vvc_config(4).msg_id_panel, DISABLED);
     -- enable all messages again
     enable_log_msg(VVC_BROADCAST, ALL_MESSAGES, scope => C_SCOPE_E2);
 
@@ -672,12 +672,12 @@ architecture func of internal_vvc_tb is
     end loop;
     -- sending Multicast
     enable_log_msg(SBI_VVCT, ALL_INSTANCES, ALL_MESSAGES, scope => C_SCOPE_E2);
+    check_log(shared_sbi_vvc_config(2).msg_id_panel, ENABLED);
     check_log(shared_sbi_vvc_config(3).msg_id_panel, ENABLED);
-    check_log(shared_sbi_vvc_config(4).msg_id_panel, ENABLED);
+    check_log(shared_uart_vvc_config(RX,2).msg_id_panel, DISABLED);
+    check_log(shared_uart_vvc_config(TX,2).msg_id_panel, DISABLED);
     check_log(shared_uart_vvc_config(RX,3).msg_id_panel, DISABLED);
     check_log(shared_uart_vvc_config(TX,3).msg_id_panel, DISABLED);
-    check_log(shared_uart_vvc_config(RX,4).msg_id_panel, DISABLED);
-    check_log(shared_uart_vvc_config(TX,4).msg_id_panel, DISABLED);
     -- enable all messages again
     enable_log_msg(VVC_BROADCAST, ALL_MESSAGES, scope => C_SCOPE_E2);
 
@@ -702,15 +702,15 @@ architecture func of internal_vvc_tb is
   begin
     await_unblock_flag(C_FLAG_F, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_F);
 
-    log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_F);
+    log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_F);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
-    shared_uart_vvc_config(TX,3).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(TX,2).bfm_config.bit_time := C_BIT_PERIOD;
 
-    uart_transmit(UART_VVCT,3, TX, x"33", "Sending data on VVC 3", C_SCOPE_F);
+    uart_transmit(UART_VVCT, 2, TX, x"33", "Sending data on VVC 2", C_SCOPE_F);
 
     v_timestamp := now;
-    await_completion(UART_VVCT, 3, ALL_CHANNELS, 2 * C_FRAME_PERIOD, scope => C_SCOPE_F);
+    await_completion(UART_VVCT, 2, ALL_CHANNELS, 2 * C_FRAME_PERIOD, scope => C_SCOPE_F);
     check_value(now > (0.5 * C_FRAME_PERIOD), TB_ERROR, "await_completion should take at least a frame_period", C_SCOPE_F);
 
     -----------------------------------------------------------------------------
@@ -748,27 +748,27 @@ architecture func of internal_vvc_tb is
 
     wait for 200 ns;
 
-    log(ID_LOG_HDR, "Activate UART VVC 4 and SBI VVC 4 and await VVC completion.", C_SCOPE_G);
+    log(ID_LOG_HDR, "Activate UART VVC 3 and SBI VVC 3 and await VVC completion.", C_SCOPE_G);
     ------------------------------------------------------------
-    shared_uart_vvc_config(RX,4).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
 
-    check_value(shared_sbi_vvc_status(4).previous_cmd_idx = shared_sbi_vvc_status(4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 4).previous_cmd_idx = shared_uart_vvc_status(RX, 4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(3).previous_cmd_idx = shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx = shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
 
-    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_G);
-    uart_receive(UART_VVCT, 4, RX, "reading out of UART 4 TX", scope => C_SCOPE_G);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_G);
+    uart_receive(UART_VVCT, 3, RX, "reading out of UART 3 TX", scope => C_SCOPE_G);
 
-    insert_delay(SBI_VVCT, 4, C_CLK_PERIOD, scope => C_SCOPE_G);
-    insert_delay(UART_VVCT, 4, RX, 2*C_CLK_PERIOD, scope => C_SCOPE_G);
+    insert_delay(SBI_VVCT, 3, C_CLK_PERIOD, scope => C_SCOPE_G);
+    insert_delay(UART_VVCT, 3, RX, 2*C_CLK_PERIOD, scope => C_SCOPE_G);
 
-    v_sbi_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 4);
-    v_uart_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, RX);
+    v_sbi_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    v_uart_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, RX);
 
-    check_value(shared_sbi_vvc_status(4).previous_cmd_idx /= shared_sbi_vvc_status(4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 4).previous_cmd_idx /= shared_uart_vvc_status(RX, 4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(3).previous_cmd_idx /= shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx /= shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different", C_SCOPE_G);
 
-    await_any_completion(SBI_VVCT, 4, v_sbi_cmd_idx, NOT_LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
-    await_any_completion(UART_VVCT, 4, RX, v_uart_cmd_idx, LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
+    await_any_completion(SBI_VVCT, 3, v_sbi_cmd_idx, NOT_LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
+    await_any_completion(UART_VVCT, 3, RX, v_uart_cmd_idx, LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
 
     v_vvc_time_of_completion := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_time_of_completion;
     v_vvc_cmd_idx := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_cmd_idx;
@@ -779,9 +779,9 @@ architecture func of internal_vvc_tb is
     check_value( (v_vvc_cmd_idx=v_sbi_cmd_idx) or (v_vvc_cmd_idx=v_uart_cmd_idx), ERROR, "check command index initiated await_any_completion", C_SCOPE_G);
     check_value(v_vvc_time_of_completion > 0 ns, ERROR, "check vvc_time_of_completion value has increased.", C_SCOPE_G);
 
-    await_completion(UART_VVCT, 4, RX, v_uart_cmd_idx, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
-    check_value(shared_sbi_vvc_status(4).previous_cmd_idx = shared_sbi_vvc_status(4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 4).previous_cmd_idx = shared_uart_vvc_status(RX, 4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
+    await_completion(UART_VVCT, 3, RX, v_uart_cmd_idx, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(3).previous_cmd_idx = shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx = shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1

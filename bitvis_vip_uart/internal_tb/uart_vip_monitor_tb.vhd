@@ -416,9 +416,13 @@ architecture func of uart_monitor_tb is
   p_monitor_tx : process
     variable v_transaction : t_uart_transaction;
   begin
-    wait until (global_uart_monitor_transaction(TX, 1).bt.transaction_status = SUCCEEDED or global_uart_monitor_transaction(TX, 1).bt.transaction_status = FAILED);
-    v_transaction := global_uart_monitor_transaction(TX, 1).bt;
-    tx_uart_monitor_sb.check_received(v_transaction);
+    wait until global_uart_monitor_transaction_trigger(TX, 1) = '1';
+    v_transaction := shared_uart_monitor_transaction_info(TX, 1).bt;
+
+    if (v_transaction.transaction_status = SUCCEEDED) or (v_transaction.transaction_status = FAILED) then
+      tx_uart_monitor_sb.check_received(v_transaction);
+    end if;
+
   end process p_monitor_tx;
 
 
@@ -429,9 +433,13 @@ architecture func of uart_monitor_tb is
   p_monitor_rx : process
     variable v_transaction : t_uart_transaction;
   begin
-    wait until (global_uart_monitor_transaction(RX, 1).bt.transaction_status = SUCCEEDED or global_uart_monitor_transaction(RX, 1).bt.transaction_status = FAILED);
-    v_transaction := global_uart_monitor_transaction(RX, 1).bt;
-    rx_uart_monitor_sb.check_received(v_transaction);
+    wait until global_uart_monitor_transaction_trigger(RX, 1) = '1';
+    v_transaction := shared_uart_monitor_transaction_info(RX, 1).bt;
+
+    if (v_transaction.transaction_status = SUCCEEDED) or (v_transaction.transaction_status = FAILED) then
+      rx_uart_monitor_sb.check_received(v_transaction);
+    end if;
+
   end process p_monitor_rx;
 
 end func;

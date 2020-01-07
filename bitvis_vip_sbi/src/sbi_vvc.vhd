@@ -87,7 +87,8 @@ architecture behave of sbi_vvc is
   alias vvc_status       : t_vvc_status is shared_sbi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_sbi_transaction_info(GC_INSTANCE_IDX);
   -- DTT
-  alias dtt_transaction_info    : t_transaction_group is global_sbi_vvc_transaction(GC_INSTANCE_IDX);
+  alias dtt_trigger   : std_logic           is global_sbi_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias dtt_info      : t_transaction_group is shared_sbi_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -290,7 +291,7 @@ begin
             end case;
 
             -- Set DTT
-            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
             -- Normalise address and data
             v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
@@ -309,13 +310,13 @@ begin
                       config       => vvc_config.bfm_config);
 
             -- Set DTT back to default values
-            restore_global_dtt(dtt_transaction_info, v_cmd);
+            reset_dtt_info(dtt_info, v_cmd);
           end loop;
 
 
         when READ =>
           -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
@@ -345,7 +346,7 @@ begin
 
         when CHECK =>
           -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
@@ -367,7 +368,7 @@ begin
 
         when POLL_UNTIL =>
           -- Set DTT
-          set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
@@ -428,7 +429,7 @@ begin
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
       -- Set DTT back to default values
-      restore_global_dtt(dtt_transaction_info, v_cmd);
+      reset_dtt_info(dtt_info, v_cmd);
     end loop;
   end process;
   --===============================================================================================

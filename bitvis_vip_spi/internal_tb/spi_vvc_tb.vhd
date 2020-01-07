@@ -141,6 +141,14 @@ architecture behav of spi_vvc_tb is
   constant C_CMD_QUEUE_COUNT_THRESHOLD          : natural       := 950;
   constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := warning;
 
+  constant C_SPI_VVC_0        : natural := 0;
+  constant C_SPI_VVC_1        : natural := 1;
+  constant C_SPI_VVC_2        : natural := 2;
+  constant C_SPI_VVC_3        : natural := 3;
+
+  constant C_SBI_VVC_0        : natural := 0;
+
+
   -- component ports
   signal spi_vvc_if_1 : t_spi_if;  -- used for inter-vvc communication, basic tests/
   signal spi_vvc_if_2 : t_spi_if;       -- used for spi_master to slave vvc
@@ -191,7 +199,7 @@ begin  -- architecture behav
     generic map (
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
-      GC_INSTANCE_IDX                       => 0,
+      GC_INSTANCE_IDX                       => C_SPI_VVC_0,
       GC_MASTER_MODE                        => true,
       GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
       GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
@@ -204,7 +212,7 @@ begin  -- architecture behav
     generic map (
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
-      GC_INSTANCE_IDX                       => 1,
+      GC_INSTANCE_IDX                       => C_SPI_VVC_1,
       GC_MASTER_MODE                        => false,
       GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
       GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
@@ -217,7 +225,7 @@ begin  -- architecture behav
     generic map (
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
-      GC_INSTANCE_IDX                       => 2,
+      GC_INSTANCE_IDX                       => C_SPI_VVC_2,
       GC_MASTER_MODE                        => false,
       GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
       GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
@@ -230,7 +238,7 @@ begin  -- architecture behav
     generic map (
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
-      GC_INSTANCE_IDX                       => 3,
+      GC_INSTANCE_IDX                       => C_SPI_VVC_3,
       GC_MASTER_MODE                        => true,
       GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
       GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
@@ -298,7 +306,7 @@ begin  -- architecture behav
     generic map (
       GC_ADDR_WIDTH                         => 8,
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
-      GC_INSTANCE_IDX                       => 4,
+      GC_INSTANCE_IDX                       => C_SBI_VVC_0,
       GC_SBI_CONFIG                         => C_SBI_BFM_CONFIG,
       GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
       GC_CMD_QUEUE_COUNT_THRESHOLD          => C_CMD_QUEUE_COUNT_THRESHOLD,
@@ -438,35 +446,35 @@ begin  -- architecture behav
       constant data : in std_logic_vector
       ) is
     begin
-      sbi_write(SBI_VVCT, 4, C_SPI_MASTER_SBI_ADDR, data, "");
+      sbi_write(SBI_VVCT, C_SBI_VVC_0, C_SPI_MASTER_SBI_ADDR, data, "");
     end procedure;
 
     procedure sbi_master_check(
       constant data : in std_logic_vector
       ) is
     begin
-      sbi_check(SBI_VVCT, 4, C_SPI_MASTER_SBI_ADDR, data, "");
+      sbi_check(SBI_VVCT, C_SBI_VVC_0, C_SPI_MASTER_SBI_ADDR, data, "");
     end procedure;
 
     procedure sbi_slave_write(
       constant data : in std_logic_vector
       ) is
     begin
-      sbi_write(SBI_VVCT, 4, C_SPI_SLAVE_SBI_ADDR, data, "");
+      sbi_write(SBI_VVCT, C_SBI_VVC_0, C_SPI_SLAVE_SBI_ADDR, data, "");
     end procedure;
 
     procedure sbi_slave_check(
       constant data : in std_logic_vector
       ) is
     begin
-      sbi_check(SBI_VVCT, 4, C_SPI_SLAVE_SBI_ADDR, data, "");
+      sbi_check(SBI_VVCT, C_SBI_VVC_0, C_SPI_SLAVE_SBI_ADDR, data, "");
     end procedure;
 
     procedure sbi_await_completion(
       constant duration : in time
       ) is
     begin
-      await_completion(SBI_VVCT, 4, duration);
+      await_completion(SBI_VVCT, C_SBI_VVC_0, duration);
     end procedure;
 
     procedure spi_master_transmit_only(

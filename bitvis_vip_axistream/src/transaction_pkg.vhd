@@ -104,13 +104,15 @@ package transaction_pkg is
     ct => C_TRANSACTION_SET_DEFAULT
     );
 
-  -- Transaction groups array
+  -- Global DTT trigger signal
+  type t_axistream_transaction_trigger_array is array (natural range <>) of std_logic;
+  signal global_axistream_vvc_transaction_trigger : t_axistream_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM) := 
+                                                    (others => '0');
+
+  -- Shared DTT info variable
   type t_axistream_transaction_group_array is array (natural range <>) of t_transaction_group;
-
-
-  -- Global DTT signals
-  signal global_axistream_vvc_transaction : t_axistream_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_axistream_vvc_transaction_info : t_axistream_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) := 
+                                                          (others => C_TRANSACTION_GROUP_DEFAULT);
 
 
 end package transaction_pkg;

@@ -211,12 +211,16 @@ package types_pkg is
   type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
     NA,               -- When channel is not relevant
     ALL_CHANNELS,     -- When command shall be received by all channels
-    RX,
-    TX
+    -- UVVM predefined channels.
+    RX, TX
+    -- User add more channels if needed below.
+    
   );
 
   type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
 
+  -- VVC trigger signal for global DTT
+  type t_transaction_trigger_array is array (natural range <>) of std_logic;
 
   -------------------------------------
   -- SB

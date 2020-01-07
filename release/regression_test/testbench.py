@@ -29,6 +29,7 @@ class Testbench:
       self.library  = None
       self.tb       = None
       self.verbose  = False
+      self.gui_mode = False
       self.num_tests_run = 0
       self.num_failing_tests = 0
       self.configs = []
@@ -44,6 +45,7 @@ class Testbench:
       """
       print("\nTestbench arguments:")
       print("-V enable terminal output")
+      print("-G enable GUI mode")
       print("-MODELSIM set modelsim simulator (default)")
       print("-RIVIERA set Aldec Riviera Pro simulator\n")
       sys.exit(0)
@@ -234,17 +236,27 @@ class Testbench:
       Args:
         args (list): list of strings with arguments.
       """
+      args = [arg.upper() for arg in args]
+
       for arg in args:
-        arg = arg.upper().split()
+        arg = arg.split()
 
         if '-V' in arg:
           self.verbose = True
-        if ('-ALDEC' or '-RIVIERA' or '-RIVIERAPRO') in arg:
+        
+        if ('-ALDEC' in arg) or ('-RIVIERA' in arg) or ('-RIVIERAPRO' in arg):
           self.simulator = 'RIVIERAPRO'
+        
         if ('-MODELSIM') in arg:
           self.simulator = 'MODELSIM'
-        #if ('-?' or '?' or '-H' or '-HELP' in arg):
-        #  self.print_help()        
+        
+        if ('-G' in arg) or ('-GUI' in arg):
+          self.gui_mode = True
+        
+        if ('-?' in arg) or ('?' in arg) or ('-H' in arg) or ('-HELP' in arg):
+          self.print_help()     
+          sys.exit(0)   
+
 
 
     def set_simulator_variable(self):
@@ -273,7 +285,7 @@ class Testbench:
 
 
     # Activate simulator with call
-    def simulator_call(self, script_call, gui=False):
+    def simulator_call(self, script_call):
       """
       Invoke simulator with given script call, and set environment variable for simulator selection.
 
@@ -289,7 +301,7 @@ class Testbench:
         print(self.env_var)
         sys.exit(1)
 
-      terminal_run = '-c' if not(gui) else ''
+      terminal_run = '-c' if not(self.gui_mode) else ''
 
       if self.verbose == False:
         subprocess.call([cmd, terminal_run, '-do', script_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
@@ -429,13 +441,13 @@ class Testbench:
             test_string = "[" +  self.tb + "] test=" + test_name + " : "
 
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
-          self.simulator_call(script_call, gui)
+          self.simulator_call(script_call)
 
           if self.check_result(test_name) == True:
             test_string += "PASS"
             logging.info(test_string)
             self.cleanup(test_name)
-            
+
           else:
             test_string += "FAILED"
             logging.warning(test_string)

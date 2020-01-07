@@ -49,15 +49,13 @@ def main(argv):
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
-  gui = True if "-g" or "-gui" in argv else False
-
   # Setup testbench and run
   tb.set_tb_name("uart_vvc_new_tb")
   tb.run_simulation()
 
   # Setup testbench and run
   tb.set_tb_name("uart_monitor_tb")
-  tb.run_simulation(gui)
+  tb.run_simulation()
 
 
 

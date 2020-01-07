@@ -285,7 +285,7 @@ class Testbench:
 
 
     # Activate simulator with call
-    def simulator_call(self, script_call):
+    def simulator_call(self, script_call, gui_mode=False):
       """
       Invoke simulator with given script call, and set environment variable for simulator selection.
 
@@ -301,7 +301,7 @@ class Testbench:
         print(self.env_var)
         sys.exit(1)
 
-      terminal_run = '-c' if not(self.gui_mode) else ''
+      terminal_run = '-c' if not(gui_mode) else ''
 
       if self.verbose == False:
         subprocess.call([cmd, terminal_run, '-do', script_call + ';exit'], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
@@ -441,7 +441,7 @@ class Testbench:
             test_string = "[" +  self.tb + "] test=" + test_name + " : "
 
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
-          self.simulator_call(script_call)
+          self.simulator_call(script_call, self.gui_mode)
 
           if self.check_result(test_name) == True:
             test_string += "PASS"

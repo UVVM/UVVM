@@ -27,4 +27,6 @@ This is just a fast access link to some interesting info:
 A demo of how to make a simple, but structured testbench is given in the [IRQC (simple interrupt controller) example](./../bitvis_irqc).
 You can compile the complete DUT, Utility library, required BFMs and the testbench via the provided [scripts](./../bitvis_irqc/script)
 
+Note that a dedicated repository (UVVM_Light)](https://github.com/UVVM/UVVM_Light) has been provided to simplify getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
+
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.

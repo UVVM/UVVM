@@ -989,6 +989,9 @@ package methods_pkg is
     constant value : t_slv_array
   ) return t_slv_array;
 
+  function log2(
+    constant num : positive
+  ) return natural;
 
   -- Warning! This function should NOT be used outside the UVVM library.
   --          Function is only included to support internal functionality.
@@ -4343,7 +4346,16 @@ package body methods_pkg is
     return return_val;
   end function reverse_vectors_in_array;
 
-
+  function log2(
+    constant num : positive)
+  return natural is
+    variable return_val : natural := 0;
+  begin
+    while (2**return_val < num) and (return_val < 31) loop
+      return_val := return_val + 1;
+    end loop;
+    return return_val;
+  end function;
 
 -- ============================================================================
 -- Time consuming checks

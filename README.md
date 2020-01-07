@@ -13,8 +13,10 @@ more to come...
 
 ## For starters
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
-Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction. 
 The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
+
+Note that a dedicated repository (UVVM_Light)](https://github.com/UVVM/UVVM_Light) has been provided to simplify getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
 
 Please also see [Getting Started](./GETTING_STARTED.md) with UVVM.
 

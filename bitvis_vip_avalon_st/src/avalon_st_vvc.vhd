@@ -81,7 +81,8 @@ architecture behave of avalon_st_vvc is
   alias vvc_status : t_vvc_status is shared_avalon_st_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_avalon_st_transaction_info(GC_INSTANCE_IDX);
     -- DTT
-  alias dtt_transaction_info    : t_transaction_group is global_avalon_st_vvc_transaction(GC_INSTANCE_IDX);
+  alias dtt_trigger   : std_logic           is global_avalon_st_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias dtt_info      : t_transaction_group is shared_avalon_st_vvc_transaction_info(GC_INSTANCE_IDX);
 
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
@@ -257,7 +258,7 @@ begin
         when TRANSMIT =>
           if GC_VVC_IS_MASTER then
             -- Set DTT
-            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
             -- Add info to the transaction_for_waveview_struct if needed
             --transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
@@ -284,7 +285,7 @@ begin
         when RECEIVE =>
           if not GC_VVC_IS_MASTER then
             -- Set DTT
-            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
             -- Add info to the transaction_for_waveview_struct if needed
             --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -323,7 +324,7 @@ begin
         when EXPECT =>
           if not GC_VVC_IS_MASTER then
             -- Set DTT
-            set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
             -- Add info to the transaction_for_waveview_struct if needed
             --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -383,7 +384,7 @@ begin
       transaction_info   := C_TRANSACTION_INFO_DEFAULT;
 
       -- Set DTT back to default values
-      restore_global_dtt(dtt_transaction_info, v_cmd);
+      reset_dtt_info(dtt_info, v_cmd);
 
     end loop;
   end process;

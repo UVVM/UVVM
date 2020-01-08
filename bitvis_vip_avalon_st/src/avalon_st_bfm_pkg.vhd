@@ -235,12 +235,13 @@ package body avalon_st_bfm_pkg is
     constant proc_name : string := "avalon_st_transmit";
     constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " sym, ch:" &
                                    to_string(channel_value, DEC, AS_IS) & ")";
+    constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
     -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
-    variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0) := data_array;
+    variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0) := data_array;
     -- Helper variables
     variable v_symbol_array      : t_slv_array_ptr;
     variable v_sym_in_beat       : natural := 0;
@@ -257,11 +258,7 @@ package body avalon_st_bfm_pkg is
     check_value(to_integer(unsigned(v_normalized_chan)) <= config.max_channel, TB_FAILURE, "Sanity check: Check that channel number is supported.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_FAILURE, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, proc_call);
-    if config.use_packet_transfer then
-      check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: (Packet mode) Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
-    else
-      check_value(data_array(data_array'low)'length = avalon_st_if.data'length, TB_FAILURE, "Sanity check: (Stream mode) Check that data_array elements have the size of the data bus.", scope, ID_NEVER, msg_id_panel, proc_call);
-    end if;
+    check_value((c_data_word_size = c_sym_width) or (c_data_word_size = avalon_st_if.data'length), TB_FAILURE, "Sanity check: Check that data_array elements have either the size of the data bus or the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -270,7 +267,7 @@ package body avalon_st_bfm_pkg is
     check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
 
     -- Use a symbol array to make it easier to iterate through the data
-    if config.use_packet_transfer then
+    if c_data_word_size = c_sym_width then
       v_symbol_array := new t_slv_array(0 to v_normalized_data'length-1)(c_sym_width-1 downto 0);
       v_symbol_array.all := v_normalized_data;
     else
@@ -431,11 +428,12 @@ package body avalon_st_bfm_pkg is
   ) is  
     constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
     constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " sym)";
+    constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
     -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0) := (others => '0');
-    variable v_normalized_data : t_slv_array(0 to data_array'length-1)(data_array(data_array'low)'length-1 downto 0);
+    variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0);
     -- Helper variables
     variable v_proc_call         : line; -- Current proc_call, external or local
     variable v_symbol_array      : t_slv_array_ptr;
@@ -460,11 +458,7 @@ package body avalon_st_bfm_pkg is
     check_value(c_symbols_per_beat <= C_MAX_SYMBOLS_PER_BEAT, TB_FAILURE, "Sanity check: Check that c_symbols_per_beat doesn't exceed C_MAX_SYMBOLS_PER_BEAT.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(avalon_st_if.data'length mod c_sym_width = 0, TB_FAILURE, "Sanity check: Check that data width is a multiple of symbol_width.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    if config.use_packet_transfer then
-      check_value(data_array(data_array'low)'length = c_sym_width, TB_FAILURE, "Sanity check: (Packet mode) Check that data_array elements have the size of the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    else
-      check_value(data_array(data_array'low)'length = avalon_st_if.data'length, TB_FAILURE, "Sanity check: (Stream mode) Check that data_array elements have the size of the data bus.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    end if;
+    check_value((c_data_word_size = c_sym_width) or (c_data_word_size = avalon_st_if.data'length), TB_FAILURE, "Sanity check: Check that data_array elements have either the size of the data bus or the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -473,7 +467,7 @@ package body avalon_st_bfm_pkg is
     check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     -- Use a symbol array to make it easier to iterate through the data
-    if config.use_packet_transfer then
+    if c_data_word_size = c_sym_width then
       v_symbol_array := new t_slv_array(0 to v_normalized_data'length-1)(c_sym_width-1 downto 0);
     else
       v_symbol_array := new t_slv_array(0 to v_normalized_data'length*c_symbols_per_beat-1)(c_sym_width-1 downto 0);
@@ -594,7 +588,7 @@ package body avalon_st_bfm_pkg is
     end loop;
 
     -- Send the data with the matching interface width
-    if config.use_packet_transfer then
+    if c_data_word_size = c_sym_width then
       v_normalized_data := v_symbol_array.all;
     else
       for i in 0 to v_normalized_data'length-1 loop
@@ -664,12 +658,13 @@ package body avalon_st_bfm_pkg is
     constant proc_name : string := "avalon_st_expect";
     constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym, ch:" &
                                    to_string(channel_exp, DEC, AS_IS) & ")";
+    constant c_data_word_size     : natural := data_exp(data_exp'low)'length;
     -- Helper variables
     variable v_normalized_chan    : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_exp, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
-    variable v_normalized_data    : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0) := data_exp;
+    variable v_normalized_data    : t_slv_array(0 to data_exp'length-1)(c_data_word_size-1 downto 0) := data_exp;
     variable v_rx_channel         : std_logic_vector(v_normalized_chan'length-1 downto 0);
-    variable v_rx_data_array      : t_slv_array(0 to data_exp'length-1)(data_exp(data_exp'low)'length-1 downto 0);
+    variable v_rx_data_array      : t_slv_array(0 to data_exp'length-1)(c_data_word_size-1 downto 0);
     variable v_channel_error      : boolean := false;
     variable v_data_error_cnt     : natural := 0;
     variable v_first_wrong_symbol : natural;

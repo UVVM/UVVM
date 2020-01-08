@@ -308,22 +308,6 @@ architecture func of simplified_data_queue_tb is
       check_value(uvvm_fifo_is_full(C_BUFFER_INDEX_1), false, TB_ERROR, "uvvm_fifo_is_full should return false.", C_SCOPE, ID_SEQUENCER);
     end loop;
 
-    --------------------------------------------------------------------------------------------------------
-    log(ID_LOG_HDR_LARGE, "Testing fifo deallocate method", C_SCOPE);
-    --------------------------------------------------------------------------------------------------------
-    queue_under_test.flush(C_BUFFER_INDEX_1);
-    check_value(uvvm_fifo_get_count(C_BUFFER_INDEX_1), 0, TB_ERROR, "Verifying that queue is empty", C_SCOPE, ID_SEQUENCER);
-    check_value(uvvm_fifo_is_full(C_BUFFER_INDEX_1), false, TB_ERROR, "uvvm_fifo_is_full should return false.", C_SCOPE, ID_SEQUENCER);
-    for i in 0 to (C_BUFFER_SIZE_1/C_ENTRY_SIZE_1)-1 loop
-      uvvm_fifo_put(C_BUFFER_INDEX_1,std_logic_vector(to_unsigned(i,C_ENTRY_SIZE_1)));
-    end loop;
-    check_value(uvvm_fifo_is_full(C_BUFFER_INDEX_1), true, TB_ERROR, "uvvm_fifo_is_full should return true.", C_SCOPE, ID_SEQUENCER);
-
-    log(ID_LOG_HDR, "Deallocating FIFO and calling uvvm_fifo_get_count() - expecting not initialized warning", C_SCOPE);
-    uvvm_fifo_deallocate_buffer(VOID);
-    increment_expected_alerts(TB_WARNING, 1);
-    check_value(uvvm_fifo_get_count(C_BUFFER_INDEX_1), 0, TB_ERROR, "Verifying that queue is empty", C_SCOPE, ID_SEQUENCER);
-
 
 
     --------------------------------------------------------------------------------------------------------

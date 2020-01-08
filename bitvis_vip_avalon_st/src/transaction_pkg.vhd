@@ -78,16 +78,16 @@ package transaction_pkg is
   -- Transaction
   type t_transaction is record
     operation           : t_operation;
-    --address             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
-    --data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    --channel_value       : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
+    --data_array          : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1)(C_VVC_CMD_WORD_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
-    --address             => (others => '0'),
-    --data                => (others => '0'),
+    --channel_value       => (others => '0'),
+    --data_array          => (others => (others => '0')),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
@@ -103,12 +103,14 @@ package transaction_pkg is
     ct => C_TRANSACTION_SET_DEFAULT
     );
 
-  -- Transaction groups array
+  -- Global DTT trigger signal
+  type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
+  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM) := 
+                                                    (others => '0');
+
+  -- Shared DTT info variable
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;
-
-  -- Global DTT signals
-  signal global_avalon_st_vvc_transaction : t_avalon_st_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
-
+  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) := 
+                                                          (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

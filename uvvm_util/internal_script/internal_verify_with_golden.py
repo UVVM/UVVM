@@ -47,13 +47,15 @@ def compare(modelsim=False, riviera=False):
   print("Number of files with error(s): " + str(num_errors))
 
 
-def main(args):
+def main(argv):
+  args = [arg.lower() for arg in argv]
+
   for arg in args:
-    if ("vsim" or "modelsim") in arg.lower():
+    if ("modelsim" in arg) or ("vsim" in arg):
       print("Verify golden modelsim files")
       compare(modelsim = True)
 
-    elif ("vcom" or "riviera" or "rivierapro") in arg.lower():
+    elif ("vcom" in arg) or ("riviera" in arg) or ("rivierapro" in arg):
       print("Verify golden riviera pro files")
       compare(riviera = True)
 

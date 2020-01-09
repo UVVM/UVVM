@@ -686,6 +686,11 @@ begin
 
       check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
 
+      check_value(std_logic_vector'("0000010010"), "0000010010", error, "My msg HEX_BIN_IF_INVALID, OK", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("0000011111"), "0000010010", error, "My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("00000U00U0"), "0000010010", error, "My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
+      increment_expected_alerts(error, 2);
+
       -- wide vector
       check_value(slv128, slv128, error, "Test wide vector, HEX, OK", C_SCOPE, HEX, AS_IS);
       check_value(slv128, slv128, error, "Test wide vector, DEC, OK", C_SCOPE, DEC, AS_IS);

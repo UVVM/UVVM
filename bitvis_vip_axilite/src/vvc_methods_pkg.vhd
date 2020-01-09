@@ -125,9 +125,9 @@ package vvc_methods_pkg is
   );
     
     
-  shared variable shared_axilite_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_AXILITE_VVC_CONFIG_DEFAULT);
-  shared variable shared_axilite_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_axilite_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM) := (others => C_TRANSACTION_INFO_DEFAULT);
+  shared variable shared_axilite_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_AXILITE_VVC_CONFIG_DEFAULT);
+  shared variable shared_axilite_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_axilite_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
   shared variable shared_axilite_sb : t_generic_sb;

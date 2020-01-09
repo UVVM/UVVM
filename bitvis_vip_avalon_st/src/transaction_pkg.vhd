@@ -105,12 +105,12 @@ package transaction_pkg is
 
   -- Global DTT trigger signal
   type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM) := 
+  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => '0');
 
   -- Shared DTT info variable
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;
-  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) := 
+  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                           (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

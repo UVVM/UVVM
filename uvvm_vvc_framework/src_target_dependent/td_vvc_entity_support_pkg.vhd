@@ -369,8 +369,8 @@ package body td_vvc_entity_support_pkg is
     variable v_delta_cycle_counter  : natural := 0;
     variable v_comma_number     : natural := 0;
   begin
-    check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) &
-                " cannot exceed C_MAX_VVC_INSTANCE_NUM in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM), C_SCOPE, ID_NEVER);
+    check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM-1, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) &
+                " cannot exceed C_MAX_VVC_INSTANCE_NUM-1 in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM-1), C_SCOPE, ID_NEVER);
     vvc_config.bfm_config :=  bfm_config;
     vvc_config.cmd_queue_count_max := cmd_queue_count_max;
     vvc_config.cmd_queue_count_threshold := cmd_queue_count_threshold;

@@ -81,7 +81,7 @@ package monitor_cmd_pkg is
   );
 
   -- Monitor
-  shared variable shared_uart_monitor_config : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) 
+  shared variable shared_uart_monitor_config : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) 
                   := (others => (others => C_UART_MONITOR_CONFIG_DEFAULT));
 
 end package monitor_cmd_pkg;

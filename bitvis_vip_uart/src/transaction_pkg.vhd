@@ -115,21 +115,21 @@ package transaction_pkg is
 
   -- Global DTT trigger signal
   type t_uart_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;
-  signal global_uart_vvc_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := 
+  signal global_uart_vvc_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                               (others => (others => '0'));
 
   -- Shared DTT info variable
   type t_uart_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;
-  shared variable shared_uart_vvc_transaction_info : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := 
+  shared variable shared_uart_vvc_transaction_info : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
 
   -- Global monitor DTT trigger signal
-  signal global_uart_monitor_transaction_trigger  : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := 
+  signal global_uart_monitor_transaction_trigger  : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => (others => '0'));
 
   -- Shared monitor DTT info variable
-  shared variable shared_uart_monitor_transaction_info  : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := 
+  shared variable shared_uart_monitor_transaction_info  : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                           (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
   alias t_uart_operation   is t_operation;

@@ -997,7 +997,7 @@ def add_vvc_cmd_pkg_header(file_handle):
     file_handle.write("  --  - Shared variable used to get last queued index from VVC to sequencer\n")
     file_handle.write("  "+division_line+"\n")
     file_handle.write("  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx"
-                      "(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => -1));\n")
+                      "(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));\n")
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")
     file_handle.write("  -- Procedures\n")
@@ -1593,12 +1593,12 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels):
     if vvc_channels.__len__() == 1:
       file_handle.write("  -- Global DTT trigger signal\n")
       file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (natural range <>) of std_logic;\n")
-      file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() + "_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM) := \n")
+      file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() + "_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := \n")
       file_handle.write("                                              (others => '0');\n")
       print_linefeed(file_handle)
       file_handle.write("  -- Shared DTT info variable\n")
       file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (natural range <>) of t_transaction_group;\n")
-      file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() + "_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) := \n")
+      file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() + "_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := \n")
       file_handle.write("                                                    (others => C_TRANSACTION_GROUP_DEFAULT);\n")
     else:
       first_channel = vvc_channels[0].name.lower()
@@ -1607,12 +1607,12 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels):
       print_linefeed(file_handle)
       file_handle.write("  -- Global DTT trigger signal\n")
       file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;\n")
-      file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() + "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := \n")
+      file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() + "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := \n")
       file_handle.write("                                              (others => (others => '0'));\n")
       print_linefeed(file_handle)
       file_handle.write("  -- Shared DTT info variable\n")
       file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;\n")
-      file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() + "_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := \n")
+      file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() + "_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := \n")
       file_handle.write("                                                    (others => (others => C_TRANSACTION_GROUP_DEFAULT));\n")
 
     print_linefeed(file_handle)

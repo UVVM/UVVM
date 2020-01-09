@@ -581,7 +581,7 @@ architecture func of internal_vvc_tb is
       )
       is
       begin
-        -- for vvc_idx in 0 to C_MAX_VVC_INSTANCE_NUM loop
+        -- for vvc_idx in 0 to C_MAX_VVC_INSTANCE_NUM-1 loop
           -- for channel in t_channel'left to t_channel'right loop
             -- if (config(channel, vvc_idx) /= -1) then
               for msg_id in t_msg_id'left to t_msg_id'right loop

@@ -20,6 +20,8 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+use work.local_adaptations_pkg.all;
+
 --================================================================================================================================
 --================================================================================================================================
 package transaction_pkg is
@@ -47,9 +49,9 @@ package transaction_pkg is
 
   -- Constants for the maximum sizes to use in this VVC.
   -- You can create VVCs with smaller sizes than these constants, but not larger.
-  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
-  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
-  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := 1024;
+  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := C_AVALON_ST_CHANNEL_MAX_LENGTH;
+  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := C_AVALON_ST_WORD_MAX_LENGTH;
+  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_DATA_MAX_WORDS;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
 
@@ -103,12 +105,12 @@ package transaction_pkg is
 
   -- Global DTT trigger signal
   type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => '0');
 
   -- Shared DTT info variable
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;
-  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := 
                                                           (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

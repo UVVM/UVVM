@@ -260,9 +260,6 @@ begin
             -- Set DTT
             set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-            -- Add info to the transaction_for_waveview_struct if needed
-            --transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-            --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
             -- Call the corresponding procedure in the BFM package.
             v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
             for i in 0 to v_cmd.data_array_length-1 loop
@@ -287,8 +284,6 @@ begin
             -- Set DTT
             set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-            -- Add info to the transaction_for_waveview_struct if needed
-            --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
             -- Call the corresponding procedure in the BFM package.
             v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
             avalon_st_receive(channel_value => v_result.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
@@ -326,8 +321,6 @@ begin
             -- Set DTT
             set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-            -- Add info to the transaction_for_waveview_struct if needed
-            --transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
             -- Call the corresponding procedure in the BFM package.
             v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
             for i in 0 to v_cmd.data_array_length-1 loop

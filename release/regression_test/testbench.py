@@ -335,7 +335,7 @@ class Testbench:
       Compile dependencie files, src files and testbench files
       """
       self.set_simulator_variable()
-      print("\nCompiling dependencies...")
+      print("Compiling dependencies...")
       self.simulator_call("do ../internal_script/compile_dependencies.do")
       print("Compiling src...")
       self.simulator_call("do ../script/compile_src.do")
@@ -395,6 +395,7 @@ class Testbench:
           for line in open(item, 'r'):
             if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
               return True
+          print("Unable to find SUCCESS statement in generated test file: %s" %(item))
           return False
         except:
           print("Unable to find test result file: %s."  %(item))

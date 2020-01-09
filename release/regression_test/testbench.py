@@ -390,16 +390,42 @@ class Testbench:
         test_name (str): name of test run in testbench
       """
       check_files = self.find_generated_test_files(test_name, post_pattern="*Log*")
+      check_ok          = False
+      num_failing_tests = 0
+      is_log_file       = False
+
       for item in check_files:
+        is_log_file = False
+        check_ok    = False
+
         try:
+          """ Read all lines and check if the file has an alert summary and simulation success. """
           for line in open(item, 'r'):
-            if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
-              return True
-          print("Unable to find SUCCESS statement in generated test file: %s" %(item))
-          return False
+
+            # Detect alert summary line
+            if "UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***" in line:
+              is_log_file = True
+
+            # Detect simulation success if alert summary has been detected.
+            if is_log_file:
+              if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
+                check_ok = True
+
+          # Was this a failing test?
+          if not(check_ok) and is_log_file:
+            print("Failing test: %s" %(item))
+            num_failing_tests += 1
+
         except:
           print("Unable to find test result file: %s."  %(item))
-          return False
+          num_failing_tests += 1
+
+      # Return simulation success result
+      if num_failing_tests > 0:
+        print("Number of failing tests in this run: %i" %(num_failing_tests))
+        return False
+      else:
+        return True
 
 
 

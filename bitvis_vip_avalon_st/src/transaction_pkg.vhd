@@ -49,7 +49,7 @@ package transaction_pkg is
   -- You can create VVCs with smaller sizes than these constants, but not larger.
   constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
   constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
-  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := 16384;
+  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := 1024;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
 
@@ -78,16 +78,16 @@ package transaction_pkg is
   -- Transaction
   type t_transaction is record
     operation           : t_operation;
-    --channel_value       : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
-    --data_array          : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1)(C_VVC_CMD_WORD_MAX_LENGTH-1 downto 0);
+    channel_value       : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
+    data_array          : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1)(C_VVC_CMD_WORD_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
-    --channel_value       => (others => '0'),
-    --data_array          => (others => (others => '0')),
+    channel_value       => (others => '0'),
+    data_array          => (others => (others => '0')),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
@@ -95,12 +95,10 @@ package transaction_pkg is
   -- Transaction group
   type t_transaction_group is record
     bt : t_transaction;
-    ct : t_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT,
-    ct => C_TRANSACTION_SET_DEFAULT
+    bt => C_TRANSACTION_SET_DEFAULT
     );
 
   -- Global DTT trigger signal

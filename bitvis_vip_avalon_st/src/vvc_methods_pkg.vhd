@@ -346,8 +346,8 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
         dtt_group.bt.operation                             := vvc_cmd.operation;
-        --dtt_group.bt.channel_value                         := vvc_cmd.channel_value;
-        --dtt_group.bt.data_array                            := vvc_cmd.data_array;
+        dtt_group.bt.channel_value                         := vvc_cmd.channel_value;
+        dtt_group.bt.data_array                            := vvc_cmd.data_array;
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                    := IN_PROGRESS;

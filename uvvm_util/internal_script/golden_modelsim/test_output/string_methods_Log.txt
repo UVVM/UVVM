@@ -120,6 +120,19 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq                         
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'x"97"'. 'to_string b"0x10010111", HEX, AS_IS, INCL_RADIX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'b"10010111"'. 'to_string b"10010111", BIN, AS_IS, INCL_RADIX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '-2147286527'. 'to_string x"80030201", DEC'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Integer as DEC
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '150'. 'to_string 150, DEC, EXCL_RADIX'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'd"150"'. 'to_string d"150", DEC, INCL_RADIX'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Integer as BIN
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '10010110'. 'to_string 10010110, BIN, EXCL_RADIX'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'b"10010110"'. 'to_string b"10010110", BIN, INCL_RADIX'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'b"00000000000000000000000010010110"'. 'to_string
+UVVM:                                                                           b"00000000000000000000000010010110", BIN, INCL_RADIX, KEEP_LEADING_0'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Integer as HEX
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '96'. 'to_string 96, HEX, EXCL_RADIX'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'x"96"'. 'to_string x"96", HEX, INCL_RADIX'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string 'x"00000096"'. 'to_string x"00000096", HEX, INCL_RADIX,
+UVVM:                                                                           KEEP_LEADING_0'
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        ASCII test
 UVVM: 
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        log using one backslash-r

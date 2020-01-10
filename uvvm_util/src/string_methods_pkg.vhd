@@ -198,7 +198,17 @@ package string_methods_pkg is
     width           : natural;
     justified       : side;
     format_spaces   : t_format_spaces;
-    truncate        : t_truncate_string := DISALLOW_TRUNCATE
+    truncate        : t_truncate_string := DISALLOW_TRUNCATE;
+    radix           : t_radix := DEC;
+    prefix          : t_radix_prefix := EXCL_RADIX;
+    format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
+    ) return string;
+
+  function to_string(
+    val             : integer;
+    radix           : t_radix;
+    prefix          : t_radix_prefix;
+    format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
     ) return string;
 
   -- This function has been deprecated and will be removed in the next major release
@@ -1020,10 +1030,56 @@ package body string_methods_pkg is
     width           : natural;
     justified       : side;
     format_spaces   : t_format_spaces;
-    truncate        : t_truncate_string := DISALLOW_TRUNCATE
+    truncate        : t_truncate_string := DISALLOW_TRUNCATE;
+    radix           : t_radix := DEC;
+    prefix          : t_radix_prefix := EXCL_RADIX;
+    format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
     ) return string is
+    variable v_val_slv : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(val, 32));
+    variable v_line    : line;
+    variable v_result  : string(1 to 40);
+    variable v_width   : natural;
+    variable v_use_end_char : boolean := false;
   begin
-    return justify(to_string(val), justified, width, format_spaces, truncate);
+    if radix = DEC then
+      if prefix = INCL_RADIX then
+        write(v_line, string'("d"""));
+        v_use_end_char := true;
+      end if;
+      write(v_line, justify(to_string(val), justified, width, format_spaces, truncate));
+    elsif radix = BIN then
+      if prefix = INCL_RADIX then
+        write(v_line, string'("b"""));
+        v_use_end_char := true;
+      end if;
+      write(v_line, adjust_leading_0(justify(to_string(v_val_slv), justified, width, format_spaces, truncate), format));
+    else -- HEX
+      if prefix = INCL_RADIX then
+        write(v_line, string'("x"""));
+        v_use_end_char := true;
+      end if;
+      write(v_line, adjust_leading_0(justify(to_hstring(v_val_slv), justified, width, format_spaces, truncate), format));
+    end if;
+    if v_use_end_char then
+      write(v_line, string'(""""));
+    end if;
+
+    v_width := v_line'length;
+    v_result(1 to v_width) := v_line.all;
+    deallocate(v_line);
+    return v_result(1 to v_width);
+  end;
+
+  function to_string(
+    val             : integer;
+    radix           : t_radix;
+    prefix          : t_radix_prefix;
+    format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
+    ) return string is
+    variable v_line : line;
+  begin
+    write(v_line, to_string(val));
+    return to_string(val, v_line'length, LEFT, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE, radix, prefix, format);
   end;
 
   -- This function has been deprecated and will be removed in the next major release

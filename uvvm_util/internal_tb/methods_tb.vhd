@@ -1930,6 +1930,19 @@ begin
       v_s32 := x"80030201";             -- -2147286527 decimal
       check_value(to_string(v_s32, DEC), "-2147286527", error, "to_string x""80030201"", DEC", C_SCOPE);
 
+      log("Integer as DEC");
+      v_i := 150;
+      check_value(to_string(v_i, DEC, EXCL_RADIX), "150", error, "to_string 150, DEC, EXCL_RADIX", C_SCOPE);
+      check_value(to_string(v_i, DEC, INCL_RADIX), "d""150""", error, "to_string d""150"", DEC, INCL_RADIX", C_SCOPE);
+      log("Integer as BIN");
+      check_value(to_string(v_i, BIN, EXCL_RADIX), "10010110", error, "to_string 10010110, BIN, EXCL_RADIX", C_SCOPE);
+      check_value(to_string(v_i, BIN, INCL_RADIX), "b""10010110""", error, "to_string b""10010110"", BIN, INCL_RADIX", C_SCOPE);
+      check_value(to_string(v_i, BIN, INCL_RADIX, KEEP_LEADING_0), "b""00000000000000000000000010010110""", error, "to_string b""00000000000000000000000010010110"", BIN, INCL_RADIX, KEEP_LEADING_0", C_SCOPE);
+      log("Integer as HEX");
+      check_value(to_string(v_i, HEX, EXCL_RADIX), "96", error, "to_string 96, HEX, EXCL_RADIX", C_SCOPE);
+      check_value(to_string(v_i, HEX, INCL_RADIX), "x""96""", error, "to_string x""96"", HEX, INCL_RADIX", C_SCOPE);
+      check_value(to_string(v_i, HEX, INCL_RADIX, KEEP_LEADING_0), "x""00000096""", error, "to_string x""00000096"", HEX, INCL_RADIX, KEEP_LEADING_0", C_SCOPE);
+
       -- Log "ASCII test" - Test ascii_to_char()
       v_string(1)  := ascii_to_char(65);
       v_string(2)  := ascii_to_char(83);

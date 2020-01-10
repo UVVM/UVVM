@@ -421,8 +421,7 @@ class Testbench:
           num_failing_tests += 1
 
       # Return simulation success result
-      if num_failing_tests > 0:
-        print("Number of failing tests in this run: %i" %(num_failing_tests))
+      if (num_failing_tests > 0) or not(check_files):
         return False
       else:
         return True

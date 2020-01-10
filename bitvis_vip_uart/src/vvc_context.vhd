@@ -18,4 +18,6 @@ context vvc_context is
   use bitvis_vip_uart.transaction_pkg.all;
   use bitvis_vip_uart.vvc_methods_pkg.all;
   use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
+  use bitvis_vip_uart.uart_bfm_pkg.t_uart_bfm_config;
+  use bitvis_vip_uart.uart_bfm_pkg.C_UART_BFM_CONFIG_DEFAULT;
 end context;

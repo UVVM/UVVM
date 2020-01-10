@@ -18,4 +18,7 @@ context vvc_context is
   use bitvis_vip_axistream.transaction_pkg.all;
   use bitvis_vip_axistream.vvc_methods_pkg.all;
   use bitvis_vip_axistream.td_vvc_framework_common_methods_pkg.all;
+  use bitvis_vip_axistream.axistream_bfm_pkg.t_axistream_if;
+  use bitvis_vip_axistream.axistream_bfm_pkg.t_axistream_bfm_config;
+  use bitvis_vip_axistream.axistream_bfm_pkg.C_AXISTREAM_BFM_CONFIG_DEFAULT;
 end context;

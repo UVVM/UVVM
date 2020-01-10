@@ -758,6 +758,7 @@ package body bfm_common_pkg is
       when SYNC_ON_CLOCK_ONLY =>
         -- sanity checking
         check_value(clk, '1', TB_WARNING, "BFM exit syncronisation called when clk was high.", C_SCOPE);
+        check_value(measured_clock_period /= 0 ns, TB_ERROR, "measured_clock_period not set", C_SCOPE, ID_NEVER);
         -- synchronisation
         wait_until_given_time_after_rising_edge(clk, measured_clock_period/4);
 
@@ -765,7 +766,6 @@ package body bfm_common_pkg is
         -- sanity checking
         check_value(clk, '1',          TB_WARNING, "BFM exit syncronisation called when clk was high.", C_SCOPE, ID_NEVER);
         check_value(hold_time /= 0 ns, TB_ERROR,   "hold_time not set.",    C_SCOPE, ID_NEVER);
-        check_value(measured_clock_period /= 0 ns, TB_ERROR, "measured_clock_period not set", C_SCOPE, ID_NEVER);
         -- synchronisation
         wait_until_given_time_after_rising_edge(clk, hold_time);
 

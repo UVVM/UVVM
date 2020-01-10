@@ -15,6 +15,10 @@ Released: 20XX-XX-XX
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
+- Added wait_on_bfm_sync_start(), wait_on_bfm_exit() and check_clock_period_margin()
+  methods to bfm_common_pkg for synchronising clock signal driven BFMs and 
+  verifying specified clock period.
+
 
 v2019.12.04
 --------------------

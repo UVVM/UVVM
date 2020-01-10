@@ -23,8 +23,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
-use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
-use bitvis_vip_avalon_mm.transaction_pkg.all;
 
 
 -- Test case entity

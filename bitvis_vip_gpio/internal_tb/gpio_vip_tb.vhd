@@ -21,14 +21,10 @@ context uvvm_util.uvvm_util_context;
 
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-use work.vvc_cmd_pkg.all;
-use work.vvc_methods_pkg.all;
-use work.td_vvc_framework_common_methods_pkg.all;
 
 -- Include Verification IPs
 library bitvis_vip_gpio;
 context bitvis_vip_gpio.vvc_context;
-use bitvis_vip_gpio.gpio_bfm_pkg.all;
 
 
 -- Test case entity
@@ -99,7 +95,7 @@ begin
   ------------------------------------------------
   p_main : process
     -- Helper variables
-    variable v_received_data      : t_vvc_result;
+    variable v_received_data      : bitvis_vip_gpio.vvc_cmd_pkg.t_vvc_result;
     variable v_set_data           : std_logic_vector(7 downto 0);
     variable v_expect_data        : std_logic_vector(7 downto 0);
     variable v_vvc_id             : natural;

@@ -29,12 +29,7 @@ library STD;
 use std.textio.all;
 
 library uvvm_util;
-use uvvm_util.types_pkg.all;
-use uvvm_util.string_methods_pkg.all;
-use uvvm_util.global_signals_and_shared_variables_pkg.all;
-use uvvm_util.adaptations_pkg.all;
-use uvvm_util.methods_pkg.all;
-use uvvm_util.bfm_common_pkg.all;
+context uvvm_util.uvvm_util_context;
 
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;

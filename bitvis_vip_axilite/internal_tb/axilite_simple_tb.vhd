@@ -29,7 +29,6 @@ library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 library bitvis_vip_axilite;
-context bitvis_vip_axilite.vvc_context;
 use bitvis_vip_axilite.axilite_bfm_pkg.all;
 
 

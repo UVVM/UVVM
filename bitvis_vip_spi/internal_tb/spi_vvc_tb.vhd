@@ -33,13 +33,9 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 -- Include Verification IPs
 library bitvis_vip_spi;
 context bitvis_vip_spi.vvc_context;
-use bitvis_vip_spi.spi_bfm_pkg.all;
 
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.vvc_methods_pkg.all;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
-use bitvis_vip_sbi.sbi_bfm_pkg.all;
-
+context bitvis_vip_sbi.vvc_context;
 
 -------------------------------------------------------------------------------
 
@@ -389,7 +385,7 @@ begin  -- architecture behav
     variable slave_tx_data_word         : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable master_tx_data_word        : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable master_tx_slv_word         : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0);
-    variable result                     : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    variable result                     : std_logic_vector(bitvis_vip_spi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     variable v_cmd_idx                  : natural;
     variable v_inter_bfm_delay          : time    := 0 ns;
     variable v_vvc_delay                : integer := 0;

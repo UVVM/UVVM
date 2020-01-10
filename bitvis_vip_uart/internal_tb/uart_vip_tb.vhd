@@ -29,9 +29,6 @@ context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
-use bitvis_vip_uart.uart_bfm_pkg.all;
-
-
 
 -- Test case entity
 entity uart_vvc_new_tb is

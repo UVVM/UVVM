@@ -23,12 +23,9 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-use work.vvc_cmd_pkg.all;
-use work.vvc_methods_pkg.all;
-use work.td_vvc_framework_common_methods_pkg.all;
-
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.sbi_bfm_pkg.all;
+context bitvis_vip_sbi.vvc_context;
+
 -- Test case entity
 entity sbi_tb_multi_cycle_read is
   generic (

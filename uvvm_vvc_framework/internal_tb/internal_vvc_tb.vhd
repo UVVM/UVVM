@@ -26,14 +26,12 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_sbi;
+context bitvis_vip_sbi.vvc_context;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
-use bitvis_vip_sbi.vvc_methods_pkg.all;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
 
 library bitvis_vip_uart;
+context bitvis_vip_uart.vvc_context;
 use bitvis_vip_uart.uart_bfm_pkg.all;
-use bitvis_vip_uart.vvc_methods_pkg.all;
-use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 
 
 -- Test bench entity

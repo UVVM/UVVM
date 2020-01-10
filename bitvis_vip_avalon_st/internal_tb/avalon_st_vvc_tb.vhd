@@ -25,7 +25,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_avalon_st;
 context bitvis_vip_avalon_st.vvc_context;
-use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 
 
 -- Test case entity

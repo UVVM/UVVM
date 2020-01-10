@@ -25,8 +25,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_axilite;
 context bitvis_vip_axilite.vvc_context;
-use bitvis_vip_axilite.axilite_bfm_pkg.all;
-use bitvis_vip_axilite.transaction_pkg.all;
 
 
 -- Test case entity
@@ -56,14 +54,14 @@ architecture func of axilite_vvc_simple_tb is
                                             write_data_channel(     wdata(  C_DATA_WIDTH_1    -1 downto 0),
                                                                     wstrb(( C_DATA_WIDTH_1/8) -1 downto 0)),
                                             read_address_channel(   araddr( C_ADDR_WIDTH_1    -1 downto 0)),
-                                            read_data_channel(      rdata(  C_DATA_WIDTH_1    -1 downto 0))) := init_axilite_if_signals(C_ADDR_WIDTH_1, C_DATA_WIDTH_1);
+                                            read_data_channel(      rdata(  C_DATA_WIDTH_1    -1 downto 0)));
 
 
   signal axilite_if_2       : t_axilite_if( write_address_channel(  awaddr( C_ADDR_WIDTH_2    -1 downto 0)),
                                             write_data_channel(     wdata(  C_DATA_WIDTH_2    -1 downto 0),
                                                                     wstrb(( C_DATA_WIDTH_2/8) -1 downto 0)),
                                             read_address_channel(   araddr( C_ADDR_WIDTH_2    -1 downto 0)),
-                                            read_data_channel(      rdata(  C_DATA_WIDTH_2    -1 downto 0))) := init_axilite_if_signals(C_ADDR_WIDTH_2, C_DATA_WIDTH_2);
+                                            read_data_channel(      rdata(  C_DATA_WIDTH_2    -1 downto 0)));
 
 
   signal read_data_interface_1  : std_logic_vector(C_DATA_WIDTH_1-1 downto 0);

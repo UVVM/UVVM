@@ -20,7 +20,6 @@ use ieee.numeric_std.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
---library uvvm_vvc_framework;
 
 library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;

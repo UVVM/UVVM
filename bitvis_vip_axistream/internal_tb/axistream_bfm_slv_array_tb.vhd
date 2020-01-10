@@ -23,7 +23,6 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_axistream;
-context bitvis_vip_axistream.vvc_context;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
 -- Test case entity

@@ -23,9 +23,10 @@ context uvvm_util.uvvm_util_context;
 
 library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
-library bitvis_vip_uart;
-library bitvis_uart;
 
+library bitvis_vip_uart;
+
+library bitvis_uart;
 
 
 -- Test case entity

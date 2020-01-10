@@ -1625,6 +1625,22 @@ def generate_transaction_pkg_file(vvc_name, vvc_channels):
     add_transaction_pkg(f, vvc_name, vvc_channels)
     f.close()
 
+def add_vvc_context(file_handle, vvc_name):
+    add_vvc_header(file_handle)
+    file_handle.write("context vvc_context is\n")
+    file_handle.write("  library bitvis_vip_" + vvc_name.lower() + ";\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + ".transaction_pkg.all;\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + ".vvc_methods_pkg.all;\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + ".td_vvc_framework_common_methods_pkg.all;\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.t_" + vvc_name.lower() + "_if;\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.t_" + vvc_name.lower() + "_bfm_config;\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.C_" + vvc_name.upper() + "_BFM_CONFIG_DEFAULT;\n")
+    file_handle.write("end context;\n")
+
+def generate_vvc_context_file(vvc_name):
+    f = open("output/vvc_context.vhd", 'w')
+    add_vvc_context(f, vvc_name)
+    f.close()
 
 def generate_vvc_file(vvc_name, vvc_channels):
 
@@ -1742,6 +1758,7 @@ if __name__ == '__main__':
     generate_vvc_methods_pkg_file(vvc_name, vvc_channels)
     generate_bfm_skeleton(vvc_name)
     generate_transaction_pkg_file(vvc_name, vvc_channels)
+    generate_vvc_context_file(vvc_name)
 
     print("\nThe vvc_generator script is now finished")
     print("The generated VVC can be found in the output folder")

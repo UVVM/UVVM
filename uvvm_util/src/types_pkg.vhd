@@ -218,6 +218,12 @@ package types_pkg is
 
   );
 
+  type t_bfm_sync is (
+    SYNC_ON_CLOCK_ONLY,
+    SYNC_WITH_SETUP_AND_HOLD,
+    NO_SYNC
+  );
+
   type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
 
   -------------------------------------

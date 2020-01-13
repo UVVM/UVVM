@@ -55,7 +55,7 @@ def main(argv):
       print("Verify golden modelsim files")
       compare(modelsim = True)
 
-    elif ("vcom" in arg) or ("riviera" in arg) or ("rivierapro" in arg):
+    elif ("vcom" in arg) or ("riviera" in arg) or ("rivierapro" in arg) or ("aldec" in arg):
       print("Verify golden riviera pro files")
       compare(riviera = True)
 

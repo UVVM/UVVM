@@ -406,6 +406,7 @@ begin
       log("Setup time: 2 ns, hold time: 1 ns");
       shared_sbi_vvc_config(1).bfm_config.setup_time := 2 ns;
       shared_sbi_vvc_config(1).bfm_config.hold_time := 1 ns;
+      shared_sbi_vvc_config(1).bfm_config.bfm_sync := SYNC_WITH_SETUP_AND_HOLD;
 
       -- Check for sbi_write
       sbi_write(SBI_VVCT,1, x"00", x"AA", "Write SBI1");
@@ -445,6 +446,7 @@ begin
       await_value(sbi1_if.rena, '0', 3 ns, 3.01 ns, ERROR, "Waiting on rena to go inactive, should occuer after 1 ns");
       check_value(clk'last_event, 3 ns, ERROR, "Check hold time", C_SCOPE, ID_SEQUENCER);
 
+      shared_sbi_vvc_config(1).bfm_config.bfm_sync := SYNC_ON_CLOCK_ONLY;
     else
       alert(tb_error, "Unsupported test");
     end if;

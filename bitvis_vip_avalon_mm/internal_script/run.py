@@ -60,12 +60,8 @@ def main(argv):
   tb.set_tb_name("avalon_mm_spi_tb")
   tb.run_simulation()
 
-
   # Set testbench, config and run
   tb.set_tb_name("avalon_mm_vvc_pipeline_tb")
-  tb.add_config("true")
-  tb.add_config("false")
-  #tb.set_configs(["true", "false"])
   tb.run_simulation()
 
 

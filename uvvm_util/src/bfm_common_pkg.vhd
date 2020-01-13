@@ -794,7 +794,7 @@ package body bfm_common_pkg is
     variable v_min_time               : time;
     variable v_max_time               : time;
   begin
-    check_value(clock = '1', TB_ERROR, "clock not high", C_SCOPE);
+    check_value(clock = '1', TB_WARNING, "clock not high when calling check_clock_period_margin()", C_SCOPE);
     check_value(prev_falling_edge /= prev_rising_edge, TB_ERROR, 
                 "incorrect values for prev_falling_edge and prev_rising_edge: " & to_string(prev_falling_edge), C_SCOPE);
 

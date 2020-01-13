@@ -791,23 +791,26 @@ package body bfm_common_pkg is
       constant config_clock_margin_severity   : in t_alert_level := TB_ERROR
   ) is
     -- helper variables
-    variable v_min_time               : time;
-    variable v_max_time               : time;
+    variable v_min_time  : time;
+    variable v_max_time  : time;
+    variable v_msg       : string(1 to 30) := (others => NUL);
   begin
     check_value(clock = '1', TB_WARNING, "clock not high when calling check_clock_period_margin()", C_SCOPE);
     check_value(prev_falling_edge /= prev_rising_edge, TB_ERROR, 
                 "incorrect values for prev_falling_edge and prev_rising_edge: " & to_string(prev_falling_edge), C_SCOPE);
 
-    if prev_rising_edge /= -1 ns then -- have measured a complete clock period
-      v_min_time := prev_rising_edge + config_clock_period - config_clock_period_margin;
-      v_max_time := prev_rising_edge + config_clock_period + config_clock_period_margin;
-    else -- have measured a half clock period
+    if prev_rising_edge > -1 ns then -- have measured a complete clock period
+      v_min_time := prev_rising_edge + config_clock_period- config_clock_period_margin;
+      v_max_time := prev_rising_edge + config_clock_period+ config_clock_period_margin;
+      v_msg(1 to 28) := "(rising_edge to rising_edge)";
+    elsif prev_falling_edge > -1 ns then -- have measured a half clock period
       v_min_time := prev_falling_edge + (config_clock_period / 2) - config_clock_period_margin;
       v_max_time := prev_falling_edge + (config_clock_period / 2) + config_clock_period_margin;
+      v_msg(1 to 29)   := "(falling_edge to rising_edge)";
     end if;
 
     check_value_in_range(current_rising_edge, v_min_time, v_max_time, config_clock_margin_severity, 
-                         "clk period not within requirement (rising_edge to rising_edge).", C_SCOPE, ID_NEVER);
+                        "clk period not within requirement " & v_msg & ".", C_SCOPE, ID_NEVER);
   end procedure check_clock_period_margin;
 
 

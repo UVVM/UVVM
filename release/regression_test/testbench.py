@@ -405,11 +405,19 @@ class Testbench:
             # Detect alert summary line
             if "UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***" in line:
               is_log_file = True
-
             # Detect simulation success if alert summary has been detected.
             if is_log_file:
               if ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" in line:
                 check_ok = True
+                continue
+            
+            # Detect any simulation stopping, i.e. failing test
+            if "UVVM: Simulator has been paused as requested after" in line:
+              num_failing_tests += 1
+              check_ok = False
+              continue
+
+
 
           # Was this a failing test?
           if not(check_ok) and is_log_file:
@@ -458,10 +466,10 @@ class Testbench:
       
         for config in self.configs:
           self.increment_num_tests()
+          
+          test_string = "[" +  self.tb + "] test=" + test_name + " : "
           if config:
-            test_string = "[" +  self.tb + "] test=" + test_name + ", config=" + config + " : "
-          else:
-            test_string = "[" +  self.tb + "] test=" + test_name + " : "
+            test_string += config + " : "           
 
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call, self.gui_mode)

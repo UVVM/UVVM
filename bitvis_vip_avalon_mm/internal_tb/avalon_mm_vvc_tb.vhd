@@ -89,6 +89,8 @@ begin
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
+    shared_avalon_mm_vvc_config(1).bfm_config.clock_period := C_CLK_PERIOD;
+    shared_avalon_mm_vvc_config(2).bfm_config.clock_period := C_CLK_PERIOD;
 
     log("Start Simulation of TB for AVALON_MM");
     ------------------------------------------------------------

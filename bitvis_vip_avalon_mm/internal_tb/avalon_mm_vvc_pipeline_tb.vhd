@@ -224,8 +224,9 @@ begin
     avalon_mm_reset(AVALON_MM_VVCT, 1, 5, "Resetting Avalon MM Interface 1");
 
     -- Set maximum allowed pipeline delay
-    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles := 100;
+    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles   := 100;
     shared_avalon_mm_vvc_config(1).bfm_config.use_readdatavalid := TRUE;
+    shared_avalon_mm_vvc_config(1).bfm_config.clock_period      := C_CLK_PERIOD;
 
     -- Wait for SDRAM to init.
     wait for 1 ms;

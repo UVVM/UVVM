@@ -348,9 +348,8 @@ package body avalon_mm_bfm_pkg is
     variable v_normalized_data : std_logic_vector(avalon_mm_if.writedata'length-1 downto 0) :=
       normalize_and_check(data_value, avalon_mm_if.writedata, ALLOW_NARROWER, "data", "avalon_mm_if.writedata", msg);
 
-    variable v_prev_rising_edge     : time    := -1 ns;  -- time of previoud clock edge
-    variable v_time_of_falling_edge : time    := -1 ns;
     variable v_time_of_rising_edge  : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := -1 ns;  -- time stamp for clk period checking
     variable timeout                : boolean := false;
 
   begin

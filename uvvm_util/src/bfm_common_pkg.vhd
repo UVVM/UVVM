@@ -705,7 +705,6 @@ package body bfm_common_pkg is
     wait_num_rising_edge_plus_margin(clk, num_rising_edge, 0 ns);
   end procedure;
 
-
   procedure wait_num_rising_edge_plus_margin (
     signal clk               : in std_logic;
     constant num_rising_edge : in natural;
@@ -722,7 +721,6 @@ package body bfm_common_pkg is
     wait for margin;
   end procedure;
 
-
   procedure wait_on_bfm_sync_start(
     signal clk                      : in std_logic;
     constant bfm_sync               : in t_bfm_sync;
@@ -736,7 +734,6 @@ package body bfm_common_pkg is
     time_of_rising_edge := -1 ns;
 
     case bfm_sync is
-
       when SYNC_ON_CLOCK_ONLY =>
         -- sample rising_egde
         if clk = '0' then
@@ -747,7 +744,6 @@ package body bfm_common_pkg is
         wait until falling_edge(clk);
         time_of_falling_edge := now;
 
-
       when SYNC_WITH_SETUP_AND_HOLD =>
         check_value(setup_time > -1 ns, TB_ERROR, proc_name & " => check: setup_time is set.",   C_SCOPE, ID_NEVER);
         check_value(config_clock_period > -1 ns, TB_ERROR, proc_name & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
@@ -755,12 +751,14 @@ package body bfm_common_pkg is
         wait_until_given_time_before_rising_edge(clk, setup_time, config_clock_period);
         time_of_falling_edge := now - clk'last_event;
 
-        when others =>
-          alert(tb_warning, proc_name & " => invalid bfm_sync parameter.");
-      end case;
+      when others =>
+        alert(tb_warning, proc_name & " => invalid bfm_sync parameter.");
+    end case;
   end procedure wait_on_bfm_sync_start;
 
-
+  -- Wait for a specific delay so the data is sampled and the BFM can finish.
+  -- Note: The times of falling and rising edges have to be consecutive
+  --       to calculate the correct period.
   procedure wait_on_bfm_exit(
     signal clk                      : in std_logic;
     constant bfm_sync               : in t_bfm_sync;
@@ -771,7 +769,6 @@ package body bfm_common_pkg is
     constant proc_name                : string  := "wait_on_bfm_exit";   
     variable v_measured_clock_period  : time;
   begin
-
 
     case bfm_sync is
       when SYNC_ON_CLOCK_ONLY =>
@@ -801,24 +798,24 @@ package body bfm_common_pkg is
 
 
   -- Check that the clock signal is within configured specifications.
-  -- Note! bfm_sync set to SYNC_WITH_SETUP_AND_HOLD and
-  --       called after clock rising edge.
+  -- Note! bfm_sync must be set to SYNC_WITH_SETUP_AND_HOLD and
+  --       the procedure called after clock rising edge.
   procedure check_clock_period_margin(
-      signal   clock                          : in std_logic;
-      constant bfm_sync                       : in t_bfm_sync;
-      constant time_of_falling_edge           : in time;
-      constant time_of_rising_edge            : in time;
-      constant config_clock_period            : in time;
-      constant config_clock_period_margin     : in time;
-      constant config_clock_margin_severity   : in t_alert_level := TB_ERROR
+    signal   clock                          : in std_logic;
+    constant bfm_sync                       : in t_bfm_sync;
+    constant time_of_falling_edge           : in time;
+    constant time_of_rising_edge            : in time;
+    constant config_clock_period            : in time;
+    constant config_clock_period_margin     : in time;
+    constant config_clock_margin_severity   : in t_alert_level := TB_ERROR
   ) is
     constant proc_name          : string := "check_clock_period_margin";    
     variable v_min_time         : time;
     variable v_max_time         : time;
     variable v_measured_period  : time;
     variable v_rising_edge_time : time;
+  begin
 
-    begin
     if bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
       check_value(time_of_falling_edge /=  time_of_rising_edge, TB_ERROR, proc_name & " => check: time_of_falling_edge not equal to time_of_rising_edge.", C_SCOPE, ID_NEVER);
       check_value(config_clock_period > -1 ns, TB_ERROR, proc_name & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
@@ -833,8 +830,6 @@ package body bfm_common_pkg is
 
       v_min_time := v_measured_period - config_clock_period_margin;
       v_max_time := v_measured_period + config_clock_period_margin;
-
-      
 
       check_value_in_range(config_clock_period, v_min_time, v_max_time, config_clock_margin_severity, 
                           proc_name & " => check: clk period within requirement.", C_SCOPE, ID_NEVER);

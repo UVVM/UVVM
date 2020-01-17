@@ -65,7 +65,7 @@ package avalon_mm_bfm_pkg is
     clock_margin_severity     : t_alert_level;  -- The above margin will have this severity
     setup_time                : time;           -- Setup time for generated signals, set to clock_period/4
     hold_time                 : time;           -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                  : t_bfm_sync;
+    bfm_sync                  : t_bfm_sync;     -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
     num_wait_states_read      : natural;        -- use_waitrequest = false -> this controls the (fixed) latency for read
     num_wait_states_write     : natural;        -- use_waitrequest = false -> this controls the (fixed) latency for write
     use_waitrequest           : boolean;        -- slave uses waitrequest
@@ -80,11 +80,11 @@ package avalon_mm_bfm_pkg is
   constant C_AVALON_MM_BFM_CONFIG_DEFAULT : t_avalon_mm_bfm_config := (
     max_wait_cycles           => 10,
     max_wait_cycles_severity  => TB_FAILURE,
-    clock_period              => 10 ns,
+    clock_period              => -1 ns,
     clock_period_margin       => 0 ns,
     clock_margin_severity     => TB_ERROR,
-    setup_time                => 2.5 ns,
-    hold_time                 => 2.5 ns,
+    setup_time                => -1 ns,
+    hold_time                 => -1 ns,
     bfm_sync                  => SYNC_ON_CLOCK_ONLY,
     num_wait_states_read      => 0,
     num_wait_states_write     => 0,
@@ -100,8 +100,18 @@ package avalon_mm_bfm_pkg is
     type t_avalon_mm_response_status is (OKAY, RESERVED, SLAVEERROR, DECODEERROR);
 
 
-    shared variable shared_avalon_clock_period : time := -1 ns; -- Used for detecting clock period for BFM exit.
-                                                                -- updated by Write request and Read Request procedures.
+    type t_avalon_clock_period is record
+      time_of_rising_edge   : time;
+      time_of_falling_edge  : time;
+    end record;
+    constant C_AVALON_CLOCK_PERIOD_DEFAULT : t_avalon_clock_period := (
+      time_of_rising_edge   => -1 ns,
+      time_of_falling_edge  => -1 ns
+    );
+    
+    -- Used for detecting clock period for BFM exit, updated by Write request and Read Request procedures.
+    shared variable shared_avalon_clock_period : t_avalon_clock_period := C_AVALON_CLOCK_PERIOD_DEFAULT; 
+                                                                
   ----------------------------------------------------
   -- BFM procedures
   ----------------------------------------------------
@@ -338,34 +348,21 @@ package body avalon_mm_bfm_pkg is
     variable v_normalized_data : std_logic_vector(avalon_mm_if.writedata'length-1 downto 0) :=
       normalize_and_check(data_value, avalon_mm_if.writedata, ALLOW_NARROWER, "data", "avalon_mm_if.writedata", msg);
 
-    variable v_prev_rising_edge   : time    := -1 ns;  -- time of previoud clock edge
-    variable v_prev_falling_edge  : time    := -1 ns;
-    variable v_rising_edge        : time    := -1 ns;  -- time stamp for clk period checking
-    variable timeout              : boolean := false;
+    variable v_prev_rising_edge     : time    := -1 ns;  -- time of previoud clock edge
+    variable v_time_of_falling_edge : time    := -1 ns;
+    variable v_time_of_rising_edge  : time    := -1 ns;  -- time stamp for clk period checking
+    variable timeout                : boolean := false;
 
   begin
-    -- setup_time and hold_time checking
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_name);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_name);
-
-    -- check if enough room for setup_time if clk is in low period
-    if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event)) then
-      await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, proc_name & ": timeout waiting for clk low period for setup_time.");
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      -- setup_time and hold_time checking
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
     end if;
-    -- Wait setup_time specified in config record
-    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period);
-
-    -- check if clk was high when BFM was called
-    if clk = '1' then
-      -- get time stamp of previous rising edge, if any, otherwise -1 ns
-      v_prev_rising_edge := now - clk'last_event;
-    else
-      -- get time stamp of previous falling edge, if any, otherwise -1 ns
-      v_prev_falling_edge := now - clk'last_event;
-    end if;
-    
+   
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+  
     avalon_mm_if.writedata    <= v_normalized_data;
     avalon_mm_if.byte_enable  <= byte_enable;
     avalon_mm_if.write        <= '1';
@@ -377,10 +374,13 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     wait until rising_edge(clk);     -- wait for DUT update of signal
-    v_rising_edge      := now;
+    v_time_of_rising_edge := now;
 
-    -- check if clock period is within margin
-    check_clock_period_margin(clk, v_prev_falling_edge, v_prev_rising_edge, v_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
+                              config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+    -- Set the clock period for avalon_mm_read_response()
+    shared_avalon_clock_period.time_of_falling_edge := v_time_of_falling_edge;
+    shared_avalon_clock_period.time_of_rising_edge  := v_time_of_rising_edge;
 
     -- Release the begintransfer signal after one clock cycle, if waitrequest is in use
     if config.use_begintransfer then
@@ -411,14 +411,8 @@ package body avalon_mm_bfm_pkg is
       end loop;
     end if;
 
-    -- Set measured clock period
-    if v_prev_rising_edge = -1 ns then
-      shared_avalon_clock_period := (v_rising_edge - v_prev_falling_edge) * 2;
-    else
-      shared_avalon_clock_period := (v_rising_edge - v_prev_rising_edge);
-    end if;
-    -- Wait hold_time specified in config record
-    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, shared_avalon_clock_period);
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
 
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock);
 
@@ -536,16 +530,16 @@ package body avalon_mm_bfm_pkg is
     variable v_proc_call              : line;                           -- Current proc_call, external or local
     variable v_normalized_addr : std_logic_vector(avalon_mm_if.address'length-1 downto 0) :=
              normalize_and_check(std_logic_vector(addr_value), avalon_mm_if.address, ALLOW_NARROWER, "addr", "avalon_mm_if.address", msg);
-    variable v_rising_edge            : time := -1 ns; -- time stamp for clk period checking
-    variable v_prev_rising_edge       : time := -1 ns;  -- time of previoud clock edge
-    variable v_prev_falling_edge      : time := -1 ns;
+
+    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
 
   begin
-    -- setup_time and hold_time checking
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_name);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_name);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_name);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_name);
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      -- setup_time and hold_time checking
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_name);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_name);
+    end if;
 
     if ext_proc_call = "" then
       -- called from sequencer/VVC, show 'avalon_mm_read_request...' in log
@@ -555,22 +549,8 @@ package body avalon_mm_bfm_pkg is
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
-    -- check if clk was high when BFM was called
-    if clk = '1' then
-      -- get time stamp of previous rising edge, if any, otherwise -1 ns
-      v_prev_rising_edge := now - clk'last_event;
-    else
-      -- get time stamp of previous falling edge, if any, otherwise -1 ns
-      v_prev_falling_edge := now - clk'last_event;
-    end if;
-
-    -- check if enough room for setup_time in low period
-    if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event)) then
-      await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, local_proc_name & ": timeout waiting for clk low period for setup_time.");
-    end if;
-
-    -- Wait setup_time specified in config record
-    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period);
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
     -- start the read
     avalon_mm_if.address      <= v_normalized_addr;
@@ -579,7 +559,14 @@ package body avalon_mm_bfm_pkg is
     avalon_mm_if.chipselect   <= '1';
 
     wait until rising_edge(clk);   -- wait for DUT update of signal
-    v_rising_edge := now;    -- time stamp for clock_period checking
+    v_time_of_rising_edge := now;
+
+    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
+                              config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+
+    -- Set the clock period for avalon_mm_read_response()
+    shared_avalon_clock_period.time_of_falling_edge := v_time_of_falling_edge;
+    shared_avalon_clock_period.time_of_rising_edge  := v_time_of_rising_edge;
 
     -- Handle read with waitrequests
     if config.use_waitrequest then
@@ -605,12 +592,6 @@ package body avalon_mm_bfm_pkg is
       end loop;
     end if;
 
-    -- Set the clock period for avalon_mm_read_response()
-    if v_prev_rising_edge = -1 ns then
-      shared_avalon_clock_period := (v_rising_edge - v_prev_falling_edge) * 2;
-    else
-      shared_avalon_clock_period := (v_rising_edge - v_prev_rising_edge);
-    end if;
     
     if ext_proc_call = "" then -- proc_name = "avalon_mm_read_request"
       log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -637,17 +618,16 @@ package body avalon_mm_bfm_pkg is
     variable v_normalized_data : std_logic_vector(avalon_mm_if.readdata'length-1 downto 0) :=
       normalize_and_check(data_value, avalon_mm_if.readdata, ALLOW_NARROWER, "data", "avalon_mm_if.readdata", msg);
     -- Helper variables
-    variable v_last_rising_edge   : time    := -1 ns;   -- time stamp for clock_period checking
-    variable v_prev_rising_edge   : time    := -1 ns;  -- time of previoud clock edge
-    variable v_prev_falling_edge  : time    := -1 ns;
-    variable timeout              : boolean := false;
+    variable v_time_of_rising_edge    : time    := shared_avalon_clock_period.time_of_rising_edge;    -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time    := shared_avalon_clock_period.time_of_falling_edge;   -- time stamp for clk period checking
+    variable timeout                  : boolean := false;
 
   begin
-    -- setup_time and hold_time checking
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_name);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_name);
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      -- setup_time and hold_time checking
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
+    end if;
 
     -- Handle read with readdatavalid.
     if config.use_readdatavalid then
@@ -656,19 +636,10 @@ package body avalon_mm_bfm_pkg is
         if is_readdatavalid_active(avalon_mm_if, config) then
           log(config.id_for_bfm, "readdatavalid was active after " & to_string(cycle) & " clock cycles", scope, msg_id_panel);
           exit;
+
         else
           wait until rising_edge(clk);
-          -- check if clk period since last rising edge is within specifications and take a new time stamp
-          if v_last_rising_edge > -1 ns then
-            check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
-          end if;
-          
-          if v_last_rising_edge > -1 ns then
-            v_prev_rising_edge := v_last_rising_edge;
-          end if;
-          
-          v_last_rising_edge := now; -- take a new time stamp for clk period checking
-        end if;
+       end if;
 
         if cycle = config.max_wait_cycles then
           timeout := true;
@@ -688,8 +659,8 @@ package body avalon_mm_bfm_pkg is
     v_normalized_data := avalon_mm_if.readdata;
     data_value        := v_normalized_data(data_value'length-1 downto 0);
 
-    -- Wait hold time specified in config record
-    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, shared_avalon_clock_period);
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
 
     if proc_name = "avalon_mm_read_response" then
       log(config.id_for_bfm, proc_call & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);

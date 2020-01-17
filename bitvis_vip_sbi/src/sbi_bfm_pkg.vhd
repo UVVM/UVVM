@@ -58,7 +58,7 @@ package sbi_bfm_pkg is
     clock_margin_severity       : t_alert_level;  -- The above margin will have this severity
     setup_time                  : time;           -- Generated signals setup time, set to clock_period/4
     hold_time                   : time;           -- Generated signals hold time, set to clock_period/4
-    bfm_sync                    : t_bfm_sync;
+    bfm_sync                    : t_bfm_sync;     -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
     id_for_bfm                  : t_msg_id;       -- The message ID used as a general message ID in the SBI BFM
     id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
     id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
@@ -70,11 +70,11 @@ package sbi_bfm_pkg is
     max_wait_cycles_severity    => failure,
     use_fixed_wait_cycles_read  => false,
     fixed_wait_cycles_read      => 0,
-    clock_period                => 10 ns,
+    clock_period                => -1 ns,
     clock_period_margin         => 0 ns,
     clock_margin_severity       => TB_ERROR,
-    setup_time                  => 2.5 ns,
-    hold_time                   => 2.5 ns,
+    setup_time                  => -1 ns,
+    hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
@@ -350,31 +350,21 @@ package body sbi_bfm_pkg is
       normalize_and_check(addr_value, addr, ALLOW_WIDER_NARROWER, "addr_value", "sbi_core_in.addr", msg);
     variable v_normalised_data : std_logic_vector(wdata'length-1 downto 0) :=
       normalize_and_check(data_value, wdata, ALLOW_NARROWER, "data_value", "sbi_core_in.wdata", msg);
+    variable v_clk_cycles_waited      : natural := 0;
+    variable v_clk_was_high           : boolean := false;  -- clk high/low status on BFM call
+    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
 
-    variable v_clk_cycles_waited  : natural := 0;
-    variable v_prev_rising_edge   : time    := -1 ns;  -- time of previoud clock edge
-    variable v_prev_falling_edge  : time    := -1 ns;
-    variable v_rising_edge        : time    := 0 ns;
-    variable v_clk_was_high       : boolean := false;  -- clk high/low status on BFM call
+    begin
 
-  begin
-    -- setup_time and hold_time checking
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
-
-    -- check if clk was high when BFM was called
-    if clk = '1' then
-      -- get time stamp of previous rising edge, if any, otherwise -1 ns
-      v_prev_rising_edge := now - clk'last_event;
-    else
-      v_prev_falling_edge := now - clk'last_event;
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      -- setup_time and hold_time checking
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     end if;
-    
-    -- Wait setup_time specified in config record. When set to SYNC_ON_CLOCK_ONLY on t_sbi_config the BFM will be
-    -- synchronised with clk falling edge, i.e. not setup_time.
-    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period);
+
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
     cs    <= '1';
     wena  <= '1';
@@ -385,11 +375,10 @@ package body sbi_bfm_pkg is
     if config.use_ready_signal then
       check_value(ready = '1' or ready = '0', failure, "Verifying that ready signal is set to either '1' or '0' when in use", scope, ID_NEVER, msg_id_panel);
     end if;
-
+  
     wait until rising_edge(clk);
-    v_rising_edge := now;
 
-    check_clock_period_margin(clk, v_prev_falling_edge, v_prev_rising_edge, v_rising_edge, config.clock_period, config.clock_period_margin);
+    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
     while (config.use_ready_signal and ready = '0') loop
       if v_clk_cycles_waited = 0 then
@@ -402,13 +391,8 @@ package body sbi_bfm_pkg is
                   ": Timeout while waiting for sbi ready", scope, ID_NEVER, msg_id_panel, proc_call);
     end loop;
 
-    -- Wait hold time specified in config record
-    if v_prev_rising_edge = -1 ns then
-      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, (v_rising_edge - v_prev_falling_edge));
-    else
-      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, (v_rising_edge - v_prev_rising_edge));
-    end if;
-    
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
 
     cs   <= '0';
     wena <= '0';
@@ -456,21 +440,21 @@ package body sbi_bfm_pkg is
     constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
 
     -- Normalize to the DUT addr/data widths
-    variable v_normalised_addr : unsigned(addr'length-1 downto 0) :=
-      normalize_and_check(addr_value, addr, ALLOW_WIDER_NARROWER, "addr_value", "sbi_core_in.addr", msg);
-    variable v_data_value         : std_logic_vector(data_value'range);
-    variable v_clk_cycles_waited  : natural := 0;
-    variable v_proc_call          : line;
-    variable v_prev_rising_edge   : time    := -1 ns;  -- time of previoud clock edge
-    variable v_prev_falling_edge  : time    := -1 ns;
-    variable v_rising_edge        : time    := 0 ns;    
-    variable v_clk_was_high       : boolean := false; -- clk high/low status on BFM call
+    variable v_normalised_addr        : unsigned(addr'length-1 downto 0) :=
+                                                normalize_and_check(addr_value, addr, ALLOW_WIDER_NARROWER, "addr_value", "sbi_core_in.addr", msg);
+    variable v_data_value             : std_logic_vector(data_value'range);
+    variable v_clk_cycles_waited      : natural := 0;
+    variable v_proc_call              : line;
+    variable v_clk_was_high           : boolean := false; -- clk high/low status on BFM call
+    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
+
   begin
-    -- setup_time and hold_time checking
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_call);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      -- setup_time and hold_time checking
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
+    end if;
 
     if ext_proc_call = "" then
       -- called directly from sequencer/VVC, show 'sbi_read...' in log
@@ -480,21 +464,8 @@ package body sbi_bfm_pkg is
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
-    -- check if enough room for setup_time in low period
-    if (clk = '0') and (config.setup_time > (config.clock_period/2 - clk'last_event))then
-      await_value(clk, '1', 0 ns, config.clock_period/2, TB_FAILURE, local_proc_name & ": timeout waiting for clk low period for setup_time.");
-    end if;
-
-    -- check if clk was high when BFM was called
-    if clk = '1' then
-      -- get time stamp of previous rising edge, if any, otherwise -1 ns
-      v_prev_rising_edge := now - clk'last_event;
-    else
-      v_prev_falling_edge := now - clk'last_event;
-    end if;
-    
-    -- Wait setup_time specified in config record
-    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period);
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
     cs   <= '1';
     wena <= '0';
@@ -506,9 +477,10 @@ package body sbi_bfm_pkg is
     end if;
 
     wait until rising_edge(clk);
-    v_rising_edge := now;
+    v_time_of_rising_edge := now;
 
-    check_clock_period_margin(clk, v_prev_falling_edge, v_prev_rising_edge, v_rising_edge, config.clock_period, config.clock_period_margin);
+    check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
+                              config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
     if config.use_fixed_wait_cycles_read then
       -- Wait for a fixed number of clk cycles
@@ -532,13 +504,9 @@ package body sbi_bfm_pkg is
     v_data_value := rdata;
     data_value   := v_data_value;
 
-    -- Wait hold_time specified in config record
-    if v_prev_rising_edge = -1 ns then
-      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, (v_rising_edge - v_prev_falling_edge));
-    else
-      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, (v_rising_edge - v_prev_rising_edge));
-    end if;
-
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+ 
     cs   <= '0';
     rena <= '0';
     if ext_proc_call = "" then          -- proc_name = "sbi_read"

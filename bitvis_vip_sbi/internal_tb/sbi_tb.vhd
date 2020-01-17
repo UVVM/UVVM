@@ -230,6 +230,10 @@ begin
       await_completion(SBI_VVCT,2, 1000 ns, "Await execution");
 
     elsif GC_TEST = "read_of_previous_value" then
+      -- Configure BFM clock_period for insert_delay() command in this test
+      shared_sbi_vvc_config(1).bfm_config.clock_period      := C_CLK_PERIOD;
+      shared_sbi_vvc_config(2).bfm_config.clock_period      := C_CLK_PERIOD;
+  
       -- Test DIVERSE
       log(ID_LOG_HDR, "Test read of a previous value");
       ------------------------------------------------------
@@ -266,6 +270,10 @@ begin
       check_value(v_data(7 downto 0), x"C2", ERROR, "Readback data via fetch_result()");
 
       await_completion(SBI_VVCT, 2, 1000 ns);
+
+      -- Reset BFM clock_period 
+      shared_sbi_vvc_config(1).bfm_config.clock_period      := -1 ns;
+      shared_sbi_vvc_config(2).bfm_config.clock_period      := -1 ns;
 
     elsif GC_TEST = "read_of_executor_status_and_inter_bfm_delay" then
       log(ID_LOG_HDR, "Test of reading executor status");
@@ -407,6 +415,7 @@ begin
       shared_sbi_vvc_config(1).bfm_config.setup_time := 2 ns;
       shared_sbi_vvc_config(1).bfm_config.hold_time := 1 ns;
       shared_sbi_vvc_config(1).bfm_config.bfm_sync := SYNC_WITH_SETUP_AND_HOLD;
+      shared_sbi_vvc_config(1).bfm_config.clock_period := C_CLK_PERIOD;
 
       -- Check for sbi_write
       sbi_write(SBI_VVCT,1, x"00", x"AA", "Write SBI1");

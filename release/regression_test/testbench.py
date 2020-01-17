@@ -462,6 +462,9 @@ class Testbench:
 
       logging.basicConfig(level=logging.INFO, format='%(message)s')
 
+      # Remove any files stuck from previous run
+      self.cleanup("All");
+
       for test_name in self.tests:
       
         for config in self.configs:
@@ -483,6 +486,7 @@ class Testbench:
             test_string += "FAILED"
             logging.warning(test_string)
             self.increment_num_failing_tests()
+            sys.exit(1)
 
       self.remove_tests()
 

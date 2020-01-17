@@ -336,6 +336,7 @@ begin
             -- Delay specified using time
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
+            check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "BFM config clock_period not set", C_SCOPE);
             -- Delay specified using integer
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;

@@ -125,11 +125,6 @@ begin
     await_uvvm_initialization(VOID);
 
     -- Override default config with settings for this testbench
-    avl_st_bfm_config.max_wait_cycles          := 1000;
-    avl_st_bfm_config.max_wait_cycles_severity := error;
-    avl_st_bfm_config.clock_period             := C_CLK_PERIOD;
-    avl_st_bfm_config.setup_time               := C_CLK_PERIOD/4;
-    avl_st_bfm_config.hold_time                := C_CLK_PERIOD/4;
     avl_st_bfm_config.symbol_width             := C_SYMBOL_WIDTH;
     avl_st_bfm_config.max_channel              := C_MAX_CHANNEL;
 
@@ -449,6 +444,54 @@ begin
       end loop;
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
       avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
+      await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
+
+    elsif GC_TEST = "test_setup_and_hold_times" then
+      avl_st_bfm_config.clock_period        := C_CLK_PERIOD;
+      avl_st_bfm_config.setup_time          := C_CLK_PERIOD/4;
+      avl_st_bfm_config.hold_time           := C_CLK_PERIOD/4;
+      avl_st_bfm_config.bfm_sync            := SYNC_WITH_SETUP_AND_HOLD;
+      avl_st_bfm_config.use_packet_transfer := true;
+      shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config     := avl_st_bfm_config;
+      shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config      := avl_st_bfm_config;
+      shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config := avl_st_bfm_config;
+      shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config  := avl_st_bfm_config;
+      new_random_data(data_packet); -- Generate random data
+
+      log(ID_LOG_HDR, "Testing setup and hold times: VVC->DUT->VVC");
+      for i in 0 to 3 loop
+        for j in 0 to i loop
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 0), "");
+        end loop;
+        for j in 0 to i loop
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(0 to 0), "");
+        end loop;
+        await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
+      end loop;
+      for i in 0 to 10 loop
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+      end loop;
+      for i in 0 to 10 loop
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+      end loop;
+      await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
+
+      log(ID_LOG_HDR, "Testing setup and hold times: VVC->VVC");
+      for i in 0 to 3 loop
+        for j in 0 to i loop
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_packet(0 to 0), "");
+        end loop;
+        for j in 0 to i loop
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, data_packet(0 to 0), "");
+        end loop;
+        await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
+      end loop;
+      for i in 0 to 10 loop
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+      end loop;
+      for i in 0 to 10 loop
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+      end loop;
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
 
     end if;

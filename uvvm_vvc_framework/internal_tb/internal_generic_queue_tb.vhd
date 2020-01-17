@@ -731,6 +731,29 @@ architecture func of generic_queue_tb is
       v_fetch_value := queue_under_test.fetch(VOID);
     end procedure;
 
+    --------------------------------------------------------------------------------------
+    -- Test of fetching the last element
+    --------------------------------------------------------------------------------------
+    procedure test_of_fetch_last_element(
+      constant dummy    : t_void
+    ) is
+      variable v_value : integer;
+    begin
+      log(ID_LOG_HDR, "Test of fetching the last element", C_SCOPE);
+
+      log(ID_SEQUENCER_SUB, "Adding two elements to the queue", C_SCOPE);
+      queue_under_test.add(0);
+      queue_under_test.add(1);
+      log(ID_SEQUENCER_SUB, "Fetching the last element from the queue", C_SCOPE);
+      v_value := queue_under_test.fetch(POSITION, 2);
+      log(ID_SEQUENCER_SUB, "Adding another element to the queue", C_SCOPE);
+      queue_under_test.add(2);
+      v_value := 0;
+      check_value(queue_under_test.fetch(VOID), v_value, ERROR, "Check fetching first element (without position)" , C_SCOPE);
+      v_value := 2;
+      check_value(queue_under_test.fetch(VOID), v_value, ERROR, "Check fetching the last element (without position)" , C_SCOPE);
+    end procedure;
+
 
     --------------------------------------------------------------------------------------
     -- Test of memory leakage in queue.
@@ -919,6 +942,7 @@ architecture func of generic_queue_tb is
     test_of_add_to_full_queue(VOID);
 
     test_of_fetch_from_empty_queue(VOID);
+    test_of_fetch_last_element(VOID);
     test_of_queue_max_count_manipulation(VOID);
     test_of_queue_fill_level_and_alerts(VOID);
 

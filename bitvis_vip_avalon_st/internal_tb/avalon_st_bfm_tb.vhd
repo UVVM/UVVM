@@ -187,173 +187,178 @@ begin
     gen_pulse(areset, 10*C_CLK_PERIOD, "Pulsing reset for 10 clock periods");
     wait for 10*C_CLK_PERIOD;
 
-    --------------------------------------------------------------------------------
-    log(ID_LOG_HDR_LARGE, "Simulating packet-based data");
-    --------------------------------------------------------------------------------
-    avl_st_bfm_config.use_packet_transfer := true;
-    new_random_data(data_packet); -- Generate random data
 
-    log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
-    avl_st_bfm_config.first_symbol_in_msb := true;
-    avalon_st_transmit(data_packet(0 to 8));
-    avalon_st_expect(data_packet(0 to 8));
+    if GC_TEST = "test_packet_data" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Simulating packet-based data");
+      ----------------------------------------------------------------------------------------------------------------------------
+      avl_st_bfm_config.use_packet_transfer := true;
+      new_random_data(data_packet); -- Generate random data
 
-    log(ID_LOG_HDR, "Testing symbol ordering: first symbol in low order bits");
-    avl_st_bfm_config.first_symbol_in_msb := false;
-    avalon_st_transmit(data_packet(0 to 8));
-    avalon_st_expect(data_packet(0 to 8));
+      log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
+      avl_st_bfm_config.first_symbol_in_msb := true;
+      avalon_st_transmit(data_packet(0 to 8));
+      avalon_st_expect(data_packet(0 to 8));
 
-    log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
-    avalon_st_transmit(data_packet(2 to 6));
-    avalon_st_receive(data_packet(2 to 6));
-    avalon_st_transmit(data_packet(3 to 9));
-    avalon_st_expect(data_packet(3 to 9));
+      log(ID_LOG_HDR, "Testing symbol ordering: first symbol in low order bits");
+      avl_st_bfm_config.first_symbol_in_msb := false;
+      avalon_st_transmit(data_packet(0 to 8));
+      avalon_st_expect(data_packet(0 to 8));
 
-    if C_SYMBOL_WIDTH = 8 then
-      log(ID_LOG_HDR, "Testing explicit std_logic_vector values");
-      avalon_st_transmit((x"01", x"23", x"45", x"67", x"89"));
-      avalon_st_expect((x"01", x"23", x"45", x"67", x"89"));
-    end if;
+      log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
+      avalon_st_transmit(data_packet(2 to 6));
+      avalon_st_receive(data_packet(2 to 6));
+      avalon_st_transmit(data_packet(3 to 9));
+      avalon_st_expect(data_packet(3 to 9));
 
-    log(ID_LOG_HDR, "Testing shortest packets possible");
-    for i in 0 to 3 loop
-      for j in 0 to i loop
-        avalon_st_transmit(data_packet(0 to 0));
+      if C_SYMBOL_WIDTH = 8 then
+        log(ID_LOG_HDR, "Testing explicit std_logic_vector values");
+        avalon_st_transmit((x"01", x"23", x"45", x"67", x"89"));
+        avalon_st_expect((x"01", x"23", x"45", x"67", x"89"));
+      end if;
+
+      log(ID_LOG_HDR, "Testing shortest packets possible");
+      for i in 0 to 3 loop
+        for j in 0 to i loop
+          avalon_st_transmit(data_packet(0 to 0));
+        end loop;
+        for j in 0 to i loop
+          avalon_st_expect(data_packet(0 to 0));
+        end loop;
       end loop;
-      for j in 0 to i loop
-        avalon_st_expect(data_packet(0 to 0));
+
+      log(ID_LOG_HDR, "Testing different packet sizes and channels");
+      for i in 0 to 30 loop
+        avalon_st_transmit(data_packet(0 to i), i);
       end loop;
-    end loop;
+      for i in 0 to 30 loop
+        avalon_st_expect(data_packet(0 to i), i);
+      end loop;
+      avalon_st_transmit(data_packet, C_MAX_CHANNEL);
+      avalon_st_expect(data_packet, C_MAX_CHANNEL);
 
-    log(ID_LOG_HDR, "Testing different packet sizes and channels");
-    for i in 0 to 30 loop
-      avalon_st_transmit(data_packet(0 to i), i);
-    end loop;
-    for i in 0 to 30 loop
-      avalon_st_expect(data_packet(0 to i), i);
-    end loop;
-    avalon_st_transmit(data_packet, C_MAX_CHANNEL);
-    avalon_st_expect(data_packet, C_MAX_CHANNEL);
-
-    log(ID_LOG_HDR, "Testing error case: receive() with missing start of packet");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';
-    avalon_st_transmit(data_packet);
-    avalon_st_receive(data_packet);
-    << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
-
-    log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
-    avalon_st_transmit(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-    avalon_st_receive(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-    << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
-
-    log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= force '0';
-    avalon_st_transmit(data_packet);
-    avalon_st_receive(data_packet);
-    << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= release;
-
-    log(ID_LOG_HDR, "Testing error case: receive() with end of packet in wrong position");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_transmit(data_packet(0 to 1*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-    avalon_st_receive(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-    new_random_data(data_packet); -- Overwrite invalid data array after receive error
-
-    if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
-      log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
+      log(ID_LOG_HDR, "Testing error case: receive() with missing start of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= force x"00";
+      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';
+      avalon_st_transmit(data_packet);
+      avalon_st_receive(data_packet);
+      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+
+      log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
+      avalon_st_transmit(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
+      avalon_st_receive(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
+      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+
+      log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= force '0';
+      avalon_st_transmit(data_packet);
+      avalon_st_receive(data_packet);
+      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= release;
+
+      log(ID_LOG_HDR, "Testing error case: receive() with end of packet in wrong position");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(data_packet(0 to 1*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
+      avalon_st_receive(data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
+      new_random_data(data_packet); -- Overwrite invalid data array after receive error
+
+      if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
+        log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
+        increment_expected_alerts_and_stop_limit(ERROR, 1);
+        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= force x"00";
+        avalon_st_transmit(data_packet(0 to 10));
+        avalon_st_receive(data_packet(0 to 10));
+        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= release;
+      end if;
+
+      log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_receive(data_packet);
+      new_random_data(data_packet); -- Overwrite invalid data array after receive error
+
+      log(ID_LOG_HDR, "Testing error case: expect() wrong data");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_transmit(data_packet(0 to 10));
-      avalon_st_receive(data_packet(0 to 10));
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= release;
-    end if;
+      avalon_st_expect(data_packet(10 to 20));
 
-    log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_receive(data_packet);
-    new_random_data(data_packet); -- Overwrite invalid data array after receive error
+      log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(data_packet, 1);
+      avalon_st_expect(data_packet, 5);
 
-    log(ID_LOG_HDR, "Testing error case: expect() wrong data");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_transmit(data_packet(0 to 10));
-    avalon_st_expect(data_packet(10 to 20));
+    elsif GC_TEST = "test_stream_data" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet)");
+      ----------------------------------------------------------------------------------------------------------------------------
+      avl_st_bfm_config.use_packet_transfer := false;
+      new_random_data(data_stream); -- Generate random data
 
-    log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_transmit(data_packet, 1);
-    avalon_st_expect(data_packet, 5);
+      log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
+      avl_st_bfm_config.first_symbol_in_msb := true;
+      avalon_st_transmit(data_stream(0 to 8));
+      avalon_st_expect(data_stream(0 to 8));
 
-    --------------------------------------------------------------------------------
-    log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet)");
-    --------------------------------------------------------------------------------
-    avl_st_bfm_config.use_packet_transfer := false;
-    new_random_data(data_stream); -- Generate random data
+      log(ID_LOG_HDR, "Testing symbol ordering: first symbol in low order bits");
+      avl_st_bfm_config.first_symbol_in_msb := false;
+      avalon_st_transmit(data_stream(0 to 8));
+      avalon_st_expect(data_stream(0 to 8));
 
-    log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
-    avl_st_bfm_config.first_symbol_in_msb := true;
-    avalon_st_transmit(data_stream(0 to 8));
-    avalon_st_expect(data_stream(0 to 8));
+      log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
+      avalon_st_transmit(data_stream(2 to 6));
+      avalon_st_receive(data_stream(2 to 6));
+      avalon_st_transmit(data_stream(3 to 9));
+      avalon_st_expect(data_stream(3 to 9));
 
-    log(ID_LOG_HDR, "Testing symbol ordering: first symbol in low order bits");
-    avl_st_bfm_config.first_symbol_in_msb := false;
-    avalon_st_transmit(data_stream(0 to 8));
-    avalon_st_expect(data_stream(0 to 8));
+      if GC_DATA_WIDTH = 32 then
+        log(ID_LOG_HDR, "Testing explicit std_logic_vector values");
+        avalon_st_transmit((x"01234567", x"89AABBCC", x"DDEEFF00", x"11223344", x"55667788"));
+        avalon_st_expect((x"01234567", x"89AABBCC", x"DDEEFF00", x"11223344", x"55667788"));
+      end if;
 
-    log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
-    avalon_st_transmit(data_stream(2 to 6));
-    avalon_st_receive(data_stream(2 to 6));
-    avalon_st_transmit(data_stream(3 to 9));
-    avalon_st_expect(data_stream(3 to 9));
-
-    if GC_DATA_WIDTH = 32 then
-      log(ID_LOG_HDR, "Testing explicit std_logic_vector values");
-      avalon_st_transmit((x"01234567", x"89AABBCC", x"DDEEFF00", x"11223344", x"55667788"));
-      avalon_st_expect((x"01234567", x"89AABBCC", x"DDEEFF00", x"11223344", x"55667788"));
-    end if;
-
-    log(ID_LOG_HDR, "Testing shortest streams possible");
-    for i in 0 to 3 loop
-      for j in 0 to i loop
-        avalon_st_transmit(data_stream(0 to 0));
+      log(ID_LOG_HDR, "Testing shortest streams possible");
+      for i in 0 to 3 loop
+        for j in 0 to i loop
+          avalon_st_transmit(data_stream(0 to 0));
+        end loop;
+        for j in 0 to i loop
+          avalon_st_expect(data_stream(0 to 0));
+        end loop;
       end loop;
-      for j in 0 to i loop
-        avalon_st_expect(data_stream(0 to 0));
+
+      log(ID_LOG_HDR, "Testing different stream sizes and channels");
+      for i in 0 to 15 loop
+        avalon_st_transmit(data_stream(0 to i), i);
       end loop;
-    end loop;
+      for i in 0 to 15 loop
+        avalon_st_expect(data_stream(0 to i), i);
+      end loop;
+      avalon_st_transmit(data_stream, C_MAX_CHANNEL);
+      avalon_st_expect(data_stream, C_MAX_CHANNEL);
 
-    log(ID_LOG_HDR, "Testing different stream sizes and channels");
-    for i in 0 to 15 loop
-      avalon_st_transmit(data_stream(0 to i), i);
-    end loop;
-    for i in 0 to 15 loop
-      avalon_st_expect(data_stream(0 to i), i);
-    end loop;
-    avalon_st_transmit(data_stream, C_MAX_CHANNEL);
-    avalon_st_expect(data_stream, C_MAX_CHANNEL);
+      log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_receive(data_stream);
+      new_random_data(data_stream); -- Overwrite invalid data array after error
 
-    log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_receive(data_stream);
-    new_random_data(data_stream); -- Overwrite invalid data array after error
+      log(ID_LOG_HDR, "Testing error case: receive() timeout - not enough data");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(data_stream(0 to 1));
+      avalon_st_receive(data_stream);
+      new_random_data(data_stream); -- Overwrite invalid data array after error
 
-    log(ID_LOG_HDR, "Testing error case: receive() timeout - not enough data");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_transmit(data_stream(0 to 1));
-    avalon_st_receive(data_stream);
-    new_random_data(data_stream); -- Overwrite invalid data array after error
+      log(ID_LOG_HDR, "Testing error case: expect() wrong data");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(data_stream(0 to 10));
+      avalon_st_expect(data_stream(10 to 20));
 
-    log(ID_LOG_HDR, "Testing error case: expect() wrong data");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_transmit(data_stream(0 to 10));
-    avalon_st_expect(data_stream(10 to 20));
+      log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(data_stream, 1);
+      avalon_st_expect(data_stream, 5);
 
-    log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
-    increment_expected_alerts_and_stop_limit(ERROR, 1);
-    avalon_st_transmit(data_stream, 1);
-    avalon_st_expect(data_stream, 5);
+    end if;
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

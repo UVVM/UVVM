@@ -678,7 +678,7 @@ package body bfm_common_pkg is
     ) is
     variable v_remaining_wait_time : time;
   begin
-    check_value(clk_period > 2*time_to_edge, TB_ERROR, "time_to_edge must be less than half clk_period", C_SCOPE, ID_NEVER);
+    check_value(clk_period > 2*time_to_edge, TB_ERROR, "Checking time_to_edge is less than half clk_period", C_SCOPE, ID_NEVER);
 
     -- If the time to the next rising edge is greater than time_to_edge and clk is low,
     -- we don't have to wait until the next falling_edge,

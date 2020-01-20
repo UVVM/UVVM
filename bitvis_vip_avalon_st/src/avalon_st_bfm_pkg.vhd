@@ -350,7 +350,7 @@ package body avalon_st_bfm_pkg is
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
 
-        v_wait_count := 0;
+        v_wait_count := 1;
         -- Check ready signal is asserted (sampled at rising_edge)
         while v_ready = '0' loop
           wait until rising_edge(clk);
@@ -361,7 +361,7 @@ package body avalon_st_bfm_pkg is
 
           v_wait_count := v_wait_count + 1;
           -- If timeout then exit procedure
-          if v_wait_count > config.max_wait_cycles then
+          if v_wait_count >= config.max_wait_cycles then
             v_timeout := true;
             exit;
           end if;
@@ -441,7 +441,6 @@ package body avalon_st_bfm_pkg is
     variable v_data_offset          : natural := 0;
     variable v_time_of_rising_edge  : time    := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge : time    := -1 ns;  -- time stamp for clk period checking
-    variable v_clock_period         : time    := -1 ns;
   begin
 
     -- If called from sequencer/VVC, show 'avalon_st_receive()...' in log
@@ -489,13 +488,13 @@ package body avalon_st_bfm_pkg is
       if v_sym_in_beat = 0 then
         -- To receive the first byte wait until valid goes high before asserting ready
         if v_sym_cnt = 0 and avalon_st_if.valid = '0' and not(v_timeout) then
-          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles-1 loop
+          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
             v_invalid_count := v_invalid_count + 1;
             wait until rising_edge(clk);
             wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
           end loop;
           -- Valid is now high, assert ready
-          if v_invalid_count < config.max_wait_cycles-1 then
+          if v_invalid_count < config.max_wait_cycles then
             avalon_st_if.ready <= '1';
             wait until rising_edge(clk);
             if v_time_of_rising_edge = -1 ns then
@@ -514,13 +513,6 @@ package body avalon_st_bfm_pkg is
             v_time_of_rising_edge := now;
           end if;
         end if;
-      end if;
-
-      -- Measure the clock period
-      if v_time_of_falling_edge > v_time_of_rising_edge then
-        v_clock_period := (v_time_of_falling_edge - v_time_of_rising_edge) * 2;
-      else
-        v_clock_period := (v_time_of_rising_edge - v_time_of_falling_edge) * 2;
       end if;
 
       if not(v_timeout) then
@@ -574,16 +566,14 @@ package body avalon_st_bfm_pkg is
           if v_sym_in_beat /= c_symbols_per_beat-1-v_empty_symbols then
             alert(error, v_proc_call.all & "=> Failed. Empty signal not set correctly for the last transfer. " & add_msg_delimiter(msg), scope);
           end if;
-          -- Wait according to bfm_sync config
-          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
         end if;
 
         -- Counter for the symbol index within the current cycle
         if v_sym_in_beat = c_symbols_per_beat-1 then
           v_sym_in_beat := 0;
           -- Don't wait on the last cycle
-          if v_sym_cnt < v_symbol_array'length-1 then
-            wait for v_clock_period;
+          if not(v_done) then
+            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
           end if;
         else
           v_sym_in_beat := v_sym_in_beat + 1;
@@ -596,15 +586,20 @@ package body avalon_st_bfm_pkg is
       ------------------------------------------------------------
       elsif not(v_timeout) then
         -- Check for timeout
-        if (v_invalid_count >= config.max_wait_cycles-1) then
+        if v_invalid_count >= config.max_wait_cycles then
           v_timeout := true;
           v_done    := true;
         else
           v_invalid_count := v_invalid_count + 1;
         end if;
-        wait for v_clock_period;
+        wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
       end if;
     end loop;
+
+    -- Wait according to bfm_sync config
+    if not(v_timeout) then
+      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+    end if;
 
     -- Send the data with the matching interface width
     if c_data_word_size = c_sym_width then

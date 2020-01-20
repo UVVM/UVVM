@@ -1,6 +1,12 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.X.X
+----------
+Released: 2020-XX-XX
+- Direct Transaction Transefer (DTT) is divided in a global trigger signal and 
+  shared variable with transfer related information.
+
 v1.5.0
 ----------
 Released: 2019-12-04

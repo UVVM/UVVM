@@ -15,9 +15,14 @@ Released: 20XX-XX-XX
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
-- Added wait_on_bfm_sync_start(), wait_on_bfm_exit() and check_clock_period_margin()
-  methods to bfm_common_pkg for synchronising clock signal driven BFMs and 
-  verifying specified clock period.
+- Clock driven BFMs utilize new synchronising methods, with synchronising to
+  clock as default, and clock_period, setup_time and hold_time set to -1 ns 
+  by default.
+- Clock driven BFMs will detect the clock period and verify with BFM config 
+  specified clock_period and clock_period_margin.
+- Direct Transaction Transefer (DTT) is divided in a global trigger signal and 
+  shared variable with transfer related information.
+
 
 
 v2019.12.04

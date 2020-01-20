@@ -3,9 +3,9 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-vX.X.X
+v2.X.X
 ----------
-Released: xxxx-xx-xx
+Released: 2020-xx-xx
 - Fixed bug in the generic queue where fetching the last element would make elements added
   after the fetch disappear.
 

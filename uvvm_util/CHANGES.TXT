@@ -3,7 +3,7 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-vX.XX.X
+v2.XX.X
 ----------
 Released: 20XX-XX-XX
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.

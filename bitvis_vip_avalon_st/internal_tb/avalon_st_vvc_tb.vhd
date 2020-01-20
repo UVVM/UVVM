@@ -311,6 +311,10 @@ begin
       avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_packet, "");
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
 
+      log(ID_LOG_HDR, "Testing error case: transmit() timeout - slave not ready");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_packet, "");
+      wait for (avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
     elsif GC_TEST = "test_stream_data" then
       ----------------------------------------------------------------------------------------------------------------------------
@@ -445,6 +449,11 @@ begin
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
       avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
+
+      log(ID_LOG_HDR, "Testing error case: transmit() timeout - slave not ready");
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_stream, "");
+      wait for (avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
     elsif GC_TEST = "test_setup_and_hold_times" then
       avl_st_bfm_config.clock_period        := C_CLK_PERIOD;

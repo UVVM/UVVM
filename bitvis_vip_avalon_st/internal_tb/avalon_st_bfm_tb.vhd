@@ -164,13 +164,8 @@ begin
     await_uvvm_initialization(VOID);
 
     -- Override default config with settings for this testbench
-    avl_st_bfm_config.max_wait_cycles          := 1000;
-    avl_st_bfm_config.max_wait_cycles_severity := error;
-    avl_st_bfm_config.clock_period             := C_CLK_PERIOD;
-    avl_st_bfm_config.setup_time               := C_CLK_PERIOD/4;
-    avl_st_bfm_config.hold_time                := C_CLK_PERIOD/4;
-    avl_st_bfm_config.symbol_width             := C_SYMBOL_WIDTH;
-    avl_st_bfm_config.max_channel              := C_MAX_CHANNEL;
+    avl_st_bfm_config.symbol_width := C_SYMBOL_WIDTH;
+    avl_st_bfm_config.max_channel  := C_MAX_CHANNEL;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -357,6 +352,30 @@ begin
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_transmit(data_stream, 1);
       avalon_st_expect(data_stream, 5);
+
+    elsif GC_TEST = "test_setup_and_hold_times" then
+      avl_st_bfm_config.clock_period        := C_CLK_PERIOD;
+      avl_st_bfm_config.setup_time          := C_CLK_PERIOD/4;
+      avl_st_bfm_config.hold_time           := C_CLK_PERIOD/4;
+      avl_st_bfm_config.bfm_sync            := SYNC_WITH_SETUP_AND_HOLD;
+      avl_st_bfm_config.use_packet_transfer := true;
+      new_random_data(data_packet); -- Generate random data
+
+      log(ID_LOG_HDR, "Testing setup and hold times");
+      for i in 0 to 3 loop
+        for j in 0 to i loop
+          avalon_st_transmit(data_packet(0 to 0));
+        end loop;
+        for j in 0 to i loop
+          avalon_st_expect(data_packet(0 to 0));
+        end loop;
+      end loop;
+      for i in 0 to 10 loop
+        avalon_st_transmit(data_packet(0 to i), i);
+      end loop;
+      for i in 0 to 10 loop
+        avalon_st_expect(data_packet(0 to i), i);
+      end loop;
 
     end if;
 

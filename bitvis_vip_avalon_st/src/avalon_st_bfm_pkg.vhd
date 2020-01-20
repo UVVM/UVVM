@@ -58,6 +58,7 @@ package avalon_st_bfm_pkg is
     clock_margin_severity       : t_alert_level; -- The above margin will have this severity
     setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
     hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                    : t_bfm_sync;    -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
     symbol_width                : natural;       -- Number of data bits per symbol.
     first_symbol_in_msb         : boolean;       -- Symbol ordering. When true, first-order symbol is in most significant bits.
     max_channel                 : natural;       -- Maximum number of channels that the interface supports.
@@ -69,11 +70,12 @@ package avalon_st_bfm_pkg is
   constant C_AVALON_ST_BFM_CONFIG_DEFAULT : t_avalon_st_bfm_config := (
     max_wait_cycles             => 100,
     max_wait_cycles_severity    => ERROR,
-    clock_period                => 0 ns,
+    clock_period                => -1 ns,
     clock_period_margin         => 0 ns,
     clock_margin_severity       => TB_ERROR,
-    setup_time                  => 0 ns,
-    hold_time                   => 0 ns,
+    setup_time                  => -1 ns,
+    hold_time                   => -1 ns,
+    bfm_sync                    => SYNC_ON_CLOCK_ONLY,
     symbol_width                => 8,
     first_symbol_in_msb         => true,
     max_channel                 => 0,
@@ -243,14 +245,15 @@ package body avalon_st_bfm_pkg is
       normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0) := data_array;
     -- Helper variables
-    variable v_symbol_array      : t_slv_array_ptr;
-    variable v_sym_in_beat       : natural := 0;
-    variable v_data_offset       : natural := 0;
-    variable v_last_rising_edge  : time    := -1 ns;
-    variable v_wait_for_transfer : boolean := false;
-    variable v_wait_count        : natural := 0;
-    variable v_timeout           : boolean := false;
-    variable v_ready             : std_logic; -- Sampled ready for the current clock cycle
+    variable v_symbol_array         : t_slv_array_ptr;
+    variable v_sym_in_beat          : natural := 0;
+    variable v_data_offset          : natural := 0;
+    variable v_time_of_rising_edge  : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_wait_for_transfer    : boolean := false;
+    variable v_wait_count           : natural := 0;
+    variable v_timeout              : boolean := false;
+    variable v_ready                : std_logic; -- Sampled ready for the current clock cycle
   begin
 
     check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_FAILURE, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -260,11 +263,10 @@ package body avalon_st_bfm_pkg is
     check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value((c_data_word_size = c_sym_width) or (c_data_word_size = avalon_st_if.data'length), TB_FAILURE, "Sanity check: Check that data_array elements have either the size of the data bus or the configured symbol.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
+    end if;
 
     -- Use a symbol array to make it easier to iterate through the data
     if c_data_word_size = c_sym_width then
@@ -290,8 +292,8 @@ package body avalon_st_bfm_pkg is
                                               data_error_width => avalon_st_if.data_error'length,
                                               empty_width      => avalon_st_if.empty'length);
 
-    -- Start transmission during setup time
-    wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
     log(ID_PACKET_INITIATE, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
@@ -337,32 +339,25 @@ package body avalon_st_bfm_pkg is
       end if;
 
       if v_wait_for_transfer then
-        -- Check if clk period since last rising edge is within specifications and take a new timestamp
         wait until rising_edge(clk);
-        if v_last_rising_edge > -1 ns then
-          check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin,
-            config.clock_period + config.clock_period_margin, config.clock_margin_severity,
-            "Checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel, proc_call);
+        if v_time_of_rising_edge = -1 ns then
+          v_time_of_rising_edge := now;
         end if;
-        v_last_rising_edge := now;
         v_ready := avalon_st_if.ready;
-        -- Wait hold time specified in config record
-        wait_until_given_time_after_rising_edge(clk, config.hold_time);
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
+                                  config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+
+        -- Wait according to config.bfm_sync setup
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
 
         v_wait_count := 0;
         -- Check ready signal is asserted (sampled at rising_edge)
         while v_ready = '0' loop
-          -- Check if clk period since last rising edge is within specifications and take a new timestamp
           wait until rising_edge(clk);
-          if v_last_rising_edge > -1 ns then
-            check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin,
-              config.clock_period + config.clock_period_margin, config.clock_margin_severity,
-              "Checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel, proc_call);
-          end if;
-          v_last_rising_edge := now;
           v_ready := avalon_st_if.ready;
-          -- Wait hold time specified in config record
-          wait_until_given_time_after_rising_edge(clk, config.hold_time);
+
+          -- Wait according to config.bfm_sync setup
+          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
 
           v_wait_count := v_wait_count + 1;
           -- If timeout then exit procedure
@@ -435,15 +430,18 @@ package body avalon_st_bfm_pkg is
     variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0) := (others => '0');
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0);
     -- Helper variables
-    variable v_proc_call         : line; -- Current proc_call, external or local
-    variable v_symbol_array      : t_slv_array_ptr;
-    variable v_sym_in_beat       : natural := 0;
-    variable v_sym_cnt           : natural := 0;
-    variable v_invalid_count     : natural := 0;  -- # cycles without valid being asserted
-    variable v_done              : boolean := false;
-    variable v_timeout           : boolean := false;
-    variable v_empty_symbols     : natural := 0;
-    variable v_data_offset       : natural := 0;
+    variable v_proc_call            : line; -- Current proc_call, external or local
+    variable v_symbol_array         : t_slv_array_ptr;
+    variable v_sym_in_beat          : natural := 0;
+    variable v_sym_cnt              : natural := 0;
+    variable v_invalid_count        : natural := 0;  -- # cycles without valid being asserted
+    variable v_done                 : boolean := false;
+    variable v_timeout              : boolean := false;
+    variable v_empty_symbols        : natural := 0;
+    variable v_data_offset          : natural := 0;
+    variable v_time_of_rising_edge  : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge : time    := -1 ns;  -- time stamp for clk period checking
+    variable v_clock_period         : time    := -1 ns;
   begin
 
     -- If called from sequencer/VVC, show 'avalon_st_receive()...' in log
@@ -460,11 +458,10 @@ package body avalon_st_bfm_pkg is
     check_value(avalon_st_if.empty'length = log2(c_symbols_per_beat), TB_FAILURE, "Sanity check: Check that empty width equals log2(symbols_per_beat).", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value((c_data_word_size = c_sym_width) or (c_data_word_size = avalon_st_if.data'length), TB_FAILURE, "Sanity check: Check that data_array elements have either the size of the data bus or the configured symbol.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for symbol order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    end if;
 
     -- Use a symbol array to make it easier to iterate through the data
     if c_data_word_size = c_sym_width then
@@ -479,36 +476,56 @@ package body avalon_st_bfm_pkg is
                                               data_error_width => avalon_st_if.data_error'length,
                                               empty_width      => avalon_st_if.empty'length);
 
-    -- Start reception during setup time
-    wait_until_given_time_before_rising_edge(clk, config.setup_time, config.clock_period);
+    -- Wait according to config.bfm_sync setup
+    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
     log(ID_PACKET_INITIATE, v_proc_call.all & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     while not(v_done) loop
       ------------------------------------------------------------
-      -- Assert the ready signal (after valid is high)
+      -- Assert the ready signal (after valid is high) and wait
+      -- for the rising_edge of the clock to sample the data
       ------------------------------------------------------------
       if v_sym_in_beat = 0 then
         -- To receive the first byte wait until valid goes high before asserting ready
         if v_sym_cnt = 0 and avalon_st_if.valid = '0' and not(v_timeout) then
-          wait until avalon_st_if.valid = '1' for (config.max_wait_cycles * config.clock_period);
-          if avalon_st_if.valid = '1' then
+          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles-1 loop
+            v_invalid_count := v_invalid_count + 1;
+            wait until rising_edge(clk);
+            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+          end loop;
+          -- Valid is now high, assert ready
+          if v_invalid_count < config.max_wait_cycles-1 then
             avalon_st_if.ready <= '1';
-            if clk = '0' then
-              -- Align sampling of the data with the rising edge of the clock
-              wait until clk = '1';
+            wait until rising_edge(clk);
+            if v_time_of_rising_edge = -1 ns then
+              v_time_of_rising_edge := now;
             end if;
+          -- Valid timed out
           else
-            -- Valid timed out
             v_timeout := true;
             v_done    := true;
           end if;
         -- Valid was already high, assert ready right away
         else
           avalon_st_if.ready <= '1';
-          -- Align sampling of the data with the rising edge of the clock
-          wait until clk = '1';
+          wait until rising_edge(clk);
+          if v_time_of_rising_edge = -1 ns then
+            v_time_of_rising_edge := now;
+          end if;
         end if;
+      end if;
+
+      -- Measure the clock period
+      if v_time_of_falling_edge > v_time_of_rising_edge then
+        v_clock_period := (v_time_of_falling_edge - v_time_of_rising_edge) * 2;
+      else
+        v_clock_period := (v_time_of_rising_edge - v_time_of_falling_edge) * 2;
+      end if;
+
+      if not(v_timeout) then
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
+                                  config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       end if;
 
       ------------------------------------------------------------
@@ -557,6 +574,8 @@ package body avalon_st_bfm_pkg is
           if v_sym_in_beat /= c_symbols_per_beat-1-v_empty_symbols then
             alert(error, v_proc_call.all & "=> Failed. Empty signal not set correctly for the last transfer. " & add_msg_delimiter(msg), scope);
           end if;
+          -- Wait according to bfm_sync config
+          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
         end if;
 
         -- Counter for the symbol index within the current cycle
@@ -564,7 +583,7 @@ package body avalon_st_bfm_pkg is
           v_sym_in_beat := 0;
           -- Don't wait on the last cycle
           if v_sym_cnt < v_symbol_array'length-1 then
-            wait for config.clock_period;
+            wait for v_clock_period;
           end if;
         else
           v_sym_in_beat := v_sym_in_beat + 1;
@@ -583,7 +602,7 @@ package body avalon_st_bfm_pkg is
         else
           v_invalid_count := v_invalid_count + 1;
         end if;
-        wait for config.clock_period;
+        wait for v_clock_period;
       end if;
     end loop;
 

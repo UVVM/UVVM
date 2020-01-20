@@ -599,7 +599,7 @@ def add_vvc_executor(file_handle, vvc_channel):
     file_handle.write("        -- Example:\n")
     file_handle.write("        --   when WRITE =>\n")
     file_handle.write("        --    -- Set DTT\n")
-    file_handle.write("        --    set_global_dtt(dtt_transaction_info, v_cmd, vvc_config);\n")
+    file_handle.write("        --    set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);\n")
     print_linefeed(file_handle)
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
     file_handle.write("        --     v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", \""+vvc_name.lower()+"_write() called with to wide data. \" & v_cmd.msg);\n")

@@ -53,7 +53,7 @@ entity uvvm_demo_th is
     -- Activity watchdog setting
     GC_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * GC_BIT_PERIOD
   );
-end entity;
+end entity uvvm_demo_th;
 
 -- Test harness architecture
 architecture struct of uvvm_demo_th is

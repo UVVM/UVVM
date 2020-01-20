@@ -39,7 +39,7 @@ context bitvis_vip_clock_generator.vvc_context;
 
 -- Test bench entity
 entity uvvm_demo_tb is
-end entity;
+end entity uvvm_demo_tb;
 
 -- Test bench architecture
 architecture func of uvvm_demo_tb is

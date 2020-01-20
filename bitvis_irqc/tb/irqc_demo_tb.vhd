@@ -34,7 +34,7 @@
 
   -- Test case entity
   entity irqc_demo_tb is
-  end entity;
+  end entity irqc_demo_tb;
 
   -- Test case architecture
   architecture func of irqc_demo_tb is

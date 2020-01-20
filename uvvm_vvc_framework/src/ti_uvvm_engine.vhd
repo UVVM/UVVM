@@ -24,7 +24,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 entity ti_uvvm_engine is
-end entity;
+end entity ti_uvvm_engine;
 
 architecture func of ti_uvvm_engine is
 begin

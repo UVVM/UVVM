@@ -482,43 +482,18 @@ package body avalon_st_bfm_pkg is
 
     while not(v_done) loop
       ------------------------------------------------------------
-      -- Assert the ready signal (after valid is high) and wait
-      -- for the rising_edge of the clock to sample the data
+      -- Wait for the rising_edge of the clock to sample the data
       ------------------------------------------------------------
       if v_sym_in_beat = 0 then
-        -- To receive the first byte wait until valid goes high before asserting ready
-        if v_sym_cnt = 0 and avalon_st_if.valid = '0' and not(v_timeout) then
-          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
-            v_invalid_count := v_invalid_count + 1;
-            wait until rising_edge(clk);
-            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-          end loop;
-          -- Valid is now high, assert ready
-          if v_invalid_count < config.max_wait_cycles then
-            avalon_st_if.ready <= '1';
-            wait until rising_edge(clk);
-            if v_time_of_rising_edge = -1 ns then
-              v_time_of_rising_edge := now;
-            end if;
-          -- Valid timed out
-          else
-            v_timeout := true;
-            v_done    := true;
-          end if;
-        -- Valid was already high, assert ready right away
-        else
-          avalon_st_if.ready <= '1';
-          wait until rising_edge(clk);
-          if v_time_of_rising_edge = -1 ns then
-            v_time_of_rising_edge := now;
-          end if;
+        avalon_st_if.ready <= '1';
+        wait until rising_edge(clk);
+        if v_time_of_rising_edge = -1 ns then
+          v_time_of_rising_edge := now;
         end if;
       end if;
 
-      if not(v_timeout) then
-        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                  config.clock_period, config.clock_period_margin, config.clock_margin_severity);
-      end if;
+      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
+                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
       ------------------------------------------------------------
       -- Receive the data
@@ -584,7 +559,7 @@ package body avalon_st_bfm_pkg is
       ------------------------------------------------------------
       -- Data couldn't be sampled, wait until next cycle
       ------------------------------------------------------------
-      elsif not(v_timeout) then
+      else
         -- Check for timeout
         if v_invalid_count >= config.max_wait_cycles then
           v_timeout := true;

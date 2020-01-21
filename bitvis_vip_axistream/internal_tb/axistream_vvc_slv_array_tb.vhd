@@ -28,12 +28,13 @@ context bitvis_vip_axistream.vvc_context;
 -- Test case entity
 entity axistream_vvc_slv_array_tb is
   generic (
-    GC_TEST           : string  := "UVVM";
-    GC_DATA_WIDTH     : natural := 32;  -- number of bits in the AXI-Stream IF data vector
-    GC_USER_WIDTH     : natural := 1;  -- number of bits in the AXI-Stream IF tuser vector
-    GC_ID_WIDTH       : natural := 1;  -- number of bits in AXI-Stream IF tID
-    GC_DEST_WIDTH     : natural := 1;  -- number of bits in AXI-Stream IF tDEST
-    GC_INCLUDE_TUSER  : boolean := true  -- If tuser, tstrb, tid, tdest is included in DUT's AXI interface
+    GC_TEST               : string  := "UVVM";
+    GC_DATA_WIDTH         : natural := 32;   -- number of bits in the AXI-Stream IF data vector
+    GC_USER_WIDTH         : natural := 1;    -- number of bits in the AXI-Stream IF tuser vector
+    GC_ID_WIDTH           : natural := 1;    -- number of bits in AXI-Stream IF tID
+    GC_DEST_WIDTH         : natural := 1;    -- number of bits in AXI-Stream IF tDEST
+    GC_INCLUDE_TUSER      : boolean := true; -- If tuser, tstrb, tid, tdest is included in DUT's AXI interface
+    GC_USE_SETUP_AND_HOLD : boolean := false -- use setup and hold times to synchronise the BFM
   );
 end entity;
 
@@ -452,12 +453,15 @@ begin
     await_uvvm_initialization(VOID);
 
     -- override default config with settings for this testbench
-    axistream_bfm_config.clock_period             := C_CLK_PERIOD;
-    axistream_bfm_config.setup_time               := C_CLK_PERIOD/4;
-    axistream_bfm_config.hold_time                := C_CLK_PERIOD/4;
     axistream_bfm_config.max_wait_cycles          := 1000;
     axistream_bfm_config.max_wait_cycles_severity := error;
     axistream_bfm_config.byte_endianness          := FIRST_BYTE_RIGHT; -- FIRST_BYTE_LEFT
+    if GC_USE_SETUP_AND_HOLD then
+      axistream_bfm_config.clock_period           := C_CLK_PERIOD;
+      axistream_bfm_config.setup_time             := C_CLK_PERIOD/4;
+      axistream_bfm_config.hold_time              := C_CLK_PERIOD/4;
+      axistream_bfm_config.bfm_sync               := SYNC_WITH_SETUP_AND_HOLD;
+    end if;
 
     -- Default: use same config for both the master and slave VVC
     shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config := axistream_bfm_config;  -- vvc_methods_pkg

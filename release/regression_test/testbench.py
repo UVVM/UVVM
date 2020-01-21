@@ -463,7 +463,7 @@ class Testbench:
       logging.basicConfig(level=logging.INFO, format='%(message)s')
 
       # Remove any files stuck from previous run
-      self.cleanup("All");
+      self.cleanup("*");
 
       for test_name in self.tests:
         self.cleanup(test_name)

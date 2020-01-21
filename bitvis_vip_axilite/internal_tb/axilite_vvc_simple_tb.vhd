@@ -97,7 +97,7 @@ begin
     constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
 
     -- BFM config
-    variable axilite_bfm_config   : t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
+    --variable axilite_bfm_config   : t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
 
     variable v_irq_mask           : std_logic_vector(7 downto 0);
     variable v_irq_mask_inv       : std_logic_vector(7 downto 0);
@@ -119,15 +119,15 @@ begin
 
     await_uvvm_initialization(VOID);
 
-    -- override default config with settings for this testbench
-    axilite_bfm_config.clock_period             := C_CLK_PERIOD;
-    axilite_bfm_config.max_wait_cycles          := 10;
-    axilite_bfm_config.max_wait_cycles_severity := ERROR;
-    axilite_bfm_config.num_aw_pipe_stages       := 2;
-    axilite_bfm_config.num_w_pipe_stages        := 1;
-    axilite_bfm_config.num_ar_pipe_stages       := 2;
-    axilite_bfm_config.num_r_pipe_stages        := 1;
-    axilite_bfm_config.num_b_pipe_stages        := 2;
+    ---- override default config with settings for this testbench
+    --axilite_bfm_config.clock_period             := C_CLK_PERIOD;
+    --axilite_bfm_config.max_wait_cycles          := 10;
+    --axilite_bfm_config.max_wait_cycles_severity := ERROR;
+    --axilite_bfm_config.num_aw_pipe_stages       := 2;
+    --axilite_bfm_config.num_w_pipe_stages        := 1;
+    --axilite_bfm_config.num_ar_pipe_stages       := 2;
+    --axilite_bfm_config.num_r_pipe_stages        := 1;
+    --axilite_bfm_config.num_b_pipe_stages        := 2;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -144,6 +144,9 @@ begin
     enable_log_msg(AXILITE_VVCT, 1, ID_IMMEDIATE_CMD);
     enable_log_msg(AXILITE_VVCT, 2, ID_IMMEDIATE_CMD);
 
+
+    shared_axilite_vvc_config(1).bfm_config.clock_period := C_CLK_PERIOD;
+    shared_axilite_vvc_config(2).bfm_config.clock_period := C_CLK_PERIOD;
 
     log(ID_LOG_HDR, "Start Simulation of AXI-Lite");
     ------------------------------------------------------------
@@ -301,6 +304,81 @@ begin
     shared_axilite_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
 
 
+
+
+
+
+    shared_axilite_vvc_config(1).bfm_config.bfm_sync := SYNC_WITH_SETUP_AND_HOLD;
+    shared_axilite_vvc_config(2).bfm_config.bfm_sync := SYNC_WITH_SETUP_AND_HOLD;
+    shared_axilite_vvc_config(1).bfm_config.setup_time := 2 ns;
+    shared_axilite_vvc_config(2).bfm_config.setup_time := 2 ns;
+    shared_axilite_vvc_config(1).bfm_config.hold_time := 3 ns;
+    shared_axilite_vvc_config(2).bfm_config.hold_time := 3 ns;
+
+
+    log(ID_LOG_HDR, "Simulation of AXI-Lite with bfm_sync = SYNC_WITH_SETUP_AND_HOLD, setup_time = 2 ns and hold_time = 3 ns;");
+    ------------------------------------------------------------
+    -- Write to VVC 1
+    axilite_write(AXILITE_VVCT,1, x"0000", x"5555", "Test of axilite write");
+    axilite_write(AXILITE_VVCT,1, x"1000", x"befbeef","Write"); -- op0
+    axilite_write(AXILITE_VVCT,1, x"2000", x"efbeef","Write");  -- op1
+    axilite_write(AXILITE_VVCT,1, x"3000", x"beef","Write");    -- op2
+    axilite_write(AXILITE_VVCT,1, x"6000", x"54321","Write");   -- rw reg
+    -- Read from VVC 1
+    axilite_read(AXILITE_VVCT, 1, x"3000", x"0"); -- just do a read
+    axilite_read(AXILITE_VVCT, 1, x"6000", x"0"); -- do another read - should see this data
+    -- verify read data on interface 1
+    v_cmd_idx := get_last_received_cmd_idx(AXILITE_VVCT, 1);
+    await_completion(AXILITE_VVCT, 1, v_cmd_idx, 1 us, "waiting for axilite_read() to finish");
+    fetch_result(AXILITE_VVCT, 1, v_cmd_idx, v_data, v_is_ok, "Fetching read-result.");
+    check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
+    check_value(v_data(C_DATA_WIDTH_1-1 downto 0), x"54321", error, "verifying read data on interface 1.");
+
+    -- Write to VVC 2
+    axilite_write(AXILITE_VVCT,2, x"0000", x"5555", to_string("Test of axilite write"));
+    axilite_write(AXILITE_VVCT,2, x"0010", x"befbeef","Write"); -- op0
+    axilite_write(AXILITE_VVCT,2, x"0020", x"efbeef","Write");  -- op1
+    axilite_write(AXILITE_VVCT,2, x"0030", x"beef","Write");    -- op2
+    axilite_write(AXILITE_VVCT,2, x"0040", x"54321","Write");   -- op3
+    axilite_write(AXILITE_VVCT,2, x"0060", x"f00b0","Write");   -- rw reg
+    -- Read from VVC 2
+    axilite_read(AXILITE_VVCT, 2, x"0040", x"0"); -- just do a read
+    axilite_read(AXILITE_VVCT, 2, x"0040", x"0"); -- do another read
+    axilite_read(AXILITE_VVCT, 2, x"0060", x"0"); -- do another read - should see this data
+    -- verify read data on interface 2
+    v_cmd_idx := get_last_received_cmd_idx(AXILITE_VVCT, 2);
+    await_completion(AXILITE_VVCT, 2, v_cmd_idx, 1 us, "waiting for axilite_read() to finish");
+    fetch_result(AXILITE_VVCT, 2, v_cmd_idx, v_data, v_is_ok, "Fetching read-result.");
+    check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
+    check_value(v_data(C_DATA_WIDTH_2-1 downto 0), x"f00b0", error, "verifying read data on interface 2.");
+
+    -- check that is was correctly written on VVC 1
+    axilite_check(AXILITE_VVCT,1, x"0006000", x"54321","Check");
+    axilite_write(AXILITE_VVCT,1, x"0006000", x"abba1972","Write");
+    axilite_check(AXILITE_VVCT,1, x"0006000", x"abba1972","Check");
+
+    -- check that is was correctly written on VVC 2
+    axilite_check(AXILITE_VVCT,2, x"0000", x"5555","Check");
+    axilite_check(AXILITE_VVCT,2, x"0010", x"befbeef","Check");
+    axilite_check(AXILITE_VVCT,2, x"0020", x"efbeef","Check");
+    axilite_check(AXILITE_VVCT,2, x"0030", x"beef","Check");
+    axilite_check(AXILITE_VVCT,2, x"0040", x"54321","Check");
+    axilite_write(AXILITE_VVCT,2, x"0000040", x"abba1972","Write");
+    axilite_check(AXILITE_VVCT,2, x"0000040", x"abba1972","Check");
+
+    -- Await completion on both VVCs
+    await_completion(AXILITE_VVCT, 1, 1000 ns);
+    await_completion(AXILITE_VVCT, 2, 1000 ns);
+
+    log(ID_LOG_HDR, "Test of timeout of check", C_SCOPE);
+    -- verify that a warning arises if the data is not what is expected
+    increment_expected_alerts(WARNING, 1);
+    axilite_check(AXILITE_VVCT,1, x"0006000", x"00000000", "Write", WARNING);
+    await_completion(AXILITE_VVCT, 1, 1000 ns);
+    -- verify that a warning arises if the data is not what is expected
+    increment_expected_alerts(WARNING, 1);
+    axilite_check(AXILITE_VVCT,2, x"0000040", x"00000000", "Check", WARNING);
+    await_completion(AXILITE_VVCT, 2, 1000 ns);    
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

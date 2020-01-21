@@ -264,6 +264,47 @@ begin
     shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_type := NO_DELAY;
     shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
 
+    wait for C_CLK_PERIOD * 5;
+
+    log(ID_LOG_HDR, "Testing basic read, write and check with setup_time = 2 ns and hold_time = 2 ns", C_SCOPE);
+    -- Reset the Avalon bus
+    avalon_mm_reset(AVALON_MM_VVCT, 1, 5, "Resetting Avalon MM Interface 1");
+    avalon_mm_reset(AVALON_MM_VVCT, 2, 5, "Resetting Avalon MM Interface 1");
+
+    -- Allow some time before testing starts
+    insert_delay(AVALON_MM_VVCT, 1, 50, "Giving the DUT some time to initialize");
+    insert_delay(AVALON_MM_VVCT, 2, 50, "Giving the DUT some time to initialize");
+
+    ----------------------------------------------------------------------
+    shared_avalon_mm_vvc_config(1).bfm_config.bfm_sync := SYNC_WITH_SETUP_AND_HOLD;
+    shared_avalon_mm_vvc_config(2).bfm_config.bfm_sync := SYNC_WITH_SETUP_AND_HOLD;
+    shared_avalon_mm_vvc_config(1).bfm_config.setup_time := 2 ns;
+    shared_avalon_mm_vvc_config(2).bfm_config.setup_time := 2 ns;
+    shared_avalon_mm_vvc_config(1).bfm_config.hold_time := 2 ns;
+    shared_avalon_mm_vvc_config(2).bfm_config.hold_time := 2 ns;
+
+    -- Write to the DUT
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"abba1111", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"abba5959", "Writing to the DUT");
+
+    await_completion(AVALON_MM_VVCT,1, 1000 ns, "Waiting for the first write to complete");
+    await_completion(AVALON_MM_VVCT,2, 1000 ns, "Waiting for the first write to complete");
+
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"aaaaaaaa", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"98765432", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"01234567", "Writing to the DUT");
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", x"98765432", "Writing to the DUT");
+
+    -- Read from the DUT
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", x"abba1111", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", x"aaaaaaaa", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 1, "0", x"98765432", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", x"abba5959", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", x"01234567", "Checking the DUT", ERROR);
+    avalon_mm_check(AVALON_MM_VVCT, 2, "0", x"98765432", "Checking the DUT", ERROR);
+
+    await_completion(AVALON_MM_VVCT,1, 100 ns, "Waiting for checks to complete");
+    await_completion(AVALON_MM_VVCT,2, 100 ns, "Waiting for checks to complete");
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

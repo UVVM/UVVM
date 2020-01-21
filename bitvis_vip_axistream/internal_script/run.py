@@ -27,7 +27,7 @@ num_failing_tests = 0
 #=============================================================================================
 
 # Create testbench configuration with TB generics
-def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuser=False):
+def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuser=False, use_setup_and_hold=False):
   config = []
 
   if any(include_tuser):
@@ -35,8 +35,13 @@ def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuse
   else:
     include_tuser = 0
 
+  if any(use_setup_and_hold):
+    use_setup_and_hold = 1
+  else:
+    use_setup_and_hold = 0
+
   for data_width, user_width, id_width, dest_width in product(data_widths, user_widths, id_widths, dest_widths):
-    config.append(str(data_width) + ' ' + str(user_width) + ' ' + str(id_width) + ' ' + str(dest_width) + ' ' + str(include_tuser))
+    config.append(str(data_width) + ' ' + str(user_width) + ' ' + str(id_width) + ' ' + str(dest_width) + ' ' + str(include_tuser) + ' ' + str(use_setup_and_hold))
 
   return config
 
@@ -54,50 +59,65 @@ def main(argv):
 
 
   # Set testbench, config and run
+  tb.set_tb_name("axistream_simple_tb")
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[True])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  tb.set_tb_name("axistream_simple_tb")
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[False])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  # Set testbench, config and run
+  tb.set_tb_name("axistream_vvc_simple_tb")
+  configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8], id_widths=[8], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[True])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  # Set testbench, config and run
+  tb.set_tb_name("axistream_vvc_simple_tb")
+  configs = create_config(data_widths=[32], user_widths=[1, 5], id_widths=[3], dest_widths=[1], include_tuser=[True], use_setup_and_hold=[False])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  # Set testbench, config and run
+  tb.set_tb_name("axistream_vvc_simple_tb")
+  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[False], use_setup_and_hold=[True])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  # Set testbench, config and run
   tb.set_tb_name("axistream_bfm_slv_array_tb")
-  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False])
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[True])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  tb.set_tb_name("axistream_bfm_slv_array_tb")
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[False])
   tb.set_configs(configs)
   tb.run_simulation()
 
   # Set testbench, config and run
   tb.set_tb_name("axistream_vvc_slv_array_tb")
-  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[True])
   tb.set_configs(configs)
   tb.run_simulation()
 
-  # Set testbench, config and run
-  tb.set_tb_name("axistream_simple_tb")
-  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False])
-  tb.set_configs(configs)
-  tb.run_simulation()
-
-  # Set testbench, config and run
-  tb.set_tb_name("axistream_vvc_simple_tb")
-  configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8], id_widths=[8], dest_widths=[4], include_tuser=[True])
-  tb.set_configs(configs)
-  tb.run_simulation()
-
-  # Set testbench, config and run
-  tb.set_tb_name("axistream_vvc_simple_tb")
-  configs = create_config(data_widths=[32], user_widths=[1, 5], id_widths=[3], dest_widths=[1], include_tuser=[True])
-  tb.set_configs(configs)
-  tb.run_simulation()
-
-  # Set testbench, config and run
-  tb.set_tb_name("axistream_vvc_simple_tb")
-  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[False])
+  tb.set_tb_name("axistream_vvc_slv_array_tb")
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[False])
   tb.set_configs(configs)
   tb.run_simulation()
 
   # Set testbench, config and run
   tb.set_tb_name("axistream_multiple_vvc_tb")
-  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[True])
+  configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[True], use_setup_and_hold=[True])
   tb.set_configs(configs)
   tb.run_simulation()
 
   # Set testbench, config and run
   tb.set_tb_name("axistream_multiple_vvc_tb")
-  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True])
+  configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[False])
   tb.set_configs(configs)
   tb.run_simulation()
 

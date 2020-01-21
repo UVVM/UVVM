@@ -18,6 +18,7 @@ set user_width 0
 set id_width 0
 set dest_width 0
 set include_tuser 0
+set use_setup_and_hold 0
 
 if { [info exists 1] } {
   set library "$1"
@@ -59,11 +60,20 @@ if { [info exists 8] } {
     set include_tuser "true"
   } else {
     set include_tuser "false"
-  } 
+  }
   unset 8
 }
 
+if { [info exists 9] } {
+  if {$9 == 1} {
+    set use_setup_and_hold "true"
+  } else {
+    set use_setup_and_hold "false"
+  }
+  unset 9
+}
 
-vsim -gGC_TEST=$run_test -gGC_DATA_WIDTH=$data_width -gGC_USER_WIDTH=$user_width -gGC_ID_WIDTH=$id_width -gGC_DEST_WIDTH=$dest_width -gGC_INCLUDE_TUSER=$include_tuser $library.$testbench
+
+vsim -gGC_TEST=$run_test -gGC_DATA_WIDTH=$data_width -gGC_USER_WIDTH=$user_width -gGC_ID_WIDTH=$id_width -gGC_DEST_WIDTH=$dest_width -gGC_INCLUDE_TUSER=$include_tuser -gGC_USE_SETUP_AND_HOLD=$use_setup_and_hold $library.$testbench
 
 run -all

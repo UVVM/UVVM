@@ -38,11 +38,12 @@ use bitvis_vip_axistream.axistream_bfm_pkg.all;
 -- Test case entity
 entity axistream_simple_tb is
   generic (
-    GC_TEST           : string  := "UVVM";
-    GC_DATA_WIDTH     : natural := 32;  -- number of bits in AXI-Stream IF tdata
-    GC_USER_WIDTH     : natural := 1;  -- number of bits in AXI-Stream IF tuser
-    GC_ID_WIDTH       : natural := 1;  -- number of bits in AXI-Stream IF tID
-    GC_DEST_WIDTH     : natural := 1  -- number of bits in AXI-Stream IF tDEST
+    GC_TEST               : string  := "UVVM";
+    GC_DATA_WIDTH         : natural := 32;   -- number of bits in AXI-Stream IF tdata
+    GC_USER_WIDTH         : natural := 1;    -- number of bits in AXI-Stream IF tuser
+    GC_ID_WIDTH           : natural := 1;    -- number of bits in AXI-Stream IF tID
+    GC_DEST_WIDTH         : natural := 1;    -- number of bits in AXI-Stream IF tDEST
+    GC_USE_SETUP_AND_HOLD : boolean := false -- use setup and hold times to synchronise the BFM
   );
 end entity;
 
@@ -136,11 +137,14 @@ begin
 
 
     -- override default config with settings for this testbench
-    axistream_bfm_config.clock_period             := C_CLK_PERIOD;
-    axistream_bfm_config.setup_time               := C_CLK_PERIOD/4;
-    axistream_bfm_config.hold_time                := C_CLK_PERIOD/4;
     axistream_bfm_config.max_wait_cycles          := 1000;
     axistream_bfm_config.max_wait_cycles_severity := error;
+    if GC_USE_SETUP_AND_HOLD then
+      axistream_bfm_config.clock_period           := C_CLK_PERIOD;
+      axistream_bfm_config.setup_time             := C_CLK_PERIOD/4;
+      axistream_bfm_config.hold_time              := C_CLK_PERIOD/4;
+      axistream_bfm_config.bfm_sync               := SYNC_WITH_SETUP_AND_HOLD;
+    end if;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -231,11 +235,14 @@ begin
   begin
 
     -- override default config with settings for this testbench
-    axistream_bfm_config.clock_period             := C_CLK_PERIOD;
-    axistream_bfm_config.setup_time               := C_CLK_PERIOD/4;
-    axistream_bfm_config.hold_time                := C_CLK_PERIOD/4;
     axistream_bfm_config.max_wait_cycles          := 1000;
     axistream_bfm_config.max_wait_cycles_severity := error;
+    if GC_USE_SETUP_AND_HOLD then
+      axistream_bfm_config.clock_period           := C_CLK_PERIOD;
+      axistream_bfm_config.setup_time             := C_CLK_PERIOD/4;
+      axistream_bfm_config.hold_time              := C_CLK_PERIOD/4;
+      axistream_bfm_config.bfm_sync               := SYNC_WITH_SETUP_AND_HOLD;
+    end if;
 
     v_data_array(0 to 2) := (x"a0" , x"a1" , x"a2");
     axistream_expect_bytes(v_data_array(0 to 2),

@@ -7,9 +7,13 @@ v2.XX.X
 ----------
 Released: 20XX-XX-XX
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
+- Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
 - Added wait_on_bfm_sync_start(), wait_on_bfm_exit() and check_clock_period_margin()
   methods for synchronising clock signal driven BFMs and verifying specified 
   clock period.
+- Added t_slv_array_ptr type.
+- Added a log2 function.
+- Added a to_string function for integer type with output as DEC, HEX or BIN.
 
 
 v2.10.1

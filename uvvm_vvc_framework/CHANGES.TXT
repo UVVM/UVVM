@@ -8,6 +8,8 @@ v2.X.X
 Released: 2020-xx-xx
 - Fixed bug in the generic queue where fetching the last element would make elements added
   after the fetch disappear.
+- Added a deallocate procedure to ti_data_fifo_pkg.
+- Fixed typos and added generation of vvc_context file in vvc_generator.py script.
 
 v2.7.0
 ----------

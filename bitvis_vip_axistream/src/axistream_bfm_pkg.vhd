@@ -89,8 +89,6 @@ package axistream_bfm_pkg is
     ready_default_value         : std_logic;     -- Which value the BFM shall set ready to between accesses.
     -- Common
     id_for_bfm                  : t_msg_id;      -- The message ID used as a general message ID in the BFM
-    id_for_bfm_wait             : t_msg_id;      -- The message ID used for logging waits in the BFM
-    id_for_bfm_poll             : t_msg_id;      -- The message ID used for logging polling in the BFM
   end record;
 
   -- Define the default value for the BFM config
@@ -111,9 +109,7 @@ package axistream_bfm_pkg is
     ready_low_at_word_num       => 0,
     ready_low_duration          => 0,
     ready_default_value         => '0',
-    id_for_bfm                  => ID_BFM,
-    id_for_bfm_wait             => ID_BFM_WAIT,
-    id_for_bfm_poll             => ID_BFM_POLL
+    id_for_bfm                  => ID_BFM
     );
 
   --========================================================================================================================

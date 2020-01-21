@@ -55,10 +55,13 @@ if { [info exists 7] } {
 }
 
 if { [info exists 8] } {
-  set include_tuser "$8"
+  if {$8 == 1} {
+    set include_tuser "true"
+  } else {
+    set include_tuser "false"
+  } 
   unset 8
 }
-
 
 
 vsim -gGC_TEST=$run_test -gGC_DATA_WIDTH=$data_width -gGC_USER_WIDTH=$user_width -gGC_ID_WIDTH=$id_width -gGC_DEST_WIDTH=$dest_width -gGC_INCLUDE_TUSER=$include_tuser $library.$testbench

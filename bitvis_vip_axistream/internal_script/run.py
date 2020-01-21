@@ -30,7 +30,7 @@ num_failing_tests = 0
 def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuser=False):
   config = []
 
-  if include_tuser:
+  if any(include_tuser):
     include_tuser = 1
   else:
     include_tuser = 0

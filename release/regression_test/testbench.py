@@ -466,6 +466,7 @@ class Testbench:
       self.cleanup("All");
 
       for test_name in self.tests:
+        self.cleanup(test_name)
       
         for config in self.configs:
           self.increment_num_tests()
@@ -486,7 +487,6 @@ class Testbench:
             test_string += "FAILED"
             logging.warning(test_string)
             self.increment_num_failing_tests()
-            sys.exit(1)
 
       self.remove_tests()
 

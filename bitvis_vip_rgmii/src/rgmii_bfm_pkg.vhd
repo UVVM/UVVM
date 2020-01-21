@@ -58,9 +58,9 @@ package rgmii_bfm_pkg is
   constant C_RGMII_BFM_CONFIG_DEFAULT : t_rgmii_bfm_config := (
     max_wait_cycles          => 10,
     max_wait_cycles_severity => ERROR,
-    clock_period             => 10 ns,
-    setup_time               => 0 ns,
-    hold_time                => 0 ns,
+    clock_period             => -1 ns,
+    setup_time               => -1 ns,
+    hold_time                => -1 ns,
     id_for_bfm               => ID_BFM
   );
 

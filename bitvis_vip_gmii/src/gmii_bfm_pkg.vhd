@@ -66,9 +66,9 @@ package gmii_bfm_pkg is
   end record;
 
   constant C_GMII_BFM_CONFIG_DEFAULT : t_gmii_bfm_config := (
-    clock_period                => 8 ns,
-    setup_time                  => 2 ns,
-    hold_time                   => 2 ns,
+    clock_period                => -1 ns,
+    setup_time                  => -1 ns,
+    hold_time                   => -1 ns,
     timeout                     => 1 us,
     timeout_severity            => TB_ERROR,
     id_for_bfm                  => ID_BFM,

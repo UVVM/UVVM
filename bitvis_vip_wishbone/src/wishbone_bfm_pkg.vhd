@@ -54,11 +54,11 @@ package wishbone_bfm_pkg is
   constant C_WISHBONE_BFM_CONFIG_DEFAULT : t_wishbone_bfm_config := (
     max_wait_cycles             => 10,
     max_wait_cycles_severity    => failure,
-    clock_period                => 10 ns,
+    clock_period                => -1 ns,
     clock_period_margin         => 0 ns,
     clock_margin_severity       => TB_ERROR,
-    setup_time                  => 0 ns,
-    hold_time                   => 0 ns,
+    setup_time                  => -1 ns,
+    hold_time                   => -1 ns,
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL

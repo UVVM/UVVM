@@ -125,6 +125,7 @@ architecture behav of spi_vvc_tb is
     clock_margin_severity       => TB_ERROR,
     setup_time                  => C_CLK_PERIOD/4,
     hold_time                   => C_CLK_PERIOD/4,
+    bfm_sync                    => SYNC_ON_CLOCK_ONLY,
     clock_period_margin         => 0 ns,
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,

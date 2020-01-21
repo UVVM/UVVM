@@ -44,7 +44,7 @@ package gpio_bfm_pkg is
 
   -- Define the default value for the BFM config
   constant C_GPIO_BFM_CONFIG_DEFAULT : t_gpio_bfm_config := (
-    clock_period     => 10 ns,
+    clock_period     => -1 ns,
     match_strictness => MATCH_STD,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,

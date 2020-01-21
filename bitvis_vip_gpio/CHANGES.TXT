@@ -4,9 +4,10 @@ Bitvis VIP GPIO - Overview on Versions and Changes
 v1.X.X
 ----------
 Released: 2020-XX-XX
+- BFM config default clock_period is now default -1 ns.
 - VVC command insert_delay() will raise a TB_ERROR when called if the 
   bfm_config.clock_period has not been set.  
-- Direct Transaction Transefer (DTT) is divided in a global trigger signal and 
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
   shared variable with transfer related information.
 
 v1.5.0

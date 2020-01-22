@@ -32,6 +32,9 @@ Released: 20XX-XX-XX
 - Added a deallocate procedure to ti_data_fifo_pkg.
 - Fixed typos and added generation of vvc_context file in vvc_generator.py script.
 - Added missing insert_expected() methods in the generic_sb_pkg.
+- Fixed bug in the generic queue where fetching the last element would make elements added
+  after the fetch disappear.
+- Updated UVVM VVC Framework Essential Mechanisms with direct transaction transfer changes.
 
 
 v2019.12.04

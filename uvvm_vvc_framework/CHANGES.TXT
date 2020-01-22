@@ -10,6 +10,7 @@ Released: 2020-xx-xx
   after the fetch disappear.
 - Added a deallocate procedure to ti_data_fifo_pkg.
 - Fixed typos and added generation of vvc_context file in vvc_generator.py script.
+- Updated UVVM VVC Framework Essential Mechanisms with direct transaction transfer changes.
 
 v2.7.0
 ----------

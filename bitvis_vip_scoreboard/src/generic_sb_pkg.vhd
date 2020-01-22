@@ -1623,12 +1623,17 @@ package body generic_sb_pkg is
             v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
 
             -- truncate decimals and add units
-            if C_LOG_TIME_BASE = ns then
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ns ";
-            else
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ps ";
+            if v_delimiter_pos > 0 then
+              if C_LOG_TIME_BASE = ns then
+                v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ns";
+              else
+                v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ps";
+              end if;
+              v_timestamp_width := v_delimiter_pos + 4;
             end if;
-            v_timestamp_width := v_delimiter_pos + 5;
+            -- add a space after the timestamp
+            v_timestamp_width := v_timestamp_width + 1;
+            v_result(v_timestamp_width to v_timestamp_width) := " ";
 
             -- add time string to return string
             v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);

@@ -251,6 +251,21 @@ package generic_sb_pkg is
       constant msg               : in string := "";
       constant source            : in string := "");
 
+      procedure insert_expected(
+        constant instance          : in integer;
+        constant identifier_option : in t_identifier_option;
+        constant identifier        : in positive;
+        constant expected_element  : in t_element;
+        constant msg               : in string := "";
+        constant source            : in string := "");
+  
+      procedure insert_expected(
+        constant identifier_option : in t_identifier_option;
+        constant identifier        : in positive;
+        constant expected_element  : in t_element;
+        constant msg               : in string := "";
+        constant source            : in string := "");
+
     procedure delete_expected(
       constant instance         : in integer;
       constant expected_element : in t_element;
@@ -1812,7 +1827,30 @@ package body generic_sb_pkg is
       end if;
     end procedure insert_expected;
 
+    procedure insert_expected(
+      constant instance          : in integer;
+      constant identifier_option : in t_identifier_option;
+      constant identifier        : in positive;
+      constant expected_element  : in t_element;
+      constant msg               : in string := "";
+      constant source            : in string := ""
+      ) is
+      begin
+        insert_expected(instance, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() inserted expected without TAG in position " & to_string(identifier) & ".");
+      end procedure insert_expected;
 
+    procedure insert_expected(
+      constant identifier_option : in t_identifier_option;
+      constant identifier        : in positive;
+      constant expected_element  : in t_element;
+      constant msg               : in string := "";
+      constant source            : in string := ""
+      ) is
+      begin
+        insert_expected(1, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() inserted expected without TAG in position " & to_string(identifier) & ".");
+      end procedure insert_expected;
+
+      
 
     ----------------------------------------------------------------------------------------------------
     --

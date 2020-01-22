@@ -29,6 +29,7 @@ Released: 20XX-XX-XX
   type with output as DEC, HEX or BIN.
 - Added a deallocate procedure to ti_data_fifo_pkg.
 - Fixed typos and added generation of vvc_context file in vvc_generator.py script.
+- Added missing insert_expected() methods in the generic_sb_pkg.
 
 
 v2019.12.04

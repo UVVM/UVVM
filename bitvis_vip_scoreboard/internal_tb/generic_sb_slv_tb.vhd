@@ -61,6 +61,17 @@ architecture func of generic_sb_slv_tb is
   ------------------------------------------------
   p_main: process
 
+    procedure add_100_expected_elements_with_no_tag(
+      constant scope : string
+    ) is
+    begin
+      log(ID_SEQUENCER, "adding 100 expected elements with no tag", scope);
+      for i in 1 to 100 loop
+        sb_under_test.add_expected(std_logic_vector(to_unsigned(i, 8)), "add expected: " & to_string(i));
+      end loop;
+    end procedure add_100_expected_elements_with_no_tag;
+
+
     procedure add_100_expected_elements_with_same_tag(
       constant scope : string
     ) is
@@ -1322,6 +1333,77 @@ architecture func of generic_sb_slv_tb is
 
     end procedure test_insert_expected;
 
+    procedure test_insert_expected_no_tag is
+      constant scope    : string := "TB: insert_expected_no_tag";
+      variable v_config : t_sb_config;
+    begin
+
+      log(ID_LOG_HDR_LARGE, "Test insert_expected", scope);
+
+      sb_under_test.disable_log_msg(ID_DATA);
+
+      v_config := C_SB_CONFIG_DEFAULT;
+      log(ID_LOG_HDR, "set configuration", scope);
+      sb_under_test.config(v_config);
+
+      log(ID_LOG_HDR, "adding expected data", scope);
+      add_100_expected_elements_with_no_tag(scope);
+
+      log(ID_LOG_HDR, "check counters before inserts", scope);
+      check_value(sb_under_test.is_empty(VOID),               false, ERROR, "verify SB is not empty",       scope);
+      check_value(sb_under_test.get_pending_count(VOID),        100, ERROR, "verify pending count",         scope);
+      check_value(sb_under_test.get_entered_count(VOID),        100, ERROR, "verify entered count",         scope);
+      check_value(sb_under_test.get_match_count(VOID),            0, ERROR, "verify match count",           scope);
+      check_value(sb_under_test.get_mismatch_count(VOID),         0, ERROR, "verify mismatch count",        scope);
+      check_value(sb_under_test.get_drop_count(VOID),             0, ERROR, "verify drop count",            scope);
+      check_value(sb_under_test.get_initial_garbage_count(VOID),  0, ERROR, "verify initial garbage count", scope);
+      check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
+
+      log(ID_LOG_HDR, "Insert expected", scope);
+      sb_under_test.insert_expected(POSITION,   2, x"AA", "insert in position 2");
+      sb_under_test.insert_expected(ENTRY_NUM, 50, x"BB", "insert after entry number 50");
+      sb_under_test.insert_expected(POSITION, 102, x"CC", "insert in position 102");
+
+      log(ID_LOG_HDR, "check counters after inserts", scope);
+      check_value(sb_under_test.is_empty(VOID),               false, ERROR, "verify SB is not empty",       scope);
+      check_value(sb_under_test.get_pending_count(VOID),        103, ERROR, "verify pending count",         scope);
+      check_value(sb_under_test.get_entered_count(VOID),        103, ERROR, "verify entered count",         scope);
+      check_value(sb_under_test.get_match_count(VOID),            0, ERROR, "verify match count",           scope);
+      check_value(sb_under_test.get_mismatch_count(VOID),         0, ERROR, "verify mismatch count",        scope);
+      check_value(sb_under_test.get_drop_count(VOID),             0, ERROR, "verify drop count",            scope);
+      check_value(sb_under_test.get_initial_garbage_count(VOID),  0, ERROR, "verify initial garbage count", scope);
+      check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
+
+      log(ID_LOG_HDR, "check expected", scope);
+      sb_under_test.check_received(std_logic_vector(to_unsigned(1, 8)), "check received: " & to_string(1));
+      sb_under_test.check_received(x"AA", "check received: inserted element 1");
+      for i in 2 to 50 loop
+        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "check received: " & to_string(i));
+      end loop;
+      sb_under_test.check_received(x"BB", "check received: inserted element 2");
+      for i in 51 to 99 loop
+        sb_under_test.check_received(std_logic_vector(to_unsigned(i, 8)), "check received: " & to_string(i));
+      end loop;
+      sb_under_test.check_received(x"CC", "check received: inserted element 3");
+      sb_under_test.check_received(std_logic_vector(to_unsigned(100, 8)), "check received: " & to_string(100));
+
+      log(ID_LOG_HDR, "check counters after check_expected", scope);
+      check_value(sb_under_test.is_empty(VOID),                      ERROR, "verify SB is empty",           scope);
+      check_value(sb_under_test.get_pending_count(VOID),          0, ERROR, "verify pending count",         scope);
+      check_value(sb_under_test.get_entered_count(VOID),        103, ERROR, "verify entered count",         scope);
+      check_value(sb_under_test.get_match_count(VOID),          103, ERROR, "verify match count",           scope);
+      check_value(sb_under_test.get_mismatch_count(VOID),         0, ERROR, "verify mismatch count",        scope);
+      check_value(sb_under_test.get_drop_count(VOID),             0, ERROR, "verify drop count",            scope);
+      check_value(sb_under_test.get_initial_garbage_count(VOID),  0, ERROR, "verify initial garbage count", scope);
+      check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
+
+      sb_under_test.report_counters(ALL_ENABLED_INSTANCES);
+      sb_under_test.report_counters(VOID);
+
+      sb_under_test.reset(VOID);
+
+    end procedure test_insert_expected_no_tag;
+
     procedure test_delete_expected is
       constant scope    : string := "TB: delete_expected";
       variable v_config : t_sb_config;
@@ -1688,6 +1770,7 @@ architecture func of generic_sb_slv_tb is
     test_peek;
     test_fetch;
     test_insert_expected;
+    test_insert_expected_no_tag;
     test_delete_expected;
     test_exists;
     test_multiple_instances;

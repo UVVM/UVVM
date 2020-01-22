@@ -16,6 +16,8 @@ Released: 20XX-XX-XX
   of the default clock period setting before using the configured setting.
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
 - Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
+- Added bfm_sync to the BFM configuration record for SBI VIP, Avalon MM VIP,
+  AXI-Lite VIP and AXI-Stream VIP.
 - Clock driven BFMs utilize new synchronising methods, with synchronising to
   clock as default, and clock_period, setup_time and hold_time set to -1 ns 
   by default.

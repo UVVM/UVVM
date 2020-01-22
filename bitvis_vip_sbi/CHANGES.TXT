@@ -5,6 +5,7 @@ Bitvis VIP SBI - Overview on Versions and Changes
 v2.X.X
 ----------
 Released: 2020-XX-XX
+- Added bfm_sync to the BFM configuration record.
 - Added new BFM synchronisation methods with default SYNC_ON_CLOCK_ONLY.
   The BFM will synchronise and start with falling edge, detect clock period, and
   exit after a quarter clock period.

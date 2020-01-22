@@ -139,6 +139,7 @@ begin
     -- override default config with settings for this testbench
     axistream_bfm_config.max_wait_cycles          := 1000;
     axistream_bfm_config.max_wait_cycles_severity := error;
+    axistream_bfm_config.check_packet_length      := true;
     if GC_USE_SETUP_AND_HOLD then
       axistream_bfm_config.clock_period           := C_CLK_PERIOD;
       axistream_bfm_config.setup_time             := C_CLK_PERIOD/4;
@@ -237,6 +238,7 @@ begin
     -- override default config with settings for this testbench
     axistream_bfm_config.max_wait_cycles          := 1000;
     axistream_bfm_config.max_wait_cycles_severity := error;
+    axistream_bfm_config.check_packet_length      := true;
     if GC_USE_SETUP_AND_HOLD then
       axistream_bfm_config.clock_period           := C_CLK_PERIOD;
       axistream_bfm_config.setup_time             := C_CLK_PERIOD/4;

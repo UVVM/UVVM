@@ -803,7 +803,7 @@ package body axistream_bfm_pkg is
 
       if byte = data_array'high then
         -- Packet done.
-        axistream_if.tlast     <= '1';
+        axistream_if.tlast <= '1';
         v_wait_for_next_transfer_cycle := true; -- No more bytes to fill in tdata
       else
         axistream_if.tlast <= '0';
@@ -1449,10 +1449,10 @@ package body axistream_bfm_pkg is
       if axistream_if.tvalid = '1' and axistream_if.tready = '1' then
         v_invalid_count := 0;
 
-        -- Sample data.
+        -- Sample data
         data_array(v_byte_cnt) := axistream_if.tdata(7+8*v_byte_in_word downto 8*v_byte_in_word);
 
-        -- Sample tuser for this transfer (this word): There is one user_array entry per word
+        -- Sample sideband data for this transfer (this word): There is one array entry per word
         if v_byte_in_word = 0 then
           v_word_idx     := v_byte_cnt/c_num_bytes_per_word;
           if (v_word_idx <= user_array'high) then  -- Include this 'if' to allow a shorter user_array if the caller doesn't care what tuser is
@@ -1476,10 +1476,13 @@ package body axistream_bfm_pkg is
         --     ", tdest=" & to_string(dest_array(v_byte_cnt/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
             " (byte# " & to_string(v_byte_cnt) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
 
-        -- Check tlast='1' at expected last byte
+        -- Stop sampling data when we have filled the data_array
         if v_byte_cnt = data_array'high then
-          check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
-          v_done := true;  -- Stop sampling data when we have filled the data_array
+          -- Check tlast='1' at expected last byte
+          if config.check_packet_length then
+            check_value(axistream_if.tlast, '1', config.protocol_error_severity, "Check tlast at expected last byte = " & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+          end if;
+          v_done := true;
         end if;
 
         -- Allow that tlast arrives sooner than indicated by data_array'high
@@ -1513,9 +1516,6 @@ package body axistream_bfm_pkg is
             end if;
           end if;
         else -- tlast = 0
-          if (v_byte_cnt = data_array'high) then
-            alert(config.protocol_error_severity, v_proc_call.all & "=> Failed. tlast not received, expected at or before byte#" & to_string(v_byte_cnt) & ". " & add_msg_delimiter(msg), scope);
-          end if;
           -- Check that all tkeep bits are '1'. (Only continous stream supported)
           check_value(axistream_if.tkeep(v_byte_in_word), '1', ERROR, "When tlast='0', check that all tkeep bits are '1'. (The BFM supports only continuous stream)" & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel, v_proc_call.all);
         end if;
@@ -1757,9 +1757,6 @@ package body axistream_bfm_pkg is
     variable v_dest_error_cnt     : natural                := 0;
     variable v_first_errored_byte : natural;
   begin
-    -- Make the receive() procedure check tlast position is as expected
-    v_config.check_packet_length := true;
-
     -- Receive and store data
     axistream_receive_bytes(data_array   => v_rx_data_array,
                       data_length  => v_rx_data_length,

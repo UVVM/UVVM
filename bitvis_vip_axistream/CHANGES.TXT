@@ -16,6 +16,7 @@ Released: 2020-XX-XX
 - Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
   shared variable with transfer related information.
 - Removed unused config elements id_for_bfm_wait & id_for_bfm_poll.
+- Only check for TLast in receive procedure when config check_packet_length is true.
 
 v4.4.0
 ----------

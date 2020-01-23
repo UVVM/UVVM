@@ -98,14 +98,14 @@ package rgmii_bfm_pkg is
     constant scope         : in    string             := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ---------------------------------------------------------------------------------------------
   -- RGMII Expect
   ---------------------------------------------------------------------------------------------
   procedure rgmii_expect (
-    constant exp_array    : in    t_byte_array;
+    constant data_exp     : in    t_byte_array;
     constant msg          : in    string             := "";
     signal   rgmii_if     : inout t_rgmii_if;
     constant alert_level  : in    t_alert_level      := ERROR;
@@ -167,9 +167,9 @@ package body rgmii_bfm_pkg is
     -- Enable control line and send 4 bits on each clock edge
     rgmii_if.tx_ctl <= '1';
     for i in data_array'range loop
-      rgmii_if.txd <= data_array(i)(7 downto 4);
-      wait for config.clock_period/2;
       rgmii_if.txd <= data_array(i)(3 downto 0);
+      wait for config.clock_period/2;
+      rgmii_if.txd <= data_array(i)(7 downto 4);
       wait for config.clock_period/2;
     end loop;
 
@@ -189,7 +189,7 @@ package body rgmii_bfm_pkg is
     constant scope         : in    string             := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     constant local_proc_name  : string := "rgmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
     constant local_proc_call  : string := local_proc_name & "(" & to_string(data_array'length) & " bytes)";
@@ -202,7 +202,7 @@ package body rgmii_bfm_pkg is
     -- If called from sequencer/VVC, show 'rgmii_read()...' in log
     if ext_proc_call = "" then
       write(v_proc_call, local_proc_call);
-    -- If called from other BFM procedure like rgmii_expect, log 'rgmii_expect() while executing rgmii_read()...'
+    -- If called from another BFM procedure like rgmii_expect, log 'rgmii_expect() while executing rgmii_read()...'
     else
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
@@ -236,9 +236,9 @@ package body rgmii_bfm_pkg is
           v_overflow := true;
           exit;
         end if;
-        data_array(v_byte_cnt)(7 downto 4) := rgmii_if.rxd;
-        wait for config.clock_period/2;
         data_array(v_byte_cnt)(3 downto 0) := rgmii_if.rxd;
+        wait for config.clock_period/2;
+        data_array(v_byte_cnt)(7 downto 4) := rgmii_if.rxd;
         wait for config.clock_period/2;
         v_byte_cnt := v_byte_cnt + 1;
       end loop;
@@ -261,7 +261,7 @@ package body rgmii_bfm_pkg is
   -- RGMII Expect
   ---------------------------------------------------------------------------------------------
   procedure rgmii_expect (
-    constant exp_array    : in    t_byte_array;
+    constant data_exp     : in    t_byte_array;
     constant msg          : in    string             := "";
     signal   rgmii_if     : inout t_rgmii_if;
     constant alert_level  : in    t_alert_level      := ERROR;
@@ -270,8 +270,8 @@ package body rgmii_bfm_pkg is
     constant config       : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
   ) is
     constant proc_name : string := "rgmii_expect";
-    constant proc_call : string := proc_name & "(" & to_string(exp_array'length) & " bytes)";
-    variable v_rx_data_array    : t_byte_array(exp_array'range);
+    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " bytes)";
+    variable v_rx_data_array    : t_byte_array(data_exp'range);
     variable v_rx_data_len      : natural;
     variable v_length_error     : boolean := false;
     variable v_data_error_cnt   : natural := 0;
@@ -282,7 +282,7 @@ package body rgmii_bfm_pkg is
     rgmii_read(v_rx_data_array, v_rx_data_len, msg, rgmii_if, scope, msg_id_panel, config, proc_call);
 
     -- Check the length of the received data
-    if v_rx_data_len /= exp_array'length then
+    if v_rx_data_len /= data_exp'length then
       v_length_error := true;
     end if;
 
@@ -291,7 +291,7 @@ package body rgmii_bfm_pkg is
     for byte in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(byte)'range loop
         -- Expected set to don't care or received value matches expected
-        if (exp_array(byte)(i) = '-') or (v_rx_data_array(byte)(i) = exp_array(byte)(i)) then
+        if (data_exp(byte)(i) = '-') or (v_rx_data_array(byte)(i) = data_exp(byte)(i)) then
           -- Check is OK
         else
           -- Received byte doesn't match
@@ -305,10 +305,10 @@ package body rgmii_bfm_pkg is
     if v_data_error_cnt /= 0 then
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " &
         to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(exp_array(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        ". Expected " & to_string(data_exp(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_length_error then
       alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) &
-        ". Expected " & to_string(exp_array'length) & "." & LF & add_msg_delimiter(msg), scope);
+        ". Expected " & to_string(data_exp'length) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " &
         add_msg_delimiter(msg), scope, msg_id_panel);

@@ -9,9 +9,10 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v20XX.XX.XX
+v2020.01.23
 --------------------
-Released: 20XX-XX-XX
+Released: 2020-01-23
+- The UVVM forum is released : https://forum.uvvm.org 
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.

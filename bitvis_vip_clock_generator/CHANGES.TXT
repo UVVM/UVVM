@@ -1,9 +1,9 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
-vX.X.X
+v1.3.1
 ----------
-Released: 20XX-XX-XX
+Released: 2020-01-23
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.
 

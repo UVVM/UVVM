@@ -1,9 +1,9 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
-v1.X.X
+v1.5.1
 ----------
-Released: 2020-XX-XX
+Released: 2020-01-23
 - BFM config default clock_period is now default -1 ns.
 - VVC command insert_delay() will raise a TB_ERROR when called if the 
   bfm_config.clock_period has not been set.  

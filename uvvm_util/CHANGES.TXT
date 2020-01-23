@@ -3,9 +3,9 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.XX.X
+v2.11.0
 ----------
-Released: 20XX-XX-XX
+Released: 2020-01-23
 - Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
 - Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
 - Added wait_on_bfm_sync_start(), wait_on_bfm_exit() and check_clock_period_margin()

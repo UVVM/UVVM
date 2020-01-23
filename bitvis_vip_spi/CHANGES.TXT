@@ -1,9 +1,9 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
-v3.X.X
+v3.6.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-01-23
 - Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
   shared variable with transfer related information.
 

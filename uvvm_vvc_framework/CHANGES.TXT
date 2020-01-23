@@ -3,9 +3,9 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.X.X
+v2.7.1
 ----------
-Released: 2020-xx-xx
+Released: 2020-01-23
 - Fixed bug in the generic queue where fetching the last element would make elements added
   after the fetch disappear.
 - Added a deallocate procedure to ti_data_fifo_pkg.

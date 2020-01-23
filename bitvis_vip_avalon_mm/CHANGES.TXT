@@ -2,9 +2,9 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
-v2.X.X
+v2.5.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-01-23
 - Added bfm_sync to the BFM configuration record.
 - Added new BFM synchronisation methods with default SYNC_ON_CLOCK_ONLY.
   The BFM will synchronise and start with falling edge, detect clock period, and

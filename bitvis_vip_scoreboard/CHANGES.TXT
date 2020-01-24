@@ -1,6 +1,12 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.0.2
+----------
+Released: 2020-01-24
+- Added missing insert_expected() methods in the generic_sb_pkg.
+- Fixed wrong timestamp when reporting counters summary with a non-decimal time.
+
 v2.0.1
 ----------
 Released: 2019-11-21

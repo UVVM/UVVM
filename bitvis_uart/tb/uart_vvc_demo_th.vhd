@@ -29,7 +29,7 @@ library bitvis_vip_clock_generator;
 
 -- Test harness entity
 entity uart_vvc_demo_th is
-end entity;
+end entity uart_vvc_demo_th;
 
 -- Test harness architecture
 architecture struct of uart_vvc_demo_th is

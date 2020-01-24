@@ -1,6 +1,12 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.4.1
+----------
+Released: 2020-01-24
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+  shared variable with transfer related information.
+
 v2.4.0
 ----------
 Released: 2019-12-04

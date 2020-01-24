@@ -49,8 +49,6 @@ package transaction_pkg is
   constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
   constant C_VVC_CMD_MAX_WORDS         : natural := 8;
 
-
-
   --==========================================================================================
   --
   -- DTT - Direct Transaction Transfer types, constants and global signal
@@ -92,21 +90,19 @@ package transaction_pkg is
   -- Transaction group
   type t_transaction_group is record
     bt : t_transaction;
-    ct : t_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT,
-    ct => C_TRANSACTION_SET_DEFAULT
+    bt => C_TRANSACTION_SET_DEFAULT
     );
 
-  -- Transaction groups array
+  -- Global DTT trigger signal
+  type t_spi_transaction_trigger_array is array (natural range <>) of std_logic;
+  signal global_spi_vvc_transaction_trigger       : t_spi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+                                                    (others => '0');
+  -- Shared DTT info variable
   type t_spi_transaction_group_array is array (natural range <>) of t_transaction_group;
-
-
-  -- Global DTT signals
-  signal global_spi_vvc_transaction : t_spi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
-
+  shared variable shared_spi_vvc_transaction_info : t_spi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) :=
+                                                    (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

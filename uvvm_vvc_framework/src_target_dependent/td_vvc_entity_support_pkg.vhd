@@ -369,8 +369,8 @@ package body td_vvc_entity_support_pkg is
     variable v_delta_cycle_counter  : natural := 0;
     variable v_comma_number     : natural := 0;
   begin
-    check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) &
-                " cannot exceed C_MAX_VVC_INSTANCE_NUM in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM), C_SCOPE, ID_NEVER);
+    check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM-1, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) &
+                " cannot exceed C_MAX_VVC_INSTANCE_NUM-1 in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM-1), C_SCOPE, ID_NEVER);
     vvc_config.bfm_config :=  bfm_config;
     vvc_config.cmd_queue_count_max := cmd_queue_count_max;
     vvc_config.cmd_queue_count_threshold := cmd_queue_count_threshold;
@@ -415,7 +415,9 @@ package body td_vvc_entity_support_pkg is
         wait for 0 ns;
         v_delta_cycle_counter := v_delta_cycle_counter + 1;
         exit when shared_uvvm_state = PHASE_A;
-        check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without intitalize_uvvm instantiated as a concurrent procedure in the test harness", scope);
+        if shared_uvvm_state /= IDLE then
+          alert(TB_FAILURE, "UVVM will not work without entity ti_uvvm_engine instantiated in the testbench or test harness.");
+        end if;       
       end loop;
     end if;
 

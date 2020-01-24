@@ -93,21 +93,21 @@ package transaction_pkg is
   -- Transaction group
   type t_transaction_group is record
     bt : t_transaction;
-    ct : t_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT,
-    ct => C_TRANSACTION_SET_DEFAULT
+    bt => C_TRANSACTION_SET_DEFAULT
     );
 
-  -- Transaction groups array
+  -- Global DTT trigger signal
+  type t_i2c_transaction_trigger_array is array (natural range <>) of std_logic;
+  signal global_i2c_vvc_transaction_trigger : t_i2c_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+                                              (others => '0');
+
+  -- Shared DTT info variable
   type t_i2c_transaction_group_array is array (natural range <>) of t_transaction_group;
-
-
-  -- Global DTT signals
-  signal global_i2c_vvc_transaction : t_i2c_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_i2c_vvc_transaction_info : t_i2c_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+                                                    (others => C_TRANSACTION_GROUP_DEFAULT);
 
 
 end package transaction_pkg;

@@ -251,6 +251,21 @@ package generic_sb_pkg is
       constant msg               : in string := "";
       constant source            : in string := "");
 
+      procedure insert_expected(
+        constant instance          : in integer;
+        constant identifier_option : in t_identifier_option;
+        constant identifier        : in positive;
+        constant expected_element  : in t_element;
+        constant msg               : in string := "";
+        constant source            : in string := "");
+  
+      procedure insert_expected(
+        constant identifier_option : in t_identifier_option;
+        constant identifier        : in positive;
+        constant expected_element  : in t_element;
+        constant msg               : in string := "";
+        constant source            : in string := "");
+
     procedure delete_expected(
       constant instance         : in integer;
       constant expected_element : in t_element;
@@ -1608,12 +1623,17 @@ package body generic_sb_pkg is
             v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
 
             -- truncate decimals and add units
-            if C_LOG_TIME_BASE = ns then
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ns ";
-            else
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+5) := " ps ";
+            if v_delimiter_pos > 0 then
+              if C_LOG_TIME_BASE = ns then
+                v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ns";
+              else
+                v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ps";
+              end if;
+              v_timestamp_width := v_delimiter_pos + 4;
             end if;
-            v_timestamp_width := v_delimiter_pos + 5;
+            -- add a space after the timestamp
+            v_timestamp_width := v_timestamp_width + 1;
+            v_result(v_timestamp_width to v_timestamp_width) := " ";
 
             -- add time string to return string
             v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
@@ -1812,7 +1832,30 @@ package body generic_sb_pkg is
       end if;
     end procedure insert_expected;
 
+    procedure insert_expected(
+      constant instance          : in integer;
+      constant identifier_option : in t_identifier_option;
+      constant identifier        : in positive;
+      constant expected_element  : in t_element;
+      constant msg               : in string := "";
+      constant source            : in string := ""
+      ) is
+      begin
+        insert_expected(instance, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() inserted expected without TAG in position " & to_string(identifier) & ".");
+      end procedure insert_expected;
 
+    procedure insert_expected(
+      constant identifier_option : in t_identifier_option;
+      constant identifier        : in positive;
+      constant expected_element  : in t_element;
+      constant msg               : in string := "";
+      constant source            : in string := ""
+      ) is
+      begin
+        insert_expected(1, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() inserted expected without TAG in position " & to_string(identifier) & ".");
+      end procedure insert_expected;
+
+      
 
     ----------------------------------------------------------------------------------------------------
     --

@@ -38,7 +38,7 @@ context bitvis_vip_clock_generator.vvc_context;
 
 -- Test bench entity
 entity uart_vvc_demo_tb is
-end entity;
+end entity uart_vvc_demo_tb;
 
 -- Test bench architecture
 architecture func of uart_vvc_demo_tb is

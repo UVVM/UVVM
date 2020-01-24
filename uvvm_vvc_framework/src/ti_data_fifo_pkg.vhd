@@ -190,7 +190,18 @@ package ti_data_fifo_pkg is
     buffer_idx      : natural
   ) return boolean;
 
+  ------------------------------------------
+  -- uvvm_fifo_deallocate
+  ------------------------------------------
+  -- This procedure deallocates all the FIFOs
+  -- in the buffer.
+  --
+  procedure uvvm_fifo_deallocate(
+    dummy : t_void
+  );
+
 end package ti_data_fifo_pkg;
+
 
 package body ti_data_fifo_pkg is
 
@@ -260,6 +271,13 @@ package body ti_data_fifo_pkg is
   begin
     return shared_data_fifo.get_queue_is_full(buffer_idx);
   end function;
+
+  procedure uvvm_fifo_deallocate(
+    dummy : t_void
+  ) is
+  begin
+    shared_data_fifo.deallocate_buffer(VOID);
+  end procedure;
 
 end package body ti_data_fifo_pkg;
 

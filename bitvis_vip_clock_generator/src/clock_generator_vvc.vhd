@@ -327,6 +327,12 @@ begin
   begin
     wait for 0 ns; -- wait for clock_ena to be set
     loop
+      
+      if not clock_ena then
+        clk <= '0';
+        wait until clock_ena;
+      end if;
+
       -- Clock period is sampled so it won't change during a clock cycle and potentialy introduce negative time in
       -- last wait statement
       v_clock_period    := clock_period;
@@ -334,11 +340,6 @@ begin
 
       if v_clock_high_time >= v_clock_period then
         tb_error(clock_name & ": clock period must be larger than clock high time; clock period: " & to_string(v_clock_period) & ", clock high time: " & to_string(clock_high_time), C_SCOPE);
-      end if;
-
-      if not clock_ena then
-        clk <= '0';
-        wait until clock_ena;
       end if;
 
       clk <= '1';

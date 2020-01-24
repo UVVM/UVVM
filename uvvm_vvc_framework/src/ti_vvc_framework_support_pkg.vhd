@@ -292,7 +292,7 @@ package ti_vvc_framework_support_pkg is
     constant num_exp_vvc  : natural;
     constant timeout      : time;
     constant alert_level  : t_alert_level := TB_ERROR;
-    constant msg          : string := "AW_1"
+    constant msg          : string := "Activity_Watchdog"
   );
 
   signal global_trigger_activity_watchdog  : std_logic := '0';
@@ -676,7 +676,7 @@ package body ti_vvc_framework_support_pkg is
     constant num_exp_vvc  : natural;
     constant timeout      : time;
     constant alert_level  : t_alert_level := TB_ERROR;
-    constant msg          : string := "AW_1"
+    constant msg          : string := "Activity_Watchdog"
   ) is
     variable v_timeout    : time;
 

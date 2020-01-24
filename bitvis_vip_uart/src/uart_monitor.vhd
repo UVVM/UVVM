@@ -44,19 +44,24 @@ end entity uart_monitor;
 
 architecture behave of uart_monitor is
 
-  alias tx_transaction   : t_transaction is global_uart_monitor_transaction(TX, GC_INSTANCE_IDX).bt;
-  alias rx_transaction   : t_transaction is global_uart_monitor_transaction(RX, GC_INSTANCE_IDX).bt;
+  alias tx_transaction_info       : t_transaction is shared_uart_monitor_transaction_info(TX, GC_INSTANCE_IDX).bt;
+  alias rx_transaction_info       : t_transaction is shared_uart_monitor_transaction_info(RX, GC_INSTANCE_IDX).bt;
+
+  alias tx_transaction_trigger    : std_logic     is global_uart_monitor_transaction_trigger(TX, GC_INSTANCE_IDX);
+  alias rx_transaction_trigger    : std_logic     is global_uart_monitor_transaction_trigger(RX, GC_INSTANCE_IDX);
+
 
   signal tx_i : std_logic;
   signal rx_i : std_logic;
 
   
   procedure monitor_uart_line(
-    constant operation      : in    t_operation;
-    constant C_LOG_PREFIX   : in    string;
-    signal   transaction    : inout t_transaction;
-    signal   uart_line      : in    std_logic;
-    variable monitor_config : in t_uart_monitor_config
+    constant  operation           : in    t_operation;
+    constant  C_LOG_PREFIX        : in    string;
+    signal    transaction_trigger : inout std_logic;
+    variable  transaction_info    : inout t_transaction;
+    signal    uart_line           : in    std_logic;
+    variable  monitor_config      : in    t_uart_monitor_config
   ) is
     alias    interface_config    : t_uart_interface_config is monitor_config.interface_config;
     variable v_data              : std_logic_vector(C_MAX_BITS_IN_DATA-1 downto 0) := (others => '0');
@@ -71,8 +76,8 @@ architecture behave of uart_monitor is
     wait for 0 ns;
     wait for 0 ns;
 
-    transaction.operation          <= NO_OPERATION;
-    transaction.transaction_status <= INACTIVE;
+    transaction_info.operation          := NO_OPERATION;
+    transaction_info.transaction_status := INACTIVE;
 
     -- Await idle state
     if uart_line /= '1' then
@@ -90,8 +95,8 @@ architecture behave of uart_monitor is
         -- If transaction_display_time > 0 then change operation after specified time
         if monitor_config.transaction_display_time > 0 ns then
           wait until falling_edge(uart_line) for monitor_config.transaction_display_time;
-          transaction.operation          <= NO_OPERATION;
-          transaction.transaction_status <= INACTIVE;
+          transaction_info.operation          := NO_OPERATION;
+          transaction_info.transaction_status := INACTIVE;
         end if;
         if uart_line /= '0' then
           wait until falling_edge(uart_line);
@@ -99,14 +104,14 @@ architecture behave of uart_monitor is
 
         -- Start bit registered and transaction is active
         log(ID_FRAME_INITIATE, C_LOG_PREFIX & "Start bit detected", monitor_config.scope_name, monitor_config.msg_id_panel);
-        transaction.transaction_status <= IN_PROGRESS;
+        transaction_info.transaction_status := IN_PROGRESS;
 
         -- Align sampling point to middle of bit period
         wait for interface_config.bit_time + (interface_config.bit_time/2);
       else
         -- Second stop bit interpreted as start bit transaction is active
         log(ID_FRAME_INITIATE, C_LOG_PREFIX & "Second stop bit interpreted as start bit.", monitor_config.scope_name, monitor_config.msg_id_panel);
-        transaction.transaction_status <= IN_PROGRESS;
+        transaction_info.transaction_status := IN_PROGRESS;
         -- Align sampling to middle of bit
         if (interface_config.bit_time/2) > uart_line'last_event then
           wait for (interface_config.bit_time/2) - uart_line'last_event + interface_config.bit_time;
@@ -156,17 +161,18 @@ architecture behave of uart_monitor is
       end if;
 
       -- Update transaction
-      transaction.operation  <= operation;
-      transaction.data       <= v_data;
-      transaction.error_info <= (parity_bit_error => v_parity_error,
+      transaction_info.operation  := operation;
+      transaction_info.data       := v_data;
+      transaction_info.error_info := (parity_bit_error => v_parity_error,
                                  stop_bit_error   => or(v_stop_bit_error));
       if v_parity_error or or(v_stop_bit_error) then
-        transaction.transaction_status <= FAILED;
+        transaction_info.transaction_status := FAILED;
       else
-        transaction.transaction_status <= SUCCEEDED;
+        transaction_info.transaction_status := SUCCEEDED;
       end if;
 
-      wait for 0 ns;
+      -- Pulse DTT trigger signal for updated transaction information
+      gen_pulse(transaction_trigger, 0 ns, BLOCKING, "pulsing monitor DTT trigger");
 
       -- Await non-active line if no stop bit has been detected
       if (and(v_stop_bit_error) or (interface_config.num_stop_bits = STOP_BITS_ONE and v_stop_bit_error(0))) and uart_line /= '1' then
@@ -185,7 +191,7 @@ begin
   p_tx_i : tx_i <= to_ux01(uart_dut_tx);
   p_rx_i : rx_i <= to_ux01(uart_dut_rx);
 
-  p_tx_monitor : monitor_uart_line(TRANSMIT, "TX: ", tx_transaction, tx_i, shared_uart_monitor_config(TX, GC_INSTANCE_IDX));
-  p_rx_monitor : monitor_uart_line(RECEIVE,  "RX: ", rx_transaction, rx_i, shared_uart_monitor_config(RX, GC_INSTANCE_IDX));
+  p_tx_monitor : monitor_uart_line(TRANSMIT, "TX: ", tx_transaction_trigger, tx_transaction_info, tx_i, shared_uart_monitor_config(TX, GC_INSTANCE_IDX));
+  p_rx_monitor : monitor_uart_line(RECEIVE,  "RX: ", rx_transaction_trigger, rx_transaction_info, rx_i, shared_uart_monitor_config(RX, GC_INSTANCE_IDX));
 
 end architecture behave;

@@ -9,6 +9,38 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2020.01.24
+--------------------
+Released: 2020-01-24
+- The UVVM forum is released : https://forum.uvvm.org 
+- Fixed an issue with clock generator VIP would use one clock period
+  of the default clock period setting before using the configured setting.
+- Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
+- Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
+- Added bfm_sync to the BFM configuration record for SBI VIP, Avalon MM VIP,
+  AXI-Lite VIP and AXI-Stream VIP.
+- Clock driven BFMs utilize new synchronising methods, with synchronising to
+  clock as default, and clock_period, setup_time and hold_time set to -1 ns 
+  by default.
+- Clock driven BFMs will detect the clock period and verify with BFM config 
+  specified clock_period and clock_period_margin.
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+  shared variable with transfer related information.
+- Updated vvc_context files for all VIPs with BFM interface and config types.
+- Removed unused config elements id_for_bfm_wait & id_for_bfm_poll in Axistream BFM.
+- Only check for TLast in receive procedure when config check_packet_length is true in
+  Axistream BFM.
+- Added a t_slv_array_ptr type, a log2 function and a to_string function for integer
+  type with output as DEC, HEX or BIN.
+- Added a deallocate procedure to ti_data_fifo_pkg.
+- Fixed typos and added generation of vvc_context file in vvc_generator.py script.
+- Added missing insert_expected() methods in the generic_sb_pkg.
+- Fixed wrong timestamp when reporting scoreboard counters summary with a non-decimal time.
+- Fixed bug in the generic queue where fetching the last element would make elements added
+  after the fetch disappear.
+- Updated UVVM VVC Framework Essential Mechanisms with direct transaction transfer changes.
+
+
 v2019.12.04
 --------------------
 Released: 2019-12-04

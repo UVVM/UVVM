@@ -47,7 +47,6 @@ package transaction_pkg is
   constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
-
   --==========================================================================================
   --
   -- DTT - Direct Transaction Transfer types, constants and global signal
@@ -70,12 +69,6 @@ package transaction_pkg is
     cmd_idx => -1
     );
 
---  -- Error info
---  type t_error_info is record
---  end record;
---
---  constant C_ERROR_INFO_DEFAULT : t_error_info := (
---    );
 
   -- Transaction
   type t_transaction is record
@@ -84,7 +77,6 @@ package transaction_pkg is
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
-    --error_info          : t_error_info;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
@@ -93,7 +85,6 @@ package transaction_pkg is
     data                => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    --error_info          => C_ERROR_INFO_DEFAULT
     );
 
   -- Transaction group
@@ -107,15 +98,14 @@ package transaction_pkg is
     ct => C_TRANSACTION_SET_DEFAULT
     );
 
-  -- Transaction groups array
+  -- Global DTT trigger signal
+  type t_sbi_transaction_trigger_array is array (natural range <>) of std_logic;
+  signal global_sbi_vvc_transaction_trigger : t_sbi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+                                              (others => '0');
+
+  -- Shared DTT info variable
   type t_sbi_transaction_group_array is array (natural range <>) of t_transaction_group;
-
-
-  -- Global DTT signals
-  signal global_sbi_vvc_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
-
-  signal global_sbi_monitor_transaction : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM) :=
-    (others => C_TRANSACTION_GROUP_DEFAULT);
-
+  shared variable shared_sbi_vvc_transaction_info : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
+                                                    (others => C_TRANSACTION_GROUP_DEFAULT);
+                                                                                                        
 end package transaction_pkg;

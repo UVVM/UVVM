@@ -191,12 +191,13 @@ package body rgmii_bfm_pkg is
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant local_proc_name  : string := "rgmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call  : string := local_proc_name & "(" & to_string(data_array'length) & " bytes)";
-    variable v_proc_call : line; -- Current proc_call, external or local
-    variable v_byte_cnt  : natural := 0;
-    variable v_overflow  : boolean := false;
-    variable v_timeout   : boolean := false;
+    constant local_proc_name   : string := "rgmii_read"; -- Internal proc_name; Used if called from sequencer or VVC
+    constant local_proc_call   : string := local_proc_name & "(" & to_string(data_array'length) & " bytes)";
+    variable v_proc_call       : line; -- Current proc_call, external or local
+    variable v_normalized_data : t_byte_array(0 to data_array'length-1);
+    variable v_byte_cnt        : natural := 0;
+    variable v_overflow        : boolean := false;
+    variable v_timeout         : boolean := false;
 
   begin
     -- If called from sequencer/VVC, show 'rgmii_read()...' in log
@@ -221,7 +222,7 @@ package body rgmii_bfm_pkg is
 
     -- Wait for control line to be active
     for i in 0 to 2*config.max_wait_cycles-1 loop
-      if rgmii_if.rx_ctl = '0' then
+      if rgmii_if.rx_ctl /= '1' then
         wait for config.clock_period/2;
       else
         exit;
@@ -232,20 +233,21 @@ package body rgmii_bfm_pkg is
       -- Read 4 bits on each clock edge
       while rgmii_if.rx_ctl = '1' loop
         -- Check that the received data fits in the data array
-        if v_byte_cnt > data_array'length-1 then
+        if v_byte_cnt > v_normalized_data'length-1 then
           v_overflow := true;
           exit;
         end if;
-        data_array(v_byte_cnt)(3 downto 0) := rgmii_if.rxd;
+        v_normalized_data(v_byte_cnt)(3 downto 0) := rgmii_if.rxd;
         wait for config.clock_period/2;
-        data_array(v_byte_cnt)(7 downto 4) := rgmii_if.rxd;
+        v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_if.rxd;
         wait for config.clock_period/2;
         v_byte_cnt := v_byte_cnt + 1;
       end loop;
     else
       v_timeout := true;
     end if;
-    data_len := v_byte_cnt;
+    data_array := v_normalized_data;
+    data_len   := v_byte_cnt;
 
     rgmii_if <= init_rgmii_if_signals;
     if v_overflow then
@@ -271,18 +273,22 @@ package body rgmii_bfm_pkg is
   ) is
     constant proc_name : string := "rgmii_expect";
     constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " bytes)";
-    variable v_rx_data_array    : t_byte_array(data_exp'range);
+    variable v_normalized_data  : t_byte_array(0 to data_exp'length-1) := data_exp;
+    variable v_rx_data_array    : t_byte_array(v_normalized_data'range);
     variable v_rx_data_len      : natural;
     variable v_length_error     : boolean := false;
     variable v_data_error_cnt   : natural := 0;
     variable v_first_wrong_byte : natural;
 
   begin
+
+    check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
+
     -- Read data
     rgmii_read(v_rx_data_array, v_rx_data_len, msg, rgmii_if, scope, msg_id_panel, config, proc_call);
 
     -- Check the length of the received data
-    if v_rx_data_len /= data_exp'length then
+    if v_rx_data_len /= v_normalized_data'length then
       v_length_error := true;
     end if;
 
@@ -291,7 +297,7 @@ package body rgmii_bfm_pkg is
     for byte in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(byte)'range loop
         -- Expected set to don't care or received value matches expected
-        if (data_exp(byte)(i) = '-') or (v_rx_data_array(byte)(i) = data_exp(byte)(i)) then
+        if (v_normalized_data(byte)(i) = '-') or (v_rx_data_array(byte)(i) = v_normalized_data(byte)(i)) then
           -- Check is OK
         else
           -- Received byte doesn't match
@@ -302,13 +308,13 @@ package body rgmii_bfm_pkg is
     end loop;
 
     -- Done. Report result
-    if v_data_error_cnt /= 0 then
+    if v_length_error then
+      alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) &
+        ". Expected " & to_string(v_normalized_data'length) & "." & LF & add_msg_delimiter(msg), scope);
+    elsif v_data_error_cnt /= 0 then
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " &
         to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(data_exp(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    elsif v_length_error then
-      alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) &
-        ". Expected " & to_string(data_exp'length) & "." & LF & add_msg_delimiter(msg), scope);
+        ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " &
         add_msg_delimiter(msg), scope, msg_id_panel);

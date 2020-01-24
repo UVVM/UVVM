@@ -659,6 +659,8 @@ package body avalon_st_bfm_pkg is
     variable v_first_wrong_symbol : natural;
   begin
 
+    check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
+
     -- Receive data
     avalon_st_receive(v_rx_channel, v_rx_data_array, msg, clk, avalon_st_if, scope, msg_id_panel, config, proc_call);
 

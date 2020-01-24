@@ -3,7 +3,7 @@ Bitvis VIP UART - Overview on Versions and Changes
 
 v2.5.0
 ----------
-Released: 2020-01-23
+Released: 2020-01-24
 - Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
   shared variable with transfer related information.
   

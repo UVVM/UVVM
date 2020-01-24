@@ -9,9 +9,9 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2020.01.23
+v2020.01.24
 --------------------
-Released: 2020-01-23
+Released: 2020-01-24
 - The UVVM forum is released : https://forum.uvvm.org 
 - Fixed an issue with clock generator VIP would use one clock period
   of the default clock period setting before using the configured setting.

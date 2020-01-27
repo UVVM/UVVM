@@ -33,8 +33,8 @@ entity test_harness is
   );
   port(
     signal clk         : in    std_logic;
-    signal rgmii_tx_if : inout t_rgmii_if;
-    signal rgmii_rx_if : inout t_rgmii_if
+    signal rgmii_tx_if : inout t_rgmii_tx_if;
+    signal rgmii_rx_if : inout t_rgmii_rx_if
   );
 end entity;
 

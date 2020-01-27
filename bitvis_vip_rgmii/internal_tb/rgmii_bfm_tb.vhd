@@ -44,8 +44,8 @@ architecture func of rgmii_bfm_tb is
   signal clk         : std_logic := '0';
   signal clock_ena   : boolean   := false;
 
-  signal rgmii_tx_if : t_rgmii_if;
-  signal rgmii_rx_if : t_rgmii_if;
+  signal rgmii_tx_if : t_rgmii_tx_if;
+  signal rgmii_rx_if : t_rgmii_rx_if;
 
   signal data_array  : t_byte_array(0 to 99);
 
@@ -85,19 +85,6 @@ begin
       rgmii_write(data_array, "", rgmii_tx_if, c_scope, shared_msg_id_panel, rgmii_bfm_config);
     end procedure;
 
-    procedure rgmii_read (
-      data_array : out t_byte_array;
-      data_len   : out natural) is
-    begin
-      rgmii_read(data_array, data_len, "", rgmii_tx_if, c_scope, shared_msg_id_panel, rgmii_bfm_config);
-    end procedure;
-
-    procedure rgmii_expect (
-      data_exp : in t_byte_array) is
-    begin
-      rgmii_expect(data_exp, "", rgmii_tx_if, error, c_scope, shared_msg_id_panel, rgmii_bfm_config);
-    end procedure;
-
   begin
 
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
@@ -118,7 +105,6 @@ begin
 
     -- Set the BFM configuration
     rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
-    rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD/4;
 
     ------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of RGMII");
@@ -198,12 +184,6 @@ begin
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
-    procedure rgmii_write (
-      data_array : in t_byte_array) is
-    begin
-      rgmii_write(data_array, "", rgmii_rx_if, c_scope, shared_msg_id_panel, rgmii_bfm_config);
-    end procedure;
-
     procedure rgmii_read (
       data_array : out t_byte_array;
       data_len   : out natural) is

@@ -32,14 +32,17 @@ package rgmii_bfm_pkg is
   --==========================================================================================
   constant C_SCOPE : string := "RGMII BFM";
 
-  -- Interface record for BFM signals
-  type t_rgmii_if is record
-    txc    : std_logic;                    -- to dut
-    txd    : std_logic_vector(3 downto 0); -- to dut
-    tx_ctl : std_logic;                    -- to dut
-    rxc    : std_logic;                    -- from dut
-    rxd    : std_logic_vector(3 downto 0); -- from dut
-    rx_ctl : std_logic;                    -- from dut
+  -- Interface record for BFM signals to DUT
+  type t_rgmii_tx_if is record
+    txc    : std_logic;
+    txd    : std_logic_vector(3 downto 0);
+    tx_ctl : std_logic;
+  end record;
+  -- Interface record for BFM signals from DUT
+  type t_rgmii_rx_if is record
+    rxc    : std_logic;
+    rxd    : std_logic_vector(3 downto 0);
+    rx_ctl : std_logic;
   end record;
 
   -- Configuration record to be assigned in the test harness.
@@ -69,7 +72,10 @@ package rgmii_bfm_pkg is
   -- All input signals are initialized to 0
   -- All output signals are initialized to Z
   function init_rgmii_if_signals
-    return t_rgmii_if;
+    return t_rgmii_tx_if;
+
+  function init_rgmii_if_signals
+    return t_rgmii_rx_if;
 
   ---------------------------------------------------------------------------------------------
   -- RGMII Write
@@ -78,7 +84,7 @@ package rgmii_bfm_pkg is
   procedure rgmii_write (
     constant data_array   : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_if;
+    signal   rgmii_if     : inout t_rgmii_tx_if;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config       : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
@@ -92,7 +98,7 @@ package rgmii_bfm_pkg is
     variable data_array    : out   t_byte_array;
     variable data_len      : out   natural;
     constant msg           : in    string             := "";
-    signal   rgmii_if      : inout t_rgmii_if;
+    signal   rgmii_if      : inout t_rgmii_rx_if;
     constant scope         : in    string             := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
@@ -105,7 +111,7 @@ package rgmii_bfm_pkg is
   procedure rgmii_expect (
     constant data_exp     : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_if;
+    signal   rgmii_if     : inout t_rgmii_rx_if;
     constant alert_level  : in    t_alert_level      := ERROR;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
@@ -120,14 +126,19 @@ end package rgmii_bfm_pkg;
 package body rgmii_bfm_pkg is
 
   function init_rgmii_if_signals
-      return t_rgmii_if is
-    variable init_if : t_rgmii_if;
+      return t_rgmii_tx_if is
+    variable init_if : t_rgmii_tx_if;
   begin
-    -- to dut
     init_if.txc    := 'Z';
     init_if.txd    := (init_if.txd'range => '0');
     init_if.tx_ctl := '0';
-    -- from dut
+    return init_if;
+  end function;
+
+  function init_rgmii_if_signals
+      return t_rgmii_rx_if is
+    variable init_if : t_rgmii_rx_if;
+  begin
     init_if.rxc    := 'Z';
     init_if.rxd    := (init_if.rxd'range => 'Z');
     init_if.rx_ctl := 'Z';
@@ -141,7 +152,7 @@ package body rgmii_bfm_pkg is
   procedure rgmii_write (
     constant data_array   : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_if;
+    signal   rgmii_if     : inout t_rgmii_tx_if;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config       : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
@@ -188,7 +199,7 @@ package body rgmii_bfm_pkg is
     variable data_array    : out   t_byte_array;
     variable data_len      : out   natural;
     constant msg           : in    string             := "";
-    signal   rgmii_if      : inout t_rgmii_if;
+    signal   rgmii_if      : inout t_rgmii_rx_if;
     constant scope         : in    string             := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
@@ -257,7 +268,6 @@ package body rgmii_bfm_pkg is
     data_array := v_normalized_data;
     data_len   := v_byte_cnt;
 
-    rgmii_if <= init_rgmii_if_signals;
     if v_overflow then
       alert(TB_ERROR, v_proc_call.all & "=> Failed. Received more bytes than data_array size. " & add_msg_delimiter(msg), scope);
     elsif v_timeout then
@@ -273,7 +283,7 @@ package body rgmii_bfm_pkg is
   procedure rgmii_expect (
     constant data_exp     : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_if;
+    signal   rgmii_if     : inout t_rgmii_rx_if;
     constant alert_level  : in    t_alert_level      := ERROR;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;

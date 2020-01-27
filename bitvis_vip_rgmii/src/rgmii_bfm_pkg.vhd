@@ -49,8 +49,7 @@ package rgmii_bfm_pkg is
                                               -- waiting for signals from the DUT.
     max_wait_cycles_severity : t_alert_level; -- Severity if max_wait_cycles expires.
     clock_period             : time;          -- Period of the clock signal.
-    setup_time               : time;          -- Setup time for generated signals, set to clock_period/4
-    hold_time                : time;          -- Hold time for generated signals, set to clock_period/4
+    rx_clock_skew            : time;          -- Skew of the sampling of the data in connection to the RX clock edges
     id_for_bfm               : t_msg_id;      -- The message ID used as a general message ID in the BFM
   end record;
 
@@ -59,8 +58,7 @@ package rgmii_bfm_pkg is
     max_wait_cycles          => 10,
     max_wait_cycles_severity => ERROR,
     clock_period             => -1 ns,
-    setup_time               => -1 ns,
-    hold_time                => -1 ns,
+    rx_clock_skew            => -1 ns,
     id_for_bfm               => ID_BFM
   );
 
@@ -150,31 +148,36 @@ package body rgmii_bfm_pkg is
   ) is
     constant proc_name : string := "rgmii_write";
     constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " bytes)";
+    variable v_timeout : boolean := false;
 
   begin
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, proc_call);
+    check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
 
     rgmii_if <= init_rgmii_if_signals;
-    -- Start transmission during setup time
-    wait_until_given_time_before_rising_edge(rgmii_if.txc, config.setup_time, config.clock_period);
     log(config.id_for_bfm, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
-    -- Enable control line and send 4 bits on each clock edge
-    rgmii_if.tx_ctl <= '1';
-    for i in data_array'range loop
-      rgmii_if.txd <= data_array(i)(3 downto 0);
-      wait for config.clock_period/2;
-      rgmii_if.txd <= data_array(i)(7 downto 4);
-      wait for config.clock_period/2;
-    end loop;
+    -- Wait for the first rising edge to enable the control line
+    wait until rising_edge(rgmii_if.txc) for config.clock_period*config.max_wait_cycles;
+    if rgmii_if.txc = '1' then
+      rgmii_if.tx_ctl <= '1';
+      -- Send 4 data bits on each clock edge
+      for i in data_array'range loop
+        rgmii_if.txd <= data_array(i)(3 downto 0);
+        wait until falling_edge(rgmii_if.txc);
+        rgmii_if.txd <= data_array(i)(7 downto 4);
+        wait until rising_edge(rgmii_if.txc);
+      end loop;
+    else
+      v_timeout := true;
+    end if;
 
     rgmii_if <= init_rgmii_if_signals;
-    log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    if v_timeout then
+      alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout while waiting for txc. " & add_msg_delimiter(msg), scope);
+    else
+      log(config.id_for_bfm, proc_call & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    end if;
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -198,6 +201,7 @@ package body rgmii_bfm_pkg is
     variable v_byte_cnt        : natural := 0;
     variable v_overflow        : boolean := false;
     variable v_timeout         : boolean := false;
+    variable v_wait_cycles     : natural := 0;
 
   begin
     -- If called from sequencer/VVC, show 'rgmii_read()...' in log
@@ -209,43 +213,47 @@ package body rgmii_bfm_pkg is
     end if;
 
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.clock_period /= 0 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-    check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(config.rx_clock_skew > -1 ns, TB_FAILURE, "Sanity check: Check that rx_clock_skew is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     rgmii_if <= init_rgmii_if_signals;
-    -- Start reception during setup time
-    wait_until_given_time_before_rising_edge(rgmii_if.rxc, config.setup_time, config.clock_period);
     log(config.id_for_bfm, v_proc_call.all & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
-    -- Wait for control line to be active
-    for i in 0 to 2*config.max_wait_cycles-1 loop
-      if rgmii_if.rx_ctl /= '1' then
-        wait for config.clock_period/2;
-      else
-        exit;
-      end if;
-    end loop;
+    -- Sample the data using the RX clock edges and a skew
+    wait until rising_edge(rgmii_if.rxc) for config.clock_period*config.max_wait_cycles;
+    if rgmii_if.rxc = '1' then
+      wait for config.rx_clock_skew;
 
-    if rgmii_if.rx_ctl = '1' then
-      -- Read 4 bits on each clock edge
+      -- Wait for control line to be active
+      while rgmii_if.rx_ctl /= '1' and v_wait_cycles < config.max_wait_cycles loop
+        wait until rising_edge(rgmii_if.rxc);
+        wait for config.rx_clock_skew;
+        v_wait_cycles := v_wait_cycles + 1;
+      end loop;
+      if rgmii_if.rx_ctl /= '1' then
+        v_timeout := true;
+      end if;
+
+      -- Sample the data
       while rgmii_if.rx_ctl = '1' loop
         -- Check that the received data fits in the data array
         if v_byte_cnt > v_normalized_data'length-1 then
           v_overflow := true;
           exit;
         end if;
+
         v_normalized_data(v_byte_cnt)(3 downto 0) := rgmii_if.rxd;
-        wait for config.clock_period/2;
+        wait until falling_edge(rgmii_if.rxc);
+        wait for config.rx_clock_skew;
         v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_if.rxd;
-        wait for config.clock_period/2;
         v_byte_cnt := v_byte_cnt + 1;
+        wait until rising_edge(rgmii_if.rxc);
+        wait for config.rx_clock_skew;
       end loop;
     else
       v_timeout := true;
     end if;
+
     data_array := v_normalized_data;
     data_len   := v_byte_cnt;
 
@@ -253,9 +261,9 @@ package body rgmii_bfm_pkg is
     if v_overflow then
       alert(TB_ERROR, v_proc_call.all & "=> Failed. Received more bytes than data_array size. " & add_msg_delimiter(msg), scope);
     elsif v_timeout then
-      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for control line. " & add_msg_delimiter(msg), scope);
+      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or control line. " & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 

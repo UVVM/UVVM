@@ -425,7 +425,7 @@ def add_vvc_interpreter(file_handle, vvc_channel):
     file_handle.write("      --    releases global semaphore\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, "+
-                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);\n")
+                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, vvc_config.msg_id_panel);\n")
     file_handle.write("      v_cmd_has_been_acked := false; -- Clear flag\n")
     file_handle.write("      -- update shared_vvc_last_received_cmd_idx with received command index\n")
     if vvc_channel.name == "NA":

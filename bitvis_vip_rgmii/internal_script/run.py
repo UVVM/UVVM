@@ -41,8 +41,8 @@ def main(argv):
   tb.run_simulation()
 
   # Set testbench, config and run
-  #tb.set_tb_name("rgmii_vvc_tb")
-  #tb.run_simulation()
+  tb.set_tb_name("rgmii_vvc_tb")
+  tb.run_simulation()
 
   # Print simulation results
   tb.print_statistics()

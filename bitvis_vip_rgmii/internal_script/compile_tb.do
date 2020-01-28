@@ -32,5 +32,5 @@ eval vcom  $compdirectives  $tb_path/rgmii_th.vhd
 echo "eval vcom  $compdirectives  $tb_path/rgmii_bfm_tb.vhd"
 eval vcom  $compdirectives  $tb_path/rgmii_bfm_tb.vhd
 
-#echo "eval vcom  $compdirectives  $tb_path/rgmii_vvc_tb.vhd"
-#eval vcom  $compdirectives  $tb_path/rgmii_vvc_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/rgmii_vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/rgmii_vvc_tb.vhd

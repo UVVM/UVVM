@@ -53,102 +53,22 @@ begin
 end struct_bfm;
 
 
---architecture struct_vvc of test_harness is
---  signal avalon_st_vvc2vvc_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
---                                               data(GC_DATA_WIDTH-1 downto 0),
---                                               data_error(GC_ERROR_WIDTH-1 downto 0),
---                                               empty(log2(GC_DATA_WIDTH/GC_SYMBOL_WIDTH)-1 downto 0));
---begin
---  --------------------------------------------------------------------------------
---  -- Instantiate DUT
---  --------------------------------------------------------------------------------
---  i_avalon_st_fifo : entity work.avalon_st_fifo
---    generic map (
---      GC_DATA_WIDTH    => GC_DATA_WIDTH,
---      GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
---      GC_EMPTY_WIDTH   => log2(GC_DATA_WIDTH/GC_SYMBOL_WIDTH),
---      GC_ERROR_WIDTH   => GC_ERROR_WIDTH,
---      GC_FIFO_DEPTH    => 512
---    )
---    port map (
---      clk_i            => clk,
---      reset_i          => areset,
---      -- Slave stream interface
---      slave_data_i     => avalon_st_master_if.data,
---      slave_channel_i  => avalon_st_master_if.channel,
---      slave_empty_i    => avalon_st_master_if.empty,
---      slave_error_i    => avalon_st_master_if.data_error,
---      slave_valid_i    => avalon_st_master_if.valid,
---      slave_sop_i      => avalon_st_master_if.start_of_packet,
---      slave_eop_i      => avalon_st_master_if.end_of_packet,
---      slave_ready_o    => avalon_st_master_if.ready,
---      -- Master stream interface
---      master_data_o    => avalon_st_slave_if.data,
---      master_channel_o => avalon_st_slave_if.channel,
---      master_empty_o   => avalon_st_slave_if.empty,
---      master_error_o   => avalon_st_slave_if.data_error,
---      master_valid_o   => avalon_st_slave_if.valid,
---      master_sop_o     => avalon_st_slave_if.start_of_packet,
---      master_eop_o     => avalon_st_slave_if.end_of_packet,
---      master_ready_i   => avalon_st_slave_if.ready
---    );
+architecture struct_vvc of test_harness is
+begin
 
---  --------------------------------------------------------------------------------
---  -- Instantiate VVCs
---  --------------------------------------------------------------------------------
---  i_avalon_st_vvc_master : entity work.avalon_st_vvc
---    generic map(
---      GC_VVC_IS_MASTER    => true,
---      GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
---      GC_DATA_WIDTH       => GC_DATA_WIDTH,
---      GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
---      GC_EMPTY_WIDTH      => log2(GC_DATA_WIDTH/GC_SYMBOL_WIDTH),
---      GC_INSTANCE_IDX     => 0
---      )
---    port map(
---      clk               => clk,
---      avalon_st_vvc_if  => avalon_st_master_if
---    );
+  -- Instantiate VVC
+  i_rgmii_vvc : entity work.rgmii_vvc
+    generic map(
+      GC_INSTANCE_IDX => 0
+      )
+    port map(
+      rgmii_vvc_tx_if => rgmii_tx_if,
+      rgmii_vvc_rx_if => rgmii_rx_if
+    );
 
---  i_avalon_st_vvc_slave : entity work.avalon_st_vvc
---    generic map(
---      GC_VVC_IS_MASTER    => false,
---      GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
---      GC_DATA_WIDTH       => GC_DATA_WIDTH,
---      GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
---      GC_EMPTY_WIDTH      => log2(GC_DATA_WIDTH/GC_SYMBOL_WIDTH),
---      GC_INSTANCE_IDX     => 1
---      )
---    port map(
---      clk               => clk,
---      avalon_st_vvc_if  => avalon_st_slave_if
---    );
+  rgmii_tx_if.txc    <= clk;
+  rgmii_rx_if.rxc    <= clk;
+  rgmii_rx_if.rxd    <= rgmii_tx_if.txd;
+  rgmii_rx_if.rx_ctl <= rgmii_tx_if.tx_ctl;
 
---  i_avalon_st_vvc2vvc_master : entity work.avalon_st_vvc
---    generic map(
---      GC_VVC_IS_MASTER    => true,
---      GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
---      GC_DATA_WIDTH       => GC_DATA_WIDTH,
---      GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
---      GC_EMPTY_WIDTH      => log2(GC_DATA_WIDTH/GC_SYMBOL_WIDTH),
---      GC_INSTANCE_IDX     => 2
---      )
---    port map(
---      clk               => clk,
---      avalon_st_vvc_if  => avalon_st_vvc2vvc_if
---    );
-
---  i_avalon_st_vvc2vcc_slave : entity work.avalon_st_vvc
---    generic map(
---      GC_VVC_IS_MASTER    => false,
---      GC_CHANNEL_WIDTH    => GC_CHANNEL_WIDTH,
---      GC_DATA_WIDTH       => GC_DATA_WIDTH,
---      GC_DATA_ERROR_WIDTH => GC_ERROR_WIDTH,
---      GC_EMPTY_WIDTH      => log2(GC_DATA_WIDTH/GC_SYMBOL_WIDTH),
---      GC_INSTANCE_IDX     => 3
---      )
---    port map(
---      clk               => clk,
---      avalon_st_vvc_if  => avalon_st_vvc2vvc_if
---    );
---end struct_vvc;
+end struct_vvc;

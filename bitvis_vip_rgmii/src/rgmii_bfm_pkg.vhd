@@ -271,7 +271,7 @@ package body rgmii_bfm_pkg is
     if v_overflow then
       alert(TB_ERROR, v_proc_call.all & "=> Failed. Received more bytes than data_array size. " & add_msg_delimiter(msg), scope);
     elsif v_timeout then
-      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or control line. " & add_msg_delimiter(msg), scope);
+      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or rx_ctl. " & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;

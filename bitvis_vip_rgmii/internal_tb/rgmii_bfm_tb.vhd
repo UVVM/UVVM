@@ -103,7 +103,7 @@ begin
       data_array(i) <= random(data_array(0)'length);
     end loop;
 
-    -- Set the BFM configuration
+    -- Override default config with settings for this testbench
     rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
 
     ------------------------------------------------------------------------------
@@ -199,7 +199,7 @@ begin
 
   begin
 
-    -- Set the BFM configuration
+    -- Override default config with settings for this testbench
     rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
     rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD/4;
 

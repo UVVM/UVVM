@@ -59,8 +59,8 @@ package vvc_methods_pkg is
     cmd_queue_count_threshold             : natural;           -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level;     -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
     result_queue_count_max                : natural;
-    result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
+    result_queue_count_threshold_severity : t_alert_level;
     bfm_config                            : t_rgmii_bfm_config; -- Configuration for the BFM. See BFM quick reference.
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.
   end record;
@@ -73,8 +73,8 @@ package vvc_methods_pkg is
     cmd_queue_count_threshold             => C_CMD_QUEUE_COUNT_THRESHOLD,
     cmd_queue_count_threshold_severity    => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_max                => C_RESULT_QUEUE_COUNT_MAX,
-    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
+    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     bfm_config                            => C_RGMII_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
   );

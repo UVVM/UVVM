@@ -22,8 +22,8 @@ if { [info exists ::env(SIMULATOR)] } {
 #------------------------------------------------------
 set root_path "../.."
 set tb_path "$root_path/bitvis_vip_rgmii/internal_tb"
-echo "\n\n\n=== Compiling TB\n"
 
+echo "\n\n\n=== Compiling TB\n"
 
 # TBs
 echo "eval vcom  $compdirectives  $tb_path/rgmii_th.vhd"

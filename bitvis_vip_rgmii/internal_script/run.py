@@ -36,11 +36,11 @@ def main(argv):
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
-  # Set testbench, config and run
+  # Set testbench and run
   tb.set_tb_name("rgmii_bfm_tb")
   tb.run_simulation()
 
-  # Set testbench, config and run
+  # Set testbench and run
   tb.set_tb_name("rgmii_vvc_tb")
   tb.run_simulation()
 

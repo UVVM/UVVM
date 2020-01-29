@@ -22,22 +22,9 @@ from testbench import Testbench
 num_tests_run = 0
 num_failing_tests = 0
 
-
 #=============================================================================================
-#
-# Define tests and run - user to edit this
-#
+# User edit starts here: define tests and run
 #=============================================================================================
-
-
-# Create testbench configuration with TB generics
-def create_config(modes, data_widths, data_array_widths):
-  config = []
-  for mode, data_width, data_array_width in product(modes, data_widths, data_array_widths):
-    config.append(str(mode) + ' ' + str(data_width) + ' ' + str(data_array_width))
-
-  return config
-
 
 def main(argv):
   global num_failing_tests
@@ -49,10 +36,9 @@ def main(argv):
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
-  # Setup testbench and run
+  # Set testbench and run
   tb.set_tb_name("gmii_vip_tb")
   tb.run_simulation()
-
 
   # Print simulation results
   tb.print_statistics()
@@ -62,8 +48,9 @@ def main(argv):
 
 
 
-
-
+#=============================================================================================
+# User edit ends here
+#=============================================================================================
 if __name__ == "__main__":
   main(sys.argv)
 

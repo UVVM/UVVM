@@ -29,7 +29,6 @@ if { [info exists 3] } {
   unset 3
 }
 
-echo "vsim -gGC_TEST=$run_test $library.$testbench"
 vsim -gGC_TEST=$run_test $library.$testbench
 
 run -all

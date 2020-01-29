@@ -30,4 +30,3 @@ eval vcom  $compdirectives  $tb_path/gmii_vip_th.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/gmii_vip_tb.vhd"
 eval vcom  $compdirectives  $tb_path/gmii_vip_tb.vhd
-

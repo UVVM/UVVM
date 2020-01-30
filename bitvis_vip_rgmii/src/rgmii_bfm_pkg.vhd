@@ -84,7 +84,7 @@ package rgmii_bfm_pkg is
   procedure rgmii_write (
     constant data_array   : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_tx_if;
+    signal   rgmii_tx_if  : inout t_rgmii_tx_if;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config       : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
@@ -98,7 +98,7 @@ package rgmii_bfm_pkg is
     variable data_array    : out   t_byte_array;
     variable data_len      : out   natural;
     constant msg           : in    string             := "";
-    signal   rgmii_if      : inout t_rgmii_rx_if;
+    signal   rgmii_rx_if   : inout t_rgmii_rx_if;
     constant scope         : in    string             := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
@@ -111,7 +111,7 @@ package rgmii_bfm_pkg is
   procedure rgmii_expect (
     constant data_exp     : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_rx_if;
+    signal   rgmii_rx_if  : inout t_rgmii_rx_if;
     constant alert_level  : in    t_alert_level      := ERROR;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
@@ -152,7 +152,7 @@ package body rgmii_bfm_pkg is
   procedure rgmii_write (
     constant data_array   : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_tx_if;
+    signal   rgmii_tx_if  : inout t_rgmii_tx_if;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config       : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
@@ -165,25 +165,25 @@ package body rgmii_bfm_pkg is
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
 
-    rgmii_if <= init_rgmii_if_signals;
+    rgmii_tx_if <= init_rgmii_if_signals;
     log(config.id_for_bfm, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     -- Wait for the first rising edge to enable the control line
-    wait until rising_edge(rgmii_if.txc) for config.clock_period*config.max_wait_cycles;
-    if rgmii_if.txc = '1' then
-      rgmii_if.tx_ctl <= '1';
+    wait until rising_edge(rgmii_tx_if.txc) for config.clock_period*config.max_wait_cycles;
+    if rgmii_tx_if.txc = '1' then
+      rgmii_tx_if.tx_ctl <= '1';
       -- Send 4 data bits on each clock edge
       for i in data_array'range loop
-        rgmii_if.txd <= data_array(i)(3 downto 0);
-        wait until falling_edge(rgmii_if.txc);
-        rgmii_if.txd <= data_array(i)(7 downto 4);
-        wait until rising_edge(rgmii_if.txc);
+        rgmii_tx_if.txd <= data_array(i)(3 downto 0);
+        wait until falling_edge(rgmii_tx_if.txc);
+        rgmii_tx_if.txd <= data_array(i)(7 downto 4);
+        wait until rising_edge(rgmii_tx_if.txc);
       end loop;
     else
       v_timeout := true;
     end if;
 
-    rgmii_if <= init_rgmii_if_signals;
+    rgmii_tx_if <= init_rgmii_if_signals;
     if v_timeout then
       alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout while waiting for txc. " & add_msg_delimiter(msg), scope);
     else
@@ -199,7 +199,7 @@ package body rgmii_bfm_pkg is
     variable data_array    : out   t_byte_array;
     variable data_len      : out   natural;
     constant msg           : in    string             := "";
-    signal   rgmii_if      : inout t_rgmii_rx_if;
+    signal   rgmii_rx_if   : inout t_rgmii_rx_if;
     constant scope         : in    string             := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel     := shared_msg_id_panel;
     constant config        : in    t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
@@ -210,7 +210,7 @@ package body rgmii_bfm_pkg is
     variable v_proc_call       : line; -- Current proc_call, external or local
     variable v_normalized_data : t_byte_array(0 to data_array'length-1);
     variable v_byte_cnt        : natural := 0;
-    variable v_overflow        : boolean := false;
+    variable v_done            : boolean := false;
     variable v_timeout         : boolean := false;
     variable v_wait_cycles     : natural := 0;
 
@@ -227,39 +227,43 @@ package body rgmii_bfm_pkg is
     check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(config.rx_clock_skew > -1 ns, TB_FAILURE, "Sanity check: Check that rx_clock_skew is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
-    rgmii_if <= init_rgmii_if_signals;
+    rgmii_rx_if <= init_rgmii_if_signals;
     log(config.id_for_bfm, v_proc_call.all & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     -- Sample the data using the RX clock edges and a skew
-    wait until rising_edge(rgmii_if.rxc) for config.clock_period*config.max_wait_cycles;
-    if rgmii_if.rxc = '1' then
+    wait until rising_edge(rgmii_rx_if.rxc) for config.clock_period*config.max_wait_cycles;
+    if rgmii_rx_if.rxc = '1' then
       wait for config.rx_clock_skew;
 
       -- Wait for control line to be active
-      while rgmii_if.rx_ctl /= '1' and v_wait_cycles < config.max_wait_cycles loop
-        wait until rising_edge(rgmii_if.rxc);
+      while rgmii_rx_if.rx_ctl /= '1' and v_wait_cycles < config.max_wait_cycles loop
+        wait until rising_edge(rgmii_rx_if.rxc);
         wait for config.rx_clock_skew;
         v_wait_cycles := v_wait_cycles + 1;
       end loop;
-      if rgmii_if.rx_ctl /= '1' then
+      if rgmii_rx_if.rx_ctl /= '1' then
         v_timeout := true;
       end if;
 
       -- Sample the data
-      while rgmii_if.rx_ctl = '1' loop
-        -- Check that the received data fits in the data array
-        if v_byte_cnt > v_normalized_data'length-1 then
-          v_overflow := true;
-          exit;
-        end if;
+      while not(v_done) loop
+        if rgmii_rx_if.rx_ctl = '1' then
+          v_normalized_data(v_byte_cnt)(3 downto 0) := rgmii_rx_if.rxd;
+          wait until falling_edge(rgmii_rx_if.rxc);
+          wait for config.rx_clock_skew;
+          v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_rx_if.rxd;
 
-        v_normalized_data(v_byte_cnt)(3 downto 0) := rgmii_if.rxd;
-        wait until falling_edge(rgmii_if.rxc);
-        wait for config.rx_clock_skew;
-        v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_if.rxd;
-        v_byte_cnt := v_byte_cnt + 1;
-        wait until rising_edge(rgmii_if.rxc);
-        wait for config.rx_clock_skew;
+          if v_byte_cnt = v_normalized_data'length-1 then
+            v_done := true;
+          else
+            wait until rising_edge(rgmii_rx_if.rxc);
+            wait for config.rx_clock_skew;
+          end if;
+          v_byte_cnt := v_byte_cnt + 1;
+        else
+          -- Data valid went low
+          v_done := true;
+        end if;
       end loop;
     else
       v_timeout := true;
@@ -268,10 +272,9 @@ package body rgmii_bfm_pkg is
     data_array := v_normalized_data;
     data_len   := v_byte_cnt;
 
-    if v_overflow then
-      alert(TB_ERROR, v_proc_call.all & "=> Failed. Received more bytes than data_array size. " & add_msg_delimiter(msg), scope);
-    elsif v_timeout then
-      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or rx_ctl. " & add_msg_delimiter(msg), scope);
+    if v_timeout then
+      alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or rx_ctl. " &
+        add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
@@ -283,7 +286,7 @@ package body rgmii_bfm_pkg is
   procedure rgmii_expect (
     constant data_exp     : in    t_byte_array;
     constant msg          : in    string             := "";
-    signal   rgmii_if     : inout t_rgmii_rx_if;
+    signal   rgmii_rx_if  : inout t_rgmii_rx_if;
     constant alert_level  : in    t_alert_level      := ERROR;
     constant scope        : in    string             := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel     := shared_msg_id_panel;
@@ -303,7 +306,7 @@ package body rgmii_bfm_pkg is
     check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
 
     -- Read data
-    rgmii_read(v_rx_data_array, v_rx_data_len, msg, rgmii_if, scope, msg_id_panel, config, proc_call);
+    rgmii_read(v_rx_data_array, v_rx_data_len, msg, rgmii_rx_if, scope, msg_id_panel, config, proc_call);
 
     -- Check the length of the received data
     if v_rx_data_len /= v_normalized_data'length then

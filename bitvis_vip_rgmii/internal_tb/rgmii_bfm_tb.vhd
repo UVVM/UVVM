@@ -73,8 +73,8 @@ begin
   -- PROCESS: p_main
   --------------------------------------------------------------------------------------------------------------------------------
   p_main : process
-    constant c_scope          : string := "Main seq.";
-    variable rgmii_bfm_config : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
+    constant c_scope            : string := "Main seq.";
+    variable v_rgmii_bfm_config : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
 
     --------------------------------------------
     -- Overloads for this testbench
@@ -82,7 +82,7 @@ begin
     procedure rgmii_write (
       data_array : in t_byte_array) is
     begin
-      rgmii_write(data_array, "", rgmii_tx_if, c_scope, shared_msg_id_panel, rgmii_bfm_config);
+      rgmii_write(data_array, "", rgmii_tx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
   begin
@@ -104,7 +104,7 @@ begin
     end loop;
 
     -- Override default config with settings for this testbench
-    rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
+    v_rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
 
     ------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of RGMII");
@@ -145,11 +145,6 @@ begin
     wait for 10*C_CLK_PERIOD; -- 10 = default max_wait_cycles
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    log(ID_LOG_HDR, "Testing error case: read() with smaller data_array");
-    increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-    rgmii_write(data_array(0 to 10));
-
-    await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     rgmii_write(data_array(0 to 10));
@@ -176,10 +171,10 @@ begin
   -- PROCESS: p_slave
   --------------------------------------------------------------------------------------------------------------------------------
   p_slave : process
-    constant c_scope          : string := "Slave seq.";
-    variable rgmii_bfm_config : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
-    variable v_rx_data_array  : t_byte_array(0 to 99);
-    variable v_data_len       : natural;
+    constant c_scope            : string := "Slave seq.";
+    variable v_rgmii_bfm_config : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
+    variable v_rx_data_array    : t_byte_array(0 to 99);
+    variable v_data_len         : natural;
 
     --------------------------------------------
     -- Overloads for this testbench
@@ -188,20 +183,20 @@ begin
       data_array : out t_byte_array;
       data_len   : out natural) is
     begin
-      rgmii_read(data_array, data_len, "", rgmii_rx_if, c_scope, shared_msg_id_panel, rgmii_bfm_config);
+      rgmii_read(data_array, data_len, "", rgmii_rx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
     procedure rgmii_expect (
       data_exp : in t_byte_array) is
     begin
-      rgmii_expect(data_exp, "", rgmii_rx_if, error, c_scope, shared_msg_id_panel, rgmii_bfm_config);
+      rgmii_expect(data_exp, "", rgmii_rx_if, error, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
   begin
 
     -- Override default config with settings for this testbench
-    rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
-    rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD/4;
+    v_rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
+    v_rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD/4;
 
     -- Testing that BFM procedures normalize data arrays
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
@@ -229,11 +224,6 @@ begin
     -- Testing error case: read() rx_ctl timeout
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
     rgmii_read(v_rx_data_array, v_data_len);
-
-    -- Testing error case: read() with smaller data_array
-    await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    rgmii_read(v_rx_data_array(0 to 5), v_data_len);
-    wait for 5*C_CLK_PERIOD; -- wait for TX data to finish
 
     -- Testing error case: expect() wrong data
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);

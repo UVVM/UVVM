@@ -255,7 +255,7 @@ begin
           rgmii_read(data_array    => v_result.data_array,
                      data_len      => v_result.data_array_length,
                      msg           => format_msg(v_cmd),
-                     rgmii_if      => rgmii_vvc_rx_if,
+                     rgmii_rx_if   => rgmii_vvc_rx_if,
                      scope         => C_SCOPE,
                      msg_id_panel  => vvc_config.msg_id_panel,
                      config        => vvc_config.bfm_config);
@@ -279,7 +279,7 @@ begin
           -- Call the corresponding procedure in the BFM package.
           rgmii_expect(data_exp      => v_cmd.data_array(0 to v_cmd.data_array_length-1),
                        msg           => format_msg(v_cmd),
-                       rgmii_if      => rgmii_vvc_rx_if,
+                       rgmii_rx_if   => rgmii_vvc_rx_if,
                        alert_level   => v_cmd.alert_level,
                        scope         => C_SCOPE,
                        msg_id_panel  => vvc_config.msg_id_panel,

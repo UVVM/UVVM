@@ -253,7 +253,7 @@ begin
           -- Call the corresponding procedure in the BFM package.
           rgmii_write(data_array    => v_cmd.data_array(0 to v_cmd.data_array_length-1),
                       msg           => format_msg(v_cmd),
-                      rgmii_if      => rgmii_vvc_tx_if,
+                      rgmii_tx_if   => rgmii_vvc_tx_if,
                       scope         => C_SCOPE,
                       msg_id_panel  => vvc_config.msg_id_panel,
                       config        => vvc_config.bfm_config);

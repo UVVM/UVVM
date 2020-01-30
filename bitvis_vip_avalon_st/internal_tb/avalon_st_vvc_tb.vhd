@@ -101,11 +101,11 @@ begin
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
-    variable avl_st_bfm_config : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    variable data_packet       : t_slv_array(0 to 99)(C_SYMBOL_WIDTH-1 downto 0);
-    variable data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH-1 downto 0);
-    variable v_cmd_idx         : natural;
-    variable v_result          : bitvis_vip_avalon_st.vvc_cmd_pkg.t_vvc_result;
+    variable v_avl_st_bfm_config : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    variable v_data_packet       : t_slv_array(0 to 99)(C_SYMBOL_WIDTH-1 downto 0);
+    variable v_data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH-1 downto 0);
+    variable v_cmd_idx           : natural;
+    variable v_result            : bitvis_vip_avalon_st.vvc_cmd_pkg.t_vvc_result;
 
     procedure new_random_data (
       data_array : inout t_slv_array) is
@@ -125,13 +125,13 @@ begin
     await_uvvm_initialization(VOID);
 
     -- Override default config with settings for this testbench
-    avl_st_bfm_config.symbol_width             := C_SYMBOL_WIDTH;
-    avl_st_bfm_config.max_channel              := C_MAX_CHANNEL;
+    v_avl_st_bfm_config.symbol_width             := C_SYMBOL_WIDTH;
+    v_avl_st_bfm_config.max_channel              := C_MAX_CHANNEL;
 
-    shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config     := avl_st_bfm_config;
-    shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config      := avl_st_bfm_config;
-    shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config := avl_st_bfm_config;
-    shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config  := avl_st_bfm_config;
+    shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config     := v_avl_st_bfm_config;
+    shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config      := v_avl_st_bfm_config;
+    shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config := v_avl_st_bfm_config;
+    shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config  := v_avl_st_bfm_config;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -164,25 +164,25 @@ begin
       ----------------------------------------------------------------------------------------------------------------------------
       shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.use_packet_transfer := true;
       shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.use_packet_transfer  := true;
-      new_random_data(data_packet); -- Generate random data
+      new_random_data(v_data_packet); -- Generate random data
 
       log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
       shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.first_symbol_in_msb := true;
       shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.first_symbol_in_msb  := true;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 8), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(0 to 8), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 8), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(0 to 8), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing symbol ordering: first symbol in low order bits");
       shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.first_symbol_in_msb := false;
       shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.first_symbol_in_msb  := false;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 8), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(0 to 8), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 8), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(0 to 8), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing that VVC procedures normalize data arrays");
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(3 to 9), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(3 to 9), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(3 to 9), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(3 to 9), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       if C_SYMBOL_WIDTH = 8 then
@@ -195,91 +195,91 @@ begin
       log(ID_LOG_HDR, "Testing shortest packets possible");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 0), "");
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 0), "");
         end loop;
         for j in 0 to i loop
-          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(0 to 0), "");
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(0 to 0), "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       end loop;
 
       log(ID_LOG_HDR, "Testing different packet sizes and channels");
       for i in 0 to 30 loop
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       for i in 0 to 30 loop
-        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_packet, "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_packet, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_packet, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_packet, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing receive and fetch");
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), data_packet(0 to 4), "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 5, data_packet(0)'length, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), v_data_packet(0 to 4), "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 5, v_data_packet(0)'length, "");
       v_cmd_idx := get_last_received_cmd_idx(AVALON_ST_VVCT, C_VVC_SLAVE);
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, v_cmd_idx, 10 us);
       fetch_result(AVALON_ST_VVCT, C_VVC_SLAVE, v_cmd_idx, v_result);
       check_value(v_result.channel_value, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), ERROR, "Checking fetch result: channel");
       for i in 0 to v_result.data_array_length-1 loop
-        check_value(v_result.data_array(i)(v_result.data_array_word_size-1 downto 0), data_packet(i), ERROR, "Checking fetch result: data_array");
+        check_value(v_result.data_array(i)(v_result.data_array_word_size-1 downto 0), v_data_packet(i), ERROR, "Checking fetch result: data_array");
       end loop;
 
       log(ID_LOG_HDR, "Testing error case: receive() with missing start of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet, "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet'length, data_packet(0)'length, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet, "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet'length, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
 
       log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1), "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH, data_packet(0)'length, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1), "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
 
       log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= force '0';
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet, "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet'length, data_packet(0)'length, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet, "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet'length, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= release;
 
       log(ID_LOG_HDR, "Testing error case: receive() with end of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 1*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1), "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH, data_packet(0)'length, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 1*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1), "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
         log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
         increment_expected_alerts_and_stop_limit(ERROR, 1);
         << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= force x"00";
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 10), "");
-        avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 11, data_packet(0)'length, "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 10), "");
+        avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 11, v_data_packet(0)'length, "");
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
         << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= release;
       end if;
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet'length, data_packet(0)'length, "");
-      wait for (avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet'length, v_data_packet(0)'length, "");
+      wait for (v_avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
       log(ID_LOG_HDR, "Testing error case: expect() wrong data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 10), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(10 to 20), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 10), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(10 to 20), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(1, GC_CHANNEL_WIDTH)), data_packet, "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(5, GC_CHANNEL_WIDTH)), data_packet, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(1, GC_CHANNEL_WIDTH)), v_data_packet, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(5, GC_CHANNEL_WIDTH)), v_data_packet, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       ----------------------------------------------------------------------------------------------------------------------------
@@ -287,34 +287,34 @@ begin
       ----------------------------------------------------------------------------------------------------------------------------
       shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.use_packet_transfer := true;
       shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.use_packet_transfer  := true;
-      new_random_data(data_packet); -- Generate random data
+      new_random_data(v_data_packet); -- Generate random data
 
       log(ID_LOG_HDR, "Testing shortest packets possible");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_packet(0 to 0), "");
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_packet(0 to 0), "");
         end loop;
         for j in 0 to i loop
-          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, data_packet(0 to 0), "");
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, v_data_packet(0 to 0), "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
       end loop;
 
       log(ID_LOG_HDR, "Testing different packet sizes and channels");
       for i in 0 to 30 loop
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       for i in 0 to 30 loop
-        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_packet, "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_packet, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_packet, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_packet, "");
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing error case: transmit() timeout - slave not ready");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_packet, "");
-      wait for (avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_packet, "");
+      wait for (v_avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
     elsif GC_TEST = "test_stream_data" then
       ----------------------------------------------------------------------------------------------------------------------------
@@ -322,25 +322,25 @@ begin
       ----------------------------------------------------------------------------------------------------------------------------
       shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.use_packet_transfer := false;
       shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.use_packet_transfer  := false;
-      new_random_data(data_stream); -- Generate random data
+      new_random_data(v_data_stream); -- Generate random data
 
       log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
       shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.first_symbol_in_msb := true;
       shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.first_symbol_in_msb  := true;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_stream(0 to 8), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream(0 to 8), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 8), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(0 to 8), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing symbol ordering: first symbol in low order bits");
       shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.first_symbol_in_msb := false;
       shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.first_symbol_in_msb  := false;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_stream(0 to 8), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream(0 to 8), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 8), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(0 to 8), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_stream(3 to 9), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream(3 to 9), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(3 to 9), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(3 to 9), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       if GC_DATA_WIDTH = 32 then
@@ -353,72 +353,72 @@ begin
       log(ID_LOG_HDR, "Testing shortest streams possible");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_stream(0 to 0), "");
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 0), "");
         end loop;
         for j in 0 to i loop
-          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream(0 to 0), "");
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(0 to 0), "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       end loop;
 
       log(ID_LOG_HDR, "Testing different stream sizes and channels");
       for i in 0 to 15 loop
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_stream(0 to i), "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_stream(0 to i), "");
       end loop;
       for i in 0 to 15 loop
-        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_stream(0 to i), "");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_stream(0 to i), "");
       end loop;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_stream, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_stream, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing receive and fetch");
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), data_stream(0 to 4), "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 5, data_stream(0)'length, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), v_data_stream(0 to 4), "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 5, v_data_stream(0)'length, "");
       v_cmd_idx := get_last_received_cmd_idx(AVALON_ST_VVCT, C_VVC_SLAVE);
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, v_cmd_idx, 10 us);
       fetch_result(AVALON_ST_VVCT, C_VVC_SLAVE, v_cmd_idx, v_result);
       check_value(v_result.channel_value, std_logic_vector(to_unsigned(10, GC_CHANNEL_WIDTH)), ERROR, "Checking fetch result: channel");
       for i in 0 to v_result.data_array_length-1 loop
-        check_value(v_result.data_array(i)(v_result.data_array_word_size-1 downto 0), data_stream(i), ERROR, "Checking fetch result: data_array");
+        check_value(v_result.data_array(i)(v_result.data_array_word_size-1 downto 0), v_data_stream(i), ERROR, "Checking fetch result: data_array");
       end loop;
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream'length, data_stream(0)'length, "");
-      wait for (avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream'length, v_data_stream(0)'length, "");
+      wait for (v_avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - not enough data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_stream(0 to 1), "");
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream'length, data_stream(0)'length, "");
-      wait for (avl_st_bfm_config.max_wait_cycles+100)*C_CLK_PERIOD;
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 1), "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream'length, v_data_stream(0)'length, "");
+      wait for (v_avl_st_bfm_config.max_wait_cycles+100)*C_CLK_PERIOD;
 
       log(ID_LOG_HDR, "Testing error case: expect() wrong data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_stream(0 to 10), "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream(10 to 20), "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 10), "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(10 to 20), "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing error case: expect() wrong channel");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(1, GC_CHANNEL_WIDTH)), data_stream, "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(5, GC_CHANNEL_WIDTH)), data_stream, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(1, GC_CHANNEL_WIDTH)), v_data_stream, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(5, GC_CHANNEL_WIDTH)), v_data_stream, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing error case: transmit() from slave");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_SLAVE, data_stream, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream, "");
       wait for C_CLK_PERIOD;
 
       log(ID_LOG_HDR, "Testing error case: receive() from master");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      avalon_st_receive(AVALON_ST_VVCT, C_VVC_MASTER, data_stream'length, data_stream(0)'length, "");
+      avalon_st_receive(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream'length, v_data_stream(0)'length, "");
       wait for C_CLK_PERIOD;
 
       log(ID_LOG_HDR, "Testing error case: expect() from master");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC_MASTER, data_stream, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream, "");
       wait for C_CLK_PERIOD;
 
       ----------------------------------------------------------------------------------------------------------------------------
@@ -426,80 +426,80 @@ begin
       ----------------------------------------------------------------------------------------------------------------------------
       shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.use_packet_transfer := false;
       shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.use_packet_transfer  := false;
-      new_random_data(data_stream); -- Generate random data
+      new_random_data(v_data_stream); -- Generate random data
 
       log(ID_LOG_HDR, "Testing shortest streams possible");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_stream(0 to 0), "");
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_stream(0 to 0), "");
         end loop;
         for j in 0 to i loop
-          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, data_stream(0 to 0), "");
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, v_data_stream(0 to 0), "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
       end loop;
 
       log(ID_LOG_HDR, "Testing different stream sizes and channels");
       for i in 0 to 15 loop
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_stream(0 to i), "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_stream(0 to i), "");
       end loop;
       for i in 0 to 15 loop
-        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_stream(0 to i), "");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_stream(0 to i), "");
       end loop;
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
-      avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), data_stream, "");
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_stream, "");
+      avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(C_MAX_CHANNEL, GC_CHANNEL_WIDTH)), v_data_stream, "");
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing error case: transmit() timeout - slave not ready");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_stream, "");
-      wait for (avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
+      avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_stream, "");
+      wait for (v_avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
     elsif GC_TEST = "test_setup_and_hold_times" then
-      avl_st_bfm_config.clock_period        := C_CLK_PERIOD;
-      avl_st_bfm_config.setup_time          := C_CLK_PERIOD/4;
-      avl_st_bfm_config.hold_time           := C_CLK_PERIOD/4;
-      avl_st_bfm_config.bfm_sync            := SYNC_WITH_SETUP_AND_HOLD;
-      avl_st_bfm_config.use_packet_transfer := true;
-      shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config     := avl_st_bfm_config;
-      shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config      := avl_st_bfm_config;
-      shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config := avl_st_bfm_config;
-      shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config  := avl_st_bfm_config;
-      new_random_data(data_packet); -- Generate random data
+      v_avl_st_bfm_config.clock_period        := C_CLK_PERIOD;
+      v_avl_st_bfm_config.setup_time          := C_CLK_PERIOD/4;
+      v_avl_st_bfm_config.hold_time           := C_CLK_PERIOD/4;
+      v_avl_st_bfm_config.bfm_sync            := SYNC_WITH_SETUP_AND_HOLD;
+      v_avl_st_bfm_config.use_packet_transfer := true;
+      shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config     := v_avl_st_bfm_config;
+      shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config      := v_avl_st_bfm_config;
+      shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config := v_avl_st_bfm_config;
+      shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config  := v_avl_st_bfm_config;
+      new_random_data(v_data_packet); -- Generate random data
 
       log(ID_LOG_HDR, "Testing setup and hold times: VVC->DUT->VVC");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, data_packet(0 to 0), "");
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 0), "");
         end loop;
         for j in 0 to i loop
-          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, data_packet(0 to 0), "");
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(0 to 0), "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       end loop;
       for i in 0 to 10 loop
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       for i in 0 to 10 loop
-        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
 
       log(ID_LOG_HDR, "Testing setup and hold times: VVC->VVC");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, data_packet(0 to 0), "");
+          avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_packet(0 to 0), "");
         end loop;
         for j in 0 to i loop
-          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, data_packet(0 to 0), "");
+          avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, v_data_packet(0 to 0), "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
       end loop;
       for i in 0 to 10 loop
-        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       for i in 0 to 10 loop
-        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), data_packet(0 to i), "");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
 

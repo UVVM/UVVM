@@ -198,14 +198,8 @@ begin
 -- - Fetch and execute the commands
 --========================================================================================================================
   cmd_executor : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean := false;
-    variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_msg_id_panel                           : t_msg_id_panel;
-
+    variable v_cmd          : t_vvc_cmd_record;
+    variable v_msg_id_panel : t_msg_id_panel;
   
   begin
 
@@ -281,16 +275,6 @@ begin
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);
       end case;
-
-      if v_command_is_bfm_access then
-        v_timestamp_end_of_last_bfm_access := now;
-        v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and
-           ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
-                to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
-        end if;
-      end if;
 
       -- Reset terminate flag if any occurred
       if (terminate_current_cmd.is_active = '1') then

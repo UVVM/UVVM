@@ -37,7 +37,7 @@ def main(argv):
   tb.compile()
 
   # Set testbench and run
-  tb.set_tb_name("gmii_vip_tb")
+  tb.set_tb_name("gmii_bfm_tb")
   tb.run_simulation()
 
   # Print simulation results

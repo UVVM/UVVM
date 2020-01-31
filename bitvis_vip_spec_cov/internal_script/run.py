@@ -47,14 +47,14 @@ def main(argv):
   tests = []
 
   tb = Testbench()
-  tb.set_library("bitvis_vip_spec_vs_verif")
+  tb.set_library("bitvis_vip_spec_cov")
   tb.check_arguments(argv)
 
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
-  tests = [ "start_req_cov",
-            "start_req_cov_with_tc",
+  tests = [ "initialize_req_cov",
+            "initialize_req_cov_with_tc",
             "reset_of_req_cov_matrix",
             "requirement_exists",
             "requirement_and_tc_exists",
@@ -63,7 +63,7 @@ def main(argv):
           ]
 
   # Setup testbench and run
-  tb.set_tb_name("spec_vs_verif_methods_tb")
+  tb.set_tb_name("spec_cov_tb")
   tb.add_tests(tests)
   tb.run_simulation()
 

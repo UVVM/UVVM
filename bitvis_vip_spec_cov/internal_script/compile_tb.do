@@ -1,4 +1,4 @@
-set lib_name "bitvis_vip_spec_vs_verif"
+set lib_name "bitvis_vip_spec_cov"
 
 if { [info exists ::env(SIMULATOR)] } {
   set simulator $::env(SIMULATOR)
@@ -21,7 +21,7 @@ if { [info exists ::env(SIMULATOR)] } {
 # Compile tb files
 #------------------------------------------------------
 set root_path "../.."
-set tb_path "$root_path/bitvis_vip_spec_vs_verif/internal_tb"
+set tb_path "$root_path/bitvis_vip_spec_cov/internal_tb"
 echo "\n\n\n=== Compiling TB\n"
 
 echo "eval vcom  $compdirectives  $tb_path/spec_vs_verif_methods_tb.vhd"

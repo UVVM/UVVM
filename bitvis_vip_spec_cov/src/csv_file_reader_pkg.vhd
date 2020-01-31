@@ -69,7 +69,7 @@ package body csv_file_reader_pkg is
             variable v_file_open_status : FILE_OPEN_STATUS;
         begin
             v_CSV_delimiter := csv_delimiter;
-            log(ID_FILE_PARSER, "Opening CSV file " & file_pathname);
+            log(ID_FILE_OPEN_CLOSE, "Opening CSV file " & file_pathname);
             file_open(v_file_open_status, my_csv_file, file_pathname, READ_MODE);
             check_file_open_status(v_file_open_status, file_pathname);
 
@@ -78,7 +78,7 @@ package body csv_file_reader_pkg is
         
         -- Release (close) the associated CSV file
         procedure dispose is begin
-            log(ID_FILE_PARSER, "Closing CSV file");
+            log(ID_FILE_OPEN_CLOSE, "Closing CSV file");
             file_close(my_csv_file);
         end;
         

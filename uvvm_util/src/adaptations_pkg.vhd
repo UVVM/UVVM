@@ -149,7 +149,7 @@ package adaptations_pkg is
     ID_DATA,                  -- To write general handling of data
     ID_CTRL,                  -- To write general control/config information
     -- Specification vs Verification IDs
-    ID_FILE_OPEN_CLOSE        -- Id used when opening / closing file
+    ID_FILE_OPEN_CLOSE,       -- Id used when opening / closing file
     ID_FILE_PARSER,           -- Id used in file parsers
     ID_SPEC_COV,              -- Messages from the specification coverage methods
     -- Special purpose - Not really IDs

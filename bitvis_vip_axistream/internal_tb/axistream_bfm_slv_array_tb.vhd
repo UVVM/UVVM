@@ -19,9 +19,6 @@ use IEEE.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_axistream;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
@@ -98,9 +95,6 @@ begin
       axistream_if_s_FIFO2VVC => axistream_if_s
       );
 
-  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
-
-
   -- Set up clock generator
   p_clock : clock_generator(clk, clock_ena, C_CLK_PERIOD, "axistream CLK");
 
@@ -174,8 +168,6 @@ begin
     -- simulations) overwrite each other.
     set_log_file_name(GC_TEST & "_Log.txt");
     set_alert_file_name(GC_TEST & "_Alert.txt");
-
-    await_uvvm_initialization(VOID);
 
     -- override default config with settings for this testbench
     axistream_bfm_config.max_wait_cycles          := 1000;

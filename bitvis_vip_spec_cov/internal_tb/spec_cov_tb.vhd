@@ -21,18 +21,18 @@ use IEEE.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library bitvis_vip_spec_vs_verif;
-use bitvis_vip_spec_vs_verif.spec_vs_verif_methods.all;
+library bitvis_vip_spec_cov;
+use bitvis_vip_spec_cov.spec_cov_pkg.all;
 
 
-entity spec_vs_verif_methods_tb is
+entity spec_cov_tb is
   generic (
     GC_TEST : string := "UVVM"
     );
 end entity;
 
 
-architecture func of spec_vs_verif_methods_tb is
+architecture func of spec_cov_tb is
 
 begin
 
@@ -50,23 +50,23 @@ begin
     set_alert_file_name(GC_TEST & "_Alert.txt");
 
 
-    if GC_TEST = "start_req_cov" then
-      start_req_cov("../internal_tb/req_to_test_map_example_1.csv");
-      end_req_cov(VOID);
+    if GC_TEST = "initialize_req_cov" then
+      initialize_req_cov("../internal_tb/req_to_test_map_example_1.csv");
+      finalize_req_cov(VOID);
 
-    elsif GC_TEST = "start_req_cov_with_tc" then
-      start_req_cov("../internal_tb/req_to_test_map_example_2.csv");
-      end_req_cov(VOID);
+    elsif GC_TEST = "initialize_req_cov_with_tc" then
+      initialize_req_cov("../internal_tb/req_to_test_map_example_2.csv");
+      finalize_req_cov(VOID);
 
     elsif GC_TEST = "reset_of_req_cov_matrix" then
-      start_req_cov("../internal_tb/req_to_test_map_example_2.csv");
-      end_req_cov(VOID);
+      initialize_req_cov("../internal_tb/req_to_test_map_example_2.csv");
+      finalize_req_cov(VOID);
       log("Resetting the data objects");
-      start_req_cov("../internal_tb/req_to_test_map_example_2.csv");
-      end_req_cov(VOID);
+      initialize_req_cov("../internal_tb/req_to_test_map_example_2.csv");
+      finalize_req_cov(VOID);
 
     elsif GC_TEST = "requirement_exists" then
-      start_req_cov("../internal_tb/req_to_test_map_example_1.csv");
+      initialize_req_cov("../internal_tb/req_to_test_map_example_1.csv");
       check_value(requirement_exists("FPGA_SPEC_1"), error, "Checking existing requirement 1");
       check_value(requirement_exists("FPGA_SPEC_2"), error, "Checking existing requirement 2");
       check_value(requirement_exists("FPGA_SPEC_3"), error, "Checking existing requirement 3");
@@ -75,10 +75,10 @@ begin
       check_value(requirement_exists("FPGA_SPEC_5"), false, error, "Checking non-existing requirement 2");
       check_value(requirement_exists("FPGA_SPEC_1 "), false, error, "Checking non-existing requirement 3");
       check_value(requirement_exists("not a valid requirement"), false, error, "Checking non-existing requirement 4");
-      end_req_cov(VOID);
+      finalize_req_cov(VOID);
 
     elsif GC_TEST = "requirement_and_tc_exists" then
-      start_req_cov("../internal_tb/req_to_test_map_example_2.csv");
+      initialize_req_cov("../internal_tb/req_to_test_map_example_2.csv");
       check_value(requirement_and_tc_exists("FPGA_SPEC_1", "TC_TOP_01"), error, "Checking existing requirement and tc 1");
       check_value(requirement_and_tc_exists("FPGA_SPEC_2", "TC_UART_1"), error, "Checking existing requirement and tc 2");
       check_value(requirement_and_tc_exists("FPGA_SPEC_3", "TC_UART_2"), error, "Checking existing requirement and tc 3");
@@ -90,18 +90,18 @@ begin
       check_value(requirement_and_tc_exists("FPGA_SPEC_3", "non ext"), false, error, "Checking existing requirement, non-existing tc");
       check_value(requirement_and_tc_exists("FPGA_SPEC_3", "TC_UART_3 "), false, error, "Checking existing requirement, non-existing tc");
       check_value(requirement_and_tc_exists("FPGA_SPEC_3", " TC_UART_3"), false, error, "Checking existing requirement, non-existing tc");
-      end_req_cov(VOID);
+      finalize_req_cov(VOID);
 
     elsif GC_TEST = "log_req_cov_normal" then
-      start_req_cov("../internal_tb/req_to_test_map_example_2.csv", "../sim/log_req_cov_normal.csv");
-      log_req_cov("FPGA_SPEC_1", "TC_TOP_01");
+      initialize_req_cov("../internal_tb/req_to_test_map_example_2.csv", "../sim/log_req_cov_normal.csv");
+      log_req_cov("FPGA_SPEC_1", "tc_TOP_01");
       log_req_cov("FPGA_SPEC_2", "TC_UART_1", false);
       log_req_cov("FPGA_SPEC_3", "TC_UART_4");
       log_req_cov("FPGA_SPEC_4", "TC_UART_5");
-      end_req_cov(VOID);
+      finalize_req_cov(VOID);
 
     elsif GC_TEST = "log_req_cov_with_error" then
-      start_req_cov("../internal_tb/req_to_test_map_example_2.csv", "../sim/log_req_cov_with_error.csv");
+      initialize_req_cov("../internal_tb/req_to_test_map_example_2.csv", "../sim/log_req_cov_with_error.csv");
       log_req_cov("FPGA_SPEC_1", "TC_TOP_01");
       log_req_cov("FPGA_SPEC_2", "TC_UART_1");
 
@@ -112,7 +112,7 @@ begin
       log_req_cov("FPGA_SPEC_3", "TC_UART_4");
       log_req_cov("FPGA_SPEC_4", "TC_UART_5");
       increment_expected_alerts(error, 1, "Incrementing expected errors after the log_req_cov function has been run");
-      end_req_cov(VOID);
+      finalize_req_cov(VOID);
 
     else
       alert(tb_error, "Unsupported test");

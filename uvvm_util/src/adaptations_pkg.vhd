@@ -147,8 +147,9 @@ package adaptations_pkg is
     ID_DATA,                  -- To write general handling of data
     ID_CTRL,                  -- To write general control/config information
     -- Specification vs Verification IDs
+    ID_FILE_OPEN_CLOSE        -- Id used when opening / closing file
     ID_FILE_PARSER,           -- Id used in file parsers
-    ID_SPEC_VS_VERIF,         -- Messages from the specification vs verification methods
+    ID_SPEC_COV,              -- Messages from the specification coverage methods
     -- Special purpose - Not really IDs
     ALL_MESSAGES              -- Applies to ALL message ID apart from ID_NEVER
     );
@@ -335,7 +336,7 @@ package adaptations_pkg is
   ------------------------------------------------------------------------
   constant C_REQ_TC_MISMATCH_SEVERITY   : t_alert_level := warning;
   constant C_DEFAULT_RESULT_FILE_NAME   : string := "resultfile.csv";
-  constant C_CSV_DELIMITER              : character := ';';
+  constant C_CSV_DELIMITER              : character := ',';
   constant C_MAX_NUM_REQUIREMENTS       : natural := 1000;
   constant C_MAX_NUM_TC_PR_REQUIREMENT  : natural := 20;
   constant C_CSV_FILE_MAX_LINE_LENGTH   : positive := 256;

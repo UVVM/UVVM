@@ -40,6 +40,10 @@ def main(argv):
   tb.set_tb_name("gmii_bfm_tb")
   tb.run_simulation()
 
+  # Set testbench and run
+  tb.set_tb_name("gmii_vvc_tb")
+  tb.run_simulation()
+
   # Print simulation results
   tb.print_statistics()
 

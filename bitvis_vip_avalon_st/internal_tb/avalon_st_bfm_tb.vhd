@@ -20,9 +20,6 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_avalon_st;
 use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 
@@ -64,11 +61,6 @@ architecture func of avalon_st_bfm_tb is
                                               empty(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH)-1 downto 0));
 
 begin
-
-  -----------------------------------------------------------------------------
-  -- Instantiate the concurrent procedure that initializes UVVM
-  -----------------------------------------------------------------------------
-  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
   -----------------------------------------------------------------------------
   -- Clock Generator
@@ -159,9 +151,6 @@ begin
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TEST & "_Log.txt");
     set_alert_file_name(GC_TEST & "_Alert.txt");
-
-    -- Wait for UVVM to finish initialization
-    await_uvvm_initialization(VOID);
 
     -- Override default config with settings for this testbench
     v_avl_st_bfm_config.symbol_width := C_SYMBOL_WIDTH;

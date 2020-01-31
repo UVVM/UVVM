@@ -25,14 +25,11 @@ set tb_path "$root_path/bitvis_vip_gmii/internal_tb"
 
 echo "\n\n\n=== Compiling TB\n"
 
-#echo "eval vcom  $compdirectives  $tb_path/gmii_vip_th.vhd"
-#eval vcom  $compdirectives  $tb_path/gmii_vip_th.vhd
-
-#echo "eval vcom  $compdirectives  $tb_path/gmii_vip_tb.vhd"
-#eval vcom  $compdirectives  $tb_path/gmii_vip_tb.vhd
-
 echo "eval vcom  $compdirectives  $tb_path/gmii_th.vhd"
 eval vcom  $compdirectives  $tb_path/gmii_th.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/gmii_bfm_tb.vhd"
 eval vcom  $compdirectives  $tb_path/gmii_bfm_tb.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/gmii_vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/gmii_vvc_tb.vhd

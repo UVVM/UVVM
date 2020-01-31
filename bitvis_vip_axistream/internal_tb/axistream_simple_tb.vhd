@@ -29,9 +29,6 @@ use IEEE.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_axistream;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 

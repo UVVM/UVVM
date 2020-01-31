@@ -53,22 +53,22 @@ begin
 end struct_bfm;
 
 
---architecture struct_vvc of test_harness is
---begin
+architecture struct_vvc of test_harness is
+begin
 
---  -- Instantiate VVC
---  i_gmii_vvc : entity work.gmii_vvc
---    generic map(
---      GC_INSTANCE_IDX => 0
---      )
---    port map(
---      gmii_vvc_tx_if => gmii_tx_if,
---      gmii_vvc_rx_if => gmii_rx_if
---    );
+  -- Instantiate VVC
+  i_gmii_vvc : entity work.gmii_vvc
+    generic map(
+      GC_INSTANCE_IDX => 0
+      )
+    port map(
+      gmii_vvc_tx_if => gmii_tx_if,
+      gmii_vvc_rx_if => gmii_rx_if
+    );
 
---  gmii_tx_if.gtxclk <= clk;
---  gmii_rx_if.rxclk  <= clk;
---  gmii_rx_if.rxd    <= gmii_tx_if.txd;
---  gmii_rx_if.rxdv   <= gmii_tx_if.txen;
+  gmii_tx_if.gtxclk <= clk;
+  gmii_rx_if.rxclk  <= clk;
+  gmii_rx_if.rxd    <= gmii_tx_if.txd;
+  gmii_rx_if.rxdv   <= gmii_tx_if.txen;
 
---end struct_vvc;
+end struct_vvc;

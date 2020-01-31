@@ -728,6 +728,7 @@ package body axistream_bfm_pkg is
     check_value(id_array'ascending,   TB_ERROR, "Sanity check: Check that id_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(dest_array'ascending, TB_ERROR, "Sanity check: Check that dest_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, proc_call);
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
       check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
       check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     end if;
@@ -1324,6 +1325,7 @@ package body axistream_bfm_pkg is
     check_value(id_array'ascending,   TB_ERROR, "Sanity check: Check that id_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(dest_array'ascending, TB_ERROR, "Sanity check: Check that dest_array is ascending (defined with 'to'), for word order clarity", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
       check_value(config.setup_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that setup_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
       check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     end if;

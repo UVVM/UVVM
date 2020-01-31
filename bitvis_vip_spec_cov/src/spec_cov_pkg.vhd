@@ -24,40 +24,43 @@ use std.textio.all;
 
 use work.csv_file_reader_pkg.all;
 
-package spec_cov_methods is  
+package spec_cov_pkg is  
 
   file RESULT_FILE : text;
 
-  -- Starts the requirement coverage process by reading the requirement file and opening the output file
+  --
+  -- initialize_req_cov()
+  --   Starts the requirement coverage process by reading the requirement 
+  --   file and opening the output file.
+  --
   procedure initialize_req_cov(
     variable testcase       : string;
     constant req_to_tc_map  : string;
     constant output_file    : string := C_DEFAULT_RESULT_FILE_NAME
   );
 
-  -- Log requirement and testcase to file. 
-  -- This function checks the global error mismatch counter for mismatch between expected and observed alerts of severity 'fail_on_alert_mismatch_severity'.
+  --
+  -- log_req_cov()
+  --   Log requirement and testcase to file. 
+  --   This function checks the global error mismatch counter for mismatch 
+  --   between expected and observed alerts.
+  --
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
     constant test_status : t_test_status := PASS
   );
-  -- Overloading procedure without testcase
+  -- Overloading procedure without testcase and optional test_status
   procedure log_req_cov(
     constant requirement : string;
     constant test_status : t_test_status := PASS
   );
-  -- Overloadding procedure without t_test_status
-  procedure log_req_cov(
-    constant requirement : string;
-    constant testcase    : string
-  );
-  -- Overloading procedure without testcase and t_test_status
-  procedure log_req_cov(
-    constant requirement : string
-  );
   
-  -- Ends the requirement coverage by writing a check-string to the result file, closing all files and cleaning up the memory.
+  --
+  -- finalize_req_cov()
+  --   Ends the requirement coverage by writing a check-string to the result file, 
+  --   closing all files and cleaning up the memory.
+  --
   procedure finalize_req_cov(
     constant VOID : t_void
   );
@@ -83,10 +86,10 @@ shared variable shared_csv_file               : csv_file_reader_type;
 shared variable shared_requirement_array      : t_requirement_entry_array(0 to C_MAX_NUM_REQUIREMENTS);
 shared variable shared_requirements_in_array  : natural := 0;
 
-constant C_PASS_STRING : string := "PASS";
-constant C_FAIL_STRING : string := "FAIL";
-constant C_SCOPE       : string := "SPEC_VS_VERIF";
-constant C_REQ_COV_SUCCESSFUL_STRING : string := "Requirement coverage completed successfully";
+constant C_FAIL_STRING                : string := "FAIL";
+constant C_PASS_STRING                : string := "PASS";
+constant C_SCOPE                      : string := "SPEC_COV";
+constant C_REQ_COV_SUCCESSFUL_STRING  : string := "Requirement coverage completed successfully";
 
 procedure priv_log_entry(
   constant index : natural
@@ -114,33 +117,43 @@ impure function priv_get_description(
     testcase    : string
 ) return string;
 
-end package spec_cov_methods;
+end package spec_cov_pkg;
 
 
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
 
-package body spec_cov_methods is
+package body spec_cov_pkg is
 
   -- This testcase string will be used when no testcase is 
   -- given when using the log_req_cov() method.
-  variable v_default_testcase : string;
+  variable priv_default_testcase_name : string;
 
 
+  --
+  -- initialize_req_cov()
+  --   Starts the requirement coverage process by reading the requirement 
+  --   file and opening the output file.
+  --
   procedure initialize_req_cov(
     variable testcase       : string;
     constant req_to_tc_map  : string;
     constant output_file    : string := C_DEFAULT_RESULT_FILE_NAME
   ) is
   begin
-    v_default_testcase := testcase;
+    priv_default_testcase_name := testcase;
     priv_read_and_parse_csv_file(req_to_tc_map);    
     priv_initialize_result_file(output_file);
-  end procedure;
+  end procedure initialize_req_cov;
   
   
-
+  --
+  -- log_req_cov()
+  --   Log requirement and testcase to file. 
+  --   This function checks the global error mismatch counter for mismatch 
+  --   between expected and observed alerts.
+  --
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
@@ -172,31 +185,22 @@ package body spec_cov_methods is
     -- Log to file
     write(v_requirement_to_file_line, requirement & C_CSV_DELIMITER & testcase & C_CSV_DELIMITER & v_requirement_passed);
     writeline(RESULT_FILE, v_requirement_to_file_line);
-  end procedure;
+  end procedure log_req_cov;
 
-  -- Overloading procedure without testcase
+  -- Overloading procedure without testcase and optional test_status
   procedure log_req_cov(
     constant requirement : string;
     constant test_status : t_test_status := PASS
-  );
-  -- Overloadding procedure without t_test_status
-  procedure log_req_cov(
-    constant requirement : string;
-    constant testcase    : string
-  );
-  -- Overloading procedure without testcase and t_test_status
-  procedure log_req_cov(
-    constant requirement : string
-  );
+  ) is 
+  begin
+    log_req_cov(requirement, priv_default_testcase_name, test_status);
+  end procedure log_req_cov;
   
-
-
-
+  
   --
   -- finalize_req_cov()
-  --
-  --   This method will free used memory, write the
-  --   run summary line to file and close the file.
+  --   Ends the requirement coverage by writing a check-string to the result file, 
+  --   closing all files and cleaning up the memory.
   --
   procedure finalize_req_cov(
     constant VOID : t_void
@@ -213,7 +217,7 @@ package body spec_cov_methods is
         deallocate(shared_requirement_array(i).tc_list(tc));
       end loop;
       shared_requirement_array(i).num_tcs := 0;
-      shared_requirement_array(i).valid := false;
+      shared_requirement_array(i).valid   := false;
     end loop;
     shared_requirements_in_array := 0;
         
@@ -226,8 +230,10 @@ package body spec_cov_methods is
     file_close(RESULT_FILE);
 
     log(ID_SPEC_VS_VERIF, "Requirement coverage ended succesfully", C_SCOPE);
-  end procedure;
+  end procedure finalize_req_cov;
   
+
+
   
 --=================================================================================================  
 -- Functions and procedures declared below this line are intended as internal functions
@@ -354,4 +360,4 @@ begin
   return "DESCRIPTION NOT FOUND";
 end;
 
-end package body spec_cov_methods;
+end package body spec_cov_pkg;

@@ -28,6 +28,8 @@ package adaptations_pkg is
   constant C_SHOW_UVVM_UTILITY_LIBRARY_INFO         : boolean := true;  -- Set this to false when you no longer need the initial info
   constant C_SHOW_UVVM_UTILITY_LIBRARY_RELEASE_INFO : boolean := true;  -- Set this to false when you no longer need the release info
 
+  constant C_UVVM_TIMEOUT    : time := 100 us; -- General timeout for UVVM wait statements
+
   -------------------------------------------------------------------------------
   -- Log format
   -------------------------------------------------------------------------------

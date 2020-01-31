@@ -654,6 +654,7 @@ package body bfm_common_pkg is
     signal clk         : in std_logic;
     constant wait_time : in time
     ) is
+    constant proc_name : string  := "wait_until_given_time_after_rising_edge";
     variable v_remaining_wait_time : time;
   begin
     -- If the time since the previous rising_edge is less than wait_time,
@@ -664,7 +665,10 @@ package body bfm_common_pkg is
         ) then
       v_remaining_wait_time := wait_time - clk'last_event;  -- Wait until wait_time after rising_edge
     else
-      wait until rising_edge(clk);
+      wait until rising_edge(clk) for C_UVVM_TIMEOUT;
+      if clk /= '1' then
+        alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+      end if;
       v_remaining_wait_time := wait_time;  -- Wait until wait_time after rising_edge
     end if;
     wait for v_remaining_wait_time;
@@ -676,6 +680,7 @@ package body bfm_common_pkg is
     constant time_to_edge : in time;
     constant clk_period   : in time
     ) is
+    constant proc_name    : string  := "wait_until_given_time_before_rising_edge";
     variable v_remaining_wait_time : time;
   begin
     check_value(clk_period > 2*time_to_edge, TB_ERROR, "Checking time_to_edge is less than half clk_period", C_SCOPE, ID_NEVER);
@@ -687,7 +692,10 @@ package body bfm_common_pkg is
         clk'last_value = '1' and clk = '0') then
       v_remaining_wait_time := (clk_period/2 - time_to_edge) - clk'last_event;  -- Wait until time_to_edge before rising_edge
     else
-      wait until falling_edge(clk);
+      wait until falling_edge(clk) for C_UVVM_TIMEOUT;
+      if clk /= '0' then
+        alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+      end if;
       v_remaining_wait_time := (clk_period/2 - time_to_edge);  -- Wait until time_to_edge before rising_edge
     end if;
 
@@ -736,8 +744,11 @@ package body bfm_common_pkg is
     case bfm_sync is
       when SYNC_ON_CLOCK_ONLY =>
         -- sample rising_egde
-        if clk = '0' then
-          wait until rising_edge(clk);
+        if clk /= '1' then
+          wait until rising_edge(clk) for C_UVVM_TIMEOUT;
+          if clk /= '1' then
+            alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+          end if;
         end if;
         time_of_rising_edge := now - clk'last_event;    
         -- exit on clock falling edge
@@ -752,7 +763,7 @@ package body bfm_common_pkg is
         time_of_falling_edge := now - clk'last_event;
 
       when others =>
-        alert(tb_warning, proc_name & " => invalid bfm_sync parameter.");
+        alert(TB_WARNING, proc_name & " => invalid bfm_sync parameter.");
     end case;
   end procedure wait_on_bfm_sync_start;
 
@@ -792,7 +803,7 @@ package body bfm_common_pkg is
         wait_until_given_time_after_rising_edge(clk, hold_time);
 
       when others =>
-        alert(tb_warning, proc_name & " => invalid bfm_sync parameter.");
+        alert(TB_WARNING, proc_name & " => invalid bfm_sync parameter.");
     end case;
   end procedure wait_on_bfm_exit;
 

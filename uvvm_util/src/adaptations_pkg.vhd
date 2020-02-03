@@ -333,18 +333,6 @@ package adaptations_pkg is
     last_cmd_idx_executed => -1
   );
 
-  ------------------------------------------------------------------------
-  -- Requirement vs Verification Matrix adaptations
-  ------------------------------------------------------------------------
-  constant C_REQ_TC_MISMATCH_SEVERITY   : t_alert_level := warning;
-  constant C_DEFAULT_RESULT_FILE_NAME   : string := "resultfile.csv";
-  constant C_CSV_DELIMITER              : character := ',';
-  constant C_MAX_NUM_REQUIREMENTS       : natural := 1000;
-  constant C_MAX_NUM_TC_PR_REQUIREMENT  : natural := 20;
-  constant C_CSV_FILE_MAX_LINE_LENGTH   : positive := 256;
-
-  shared variable shared_req_vs_cov_strict_testcase_checking : boolean := false;
-
 
   ------------------------------------------------------------------------
   -- CRC32

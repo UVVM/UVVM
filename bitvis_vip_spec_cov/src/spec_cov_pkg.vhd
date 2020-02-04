@@ -143,8 +143,9 @@ end package spec_cov_pkg;
 package body spec_cov_pkg is
 
   -- This testcase string will be used when no testcase is given when using the log_req_cov() method.
-  shared variable priv_default_testcase_name  : string(1 to C_TESTCASE_NAME_MAX_LENGTH) := (others => NUL);
-  shared variable priv_testcase_passed        : boolean;
+  shared variable priv_default_testcase_name    : string(1 to C_TESTCASE_NAME_MAX_LENGTH) := (others => NUL);
+  shared variable priv_testcase_passed          : boolean;
+  shared variable priv_requirement_file_exists  : boolean;
   
   --
   -- initialize_req_cov()
@@ -161,14 +162,11 @@ package body spec_cov_pkg is
   ) is
   begin
     priv_default_testcase_name(1 to testcase'length) := testcase;
-
-    if config.skip_requirement_list = false then
-      priv_read_and_parse_csv_file(req_to_tc_map);    
-    end if;
-
+    priv_read_and_parse_csv_file(req_to_tc_map);    
     priv_initialize_result_file(output_file);
-
-    priv_testcase_passed := true;
+    -- update pkg local variables
+    priv_testcase_passed          := true;
+    priv_requirement_file_exists  := true;
   end procedure initialize_req_cov;
   
   -- Overloading procedure, no req_to_tc_map
@@ -180,8 +178,9 @@ package body spec_cov_pkg is
     log(ID_SPEC_COV, "Requirement Coverage initialized with no requirement file.", C_SCOPE);
     priv_default_testcase_name(1 to testcase'length) := testcase;
     priv_initialize_result_file(output_file);
-
-    priv_testcase_passed := true;
+    -- update pkg local variables
+    priv_testcase_passed          := true;
+    priv_requirement_file_exists  := false;
   end procedure initialize_req_cov;
   
   --
@@ -199,7 +198,7 @@ package body spec_cov_pkg is
     variable v_requirement_status       : t_test_status := test_status;
   begin
 
-    if shared_requirements_in_array = 0 and config.skip_requirement_list = false then
+    if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
       alert(TB_ERROR, "Requirements not been parsed. Please used initialize_req_cov() with a requirement file before calling log_req_cov().", C_SCOPE);
       return;
     end if;
@@ -388,7 +387,7 @@ begin
     end if;
   end loop;
 
-  if config.skip_requirement_list = true then
+  if priv_requirement_file_exists = false then
     return "";
   else
     return "DESCRIPTION NOT FOUND";

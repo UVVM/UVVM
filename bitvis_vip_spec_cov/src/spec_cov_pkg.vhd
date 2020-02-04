@@ -287,6 +287,7 @@ procedure priv_read_and_parse_csv_file(
     constant req_to_tc_map  : string
 ) is 
   variable v_tc_valid : boolean;
+  variable v_file_ok  : boolean;
 begin
   log(ID_SPEC_COV, "Reading and parsing requirement to testcase map file, " & req_to_tc_map, C_SCOPE);
 
@@ -294,8 +295,14 @@ begin
     alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
     return;
   end if;
-  shared_csv_file.initialize(req_to_tc_map, C_CSV_DELIMITER);
 
+  -- Open file and check status, return if failing
+  v_file_ok := shared_csv_file.initialize(req_to_tc_map, C_CSV_DELIMITER);
+  if v_file_ok = false then
+    return;
+  end if;
+
+  -- File ok, read file
   while not shared_csv_file.end_of_file loop
     shared_csv_file.readline;
 

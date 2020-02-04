@@ -25,8 +25,6 @@ package local_adaptations_pkg is
 
     -- Maximum length for testcase name, increase if needed.
     constant C_TESTCASE_NAME_MAX_LENGTH     : positive := 100;
-    -- File name used if no file name is given when calling initialize_req_cov() procedure.
-    --constant C_DEFAULT_RESULT_FILE_NAME     : string := "resultfile.csv";
     -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
     constant C_CSV_FILE_MAX_LINE_LENGTH     : positive := 256;
     -- Delimiter when reading and writing CSV files.

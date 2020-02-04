@@ -99,7 +99,6 @@ package spec_cov_pkg is
   constant C_FAIL_STRING                : string := "FAIL";
   constant C_PASS_STRING                : string := "PASS";
   constant C_SCOPE                      : string := "SPEC_COV";
-  constant C_REQ_COV_SUCCESSFUL_STRING  : string := "Requirement coverage completed successfully";
 
   procedure priv_log_entry(
     constant index : natural

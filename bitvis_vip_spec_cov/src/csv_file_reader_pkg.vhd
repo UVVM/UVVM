@@ -10,6 +10,8 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+use work.local_adaptations_pkg.all;
+
 -- Define operations to read formatted data from a comma-separated-values file
 -- (CSV file). To use this package:
 --    1. Create a csv_file_reader:      variable csv: csv_file_reader_type;
@@ -23,7 +25,7 @@ package csv_file_reader_pkg is
 
     type csv_file_reader_type is protected
         -- Open the CSV text file to be used for subsequent read operations
-        procedure initialize(file_pathname: string; csv_delimiter : character := ';');
+        procedure initialize(file_pathname: string; csv_delimiter : character := ',');
         -- Release (close) the associated CSV file
         procedure dispose;
         -- Read one line from the csv file, and keep it in the cache
@@ -64,7 +66,7 @@ package body csv_file_reader_pkg is
         -- Open the CSV text file to be used for subsequent read operations
         procedure initialize(
             file_pathname: string;
-            csv_delimiter : character := ';'
+            csv_delimiter : character := ','
         ) is 
             variable v_file_open_status : FILE_OPEN_STATUS;
         begin

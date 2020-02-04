@@ -1,5 +1,0 @@
-FPGA_SPEC_1;TC_TOP_01;PASS
-FPGA_SPEC_2;TC_UART_1;FAIL
-FPGA_SPEC_3;TC_UART_4;PASS
-FPGA_SPEC_4;TC_UART_5;PASS
-Requirement coverage completed successfully

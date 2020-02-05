@@ -46,11 +46,10 @@ begin
 
 
     -- helper procedures
-    procedure provoke_uvvm_status_error(void : t_void) is
+    procedure provoke_uvvm_status_error(alert_level : t_alert_level) is
     begin
-      log(ID_SEQUENCER, "Incrementing stop limit and setting a TB_ERROR.", C_SCOPE);
-      set_alert_stop_limit(TB_ERROR, get_alert_stop_limit(TB_ERROR) + 1);
-      check_value(true = false, TB_ERROR, "setting a TB_ERROR");
+      log(ID_SEQUENCER, "Incrementing stop limit and setting an alert.", C_SCOPE);
+      check_value(true = false, alert_level, "triggering alert");
     end procedure;
 
 
@@ -62,62 +61,62 @@ begin
     set_alert_file_name(GC_TEST & "_Alert.txt");
 
     shared_spec_cov_config := C_SPEC_COV_CONFIG_DEFAULT;
+    set_alert_stop_limit(TB_ERROR, 2);
 
 
-    if GC_TEST = "basic_test_init_no_requirement_file" then
-      shared_spec_cov_config.skip_requirement_list := true;
-      -- Run testcase
-      initialize_req_cov(C_DEFAULT_TESTCASE, "resultfile.csv");
-      log_req_cov("initialize_without_requirement_file");
-      -- End testcase
+    if GC_TEST = "test_init_with_no_requirement_file" then
+      initialize_req_cov("T_SPEC_COV_1", "test_requirement_1.csv");
+      log_req_cov("SPEC_COV_REQ_1");
       finalize_req_cov(VOID);
 
-    elsif GC_TEST = "basic_test_init_with_requirement_file" then
-      -- Run testcase
-      initialize_req_cov(C_DEFAULT_TESTCASE, "../internal_tb/requirement_file_1.csv", "resultfile_1.csv");
-      log_req_cov("initialize_with_requirement_file");
-      -- End testcase
+    elsif GC_TEST = "test_init_with_requirement_file" then
+      initialize_req_cov("T_SPEC_COV_2", "../internal_tb/simple_req_file.csv", "test_requirement_2.csv");
+      log_req_cov("SPEC_COV_REQ_2");
       finalize_req_cov(VOID);
 
-    elsif GC_TEST = "basic_test_log_default_testcase_and_other" then
-      -- Run testcase
-      initialize_req_cov(C_DEFAULT_TESTCASE, "../internal_tb/requirement_file_2.csv", "resultfile_2.csv");
-      log_req_cov("log_req_cov_testcase");
-      log_req_cov("log_req_cov_testcase", "T_INIT_2");
-      -- End testcase
+    elsif GC_TEST = "test_log_default_testcase_and_not_listed" then
+      initialize_req_cov("T_SPEC_COV_3", "../internal_tb/simple_req_file.csv", "test_requirement_3.csv");
+      log_req_cov("SPEC_COV_REQ_3");
+      log_req_cov("SPEC_COV_REQ_3", "T_SPEC_COV_50");
       finalize_req_cov(VOID);
       
-    elsif GC_TEST = "basic_test_log_testcase_pass_and_fail" then
-      -- Run testcase
-      initialize_req_cov("T_LOG_FAIL", "../internal_tb/requirement_file_2.csv", "resultfile_3.csv");
-      log_req_cov("log_req_cov_testcase", FAIL);
-      log_req_cov("log_req_cov_testcase", "T_LOG_PASS", PASS);
-      -- End testcase
+    elsif GC_TEST = "test_log_testcase_pass_and_fail" then
+      initialize_req_cov("T_SPEC_COV_4", "../internal_tb/simple_req_file.csv", "test_requirement_4.csv");
+      log_req_cov("SPEC_COV_REQ_4", FAIL);
+      log_req_cov("SPEC_COV_REQ_4", "T_SPEC_COV_4_PASSING", PASS);
       finalize_req_cov(VOID);
 
-
-    elsif GC_TEST = "basic_test_log_uvvm_status_before_log" then
+    elsif GC_TEST = "test_uvvm_status_error_before_log" then
       -- Provoking tb_error and incrementing alert stop limit
-      provoke_uvvm_status_error(VOID);
+      provoke_uvvm_status_error(TB_ERROR);
+
       -- Run testcase
-      initialize_req_cov("T_LOG_FAIL", "../internal_tb/requirement_file_2.csv", "resultfile_4.csv");   
-      log_req_cov("log_req_cov_testcase", PASS);  
-      -- End testcase
-      finalize_req_cov(VOID);           
+      initialize_req_cov("T_SPEC_COV_5", "../internal_tb/simple_req_file.csv", "test_requirement_5.csv");   
+      log_req_cov("SPEC_COV_REQ_5", PASS);  
+      finalize_req_cov(VOID);
+
       -- Increment expected alerts so test will pass
       increment_expected_alerts(TB_ERROR, 1);
 
         
-    elsif GC_TEST = "basic_test_log_uvvm_status_after_log" then
+    elsif GC_TEST = "test_uvvm_status_error_after_log" then
       -- Run testcase
-      initialize_req_cov("T_LOG_FAIL", "../internal_tb/requirement_file_2.csv", "resultfile_5.csv");   
-      log_req_cov("log_req_cov_testcase", PASS);
+      initialize_req_cov("T_SPEC_COV_6", "../internal_tb/simple_req_file.csv", "test_requirement_6.csv");   
+      log_req_cov("SPEC_COV_REQ_6", PASS);
       -- Provoking tb_error and incrementing alert stop limit
-      provoke_uvvm_status_error(VOID);
+      provoke_uvvm_status_error(TB_ERROR);
       -- End testcase
-      finalize_req_cov(VOID);          
+      finalize_req_cov(VOID);
       -- Increment expected alerts so test will pass
       increment_expected_alerts(TB_ERROR, 1);
+
+    elsif GC_TEST = "test_open_no_existing_req_file" then
+      increment_expected_alerts(TB_ERROR, 1);
+      -- Run testcase
+      initialize_req_cov("T_SPEC_COV_7", "../internal_tb/non_existing_req_file.csv", "test_requirement_7.csv");   
+      -- End testcase
+      --finalize_req_cov(VOID);          
+
 
 
 --    elsif GC_TEST = "initialize_req_cov_with_tc" then

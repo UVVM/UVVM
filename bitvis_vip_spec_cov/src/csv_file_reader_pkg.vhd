@@ -25,7 +25,7 @@ package csv_file_reader_pkg is
 
     type csv_file_reader_type is protected
         -- Open the CSV text file to be used for subsequent read operations
-        procedure initialize(file_pathname: string; csv_delimiter : character := ',');
+        impure function initialize(file_pathname: string; csv_delimiter : character := ',') return boolean;
         -- Release (close) the associated CSV file
         procedure dispose;
         -- Read one line from the csv file, and keep it in the cache
@@ -64,10 +64,10 @@ package body csv_file_reader_pkg is
         end;
         
         -- Open the CSV text file to be used for subsequent read operations
-        procedure initialize(
+        impure function initialize(
             file_pathname: string;
             csv_delimiter : character := ','
-        ) is 
+        ) return boolean is 
             variable v_file_open_status : FILE_OPEN_STATUS;
         begin
             v_CSV_delimiter := csv_delimiter;
@@ -76,6 +76,12 @@ package body csv_file_reader_pkg is
             check_file_open_status(v_file_open_status, file_pathname);
 
             end_of_file_reached := false;
+
+            if v_file_open_status = open_ok then
+                return true;
+            else
+                return false;
+            end if;
         end;
         
         -- Release (close) the associated CSV file

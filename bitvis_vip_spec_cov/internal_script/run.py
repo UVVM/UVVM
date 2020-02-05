@@ -53,21 +53,13 @@ def main(argv):
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
-  #tests = [ "initialize_req_cov",
-  #          "initialize_req_cov_with_tc",
-  #          "reset_of_req_cov_matrix",
-  #          "requirement_exists",
-  #          "requirement_and_tc_exists",
-  #          "log_req_cov_normal",
-  #          "log_req_cov_with_error"
-  #        ]
-
-  tests = ["basic_test_init_no_requirement_file",
-           "basic_test_init_with_requirement_file",
-           "basic_test_log_default_testcase_and_other",
-           "basic_test_log_testcase_pass_and_fail",
-           "basic_test_log_uvvm_status_before_log",
-           "basic_test_log_uvvm_status_after_log"
+  tests = ["test_init_with_no_requirement_file",
+           "test_init_with_requirement_file",
+           "test_log_default_testcase_and_not_listed",
+           "test_log_testcase_pass_and_fail",
+           "test_uvvm_status_error_before_log",
+           "test_uvvm_status_error_after_log",
+           "test_open_no_existing_req_file"
           ]
 
   # Setup testbench and run

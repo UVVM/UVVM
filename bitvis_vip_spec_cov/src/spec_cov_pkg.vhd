@@ -112,14 +112,14 @@ package spec_cov_pkg is
     constant file_name : string
   );
 
-  impure function priv_requirement_exists(
-      requirement : string
-  ) return boolean;
-
-  impure function priv_requirement_and_tc_exists(
-      requirement : string;
-      testcase    : string
-  ) return boolean;
+--  impure function priv_requirement_exists(
+--      requirement : string
+--  ) return boolean;
+--
+--  impure function priv_requirement_and_tc_exists(
+--      requirement : string;
+--      testcase    : string
+--  ) return boolean;
 
   impure function priv_get_description(
       requirement : string;
@@ -133,6 +133,13 @@ package spec_cov_pkg is
   impure function priv_get_summary_string 
   return string;
 
+  procedure priv_set_default_testcase_name(
+    constant testcase : string
+  );
+  
+  impure function priv_get_default_testcase_name 
+  return string;
+
 end package spec_cov_pkg;
 
 
@@ -144,6 +151,7 @@ package body spec_cov_pkg is
 
   -- This testcase string will be used when no testcase is given when using the log_req_cov() method.
   shared variable priv_default_testcase_name    : string(1 to C_TESTCASE_NAME_MAX_LENGTH) := (others => NUL);
+  shared variable priv_testcase_name_length     : natural;
   shared variable priv_testcase_passed          : boolean;
   shared variable priv_requirement_file_exists  : boolean;
   
@@ -161,12 +169,13 @@ package body spec_cov_pkg is
     constant output_file    : string
   ) is
   begin
-    priv_default_testcase_name(1 to testcase'length) := testcase;
-    priv_read_and_parse_csv_file(req_to_tc_map);    
-    priv_initialize_result_file(output_file);
+    priv_set_default_testcase_name(testcase);
     -- update pkg local variables
     priv_testcase_passed          := true;
     priv_requirement_file_exists  := true;
+
+    priv_read_and_parse_csv_file(req_to_tc_map);    
+    priv_initialize_result_file(output_file);
   end procedure initialize_req_cov;
   
   -- Overloading procedure, no req_to_tc_map
@@ -176,12 +185,13 @@ package body spec_cov_pkg is
   ) is
   begin
     log(ID_SPEC_COV, "Requirement Coverage initialized with no requirement file.", C_SCOPE);
-    priv_default_testcase_name(1 to testcase'length) := testcase;
-    priv_initialize_result_file(output_file);
+    priv_set_default_testcase_name(testcase);
     -- update pkg local variables
     priv_testcase_passed          := true;
-    priv_requirement_file_exists  := false;
-  end procedure initialize_req_cov;
+    priv_requirement_file_exists  := true;
+
+    priv_initialize_result_file(output_file);
+    end procedure initialize_req_cov;
   
   --
   -- log_req_cov()
@@ -226,7 +236,7 @@ package body spec_cov_pkg is
     constant test_status : t_test_status := PASS
   ) is 
   begin
-    log_req_cov(requirement, priv_default_testcase_name, test_status);
+    log_req_cov(requirement, priv_get_default_testcase_name , test_status);
   end procedure log_req_cov;
   
   
@@ -269,162 +279,186 @@ package body spec_cov_pkg is
 
 
   
---=================================================================================================  
--- Functions and procedures declared below this line are intended as internal functions
---=================================================================================================  
+  --=================================================================================================  
+  -- Functions and procedures declared below this line are intended as internal functions
+  --=================================================================================================  
 
 
-procedure priv_initialize_result_file(
-  constant file_name : string
-) is
-  variable v_file_open_status : FILE_OPEN_STATUS;
-begin
-  file_open(v_file_open_status, RESULT_FILE, file_name, write_mode);
-  check_file_open_status(v_file_open_status, file_name);
-end procedure;
+  procedure priv_initialize_result_file(
+    constant file_name : string
+  ) is
+    variable v_file_open_status      : FILE_OPEN_STATUS;
+    variable v_settings_to_file_line : line;
+    constant c_note_string           : string := "NOTE: " & LF;
+    constant c_testcase_string       : string := "TESTCASE_NAME: " & priv_get_default_testcase_name & LF;
+    constant c_delimiter_string      : string := "DELIMITER: " & config.csv_delimiter;
 
-procedure priv_read_and_parse_csv_file(
-    constant req_to_tc_map  : string
-) is 
-  variable v_tc_valid : boolean;
-  variable v_file_ok  : boolean;
-begin
-  log(ID_SPEC_COV, "Reading and parsing requirement to testcase map file, " & req_to_tc_map, C_SCOPE);
+  begin
+    file_open(v_file_open_status, RESULT_FILE, file_name, write_mode);
+    check_file_open_status(v_file_open_status, file_name);
 
-  if shared_requirements_in_array > 0 then
-    alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
-    return;
-  end if;
+    -- Write setting to CSV file for Python script
+    log(ID_SPEC_COV, "Adding test and configuration information to CSV file. ", C_SCOPE);
+    write(v_settings_to_file_line, c_note_string);
+    write(v_settings_to_file_line, c_testcase_string);
+    write(v_settings_to_file_line, c_delimiter_string);
+    writeline(RESULT_FILE, v_settings_to_file_line);
+  end procedure;
 
-  -- Open file and check status, return if failing
-  v_file_ok := shared_csv_file.initialize(req_to_tc_map, C_CSV_DELIMITER);
-  if v_file_ok = false then
-    return;
-  end if;
+  procedure priv_read_and_parse_csv_file(
+      constant req_to_tc_map  : string
+  ) is 
+    variable v_tc_valid : boolean;
+    variable v_file_ok  : boolean;
+  begin
+    log(ID_SPEC_COV, "Reading and parsing requirement to testcase map file, " & req_to_tc_map, C_SCOPE);
 
-  -- File ok, read file
-  while not shared_csv_file.end_of_file loop
-    shared_csv_file.readline;
+    if shared_requirements_in_array > 0 then
+      alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
+      return;
+    end if;
 
-    -- Read requirement
-    shared_requirement_array(shared_requirements_in_array).requirement := new string'(shared_csv_file.read_string);
-    -- Read description
-    shared_requirement_array(shared_requirements_in_array).description := new string'(shared_csv_file.read_string);
-    -- Read testcases
-    v_tc_valid := true;
-    shared_requirement_array(shared_requirements_in_array).num_tcs := 0;
-    while v_tc_valid loop
-      shared_requirement_array(shared_requirements_in_array).tc_list(shared_requirement_array(shared_requirements_in_array).num_tcs) := new string'(shared_csv_file.read_string);  
-      if (shared_requirement_array(shared_requirements_in_array).tc_list(shared_requirement_array(shared_requirements_in_array).num_tcs).all(1) /= NUL) then
-        shared_requirement_array(shared_requirements_in_array).num_tcs := shared_requirement_array(shared_requirements_in_array).num_tcs + 1;
+    -- Open file and check status, return if failing
+    v_file_ok := shared_csv_file.initialize(req_to_tc_map, C_CSV_DELIMITER);
+    if v_file_ok = false then
+      return;
+    end if;
+
+    -- File ok, read file
+    while not shared_csv_file.end_of_file loop
+      shared_csv_file.readline;
+
+      -- Read requirement
+      shared_requirement_array(shared_requirements_in_array).requirement := new string'(shared_csv_file.read_string);
+      -- Read description
+      shared_requirement_array(shared_requirements_in_array).description := new string'(shared_csv_file.read_string);
+      -- Read testcases
+      v_tc_valid := true;
+      shared_requirement_array(shared_requirements_in_array).num_tcs := 0;
+      while v_tc_valid loop
+        shared_requirement_array(shared_requirements_in_array).tc_list(shared_requirement_array(shared_requirements_in_array).num_tcs) := new string'(shared_csv_file.read_string);  
+        if (shared_requirement_array(shared_requirements_in_array).tc_list(shared_requirement_array(shared_requirements_in_array).num_tcs).all(1) /= NUL) then
+          shared_requirement_array(shared_requirements_in_array).num_tcs := shared_requirement_array(shared_requirements_in_array).num_tcs + 1;
+        else
+          v_tc_valid := false;
+        end if;
+      end loop;
+      -- Validate entry
+      shared_requirement_array(shared_requirements_in_array).valid := true;
+
+      priv_log_entry(shared_requirements_in_array);
+      shared_requirements_in_array := shared_requirements_in_array + 1;
+    end loop;
+        
+    log(ID_SPEC_COV, "Closing requirement to testcase map file", C_SCOPE);
+    shared_csv_file.dispose;
+  end procedure;
+
+  procedure priv_log_entry(
+      constant index : natural
+    ) is
+    begin
+      if shared_requirement_array(index).valid then
+        log(ID_SPEC_COV, "Requirement: " & shared_requirement_array(index).requirement.all, C_SCOPE);
+        log(ID_SPEC_COV, "Description: " & shared_requirement_array(index).description.all, C_SCOPE);
+        for i in 0 to shared_requirement_array(index).num_tcs-1 loop
+          log(ID_SPEC_COV, "  TC: " & shared_requirement_array(index).tc_list(i).all, C_SCOPE);
+        end loop;
       else
-        v_tc_valid := false;
+        log(ID_SPEC_COV, "Requirement entry was not valid", C_SCOPE);
+      end if;
+  end procedure;
+
+  --impure function priv_requirement_exists(
+  --  requirement : string
+  --) return boolean is
+  --begin
+  --  for i in 0 to shared_requirements_in_array-1 loop
+  --    if (shared_requirement_array(i).requirement.all(1 to requirement'length) = requirement(1 to requirement'length)) then
+  --      return true;
+  --    end if;
+  --  end loop;
+  --  return false;
+  --end function;
+
+  --impure function priv_requirement_and_tc_exists(
+  --    requirement : string;
+  --    testcase    : string
+  --) return boolean is
+  --begin
+  --  for i in 0 to shared_requirements_in_array-1 loop
+  --    if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+  --      for tc in 0 to shared_requirement_array(i).num_tcs-1 loop
+  --        if to_upper(shared_requirement_array(i).tc_list(tc).all(1 to testcase'length)) = to_upper(testcase(1 to testcase'length)) then
+  --          return true;
+  --        end if;
+  --      end loop;
+  --    end if;
+  --  end loop;
+  --  return false;
+  --end;
+
+  impure function priv_get_description(
+      requirement : string;
+      testcase    : string
+  ) return string is
+  begin
+    for i in 0 to shared_requirements_in_array-1 loop
+      if shared_requirement_array(i).requirement.all(1 to requirement'length) = requirement(1 to requirement'length) then
+        -- Found requirement
+        for tc in 0 to shared_requirement_array(i).num_tcs-1 loop
+          if shared_requirement_array(i).tc_list(tc).all(1 to testcase'length) = testcase(1 to testcase'length) then
+            -- Found both requirement AND testcase
+            return shared_requirement_array(i).description.all;
+          end if;
+        end loop;
       end if;
     end loop;
-    -- Validate entry
-    shared_requirement_array(shared_requirements_in_array).valid := true;
 
-    priv_log_entry(shared_requirements_in_array);
-    shared_requirements_in_array := shared_requirements_in_array + 1;
-  end loop;
-  
-  log(ID_SPEC_COV, "Closing requirement to testcase map file", C_SCOPE);
-  shared_csv_file.dispose;
+    if priv_requirement_file_exists = false then
+      return "";
+    else
+      return "DESCRIPTION NOT FOUND";
+    end if;
+  end;
 
-end procedure;
 
-procedure priv_log_entry(
-    constant index : natural
+  function priv_test_status_to_string(
+    constant test_status : t_test_status
+  ) return string is
+  begin
+    if test_status = PASS then
+      return C_PASS_STRING;
+    else -- test_status = FAIL
+      return C_FAIL_STRING;
+    end if;
+  end function priv_test_status_to_string;
+
+
+  impure function priv_get_summary_string 
+    return string is
+  begin
+    if (priv_testcase_passed = true) and (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 0) then
+      return "SUMMARY, " & priv_get_default_testcase_name & ", " & C_PASS_STRING;
+    else
+    return "SUMMARY, " & priv_get_default_testcase_name & ", " & C_FAIL_STRING;
+    end if;
+  end function priv_get_summary_string;
+
+
+  procedure priv_set_default_testcase_name(
+    constant testcase : string
   ) is
   begin
-    if shared_requirement_array(index).valid then
-      log(ID_SPEC_COV, "Requirement: " & shared_requirement_array(index).requirement.all, C_SCOPE);
-      log(ID_SPEC_COV, "Description: " & shared_requirement_array(index).description.all, C_SCOPE);
-      for i in 0 to shared_requirement_array(index).num_tcs-1 loop
-        log(ID_SPEC_COV, "  TC: " & shared_requirement_array(index).tc_list(i).all, C_SCOPE);
-      end loop;
-    else
-      log(ID_SPEC_COV, "Requirement entry was not valid", C_SCOPE);
-    end if;
-end procedure;
-
-impure function priv_requirement_exists(
-  requirement : string
-) return boolean is
-begin
-  for i in 0 to shared_requirements_in_array-1 loop
-    if (shared_requirement_array(i).requirement.all(1 to requirement'length) = requirement(1 to requirement'length)) then
-      return true;
-    end if;
-  end loop;
-  return false;
-end function;
-
-impure function priv_requirement_and_tc_exists(
-    requirement : string;
-    testcase    : string
-) return boolean is
-begin
-  for i in 0 to shared_requirements_in_array-1 loop
-    if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
-      for tc in 0 to shared_requirement_array(i).num_tcs-1 loop
-        if to_upper(shared_requirement_array(i).tc_list(tc).all(1 to testcase'length)) = to_upper(testcase(1 to testcase'length)) then
-          return true;
-        end if;
-      end loop;
-    end if;
-  end loop;
-  return false;
-end;
-
-impure function priv_get_description(
-    requirement : string;
-    testcase    : string
-) return string is
-begin
-  for i in 0 to shared_requirements_in_array-1 loop
-    if shared_requirement_array(i).requirement.all(1 to requirement'length) = requirement(1 to requirement'length) then
-      -- Found requirement
-      for tc in 0 to shared_requirement_array(i).num_tcs-1 loop
-        if shared_requirement_array(i).tc_list(tc).all(1 to testcase'length) = testcase(1 to testcase'length) then
-          -- Found both requirement AND testcase
-          return shared_requirement_array(i).description.all;
-        end if;
-      end loop;
-    end if;
-  end loop;
-
-  if priv_requirement_file_exists = false then
-    return "";
-  else
-    return "DESCRIPTION NOT FOUND";
-  end if;
-end;
+    priv_default_testcase_name(1 to testcase'length)  := testcase;
+    priv_testcase_name_length := testcase'length;
+  end procedure priv_set_default_testcase_name;
 
 
-function priv_test_status_to_string(
-  constant test_status : t_test_status
-) return string is
-begin
-  if test_status = PASS then
-    return C_PASS_STRING;
-  else -- test_status = FAIL
-    return C_FAIL_STRING;
-  end if;
-end function priv_test_status_to_string;
-
-
-
-impure function priv_get_summary_string 
-  return string is
-begin
-  if (priv_testcase_passed = true) and (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 0) then
-    return "SUMMARY, " & priv_default_testcase_name & ", " & C_PASS_STRING;
-  else
-  return "SUMMARY, " & priv_default_testcase_name & ", " & C_FAIL_STRING;
-  end if;
-end function priv_get_summary_string;
-
+  impure function priv_get_default_testcase_name return string is
+  begin 
+    return priv_default_testcase_name(1 to priv_testcase_name_length);
+  end function priv_get_default_testcase_name;
 
 
 end package body spec_cov_pkg;

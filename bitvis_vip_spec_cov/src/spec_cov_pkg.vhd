@@ -35,14 +35,14 @@ package spec_cov_pkg is
 
 
   procedure initialize_req_cov(
-    constant testcase       : string;
-    constant req_to_tc_map  : string;
-    constant output_file    : string
+    constant testcase         : string;
+    constant req_list_file    : string;
+    constant partial_cov_file : string
   );
-  -- Overloading procedure, no req_to_tc_map
+  -- Overloading procedure, no req_list_file
   procedure initialize_req_cov(
-    constant testcase       : string;
-    constant output_file    : string
+    constant testcase         : string;
+    constant partial_cov_file : string
   );
 
 
@@ -92,7 +92,7 @@ package spec_cov_pkg is
   );
 
   procedure priv_read_and_parse_csv_file(
-    constant req_to_tc_map  : string
+    constant req_list_file  : string
   );
 
   procedure priv_initialize_result_file(
@@ -145,9 +145,9 @@ package body spec_cov_pkg is
   
 
   procedure initialize_req_cov(
-    constant testcase       : string;
-    constant req_to_tc_map  : string;
-    constant output_file    : string
+    constant testcase         : string;
+    constant req_list_file    : string;
+    constant partial_cov_file : string
   ) is
   begin
     priv_set_default_testcase_name(testcase);
@@ -155,13 +155,13 @@ package body spec_cov_pkg is
     priv_testcase_passed          := true;
     priv_requirement_file_exists  := true;
 
-    priv_read_and_parse_csv_file(req_to_tc_map);    
-    priv_initialize_result_file(output_file);
+    priv_read_and_parse_csv_file(req_list_file);    
+    priv_initialize_result_file(partial_cov_file);
   end procedure initialize_req_cov;
 
   procedure initialize_req_cov(
-    constant testcase       : string;
-    constant output_file    : string
+    constant testcase         : string;
+    constant partial_cov_file : string
   ) is
   begin
     log(ID_SPEC_COV, "Requirement Coverage initialized with no requirement file.", C_SCOPE);
@@ -170,7 +170,7 @@ package body spec_cov_pkg is
     priv_testcase_passed          := true;
     priv_requirement_file_exists  := false;
 
-    priv_initialize_result_file(output_file);
+    priv_initialize_result_file(partial_cov_file);
     end procedure initialize_req_cov;
   
 
@@ -277,12 +277,12 @@ package body spec_cov_pkg is
 
 
   procedure priv_read_and_parse_csv_file(
-      constant req_to_tc_map  : string
+      constant req_list_file  : string
   ) is 
     variable v_tc_valid : boolean;
     variable v_file_ok  : boolean;
   begin
-    log(ID_SPEC_COV, "Reading and parsing requirement file, " & req_to_tc_map, C_SCOPE);
+    log(ID_SPEC_COV, "Reading and parsing requirement file, " & req_list_file, C_SCOPE);
 
     if shared_requirements_in_array > 0 then
       alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
@@ -290,7 +290,7 @@ package body spec_cov_pkg is
     end if;
 
     -- Open file and check status, return if failing
-    v_file_ok := shared_csv_file.initialize(req_to_tc_map, C_CSV_DELIMITER);
+    v_file_ok := shared_csv_file.initialize(req_list_file, C_CSV_DELIMITER);
     if v_file_ok = false then
       return;
     end if;

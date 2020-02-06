@@ -184,7 +184,7 @@ package body spec_cov_pkg is
     constant scope       : string         := C_SCOPE
   ) is
     variable v_requirement_to_file_line : line;
-    variable v_requirement_status       : t_test_status := test_status;
+    variable v_requirement_status       : t_test_status;
   begin
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
       alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling log_req_cov().", scope);
@@ -192,17 +192,17 @@ package body spec_cov_pkg is
     end if;
 
     -- Check if requirement exists
-    if priv_requirement_exists(requirement) = false then
+    if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
       alert(tb_warning, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
-    ---- Check if there were any errors globally
-    if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) then
+    ---- Check if there were any errors globally or testcase was explicit set to FAIL
+    if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) or (test_status = FAIL) then
       v_requirement_status := FAIL;
-    end if;
-
-    if v_requirement_status = FAIL then
+      -- Set failing testcase for summary line
       priv_testcase_passed := false;
+    else
+      v_requirement_status := PASS;
     end if;
 
     -- Log result to transcript

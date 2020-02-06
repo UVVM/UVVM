@@ -49,12 +49,12 @@ package spec_cov_pkg is
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
-    constant test_status : t_test_status := PASS
+    constant test_status : t_test_status := NA
   );
   -- Overloading procedure without testcase and optional test_status
   procedure log_req_cov(
     constant requirement : string;
-    constant test_status : t_test_status := PASS
+    constant test_status : t_test_status := NA
   );
   
 
@@ -177,7 +177,7 @@ package body spec_cov_pkg is
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
-    constant test_status : t_test_status := PASS
+    constant test_status : t_test_status := NA
   ) is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status := test_status;
@@ -208,7 +208,7 @@ package body spec_cov_pkg is
   -- Overloading procedure without testcase and optional test_status
   procedure log_req_cov(
     constant requirement : string;
-    constant test_status : t_test_status := PASS
+    constant test_status : t_test_status := NA
   ) is 
   begin
     log_req_cov(requirement, priv_get_default_testcase_name , test_status);

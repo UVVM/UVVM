@@ -78,6 +78,7 @@ begin
       initialize_req_cov("T_SPEC_COV_3", "../internal_tb/simple_req_file.csv", "test_requirement_3.csv");
       log_req_cov("SPEC_COV_REQ_3");
       log_req_cov("SPEC_COV_REQ_3", "T_SPEC_COV_50");
+      log_req_cov("SPEC_COV_REQ_10", "T_SPEC_COV_1");
       finalize_req_cov(VOID);
       
     elsif GC_TEST = "test_log_testcase_pass_and_fail" then
@@ -115,7 +116,7 @@ begin
       -- Run testcase
       initialize_req_cov("T_SPEC_COV_7", "../internal_tb/non_existing_req_file.csv", "test_requirement_7.csv");   
       -- End testcase
-      --finalize_req_cov(VOID);          
+      finalize_req_cov(VOID);          
 
 
 

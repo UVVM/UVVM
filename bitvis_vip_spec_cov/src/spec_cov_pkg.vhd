@@ -191,6 +191,11 @@ package body spec_cov_pkg is
       return;
     end if;
 
+    -- Check if requirement exists
+    if priv_requirement_exists(requirement) = false then
+      alert(tb_warning, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
+    end if;
+
     ---- Check if there were any errors globally
     if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) then
       v_requirement_status := FAIL;

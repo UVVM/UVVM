@@ -1,7 +1,7 @@
 SPEC_COV_REQ_1, Initialize with no requirement file, T_SPEC_COV_1
 SPEC_COV_REQ_2, Initialize with a requirement file, T_SPEC_COV_2
 SPEC_COV_REQ_3, Log listed and not listed testcases, T_SPEC_COV_3
-SPEC_COV_REQ_4, Log testcase as PASS and FAIL, T_SPEC_COV_4
+SPEC_COV_REQ_4, Log testcase as PASS and FAIL, T_SPEC_COV_4, T_SPEC_COV_4_FAIL
 SPEC_COV_REQ_5, UVVM status error before logging testcase, T_SPEC_COV_5
 SPEC_COV_REQ_6, UVVM status error after logging testcase, T_SPEC_COV_6
 SPEC_COV_REQ_7, Open an non-existing requirement file, T_SPEC_COV_7

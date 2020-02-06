@@ -33,11 +33,7 @@ package spec_cov_pkg is
 
   file RESULT_FILE : text;
 
-  --
-  -- initialize_req_cov()
-  --   Starts the requirement coverage process by reading the requirement 
-  --   file and opening the output file.
-  --
+
   procedure initialize_req_cov(
     constant testcase       : string;
     constant req_to_tc_map  : string;
@@ -49,12 +45,7 @@ package spec_cov_pkg is
     constant output_file    : string
   );
 
-  --
-  -- log_req_cov()
-  --   Log requirement and testcase to file. 
-  --   This function checks the global error mismatch counter for mismatch 
-  --   between expected and observed alerts.
-  --
+
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
@@ -66,11 +57,7 @@ package spec_cov_pkg is
     constant test_status : t_test_status := PASS
   );
   
-  --
-  -- finalize_req_cov()
-  --   Ends the requirement coverage by writing a check-string to the result file, 
-  --   closing all files and cleaning up the memory.
-  --
+
   procedure finalize_req_cov(
     constant VOID : t_void
   );
@@ -112,18 +99,9 @@ package spec_cov_pkg is
     constant file_name : string
   );
 
---  impure function priv_requirement_exists(
---      requirement : string
---  ) return boolean;
---
---  impure function priv_requirement_and_tc_exists(
---      requirement : string;
---      testcase    : string
---  ) return boolean;
-
   impure function priv_get_description(
-      requirement : string;
-      testcase    : string
+    requirement : string;
+    testcase    : string
   ) return string;
 
   function priv_test_status_to_string(
@@ -131,7 +109,7 @@ package spec_cov_pkg is
   ) return string;
 
   impure function priv_get_summary_string 
-  return string;
+    return string;
 
   procedure priv_set_default_testcase_name(
     constant testcase : string
@@ -139,6 +117,12 @@ package spec_cov_pkg is
   
   impure function priv_get_default_testcase_name 
   return string;
+
+  impure function priv_find_string_length(
+    constant search_string : string
+  ) return natural;
+
+
 
 end package spec_cov_pkg;
 
@@ -149,20 +133,13 @@ end package spec_cov_pkg;
 
 package body spec_cov_pkg is
 
-  -- This testcase string will be used when no testcase is given when using the log_req_cov() method.
-  shared variable priv_default_testcase_name    : string(1 to C_TESTCASE_NAME_MAX_LENGTH) := (others => NUL);
+  -- private variables for pkg internal use only
+  shared variable priv_testcase_name            : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
   shared variable priv_testcase_name_length     : natural;
   shared variable priv_testcase_passed          : boolean;
   shared variable priv_requirement_file_exists  : boolean;
   
-  --
-  -- initialize_req_cov()
-  --   Starts the requirement coverage process by reading the requirement 
-  --   file and opening the output file.
-  --
-  --   Note! If skip_requirement_list is TRUE then any given requirement list
-  --         will be ignored.
-  --
+
   procedure initialize_req_cov(
     constant testcase       : string;
     constant req_to_tc_map  : string;
@@ -177,8 +154,7 @@ package body spec_cov_pkg is
     priv_read_and_parse_csv_file(req_to_tc_map);    
     priv_initialize_result_file(output_file);
   end procedure initialize_req_cov;
-  
-  -- Overloading procedure, no req_to_tc_map
+
   procedure initialize_req_cov(
     constant testcase       : string;
     constant output_file    : string
@@ -188,17 +164,12 @@ package body spec_cov_pkg is
     priv_set_default_testcase_name(testcase);
     -- update pkg local variables
     priv_testcase_passed          := true;
-    priv_requirement_file_exists  := true;
+    priv_requirement_file_exists  := false;
 
     priv_initialize_result_file(output_file);
     end procedure initialize_req_cov;
   
-  --
-  -- log_req_cov()
-  --   Log requirement and testcase to file. 
-  --   This function checks the global error mismatch counter for mismatch 
-  --   between expected and observed alerts.
-  --
+
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
@@ -207,9 +178,8 @@ package body spec_cov_pkg is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status := test_status;
   begin
-
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
-      alert(TB_ERROR, "Requirements not been parsed. Please used initialize_req_cov() with a requirement file before calling log_req_cov().", C_SCOPE);
+      alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling log_req_cov().", C_SCOPE);
       return;
     end if;
 
@@ -223,13 +193,14 @@ package body spec_cov_pkg is
     end if;
 
     -- Log result to transcript
-    log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & priv_get_description(requirement, testcase) & "'.", C_SCOPE);
+    log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & 
+                      priv_get_description(requirement, testcase) & "'.", C_SCOPE);
 
     -- Log to file
     write(v_requirement_to_file_line, requirement & C_CSV_DELIMITER & testcase & C_CSV_DELIMITER & priv_test_status_to_string(v_requirement_status));
     writeline(RESULT_FILE, v_requirement_to_file_line);
   end procedure log_req_cov;
-
+  
   -- Overloading procedure without testcase and optional test_status
   procedure log_req_cov(
     constant requirement : string;
@@ -240,21 +211,15 @@ package body spec_cov_pkg is
   end procedure log_req_cov;
   
   
-  --
-  -- finalize_req_cov()
-  --   Ends the requirement coverage by writing a check-string to the result file, 
-  --   closing all files and cleaning up the memory.
-  --
   procedure finalize_req_cov(
     constant VOID : t_void
   ) is
     variable v_checksum_string : line;
     constant c_summary_string  : string := priv_get_summary_string;
-
   begin
-
     -- Free used memory
     log(ID_SPEC_COV, "Freeing stored requirements from memory", C_SCOPE);
+
     for i in 0 to shared_requirements_in_array-1 loop
       deallocate(shared_requirement_array(i).requirement);
       deallocate(shared_requirement_array(i).description);
@@ -268,7 +233,7 @@ package body spec_cov_pkg is
         
     -- Add closing line
     log(ID_SPEC_COV, "Marking requirement coverage result.", C_SCOPE);
-    write(v_checksum_string, c_summary_string);
+    write(v_checksum_string, priv_get_summary_string);
 
     writeline(RESULT_FILE, v_checksum_string);
 
@@ -289,21 +254,23 @@ package body spec_cov_pkg is
   ) is
     variable v_file_open_status      : FILE_OPEN_STATUS;
     variable v_settings_to_file_line : line;
-    constant c_note_string           : string := "NOTE: " & LF;
+  
+    constant c_note_string           : string := "NOTE: This coverage file is only valid when the last line is 'SUMMARY, " & 
+                                                  priv_get_default_testcase_name & ", PASS'" & LF;
     constant c_testcase_string       : string := "TESTCASE_NAME: " & priv_get_default_testcase_name & LF;
-    constant c_delimiter_string      : string := "DELIMITER: " & config.csv_delimiter;
-
+    constant c_delimiter_string      : string := "DELIMITER: " & config.csv_delimiter & LF;
   begin
     file_open(v_file_open_status, RESULT_FILE, file_name, write_mode);
     check_file_open_status(v_file_open_status, file_name);
 
     -- Write setting to CSV file for Python script
-    log(ID_SPEC_COV, "Adding test and configuration information to CSV file. ", C_SCOPE);
+    log(ID_SPEC_COV, "Adding test and configuration information to coverage file. ", C_SCOPE);
     write(v_settings_to_file_line, c_note_string);
     write(v_settings_to_file_line, c_testcase_string);
     write(v_settings_to_file_line, c_delimiter_string);
     writeline(RESULT_FILE, v_settings_to_file_line);
-  end procedure;
+  end procedure priv_initialize_result_file;
+
 
   procedure priv_read_and_parse_csv_file(
       constant req_to_tc_map  : string
@@ -311,7 +278,7 @@ package body spec_cov_pkg is
     variable v_tc_valid : boolean;
     variable v_file_ok  : boolean;
   begin
-    log(ID_SPEC_COV, "Reading and parsing requirement to testcase map file, " & req_to_tc_map, C_SCOPE);
+    log(ID_SPEC_COV, "Reading and parsing requirement file, " & req_to_tc_map, C_SCOPE);
 
     if shared_requirements_in_array > 0 then
       alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
@@ -352,34 +319,39 @@ package body spec_cov_pkg is
         
     log(ID_SPEC_COV, "Closing requirement to testcase map file", C_SCOPE);
     shared_csv_file.dispose;
-  end procedure;
+  end procedure priv_read_and_parse_csv_file;
+
 
   procedure priv_log_entry(
       constant index : natural
     ) is
-    begin
-      if shared_requirement_array(index).valid then
-        log(ID_SPEC_COV, "Requirement: " & shared_requirement_array(index).requirement.all, C_SCOPE);
-        log(ID_SPEC_COV, "Description: " & shared_requirement_array(index).description.all, C_SCOPE);
-        for i in 0 to shared_requirement_array(index).num_tcs-1 loop
-          log(ID_SPEC_COV, "  TC: " & shared_requirement_array(index).tc_list(i).all, C_SCOPE);
-        end loop;
-      else
-        log(ID_SPEC_COV, "Requirement entry was not valid", C_SCOPE);
-      end if;
-  end procedure;
+  begin
+    if shared_requirement_array(index).valid then
+      -- log requirement and description to terminal
+      log(ID_SPEC_COV, "Requirement: " & shared_requirement_array(index).requirement.all, C_SCOPE);
+      log(ID_SPEC_COV, "Description: " & shared_requirement_array(index).description.all, C_SCOPE);
+      -- log testcases to terminal
+      for i in 0 to shared_requirement_array(index).num_tcs-1 loop
+        log(ID_SPEC_COV, "  TC: " & shared_requirement_array(index).tc_list(i).all, C_SCOPE);
+      end loop;
+    else
+      log(ID_SPEC_COV, "Requirement entry was not valid", C_SCOPE);
+    end if;
+  end procedure priv_log_entry;
 
-  --impure function priv_requirement_exists(
-  --  requirement : string
-  --) return boolean is
-  --begin
-  --  for i in 0 to shared_requirements_in_array-1 loop
-  --    if (shared_requirement_array(i).requirement.all(1 to requirement'length) = requirement(1 to requirement'length)) then
-  --      return true;
-  --    end if;
-  --  end loop;
-  --  return false;
-  --end function;
+
+--  impure function priv_requirement_exists(
+--    requirement : string
+--  ) return boolean is
+--
+--  begin
+--    for i in 0 to shared_requirements_in_array-1 loop
+--      if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+--        return true;
+--      end if;
+--    end loop;
+--    return false;
+--  end function priv_requirement_exists;
 
   --impure function priv_requirement_and_tc_exists(
   --    requirement : string;
@@ -420,7 +392,7 @@ package body spec_cov_pkg is
     else
       return "DESCRIPTION NOT FOUND";
     end if;
-  end;
+  end function priv_get_description;
 
 
   function priv_test_status_to_string(
@@ -438,10 +410,11 @@ package body spec_cov_pkg is
   impure function priv_get_summary_string 
     return string is
   begin
+    -- Create a CSV coverage file summary string
     if (priv_testcase_passed = true) and (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 0) then
       return "SUMMARY, " & priv_get_default_testcase_name & ", " & C_PASS_STRING;
     else
-    return "SUMMARY, " & priv_get_default_testcase_name & ", " & C_FAIL_STRING;
+      return "SUMMARY, " & priv_get_default_testcase_name & ", " & C_FAIL_STRING;
     end if;
   end function priv_get_summary_string;
 
@@ -450,15 +423,32 @@ package body spec_cov_pkg is
     constant testcase : string
   ) is
   begin
-    priv_default_testcase_name(1 to testcase'length)  := testcase;
-    priv_testcase_name_length := testcase'length;
+    priv_testcase_name(1 to testcase'length)  := testcase;
   end procedure priv_set_default_testcase_name;
 
 
-  impure function priv_get_default_testcase_name return string is
+  impure function priv_get_default_testcase_name 
+    return string is
+    variable v_testcase_length : natural := priv_find_string_length(priv_testcase_name);
   begin 
-    return priv_default_testcase_name(1 to priv_testcase_name_length);
+    return priv_testcase_name(1 to v_testcase_length);
   end function priv_get_default_testcase_name;
 
+
+  impure function priv_find_string_length(
+    constant search_string : string
+  ) return natural is
+    variable v_return : natural := 0;
+  begin
+    -- loop string until NUL is found and return idx-1
+    for idx in 1 to search_string'length loop
+      if search_string(idx) = NUL then
+        return idx - 1;
+      end if;
+    end loop;
+
+    -- NUL was not found, return full length
+    return search_string'length;
+  end function priv_find_string_length;
 
 end package body spec_cov_pkg;

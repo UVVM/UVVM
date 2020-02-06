@@ -5,3 +5,7 @@ SPEC_COV_REQ_4, Log testcase as PASS and FAIL, T_SPEC_COV_4
 SPEC_COV_REQ_5, UVVM status error before logging testcase, T_SPEC_COV_5
 SPEC_COV_REQ_6, UVVM status error after logging testcase, T_SPEC_COV_6
 SPEC_COV_REQ_7, Open an non-existing requirement file, T_SPEC_COV_7
+UART_REQ_1, Baudrate 9k6, T_9k6
+UART_REQ_2, Baudrate 19k2, T_19k2
+UART_REQ_3, Odd parity, T_9k6, T_19k2
+UART_REQ_4, Active low reset, T_reset, T_9k6, T_19k2

@@ -1,0 +1,4 @@
+UART_REQ_BR_A, Baudrate 9k6
+UART_REQ_BR_B, Baudrate 19k2
+UART_REQ_ODD, Odd parity
+UART_REQ_EVEN, Even parity

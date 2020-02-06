@@ -49,12 +49,15 @@ package spec_cov_pkg is
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
-    constant test_status : t_test_status := NA
+    constant test_status : t_test_status  := NA;
+    constant msg         : string         := "";
+    constant scope       : string         := C_SCOPE
   );
-  -- Overloading procedure without testcase and optional test_status
   procedure log_req_cov(
     constant requirement : string;
-    constant test_status : t_test_status := NA
+    constant test_status : t_test_status  := NA;
+    constant msg         : string         := "";
+    constant scope       : string         := C_SCOPE
   );
   
 
@@ -85,7 +88,6 @@ package spec_cov_pkg is
 
   constant C_FAIL_STRING                : string := "FAIL";
   constant C_PASS_STRING                : string := "PASS";
-  constant C_SCOPE                      : string := "SPEC_COV";
 
   procedure priv_log_entry(
     constant index : natural
@@ -177,13 +179,15 @@ package body spec_cov_pkg is
   procedure log_req_cov(
     constant requirement : string;
     constant testcase    : string;
-    constant test_status : t_test_status := NA
+    constant test_status : t_test_status  := NA;
+    constant msg         : string         := "";
+    constant scope       : string         := C_SCOPE
   ) is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status := test_status;
   begin
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
-      alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling log_req_cov().", C_SCOPE);
+      alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling log_req_cov().", scope);
       return;
     end if;
 
@@ -198,20 +202,22 @@ package body spec_cov_pkg is
 
     -- Log result to transcript
     log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & 
-                      priv_get_description(requirement, testcase) & "'.", C_SCOPE);
+                      priv_get_description(requirement, testcase) & "'. " & msg, scope);
 
     -- Log to file
     write(v_requirement_to_file_line, requirement & C_CSV_DELIMITER & testcase & C_CSV_DELIMITER & priv_test_status_to_string(v_requirement_status));
     writeline(RESULT_FILE, v_requirement_to_file_line);
   end procedure log_req_cov;
-  
-  -- Overloading procedure without testcase and optional test_status
+
+  -- Overloading procedure
   procedure log_req_cov(
     constant requirement : string;
-    constant test_status : t_test_status := NA
+    constant test_status : t_test_status  := NA;
+    constant msg         : string         := "";
+    constant scope       : string         := C_SCOPE
   ) is 
   begin
-    log_req_cov(requirement, priv_get_default_testcase_name , test_status);
+    log_req_cov(requirement, priv_get_default_testcase_name , test_status, msg, scope);
   end procedure log_req_cov;
   
   

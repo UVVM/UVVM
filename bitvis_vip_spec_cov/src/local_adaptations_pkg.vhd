@@ -22,14 +22,12 @@ context uvvm_util.uvvm_util_context;
 
 package local_adaptations_pkg is
 
-
-    -- Maximum length for testcase name, increase if needed.
-    constant C_TESTCASE_NAME_MAX_LENGTH     : positive := 100;
     -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
     constant C_CSV_FILE_MAX_LINE_LENGTH     : positive := 256;
     -- Delimiter when reading and writing CSV files.
     constant C_CSV_DELIMITER                : character := ',';
 
+    
 
    -------------------------------------------------------------------------------
     -- VIP configuration record

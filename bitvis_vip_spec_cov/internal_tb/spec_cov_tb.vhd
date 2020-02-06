@@ -65,16 +65,19 @@ begin
 
 
     if GC_TEST = "test_init_with_no_requirement_file" then
+      log(ID_LOG_HDR, "Testing initialize_req_cov() with not requirement file.", C_SCOPE);
       initialize_req_cov("T_SPEC_COV_1", "test_requirement_1.csv");
       log_req_cov("SPEC_COV_REQ_1");
       finalize_req_cov(VOID);
 
     elsif GC_TEST = "test_init_with_requirement_file" then
+      log(ID_LOG_HDR, "Testing initialize_req_cov() with a requirement file.", C_SCOPE);
       initialize_req_cov("T_SPEC_COV_2", "../internal_tb/simple_req_file.csv", "test_requirement_2.csv");
       log_req_cov("SPEC_COV_REQ_2");
       finalize_req_cov(VOID);
 
     elsif GC_TEST = "test_log_default_testcase_and_not_listed" then
+      log(ID_LOG_HDR, "Testing log_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
       initialize_req_cov("T_SPEC_COV_3", "../internal_tb/simple_req_file.csv", "test_requirement_3.csv");
       log_req_cov("SPEC_COV_REQ_3");
       log_req_cov("SPEC_COV_REQ_3", "T_SPEC_COV_50");
@@ -82,12 +85,15 @@ begin
       finalize_req_cov(VOID);
       
     elsif GC_TEST = "test_log_testcase_pass_and_fail" then
+      log(ID_LOG_HDR, "Testing log_req_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
       initialize_req_cov("T_SPEC_COV_4", "../internal_tb/simple_req_file.csv", "test_requirement_4.csv");
-      log_req_cov("SPEC_COV_REQ_4", FAIL);
-      log_req_cov("SPEC_COV_REQ_4", "T_SPEC_COV_4_PASSING", PASS);
+      log_req_cov("SPEC_COV_REQ_4", "T_SPEC_COV_4_FAIL", FAIL);
+      log_req_cov("SPEC_COV_REQ_4", "T_SPEC_COV_4");
       finalize_req_cov(VOID);
 
     elsif GC_TEST = "test_uvvm_status_error_before_log" then
+      log(ID_LOG_HDR, "Testing log_req_cov() with UVVM status error triggered prior to initialize_req_cov().", C_SCOPE);
+
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
 
@@ -101,6 +107,8 @@ begin
 
         
     elsif GC_TEST = "test_uvvm_status_error_after_log" then
+      log(ID_LOG_HDR, "Testing log_req_cov() with UVVM status error triggered after log_req_cov() and prior to finalize_req_cov().", C_SCOPE);
+
       -- Run testcase
       initialize_req_cov("T_SPEC_COV_6", "../internal_tb/simple_req_file.csv", "test_requirement_6.csv");   
       log_req_cov("SPEC_COV_REQ_6", PASS);
@@ -112,6 +120,8 @@ begin
       increment_expected_alerts(TB_ERROR, 1);
 
     elsif GC_TEST = "test_open_no_existing_req_file" then
+      log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing requirement file.", C_SCOPE);
+
       increment_expected_alerts(TB_ERROR, 1);
       -- Run testcase
       initialize_req_cov("T_SPEC_COV_7", "../internal_tb/non_existing_req_file.csv", "test_requirement_7.csv");   

@@ -104,6 +104,10 @@ package spec_cov_pkg is
     testcase    : string
   ) return string;
 
+  impure function priv_requirement_exists(
+    requirement : string
+  ) return boolean;
+
   function priv_test_status_to_string(
     constant test_status : t_test_status
   ) return string;
@@ -340,18 +344,17 @@ package body spec_cov_pkg is
   end procedure priv_log_entry;
 
 
---  impure function priv_requirement_exists(
---    requirement : string
---  ) return boolean is
---
---  begin
---    for i in 0 to shared_requirements_in_array-1 loop
---      if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
---        return true;
---      end if;
---    end loop;
---    return false;
---  end function priv_requirement_exists;
+  impure function priv_requirement_exists(
+    requirement : string
+  ) return boolean is
+  begin
+    for i in 0 to shared_requirements_in_array-1 loop
+      if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+        return true;
+      end if;
+    end loop;
+    return false;
+  end function priv_requirement_exists;
 
   --impure function priv_requirement_and_tc_exists(
   --    requirement : string;

@@ -199,7 +199,7 @@ package body spec_cov_pkg is
     ---- Check if there were any errors globally or testcase was explicit set to FAIL
     if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) or (test_status = FAIL) then
       v_requirement_status := FAIL;
-      -- Set failing testcase for summary line
+      -- Set failing testcase for finishing summary line
       priv_testcase_passed := false;
     else
       v_requirement_status := PASS;
@@ -392,12 +392,12 @@ package body spec_cov_pkg is
     for i in 0 to shared_requirements_in_array-1 loop
       if shared_requirement_array(i).requirement.all(1 to requirement'length) = requirement(1 to requirement'length) then
         -- Found requirement
-        for tc in 0 to shared_requirement_array(i).num_tcs-1 loop
-          if shared_requirement_array(i).tc_list(tc).all(1 to testcase'length) = testcase(1 to testcase'length) then
-            -- Found both requirement AND testcase
+        --for tc in 0 to shared_requirement_array(i).num_tcs-1 loop
+        --  if shared_requirement_array(i).tc_list(tc).all(1 to testcase'length) = testcase(1 to testcase'length) then
+        --    -- Found both requirement AND testcase
             return shared_requirement_array(i).description.all;
-          end if;
-        end loop;
+        --  end if;
+        --end loop;
       end if;
     end loop;
 

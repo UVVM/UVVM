@@ -193,7 +193,7 @@ package body spec_cov_pkg is
 
     -- Check if requirement exists
     if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
-      alert(tb_warning, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
+      alert(config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
     ---- Check if there were any errors globally or testcase was explicit set to FAIL

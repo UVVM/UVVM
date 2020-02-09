@@ -9,6 +9,12 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2020.02.XX
+--------------------
+Released: 2020-02-XX
+- Added missing Scoreboard VIP to IRQC dependencies list.
+
+
 v2020.01.24
 --------------------
 Released: 2020-01-24

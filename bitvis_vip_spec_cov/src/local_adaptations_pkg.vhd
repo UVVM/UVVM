@@ -47,7 +47,7 @@ package local_adaptations_pkg is
         csv_delimiter               => C_CSV_DELIMITER,
         max_requirements            => 1000,
         max_testcases_per_req       => 20,
-        csv_max_line_length         => 256
+        csv_max_line_length         => C_CSV_FILE_MAX_LINE_LENGTH
     );
 
     -- Shared variable for configuring the Spec Cov VIP from the testbench sequencer.

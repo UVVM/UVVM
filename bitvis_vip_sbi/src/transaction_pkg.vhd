@@ -75,6 +75,9 @@ package transaction_pkg is
     operation           : t_operation;
     address             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    randomisation       : t_randomisation;
+    num_words           : natural;
+    max_polls           : integer;
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
@@ -83,6 +86,9 @@ package transaction_pkg is
     operation           => NO_OPERATION,
     address             => (others => '0'),
     data                => (others => '0'),
+    randomisation       => NA,
+    num_words           => 1,
+    max_polls           => 1,
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );

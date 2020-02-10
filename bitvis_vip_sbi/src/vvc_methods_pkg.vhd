@@ -452,6 +452,8 @@ package body vvc_methods_pkg is
         dtt_group.bt.operation                                  := vvc_cmd.operation;
         dtt_group.bt.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
         dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
+        dtt_group.bt.randomisation                              := vvc_cmd.randomisation;
+        dtt_group.bt.num_words                                  := vvc_cmd.num_words;
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                         := IN_PROGRESS;
@@ -461,6 +463,9 @@ package body vvc_methods_pkg is
         dtt_group.ct.operation                                  := vvc_cmd.operation;
         dtt_group.ct.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
         dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
+        dtt_group.bt.randomisation                              := vvc_cmd.randomisation;
+        dtt_group.bt.num_words                                  := vvc_cmd.num_words;
+        dtt_group.bt.max_polls                                  := vvc_cmd.max_polls;
         dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
         dtt_group.ct.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
         dtt_group.ct.transaction_status                         := IN_PROGRESS;

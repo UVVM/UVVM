@@ -20,6 +20,8 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+use work.axistream_bfm_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
@@ -81,14 +83,22 @@ package transaction_pkg is
   -- Transaction
   type t_transaction is record
     operation           : t_operation;
-    data                : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    data_array          : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    user_array          : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
+    strb_array          : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
+    id_array            : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
+    dest_array          : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
-    data                => (others => (others => '0')),
+    data_array          => (others => (others => '0')),
+    user_array          => (others => (others => '0')),
+    strb_array          => (others => (others => '0')),
+    id_array            => (others => (others => '0')),
+    dest_array          => (others => (others => '0')),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );

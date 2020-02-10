@@ -43,10 +43,10 @@ package transaction_pkg is
     -- VVC local
     WRITE, READ, CHECK, RESET, LOCK, UNLOCK);
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH    : natural := 1024;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH    : natural := 64;
-  constant C_VVC_CMD_STRING_MAX_LENGTH  : natural := 300;
-
+  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := 1024;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := 64;
+  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 128;
+  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := 300;
 
   --==========================================================================================
   --
@@ -73,16 +73,18 @@ package transaction_pkg is
   -- Transaction
   type t_transaction is record
     operation           : t_operation;
-    address             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);  -- Max width may be increased if required
+    addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    byte_enable         : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
-    address             => (others => '0'),
+    addr                => (others => '0'),
     data                => (others => '0'),
+    byte_enable         => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );

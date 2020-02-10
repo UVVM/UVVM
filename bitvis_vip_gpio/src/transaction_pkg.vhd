@@ -74,6 +74,7 @@ package transaction_pkg is
   type t_transaction is record
     operation           : t_operation;
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    data_exp            : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
@@ -81,6 +82,7 @@ package transaction_pkg is
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
     operation           => NO_OPERATION,
     data                => (others => '0'),
+    data_exp            => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );

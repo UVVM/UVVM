@@ -74,17 +74,29 @@ package transaction_pkg is
 
   -- Transaction
   type t_transaction is record
-    operation           : t_operation;
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation                    : t_operation;
+    data                         : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    data_exp                     : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    num_words                    : natural;
+    word_length                  : natural;
+    when_to_start_transfer       : t_when_to_start_transfer;
+    action_when_transfer_is_done : t_action_when_transfer_is_done;
+    action_between_words         : t_action_between_words;
+    vvc_meta                     : t_vvc_meta;
+    transaction_status           : t_transaction_status;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
-    operation           => NO_OPERATION,
-    data                => (others => '0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    operation                    => NO_OPERATION,
+    data                         => (others => (others => '0')),
+    data_exp                     => (others => (others => '0')),
+    num_words                    => 0,
+    word_length                  => 0,
+    when_to_start_transfer       => START_TRANSFER_IMMEDIATE,
+    action_when_transfer_is_done => RELEASE_LINE_AFTER_TRANSFER,
+    action_between_words         => HOLD_LINE_BETWEEN_WORDS,
+    vvc_meta                     => C_VVC_META_DEFAULT,
+    transaction_status           => C_TRANSACTION_STATUS_DEFAULT
     );
 
   -- Transaction group

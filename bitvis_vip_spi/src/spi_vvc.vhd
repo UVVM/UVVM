@@ -76,6 +76,9 @@ architecture behave of spi_vvc is
   alias vvc_config       : t_vvc_config is shared_spi_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_spi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_spi_transaction_info(GC_INSTANCE_IDX);
+    -- DTT
+  alias dtt_trigger   : std_logic           is global_spi_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias dtt_info      : t_transaction_group is shared_spi_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -283,6 +286,9 @@ begin
         --===================================
         when MASTER_TRANSMIT_AND_RECEIVE =>
           if GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.tx_data := v_cmd.data;
 
             -- Call the corresponding procedure in the BFM package.
@@ -328,6 +334,9 @@ begin
 
         when MASTER_TRANSMIT_AND_CHECK =>
           if GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -361,6 +370,9 @@ begin
 
         when MASTER_TRANSMIT_ONLY =>
           if GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -391,6 +403,9 @@ begin
 
         when MASTER_RECEIVE_ONLY =>
           if GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
               spi_master_receive(rx_data                      => v_result(0)(GC_DATA_WIDTH-1 downto 0),
@@ -430,6 +445,9 @@ begin
 
         when MASTER_CHECK_ONLY =>
           if GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
               spi_master_check(data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
@@ -460,6 +478,9 @@ begin
 
         when SLAVE_TRANSMIT_AND_RECEIVE =>
           if not GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -503,6 +524,9 @@ begin
 
         when SLAVE_TRANSMIT_AND_CHECK =>
           if not GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
               spi_slave_transmit_and_check(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
@@ -536,6 +560,9 @@ begin
 
         when SLAVE_TRANSMIT_ONLY =>
           if not GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
               spi_slave_transmit(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
@@ -563,6 +590,9 @@ begin
 
         when SLAVE_RECEIVE_ONLY =>
           if not GC_MASTER_MODE then
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
               spi_slave_receive(rx_data                => v_result(0)(GC_DATA_WIDTH-1 downto 0),
@@ -601,6 +631,9 @@ begin
 
         when SLAVE_CHECK_ONLY =>
           if not GC_MASTER_MODE then    -- slave check
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
               spi_slave_check(data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
@@ -662,6 +695,10 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
+
+      -- Set DTT back to default values
+      reset_dtt_info(dtt_info, v_cmd);
+
     end loop;
   end process;
 --========================================================================================================================

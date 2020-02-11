@@ -66,7 +66,7 @@ def write_specification_coverage_file(run_configuration, specification_coverage_
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))
-        abort(error_code = 1, error_msg = error_msg)
+        abort(error_code = 1, msg = error_msg)
 
 
 
@@ -302,7 +302,7 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
             partial_coverage_files.append(partial_coverage_file_name)
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], map_partial_coverage_file_namename))
-        abort(error_code = 1, error_msg = error_msg)
+        abort(error_code = 1, msg = error_msg)
 
 
     # Get the delimiter from the partial_cov file
@@ -319,7 +319,7 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
                 continue
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file_name))
-        abort(error_code = 1, error_msg = error_msg)
+        abort(error_code = 1, msg = error_msg)
 
     # Start reading CSVs
     try:
@@ -342,7 +342,7 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
                         partial_coverage_list.append({row[0] : row[2]})
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file))
-        abort(error_code = 1, error_msg = error_msg)
+        abort(error_code = 1, msg = error_msg)
         
 
 
@@ -389,12 +389,12 @@ def build_requirement_list(run_configuration, requirement_list):
                 requirement_list.append(requirement_item)
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_file))
-        abort(error_code = 1, error_msg = error_msg)
+        abort(error_code = 1, msg = error_msg)
 
 
 
 
-def abort(error_code = 0, error_msg = ""):
+def abort(error_code = 0, msg = ""):
     """
     This method will list all available arguments and exit the program.
 
@@ -402,12 +402,12 @@ def abort(error_code = 0, error_msg = ""):
 
     error_code (int)    : exit code set when stopping program.
         
-    error_msg (str)     : string displayed prior to listing arguments.
+    msg (str)           : string displayed prior to listing arguments.
     """
     global def_args
 
-    if error_msg:
-        print(error_msg)
+    if msg:
+        print(msg)
 
     print("\nrun_spec_cov command line arguments (see QuickReference for more details):\n")
     for item in def_args:
@@ -506,7 +506,7 @@ def set_run_config_from_file(run_configuration):
             lines = config_file.readlines()
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], config_file_name))
-        abort(error_code = 1, error_msg = error_msg)
+        abort(error_code = 1, msg = error_msg)
 
     # Add each line in the config file as a list to the arguments_lists
     for line in lines:
@@ -546,7 +546,7 @@ def run_housekeeping(run_configuration):
         run_configuration.get("config")
         ):
        error_msg = ("ERROR! --clean argument used in combination with other arguments.")
-       abort(error_code = 1, error_msg = error_msg)
+       abort(error_code = 1, msg = error_msg)
 
     else:
         try:
@@ -556,14 +556,15 @@ def run_housekeeping(run_configuration):
                     os.remove(filename)
                     num_files_removed += 1
                 
-            print("Successfully removed %d CSV files." %(num_files_removed))
-            # Done, exit
-            abort(error_code = 0)
+            msg = ("Successfully removed %d CSV files." %(num_files_removed))
+            exit_code = 0
 
         except:
-            error_msg = ("Error %s occurred" %(sys.exc_info()[0]))
-            # Done, exit
-            abort(error_code = 1, error_msg = error_msg)
+            msg = ("Error %s occurred" %(sys.exc_info()[0]))
+            exit_code = 1
+
+        # Done, exit
+        abort(error_code = exit_code, msg = msg)
 
         
 

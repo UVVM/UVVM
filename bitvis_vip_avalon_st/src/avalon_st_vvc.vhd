@@ -83,7 +83,6 @@ architecture behave of avalon_st_vvc is
     -- DTT
   alias dtt_trigger   : std_logic           is global_avalon_st_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias dtt_info      : t_transaction_group is shared_avalon_st_vvc_transaction_info(GC_INSTANCE_IDX);
-
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 

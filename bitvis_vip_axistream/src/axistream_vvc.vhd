@@ -33,6 +33,7 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+use work.transaction_pkg.all;
 
 --========================================================================================================================
 entity axistream_vvc is
@@ -83,6 +84,9 @@ architecture behave of axistream_vvc is
   alias vvc_config       : t_vvc_config       is shared_axistream_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status       is shared_axistream_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_axistream_transaction_info(GC_INSTANCE_IDX);
+    -- DTT
+  alias dtt_trigger   : std_logic           is global_axistream_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias dtt_info      : t_transaction_group is shared_axistream_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -266,6 +270,9 @@ begin
 
             when TRANSMIT =>
                 if GC_VVC_IS_MASTER then
+                  -- Set DTT
+                  set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
                   -- Put in queue so that the monitor VVC knows what to expect
                   -- Needed when the sink is in Monitor Mode, as an alternative to calling lbusExpect() for each packet
                   transaction_info.numPacketsSent := transaction_info.numPacketsSent + 1;
@@ -289,6 +296,8 @@ begin
 
             when RECEIVE =>
                if not GC_VVC_IS_MASTER then
+                  -- Set DTT
+                  set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
                   axistream_receive(data_array          => v_result.data_array,
                                     data_length         => v_result.data_length,
@@ -321,6 +330,8 @@ begin
 
             when EXPECT =>
                if not GC_VVC_IS_MASTER then
+                  -- Set DTT
+                  set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
                   -- Call the corresponding procedure in the BFM package.
                   axistream_expect_bytes(
@@ -377,6 +388,9 @@ begin
          last_cmd_idx_executed <= v_cmd.cmd_idx;
          -- Reset the transaction info for waveview
          transaction_info   := C_TRANSACTION_INFO_DEFAULT;
+
+        -- Set DTT back to default values
+        reset_dtt_info(dtt_info, v_cmd);
 
       end loop;
    end process;

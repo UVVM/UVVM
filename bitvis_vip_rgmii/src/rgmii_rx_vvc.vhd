@@ -75,7 +75,6 @@ architecture behave of rgmii_rx_vvc is
     -- DTT
   alias dtt_trigger             : std_logic           is global_rgmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
   alias dtt_info                : t_transaction_group is shared_rgmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
-
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 

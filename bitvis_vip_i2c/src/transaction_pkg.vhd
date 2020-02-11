@@ -75,19 +75,27 @@ package transaction_pkg is
 
   -- Transaction
   type t_transaction is record
-    operation           : t_operation;
-    address             : std_logic_vector(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation                    : t_operation;
+    addr                         : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    data                         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_LENGTH-1);
+    num_bytes                    : natural;
+    action_when_transfer_is_done : t_action_when_transfer_is_done;
+    exp_ack                      : boolean;
+    rw_bit                       : std_logic;
+    vvc_meta                     : t_vvc_meta;
+    transaction_status           : t_transaction_status;
   end record;
 
   constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
-    operation           => NO_OPERATION,
-    address             => (others => '0'),
-    data                => (others => '0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    operation                    => NO_OPERATION,
+    addr                         => (others => '0'),
+    data                         => (others => (others => '0')),
+    num_bytes                    => 0,
+    action_when_transfer_is_done => RELEASE_LINE_AFTER_TRANSFER,
+    exp_ack                      => true,
+    rw_bit                       => '0',
+    vvc_meta                     => C_VVC_META_DEFAULT,
+    transaction_status           => C_TRANSACTION_STATUS_DEFAULT
     );
 
   -- Transaction group

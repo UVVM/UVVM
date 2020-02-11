@@ -75,6 +75,9 @@ architecture behave of i2c_vvc is
   alias vvc_config       : t_vvc_config is shared_i2c_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_i2c_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_i2c_transaction_info(GC_INSTANCE_IDX);
+    -- DTT
+  alias dtt_trigger   : std_logic           is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias dtt_info      : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -262,10 +265,12 @@ begin
         -- VVC dedicated operations
         --===================================
         when MASTER_TRANSMIT =>
-          transaction_info.data      := v_cmd.data;
-          transaction_info.num_bytes := v_cmd.num_bytes;
-
           if GC_MASTER_MODE then        -- master transmit
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
+            transaction_info.data      := v_cmd.data;
+            transaction_info.num_bytes := v_cmd.num_bytes;
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
 
@@ -280,9 +285,12 @@ begin
           else  -- attempted master transmit when in slave mode
             alert(error, "Master transmit called when VVC is in slave mode.", C_SCOPE);
           end if;
-        when MASTER_RECEIVE =>
 
+        when MASTER_RECEIVE =>
           if GC_MASTER_MODE then        -- master receive
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
             transaction_info.num_bytes                    := v_cmd.num_bytes;
@@ -314,10 +322,12 @@ begin
           end if;
 
         when MASTER_CHECK =>
-          transaction_info.data      := v_cmd.data;
-          transaction_info.num_bytes := v_cmd.num_bytes;
-
           if GC_MASTER_MODE then        -- master check
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
+            transaction_info.data      := v_cmd.data;
+            transaction_info.num_bytes := v_cmd.num_bytes;
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
 
@@ -336,6 +346,9 @@ begin
 
         when MASTER_QUICK_CMD =>
           if GC_MASTER_MODE then        -- master check
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.exp_ack                      := v_cmd.exp_ack;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
@@ -355,9 +368,13 @@ begin
           end if;
 
         when SLAVE_TRANSMIT =>
-          transaction_info.data      := v_cmd.data;
-          transaction_info.num_bytes := v_cmd.num_bytes;
           if not GC_MASTER_MODE then    -- slave transmit
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
+            transaction_info.data      := v_cmd.data;
+            transaction_info.num_bytes := v_cmd.num_bytes;
+
             i2c_slave_transmit(data         => v_cmd.data(0 to v_cmd.num_bytes-1),
                                msg          => format_msg(v_cmd),
                                i2c_if       => i2c_vvc_if,
@@ -370,6 +387,9 @@ begin
 
         when SLAVE_RECEIVE =>
           if not GC_MASTER_MODE then    -- requires slave mode
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
             transaction_info.num_bytes := v_cmd.num_bytes;
 
             check_value(v_cmd.num_bytes <= C_VVC_CMD_DATA_MAX_LENGTH, error, "Verifying number of bytes to receive.", C_SCOPE, ID_NEVER);
@@ -397,9 +417,13 @@ begin
           end if;
 
         when SLAVE_CHECK =>
-          transaction_info.data      := v_cmd.data;
-          transaction_info.num_bytes := v_cmd.num_bytes;
           if not GC_MASTER_MODE then    -- slave check
+            -- Set DTT
+            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
+            transaction_info.data      := v_cmd.data;
+            transaction_info.num_bytes := v_cmd.num_bytes;
+
             i2c_slave_check(data_exp     => v_cmd.data(0 to v_cmd.num_bytes-1),
                             msg          => format_msg(v_cmd),
                             i2c_if       => i2c_vvc_if,
@@ -449,6 +473,9 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
+
+      -- Set DTT back to default values
+      reset_dtt_info(dtt_info, v_cmd);
 
     end loop;
   end process;

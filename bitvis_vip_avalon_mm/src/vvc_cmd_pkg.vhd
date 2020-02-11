@@ -33,8 +33,6 @@ package vvc_cmd_pkg is
 
   alias t_operation is work.transaction_pkg.t_operation;
 
-  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH   : natural := 128;
-
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC

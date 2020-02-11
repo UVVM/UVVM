@@ -301,6 +301,19 @@ package vvc_methods_pkg is
     constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
     );
 
+  --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_trigger    : inout std_logic;
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record;
+    constant vvc_config   : in t_vvc_config;
+    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure reset_dtt_info(
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record);
 
   --==============================================================================
   -- Activity Watchdog
@@ -591,6 +604,52 @@ package body vvc_methods_pkg is
   begin
     i2c_slave_check(VVCT, vvc_instance_idx, v_dummy_byte_array, msg, alert_level, rw_bit, scope);
   end procedure;
+
+  --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_trigger    : inout std_logic;
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record;
+    constant vvc_config   : in t_vvc_config;
+    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when MASTER_TRANSMIT | MASTER_RECEIVE | MASTER_CHECK |
+           SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
+        dtt_group.bt.operation                             := vvc_cmd.operation;
+        dtt_group.bt.addr(vvc_cmd.addr'length-1 downto 0)  := vvc_cmd.addr;
+        dtt_group.bt.data                                  := vvc_cmd.data;
+        dtt_group.bt.num_bytes                             := vvc_cmd.num_bytes;
+        dtt_group.bt.action_when_transfer_is_done          := vvc_cmd.action_when_transfer_is_done;
+        dtt_group.bt.exp_ack                               := vvc_cmd.exp_ack;
+        dtt_group.bt.rw_bit                                := vvc_cmd.rw_bit;
+        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
+        dtt_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
+        dtt_group.bt.transaction_status                    := IN_PROGRESS;
+        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+      when others =>
+        alert(TB_ERROR, "VVC operation not recognized");
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_dtt;
+
+  procedure reset_dtt_info(
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when MASTER_TRANSMIT | MASTER_RECEIVE | MASTER_CHECK |
+           SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
+        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure reset_dtt_info;
 
   --==============================================================================
   -- Activity Watchdog

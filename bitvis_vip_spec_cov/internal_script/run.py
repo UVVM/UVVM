@@ -60,7 +60,8 @@ def main(argv):
            "test_uvvm_status_error_before_log",
            "test_uvvm_status_error_after_log",
            "test_open_no_existing_req_file",
-           "test_sub_requirement",
+           "test_sub_requirement_pass",
+           "test_sub_requirement_fail",
            "test_incomplete_testcase"
           ]
 

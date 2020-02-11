@@ -1,0 +1,5 @@
+-r ../internal_tb/simple_req_file.csv 
+-i partial_cov_listed_and_not_listed.csv 
+--strictness 1 
+-s test_strict_1.csv 
+-m ../internal_tb/simple_req_map_file.csv

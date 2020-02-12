@@ -468,7 +468,7 @@ package body axilite_bfm_pkg is
         check_value(axilite_if.write_response_channel.bresp, to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
         -- Wait according to config.bfm_sync setup
-        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
         axilite_if.write_response_channel.bready <= '0';
         v_await_bvalid := false;
@@ -577,7 +577,7 @@ package body axilite_bfm_pkg is
         v_data_value := axilite_if.read_data_channel.rdata;
 
         -- Wait according to config.bfm_sync setup
-        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
         axilite_if.read_data_channel.rready <= '0';
       end if;

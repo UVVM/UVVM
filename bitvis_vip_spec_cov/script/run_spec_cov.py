@@ -559,7 +559,7 @@ def arg_parser(arguments):
 
     # No legal arguments given - present help and exit
     if run_configuration == run_parameter_default:
-        abort(error_code = 0, error_msg = "Please call script with one of the following arguments.")
+        abort(error_code = 0, msg = "Please call script with one of the following arguments.")
     else:
         return run_configuration
 

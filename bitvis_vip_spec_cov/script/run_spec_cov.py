@@ -5,6 +5,8 @@ import csv
 import sys
 
 
+# Default delimiter - will be updated from partial coverage file
+delimiter = ","
 
 # Predefined arguments and run parameters
 def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-file",   "help" : "-r              Path/requirements.csv contains requirements", "default" : "NA"},
@@ -19,26 +21,31 @@ def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-fil
 
 # Default, non-configured run
 run_parameter_default = {"requirement_list" : None, "input_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : '0', "config" : None}
-# Queue item structure
-requirement_item_struct = {"requirement" : "", "description" : "", "testcase" : [], "pass" : False, "compliant" : "", "note" : "", "sub_requirement" : []}
-
-# List of requirements and testcases listed in requirement_list_file
-requirement_list = []
-# List of requirements and testcases listed in partial_cov_file(s)
-partial_coverage_list = []
-# Specification coverage list
-specification_coverage_list = []
-# Requirement mapping list
-requirement_map_list = []
-
-# Default delimiter - will be read from partial coverage file
-delimiter = ","
 
 
-#lambda match: 
 
 
-def write_specification_coverage_file(run_configuration, specification_coverage_list, requirement_map_list):
+requirement_item_struct = {"requirement" : "", "description" : "", "testcase" : [], "pass" : False, "note" : ""}
+# requirement_list: requirement_item_struct (requirements and testcases listed in requirement_list_file)
+requirement_list = []  # From the requirement specification document, inputs to VHDL simulations and post-prosessing.
+# partial_coverage_list: requirement_item_struct (requirements w/testcases listed in partial_cov_files)
+partial_coverage_list = []  # From the output of VHDL simulations, input to post-prosessing.
+
+
+partial_coverage_item_struct = {"requirement" : "", "compliant" : ""}
+# specification_compliance_list: specification coverage list of partial_coverage_item_structs
+specification_compliance_list = [] # Buildt from requirement_list, partial_coverage_list and strictness.
+
+
+mapping_requirement_item_struct = {"requirement" : "", "sub_requirement" : []}
+# mapping_requirement_list: mapping_requirement_item_structs (super-requirement and a list of its sub-requirements)
+mapping_requirement_list = []
+
+
+
+
+
+def write_specification_coverage_file(run_configuration, specification_compliance_list, mapping_requirement_list):
     """
     This method will write all the results to the specification_coverage CSV file.
 
@@ -46,55 +53,111 @@ def write_specification_coverage_file(run_configuration, specification_coverage_
     
     run_configuration (dict) : selected configuration for this run.
     
-    specification_coverage_list (list) :  a list of requirement_item_struct 
-                            strutcture items which are set to COMPLIANT or
-                            NON COMPLIANT.
+    specification_compliance_list (list) :  a list of partial_coverage_item_struct strutcture items which 
+                            are set to COMPLIANT or NON COMPLIANT.
 
-    requirement_map_list (list) : a list of requirement_item_struct 
-                            strutcture items which are constructed 
-                            from the requirement mapping file.
+    mapping_requirement_list (list) : a list of mapping_requirement_item_struct 
+                            strutcture items which are constructed from the requirement mapping file.
     """
+
+    # Get the global defined delimiter setting for CSV files.
     global delimiter
 
+    #
+    # Write the results to CSV
+    #
     try:
-        with open(run_configuration.get("spec_cov"), mode='w') as spec_cov_file:
+        with open(run_configuration.get("spec_cov"), mode='w', newline='') as spec_cov_file:
             csv_writer = csv.writer(spec_cov_file, delimiter=delimiter)
-            for spec_cov_item in specification_coverage_list:
+
+            csv_writer.writerow(["Requirement results :", ])
+            for spec_cov_item in specification_compliance_list:
                 requirement = spec_cov_item.get("requirement")
                 compliance  = spec_cov_item.get("compliant")
                 csv_writer.writerow([requirement, compliance])
+
+
+            if mapping_requirement_list:
+                # Add a seperator row
+                csv_writer.writerow([])
+                csv_writer.writerow(["Mapped requirement results :", ])
+
+                for super_requirement in mapping_requirement_list:
+                    requirement = super_requirement.get("requirement")
+                    compliance = super_requirement.get("pass")
+                    csv_writer.writerow([requirement, compliance])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))
         abort(error_code = 1, msg = error_msg)
 
 
+    #
+    # Present a summary to terminal
+    #
+
+    # Summary counters
+    num_failing_requirements = 0
+    num_passing_requirements = 0
+
+    failing_requirement_list        = []
+    failing_sub_requirement_list    = []
+
+    for requirement in specification_compliance_list:
+        if not(requirement.get("compliant") == "COMPLIANT"):
+            num_failing_requirements += 1
+            failing_requirement_list.append(requirement.get("requirement"))
+        else:
+            num_passing_requirements += 1
+
+    for requirement in mapping_requirement_list:
+        if not(requirement.get("pass") == "PASS"):
+            num_failing_requirements += 1
+
+            for sub_requirement in requirement.get("sub_requirement"):
+                if not(sub_requirement.get("pass") == "PASS"):
+                    failing_sub_requirement_list.append(sub_requirement.get("requirement"))
+
+        else:
+            num_passing_requirements += 1
+
+    print("SUMMARY:")
+    print("----------------------------------------------")
+    print("Number of passing requirements : %d" %(num_passing_requirements))
+    print("Number of failing requirements : %d" %(num_failing_requirements))
+
+    if failing_requirement_list:
+        print("Failing requirement(s) : %s" %(failing_requirement_list))
+    if failing_sub_requirement_list:
+        print("Failing sub-requirement(s) : %s" %(failing_sub_requirement_list))
 
 
 
-def build_requirement_map_list(run_configuration, requirement_map_list, partial_coverage_list):
+
+
+
+def build_mapping_requirement_list(run_configuration, mapping_requirement_list, partial_coverage_list):
     """
     This method will read the requirement mapping file and verify with the
     partial coverage file.
-    Results are written to the requirement_map_list.
+    Results are written to the mapping_requirement_list.
 
     Parameters:
 
     run_configuration (dict) : selected configuration for this run.
 
-    requirement_map_list (list) : a list of requirement_item_struct 
-                            strutcture items which are constructed 
-                            from the requirement mapping file.
+    mapping_requirement_list (list) : a list of mapping_requirement_item_struct 
+                            strutcture items which are constructed from the requirement mapping file.
 
-    parital_coverage_list (list) : a list of requirement_item_struct 
-                            strutcture items which are constructed 
-                            from the partial_coverage file.
+    parital_coverage_list (list) : a list of requirement_item_struct strutcture items which are 
+                            constructed from the partial_coverage file.
     """
+    # Get the global defined delimiter setting for CSV files.
     global delimiter
 
     requirement_map_file = run_configuration.get("requirement_map_list")
 
-    # Skip if not specified
+    # Skip if not specified in the run_configuration
     if not(requirement_map_file):
         return
 
@@ -102,27 +165,35 @@ def build_requirement_map_list(run_configuration, requirement_map_list, partial_
     try:
         with open(requirement_map_file) as csv_map_file:
             csv_reader = csv.reader(csv_map_file, delimiter=delimiter)
+
             for row in csv_reader:     
-                requirement_item = requirement_item_struct.copy()
+                mapping_requirement_item = mapping_requirement_item_struct.copy()
+                # A new sub-requirement list for each requirement 
                 sub_requirement_list = []
-                for idx, cell_item in enumerate(row):
-                    if idx == 0:
-                        requirement_item["requirement"] = cell_item
-                    else:
-                        sub_requirement_list.append(cell_item.strip())
                 
-                # Add sub requirement list to requirement_item
-                requirement_item["sub_requirement"] = sub_requirement_list
-                # Add requirement item to requirement_map_list
-                requirement_map_list.append(requirement_item)
+                for idx, cell_item in enumerate(row):
+                    # Firs cell is the super-requirement
+                    if idx == 0:
+                        mapping_requirement_item["requirement"] = cell_item
+                    # Rest of the cells are sub-requirements
+                    else:
+                        sub_requirement = requirement_item_struct.copy()
+                        sub_requirement["requirement"] = cell_item.strip()
+                        sub_requirement_list.append(sub_requirement)
+                
+                # Add sub-requirement list to mapping_requirement_item
+                mapping_requirement_item["sub_requirement"] = sub_requirement_list
+
+                # Add the mapping_requirement_item to the mapping_requirement_list
+                mapping_requirement_list.append(mapping_requirement_item)
             
     except:
-        print("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
-        abort()
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
+        abort(error_code = 1, msg = error_msg)
 
 
     # Check all super-requirements
-    for mapping_requirement in requirement_map_list:
+    for mapping_requirement in mapping_requirement_list:
 
         mapped_requirement_passed   = True
         num_sub_requirements        = len(mapping_requirement.get("sub_requirement"))
@@ -133,14 +204,24 @@ def build_requirement_map_list(run_configuration, requirement_map_list, partial_
 
             # Check with partial_coverage_list
             for partial_requirement in partial_coverage_list:
-                partial_requirement_name = partial_requirement.get("requirement")
 
-                if partial_requirement_name and sub_requirement:
-                    if partial_requirement_name.upper() == sub_requirement.upper():
+                # Exract the requirement names for comparing
+                partial_requirement_name = partial_requirement.get("requirement")
+                sub_requirement_name = sub_requirement.get("requirement")
+
+                # If both are defined, check
+                if partial_requirement_name and sub_requirement_name:
+                    # Check if same requirement
+                    if partial_requirement_name.upper() == sub_requirement_name.upper():
+                        # Update counter
                         num_sub_requirements_found += 1
+                        # Update the sub_requirement PASS/FAIL status
+                        sub_requirement["pass"] = partial_requirement.get("pass")
+
+                        # Update boolean for failing super-requirement/mapping requirement.
                         if partial_requirement.get("pass") == "FAIL":
                             mapped_requirement_passed = False
-
+                      
 
         #
         # Set the super-requirement to PASS/COMPLIANT or FAIL/NON COMPLIANT
@@ -160,9 +241,9 @@ def build_requirement_map_list(run_configuration, requirement_map_list, partial_
 
 
 
-def build_specification_coverage_list(run_configuration, requirement_list, partial_coverage_list, specification_coverage_list):
+def build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list):
     """
-    This method will build the specification_coverage_list, i.e. create a list 
+    This method will build the specification_compliance_list, i.e. create a list 
     with all requirements marked as COMPLIANT / NON COMPLIANT based on
     partial_coverage_list items and strictness level.
 
@@ -178,10 +259,11 @@ def build_specification_coverage_list(run_configuration, requirement_list, parti
                             strutcture items which are constructed 
                             from the partial_coverage file.
 
-    specification_coverage_list (list) : a list of requirement_item_struct 
+    specification_compliance_list (list) : a list of requirement_item_struct 
                             strutcture items which are set to COMPLIANT or
                             NON COMPLIANT in this method.
     """
+    # Get the global defined delimiter setting for CSV files.
     global delimiter
 
     # Check if requirement file has been specified
@@ -225,46 +307,48 @@ def build_specification_coverage_list(run_configuration, requirement_list, parti
                     else:
                         requirement_checked_in_unspecified_testcase = True
 
-        # Check if SUMMARY PASS footer is in CSV file
+        # Check if SUMMARY PASS footer is in CSV file - should be on the last line, 
+        # i.e. get the final dictionary in the parial_coverage_list of dictionaries
+        # and check the "SUMMARY" keyword.
         summary_seek_dict = partial_coverage_list[len(partial_coverage_list) - 1]
         if "SUMMARY" in summary_seek_dict:
             if summary_seek_dict.get("SUMMARY").strip()  == "PASS":
                 summary_line_ok = True
 
-        # Create a requirement item
-        requirement_item = requirement_item_struct.copy()
-        requirement_item["requirement"] = requirement.get("requirement")
-
+        # Create a parial coverage item
+        partial_cov_item = partial_coverage_item_struct.copy()
+        partial_cov_item["requirement"] = requirement.get("requirement")
         #
-        # Create a requirement_item (scructure) with default NON COMPLIANT.
+        # Create a partial_coverage_item (scructure) with default NON COMPLIANT.
         # Change from NON COMPLIANT to COMPLIANT if requirement is found 
         # and the testcase has PASSed.
         #
-        # Set requirement_item compliance default to NON COMPLIANT
-        requirement_item["compliant"] = "NON COMPLIANT" # default
+        # Set partial_coverage_item compliance default to NON COMPLIANT
+        partial_cov_item["compliant"] = "NON COMPLIANT" # default
 
         if (summary_line_ok and requirement_found and compliant):
 
             # No strictness: any testcase is OK
             if strictness == '0':
-                requirement_item["compliant"] = "COMPLIANT"
+                partial_cov_item["compliant"] = "COMPLIANT"
+
 
             # Low strictness: at least checked in specified testcase
             elif (strictness == '1' and requirement_checked_in_specified_testcase):
-                requirement_item["compliant"] = "COMPLIANT"
+                partial_cov_item["compliant"] = "COMPLIANT"
 
             # High strictness: only checked in the specified testcase
             elif (strictness == '2' and requirement_checked_in_specified_testcase and 
                     not(requirement_checked_in_unspecified_testcase)):
-                requirement_item["compliant"] = "COMPLIANT"
+                partial_cov_item["compliant"] = "COMPLIANT"
 
             # Something did not match, keep default (NON COMPLIANT)
             else:
-                continue
+                pass
 
 
-        # Save requirement_item to specification_coverage_list
-        specification_coverage_list.append(requirement_item)
+        # Save requirement_item to specification_compliance_list
+        specification_compliance_list.append(partial_cov_item)
 
 
 
@@ -284,6 +368,7 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
                             strutcture items which are constructed 
                             from the partial_coverage file.
     """
+    # Get the global defined delimiter setting for CSV files.
     global delimiter
 
     # Get the partial coverage file - note: can be a txt file with
@@ -363,6 +448,7 @@ def build_requirement_list(run_configuration, requirement_list):
                             items which are constructed from the
                             requirement file.
     """
+    # Get the global defined delimiter setting for CSV files.
     global delimiter
 
     # Get the requirement list file
@@ -437,6 +523,7 @@ def arg_parser(arguments):
 
     # Check all arguments
     for idx, arg in enumerate(arguments):
+
         for dict in def_args:
             argument = None
             # Search for argument in predefined arguments list
@@ -451,6 +538,7 @@ def arg_parser(arguments):
 
                 # Check with argument keywords which require an additional argument
                 if argument[1] in ["in-file", "out-file", "setting", "config"]:
+
                     # Check if a next argument exists
                     if (idx + 1) >= len(arguments):
                         abort()
@@ -474,13 +562,6 @@ def arg_parser(arguments):
 
 
 
-def version_check():
-    """
-    Check if Python version is at least version 3.0, will throw an 
-    exception if lower than version 3.
-    """
-    if sys.version_info[0] < 3:
-        raise Exception("Python version 3 is required to run this script!")
 
 
 
@@ -569,29 +650,41 @@ def run_housekeeping(run_configuration):
         
 
 
+def version_check():
+    """
+    Check if Python version is at least version 3.0, will throw an 
+    exception if lower than version 3.
+    """
+    if sys.version_info[0] < 3:
+        raise Exception("Python version 3 is required to run this script!")
+
+
 
 
 def main():
-    # Grab the global variable
+    # Grab the global variables
     global delimiter
     global requirement_list
     global partial_coverage_list
-    global specification_coverage_list
+    global specification_compliance_list
+    global mapping_requirement_list
 
-    # Check Python version
+    # Check Python version >= 3.0
     version_check()
     
     # Parse arguments and get run selection
     run_configuration = arg_parser(sys.argv[1:])
 
+    # If --clean parameter is applied
     if run_configuration.get("clean"):
         run_housekeeping(run_configuration)
 
+    # If --config parameter is applied
     if run_configuration.get("config"):
         run_configuration = set_run_config_from_file(run_configuration)
 
 
-    # Start by reading from the partial coverage file - will sample the CSV delimiter
+    # Start by reading from the partial coverage file - need to sample the CSV delimiter.
     build_partial_coverage_list(run_configuration, partial_coverage_list)
 
     # Read the requirement file and save in the requirement_list. 
@@ -602,38 +695,16 @@ def main():
     # Read the requirement mapping file and extract the sub-requirements, check the results from the
     # partial_coverage_list and mark the super-requirements as PASS/COMPLIANT or FAIL/NON COMPLIANT
     # based on the PASS/FAIL setting of the requirements in the partial_coverage_list.
-    build_requirement_map_list(run_configuration, requirement_map_list, partial_coverage_list)
+    build_mapping_requirement_list(run_configuration, mapping_requirement_list, partial_coverage_list)
 
     # Read each requirement from the requirement_list, check with the testcase(s) PASS/FAIL in the 
-    # partial_coverage_list, and write to the specification_coverage_list.
-    build_specification_coverage_list(run_configuration, requirement_list, partial_coverage_list, specification_coverage_list)
+    # partial_coverage_list, and write to the specification_compliance_list.
+    build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list)
 
-    # Write results in the specification_coverage_list and requirement_map_list to the summarizing specification CSV file
-    #write_specification_coverage_file(run_configuration, specification_coverage_list, requirement_map_list)
-
-
+    # Write results in the specification_compliance_list and mapping_requirement_list to the summarizing specification CSV file
+    write_specification_coverage_file(run_configuration, specification_compliance_list, mapping_requirement_list)
 
 
-    # Present settings for debug
-    print("\nConfiguration for this run:")
-    for item in run_configuration:
-        print("%s : %s" %(item, run_configuration.get(item)))
-
-    print("\nrequirement_list:")
-    for item in requirement_list:
-        print(item)
-
-    print("\npartial_coverage_list:")
-    for item in partial_coverage_list:
-        print(item)
-
-    print("\nrequirement_map_list:")
-    for item in requirement_map_list:
-        print(item)
-
-    print("\nspecification_coverage_list:")
-    for item in specification_coverage_list:
-        print("%(requirement)s : %(compliant)s" %(item))
 
 
 if __name__ == "__main__":

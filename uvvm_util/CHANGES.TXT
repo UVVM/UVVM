@@ -8,6 +8,7 @@ v2.11.1
 Released: 2020-XX-XX
 - Added a constant C_UVVM_TIMEOUT in adaptations_pkg as a general timeout for
   UVVM wait statements.
+- Updated Quickref BFM common package section.
 
 
 v2.11.0

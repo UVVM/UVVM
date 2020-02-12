@@ -111,11 +111,11 @@ def write_specification_coverage_file(run_configuration, specification_complianc
             num_passing_requirements += 1
 
     for requirement in mapping_requirement_list:
-        if not(requirement.get("pass") == "PASS"):
+        if requirement.get("pass") == "FAIL":
             num_failing_requirements += 1
 
             for sub_requirement in requirement.get("sub_requirement"):
-                if not(sub_requirement.get("pass") == "PASS"):
+                if sub_requirement.get("pass") == "FAIL":
                     failing_sub_requirement_list.append(sub_requirement.get("requirement"))
 
         else:
@@ -326,29 +326,32 @@ def build_specification_compliance_list(run_configuration, requirement_list, par
         # Set partial_coverage_item compliance default to NON COMPLIANT
         partial_cov_item["compliant"] = "NON COMPLIANT" # default
 
-        if (summary_line_ok and requirement_found and compliant):
 
-            # No strictness: any testcase is OK
-            if strictness == '0':
+        # No strictness: any testcase is OK
+        if strictness == '0':
+            if summary_line_ok and compliant:
                 partial_cov_item["compliant"] = "COMPLIANT"
+            # Save requirement_item to specification_compliance_list
+            specification_compliance_list.append(partial_cov_item)
 
-
-            # Low strictness: at least checked in specified testcase
-            elif (strictness == '1' and requirement_checked_in_specified_testcase):
+        # Low strictness: at least checked in specified testcase
+        elif strictness == '1':
+            if (summary_line_ok and requirement_found and 
+                compliant and requirement_checked_in_specified_testcase):
                 partial_cov_item["compliant"] = "COMPLIANT"
+            # Save requirement_item to specification_compliance_list
+            specification_compliance_list.append(partial_cov_item)
 
-            # High strictness: only checked in the specified testcase
-            elif (strictness == '2' and requirement_checked_in_specified_testcase and 
-                    not(requirement_checked_in_unspecified_testcase)):
+        elif strictness == '2':
+            if (summary_line_ok and requirement_found and compliant and 
+                requirement_checked_in_specified_testcase and not(requirement_checked_in_unspecified_testcase)):
                 partial_cov_item["compliant"] = "COMPLIANT"
+            # Save requirement_item to specification_compliance_list
+            specification_compliance_list.append(partial_cov_item)
 
-            # Something did not match, keep default (NON COMPLIANT)
-            else:
-                pass
+        else:
+            pass
 
-
-        # Save requirement_item to specification_compliance_list
-        specification_compliance_list.append(partial_cov_item)
 
 
 

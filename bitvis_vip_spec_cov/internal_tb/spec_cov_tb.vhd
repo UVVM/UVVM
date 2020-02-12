@@ -200,7 +200,7 @@ begin
       initialize_req_cov("T_SUB_REQ", "../internal_tb/sub_req_file.csv", "partial_cov_sub_req_fail.csv");   
       log_req_cov("UART_REQ_BR_A", NA);
       log_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-      log_req_cov("UART_REQ_EVEN", FAIL, "testing UART_REQ_EVEN with scope", C_SCOPE);
+      log_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", C_SCOPE);
       log_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);

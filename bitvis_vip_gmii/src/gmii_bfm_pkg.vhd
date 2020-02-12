@@ -196,7 +196,7 @@ package body gmii_bfm_pkg is
       check_clock_period_margin(gmii_tx_if.gtxclk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                 config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Wait according to config.bfm_sync setup
-      wait_on_bfm_exit(gmii_tx_if.gtxclk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+      wait_on_bfm_exit(gmii_tx_if.gtxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     end loop;
 
     gmii_tx_if <= init_gmii_if_signals;
@@ -275,7 +275,7 @@ package body gmii_bfm_pkg is
         if v_byte_cnt = v_normalized_data'length-1 then
           v_done := true;
         else
-          wait_on_bfm_exit(gmii_rx_if.rxclk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+          wait_on_bfm_exit(gmii_rx_if.rxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
           wait until rising_edge(gmii_rx_if.rxclk);
         end if;
         v_byte_cnt := v_byte_cnt + 1;
@@ -290,7 +290,7 @@ package body gmii_bfm_pkg is
 
     -- Wait according to bfm_sync config
     if not(v_timeout) then
-      wait_on_bfm_exit(gmii_rx_if.rxclk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+      wait_on_bfm_exit(gmii_rx_if.rxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     end if;
 
     -- Done. Check if there was a timeout or it was successful

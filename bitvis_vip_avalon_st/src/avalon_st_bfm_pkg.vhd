@@ -349,7 +349,7 @@ package body avalon_st_bfm_pkg is
                                   config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
         -- Wait according to config.bfm_sync setup
-        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
         v_wait_count := 1;
         -- Check ready signal is asserted (sampled at rising_edge)
@@ -358,7 +358,7 @@ package body avalon_st_bfm_pkg is
           v_ready := avalon_st_if.ready;
 
           -- Wait according to config.bfm_sync setup
-          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+          wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
           v_wait_count := v_wait_count + 1;
           -- If timeout then exit procedure
@@ -575,7 +575,7 @@ package body avalon_st_bfm_pkg is
 
     -- Wait according to bfm_sync config
     if not(v_timeout) then
-      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge, v_time_of_falling_edge);
+      wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     end if;
 
     -- Send the data with the matching interface width

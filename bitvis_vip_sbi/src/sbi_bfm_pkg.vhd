@@ -392,7 +392,7 @@ package body sbi_bfm_pkg is
     end loop;
 
     -- Wait according to config.bfm_sync setup
-    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
     cs   <= '0';
     wena <= '0';
@@ -505,7 +505,7 @@ package body sbi_bfm_pkg is
     data_value   := v_data_value;
 
     -- Wait according to config.bfm_sync setup
-    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
  
     cs   <= '0';
     rena <= '0';

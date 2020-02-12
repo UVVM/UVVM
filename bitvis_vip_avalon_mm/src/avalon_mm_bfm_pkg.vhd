@@ -411,7 +411,7 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     -- Wait according to config.bfm_sync setup
-    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock);
 
@@ -659,7 +659,7 @@ package body avalon_mm_bfm_pkg is
     data_value        := v_normalized_data(data_value'length-1 downto 0);
 
     -- Wait according to config.bfm_sync setup
-    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_rising_edge,  v_time_of_falling_edge);
+    wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
     if proc_name = "avalon_mm_read_response" then
       log(config.id_for_bfm, proc_call & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);

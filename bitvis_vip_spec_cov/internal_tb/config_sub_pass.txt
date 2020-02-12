@@ -1,5 +1,4 @@
 -r ../internal_tb/sub_req_file.csv 
 -i partial_cov_sub_req_pass.csv 
---strictness 1 
 -s test_sub_pass.csv 
 -m ../internal_tb/sub_req_map_file.csv

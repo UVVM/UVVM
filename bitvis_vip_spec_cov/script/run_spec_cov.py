@@ -13,14 +13,14 @@ def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-fil
             {"short" : "-i", "long" : "--input_cov",            "type" : "in-file",   "help" : "-i              Path/testcase_result.csv partial coverage file from VHDL simulations", "default" : "NA"},
             {"short" : "-m", "long" : "--requirement_map_list", "type" : "in-file",   "help" : "-m              Optional: path/subrequirements.csv requirement map file", "default" : "NA"},
             {"short" : "-s", "long" : "--spec_cov",             "type" : "out-file",  "help" : "-s              Path/spec_cov.csv specification coverage file", "default" : "NA"},
-            {"short" : "",   "long" : "--strictness",           "type" : "setting",   "help" : "--strictness N  Optional: will set specification coverage to strictness (1-2) (0=default)", "default" : "0"},
+            {"short" : "",   "long" : "--strictness",           "type" : "setting",   "help" : "--strictness N  Optional: will set specification coverage to strictness (1-2) (0=default)", "default" : "X"},
             {"short" : "",   "long" : "--config",               "type" : "config",    "help" : "--config        Optional: configuration file with all arguments", "default" : "NA"},
             {"short" : "",   "long" : "--clean",                "type" : "household", "help" : "--clean         Will clean any/all partial coverage file(s)", "default" : "NA"},
             {"short" : "-h", "long" : "--help",                 "type" : "help",      "help" : "--help          This help screen", "default" : "NA"} 
             ]
 
 # Default, non-configured run
-run_parameter_default = {"requirement_list" : None, "input_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : '0', "config" : None}
+run_parameter_default = {"requirement_list" : None, "input_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : 'X', "config" : None}
 
 
 
@@ -270,6 +270,7 @@ def build_specification_compliance_list(run_configuration, requirement_list, par
     if not(run_configuration.get("requirement_list")):
         return
 
+    # Get the configured strictness level
     strictness = run_configuration.get("strictness")
 
     # Check all requirements
@@ -330,17 +331,24 @@ def build_specification_compliance_list(run_configuration, requirement_list, par
         # No strictness: any testcase is OK
         if strictness == '0':
             if summary_line_ok and compliant:
-                partial_cov_item["compliant"] = "COMPLIANT"
-            # Save requirement_item to specification_compliance_list
-            specification_compliance_list.append(partial_cov_item)
+                if requirement_found:
+                    partial_cov_item["compliant"] = "COMPLIANT"
+                    # Save requirement_item to specification_compliance_list
+                    specification_compliance_list.append(partial_cov_item)
+            else:
+                # Save requirement_item to specification_compliance_list
+                specification_compliance_list.append(partial_cov_item)
 
         # Low strictness: at least checked in specified testcase
         elif strictness == '1':
-            if (summary_line_ok and requirement_found and 
-                compliant and requirement_checked_in_specified_testcase):
-                partial_cov_item["compliant"] = "COMPLIANT"
-            # Save requirement_item to specification_compliance_list
-            specification_compliance_list.append(partial_cov_item)
+            if (summary_line_ok and compliant and requirement_found):
+                if requirement_found and requirement_checked_in_specified_testcase:
+                    partial_cov_item["compliant"] = "COMPLIANT"
+                    # Save requirement_item to specification_compliance_list
+                    specification_compliance_list.append(partial_cov_item)
+            else:
+                # Save requirement_item to specification_compliance_list
+                specification_compliance_list.append(partial_cov_item)
 
         elif strictness == '2':
             if (summary_line_ok and requirement_found and compliant and 
@@ -377,6 +385,9 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
     # Get the partial coverage file - note: can be a txt file with
     # a list of partial coverage files.
     partial_coverage_file_name = run_configuration.get("input_cov")
+    if not(partial_coverage_file_name):
+        msg = "partial coverage file missing"
+        abort(msg = msg)
 
     # Create a list of partial_cov_files to read
     partial_coverage_files = []
@@ -531,6 +542,7 @@ def arg_parser(arguments):
             argument = None
             # Search for argument in predefined arguments list
             if arg.lower() in dict.values():
+
                 # Set the argument keyword (long version) and type
                 argument = [dict.get("long"), dict.get("type"), dict]
 
@@ -544,12 +556,14 @@ def arg_parser(arguments):
 
                     # Check if a next argument exists
                     if (idx + 1) >= len(arguments):
-                        abort()
+                        msg = ("missing argument after keyword : %s" %(arg))
+                        abort(msg = msg)
                     # and is not a possible keyword
                     elif arguments[idx+1][0] == '-':
-                        abort()
+                        msg = ("argument can not start with '-'")
+                        abort(msg = msg)
                     else:
-                        run_configuration[key_word] = arguments[idx + 1]               
+                        run_configuration[key_word] = arguments[idx + 1]
 
                 elif argument[1] == "household":
                     run_configuration[key_word] = True
@@ -561,6 +575,7 @@ def arg_parser(arguments):
     if run_configuration == run_parameter_default:
         abort(error_code = 0, msg = "Please call script with one of the following arguments.")
     else:
+        if run_configuration.get("strictness") == "X": run_configuration["strictness"] = '0' 
         return run_configuration
 
 
@@ -640,8 +655,8 @@ def run_housekeeping(run_configuration):
                     os.remove(filename)
                     num_files_removed += 1
                 
-            msg = ("Successfully removed %d CSV files." %(num_files_removed))
-            exit_code = 0
+            print("Successfully removed %d CSV files." %(num_files_removed))
+            sys.exit(0)
 
         except:
             msg = ("Error %s occurred" %(sys.exc_info()[0]))
@@ -685,7 +700,6 @@ def main():
     # If --config parameter is applied
     if run_configuration.get("config"):
         run_configuration = set_run_config_from_file(run_configuration)
-
 
     # Start by reading from the partial coverage file - need to sample the CSV delimiter.
     build_partial_coverage_list(run_configuration, partial_coverage_list)

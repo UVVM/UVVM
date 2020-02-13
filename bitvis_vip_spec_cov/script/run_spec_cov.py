@@ -131,19 +131,24 @@ def write_specification_coverage_file(run_configuration, specification_complianc
         else:
             num_passing_requirements += 1
 
+
     print("SUMMARY:")
     print("----------------------------------------------")
     print("Number of passing requirements : %d" %(num_passing_requirements))
     print("Number of failing requirements : %d" %(num_failing_requirements))
+    print("\n")
 
     if failing_requirement_list:
         print("Failing requirement(s) :")
         for item in failing_requirement_list:
             print("%s : %s" %(item.get("name"), item.get("testcase")))
+        print("\n")
+
     if failing_sub_requirement_list:
         print("Failing sub-requirement(s) :")
         for item in failing_sub_requirement_list:
             print("%s : %s" %(item.get("name"), item.get("testcase")))
+        print("\n")
 
 
 
@@ -780,15 +785,19 @@ def run_housekeeping(run_configuration):
                     os.remove(filename)
                     num_files_removed += 1
                 
-            print("Successfully removed %d CSV files." %(num_files_removed))
-            sys.exit(0)
-
+            msg = ("Successfully removed %d CSV files." %(num_files_removed))
+            exit_code = 0
         except:
             msg = ("Error %s occurred" %(sys.exc_info()[0]))
             exit_code = 1
 
-        # Done, exit
-        abort(error_code = exit_code, msg = msg)
+
+        if exit_code == 1:
+            # Done, exit
+            abort(error_code = exit_code, msg = msg)
+        else:
+            print(msg)
+            sys.exit(exit_code)
 
         
 

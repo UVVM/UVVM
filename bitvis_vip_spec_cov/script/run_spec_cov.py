@@ -152,6 +152,14 @@ def write_specification_coverage_file(run_configuration, specification_complianc
 
 def build_mapping_requirement_list(run_configuration, partial_coverage_list, mapping_requirement_list):
     """
+    Constriuct the mapping_reqiurement_list by reading the requirement mapping file and add
+    requirement_items with a list of sub_requirements (requirement_items).
+
+    Parameters:
+
+    partial_coverage_list (list) : list of testcase_item, final entry is SUMMARY: PASS/FAIL
+
+    mapping_requirement_list (list) : list of requirement_item 
     """
     # Get the global defined delimiter setting for CSV files.
     global delimiter
@@ -240,7 +248,7 @@ def build_mapping_requirement_list(run_configuration, partial_coverage_list, map
 
 
 
-def build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, mapping_requirement_list, specification_compliance_list):
+def build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list):
     """
     This method will build the specification_compliance_list, i.e. create a list 
     with all requirements marked as COMPLIANT / NON COMPLIANT based on
@@ -529,7 +537,6 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
     # Start reading CSVs
     #==========================================================================
     try:
-        # Read from all s
         for partial_coverage_file in partial_coverage_files:
             with open(partial_coverage_file) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=delimiter)
@@ -557,14 +564,13 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
 
 
 
-def build_requirement_list(run_configuration, requirement_list, partial_coverage_list):
+def build_requirement_list(run_configuration, requirement_list):
     """
-    Contructs the requirement_list with requirement_items from the 
-    partial_coverage_list.
+    Contructs the requirement_list with requirement_items.
 
     Parameters:
 
-    requirement_list (list) : list with 
+    requirement_list (list) : list with requirement_items
     """
     # Get the global defined delimiter setting for CSV files.
     global delimiter
@@ -726,9 +732,13 @@ def set_run_config_from_file(run_configuration):
     for line in lines:
         arguments_lists.append(line.strip().split())
 
+    # Add the config file
+    arguments_lists.append(["config", config_file_name])
+
     # Convert the arguments_lists [[arg1, arg2], [arg3, arg4], ....] to a flat list,
     # i.e. [agr1, arg2, arg3, arg4, ...]
     arguments = [argument for sub_argument_list in arguments_lists for argument in sub_argument_list]
+
 
     # Pass the arguments list to the argument parser and return the result
     configuration = arg_parser(arguments)
@@ -802,9 +812,18 @@ def main():
     global specification_compliance_list
     global mapping_requirement_list
 
+    #==========================================================================
+    # Verify that correct Python version is used
+    #==========================================================================
+
     # Check Python version >= 3.0
     version_check()
     
+
+    #==========================================================================
+    # Parse the command line arguments and set the configuration
+    #==========================================================================
+
     # Parse arguments and get run selection
     run_configuration = arg_parser(sys.argv[1:])
 
@@ -816,22 +835,36 @@ def main():
     if run_configuration.get("config"):
         run_configuration = set_run_config_from_file(run_configuration)
 
+
+    #==========================================================================
+    # Show the configuration for current run
+    #==========================================================================
     print("\nConfiguration:")
     print("--------------------------------")
     for key, value in run_configuration.items():
         print("%s : %s" %(key, value))
     print("\n")
 
-    # Start by reading from the partial coverage file - need to sample the CSV delimiter.
+
+    #==========================================================================
+    # Build structure and process results
+    #
+    #   Note that partial_coverage files will have to be read first so
+    #   we can extract the CSV delimiter.
+    #==========================================================================
+
     build_partial_coverage_list(run_configuration, partial_coverage_list)
 
-    build_requirement_list(run_configuration, requirement_list, partial_coverage_list)
+    build_requirement_list(run_configuration, requirement_list)
 
     build_mapping_requirement_list(run_configuration, partial_coverage_list, mapping_requirement_list)
     
-    build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, mapping_requirement_list, specification_compliance_list)
+    build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list)
 
-    #Write results in the specification_compliance_list and mapping_requirement_list to the summarizing specification CSV file
+
+    #==========================================================================
+    # Write the results to CSV file
+    #==========================================================================
     write_specification_coverage_file(run_configuration, specification_compliance_list, mapping_requirement_list)
 
 

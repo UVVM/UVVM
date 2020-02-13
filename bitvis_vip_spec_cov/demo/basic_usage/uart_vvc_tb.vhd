@@ -18,7 +18,6 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -26,15 +25,14 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.vvc_methods_pkg.all;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_uart;
-use bitvis_vip_uart.vvc_methods_pkg.all;
-use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_uart.vvc_context;
 
-library bitvis_vip_spec_vs_verif;
-use bitvis_vip_spec_vs_verif.spec_vs_verif_methods.all;
+library bitvis_vip_spec_cov;
+use bitvis_vip_spec_cov.spec_cov_pkg.all;
+use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
 
 -- Test bench entity
@@ -45,8 +43,8 @@ end entity;
 architecture func of uart_vvc_tb is
 
   -- Assuming that the testbench is run from the sim folder
-  constant C_REQ_TO_TC_MAP_FILE : string := "../demo/basic_usage/req_to_test_map.csv";
-  constant C_REQ_OUTPUT_FILE    : string := "../sim/basic_demo_req_output_file.csv";
+  constant C_REQ_LIST_FILE      : string := "../demo/basic_usage/req_list_basic_demo.csv";
+  constant C_PARTIAL_COV_FILE   : string := "../sim/partial_cov_basic_demo.csv";
 
   constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
 
@@ -85,12 +83,12 @@ architecture func of uart_vvc_tb is
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
-    --enable_log_msg(ALL_MESSAGES);
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
-    enable_log_msg(ID_FILE_PARSER);     -- Enable the Spec Vs Verif IDs
-    enable_log_msg(ID_SPEC_VS_VERIF);   -- Enable the Spec Vs Verif IDs
+    enable_log_msg(ID_FILE_OPEN_CLOSE); -- Enable the Spec Cov IDs
+    enable_log_msg(ID_FILE_PARSER);     -- Enable the Spec Cov IDs
+    enable_log_msg(ID_SPEC_COV);        -- Enable the Spec Cov IDs
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     enable_log_msg(SBI_VVCT, 1, ID_BFM);
@@ -102,14 +100,12 @@ architecture func of uart_vvc_tb is
     enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
 
 
-    -- Start the requirement coverage process
     log("Starting the requirement coverage process");
-    start_req_cov(C_REQ_TO_TC_MAP_FILE, C_REQ_OUTPUT_FILE);
+    initialize_req_cov("T_UART_1", C_REQ_LIST_FILE, C_PARTIAL_COV_FILE);
 
 
     log(ID_LOG_HDR, "Starting simulation of TB for UART using VVCs", C_SCOPE);
     ------------------------------------------------------------
-
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
 
@@ -120,50 +116,39 @@ architecture func of uart_vvc_tb is
     shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
 
 
-
-    log(ID_LOG_HDR, "TC_DUT_DEFAULTS - Check register defaults", C_SCOPE);
+    log(ID_LOG_HDR, "Check register defaults", C_SCOPE);
     ------------------------------------------------------------
-    -- First testcase - TC_DUT_DEFAULTS
-    -- This testcase will read the DUT default values
     sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"00", "RX_DATA default");
     sbi_check(SBI_VVCT, 1, C_ADDR_TX_READY, x"01", "TX_READY default");
     sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
     await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
-    -- Log the requirement FPGA_SPEC_1 after testcase TC_DUT_DEFAULTS has completed
-    log_req_cov("FPGA_SPEC_1", "TC_DUT_DEFAULTS");
+    -- Log the requirement FPGA_SPEC_1 after test has completed
+    log_req_cov("FPGA_SPEC_1");
 
 
-    log(ID_LOG_HDR, "TC_UART_TX - Check simple transmit", C_SCOPE);
+    log(ID_LOG_HDR, "Check simple transmit", C_SCOPE);
     ------------------------------------------------------------
-    -- Second testcase - TC_UART_TX
-    -- This testcase will check a UART TX operation
     sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"55", "TX_DATA");
     uart_expect(UART_VVCT,1,RX,  x"55", "Expecting data on UART RX");
     await_completion(UART_VVCT,1,RX,  13 * C_BIT_PERIOD);
-    -- Log the requirement FPGA_SPEC_2 after testcase TC_UART_TX has completed
-    log_req_cov("FPGA_SPEC_2", "TC_UART_TX");
+    -- Log the requirement FPGA_SPEC_2 after test has completed
+    log_req_cov("FPGA_SPEC_2");
     wait for 200 ns;  -- margin
 
 
-
-    log(ID_LOG_HDR, "TC_UART_RX - Check simple receive", C_SCOPE);
+    log(ID_LOG_HDR, "Check simple receive", C_SCOPE);
     ------------------------------------------------------------
-    -- Third testcase - TC_UART_RX
-    -- This testcase will check a UART RX operation
     uart_transmit(UART_VVCT,1,TX,  x"AA", "UART TX");
     await_completion(UART_VVCT,1,TX,  13 * C_BIT_PERIOD);
     wait for 200 ns;  -- margin
     sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
     await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-    -- Log the requirement FPGA_SPEC_3 after testcase TC_UART_RX has completed
-    log_req_cov("FPGA_SPEC_3", "TC_UART_RX");
+    -- Log the requirement FPGA_SPEC_3 after test has completed
+    log_req_cov("FPGA_SPEC_3");
 
 
-
-    log(ID_LOG_HDR, "TC_UART_SIMULTANEOUS - Check single simultaneous transmit and receive", C_SCOPE);
+    log(ID_LOG_HDR, "Check single simultaneous transmit and receive", C_SCOPE);
     ------------------------------------------------------------
-    -- Fourth testcase - TC_UART_SIMULTANEOUS
-    -- This testcase will check simultaneous RX and TX operation
     sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"B4", "TX_DATA");
     uart_transmit(UART_VVCT,1,TX,  x"87", "UART TX");
     uart_expect(UART_VVCT,1,RX,  x"B4", "Expecting data on UART RX");
@@ -171,12 +156,12 @@ architecture func of uart_vvc_tb is
     wait for 200 ns;  -- margin
     sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA");
     await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
-    -- Log the requirement FPGA_SPEC_4 after testcase TC_UART_SIMULTANEOUS has completed
-    log_req_cov("FPGA_SPEC_4", "TC_UART_SIMULTANEOUS");
+    -- Log the requirement FPGA_SPEC_4 after test has completed
+    log_req_cov("FPGA_SPEC_4");
 
 
     -- End the requirement coverage process
-    end_req_cov(VOID);
+    finalize_req_cov(VOID);
     
     -----------------------------------------------------------------------------
     -- Ending the simulation

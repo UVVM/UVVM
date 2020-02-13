@@ -10,5 +10,11 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-vsim bitvis_vip_spec_cov.uart_vvc_tb
+if { [info exists 1] } {
+  set testcase "$1"
+  vsim -gGC_TESTCASE=$testcase bitvis_vip_spec_cov.uart_vvc_tb
+} else {
+  vsim bitvis_vip_spec_cov.uart_vvc_tb
+}
+
 run -all

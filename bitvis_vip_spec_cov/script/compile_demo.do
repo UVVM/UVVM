@@ -64,7 +64,7 @@ if { [string equal -nocase $demo_version "basic"] } {
   quietly set demo_path "$root_path/bitvis_vip_spec_cov/demo/basic_usage"
 } else {
   echo "\n\n=== Compiling Advanced Demo TB\n"
-  quietly set demo_path "$root_path/bitvis_vip_spec_cov/demo/advance_usage"
+  quietly set demo_path "$root_path/bitvis_vip_spec_cov/demo/advanced_usage"
 }
 
 echo "eval vcom  $compdirectives  $demo_path/uart_vvc_th.vhd"

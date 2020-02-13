@@ -514,7 +514,9 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
         # Check if partial_cov_file is a TXT file, i.e. a list of files.
         if ".txt" in partial_coverage_file_name.lower():
             with open(partial_coverage_file_name) as partial_coverage_file:
-                partial_coverage_files.append(partial_coverage_file.readline())
+                lines = partial_coverage_file.readlines()
+            for line in lines:
+                partial_coverage_files.append(line.strip())
         # Partial_cov_file is a CSV file - add it as a single item to the list.
         else:
             partial_coverage_files.append(partial_coverage_file_name)

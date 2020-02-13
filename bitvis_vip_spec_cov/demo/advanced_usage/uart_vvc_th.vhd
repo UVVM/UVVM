@@ -19,8 +19,6 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
-
 library bitvis_vip_sbi;
 library bitvis_vip_uart;
 library bitvis_uart;
@@ -62,7 +60,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate DUT
   -----------------------------------------------------------------------------
-  i_uart: entity work.uart
+  i_uart: entity bitvis_uart.uart
     port map (
       -- DSP interface and general control signals
       clk             => clk,

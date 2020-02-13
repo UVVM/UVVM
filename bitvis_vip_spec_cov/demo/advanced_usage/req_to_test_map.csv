@@ -1,6 +1,0 @@
-FPGA_SPEC_1.a;Check of default registers;TC_DUT_DEFAULTS_0
-FPGA_SPEC_1.b;Check of default registers;TC_DUT_DEFAULTS_1
-FPGA_SPEC_1.c;Check of default registers;TC_DUT_DEFAULTS_2
-FPGA_SPEC_2;UART TX;TC_UART_TX
-FPGA_SPEC_3;UART RX;TC_UART_RX
-FPGA_SPEC_4;Simultaneous operation;TC_UART_SIMULTANEOUS

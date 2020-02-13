@@ -1,4 +1,0 @@
-../sim/advanced_demo_req_output_file_TC0.csv
-../sim/advanced_demo_req_output_file_TC1.csv
-../sim/advanced_demo_req_output_file_TC2.csv
-../sim/advanced_demo_req_output_file_TC3.csv

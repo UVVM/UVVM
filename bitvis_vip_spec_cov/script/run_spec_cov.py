@@ -49,25 +49,6 @@ specification_compliance_list   = []    # List of partial_coverage_item
 mapping_requirement_list        = []    # List of requirement_item
 
 
-#mapping_requirement_item_struct = {
-#    "requirement"   : None,     # requirement_item_struct
-#    "sub_requirement" : []      # list of requirement_item_struct
-#}
-
-
-
-#requirement_item_struct = {"requirement" : "", "description" : "", "testcase" : [], "pass" : False, "note" : ""}
-## requirement_list: requirement_item_struct (requirements and testcases listed in requirement_list_file)
-#requirement_list = []  # From the requirement specification document, inputs to VHDL simulations and post-prosessing.
-## partial_coverage_list: requirement_item_struct (requirements w/testcases listed in partial_cov_files)
-#partial_coverage_list = []  # From the output of VHDL simulations, input to post-prosessing.
-#partial_coverage_item_struct = {"requirement" : "", "compliant" : ""}
-## specification_compliance_list: specification coverage list of partial_coverage_item_structs
-#specification_compliance_list = [] # Buildt from requirement_list, partial_coverage_list and strictness.
-#mapping_requirement_item_struct = {"requirement" : "", "sub_requirement" : []}
-## mapping_requirement_list: mapping_requirement_item_structs (super-requirement and a list of its sub-requirements)
-#mapping_requirement_list = []
-
 
 
 
@@ -90,9 +71,10 @@ def write_specification_coverage_file(run_configuration, specification_complianc
     # Get the global defined delimiter setting for CSV files.
     global delimiter
 
-    #
+    #==========================================================================
     # Write the results to CSV
-    #
+    #==========================================================================
+
     try:
         with open(run_configuration.get("spec_cov"), mode='w', newline='') as spec_cov_file:
             csv_writer = csv.writer(spec_cov_file, delimiter=delimiter)
@@ -100,8 +82,9 @@ def write_specification_coverage_file(run_configuration, specification_complianc
             csv_writer.writerow(["Requirement results :", ])
             for spec_cov_item in specification_compliance_list:
                 requirement = spec_cov_item.get("requirement")
+                requirement_name = requirement.get("name")
                 compliance  = spec_cov_item.get("compliant")
-                csv_writer.writerow([requirement, compliance])
+                csv_writer.writerow([requirement_name, compliance])
 
 
             if mapping_requirement_list:
@@ -110,8 +93,8 @@ def write_specification_coverage_file(run_configuration, specification_complianc
                 csv_writer.writerow(["Mapped requirement results :", ])
 
                 for super_requirement in mapping_requirement_list:
-                    requirement = super_requirement.get("requirement")
-                    compliance = super_requirement.get("pass")
+                    requirement = super_requirement.get("name")
+                    compliance = super_requirement.get("result")
                     csv_writer.writerow([requirement, compliance])
 
     except:
@@ -119,9 +102,9 @@ def write_specification_coverage_file(run_configuration, specification_complianc
         abort(error_code = 1, msg = error_msg)
 
 
-    #
+    #==========================================================================
     # Present a summary to terminal
-    #
+    #==========================================================================
 
     # Summary counters
     num_failing_requirements = 0
@@ -576,6 +559,12 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
 
 def build_requirement_list(run_configuration, requirement_list, partial_coverage_list):
     """
+    Contructs the requirement_list with requirement_items from the 
+    partial_coverage_list.
+
+    Parameters:
+
+    requirement_list (list) : list with 
     """
     # Get the global defined delimiter setting for CSV files.
     global delimiter

@@ -72,7 +72,7 @@ delimiter                           = "," # Default delimiter - will be updated 
 
 
 
-def write_specification_coverage_file(run_configuration, specification_compliance_list, mapping_requirement_list):
+def write_specification_coverage_file(run_configuration, requirement_list, specification_compliance_list, mapping_requirement_list):
     """
     This method will write all the results to the specification_coverage CSV file.
 
@@ -125,70 +125,41 @@ def write_specification_coverage_file(run_configuration, specification_complianc
     # Present a summary to terminal
     #==========================================================================
 
-    # Summary counters
-    num_failing_requirements = 0
-    num_passing_requirements = 0
-    num_untested_requirements = 0
-    num_failing_sub_requirements = 0
-
     passing_requirement_list        = []
     failing_requirement_list        = []
-    failing_sub_requirement_list    = []
-    untested_requirement_list       = []
 
     for part_cov_requirement in specification_compliance_list:
 
         if part_cov_requirement.get("compliance") == non_compliant_string:
-            num_failing_requirements += 1
             failing_requirement_list.append(part_cov_requirement.get("requirement"))
 
         elif part_cov_requirement.get("compliance") == compliant_string:
-            num_passing_requirements += 1
             passing_requirement_list.append(part_cov_requirement.get("requirement"))
 
-        elif part_cov_requirement.get("compliance") == not_tested_compliant_string:
-            num_untested_requirements += 1
-            untested_requirement_list.append(part_cov_requirement.get("requirement"))
         else:
             print("WARNING! Unknown result for %s." %(part_cov_requirement.get("requirement")))
 
 
-    for requirement in mapping_requirement_list:
-
-        if requirement.get(pass_string) == fail_string:
-            num_failing_requirements += 1
-
-            for sub_requirement in requirement.get("sub_requirement"):
-                if sub_requirement.get(pass_string) == fail_string:
-                    num_failing_sub_requirements += 1
-                    failing_sub_requirement_list.append(sub_requirement.get("requirement"))
-
 
     print("SUMMARY:")
     print("----------------------------------------------")
-    print("Number of passing requirements    : %d" %(num_passing_requirements))
-    print("Number of failing requirements    : %d" %(num_failing_requirements))
-    print("Number of failing sub-requirement : %s" %(num_failing_sub_requirements))
-    print("Number of untested requirements   : %d" %(num_untested_requirements))
+    print("Number of passing requirements : %d" %(len(passing_requirement_list)))
+    print("Number of failing requirements : %d" %(len(failing_requirement_list)))
     print("\n")
 
     if failing_requirement_list:
         print("Failing requirement(s) :")
         for item in failing_requirement_list:
-            print("%s : %s" %(item.get("name"), item.get("testcase")))
+            if item.get("testcase"):
+                print("%s : %s" %(item.get("name"), item.get("testcase")))
+            else:
+                print("%s" %(item.get("name")))
         print("\n")
 
-    if failing_sub_requirement_list:
-        print("Failing sub-requirement(s) :")
-        for item in failing_sub_requirement_list:
-            print("%s : %s" %(item.get("name"), item.get("testcase")))
-        print("\n")
 
-    if untested_requirement_list:
-        print("Untested requirement(s) :")
-        for item in untested_requirement_list:
-            print("%s : %s" %(item.get("name"), item.get("testcase")))
-        print("\n")
+
+
+
 
 
 
@@ -234,6 +205,7 @@ def build_mapping_requirement_list(run_configuration, requirement_list, partial_
                     else:
                         sub_requirement = requirement_item_struct.copy()
                         sub_requirement["name"] = cell_item.strip()
+                        sub_requirement["super_requirement"] = super_requirement.get("name")
                         sub_requirement_list.append(sub_requirement)
                 
                 # Add sub-requirement list to super_requirement_item
@@ -355,9 +327,7 @@ def build_specification_compliance_list(run_configuration, requirement_list, par
 
         # Check all requirements
         for requirement in requirement_list:
-            print("Checking : %s" %(requirement.get("name")))
 
-            requirement_was_found_in_partial_coverage_list = False
             num_testcase_checked = 0
             num_testcase_to_check = len(requirement.get("testcase"))
 
@@ -376,7 +346,6 @@ def build_specification_compliance_list(run_configuration, requirement_list, par
                     if partial_testcase_name and testcase_name:
                         if partial_testcase_name.upper() == testcase_name.upper():
                             num_testcase_checked += 1
-                            requirement_was_found_in_partial_coverage_list = True
 
                             if partial_testcase.get("result") == fail_string:
                                 testcase_pass = False
@@ -399,11 +368,7 @@ def build_specification_compliance_list(run_configuration, requirement_list, par
             if testcase_pass and summary_line_ok:
                 partial_coverage_item["compliance"] = compliant_string
             else:
-                if requirement_was_found_in_partial_coverage_list == False:
-                    print("Not found : %s" %(requirement.get("name")))
-                    partial_coverage_item["compliance"] = not_tested_compliant_string
-                else:
-                    partial_coverage_item["compliance"] = non_compliant_string
+                partial_coverage_item["compliance"] = non_compliant_string
 
             specification_compliance_list.append(partial_coverage_item)
 
@@ -912,9 +877,9 @@ def main():
     # Show the configuration for current run
     #==========================================================================
     print("\nConfiguration:")
-    print("--------------------------------")
+    print("----------------------------------------------")
     for key, value in run_configuration.items():
-        print("%s : %s" %(key, value))
+        print("%-20s : %s" %(key, value))
     print("\n")
 
 
@@ -937,7 +902,7 @@ def main():
     #==========================================================================
     # Write the results to CSV file
     #==========================================================================
-    write_specification_coverage_file(run_configuration, specification_compliance_list, mapping_requirement_list)
+    write_specification_coverage_file(run_configuration, requirement_list, specification_compliance_list, mapping_requirement_list)
 
 
 

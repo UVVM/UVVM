@@ -5,12 +5,12 @@ import csv
 import sys
 
 
-# Default delimiter - will be updated from partial coverage file
-delimiter = ","
-
+#==========================================================================
+# Settings
+#==========================================================================
 # Predefined arguments and run parameters
 def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-file",   "help" : "-r              Path/requirements.csv contains requirements", "default" : "NA"},
-            {"short" : "-i", "long" : "--input_cov",            "type" : "in-file",   "help" : "-i              Path/testcase_result.csv partial coverage file from VHDL simulations", "default" : "NA"},
+            {"short" : "-p", "long" : "--partial_cov",          "type" : "in-file",   "help" : "-p              Path/testcase_result.csv partial coverage file from VHDL simulations", "default" : "NA"},
             {"short" : "-m", "long" : "--requirement_map_list", "type" : "in-file",   "help" : "-m              Optional: path/subrequirements.csv requirement map file", "default" : "NA"},
             {"short" : "-s", "long" : "--spec_cov",             "type" : "out-file",  "help" : "-s              Path/spec_cov.csv specification coverage file", "default" : "NA"},
             {"short" : "",   "long" : "--strictness",           "type" : "setting",   "help" : "--strictness N  Optional: will set specification coverage to strictness (1-2) (0=default)", "default" : "X"},
@@ -20,16 +20,19 @@ def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-fil
             ]
 
 # Default, non-configured run
-run_parameter_default = {"requirement_list" : None, "input_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : 'X', "config" : None}
+run_parameter_default = {"requirement_list" : None, "partial_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : 'X', "config" : None}
 
 
-
+#==========================================================================
+# Structures
+#==========================================================================
 requirement_item_struct = { 
     "name"          : None,     # string
     "description"   : None,     # string
     "testcase"      : [],       # list of testcase names
     "result"        : None,     # string (PASS / FAIL)
-    "sub_requirement" : []      # list of requirement_items
+    "sub_requirement" : [],     # list of requirement_items
+    "super_requirement" : None  # string
     }
 
 testcase_item_struct = {    
@@ -43,17 +46,29 @@ partial_coverage_item_struct = {
     "compliance"    : None      # string (COMPLIANT / NON COMPLIANT)
 }
 
+#==========================================================================
+# Lists
+#==========================================================================
 requirement_list                = []    # List of requirement_item
 partial_coverage_list           = []    # List of testcase_item, final entry is SUMMARY: PASS/FAIL
 specification_compliance_list   = []    # List of partial_coverage_item
 mapping_requirement_list        = []    # List of requirement_item
 
 
-pass_string = "PASS"
-fail_string = "FAIL"
-compliant_string = "COMPLIANT"
-non_compliant_string = "NON COMPLIANT"
-not_tested_compliant_string = "NA"
+#==========================================================================
+# Constants
+#==========================================================================
+pass_string                         = "PASS"
+fail_string                         = "FAIL"
+compliant_string                    = "COMPLIANT"
+non_compliant_string                = "NON COMPLIANT"
+not_tested_compliant_string         = "NA"
+sub_requirement_compliant_string    = "SUB_REQUIREMENT"
+delimiter                           = "," # Default delimiter - will be updated from partial coverage file
+
+
+
+
 
 
 
@@ -139,6 +154,7 @@ def write_specification_coverage_file(run_configuration, specification_complianc
 
 
     for requirement in mapping_requirement_list:
+
         if requirement.get(pass_string) == fail_string:
             num_failing_requirements += 1
 
@@ -178,7 +194,7 @@ def write_specification_coverage_file(run_configuration, specification_complianc
 
 
 
-def build_mapping_requirement_list(run_configuration, partial_coverage_list, mapping_requirement_list):
+def build_mapping_requirement_list(run_configuration, requirement_list, partial_coverage_list, mapping_requirement_list):
     """
     Constriuct the mapping_reqiurement_list by reading the requirement mapping file and add
     requirement_items with a list of sub_requirements (requirement_items).
@@ -272,6 +288,24 @@ def build_mapping_requirement_list(run_configuration, partial_coverage_list, map
         # Not all sub-requirement are PASSed and/or sub-requirements missing
         else:
             super_requirement["result"] = fail_string
+
+    #==========================================================================
+    # Set super-requirement for requirements in the requirement_list
+    #==========================================================================
+    for super_requirement in mapping_requirement_list:
+        for sub_requirement in super_requirement.get("sub_requirement"):
+            sub_requirement_name = sub_requirement.get("name")
+
+            for requirement in requirement_list:
+                requirement_name = requirement.get("name")
+
+                if sub_requirement_name and requirement_name:
+                    if sub_requirement_name.upper() == requirement_name.upper():
+                        requirement["super_requirement"] = super_requirement.get("name")
+
+
+
+
 
 
 
@@ -526,7 +560,7 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
 
     # Get the partial coverage file - note: can be a txt file with
     # a list of partial coverage files.
-    partial_coverage_file_name = run_configuration.get("input_cov")
+    partial_coverage_file_name = run_configuration.get("partial_cov")
     if not(partial_coverage_file_name):
         msg = "partial coverage file missing"
         abort(msg = msg)
@@ -797,7 +831,7 @@ def run_housekeeping(run_configuration):
     # other legal arguments.
     if (
         run_configuration.get("requirement_file") or 
-        run_configuration.get("input_cov") or 
+        run_configuration.get("partial_cov") or 
         run_configuration.get("requiremenet_map_list") or 
         run_configuration.get("spec_cov") or
         run_configuration.get("strictness") != '0' or
@@ -895,7 +929,7 @@ def main():
 
     build_requirement_list(run_configuration, requirement_list)
 
-    build_mapping_requirement_list(run_configuration, partial_coverage_list, mapping_requirement_list)
+    build_mapping_requirement_list(run_configuration, requirement_list, partial_coverage_list, mapping_requirement_list)
     
     build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list)
 

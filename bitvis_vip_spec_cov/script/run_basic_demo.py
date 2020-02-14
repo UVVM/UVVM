@@ -21,4 +21,4 @@ subprocess.call(['vsim', '-c', '-do', 'do ../script/compile_demo.do basic' + ';e
 subprocess.call(['vsim', '-c', '-do', 'do ../script/simulate_demo.do' + ';exit'], stderr=subprocess.PIPE)
 
 # Run the specification coverage python script
-subprocess.call(['python', '../script/run_spec_cov.py', '-r', '../demo/basic_usage/req_list_basic_demo.csv', '-i', '../sim/partial_cov_basic_demo.csv', '-s', '../sim/spec_cov_basic_demo.csv'], stderr=subprocess.PIPE)
+subprocess.call(['python', '../script/run_spec_cov.py', '-r', '../demo/basic_usage/req_list_basic_demo.csv', '-p', '../sim/partial_cov_basic_demo.csv', '-s', '../sim/spec_cov_basic_demo.csv'], stderr=subprocess.PIPE)

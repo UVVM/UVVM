@@ -45,6 +45,7 @@ architecture func of avalon_st_vvc_tb is
   constant C_CLK_PERIOD   : time    := 10 ns;
   constant C_SCOPE        : string  := C_TB_SCOPE_DEFAULT;
   constant C_SYMBOL_WIDTH : natural := 8;
+  constant C_EMPTY_WIDTH  : natural := maximum(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH),1);
   constant C_MAX_CHANNEL  : natural := 64;
 
   constant C_VVC_MASTER     : natural := 0;
@@ -62,11 +63,11 @@ architecture func of avalon_st_vvc_tb is
   signal avalon_st_master_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
                                               data(GC_DATA_WIDTH-1 downto 0),
                                               data_error(GC_ERROR_WIDTH-1 downto 0),
-                                              empty(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH)-1 downto 0));
+                                              empty(C_EMPTY_WIDTH-1 downto 0));
   signal avalon_st_slave_if  : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
                                               data(GC_DATA_WIDTH-1 downto 0),
                                               data_error(GC_ERROR_WIDTH-1 downto 0),
-                                              empty(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH)-1 downto 0));
+                                              empty(C_EMPTY_WIDTH-1 downto 0));
 
 begin
 
@@ -88,7 +89,8 @@ begin
       GC_DATA_WIDTH    => GC_DATA_WIDTH,
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
       GC_ERROR_WIDTH   => GC_ERROR_WIDTH,
-      GC_SYMBOL_WIDTH  => C_SYMBOL_WIDTH
+      GC_SYMBOL_WIDTH  => C_SYMBOL_WIDTH,
+      GC_EMPTY_WIDTH   => C_EMPTY_WIDTH
     )
     port map (
       clk                 => clk,
@@ -232,6 +234,7 @@ begin
       avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet'length, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+      wait for 0 ns; -- Riviera Pro needs a delta cycle to use the force command again on the same signal
 
       log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -258,11 +261,11 @@ begin
       if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
         log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
         increment_expected_alerts_and_stop_limit(ERROR, 1);
-        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= force x"00";
+        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH-1 downto 0) >> <= force (others => '0');
         avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 10), "");
         avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 11, v_data_packet(0)'length, "");
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
-        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector >> <= release;
+        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH-1 downto 0) >> <= release;
       end if;
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");

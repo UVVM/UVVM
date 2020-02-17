@@ -80,8 +80,9 @@ UVVM:                ID_MONITOR                   : ENABLED
 UVVM:                ID_MONITOR_ERROR             : ENABLED
 UVVM:                ID_DATA                      : ENABLED
 UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
 UVVM:                ID_FILE_PARSER               : ENABLED
-UVVM:                ID_SPEC_VS_VERIF             : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
 UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8100000 ps. Watchdog A

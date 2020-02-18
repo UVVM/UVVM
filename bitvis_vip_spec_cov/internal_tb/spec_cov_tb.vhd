@@ -71,8 +71,8 @@ begin
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with no requirement file.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_1", "partial_cov_with_no_req_file.csv");
-      log_req_cov("SPEC_COV_REQ_1");
+      initialize_req_cov("TC_1", "partial_cov_test_init_with_no_req_file.csv");
+      log_req_cov("REQ_A");
       -- End testcase
       finalize_req_cov(VOID);
 

@@ -1,6 +1,12 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+
+v1.5.2
+----------
+Released: 2020-02-16
+- Added missing DTT commands. 
+
 v1.5.1
 ----------
 Released: 2020-01-24

@@ -5,8 +5,9 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 v2.7.2
 ----------
-Released: 2020-XX-XX
+Released: 2020-02-16
 - Updated vvc_generator.py script with missing msg_id_panel parameter in VVC procedure.
+- Fixed missing generated code from vvc_generator.py script.
 
 v2.7.1
 ----------

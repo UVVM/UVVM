@@ -1,6 +1,11 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.5.1
+----------
+Released: 2020-02-16
+- Updated figure in UART Demo TB quick reference.
+
 v2.5.0
 ----------
 Released: 2020-01-24

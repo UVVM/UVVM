@@ -3,7 +3,7 @@ Bitvis VIP Scoreboard - Overview on Versions and Changes
 
 v2.0.3
 ----------
-Released: 2020-XX-XX
+Released: 2020-02-16
 - Updated logs to show the instance number in the SCOPE column instead of the msg.
 
 v2.0.2

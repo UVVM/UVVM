@@ -128,7 +128,7 @@ package vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
-    constant data_array       : in    t_slv_array;
+    constant data_array       : in    t_byte_array;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -145,7 +145,7 @@ package vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
-    constant data_exp         : in    t_slv_array;
+    constant data_exp         : in    t_byte_array;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)";
     constant alert_level      : in    t_alert_level := ERROR
@@ -186,7 +186,7 @@ package body vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
-    constant data_array       : in    t_slv_array;
+    constant data_array       : in    t_byte_array;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
@@ -224,7 +224,7 @@ package body vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
-    constant data_exp         : in    t_slv_array;
+    constant data_exp         : in    t_byte_array;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)";
     constant alert_level      : in    t_alert_level := ERROR

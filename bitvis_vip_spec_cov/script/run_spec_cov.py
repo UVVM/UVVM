@@ -61,9 +61,9 @@ class Requirement():
     def get_actual_testcase_list(self):
         return self.actual_testcase_list
 
-    def expected_testcase_from_actual_testcase_list(self, testcase):
+    def expected_testcase_from_actual_testcase_list(self, testcase_name):
         for actual_testcase in self.actual_testcase_list:
-            if actual_testcase.get_name().upper() == testcase.get_name().upper():
+            if actual_testcase.get_name().upper() == testcase_name.upper():
                 return actual_testcase
         return None
 
@@ -281,19 +281,32 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
         with open(run_configuration.get("spec_cov"), mode='w', newline='') as spec_cov_file:
             csv_writer = csv.writer(spec_cov_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Requirement results :", ])
+            csv_writer.writerow(["Requirements :", ])
             for requirement in requirement_container.get_list():
-                write_list = [requirement.get_name(), requirement.get_compliance()]
-                csv_writer.writerow(write_list)
+                testcase_string = ""
+                for testcase in requirement.get_actual_testcase_list():
+                    testcase_string += testcase.get_name() + " "
 
-                #for testcase in requirement.get_actual_testcase_list():
-                #    write_list.append(testcase.get_name())
-                #    write_list.append(testcase.get_result())
+                sub_requirement_string = ""
+                for sub_requirement in requirement.get_sub_requirement_list():
+                    if sub_requirement.get_compliance() == compliant_string:
+                        sub_requirement_string += sub_requirement.get_name() + " "
 
+                if requirement.get_actual_testcase_list():
+                    csv_writer.writerow([requirement.get_name(), testcase_string])
+    
+                if requirement.get_sub_requirement_list():
+                    csv_writer.writerow([requirement.get_name(), sub_requirement_string])
 
-            csv_writer.writerow(["Testcase results :", ])
+            # Insert blank line in CSV
+            csv_writer.writerow([])
+
+            csv_writer.writerow(["Testcases :", ])
             for testcase in testcase_container.get_list():
-                csv_writer.writerow([testcase.get_name(), testcase.get_result()])
+                requirement_string = ""
+                for requirement in testcase.get_actual_requirement_list():
+                    requirement_string += requirement.get_name() + " "
+                csv_writer.writerow([testcase.get_name(), requirement_string])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))
@@ -436,7 +449,6 @@ def build_specification_compliance_list(run_configuration, requirement_container
         abort(error_code = 1, msg = msg)
 
 
-
 def build_mapping_requirement_list(run_configuration, requirement_container, testcase_container, delimiter):
     """
     Constriuct the mapping_reqiurement_list by reading the requirement mapping file and add
@@ -531,8 +543,12 @@ def build_requirement_list(run_configuration, requirement_container, testcase_co
                     # Testcase(s)
                     elif idx >= 2:
                         testcase_name = row[idx].strip()
-                        # Check if testcase exist, create if not
-                        testcase = testcase_container.get_item(testcase_name)
+                        # Fetch testcase from requirement actual testcase list
+                        testcase = requirement.expected_testcase_from_actual_testcase_list(testcase_name)
+                        # Fetch testcase from container if not in requirement actual testcase list
+                        if not(testcase):
+                            testcase = testcase_container.get_item(testcase_name)
+                        # Create a new testcase if not in testcase container
                         if not(testcase):
                             testcase = Testcase(testcase_name)
                             testcase_container.add(testcase)

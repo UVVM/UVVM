@@ -239,10 +239,10 @@ class Testbench:
         if '-V' in arg:
           self.verbose = True
         
-        if ('-ALDEC' in arg) or ('-RIVIERA' in arg) or ('-RIVIERAPRO' in arg):
+        if ('ALDEC' in arg) or ('RIVIERA' in arg) or ('RIVIERAPRO' in arg):
           self.simulator = 'RIVIERAPRO'
         
-        if ('-MODELSIM') in arg:
+        if ('MODELSIM') in arg:
           self.simulator = 'MODELSIM'
         
         if ('-G' in arg) or ('-GUI' in arg):
@@ -335,6 +335,7 @@ class Testbench:
       Compile dependencie files, src files and testbench files
       """
       self.set_simulator_variable()
+      print("Running with simulator : %s" %(self.simulator))
       print("Compiling dependencies...")
       self.simulator_call("do ../internal_script/compile_dependencies.do")
       print("Compiling src...")

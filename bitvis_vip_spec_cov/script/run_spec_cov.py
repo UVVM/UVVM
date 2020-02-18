@@ -26,33 +26,148 @@ run_parameter_default = {"requirement_list" : None, "partial_cov" : None, "requi
 #==========================================================================
 # Structures
 #==========================================================================
-requirement_item_struct = { 
-    "name"          : None,     # string
-    "description"   : None,     # string
-    "testcase"      : [],       # list of testcase names
-    "result"        : None,     # string (PASS / FAIL)
-    "sub_requirement" : [],     # list of requirement_items
-    "super_requirement" : None  # string
-    }
 
-testcase_item_struct = {    
-    "name"          : None,     # string (name of testcase)
-    "requirement"   : None,     # string (name of requirement)
-    "result"        : None      # string (PASS / FAIL)
-    }
+class Requirement():
 
-partial_coverage_item_struct = {
-    "requirement"   : None,     # requirement_item_struct
-    "compliance"    : None      # string (COMPLIANT / NON COMPLIANT)
-}
+    def __init__(self, name = None):
+        self.name = name
+        self.super_requirement = None
+        self.expected_testcase_list = []
+        self.actual_testcase_list = []
+        self.sub_requirement_list = []
+        self.description = None
+        self.compliance = None
 
-#==========================================================================
-# Lists
-#==========================================================================
-requirement_list                = []    # List of requirement_item
-partial_coverage_list           = []    # List of testcase_item, final entry is SUMMARY: PASS/FAIL
-specification_compliance_list   = []    # List of partial_coverage_item
-mapping_requirement_list        = []    # List of requirement_item
+    def set_name(self, name):
+        self.name = name
+    def get_name(self):
+        return self.name
+
+    def set_description(self, description):
+        self.description = description
+    def get_description(self):
+        return self.description
+
+    # Testcase from requirement file
+    def add_expected_testcase(self, testcase):
+        if not(testcase in self.expected_testcase_list):
+           self.expected_testcase_list.append(testcase)
+    def get_expected_testcase_list(self):
+        return self.expected_testcase_list
+
+    # Testcase from partial coverage file
+    def add_actual_testcase(self, testcase):
+        self.actual_testcase_list.append(testcase)
+    def get_actual_testcase_list(self):
+        return self.actual_testcase_list
+
+    def expected_testcase_from_actual_testcase_list(self, testcase):
+        for actual_testcase in self.actual_testcase_list:
+            if actual_testcase.get_name().upper() == testcase.get_name().upper():
+                return actual_testcase
+        return None
+
+    # This requirement will be sub-requirement
+    def set_super_requirement(self, super_requirement):
+        self.super_requirement = super_requirement
+    def get_supert_requirement(self):
+        return self.super_requirement
+
+    # This requirement will have sub-requirement(s)
+    def add_sub_requirement(self, sub_requirement):
+        self.sub_requirement_list.append(sub_requirement)
+    def get_sub_requirement_list(self):
+        return self.sub_requirement_list
+    def sub_requirement_exist(self, sub_requirement):
+        if sub_requirement in self.sub_requirement_list:
+            return True
+        else:
+            return False
+
+    def set_compliance(self, compliance):
+        self.compliance = compliance
+    def get_compliance(self):
+        return self.compliance
+
+
+
+
+class Testcase():
+
+    def __init__(self, name = None):
+        self.name = name
+        self.expected_requirement_list = []
+        self.actual_requirement_list = []
+        self.result = None
+
+    def set_name(self, name):
+        self.name = name
+    def get_name(self):
+        return self.name
+
+    def add_expected_requirement(self, requirement):
+        self.expected_requirement_list.append(requirement)
+    def get_expected_requirement(self, requirement_name):
+        for requirement in self.expected_requirement_list:
+            if requirement.get_name().upper() == requirement_name.upper():
+                return requirement
+        return None
+    def get_expected_requirement_list(self):
+        return self.expected_requirement_list
+
+    def add_actual_requirement(self, requirement):
+        self.actual_requirement_list.append(requirement)
+    def get_actual_requirement_list(self):
+        return self.actual_requirement_list
+
+    def set_result(self, result):
+        self.result = result
+    def get_result(self):
+        return self.result
+
+
+
+
+class PartialCoverage():
+
+    def __init__(self, requirement = None):
+        self.requirement = requirement
+        self.compliance = None
+
+    def set_requirement(self, requirement):
+        self.requirement = requirement
+    def get_requirement(self):
+        return self.requirement
+    
+    def set_compliance(self, compliance):
+        self.compliance = compliance
+    def get_compliance(self):
+        return self.compliance
+
+
+
+class Container():
+
+    def __init__(self):
+        self.list = []
+        self.result = None
+
+    def add(self, item):
+        self.list.append(item)
+    def get_list(self):
+        return self.list
+
+    def set_result(self, result):
+        self.result = result
+    def get_result(self):
+        return self.result
+
+    def get_item(self, name):
+        for item in self.list:
+            if item.get_name().upper() == name.upper():
+                return item
+        return None
+
 
 
 #==========================================================================
@@ -72,23 +187,113 @@ delimiter                           = "," # Default delimiter - will be updated 
 
 
 
-def write_specification_coverage_file(run_configuration, requirement_list, specification_compliance_list, mapping_requirement_list):
+def write_specification_coverage_file(run_configuration, requirement_container, testcase_container, delimiter):
     """
     This method will write all the results to the specification_coverage CSV file.
 
     Parameters:
-    
+        
     run_configuration (dict) : selected configuration for this run.
+
+    requirement_container (Containter()) : container for requirement objects
     
-    specification_compliance_list (list) :  a list of partial_coverage_item_struct strutcture items which 
-                            are set to COMPLIANT or NON COMPLIANT.
+    testcase_container (Container()) : container for testcase objects
 
-    mapping_requirement_list (list) : a list of mapping_requirement_item_struct 
-                            strutcture items which are constructed from the requirement mapping file.
+    delimiter (char) : CSV delimiter
     """
+    #==========================================================================
+    # Present a summary to terminal
+    #==========================================================================
+    testcase_pass_list = []
+    testcase_fail_list = []
+    testcase_not_run_list = []
 
-    # Get the global defined delimiter setting for CSV files.
-    global delimiter
+    requirement_compliant_list = []
+    requirement_non_compliant_list = []
+    requirement_not_run_list = []
+
+    # Check run testcases with all requirements
+    for requirement in requirement_container.get_list():
+
+        # Check with all testcases run with requirement
+        for testcase in requirement.get_actual_testcase_list():
+            if testcase.get_result() == None:
+                testcase_not_run_list.append(testcase)
+            elif testcase.get_result() == fail_string:
+                testcase_fail_list.append(testcase)
+            elif testcase.get_result() == pass_string:
+                testcase_pass_list.append(testcase)
+            else:
+                print("WARNING! Unknown result for testcase : %s." %(testcase.get_name()))
+                testcase_fail_list.append(testcase)
+
+    # Check with all defined testcases, and verify if they have a result
+    for testcase in testcase_container.get_list():
+        if testcase.get_result() == None:
+            testcase_not_run_list.append(testcase)
+
+    # Check compliance for all requirements
+    for requirement in requirement_container.get_list():
+        if requirement.get_compliance() == None:
+            requirement_not_run_list.append(requirement)
+        elif requirement.get_compliance() == non_compliant_string:
+            requirement_non_compliant_list.append(requirement)
+        elif requirement.get_compliance() == compliant_string:
+            requirement_compliant_list.append(requirement)
+        else:
+            print("WARNING! Unknown result for requirement : %s." %(requirement.get_name()))
+            requirement_non_compliant_list.append(requirement)
+
+
+    print("SUMMARY:")
+    print("----------------------------------------------")
+    print("Number of compliant requirements     : %d" %(len(requirement_compliant_list)))
+    print("Number of non compliant requirements : %d" %(len(requirement_non_compliant_list)))
+    print("Number of not run requirements       : %d" %(len(requirement_not_run_list)))
+
+    print("Number of passing testcases : %d" %(len(testcase_pass_list)))
+    print("Number of failing testcases : %d" %(len(testcase_fail_list)))
+    print("Number of not run testcases : %d" %(len(testcase_not_run_list)))
+
+    print("\n")
+
+    if requirement_compliant_list:
+        print("Compliant requirement(s) :")
+        for item in requirement_compliant_list:
+            print("%s%s " %(item.get_name(), delimiter), end='')
+        print("\n")
+
+    if requirement_non_compliant_list:
+        print("Non compliant requirement(s) :")
+        for item in requirement_non_compliant_list:
+            print("%s%s " %(item.get_name(), delimiter), end='')
+        print("\n")
+
+    if requirement_not_run_list:
+        print("Not run requirement(s) :")
+        for item in requirement_not_run_list:
+            print("%s%s " %(item.get_name(), delimiter), end='')
+        print("\n")
+
+
+
+    if testcase_pass_list:
+        print("Passing testcase(s) :")
+        for item in testcase_pass_list:
+            print("%s%s " %(item.get_name(), delimiter), end='')
+        print("\n")
+
+    if testcase_fail_list:
+        print("Failing testcase(s) :")
+        for item in testcase_fail_list:
+            print("%s%s " %(item.get_name(), delimiter), end='')
+        print("\n")
+
+    if testcase_not_run_list:
+        print("Not run testcase(s) :")
+        for item in testcase_not_run_list:
+            print("%s%s " %(item.get_name(), delimiter), end='')
+        print("\n")
 
     #==========================================================================
     # Write the results to CSV
@@ -99,86 +304,166 @@ def write_specification_coverage_file(run_configuration, requirement_list, speci
             csv_writer = csv.writer(spec_cov_file, delimiter=delimiter)
 
             csv_writer.writerow(["Requirement results :", ])
-            for spec_cov_item in specification_compliance_list:
-                requirement = spec_cov_item.get("requirement")
-                requirement_name = requirement.get("name")
-                compliance  = spec_cov_item.get("compliance")
-                csv_writer.writerow([requirement_name, compliance])
+            for requirement in requirement_container.get_list():
+                write_list = [requirement.get_name(), requirement.get_compliance()]
+                csv_writer.writerow(write_list)
+
+                #for testcase in requirement.get_actual_testcase_list():
+                #    write_list.append(testcase.get_name())
+                #    write_list.append(testcase.get_result())
 
 
-            if mapping_requirement_list:
-                # Add a seperator row
-                csv_writer.writerow([])
-                csv_writer.writerow(["Mapped requirement results :", ])
-
-                for super_requirement in mapping_requirement_list:
-                    requirement = super_requirement.get("name")
-                    compliance = super_requirement.get("result")
-                    csv_writer.writerow([requirement, compliance])
+            csv_writer.writerow(["Testcase results :", ])
+            for testcase in testcase_container.get_list():
+                csv_writer.writerow([testcase.get_name(), testcase.get_result()])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))
         abort(error_code = 1, msg = error_msg)
 
 
+
+
+
+
+def build_specification_compliance_list(run_configuration, requirement_container, testcase_container, delimiter):
+    """
+    This method will build the specification_compliance_list, i.e. create a list 
+    with all requirement objects marked as COMPLIANT / NON COMPLIANT based on
+    requirement and testcase objects and strictness level.
+
+    Parameters:
+        
+    run_configuration (dict) : selected configuration for this run.
+
+    requirement_container (Containter()) : container for requirement objects
+    
+    testcase_container (Container()) : container for testcase objects
+
+    delimiter (char) : CSV delimiter
+    """
+    # Get the configured strictness level
+    strictness = run_configuration.get("strictness")
+
     #==========================================================================
-    # Present a summary to terminal
+    # Strictness = 0 : testcase can be run with any requirement
     #==========================================================================
+    if strictness == '0':
+        for requirement in requirement_container.get_list():
 
-    passing_requirement_list        = []
-    failing_requirement_list        = []
+            # Start as compliant, if not already set
+            if not(requirement.get_compliance()):
+                requirement.set_compliance(compliant_string)
 
-    for part_cov_requirement in specification_compliance_list:
+            # Verify with all testcases
+            for testcase in testcase_container.get_list():
+                if requirement in testcase.get_actual_requirement_list():
+                    if testcase.get_result() == fail_string:
+                        requirement.set_compliance(non_compliant_string)
 
-        if part_cov_requirement.get("compliance") == non_compliant_string:
-            failing_requirement_list.append(part_cov_requirement.get("requirement"))
+            # Verify with sub-reqiurements
+            for sub_requirement in requirement.get_sub_requirement_list():
+                if sub_requirement.get_compliance() == non_compliant_string:
+                    requirement.set_compliance(non_compliant_string)
 
-        elif part_cov_requirement.get("compliance") == compliant_string:
-            passing_requirement_list.append(part_cov_requirement.get("requirement"))
-
-        else:
-            print("WARNING! Unknown result for %s." %(part_cov_requirement.get("requirement")))
-
-
-
-    print("SUMMARY:")
-    print("----------------------------------------------")
-    print("Number of passing requirements : %d" %(len(passing_requirement_list)))
-    print("Number of failing requirements : %d" %(len(failing_requirement_list)))
-    print("\n")
-
-    if failing_requirement_list:
-        print("Failing requirement(s) :")
-        for item in failing_requirement_list:
-            if item.get("testcase"):
-                print("%s : %s" %(item.get("name"), item.get("testcase")))
-            else:
-                print("%s" %(item.get("name")))
-        print("\n")
+            # Update super-requirement
+            super_requirement = requirement.get_supert_requirement()
+            if super_requirement:
+                if requirement.get_compliance() == non_compliant_string:
+                    super_requirement.set_compliance(non_compliant_string)
 
 
+    #==========================================================================
+    # Strictness = 1 : testcase has to be run with specified requirement,
+    #                  any other requirement is also OK.
+    #==========================================================================
+    elif strictness == '1':
+
+        for requirement in requirement_container.get_list():
+            # Start as compliant, if not already set
+            if not(requirement.get_compliance()):
+                requirement.set_compliance(compliant_string)
+
+            # Verify with all testcases
+            for testcase in testcase_container.get_list():
+                if requirement in testcase.get_actual_requirement_list():
+                    if testcase.get_result() == fail_string:
+                        requirement.set_compliance(non_compliant_string)
+
+            # Verify that requirement has been run with all testcases
+            for testcase in requirement.get_expected_testcase_list():
+                if not(requirement in testcase.get_actual_requirement_list()):
+                    requirement.set_compliance(non_compliant_string)
+
+            # Verify with sub-reqiurements
+            for sub_requirement in requirement.get_sub_requirement_list():
+                if sub_requirement.get_compliance() == non_compliant_string:
+                    requirement.set_compliance(non_compliant_string)
+
+            # Update super-requirement
+            super_requirement = requirement.get_supert_requirement()
+            if super_requirement:
+                if requirement.get_compliance() == non_compliant_string:
+                    super_requirement.set_compliance(non_compliant_string)
 
 
 
 
+    #==========================================================================
+    # Strictness = 2 : all expected testcase should only be run, and
+    #                  only with specified requirement.
+    #==========================================================================
+    elif strictness == '2':
+        for requirement in requirement_container.get_list():
+            # Start as compliant, if not already set
+            if not(requirement.get_compliance()):
+                requirement.set_compliance(compliant_string)
+
+            # Verify with all testcases
+            for testcase in testcase_container.get_list():
+
+                # 1. all expected testcases
+                if requirement in testcase.get_expected_requirement_list():
+                    if testcase.get_result() == fail_string:
+                        requirement.set_compliance(non_compliant_string)
+
+                # 2. all actual testcases
+                if requirement in testcase.get_actual_requirement_list():
+                    if testcase.get_result() == fail_string:
+                        requirement.set_compliance(non_compliant_string)
+
+                # 3. only this requirement in testcase actual list
+                for testcase_requirement in testcase.get_actual_requirement_list():
+                    if not(requirement.get_name().upper() == testcase_requirement.get_name().upper()):
+                        requirement.set_compliance(non_compliant_string)
+
+            # Verify that requirement has been run with all testcases
+            for testcase in requirement.get_expected_testcase_list():
+                if not(requirement in testcase.get_actual_requirement_list()):
+                    requirement.set_compliance(non_compliant_string)
+
+            # Verify with sub-reqiurements
+            for sub_requirement in requirement.get_sub_requirement_list():
+                if sub_requirement.get_compliance() == non_compliant_string:
+                    requirement.set_compliance(non_compliant_string)
+
+            # Update super-requirement
+            super_requirement = requirement.get_supert_requirement()
+            if super_requirement:
+                if requirement.get_compliance() == non_compliant_string:
+                    super_requirement.set_compliance(non_compliant_string)
+
+    else:
+        msg = ("strictness level %d outside limits 0-2" %(strictness))
+        abort(error_code = 1, msg = msg)
 
 
 
-
-def build_mapping_requirement_list(run_configuration, requirement_list, partial_coverage_list, mapping_requirement_list):
+def build_mapping_requirement_list(run_configuration, requirement_container, testcase_container, delimiter):
     """
     Constriuct the mapping_reqiurement_list by reading the requirement mapping file and add
     requirement_items with a list of sub_requirements (requirement_items).
-
-    Parameters:
-
-    partial_coverage_list (list) : list of testcase_item, final entry is SUMMARY: PASS/FAIL
-
-    mapping_requirement_list (list) : list of requirement_item 
     """
-    # Get the global defined delimiter setting for CSV files.
-    global delimiter
-
     requirement_map_file = run_configuration.get("requirement_map_list")
 
     # Skip if not specified in the run_configuration
@@ -196,329 +481,136 @@ def build_mapping_requirement_list(run_configuration, requirement_list, partial_
 
             for row in csv_reader:
                 for idx, cell_item in enumerate(row):
+
                     # Firs cell is the super-requirement, find it
                     if idx == 0:
-                        super_requirement = requirement_item_struct.copy()
-                        super_requirement["name"] = cell_item.strip()  
-                        sub_requirement_list = []  
+                        super_requirement_name = cell_item.strip()
+                        super_requirement = requirement_container.get_item(super_requirement_name)
+                        if not(super_requirement):
+                            super_requirement = Requirement(super_requirement_name)
+                            requirement_container.add(super_requirement)
+
                     # Rest of the cells are sub-requirements
                     else:
-                        sub_requirement = requirement_item_struct.copy()
-                        sub_requirement["name"] = cell_item.strip()
-                        sub_requirement["super_requirement"] = super_requirement.get("name")
-                        sub_requirement_list.append(sub_requirement)
-                
-                # Add sub-requirement list to super_requirement_item
-                super_requirement["sub_requirement"] = sub_requirement_list
-                # Add the mapping_requirement_item to the mapping_requirement_list
-                mapping_requirement_list.append(super_requirement)
+                        # Get the requirement (if it exists)
+                        sub_requirement_name = cell_item.strip()
+                        sub_requirement = requirement_container.get_item(sub_requirement_name)
+                        if not(sub_requirement):
+                            sub_requirement = Requirement(sub_requirement_name)
+                            requirement_container.add(sub_requirement)
+
+                        super_requirement.add_sub_requirement(sub_requirement)
+                        sub_requirement.set_super_requirement(super_requirement)
             
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
         abort(error_code = 1, msg = error_msg)
 
 
-    #==========================================================================
-    # Set result for the super-requirements based on sub-requirement result
-    #==========================================================================
-
-    # Check all super-requirements
-    for super_requirement in mapping_requirement_list:
-
-        super_requirement_passed    = True
-        num_sub_requirements        = len(super_requirement.get("sub_requirement"))
-        num_sub_requirements_found  = 0
-
-        # Check all sub-requirements in the super-requirement
-        for sub_requirement in super_requirement.get("sub_requirement"):
-
-            # Check with partial_coverage_list
-            for testcase_item in partial_coverage_list:
-
-                # Exract the requirement names for comparing
-                testcase_requirement_name = testcase_item.get("requirement")
-                sub_requirement_name = sub_requirement.get("name")
-
-                # If both are defined, check
-                if testcase_requirement_name and sub_requirement_name:
-                    # Check if same requirement
-                    if testcase_requirement_name.upper() == sub_requirement_name.upper():
-
-                        # Update counter
-                        num_sub_requirements_found += 1
-                        # Update the sub_requirement PASS/FAIL status
-                        sub_requirement["result"] = testcase_item.get("result")
-
-                        # Update boolean for failing super-requirement/mapping requirement.
-                        if testcase_item.get("result") == fail_string:
-                            super_requirement_passed = False
-                      
-
-        # If ALL sub-requirements are PASSed and all sub-requirements are found
-        if super_requirement_passed and (num_sub_requirements == num_sub_requirements_found):
-            super_requirement["result"] = pass_string
-        # Not all sub-requirement are PASSed and/or sub-requirements missing
-        else:
-            super_requirement["result"] = fail_string
-
-    #==========================================================================
-    # Set super-requirement for requirements in the requirement_list
-    #==========================================================================
-    for super_requirement in mapping_requirement_list:
-        for sub_requirement in super_requirement.get("sub_requirement"):
-            sub_requirement_name = sub_requirement.get("name")
-
-            for requirement in requirement_list:
-                requirement_name = requirement.get("name")
-
-                if sub_requirement_name and requirement_name:
-                    if sub_requirement_name.upper() == requirement_name.upper():
-                        requirement["super_requirement"] = super_requirement.get("name")
-
-
-
-
-
-
-
-
-def build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list):
+def build_requirement_list(run_configuration, requirement_container, testcase_container, delimiter):
     """
-    This method will build the specification_compliance_list, i.e. create a list 
-    with all requirements marked as COMPLIANT / NON COMPLIANT based on
-    partial_coverage_list items and strictness level.
+    Contructs the requirement_list with requirement_items.
 
     Parameters:
         
     run_configuration (dict) : selected configuration for this run.
 
-    requirement_list (list) : a list of requirement_item_struct 
-                            strutcture items which are constructed 
-                            from the requirement file.
+    requirement_container (Containter()) : container for requirement objects
+    
+    testcase_container (Container()) : container for testcase objects
 
-    partial_coverage_list (list) : a list of requirement_item_struct 
-                            strutcture items which are constructed 
-                            from the partial_coverage file.
-
-    specification_compliance_list (list) : a list of requirement_item_struct 
-                            strutcture items which are set to COMPLIANT or
-                            NON COMPLIANT in this method.
+    delimiter (char) : CSV delimiter    
     """
-    # Get the global defined delimiter setting for CSV files.
-    global delimiter
+    # Get the requirement list file
+    req_file = run_configuration.get("requirement_list")
 
     # Check if requirement file has been specified
-    if not(run_configuration.get("requirement_list")):
+    if not(req_file):
         return
 
-    # Get the configured strictness level
-    strictness = run_configuration.get("strictness")
-
-
     #==========================================================================
-    # Build the specification_compliance_list with strictness level
+    # Read the requirements and save to requirement_list
     #==========================================================================
+    try:    
+        with open(req_file) as req_file:
+            csv_reader = csv.reader(req_file, delimiter=delimiter)
+
+            for row in csv_reader:
+                for idx, cell in enumerate(row):
+                    # Requirement name
+                    if idx == 0:
+                        requirement_name = cell.strip()
+                        # Check if requirement exist, create if not
+                        requirement = requirement_container.get_item(requirement_name)
+                        if not(requirement):
+                            requirement = Requirement(requirement_name) 
+                            requirement_container.add(requirement)
+
+                    # Requirement description
+                    elif idx == 1:
+                        requirement.set_description(row[idx])
+
+                    # Testcase(s)
+                    elif idx >= 2:
+                        testcase_name = row[idx].strip()
+                        # Check if testcase exist, create if not
+                        testcase = testcase_container.get_item(testcase_name)
+                        if not(testcase):
+                            testcase = Testcase(testcase_name)
+                            testcase_container.add(testcase)
+                                                        
+                        # Connect: requirement <-> testcase
+                        testcase.add_expected_requirement(requirement)
+                        requirement.add_expected_testcase(testcase)    
+                
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_file))
+        abort(error_code = 1, msg = error_msg)
 
 
-    #==========================================================================
-    # Strictness = 0 : testcase can be run with any requirement
-    #==========================================================================
-    if strictness == '0':
-
-        # Check all requirements
-        for requirement in requirement_list:
-
-            num_testcase_checked = 0
-            num_testcase_to_check = len(requirement.get("testcase"))
-
-            testcase_pass = True
-            summary_line_ok = False
-
-            # Get testcase names defined for this requirement
-            for testcase_name in requirement.get("testcase"):
-
-                # Check with all logged parial coverage testcase results,
-                # ignore which reqiuirement has the testcase.
-                for partial_testcase in partial_coverage_list:
-                    partial_testcase_name = partial_testcase.get("name")
-
-                    # testcase from requirement match testcase from partial_coverage_list
-                    if partial_testcase_name and testcase_name:
-                        if partial_testcase_name.upper() == testcase_name.upper():
-                            num_testcase_checked += 1
-
-                            if partial_testcase.get("result") == fail_string:
-                                testcase_pass = False
-
-            if num_testcase_checked < num_testcase_to_check:
-                testcase_pass = False
-
-            # Check if SUMMARY PASS footer is in CSV file - should be on the last line, 
-            # i.e. get the final dictionary in the parial_coverage_list of dictionaries
-            # and check the "SUMMARY" keyword.
-            summary_seek_dict = partial_coverage_list[len(partial_coverage_list) - 1]
-            if "SUMMARY" in summary_seek_dict:
-                if summary_seek_dict.get("SUMMARY").strip()  == pass_string:
-                    summary_line_ok = True
-
-            # Create a partial_coverage_item and save to specification_compliance_list
-            partial_coverage_item = partial_coverage_item_struct.copy()
-            partial_coverage_item["requirement"] = requirement
-
-            if testcase_pass and summary_line_ok:
-                partial_coverage_item["compliance"] = compliant_string
-            else:
-                partial_coverage_item["compliance"] = non_compliant_string
-
-            specification_compliance_list.append(partial_coverage_item)
-
-
-
-    #==========================================================================
-    # Strictness = 1 : testcase has to be run with specified requirement
-    #==========================================================================
-    elif strictness == '1':
-
-        # Check all requirements
-        for requirement in requirement_list:
-            requirement_name = requirement.get("name")
-
-            requirement_fail = False
-            num_testcase_checked = 0
-            num_testcase_to_check = len(requirement.get("testcase"))
-
-            testcase_has_been_run_in_requirement = False
-
-            testcase_pass = True
-            summary_line_ok = False
-
-            # Get testcase names defined for this requirement
-            for testcase_name in requirement.get("testcase"):
-
-                # Check with all logged parial coverage testcase results,
-                # ignore which reqiuirement has the testcase.
-                for partial_testcase in partial_coverage_list:
-                    partial_testcase_name = partial_testcase.get("name")
-
-                    # testcase from requirement match testcase from partial_coverage_list
-                    if partial_testcase_name and testcase_name:
-                        if partial_testcase_name.upper() == testcase_name.upper():
-                            num_testcase_checked += 1
-                            
-                            if partial_testcase.get("result") == fail_string:
-                                testcase_pass = False
-
-                            # Strict checking 1: testcase and requirement has matched
-                            partial_testcase_requirement_name = partial_testcase.get("requirement")
-                            if partial_testcase_requirement_name.upper() == requirement_name.upper():
-                                testcase_has_been_run_in_requirement = True
-
-            if num_testcase_checked < num_testcase_to_check:
-                testcase_pass = False
-
-            # Check if SUMMARY PASS footer is in CSV file - should be on the last line, 
-            # i.e. get the final dictionary in the parial_coverage_list of dictionaries
-            # and check the "SUMMARY" keyword.
-            summary_seek_dict = partial_coverage_list[len(partial_coverage_list) - 1]
-            if "SUMMARY" in summary_seek_dict:
-                if summary_seek_dict.get("SUMMARY").strip()  == pass_string:
-                    summary_line_ok = True
-
-            # Create a partial_coverage_item and save to specification_compliance_list
-            partial_coverage_item = partial_coverage_item_struct.copy()
-            partial_coverage_item["requirement"] = requirement
-
-            if testcase_pass and summary_line_ok and testcase_has_been_run_in_requirement:
-                partial_coverage_item["compliance"] = compliant_string
-            else:
-                partial_coverage_item["compliance"] = non_compliant_string
-
-            specification_compliance_list.append(partial_coverage_item)
-
-
-    #==========================================================================
-    # Strictness = 2 : testcase should only be run with specified requirement
-    #==========================================================================
-    elif strictness == '2':
-        # Check all requirements
-        for requirement in requirement_list:
-            requirement_name = requirement.get("name")
-
-            requirement_fail = False
-            num_testcase_checked = 0
-            num_testcase_to_check = len(requirement.get("testcase"))
-
-            testcase_has_been_run_in_other_requirement = False
-
-            testcase_pass = True
-            summary_line_ok = False
-
-            # Get testcase names defined for this requirement
-            for testcase_name in requirement.get("testcase"):
-
-                # Check with all logged parial coverage testcase results,
-                # ignore which reqiuirement has the testcase.
-                for partial_testcase in partial_coverage_list:
-                    partial_testcase_name = partial_testcase.get("name")
-
-                    # testcase from requirement match testcase from partial_coverage_list
-                    if partial_testcase_name and testcase_name:
-                        if partial_testcase_name.upper() == testcase_name.upper():
-
-                            if partial_testcase.get("result") == fail_string:
-                                testcase_pass = False
-
-                            # Strict checking 2: testcase only match with specified requirement
-                            partial_testcase_requirement_name = partial_testcase.get("requirement")
-                            if partial_testcase_requirement_name.upper() != requirement_name.upper():
-                                testcase_has_been_run_in_other_requirement = True
-                            else:
-                                num_testcase_checked += 1
-
-
-            if num_testcase_checked < num_testcase_to_check:
-                testcase_pass = False
-
-            # Check if SUMMARY PASS footer is in CSV file - should be on the last line, 
-            # i.e. get the final dictionary in the parial_coverage_list of dictionaries
-            # and check the "SUMMARY" keyword.
-            summary_seek_dict = partial_coverage_list[len(partial_coverage_list) - 1]
-            if "SUMMARY" in summary_seek_dict:
-                if summary_seek_dict.get("SUMMARY").strip()  == pass_string:
-                    summary_line_ok = True
-
-            # Create a partial_coverage_item and save to specification_compliance_list
-            partial_coverage_item = partial_coverage_item_struct.copy()
-            partial_coverage_item["requirement"] = requirement
-
-            if testcase_pass and summary_line_ok and not(testcase_has_been_run_in_other_requirement):
-                partial_coverage_item["compliance"] = compliant_string
-            else:
-                partial_coverage_item["compliance"] = non_compliant_string
-
-            specification_compliance_list.append(partial_coverage_item)
-
-    else:
-        msg = ("strictness level %d outside limits 0-2" %(strictness))
-        abort(error_code = 1, msg = msg)
-
-
-
-
-def build_partial_coverage_list(run_configuration, partial_coverage_list):
+def find_partial_coverage_summary(partial_coverage_file):
     """
-    This method will read the delimiter written by the spec_cov_pkg.vhd to 
-    the partial_coverage CSV files, and updated the global delimiter.
-    The method will add requirement_item_struct strutcture items, which are 
-    constructed from the partial_coverage file, to the partial_coverage_list.
+    This method will search for the partial coverage file summary
+    line and return True if found and summary reported PASS.
 
     Parameters:
 
+    partial_coverage_file (str) : name of the partial coverage file
+
+    Return:
+
+    Boolean : True if summary report is PASS, else False is returned.
+    """
+    try:
+        with open(partial_coverage_file) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=delimiter)
+            for idx, row in enumerate(csv_reader):
+                # Get the testcase summary
+                if (idx > 3) and (row[0].upper() == "SUMMARY"):
+                    result = row[2].strip().upper()
+                    if result == pass_string:
+                        return True
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file))
+        abort(error_code = 1, msg = error_msg)
+    return False
+
+
+def build_partial_coverage_list(run_configuration, requirement_container, testcase_container):
+    """
+    This method will read the delimiter written by the spec_cov_pkg.vhd to 
+    the partial_coverage CSV files, and updated the global delimiter.
+    The method will requirement objects and testcase objects, update requirement and testcase
+    result based on testcase result and partial coverage summary line. The objects are stored
+    in the requirement and testcase containers.
+
+    Parameters:
+        
     run_configuration (dict) : selected configuration for this run.
 
-    partial_coverage_list (list) : a list of requirement_item_struct 
-                            strutcture items which are constructed 
-                            from the partial_coverage file.
+    requirement_container (Containter()) : container for requirement objects
+    
+    testcase_container (Container()) : container for testcase objects
     """
     # Get the global defined delimiter setting for CSV files.
     global delimiter
@@ -528,7 +620,7 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
     partial_coverage_file_name = run_configuration.get("partial_cov")
     if not(partial_coverage_file_name):
         msg = "partial coverage file missing"
-        abort(msg = msg)
+        abort(error_code = 1, msg = msg)
 
     #==========================================================================
     # Create a list of partial_cov_files to read
@@ -551,6 +643,8 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
     #==========================================================================
     # Get the delimiter from the partial_cov file
     #==========================================================================
+    partial_coverage_pass = False
+
     try:
         with open(partial_coverage_files[0]) as partial_coverage_file:
             lines = partial_coverage_file.readlines()
@@ -562,87 +656,58 @@ def build_partial_coverage_list(run_configuration, partial_coverage_list):
                 # Delimiter char should be in CSV cell 2
                 delimiter = line.split()[1]
                 continue
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file_name))
         abort(error_code = 1, msg = error_msg)
 
+
     #==========================================================================
-    # Start reading CSVs
+    # Read requirements, testcases and results
     #==========================================================================
     try:
         for partial_coverage_file in partial_coverage_files:
+
+            partial_coverage_pass = find_partial_coverage_summary(partial_coverage_file)
+
             with open(partial_coverage_file) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=delimiter)
 
                 for idx, row in enumerate(csv_reader):
-                    # Skip partial_coveage_file header info on the 4 first lines.
+
+                    # Skip partial_coveage_file header info on the 4 first lines and
+                    # summary line at the end (if it exists)
                     if (idx > 3) and (row[0].upper() != "SUMMARY"):
-                        testcase_item  = testcase_item_struct.copy()
-                        testcase_item["requirement"]  = row[0]
-                        testcase_item["name"]         = row[1]
-                        testcase_item["result"]       = row[2]
 
-                        partial_coverage_list.append(testcase_item)
+                        # Read 3 cells: requirement name, testcase name, testcase result
+                        requirement_name = row[0]
+                        testcase_name    = row[1]
+                        testcase_result  = row[2]
 
-                    # Get the testcase summary
-                    elif (idx > 3) and (row[0].upper() == "SUMMARY"):
-                        partial_coverage_list.append({row[0] : row[2]})
+                        # Create requirement object
+                        requirement = requirement_container.get_item(requirement_name)
+                        if not(requirement):
+                            requirement = Requirement(requirement_name)
+                            requirement_container.add(requirement)
+
+                        # Create testcase object
+                        testcase = Testcase(testcase_name)
+                        testcase_container.add(testcase)
+                        testcase.set_result(testcase_result.upper())
+
+                        # Connect testcase <-> requirement
+                        testcase.add_actual_requirement(requirement)
+                        requirement.add_actual_testcase(testcase)
+
+                        # Set the requirement intermediate compliance.
+                        if partial_coverage_pass:
+                            requirement.set_compliance(compliant_string)
+                        else:
+                            requirement.set_compliance(non_compliant_string)
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file))
         abort(error_code = 1, msg = error_msg)
-        
-
-
-
-
-
-
-def build_requirement_list(run_configuration, requirement_list):
-    """
-    Contructs the requirement_list with requirement_items.
-
-    Parameters:
-
-    requirement_list (list) : list with requirement_items
-    """
-    # Get the global defined delimiter setting for CSV files.
-    global delimiter
-
-    # Get the requirement list file
-    req_file = run_configuration.get("requirement_list")
-
-    # Check if requirement file has been specified
-    if not(req_file):
-        return
-
-    #==========================================================================
-    # Read the requirements and save to requirement_list
-    #==========================================================================
-    try:    
-        with open(req_file) as req_file:
-            csv_reader = csv.reader(req_file, delimiter=delimiter)
-
-            for row in csv_reader:
-                requirement_item = requirement_item_struct.copy()
-                testcase_list    = []
-
-                for idx, cell in enumerate(row):
-                    if idx == 0:
-                        requirement_item["name"] = row[idx]
-                    elif idx == 1:
-                        requirement_item["description"] = row[idx]
-                    elif idx >= 2:
-                        testcase_name = row[idx].strip()
-                        testcase_list.append(testcase_name)
-
-                # Save the testcase_list
-                requirement_item["testcase"] = testcase_list
-                # Save the requirement in the requirement_list
-                requirement_list.append(requirement_item)
-    except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], req_file))
-        abort(error_code = 1, msg = error_msg)
-
 
 
 
@@ -665,9 +730,6 @@ def abort(error_code = 0, msg = ""):
     for item in def_args:
         print(item.get("help"))
     sys.exit(error_code)
-
-
-
 
 def arg_parser(arguments):
     """
@@ -732,11 +794,6 @@ def arg_parser(arguments):
         if run_configuration.get("strictness") == "X": run_configuration["strictness"] = '0' 
         return run_configuration
 
-
-
-
-
-
 def set_run_config_from_file(run_configuration):
     """
     This method will set the run_configuration from a text file.
@@ -777,8 +834,21 @@ def set_run_config_from_file(run_configuration):
     configuration = arg_parser(arguments)
     return configuration
 
+def validate_run_configuration(run_configuration):
+    # Validate 
+    if run_configuration.get("strictness") > 0:
+        if run_configuration.get("requirement_file") == None:
+            msg = ("Strictness level %d require a requiement file" %(run_configuration.get("strictness")))
+            abort(error_code = 1, msg = msg)
 
+    if run_configuration.get("partial_cov") == None:
+        msg = ("Missing argument for parital coverage file")
+        abort(error_code = 1, msg = msg)
 
+    if run_configuration.get("spec_cov") == None:
+        msg = ("Missing argument for specification coverage file")
+        abort(error_code = 1, msg = msg)
+    return
 
 def run_housekeeping(run_configuration):
     """
@@ -827,9 +897,6 @@ def run_housekeeping(run_configuration):
             print(msg)
             sys.exit(exit_code)
 
-        
-
-
 def version_check():
     """
     Check if Python version is at least version 3.0, will throw an 
@@ -839,15 +906,16 @@ def version_check():
         raise Exception("Python version 3 is required to run this script!")
 
 
-
-
 def main():
     # Grab the global variables
     global delimiter
-    global requirement_list
-    global partial_coverage_list
-    global specification_compliance_list
-    global mapping_requirement_list
+    global requirement_container
+    global testcase_container
+
+    requirement_container = Container()
+    testcase_container = Container()
+
+
 
     #==========================================================================
     # Verify that correct Python version is used
@@ -858,7 +926,8 @@ def main():
     
 
     #==========================================================================
-    # Parse the command line arguments and set the configuration
+    # Parse the command line arguments, set the configuration, and
+    # validate the settings.
     #==========================================================================
 
     # Parse arguments and get run selection
@@ -887,22 +956,18 @@ def main():
     # Build structure and process results
     #
     #   Note that partial_coverage files will have to be read first so
-    #   we can extract the CSV delimiter.
+    #   that the CSV delimiter can be determined.
     #==========================================================================
 
-    build_partial_coverage_list(run_configuration, partial_coverage_list)
-
-    build_requirement_list(run_configuration, requirement_list)
-
-    build_mapping_requirement_list(run_configuration, requirement_list, partial_coverage_list, mapping_requirement_list)
-    
-    build_specification_compliance_list(run_configuration, requirement_list, partial_coverage_list, specification_compliance_list)
-
+    build_partial_coverage_list(run_configuration, requirement_container, testcase_container)
+    build_requirement_list(run_configuration, requirement_container, testcase_container, delimiter)
+    build_mapping_requirement_list(run_configuration, requirement_container, testcase_container, delimiter)
+    build_specification_compliance_list(run_configuration, requirement_container, testcase_container, delimiter)
 
     #==========================================================================
     # Write the results to CSV file
     #==========================================================================
-    write_specification_coverage_file(run_configuration, requirement_list, specification_compliance_list, mapping_requirement_list)
+    write_specification_coverage_file(run_configuration, requirement_container, testcase_container, delimiter)
 
 
 

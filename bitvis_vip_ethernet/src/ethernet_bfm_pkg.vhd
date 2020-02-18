@@ -1,17 +1,17 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+--================================================================================================================================
+-- Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+-- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 -- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+--================================================================================================================================
 
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 
 library ieee;
@@ -29,17 +29,16 @@ package ethernet_bfm_pkg is
   --========================================================================================================================
   -- Types and constants for ETHERNET BFM
   --========================================================================================================================
-  constant C_MIN_PAYLOAD_LENGTH          : natural := 46;
-  constant C_MAX_PAYLOAD_LENGTH          : natural := 1500;
-  constant C_MAX_FRAME_LENGTH            : natural := C_MAX_PAYLOAD_LENGTH + 18;
-  constant C_MAX_PACKET_LENGTH           : natural := C_MAX_FRAME_LENGTH + 8;
-  constant C_VVC_CMD_STRING_MAX_LENGTH   : natural := 300;
-
   constant C_SCOPE             : string := "ETHERNET BFM";
   constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
   constant C_CRC_32_RESIDUE    : std_logic_vector(31 downto 0) := x"C704DD7B";
   constant C_CRC_32_POLYNOMIAL : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
+
+  constant C_MIN_PAYLOAD_LENGTH : natural := 46;
+  constant C_MAX_PAYLOAD_LENGTH : natural := 1500;
+  constant C_MAX_FRAME_LENGTH   : natural := C_MAX_PAYLOAD_LENGTH + 18;
+  constant C_MAX_PACKET_LENGTH  : natural := C_MAX_FRAME_LENGTH + 8;
 
   -- IF field config number
   constant C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD    : natural := 0;

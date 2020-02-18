@@ -1,18 +1,17 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+--================================================================================================================================
+-- Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+-- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 -- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+--================================================================================================================================
 
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -38,11 +37,13 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+use work.transaction_pkg.all;
 
---========================================================================================================================
+--==========================================================================================
 entity ethernet_receive_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
+    GC_CHANNEL                               : t_channel;
     GC_INTERFACE                             : t_interface;
     GC_VVC_INSTANCE_IDX                      : natural;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array;
@@ -56,13 +57,12 @@ entity ethernet_receive_vvc is
   );
 end entity ethernet_receive_vvc;
 
---========================================================================================================================
---========================================================================================================================
+--==========================================================================================
+--==========================================================================================
 architecture behave of ethernet_receive_vvc is
 
-  constant C_CHANNEL    : t_channel     := RX;
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
-  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, C_CHANNEL);
+  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
   signal executor_is_busy       : boolean := false;
   signal queue_is_increasing    : boolean := false;
@@ -75,17 +75,20 @@ architecture behave of ethernet_receive_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(C_CHANNEL, GC_INSTANCE_IDX);
-  alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(C_CHANNEL, GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(C_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
+    -- DTT
+  alias dtt_trigger      : std_logic           is global_ethernet_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias dtt_info         : t_transaction_group is shared_ethernet_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
 begin
 
---========================================================================================================================
+--==========================================================================================
 -- HVVC-to-VVC Bridge
---========================================================================================================================
+--==========================================================================================
   i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
       GC_INTERFACE           => GC_INTERFACE,
@@ -100,20 +103,20 @@ begin
     );
 
 
---========================================================================================================================
+--==========================================================================================
 -- Constructor
 -- - Set up the defaults and show constructor if enabled
---========================================================================================================================
-  vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_ETHERNET_BFM_CONFIG,
+--==========================================================================================
+  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_ETHERNET_BFM_CONFIG,
                   GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                   GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---========================================================================================================================
+--==========================================================================================
 
 
---========================================================================================================================
+--==========================================================================================
 -- Command interpreter
 -- - Interpret, decode and acknowledge commands from the central sequencer
---========================================================================================================================
+--==========================================================================================
   cmd_interpreter : process
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
      variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
@@ -121,12 +124,14 @@ begin
   begin
 
     -- 0. Initialize the process prior to first command
-    initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
+    work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
-    shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := 0;
+    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
+
     -- Register VVC in activity watchdog register
-    vvc_idx_for_activity_watchdog <= shared_inactivity_watchdog.priv_register_vvc(name      => "Ethernet_receive",
-                                                                                  instance  => GC_INSTANCE_IDX);
+    vvc_idx_for_activity_watchdog <= shared_activity_watchdog.priv_register_vvc(name      => "ETHERNET",
+                                                                                channel   => GC_CHANNEL,
+                                                                                instance  => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -136,17 +141,17 @@ begin
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
-      await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
       v_cmd_has_been_acked := false; -- Clear flag
       -- Update shared_vvc_last_received_cmd_idx with received command index
-      shared_vvc_last_received_cmd_idx(C_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Update v_msg_id_panel
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
       if v_local_vvc_cmd.command_type = QUEUED then
-        put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
+        work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
 
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
@@ -155,30 +160,30 @@ begin
 
           when AWAIT_COMPLETION =>
             -- Await completion of all commands in the cmd_executor executor
-            interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
+            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
 
           when AWAIT_ANY_COMPLETION =>
             if not v_local_vvc_cmd.gen_boolean then
               -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-              acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
               v_cmd_has_been_acked := true;
             end if;
-            interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
+            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
           when DISABLE_LOG_MSG =>
-            uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
+            uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, v_msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
 
           when ENABLE_LOG_MSG =>
-            uvvm_util.methods_pkg.enable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
+            uvvm_util.methods_pkg.enable_log_msg(v_local_vvc_cmd.msg_id, v_msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
 
           when FLUSH_COMMAND_QUEUE =>
-            interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
+            work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
-            interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
+            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
 
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
@@ -192,19 +197,19 @@ begin
       -- 3. Acknowledge command after runing or queuing the command
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
-        acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
       end if;
 
     end loop;
   end process;
---========================================================================================================================
+--==========================================================================================
 
 
 
---========================================================================================================================
+--==========================================================================================
 -- Command executor
 -- - Fetch and execute the commands
---========================================================================================================================
+--==========================================================================================
   cmd_executor : process
     constant C_RECEIVE_PROC_CALL : string := "Ethernet receive";
     constant C_EXPECT_PROC_CALL  : string := "Ethernet expect";
@@ -220,8 +225,6 @@ begin
     variable v_command_is_bfm_access                 : boolean := false;
     variable v_prev_command_was_bfm_access           : boolean := false;
     variable v_msg_id_panel                          : t_msg_id_panel;
-    variable v_sfd_found                             : boolean := false;
-    variable v_cmd_idx                               : natural;
     variable v_ethernet_packet_raw                   : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_payload_length                        : integer;
     variable v_preamble_sfd                          : std_logic_vector(63 downto 0) := (others => '0');
@@ -314,21 +317,27 @@ begin
 
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
-    initialize_executor(terminate_current_cmd);
+    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
+
+    -- Setup ETHERNET scoreboard
+    shared_ethernet_sb.set_scope("ETHERNET VVC");
+    shared_ethernet_sb.enable(GC_INSTANCE_IDX, "SB ETHERNET Enabled");
+    shared_ethernet_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    shared_ethernet_sb.enable_log_msg(ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     loop
 
       -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);
+      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(global_trigger_testcase_inactivity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed);
+      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
       -- Reset the transaction info for waveview
       transaction_info := C_TRANSACTION_INFO_DEFAULT;
@@ -340,19 +349,19 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
-      if v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then  -- Replace this line with actual check
+      if v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
       end if;
 
       -- Insert delay if needed
-      insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
-                                          command_is_bfm_access              => v_prev_command_was_bfm_access,
-                                          timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
-                                          timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                          scope                              => C_SCOPE,
-                                          msg_id_panel                       => v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
+                                                                         command_is_bfm_access              => v_prev_command_was_bfm_access,
+                                                                         timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
+                                                                         timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
+                                                                         scope                              => C_SCOPE,
+                                                                         msg_id_panel                       => v_msg_id_panel);
 
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
@@ -364,8 +373,6 @@ begin
 
         -- VVC dedicated operations
         --===================================
-
-        -- If the result from the BFM call is to be stored, e.g. in a read call, use the additional procedure illustrated in this read example
         when RECEIVE =>
           log(ID_PACKET_INITIATE, C_RECEIVE_PROC_CALL & ": Await ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
 
@@ -387,9 +394,9 @@ begin
 
         when EXPECT =>
           -- For FCS calculation
-          v_ethernet_packet_raw( 8 to 13)                        := to_byte_array(std_logic_vector(v_cmd.mac_destination));
-          v_ethernet_packet_raw(14 to 19)                        := to_byte_array(std_logic_vector(v_cmd.mac_source));
-          v_ethernet_packet_raw(20 to 21)                        := to_byte_array(std_logic_vector(to_unsigned(v_cmd.length, 16)));
+          v_ethernet_packet_raw( 8 to 13)                := to_byte_array(std_logic_vector(v_cmd.mac_destination));
+          v_ethernet_packet_raw(14 to 19)                := to_byte_array(std_logic_vector(v_cmd.mac_source));
+          v_ethernet_packet_raw(20 to 21)                := to_byte_array(std_logic_vector(to_unsigned(v_cmd.length, 16)));
           v_ethernet_packet_raw(22 to 22+v_cmd.length-1) := v_cmd.payload(0 to v_cmd.length-1);
           if v_cmd.length < C_MIN_PAYLOAD_LENGTH then
             v_payload_length := C_MIN_PAYLOAD_LENGTH;
@@ -426,7 +433,10 @@ begin
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
-            --wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
+            --<USER_INPUT> Uncomment if BFM has clock_period config
+            -- check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
+            --             C_SCOPE, ID_NEVER, v_msg_id_panel);
+            -- wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;
 
         when others =>
@@ -451,22 +461,23 @@ begin
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
-      transaction_info   := work.vvc_methods_pkg.C_TRANSACTION_INFO_DEFAULT;
+      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
+
+      -- Set DTT back to default values
+      reset_dtt_info(dtt_info, v_cmd);
 
     end loop;
   end process;
---========================================================================================================================
+--==========================================================================================
 
 
 
---========================================================================================================================
+--==========================================================================================
 -- Command termination handler
 -- - Handles the termination request record (sets and resets terminate flag on request)
---========================================================================================================================
+--==========================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---========================================================================================================================
+--==========================================================================================
 
 
 end behave;
-
-

@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -15,4 +15,3 @@
 #-----------------------------------------------------------------------
 vsim bitvis_vip_ethernet.ethernet_sbi_sb_demo_tb
 run -all
-exit -f

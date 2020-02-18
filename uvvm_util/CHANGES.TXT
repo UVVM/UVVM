@@ -3,6 +3,16 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.11.1
+----------
+Released: 2020-02-16
+- Added a constant C_UVVM_TIMEOUT in adaptations_pkg as a general timeout for
+  UVVM wait statements.
+- Updated Quickref BFM common package section.
+- Added default scope and changed alert message for check_file_open_status()
+  in UVVM Util.
+
+
 v2.11.0
 ----------
 Released: 2020-01-24

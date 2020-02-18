@@ -44,7 +44,8 @@ package methods_pkg is
 -- ============================================================================
   procedure check_file_open_status(
     constant status      : in file_open_status;
-    constant file_name   : in string
+    constant file_name   : in string;
+    constant scope       : in string := C_SCOPE
     );
 
   procedure set_alert_file_name(
@@ -1788,18 +1789,19 @@ package body methods_pkg is
 -- ============================================================================
   procedure check_file_open_status(
     constant status      : in file_open_status;
-    constant file_name   : in string
+    constant file_name   : in string;
+    constant scope       : in string := C_SCOPE
     ) is
   begin
     case status is
       when open_ok =>
         null;  --**** logmsg (if log is open for write)
       when status_error =>
-        alert(tb_warning, "File: " & file_name & " is already open", "SCOPE_TBD");
+        alert(tb_warning, "File: " & file_name & " is already open", scope);
       when name_error =>
-        alert(tb_error, "Cannot create file: " & file_name, "SCOPE TBD");
+        alert(tb_error, "Cannot open file: " & file_name, scope);
       when mode_error =>
-        alert(tb_error, "File: " & file_name & " exists, but cannot be opened in write mode", "SCOPE TBD");
+        alert(tb_error, "File: " & file_name & " exists, but cannot be opened in write mode", scope);
     end case;
   end;
 

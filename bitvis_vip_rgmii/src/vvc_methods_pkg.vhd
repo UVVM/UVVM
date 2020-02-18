@@ -1,0 +1,300 @@
+--================================================================================================================================
+-- Copyright (c) 2019 by Bitvis AS.  All rights reserved.
+-- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
+-- contact Bitvis AS <support@bitvis.no>.
+--
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+-- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+-- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+--================================================================================================================================
+
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+library uvvm_vvc_framework;
+use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.slv_sb_pkg.all;
+
+use work.rgmii_bfm_pkg.all;
+use work.vvc_cmd_pkg.all;
+use work.td_target_support_pkg.all;
+use work.transaction_pkg.all;
+
+--==========================================================================================
+--==========================================================================================
+package vvc_methods_pkg is
+
+  --==========================================================================================
+  -- Types and constants for the RGMII VVC 
+  --==========================================================================================
+  constant C_VVC_NAME     : string := "RGMII_VVC";
+
+  signal RGMII_VVCT        : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
+  alias  THIS_VVCT         : t_vvc_target_record is RGMII_VVCT;
+  alias  t_bfm_config is t_rgmii_bfm_config;
+
+  -- Type found in UVVM-Util types_pkg
+  constant C_RGMII_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
+    delay_type                         => NO_DELAY,
+    delay_in_time                      => 0 ns,
+    inter_bfm_delay_violation_severity => WARNING
+  );
+
+  type t_vvc_config is
+  record
+    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural;           -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural;           -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level;     -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
+    result_queue_count_max                : natural;
+    result_queue_count_threshold          : natural;
+    result_queue_count_threshold_severity : t_alert_level;
+    bfm_config                            : t_rgmii_bfm_config; -- Configuration for the BFM. See BFM quick reference.
+    msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.
+  end record;
+
+  type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
+
+  constant C_RGMII_VVC_CONFIG_DEFAULT : t_vvc_config := (
+    inter_bfm_delay                       => C_RGMII_INTER_BFM_DELAY_DEFAULT,
+    cmd_queue_count_max                   => C_CMD_QUEUE_COUNT_MAX, --  from adaptation package
+    cmd_queue_count_threshold             => C_CMD_QUEUE_COUNT_THRESHOLD,
+    cmd_queue_count_threshold_severity    => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
+    result_queue_count_max                => C_RESULT_QUEUE_COUNT_MAX,
+    result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
+    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
+    bfm_config                            => C_RGMII_BFM_CONFIG_DEFAULT,
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+  );
+
+  type t_vvc_status is
+  record
+    current_cmd_idx  : natural;
+    previous_cmd_idx : natural;
+    pending_cmd_cnt  : natural;
+  end record;
+
+  type t_vvc_status_array is array (t_channel range <>, natural range <>) of t_vvc_status;
+
+  constant C_VVC_STATUS_DEFAULT : t_vvc_status := (
+    current_cmd_idx  => 0,
+    previous_cmd_idx => 0,
+    pending_cmd_cnt  => 0
+  );
+
+  -- Transaction information to include in the wave view during simulation
+  type t_transaction_info is
+  record
+    operation       : t_operation;
+    msg             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+  end record;
+
+  type t_transaction_info_array is array (t_channel range <>, natural range <>) of t_transaction_info;
+
+  constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
+    operation           =>  NO_OPERATION,
+    msg                 => (others => ' ')
+  );
+
+
+  shared variable shared_rgmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_RGMII_VVC_CONFIG_DEFAULT));
+  shared variable shared_rgmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_rgmii_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
+
+  -- Scoreboard
+  shared variable shared_rgmii_sb : t_generic_sb;
+
+
+  --==========================================================================================
+  -- Methods dedicated to this VVC 
+  -- - These procedures are called from the testbench in order for the VVC to execute
+  --   BFM calls towards the given interface. The VVC interpreter will queue these calls
+  --   and then the VVC executor will fetch the commands from the queue and handle the
+  --   actual BFM execution.
+  --==========================================================================================
+  procedure rgmii_write(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant data_array       : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  );
+
+  procedure rgmii_read(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  );
+
+  procedure rgmii_expect(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant data_exp         : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)";
+    constant alert_level      : in    t_alert_level := ERROR
+  );
+
+  --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_trigger    : inout std_logic;
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record;
+    constant vvc_config   : in t_vvc_config;
+    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure reset_dtt_info(
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record);
+
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;
+                                                  constant busy                             : in boolean;
+                                                  constant vvc_idx_for_activity_watchdog    : in integer;
+                                                  constant last_cmd_idx_executed            : in natural;
+                                                  constant scope                            : in string := "RGMII_VVC");
+
+end package vvc_methods_pkg;
+
+
+package body vvc_methods_pkg is
+
+  --==========================================================================================
+  -- Methods dedicated to this VVC
+  --==========================================================================================
+  procedure rgmii_write( 
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant data_array       : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+    constant proc_name : string := "rgmii_write";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
+             & ", " & to_string(data_array'length) & " bytes)";
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
+    shared_vvc_cmd.data_array(0 to data_array'length-1) := data_array;
+    shared_vvc_cmd.data_array_length                    := data_array'length;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+  procedure rgmii_read(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+    constant proc_name : string := "rgmii_read";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+  procedure rgmii_expect( 
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant data_exp         : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)";
+    constant alert_level      : in    t_alert_level := ERROR
+  ) is
+    constant proc_name : string := "rgmii_expect";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
+             & ", " & to_string(data_exp'length) & " bytes)";
+  begin
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
+    shared_vvc_cmd.data_array(0 to data_exp'length-1) := data_exp;
+    shared_vvc_cmd.data_array_length                  := data_exp'length;
+    shared_vvc_cmd.alert_level                        := alert_level;
+    send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+  --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_trigger    : inout std_logic;
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record;
+    constant vvc_config   : in t_vvc_config;
+    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | EXPECT =>
+        dtt_group.bt.operation                                  := vvc_cmd.operation;
+        dtt_group.bt.data_array                                 := vvc_cmd.data_array;
+        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
+        dtt_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
+        dtt_group.bt.transaction_status                         := IN_PROGRESS;
+        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_dtt;
+
+  procedure reset_dtt_info(
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE | READ | EXPECT =>
+        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure reset_dtt_info;
+
+  --==============================================================================
+  -- Activity Watchdog
+  --==============================================================================
+  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;
+                                                  constant busy                             : in boolean;
+                                                  constant vvc_idx_for_activity_watchdog    : in integer;
+                                                  constant last_cmd_idx_executed            : in natural;
+                                                  constant scope                            : in string := "RGMII_VVC") is
+  begin
+    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
+                                                      busy                  => busy,
+                                                      last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
+  end procedure;
+
+end package body vvc_methods_pkg;

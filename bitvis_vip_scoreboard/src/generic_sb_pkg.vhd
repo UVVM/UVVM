@@ -662,6 +662,7 @@ package body generic_sb_pkg is
       constant sb_config_array : in t_sb_config_array;
       constant msg             : in string := ""
     ) is
+      constant proc_name : string := "config";
     begin
 
       -- Check if range is within limits
@@ -671,7 +672,7 @@ package body generic_sb_pkg is
       -- Apply config to the defined range
       for i in sb_config_array'low to sb_config_array'high loop
         check_config_validity(sb_config_array(i));
-        log(i, ID_CTRL, "config: config applied to instance " & to_string(i) & "." & add_msg_delimiter(msg), vr_scope);
+        log(i, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), vr_scope & "," & to_string(i));
         vr_config(i) := sb_config_array(i);
       end loop;
     end procedure config;
@@ -690,10 +691,10 @@ package body generic_sb_pkg is
 
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
-        log(instance, ID_CTRL, proc_name & ": config applied to instance " & to_string(instance) & "." & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       else
         -- Called from other SB method
-        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
 
       vr_config(instance) := sb_config;
@@ -704,7 +705,7 @@ package body generic_sb_pkg is
       constant msg       : in string := ""
     ) is
     begin
-      config(1, sb_config, msg, "config: config applied to SB.");
+      config(1, sb_config, msg, "config() => config applied to SB. ");
     end procedure config;
 
 
@@ -732,13 +733,13 @@ package body generic_sb_pkg is
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
         if instance = ALL_INSTANCES then
-          log(ID_CTRL, proc_name & ": all instances enabled." & add_msg_delimiter(msg), vr_scope);
+          log(ID_CTRL, proc_name & "() => all instances enabled. " & add_msg_delimiter(msg), vr_scope);
         else
-          log(instance, ID_CTRL, proc_name & ": instance " & to_string(instance) & " enabled." & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_CTRL, proc_name & "() => SB enabled. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       else
         -- Called from other SB method
-        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
 
       if instance = ALL_INSTANCES then
@@ -774,14 +775,14 @@ package body generic_sb_pkg is
       constant msg : in string
     ) is
     begin
-      enable(1, msg, "enable: SB enabled.");
+      enable(1, msg, "enable() => SB enabled. ");
     end procedure enable;
 
     procedure enable(
       constant void : in t_void
     ) is
     begin
-      enable(1, "", "enable: SB enabled.");
+      enable(1, "", "enable() => SB enabled. ");
     end procedure enable;
 
 
@@ -798,6 +799,7 @@ package body generic_sb_pkg is
       constant msg           : in string := "";
       constant ext_proc_call : in string := "" -- not proc???
     ) is
+      constant proc_name : string := "disable";
     begin
       -- Check if instance is within range
       if instance /= ALL_INSTANCES then
@@ -813,13 +815,13 @@ package body generic_sb_pkg is
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
         if instance = ALL_INSTANCES then
-          log(ID_CTRL, "disable: all instances disabled." & add_msg_delimiter(msg), vr_scope);
+          log(ID_CTRL, proc_name & "() => all instances disabled. " & add_msg_delimiter(msg), vr_scope);
         else
-          log(instance, ID_CTRL, "disable: instance " & to_string(instance) & " disabled." & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_CTRL, proc_name & "() => SB disabled. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       else
         -- Called from other SB method
-        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
     end procedure disable;
 
@@ -827,14 +829,14 @@ package body generic_sb_pkg is
       constant msg : in string
     ) is
     begin
-      disable(1, msg, "disable: SB disabled.");
+      disable(1, msg, "disable() => SB disabled. ");
     end procedure disable;
 
     procedure disable(
       constant void : in t_void
     ) is
     begin
-      disable(1, "", "disable: SB disabled.");
+      disable(1, "", "disable() => SB disabled. ");
     end procedure disable;
 
 
@@ -873,11 +875,11 @@ package body generic_sb_pkg is
             vr_entered_cnt(i) := vr_entered_cnt(i)+1;
 
             if tag_usage = NO_TAG then
-              log(i, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) &
-                ".  " & add_msg_delimiter(msg), vr_scope);
+              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) &
+                ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(i));
             else
-              log(i, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) &
-              ".  " & add_msg_delimiter(msg), vr_scope);
+              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) &
+              ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(i));
             end if;
           end if;
         end loop;
@@ -893,15 +895,15 @@ package body generic_sb_pkg is
 
         if ext_proc_call = "" then
           if tag_usage = NO_TAG then
-            log(instance, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) &
-              ".  " & add_msg_delimiter(msg), vr_scope);
+            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) &
+              ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & "() => instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) &
-              ".  " & add_msg_delimiter(msg), vr_scope);
+            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) &
+              ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
           end if;
         else
           -- Called from other SB method
-          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       end if;
     end procedure add_expected;
@@ -915,9 +917,9 @@ package body generic_sb_pkg is
     ) is
     begin
       if tag_usage = NO_TAG then
-        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & to_string_element(expected_element) & ".  ");
+        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & to_string_element(expected_element) & ". ");
       else
-        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ".  ");
+        add_expected(1, expected_element, tag_usage, tag, msg, source, "add_expected() => expected: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". ");
       end if;
     end procedure add_expected;
 
@@ -964,7 +966,7 @@ package body generic_sb_pkg is
         constant instance : in integer
       ) is
       begin
-        check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "instance " & to_string(instance) & ": no pending entries to check.", vr_scope, ID_NEVER);
+        check_value(not vr_sb_queue.is_empty(instance), TB_ERROR, "No pending entries to check.", vr_scope & "," & to_string(instance), ID_NEVER);
       end procedure check_pending_exists;
 
       procedure check_received_instance(
@@ -1036,11 +1038,11 @@ package body generic_sb_pkg is
         -- Check if overdue time
         if v_matched and (vr_config(instance).overdue_check_time_limit /= 0 ns) and (now-v_entry.entry_time > vr_config(instance).overdue_check_time_limit) then
           if ext_proc_call = "" then
-            alert(vr_config(instance).overdue_check_alert_level, proc_name & "() instance " & to_string(instance) &" => TIME LIMIT OVERDUE: time limit is "
-              & to_string(vr_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now-v_entry.entry_time) & ".  " & add_msg_delimiter(msg) , vr_scope);
+            alert(vr_config(instance).overdue_check_alert_level, proc_name & "() => TIME LIMIT OVERDUE: time limit is " & to_string(vr_config(instance).overdue_check_time_limit) &
+              ", time from entry is " & to_string(now-v_entry.entry_time) & ". " & add_msg_delimiter(msg) , vr_scope & "," & to_string(instance));
           else
             alert(vr_config(instance).overdue_check_alert_level, ext_proc_call & " => TIME LIMIT OVERDUE: time limit is " & to_string(vr_config(instance).overdue_check_time_limit) &
-              ", time from entry is " & to_string(now-v_entry.entry_time) & ".  " & add_msg_delimiter(msg) , vr_scope);
+              ", time from entry is " & to_string(now-v_entry.entry_time) & ". " & add_msg_delimiter(msg) , vr_scope & "," & to_string(instance));
           end if;
           -- Update counter
           vr_overdue_check_cnt(instance) := vr_overdue_check_cnt(instance) + 1;
@@ -1050,37 +1052,39 @@ package body generic_sb_pkg is
         if v_matched then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, proc_name & "() instance " & to_string(instance) & " => MATCH, for value: " & to_string_element(v_entry.expected_element) &
-                ".  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) &
+                ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             else
-              log(instance, ID_DATA, proc_name & "() instance " & to_string(instance) & " => MATCH, for value: " & to_string_element(v_entry.expected_element) &
-                ". tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) &
+                ". tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             end if;
           -- Called from other SB method
           else
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) &
+                ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             else
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) &
+                ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             end if;
           end if;
         -- Initial garbage
         elsif not(vr_match_cnt(instance) = 0 and vr_config(instance).ignore_initial_garbage) then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: "  & to_string_element(v_entry.expected_element) &
-                               "; received: " & to_string_element(received_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              alert(vr_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: "  & to_string_element(v_entry.expected_element) &
+                "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             else
-              alert(vr_config(instance).mismatch_alert_level, proc_name & "() instance " & to_string(instance) & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) &
-                "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              alert(vr_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) &
+                "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             end if;
           else
             if tag_usage = NO_TAG then
               alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) &
-                "; received: " & to_string_element(received_element) & add_msg_delimiter(msg), vr_scope);
+                "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             else
               alert(vr_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) &
-                "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+                "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
             end if;
           end if;
         end if;
@@ -1150,7 +1154,7 @@ package body generic_sb_pkg is
       constant proc_name : string := "flush";
     begin
       if instance = ALL_INSTANCES then
-        log(ID_DATA, proc_name & ": flushing all instances." & add_msg_delimiter(msg), vr_scope);
+        log(ID_DATA, proc_name & "() => flushing all instances. " & add_msg_delimiter(msg), vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           -- update counters
           vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
@@ -1158,7 +1162,7 @@ package body generic_sb_pkg is
           vr_sb_queue.flush(i);
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
-        log(ID_DATA, proc_name & ": flushing all enabled instances." & add_msg_delimiter(msg), vr_scope);
+        log(ID_DATA, proc_name & "() => flushing all enabled instances. " & add_msg_delimiter(msg), vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- update counters
@@ -1169,9 +1173,9 @@ package body generic_sb_pkg is
         end loop;
       else
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & ": flushing instance " & to_string(instance) & "." & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, proc_name & "() => flushing SB. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
         check_instance_in_range(instance);
         check_instance_enabled(instance);
@@ -1186,7 +1190,7 @@ package body generic_sb_pkg is
       constant msg : in string
     ) is
     begin
-      flush(1, msg, "flush: flushing SB.");
+      flush(1, msg, "flush() => flushing SB. ");
     end procedure flush;
 
     procedure flush(
@@ -1231,12 +1235,12 @@ package body generic_sb_pkg is
 
     begin
       if instance = ALL_INSTANCES then
-        log(ID_CTRL, proc_name & ": reseting all instances.  " & add_msg_delimiter(msg), vr_scope);
+        log(ID_CTRL, proc_name & "() => reseting all instances. " & add_msg_delimiter(msg), vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
             reset_instance(i);
         end loop;
       elsif instance = ALL_ENABLED_INSTANCES then
-        log(ID_CTRL, proc_name & ": reseting all enabled instances.  " & add_msg_delimiter(msg), vr_scope);
+        log(ID_CTRL, proc_name & "() => reseting all enabled instances. " & add_msg_delimiter(msg), vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             reset_instance(i);
@@ -1244,9 +1248,9 @@ package body generic_sb_pkg is
         end loop;
       else
         if ext_proc_call = "" then
-          log(instance, ID_CTRL, proc_name & ": reseting instance " & to_string(instance) & ".  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_CTRL, proc_name & "() => reseting SB. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
         check_instance_in_range(instance);
         check_instance_enabled(instance);
@@ -1258,7 +1262,7 @@ package body generic_sb_pkg is
       constant msg : in string
     ) is
     begin
-      reset(1, msg, "reset: reseting SB.");
+      reset(1, msg, "reset() => reseting SB. ");
     end procedure reset;
 
     procedure reset(
@@ -1525,15 +1529,15 @@ package body generic_sb_pkg is
       constant proc_name : string := "enable_log_msg";
     begin
       if instance = ALL_INSTANCES then
-        log(ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " enabled for all instances", vr_scope);
+        log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled for all instances.", vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           vr_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
       else
         if ext_proc_call = "" then
-          log(instance, ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " enabled for instance " & to_string(instance), vr_scope);
+          log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled.", vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_CTRL, ext_proc_call, vr_scope);
+          log(instance, ID_CTRL, ext_proc_call, vr_scope & "," & to_string(instance));
         end if;
         vr_msg_id_panel_array(instance)(msg_id) := ENABLED;
       end if;
@@ -1543,7 +1547,7 @@ package body generic_sb_pkg is
       constant msg_id        : in t_msg_id
     ) is
     begin
-      enable_log_msg(1, msg_id, "enable_log_msg: "& ": message id " & to_string(msg_id) & " enabled");
+      enable_log_msg(1, msg_id, "enable_log_msg() => message id " & to_string(msg_id) & " enabled. ");
     end procedure enable_log_msg;
 
 
@@ -1563,15 +1567,15 @@ package body generic_sb_pkg is
       constant proc_name : string := "disable_log_msg";
     begin
       if instance = ALL_INSTANCES then
-        log(ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " disabled for all instances", vr_scope);
+        log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled for all instances.", vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           vr_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
       else
         if ext_proc_call = "" then
-          log(instance, ID_CTRL, proc_name & ": message id " & to_string(msg_id) & " disabled for instance " & to_string(instance), vr_scope);
+          log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled.", vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_CTRL, ext_proc_call, vr_scope);
+          log(instance, ID_CTRL, ext_proc_call, vr_scope & "," & to_string(instance));
         end if;
         vr_msg_id_panel_array(instance)(msg_id) := DISABLED;
       end if;
@@ -1581,7 +1585,7 @@ package body generic_sb_pkg is
       constant msg_id : in t_msg_id
     ) is
     begin
-      disable_log_msg(1, msg_id, "disable_log_msg: "& ": message id " & to_string(msg_id) & " disabled");
+      disable_log_msg(1, msg_id, "disable_log_msg() => message id " & to_string(msg_id) & " disabled. ");
     end procedure disable_log_msg;
 
 
@@ -1761,7 +1765,7 @@ package body generic_sb_pkg is
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- Check that instance is enabled
-            check_queue_empty(instance);
+            check_queue_empty(i);
             -- add entry
             vr_sb_queue.insert(i, identifier_option, identifier, v_sb_entry);
             -- increment counters
@@ -1784,33 +1788,33 @@ package body generic_sb_pkg is
         if instance = ALL_ENABLED_INSTANCES then
           if identifier_option = POSITION then
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, proc_name & "() inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "
-                & to_string_element(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              log(ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "
+                & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), vr_scope);
             else
-              log(instance, ID_DATA, proc_name & "() inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "
-                & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              log(ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "
+                & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope);
             end if;
           else
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, proc_name & "() inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: "
-                & to_string_element(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+              log(ID_DATA, proc_name & "() => inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: "
+                & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), vr_scope);
             else
-              log(instance, ID_DATA, proc_name & "() inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: "
-                & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+              log(ID_DATA, proc_name & "() => inserted expected after entry with entry number " & to_string(identifier) & " for all enabled instances. Expected: "
+                & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope);
             end if;
           end if;
         else
           if identifier_option = POSITION then
-            log(instance, ID_DATA, proc_name & "() inserted expected after entry with position " & to_string(identifier) & " for instance " & to_string(instance) & "." & add_msg_delimiter(msg), vr_scope);
+            log(instance, ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & "() inserted expected after entry with entry number " & to_string(identifier) & " for instance " & to_string(instance) & "." & add_msg_delimiter(msg), vr_scope);
+            log(instance, ID_DATA, proc_name & "() => inserted expected after entry with entry number " & to_string(identifier) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
           end if;
         end if;
       else
         if tag_usage = NO_TAG then
-          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ".  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & " Expected: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       end if;
     end procedure insert_expected;
@@ -1826,9 +1830,9 @@ package body generic_sb_pkg is
     ) is
     begin
       if identifier_option = POSITION then
-        insert_expected(1, identifier_option, identifier, expected_element, tag_usage, tag, msg, source, "insert_expected() inserted expected after entry with position " & to_string(identifier) & ".");
+        insert_expected(1, identifier_option, identifier, expected_element, tag_usage, tag, msg, source, "insert_expected() => inserted expected after entry with position " & to_string(identifier) & ". ");
       else
-        insert_expected(1, identifier_option, identifier, expected_element, tag_usage, tag, msg, source, "insert_expected() inserted expected after entry with entry number " & to_string(identifier) & ".");
+        insert_expected(1, identifier_option, identifier, expected_element, tag_usage, tag, msg, source, "insert_expected() => inserted expected after entry with entry number " & to_string(identifier) & ". ");
       end if;
     end procedure insert_expected;
 
@@ -1841,7 +1845,7 @@ package body generic_sb_pkg is
       constant source            : in string := ""
       ) is
       begin
-        insert_expected(instance, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() inserted expected without TAG in position " & to_string(identifier) & ".");
+        insert_expected(instance, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() => inserted expected without TAG in position " & to_string(identifier) & ". ");
       end procedure insert_expected;
 
     procedure insert_expected(
@@ -1852,7 +1856,7 @@ package body generic_sb_pkg is
       constant source            : in string := ""
       ) is
       begin
-        insert_expected(1, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() inserted expected without TAG in position " & to_string(identifier) & ".");
+        insert_expected(1, identifier_option, identifier, expected_element, NO_TAG, "", msg, source, "insert_expected() => inserted expected without TAG in position " & to_string(identifier) & ". ");
       end procedure insert_expected;
 
       
@@ -2063,18 +2067,17 @@ package body generic_sb_pkg is
 
       v_position := find_expected_position(instance, expected_element, tag_usage, tag);
 
-
       if v_position /= -1 then
         vr_sb_queue.delete(instance, POSITION, v_position, SINGLE);
         vr_delete_cnt(instance) := vr_delete_cnt(instance) + 1;
 
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       else
-        log(instance, ID_DATA, proc_name & ": NO DELETION. Did not find matching entry.  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
     end procedure delete_expected;
 
@@ -2085,7 +2088,7 @@ package body generic_sb_pkg is
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(1, expected_element, tag_usage, tag, msg, "delete_expected: value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'.  ");
+      delete_expected(1, expected_element, tag_usage, tag, msg, "delete_expected() => value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. ");
     end procedure delete_expected;
 
     procedure delete_expected(
@@ -2094,7 +2097,7 @@ package body generic_sb_pkg is
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(instance, expected_element, NO_TAG, "", msg, "delete_expected: instance " & to_string(instance) & ", value: " & to_string_element(expected_element) & ".  ");
+      delete_expected(instance, expected_element, NO_TAG, "", msg, "delete_expected() => value: " & to_string_element(expected_element) & ". ");
     end procedure delete_expected;
 
     procedure delete_expected(
@@ -2102,7 +2105,7 @@ package body generic_sb_pkg is
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(1, expected_element, NO_TAG, "", msg, "delete_expected: instance value: " & to_string_element(expected_element) & ".  ");
+      delete_expected(1, expected_element, NO_TAG, "", msg, "delete_expected() => value: " & to_string_element(expected_element) & ". ");
     end procedure delete_expected;
 
     procedure delete_expected(
@@ -2124,12 +2127,12 @@ package body generic_sb_pkg is
         vr_delete_cnt(instance) := vr_delete_cnt(instance) + 1;
 
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", tag: '" & to_string(tag) & "'.  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, proc_name & "() => tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         else
           log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
         end if;
       else
-        log(instance, ID_DATA, proc_name & ": NO DELETION. Did not find matching entry.  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
     end procedure delete_expected;
 
@@ -2139,7 +2142,7 @@ package body generic_sb_pkg is
       constant msg              : in string := ""
     ) is
     begin
-      delete_expected(1, tag_usage, tag, msg, "delete_expected: tag: '" & to_string(tag) & "'.  ");
+      delete_expected(1, tag_usage, tag, msg, "delete_expected() => tag: '" & to_string(tag) & "'. ");
     end procedure delete_expected;
 
     procedure delete_expected(
@@ -2166,13 +2169,13 @@ package body generic_sb_pkg is
 
       -- If error
       if v_num_deleted = 0 then
-        log(instance, ID_DATA, proc_name & ": NO DELETION. Did not find matching entry.  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       else
         if ext_proc_call = "" then
-          log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", entries with identifier " & to_string(identifier_option) &
-            " range " & to_string(identifier_min) & " to " & to_string(identifier_max) & " deleted.  " & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, proc_name & "() => entries with identifier " & to_string(identifier_option) &
+            " range " & to_string(identifier_min) & " to " & to_string(identifier_max) & " deleted. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         else
-          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       end if;
     end procedure delete_expected;
@@ -2184,8 +2187,8 @@ package body generic_sb_pkg is
       constant msg               : in string := ""
     ) is
     begin
-      delete_expected(1, identifier_option, identifier_min, identifier_max, msg, "delete_expected: entries with identifier " & to_string(identifier_option) &
-        " range " & to_string(identifier_min) & " to " & to_string(identifier_max) & " deleted.  ");
+      delete_expected(1, identifier_option, identifier_min, identifier_max, msg, "delete_expected() => entries with identifier " & to_string(identifier_option) &
+        " range " & to_string(identifier_min) & " to " & to_string(identifier_max) & " deleted. ");
     end procedure delete_expected;
 
     procedure delete_expected(
@@ -2212,18 +2215,18 @@ package body generic_sb_pkg is
 
       -- If error
       if v_num_deleted = 0 then
-        log(instance, ID_DATA, proc_name & ": NO DELETION. Did not find matching entry.  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => NO DELETION. Did not find matching entry. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       else
         if ext_proc_call = "" then
           if range_option = SINGLE then
-            log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", entry with identifier " & to_string(identifier_option) &
-              " " & to_string(identifier) & ".  " & add_msg_delimiter(msg), vr_scope);
+            log(instance, ID_DATA, proc_name & "() => entry with identifier " & to_string(identifier_option) &
+              " " & to_string(identifier) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", entries with identifier " & to_string(identifier_option) &
-              " range " & to_string(identifier) & " " & to_string(range_option) & " deleted.  " & add_msg_delimiter(msg), vr_scope);
+            log(instance, ID_DATA, proc_name & "() => entries with identifier " & to_string(identifier_option) &
+              " range " & to_string(identifier) & " " & to_string(range_option) & " deleted. " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
           end if;
         else
-          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
         end if;
       end if;
     end procedure delete_expected;
@@ -2236,11 +2239,11 @@ package body generic_sb_pkg is
     ) is
     begin
       if range_option = SINGLE then
-        delete_expected(1, identifier_option, identifier, range_option, msg, "delete_expected: entry with identifier '" & to_string(identifier_option) &
-          " " & to_string(identifier) & " deleted.  ");
+        delete_expected(1, identifier_option, identifier, range_option, msg, "delete_expected() => entry with identifier '" & to_string(identifier_option) &
+          " " & to_string(identifier) & " deleted. ");
       else
-        delete_expected(1, identifier_option, identifier, range_option, msg, "delete_expected: entries with identifier '" & to_string(identifier_option) &
-          " range " & to_string(identifier) & " to " & to_string(range_option) & " deleted.  ");
+        delete_expected(1, identifier_option, identifier, range_option, msg, "delete_expected() => entries with identifier '" & to_string(identifier_option) &
+          " range " & to_string(identifier) & " to " & to_string(range_option) & " deleted. ");
       end if;
     end procedure delete_expected;
 
@@ -2428,10 +2431,10 @@ package body generic_sb_pkg is
       -- Sanity checks in fetch entry
       -- Logging
       if ext_proc_call = "" then
-        log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", fetching expected by " & to_string(identifier_option) & " " &
-          to_string(identifier) & ".  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => fetching expected by " & to_string(identifier_option) & " " &
+          to_string(identifier) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       else
-        log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
       return fetch_entry(instance, identifier_option, identifier).expected_element;
     end function fetch_expected;
@@ -2442,8 +2445,8 @@ package body generic_sb_pkg is
       constant msg               : string := ""
     ) return t_element is
     begin
-      return fetch_expected(1, identifier_option, identifier, msg, "fetch_expected: fetching expected by " &
-        to_string(identifier_option) & " " & to_string(identifier) & ".  ");
+      return fetch_expected(1, identifier_option, identifier, msg, "fetch_expected() => fetching expected by " &
+        to_string(identifier_option) & " " & to_string(identifier) & ". ");
     end function fetch_expected;
 
     impure function fetch_expected(
@@ -2489,10 +2492,10 @@ package body generic_sb_pkg is
       -- Sanity checks in fetch entry
       -- Logging
       if ext_proc_call = "" then
-        log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", fetching source by " & to_string(identifier_option) & " " &
-          to_string(identifier) & ".  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => fetching source by " & to_string(identifier_option) & " " &
+          to_string(identifier) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       else
-        log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
       return to_string(fetch_entry(instance, identifier_option, identifier).source);
     end function fetch_source;
@@ -2503,8 +2506,8 @@ package body generic_sb_pkg is
       constant msg               : string := ""
     ) return string is
     begin
-      return fetch_source(1, identifier_option, identifier, msg, "fetch_source: fetching source by " &
-        to_string(identifier_option) & " " & to_string(identifier) & ".  ");
+      return fetch_source(1, identifier_option, identifier, msg, "fetch_source() => fetching source by " &
+        to_string(identifier_option) & " " & to_string(identifier) & ". ");
     end function fetch_source;
 
     impure function fetch_source(
@@ -2550,10 +2553,10 @@ package body generic_sb_pkg is
       -- Sanity checks in fetch entry
       -- Logging
       if ext_proc_call = "" then
-        log(instance, ID_DATA, proc_name & ": instance " & to_string(instance) & ", fetching tag by " & to_string(identifier_option) & " " &
-          to_string(identifier) & ".  " & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, proc_name & "() => fetching tag by " & to_string(identifier_option) & " " &
+          to_string(identifier) & ". " & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       else
-        log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope);
+        log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), vr_scope & "," & to_string(instance));
       end if;
       return to_string(fetch_entry(instance, identifier_option, identifier).tag);
     end function fetch_tag;
@@ -2564,8 +2567,8 @@ package body generic_sb_pkg is
       constant msg               : string := ""
     ) return string is
     begin
-      return fetch_tag(1, identifier_option, identifier, msg, "fetch_tag: fetching tag by " &
-        to_string(identifier_option) & " " & to_string(identifier) & ".  ");
+      return fetch_tag(1, identifier_option, identifier, msg, "fetch_tag() => fetching tag by " &
+        to_string(identifier_option) & " " & to_string(identifier) & ". ");
     end function fetch_tag;
 
     impure function fetch_tag(

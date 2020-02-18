@@ -1,6 +1,12 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.5.1
+----------
+Released: 2020-02-16
+- Fixed wrong order of parameters in wait_on_bfm_exit call.
+- Added missing DTT commands.
+
 v4.5.0
 ----------
 Released: 2020-01-24

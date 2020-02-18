@@ -9,6 +9,25 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2020.02.16
+--------------------
+Released: 2020-02-16
+- Added Bitvis VIP Avalon ST
+- Added Bitvis VIP RGMII beta
+- Added Bitvis VIP GMII beta
+- Fixed missing Scoreboard VIP in IRQC dependency list.
+- Added missing DTT commands in VIPs.
+- Improved Scoreboard logging.
+- Added default scope and changed alert message for check_file_open_status()
+  in UVVM Util.
+- Fixed bugs and added checks to BFM sync methods.
+- Added C_UVVM_TIMEOUT for internal wait statements.
+- Removed unused code from Clock Generator VVC executor.
+- Added missing generated generics from vvc_generator.py script.
+- Updated figure in UART Demo TB quick reference.
+
+
+
 v2020.01.24
 --------------------
 Released: 2020-01-24

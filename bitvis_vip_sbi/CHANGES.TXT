@@ -1,6 +1,10 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.5.1
+----------
+Released: 2020-02-16
+- Fixed wrong order of parameters in wait_on_bfm_exit call.
 
 v2.5.0
 ----------

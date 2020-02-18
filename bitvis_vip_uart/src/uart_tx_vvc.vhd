@@ -79,7 +79,6 @@ architecture behave of uart_tx_vvc is
   -- DTT
   alias dtt_trigger             : std_logic           is global_uart_vvc_transaction_trigger(TX, GC_INSTANCE_IDX);
   alias dtt_info                : t_transaction_group is shared_uart_vvc_transaction_info(TX, GC_INSTANCE_IDX);
-
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 

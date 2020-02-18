@@ -1,6 +1,11 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.10
+----------
+Released: 2020-02-16
+- Added missing Scoreboard VIP to IRQC dependencies list.
+
 v1.0.9
 ----------
 Released: 2019-11-21

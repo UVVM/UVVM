@@ -1,0 +1,7 @@
+Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
+==============================================================
+
+v0.1.0
+----------
+Released: 2020-02-16
+- Beta version of GMII VIP.

@@ -153,6 +153,20 @@ package vvc_methods_pkg is
     );
 
   --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_trigger    : inout std_logic;
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record;
+    constant vvc_config   : in t_vvc_config;
+    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure reset_dtt_info(
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record);
+
+  --==============================================================================
   -- Activity Watchdog
   --==============================================================================
   procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
@@ -269,6 +283,45 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVC, scope => scope);
   end procedure;
 
+  --==============================================================================
+  -- Direct Transaction Transfer methods
+  --==============================================================================
+  procedure set_global_dtt(
+    signal dtt_trigger    : inout std_logic;
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record;
+    constant vvc_config   : in t_vvc_config;
+    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when SET | GET | CHECK | EXPECT =>
+        dtt_group.bt.operation                                    := vvc_cmd.operation;
+        dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)         := vvc_cmd.data;
+        dtt_group.bt.data_exp(vvc_cmd.data_exp'length-1 downto 0) := vvc_cmd.data_exp;
+        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)        := vvc_cmd.msg;
+        dtt_group.bt.vvc_meta.cmd_idx                             := vvc_cmd.cmd_idx;
+        dtt_group.bt.transaction_status                           := IN_PROGRESS;
+        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+      when others =>
+        alert(TB_ERROR, "VVC operation not recognized");
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_dtt;
+
+  procedure reset_dtt_info(
+    variable dtt_group    : inout t_transaction_group;
+    constant vvc_cmd      : in t_vvc_cmd_record) is
+  begin
+    case vvc_cmd.operation is
+      when SET | GET | CHECK | EXPECT =>
+        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+      when others =>
+        null;
+    end case;
+
+    wait for 0 ns;
+  end procedure reset_dtt_info;
 
   --==============================================================================
   -- Activity Watchdog

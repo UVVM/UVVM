@@ -281,27 +281,30 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
         with open(run_configuration.get("spec_cov"), mode='w', newline='') as spec_cov_file:
             csv_writer = csv.writer(spec_cov_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Requirements :", ])
+            csv_writer.writerow(["Requirement", "Testcase(s)"])
             for requirement in requirement_container.get_list():
                 testcase_string = ""
                 for testcase in requirement.get_actual_testcase_list():
                     testcase_string += testcase.get_name() + " "
 
+                if requirement.get_actual_testcase_list():
+                    csv_writer.writerow([requirement.get_name(), testcase_string])
+
+                # Insert blank line in CSV
+            csv_writer.writerow([])
+            csv_writer.writerow(["Requirement", "Sub-requirement(s)"])
+            for requirement in requirement_container.get_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
                     if sub_requirement.get_compliance() == compliant_string:
                         sub_requirement_string += sub_requirement.get_name() + " "
 
-                if requirement.get_actual_testcase_list():
-                    csv_writer.writerow([requirement.get_name(), testcase_string])
-    
                 if requirement.get_sub_requirement_list():
                     csv_writer.writerow([requirement.get_name(), sub_requirement_string])
 
             # Insert blank line in CSV
             csv_writer.writerow([])
-
-            csv_writer.writerow(["Testcases :", ])
+            csv_writer.writerow(["Testcase", "Requirement(s)"])
             for testcase in testcase_container.get_list():
                 requirement_string = ""
                 for requirement in testcase.get_actual_requirement_list():

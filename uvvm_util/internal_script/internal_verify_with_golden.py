@@ -44,7 +44,12 @@ def compare(modelsim=False, riviera=False):
       print(sim_files[idx] + " <-----> " + golden_files[idx])
       num_errors += cmp_files(sim_files[idx], golden_files[idx])
 
-  print("Number of files with error(s): " + str(num_errors))
+  if modelsim:
+    simulator = "[MODELSIM]"
+  elif riviera:
+    simulator = "[RIVIERA_PRO]"
+
+  print("%s Number of files with error(s): %d" %(simulator, num_errors))
 
 
 def main(argv):
@@ -52,11 +57,13 @@ def main(argv):
 
   for arg in args:
     if ("modelsim" in arg) or ("vsim" in arg):
-      print("Verify golden modelsim files")
+      print("Verify golden modelsim files : ")
+      print("--------------------------------------")
       compare(modelsim = True)
 
     elif ("vcom" in arg) or ("riviera" in arg) or ("rivierapro" in arg) or ("aldec" in arg):
-      print("Verify golden riviera pro files")
+      print("Verify golden riviera pro files : ")
+      print("--------------------------------------")
       compare(riviera = True)
 
     else:

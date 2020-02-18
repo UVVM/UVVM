@@ -30,7 +30,6 @@ library bitvis_vip_hvvc_to_vvc_bridge;
 use bitvis_vip_hvvc_to_vvc_bridge.common_methods_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
-use work.ethernet_sb_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;

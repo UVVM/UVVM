@@ -1,18 +1,17 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+--================================================================================================================================
+-- Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+-- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 -- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+--================================================================================================================================
 
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -25,9 +24,9 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 package common_methods_pkg is
 
-  --========================================================================================================================
+  --==========================================================================================
   -- Methods
-  --========================================================================================================================
+  --==========================================================================================
   procedure hvvc_to_bridge_trigger(
     signal hvvc_to_bridge : out t_hvvc_to_bridge
   );
@@ -76,6 +75,7 @@ package common_methods_pkg is
 
 end package common_methods_pkg;
 
+
 package body common_methods_pkg is
 
   procedure hvvc_to_bridge_trigger(
@@ -97,11 +97,11 @@ package body common_methods_pkg is
     constant field_timeout_margin      : in  time
   ) is
     -- Need to normalize array range or Riviera Pro fails with error code: 'DAGGEN ERROR DAGGEN_0700: "Fatal error : INTERNAL CODE GENERATOR ERROR"'
-    constant C_NORMALIIZED_DATA_BYTES : t_byte_array(0 to data_bytes'length-1) := data_bytes;
+    constant C_NORMALIZED_DATA_BYTES : t_byte_array(0 to data_bytes'length-1) := data_bytes;
   begin
     hvvc_to_bridge.operation                            <= operation;
     hvvc_to_bridge.num_data_bytes                       <= data_bytes'length;
-    hvvc_to_bridge.data_bytes(0 to data_bytes'length-1) <= C_NORMALIIZED_DATA_BYTES;
+    hvvc_to_bridge.data_bytes(0 to data_bytes'length-1) <= C_NORMALIZED_DATA_BYTES;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;

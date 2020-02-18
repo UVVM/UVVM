@@ -90,8 +90,6 @@ class Requirement():
         return self.compliance
 
 
-
-
 class Testcase():
 
     def __init__(self, name = None):
@@ -124,26 +122,6 @@ class Testcase():
         self.result = result
     def get_result(self):
         return self.result
-
-
-
-
-class PartialCoverage():
-
-    def __init__(self, requirement = None):
-        self.requirement = requirement
-        self.compliance = None
-
-    def set_requirement(self, requirement):
-        self.requirement = requirement
-    def get_requirement(self):
-        return self.requirement
-    
-    def set_compliance(self, compliance):
-        self.compliance = compliance
-    def get_compliance(self):
-        return self.compliance
-
 
 
 class Container():

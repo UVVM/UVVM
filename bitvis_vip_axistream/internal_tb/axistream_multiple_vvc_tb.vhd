@@ -140,6 +140,7 @@ begin
     await_uvvm_initialization(VOID);
 
     -- override default config with settings for this testbench
+    axistream_bfm_config.clock_period             := C_CLK_PERIOD;
     axistream_bfm_config.max_wait_cycles          := 1000;
     axistream_bfm_config.max_wait_cycles_severity := error;
     axistream_bfm_config.check_packet_length      := true;

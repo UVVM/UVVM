@@ -28,17 +28,8 @@ num_failing_tests = 0
 #=============================================================================================
 
 # Create testbench configuration with TB generics
-def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuser=False):
+def create_config():
   config = []
-
-  if include_tuser:
-    include_tuser = 1
-  else:
-    include_tuser = 0
-
-  for data_width, user_width, id_width, dest_width in product(data_widths, user_widths, id_widths, dest_widths):
-    config.append(str(data_width) + ' ' + str(user_width) + ' ' + str(id_width) + ' ' + str(dest_width) + ' ' + str(include_tuser))
-
   return config
 
 

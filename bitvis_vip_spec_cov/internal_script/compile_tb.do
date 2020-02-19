@@ -24,5 +24,5 @@ set root_path "../.."
 set tb_path "$root_path/bitvis_vip_spec_cov/internal_tb"
 echo "\n\n\n=== Compiling TB\n"
 
-echo "eval vcom  $compdirectives  $tb_path/spec_cov_tb.vhd"
-eval vcom  $compdirectives  $tb_path/spec_cov_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/internal_spec_cov_tb.vhd"
+eval vcom  $compdirectives  $tb_path/internal_spec_cov_tb.vhd

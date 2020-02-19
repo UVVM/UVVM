@@ -214,6 +214,8 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
     for requirement in requirement_container.get_list():
         if requirement.get_compliance() == not_tested_compliant_string:
             requirement_not_run_list.append(requirement)
+        elif requirement.get_compliance() == None:
+             requirement_not_run_list.append(requirement)
         elif requirement.get_compliance() == non_compliant_string:
             requirement_non_compliant_list.append(requirement)
         elif requirement.get_compliance() == compliant_string:
@@ -287,7 +289,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 for testcase in requirement.get_actual_testcase_list():
                     testcase_string += testcase.get_name() + " "
 
-                if requirement.get_actual_testcase_list():
+                if requirement.get_actual_testcase_list() and (requirement.get_compliance() == compliant_string):
                     csv_writer.writerow([requirement.get_name(), testcase_string])
 
                 # Insert blank line in CSV
@@ -299,7 +301,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                     if sub_requirement.get_compliance() == compliant_string:
                         sub_requirement_string += sub_requirement.get_name() + " "
 
-                if requirement.get_sub_requirement_list():
+                if requirement.get_sub_requirement_list() and (requirement.get_compliance() == compliant_string):
                     csv_writer.writerow([requirement.get_name(), sub_requirement_string])
 
             # Insert blank line in CSV
@@ -307,10 +309,11 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
             csv_writer.writerow(["Testcase", "Requirement(s)"])
             for testcase in testcase_container.get_list():
                 requirement_string = ""
-                for requirement in testcase.get_actual_requirement_list():
-                    requirement_string += requirement.get_name() + " "
-                if requirement_string:
-                    csv_writer.writerow([testcase.get_name(), requirement_string])
+                if testcase.get_result() == pass_string:
+                    for requirement in testcase.get_actual_requirement_list():
+                        requirement_string += requirement.get_name() + " "
+                    if requirement_string:
+                        csv_writer.writerow([testcase.get_name(), requirement_string])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))

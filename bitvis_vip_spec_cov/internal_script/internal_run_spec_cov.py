@@ -2,7 +2,7 @@ import subprocess
 import os
 
 test_list = [
-            ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_1.csv", "-s", "../sim/sc_1.csv"],
+            ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-p", "../sim/pc_1.csv", "-s", "../sim/sc_1.csv"],
             ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_2.csv", "-s", "../sim/sc_2.csv"],
             ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_3.csv", "-s", "../sim/sc_3.csv"],
             ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_4.csv", "-s", "../sim/sc_4.csv"],

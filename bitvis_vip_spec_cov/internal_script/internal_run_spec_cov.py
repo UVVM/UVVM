@@ -20,8 +20,12 @@ test_list = [
 
 def remove_specification_coverage_files():
     for filename in os.listdir("."):
-        if filename[0:2] == "sc_":
+        if filename[0:3] == "sc_":
             if filename.endswith(".csv"):
+                print("Removing : %s" %(filename))
+                os.remove(filename)
+        elif filename[0:7] == "output_":
+            if filename.endswith(".txt"):
                 print("Removing : %s" %(filename))
                 os.remove(filename)
 

@@ -71,8 +71,8 @@ begin
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with no requirement file.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("TC_1", "partial_cov_test_init_with_no_req_file.csv");
-      log_req_cov("REQ_A");
+      initialize_req_cov("TC_1", "pc_1.csv");
+      log_req_cov("REQ_1");
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -84,8 +84,8 @@ begin
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with a requirement file.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_2", "../internal_tb/simple_req_file.csv", "partial_cov_with_req_file.csv");
-      log_req_cov("SPEC_COV_REQ_2");
+      initialize_req_cov("TC_2", "../internal_tb/internal_req_file.csv", "pc_2.csv");
+      log_req_cov("REQ_2");
       -- End testcase      
       finalize_req_cov(VOID);
 
@@ -98,12 +98,12 @@ begin
       --
       log(ID_LOG_HDR, "Testing log_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_3", "../internal_tb/simple_req_file.csv", "partial_cov_listed_and_not_listed.csv");
-      log_req_cov("SPEC_COV_REQ_3");
-      log_req_cov("SPEC_COV_REQ_3", "T_SPEC_COV_50", NA, "logging unknown testcase.", C_SCOPE);
+      initialize_req_cov("TC_3", "../internal_tb/internal_req_file.csv", "pc_3.csv");
+      log_req_cov("REQ_3");
+      log_req_cov("REQ_3", "TC_50", NA, "logging unknown testcase.", C_SCOPE);
       -- Increment expected alerts so test will pass with missing requirement
       increment_expected_alerts(TB_WARNING, 1);      
-      log_req_cov("SPEC_COV_REQ_10", "T_SPEC_COV_1", NA, "logging unknown requirement.", C_SCOPE);
+      log_req_cov("REQ_10", "TC_1", NA, "logging unknown requirement.", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
       
@@ -115,9 +115,9 @@ begin
       --
       log(ID_LOG_HDR, "Testing log_req_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_4", "../internal_tb/simple_req_file.csv", "partial_cov_testcase_fail_pass.csv");
-      log_req_cov("SPEC_COV_REQ_4", "T_SPEC_COV_4_FAIL", FAIL);
-      log_req_cov("SPEC_COV_REQ_4", "T_SPEC_COV_4");
+      initialize_req_cov("TC_4", "../internal_tb/internal_req_file.csv", "pc_4.csv");
+      log_req_cov("REQ_4", "TC_4_FAIL", FAIL);
+      log_req_cov("REQ_4", "TC_4");
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -131,8 +131,8 @@ begin
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_5", "../internal_tb/simple_req_file.csv", "partial_cov_error_prior.csv");   
-      log_req_cov("SPEC_COV_REQ_5");  
+      initialize_req_cov("TC_5", "../internal_tb/internal_req_file.csv", "pc_5.csv");   
+      log_req_cov("REQ_5");  
       -- End testcase
       finalize_req_cov(VOID);
       -- Increment expected alerts so test will pass with provoked UVVM TB_ERROR
@@ -146,8 +146,8 @@ begin
       --
       log(ID_LOG_HDR, "Testing log_req_cov() with UVVM status error triggered after log_req_cov() and prior to finalize_req_cov().", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_6", "../internal_tb/simple_req_file.csv", "partial_cov_error_during.csv");   
-      log_req_cov("SPEC_COV_REQ_6", PASS);
+      initialize_req_cov("TC_6", "../internal_tb/internal_req_file.csv", "pc_6.csv");   
+      log_req_cov("REQ_6", PASS);
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
       -- End testcase
@@ -164,7 +164,7 @@ begin
       log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing requirement file.", C_SCOPE);
       increment_expected_alerts(TB_ERROR, 1);
       -- Run testcase
-      initialize_req_cov("T_SPEC_COV_7", "../internal_tb/non_existing_req_file.csv", "partial_cov_non_existing_req.csv");   
+      initialize_req_cov("TC_7", "../internal_tb/non_existing_req_file.csv", "pc_7.csv");   
       -- End testcase
       finalize_req_cov(VOID);         
 
@@ -180,9 +180,9 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
+      log(ID_LOG_HDR, "Testing passing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
       -- Run testcase
-      initialize_req_cov("T_SUB_REQ", "../internal_tb/sub_req_file.csv", "partial_cov_sub_req_pass.csv");   
+      initialize_req_cov("TC_SUB_REQ", "../internal_tb/internal_sub_req_file.csv", "pc_8.csv");   
       log_req_cov("UART_REQ_BR_A", NA);
       log_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
       log_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", C_SCOPE);
@@ -195,9 +195,9 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
+      log(ID_LOG_HDR, "Testing failing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
       -- Run testcase
-      initialize_req_cov("T_SUB_REQ", "../internal_tb/sub_req_file.csv", "partial_cov_sub_req_fail.csv");   
+      initialize_req_cov("TC_SUB_REQ", "../internal_tb/internal_sub_req_file.csv", "pc_9.csv");   
       log_req_cov("UART_REQ_BR_A", NA);
       log_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
       log_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", C_SCOPE);
@@ -213,8 +213,8 @@ begin
       --
       log(ID_LOG_HDR, "Testing failing simulations with incomplete testcase.", C_SCOPE);  
       -- Run testcase
-      initialize_req_cov("T_INCOMPLETE", "../internal_tb/sub_req_file.csv", "partial_cov_incomplete.csv");   
-      log_req_cov("UART_REQ_BR_A");  
+      initialize_req_cov("TC_1", "../internal_tb/internal_req_file.csv", "pc_10.csv");   
+      log_req_cov("REQ_1");  
       log(ID_SEQUENCER, "\nProvoking 2 TB_ERRORs to stop simulations.", C_SCOPE);
       -- Provoking tb_error 2 times to make testcase fail and simulation abort
       provoke_uvvm_status_error(TB_ERROR);

@@ -1,0 +1,10 @@
+Requirement,Testcase(s)
+REQ_3,TC_3 TC_50 
+REQ_10,TC_1 
+
+Requirement,Sub-requirement(s)
+
+Testcase,Requirement(s)
+TC_3,REQ_3 
+TC_50,REQ_3 
+TC_1,REQ_10 

@@ -1,0 +1,7 @@
+Requirement,Testcase(s)
+REQ_6,TC_6 
+
+Requirement,Sub-requirement(s)
+
+Testcase,Requirement(s)
+TC_6,REQ_6 

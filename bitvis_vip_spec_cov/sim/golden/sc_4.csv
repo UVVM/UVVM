@@ -1,0 +1,8 @@
+Requirement,Testcase(s)
+REQ_4,TC_4_FAIL TC_4 
+
+Requirement,Sub-requirement(s)
+
+Testcase,Requirement(s)
+TC_4_FAIL,REQ_4 
+TC_4,REQ_4 

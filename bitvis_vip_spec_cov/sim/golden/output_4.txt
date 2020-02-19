@@ -23,7 +23,7 @@ Number of not run testcases : 6
 Non compliant requirement(s) :
 REQ_4, 
 
-Not run requirement(s) :
+Not verified requirement(s) :
 REQ_1, REQ_2, REQ_3, REQ_5, REQ_6, REQ_7, 
 
 Passing testcase(s) :

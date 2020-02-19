@@ -1,7 +1,5 @@
 Requirement,Testcase(s)
-REQ_5,TC_5 
 
 Requirement,Sub-requirement(s)
 
 Testcase,Requirement(s)
-TC_5,REQ_5 

@@ -248,7 +248,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
         print("\n")
 
     if requirement_not_run_list:
-        print("Not run requirement(s) :")
+        print("Not verified requirement(s) :")
         for item in requirement_not_run_list:
             print("%s%s " %(item.get_name(), delimiter), end='')
         print("\n")

@@ -10,25 +10,12 @@
 # OTHER DEALINGS IN UVVM.
 #========================================================================================================================
 
-# Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
-proc quietly { args } {
-  if {[llength $args] == 0} {
-    puts "quietly"
-  } else {
-    # this works since tcl prompt only prints the last command given. list prints "".
-    uplevel $args; list;
-  }
-}
-
 #-----------------------------------------------------------------------
 # Call compile scripts from dependent libraries
 #-----------------------------------------------------------------------
-quietly set root_path "../.."
+set root_path "../.."
 do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
 do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
-do $root_path/script/compile_src.do $root_path/xConstrRandFuncCov $root_path/xConstrRandFuncCov/sim
-do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_gmii $root_path/bitvis_vip_gmii/sim
-do $root_path/script/compile_src.do $root_path/bitvis_vip_hvvc_to_vvc_bridge $root_path/bitvis_vip_hvvc_to_vvc_bridge/sim
-do $root_path/script/compile_src.do $root_path/bitvis_vip_ethernet $root_path/bitvis_vip_ethernet/sim
+do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim

@@ -1,5 +1,5 @@
 #========================================================================================================================
-# Copyright (c) 2019 by Bitvis AS.  All rights reserved.
+# Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 # You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 # contact Bitvis AS <support@bitvis.no>.
 #
@@ -55,17 +55,12 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }
 
-#------------------------------------------------------
-# Compile tb files
-#------------------------------------------------------
-quietly set tb_path "$root_path/bitvis_vip_ethernet/demo"
-
-echo "\n\n\n=== Compiling TB\n"
-echo "eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd"
-eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd
-echo "eval vcom  $compdirectives  $tb_path/ethernet_sbi_pkg.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_sbi_pkg.vhd
-echo "eval vcom  $compdirectives  $tb_path/ethernet_sbi_th.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_sbi_th.vhd
-echo "eval vcom  $compdirectives  $tb_path/ethernet_sbi_sb_demo_tb.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_sbi_sb_demo_tb.vhd
+echo "\nCompiling TB\n"
+echo "eval vcom  $compdirectives  ../tb/sbi_fifo.vhd"
+eval vcom  $compdirectives  ../tb/sbi_fifo.vhd
+echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_pkg.vhd"
+eval vcom  $compdirectives  ../tb/ethernet_sbi_pkg.vhd
+echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_th.vhd"
+eval vcom  $compdirectives  ../tb/ethernet_sbi_th.vhd
+echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_sb_demo_tb.vhd"
+eval vcom  $compdirectives  ../tb/ethernet_sbi_sb_demo_tb.vhd

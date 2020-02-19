@@ -1,18 +1,17 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+--================================================================================================================================
+-- Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+-- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 -- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+--================================================================================================================================
 
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -25,35 +24,18 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
+use work.transaction_pkg.all;
 
---========================================================================================================================
---========================================================================================================================
+--==========================================================================================
+--==========================================================================================
 package vvc_cmd_pkg is
 
+  alias t_operation is work.transaction_pkg.t_operation;
 
-  --========================================================================================================================
-  -- t_operation
-  -- - VVC and BFM operations
-  --========================================================================================================================
-  type t_operation is (
-    NO_OPERATION,
-    AWAIT_COMPLETION,
-    AWAIT_ANY_COMPLETION,
-    ENABLE_LOG_MSG,
-    DISABLE_LOG_MSG,
-    FLUSH_COMMAND_QUEUE,
-    FETCH_RESULT,
-    INSERT_DELAY,
-    TERMINATE_CURRENT_COMMAND,
-    TRANSMIT,
-    RECEIVE,
-    EXPECT
-  );
-
-  --========================================================================================================================
+  --==========================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC
-  --========================================================================================================================
+  --==========================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
     mac_destination           : unsigned(47 downto 0);
@@ -64,6 +46,7 @@ package vvc_cmd_pkg is
     operation                 : t_operation;
     proc_call                 : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     msg                       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    data_routing              : t_data_routing;
     cmd_idx                   : natural;
     command_type              : t_immediate_or_queued;
     msg_id                    : t_msg_id;
@@ -73,9 +56,8 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    data_routing              : t_data_routing;
-    use_provided_msg_id_panel : t_use_provided_msg_id_panel;
-    msg_id_panel              : t_msg_id_panel;
+    --use_provided_msg_id_panel : t_use_provided_msg_id_panel;
+    --msg_id_panel              : t_msg_id_panel;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -88,6 +70,7 @@ package vvc_cmd_pkg is
     operation                 => NO_OPERATION,
     proc_call                 => (others => NUL),
     msg                       => (others => NUL),
+    data_routing              => NA,
     cmd_idx                   => 0,
     command_type              => NO_COMMAND_TYPE,
     msg_id                    => NO_ID,
@@ -96,36 +79,30 @@ package vvc_cmd_pkg is
     timeout                   => 0 ns,
     alert_level               => FAILURE,
     delay                     => 0 ns,
-    quietness                 => NON_QUIET,
-    data_routing              => TO_RECEIVE_BUFFER,
-    use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
-    msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
+    quietness                 => NON_QUIET
+    --use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
+    --msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
   );
 
-  --========================================================================================================================
+  --==========================================================================================
   -- shared_vvc_cmd
   -- - Shared variable used for transmitting VVC commands
-  --========================================================================================================================
+  --==========================================================================================
   shared variable shared_vvc_cmd : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
 
-  --========================================================================================================================
+  --==========================================================================================
   -- t_vvc_result, t_vvc_result_queue_element, t_vvc_response and shared_vvc_response :
-  --
+  -- 
   -- - Used for storing the result of a BFM procedure called by the VVC,
   --   so that the result can be transported from the VVC to for example a sequencer via
-  --   fetch_result() as described in VVC_Framework_common_methods_QuickRef
-  --
-  -- - t_vvc_result includes the return value of the procedure in the BFM.
-  --   It can also be defined as a record if multiple values shall be transported from the BFM
-  --========================================================================================================================
-  type  t_vvc_result is record
+  --   fetch_result() as described in uvvm_vvc_framework/Common_VVC_Methods QuickRef.
+  -- - t_vvc_result includes the return value of the procedure in the BFM. It can also
+  --   be defined as a record if multiple values shall be transported from the BFM
+  --==========================================================================================
+  type t_vvc_result is record
     ethernet_frame        : t_ethernet_frame;
     ethernet_frame_status : t_ethernet_frame_status;
   end record t_vvc_result;
-
-  function to_string(
-    constant val : in t_vvc_result
-  ) return string;
 
   type t_vvc_result_queue_element is record
     cmd_idx       : natural;   -- from UVVM handshake mechanism
@@ -140,30 +117,37 @@ package vvc_cmd_pkg is
 
   shared variable shared_vvc_response : t_vvc_response;
 
-  --========================================================================================================================
-  -- t_last_received_cmd_idx :
-  -- - Used to store the last queued cmd in vvc interpreter.
-  --========================================================================================================================
-  type t_last_received_cmd_idx is array (t_channel range <>, natural range <>) of integer;
+  --==========================================================================================
+  -- t_last_received_cmd_idx : 
+  -- - Used to store the last queued cmd in VVC interpreter.
+  --==========================================================================================
+  type t_last_received_cmd_idx is array (t_channel range <>,natural range <>) of integer;
 
-  --========================================================================================================================
+  --==========================================================================================
   -- shared_vvc_last_received_cmd_idx
-  --  - Shared variable used to get last queued index from vvc to sequencer
-  --========================================================================================================================
+  --  - Shared variable used to get last queued index from VVC to sequencer
+  --==========================================================================================
   shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));
+
+  --==========================================================================================
+  -- Procedures
+  --==========================================================================================
+  function to_string(
+    result : t_vvc_result
+  ) return string;
 
 end package vvc_cmd_pkg;
 
 
 package body vvc_cmd_pkg is
 
+  -- Custom to_string overload needed when result is of a record type
   function to_string(
-    constant val : in t_vvc_result
+    result : t_vvc_result
   ) return string is
   begin
-    return "MAC destination: " & to_string(val.ethernet_frame.mac_destination, HEX) &
-           ", MAC source: "    & to_string(val.ethernet_frame.mac_source, HEX);
-  end function to_string;
+    return "MAC destination: " & to_string(result.ethernet_frame.mac_destination, HEX) &
+           ", MAC source: "    & to_string(result.ethernet_frame.mac_source, HEX);
+  end;
 
 end package body vvc_cmd_pkg;
-

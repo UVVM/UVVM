@@ -2,9 +2,9 @@
 Configuration:
 ----------------------------------------------
 requirement_list     : ../internal_tb/internal_req_file.csv
-partial_cov          : ../sim/pc_7.csv
+partial_cov          : ../sim/pc_6.csv
 requirement_map_list : None
-spec_cov             : ../sim/sc_7.csv
+spec_cov             : ../sim/sc_6.csv
 clean                : False
 strictness           : 0
 config               : None
@@ -13,16 +13,22 @@ config               : None
 SUMMARY:
 ----------------------------------------------
 Number of compliant requirements     : 0
-Number of non compliant requirements : 0
-Number of non verified requirements  : 7
-Number of passing testcases : 0
+Number of non compliant requirements : 1
+Number of non verified requirements  : 6
+Number of passing testcases : 1
 Number of failing testcases : 0
-Number of not run testcases : 8
+Number of not run testcases : 7
 
+
+Non compliant requirement(s) :
+REQ_6, 
 
 Not run requirement(s) :
-REQ_1, REQ_2, REQ_3, REQ_4, REQ_5, REQ_6, REQ_7, 
+REQ_1, REQ_2, REQ_3, REQ_4, REQ_5, REQ_7, 
+
+Passing testcase(s) :
+TC_6, 
 
 Not run testcase(s) :
-TC_1, TC_2, TC_3, TC_4, TC_4_FAIL, TC_5, TC_6, TC_7, 
+TC_1, TC_2, TC_3, TC_4, TC_4_FAIL, TC_5, TC_7, 
 

@@ -4,10 +4,10 @@ Configuration:
 requirement_list     : ../internal_tb/internal_sub_req_file.csv
 partial_cov          : ../sim/pc_9.csv
 requirement_map_list : ../internal_tb/internal_sub_req_map_file.csv
-spec_cov             : ../sim/sc_9_1.csv
+spec_cov             : ../sim/sc_9_0.csv
 clean                : False
-strictness           : 1
-config               : ../internal_tb/internal_cfg_2_strict_1.txt
+strictness           : 0
+config               : ../internal_tb/internal_cfg_2_strict_0.txt
 
 
 SUMMARY:

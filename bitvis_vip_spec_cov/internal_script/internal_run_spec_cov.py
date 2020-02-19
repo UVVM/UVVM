@@ -29,7 +29,7 @@ def run_tests():
     for idx, test in enumerate(test_list):
         output = subprocess.check_output(test, stderr=subprocess.PIPE)
         # Save output for golden check        
-        with open("output_" + str(idx) + ".txt", 'w') as file:
+        with open("output_" + str(idx + 1) + ".txt", 'w') as file:
             file.write(str(output, 'utf-8'))
 
 

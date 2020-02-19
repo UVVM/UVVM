@@ -309,7 +309,8 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 requirement_string = ""
                 for requirement in testcase.get_actual_requirement_list():
                     requirement_string += requirement.get_name() + " "
-                csv_writer.writerow([testcase.get_name(), requirement_string])
+                if requirement_string:
+                    csv_writer.writerow([testcase.get_name(), requirement_string])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))

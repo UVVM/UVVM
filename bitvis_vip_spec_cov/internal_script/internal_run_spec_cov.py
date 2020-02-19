@@ -26,11 +26,11 @@ def remove_specification_coverage_files():
                 os.remove(filename)
 
 def run_tests():
-    for test in test_list:
-        process = subprocess.Popen(test, stderr=subprocess.PIPE)
-        process.wait()
-
-
+    for idx, test in enumerate(test_list):
+        output = subprocess.check_output(test, stderr=subprocess.PIPE)
+        # Save output for golden check        
+        with open("output_" + str(idx) + ".txt", 'w') as file:
+            file.write(str(output, 'utf-8'))
 
 
 remove_specification_coverage_files()

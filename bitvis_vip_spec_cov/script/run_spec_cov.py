@@ -212,7 +212,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
 
     # Check compliance for all requirements
     for requirement in requirement_container.get_list():
-        if requirement.get_compliance() == None:
+        if requirement.get_compliance() == not_tested_compliant_string:
             requirement_not_run_list.append(requirement)
         elif requirement.get_compliance() == non_compliant_string:
             requirement_non_compliant_list.append(requirement)
@@ -227,7 +227,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
     print("----------------------------------------------")
     print("Number of compliant requirements     : %d" %(len(requirement_compliant_list)))
     print("Number of non compliant requirements : %d" %(len(requirement_non_compliant_list)))
-    print("Number of not run requirements       : %d" %(len(requirement_not_run_list)))
+    print("Number of non verified requirements  : %d" %(len(requirement_not_run_list)))
 
     print("Number of passing testcases : %d" %(len(testcase_pass_list)))
     print("Number of failing testcases : %d" %(len(testcase_fail_list)))
@@ -348,7 +348,7 @@ def build_specification_compliance_list(run_configuration, requirement_container
 
             # Start as compliant, if not already set
             if not(requirement.get_compliance()):
-                requirement.set_compliance(compliant_string)
+                requirement.set_compliance(not_tested_compliant_string)
 
             # Verify with all testcases
             for testcase in testcase_container.get_list():
@@ -377,7 +377,7 @@ def build_specification_compliance_list(run_configuration, requirement_container
         for requirement in requirement_container.get_list():
             # Start as compliant, if not already set
             if not(requirement.get_compliance()):
-                requirement.set_compliance(compliant_string)
+                requirement.set_compliance(not_tested_compliant_string)
 
             # Verify with all testcases
             for testcase in testcase_container.get_list():
@@ -412,7 +412,7 @@ def build_specification_compliance_list(run_configuration, requirement_container
         for requirement in requirement_container.get_list():
             # Start as compliant, if not already set
             if not(requirement.get_compliance()):
-                requirement.set_compliance(compliant_string)
+                requirement.set_compliance(not_tested_compliant_string)
 
             # Verify with all testcases
             for testcase in testcase_container.get_list():

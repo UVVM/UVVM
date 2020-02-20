@@ -43,7 +43,7 @@ package vvc_methods_pkg is
 
   signal ETHERNET_VVCT    : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias  THIS_VVCT        : t_vvc_target_record is ETHERNET_VVCT;
-  alias  t_bfm_config is t_ethernet_bfm_config;
+  alias  t_bfm_config is t_ethernet_if_config;
 
   -- Type found in UVVM-Util types_pkg
   constant C_ETHERNET_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
@@ -69,7 +69,7 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold          : natural;
     result_queue_count_threshold_severity : t_alert_level;
-    bfm_config                            : t_ethernet_bfm_config; -- Configuration for the BFM. See BFM quick reference.
+    bfm_config                            : t_ethernet_if_config;  -- Configuration for the HVVC IF. See HVVC quick reference.
     msg_id_panel                          : t_msg_id_panel;        -- VVC dedicated message ID panel.
     field_timeout_margin                  : time;                  -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
   end record;
@@ -84,7 +84,7 @@ package vvc_methods_pkg is
     result_queue_count_max                => C_RESULT_QUEUE_COUNT_MAX,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
-    bfm_config                            => C_ETHERNET_BFM_CONFIG_DEFAULT,
+    bfm_config                            => C_ETHERNET_IF_CONFIG_DEFAULT,
     msg_id_panel                          => C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT,
     field_timeout_margin                  => 10 us
   );
@@ -342,7 +342,7 @@ package body vvc_methods_pkg is
   ) is
   begin
     ethernet_send(VVCT, vvc_instance_idx, channel, mac_destination,
-        shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
   end procedure ethernet_send;
 
   procedure ethernet_send(
@@ -356,9 +356,8 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
-    ethernet_send(VVCT, vvc_instance_idx, channel,
-        shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
-        shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+    ethernet_send(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
+      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
   end procedure ethernet_send;
 
 
@@ -433,7 +432,7 @@ package body vvc_methods_pkg is
   ) is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel, mac_destination,
-        shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
+      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
   end procedure ethernet_expect;
 
   procedure ethernet_expect(
@@ -448,9 +447,8 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
-    ethernet_expect(VVCT, vvc_instance_idx, channel,
-        shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source,
-        shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
+    ethernet_expect(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source,
+      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
   end procedure ethernet_expect;
 
   --==========================================================================================

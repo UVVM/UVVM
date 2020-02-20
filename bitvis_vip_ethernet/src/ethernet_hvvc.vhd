@@ -32,7 +32,7 @@ entity ethernet_vvc is
     GC_PHY_INTERFACE                         : t_interface;
     GC_PHY_VVC_INSTANCE_IDX                  : natural;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array := C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT;
-    GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config                 := C_ETHERNET_BFM_CONFIG_DEFAULT;
+    GC_ETHERNET_IF_CONFIG                    : t_ethernet_if_config                  := C_ETHERNET_IF_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural                               := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                               := 950;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                         := WARNING;
@@ -56,7 +56,7 @@ begin
     GC_PHY_INTERFACE                         => GC_PHY_INTERFACE,
     GC_PHY_VVC_INSTANCE_IDX                  => GC_PHY_VVC_INSTANCE_IDX,
     GC_DUT_IF_FIELD_CONFIG                   => GC_DUT_IF_FIELD_CONFIG,
-    GC_ETHERNET_BFM_CONFIG                   => GC_ETHERNET_BFM_CONFIG,
+    GC_ETHERNET_IF_CONFIG                    => GC_ETHERNET_IF_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,
     GC_CMD_QUEUE_COUNT_THRESHOLD             => GC_CMD_QUEUE_COUNT_THRESHOLD,
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
@@ -73,7 +73,7 @@ begin
     GC_PHY_INTERFACE                         => GC_PHY_INTERFACE,
     GC_PHY_VVC_INSTANCE_IDX                  => GC_PHY_VVC_INSTANCE_IDX,
     GC_DUT_IF_FIELD_CONFIG                   => GC_DUT_IF_FIELD_CONFIG,
-    GC_ETHERNET_BFM_CONFIG                   => GC_ETHERNET_BFM_CONFIG,
+    GC_ETHERNET_IF_CONFIG                    => GC_ETHERNET_IF_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,
     GC_CMD_QUEUE_COUNT_THRESHOLD             => GC_CMD_QUEUE_COUNT_THRESHOLD,
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,

@@ -27,7 +27,6 @@ library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 library bitvis_vip_hvvc_to_vvc_bridge;
-use bitvis_vip_hvvc_to_vvc_bridge.common_methods_pkg.all;
 
 use work.ethernet_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -210,8 +209,6 @@ begin
 -- - Fetch and execute the commands
 --==========================================================================================
   cmd_executor : process
-    constant C_TRANSMIT_PROC_CALL                    : string := "Ethernet transmit";
-
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time := 0 ns;
@@ -219,21 +216,6 @@ begin
     variable v_command_is_bfm_access                 : boolean := false;
     variable v_prev_command_was_bfm_access           : boolean := false;
     variable v_msg_id_panel                          : t_msg_id_panel;
-    variable v_ethernet_packet_raw                   : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_length                                : std_logic_vector(15 downto 0);
-    variable v_payload_length                        : natural;
-    variable v_crc_32                                : std_logic_vector(31 downto 0);
-    variable v_ethernet_frame                        : t_ethernet_frame;
-  
-    -- Local overload
-    procedure blocking_send_to_bridge(
-      constant data_bytes                : in  t_byte_array;
-      constant dut_if_field_idx          : in  integer
-    ) is
-      constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
-    begin
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, data_bytes, dut_if_field_idx, C_CURRENT_BYTE_IDX_IN_FIELD, v_msg_id_panel, vvc_config.field_timeout_margin);
-    end procedure blocking_send_to_bridge;
 
   begin
 
@@ -296,67 +278,19 @@ begin
         -- VVC dedicated operations
         --===================================
         when TRANSMIT =>
-          -- Preamble
-          for i in 0 to 6 loop
-            v_ethernet_packet_raw(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);
-          end loop;
+          -- Set DTT
+          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-          -- SFD
-          v_ethernet_packet_raw(7) := C_SFD;
-
-          -- MAC destination
-          v_ethernet_packet_raw(8 to 13)   := to_byte_array(std_logic_vector(v_cmd.mac_destination));
-          v_ethernet_frame.mac_destination := v_cmd.mac_destination;
-
-          -- MAC source
-          v_ethernet_packet_raw(14 to 19) := to_byte_array(std_logic_vector(v_cmd.mac_source));
-          v_ethernet_frame.mac_source     := v_cmd.mac_source;
-
-          -- Length
-          v_payload_length          := v_cmd.length;
-          v_length                  := std_logic_vector(to_unsigned(v_cmd.length, 16));
-          v_ethernet_packet_raw(20) := v_length(15 downto 8);
-          v_ethernet_packet_raw(21) := v_length( 7 downto 0);
-          v_ethernet_frame.length   := v_cmd.length;
-
-          -- Payload
-          v_ethernet_packet_raw(22 to 22+v_cmd.length-1) := v_cmd.payload(0 to v_cmd.length-1);
-          v_ethernet_frame.payload := v_cmd.payload;
-
-          -- Pad if length is less than C_MIN_PAYLOAD_LENGTH(46)
-          if v_cmd.length < C_MIN_PAYLOAD_LENGTH then
-            v_payload_length := C_MIN_PAYLOAD_LENGTH;
-            v_ethernet_packet_raw(22+v_cmd.length to 22+v_payload_length) := (others => (others => '0'));
-          end if;
-
-
-          -- FCS
-          v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
-          v_crc_32 := not(v_crc_32);
-          v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
-          v_ethernet_frame.fcs := v_crc_32;
-
-          -- Add info to the transaction_for_waveview_struct
-          transaction_info.ethernet_frame := v_ethernet_frame;
-
-          -- Send to bridge
-          log(ID_PACKET_INITIATE, C_TRANSMIT_PROC_CALL & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
-          blocking_send_to_bridge(v_ethernet_packet_raw( 0 to  7),                                     C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD);
-
-          log(ID_PACKET_HDR, C_TRANSMIT_PROC_CALL & ": Transmitting header." & format_command_idx(v_cmd.cmd_idx) & hdr_to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
-          blocking_send_to_bridge(v_ethernet_packet_raw( 8 to 13),                                     C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION);
-          blocking_send_to_bridge(v_ethernet_packet_raw(14 to 19),                                     C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE);
-          blocking_send_to_bridge(v_ethernet_packet_raw(20 to 21),                                     C_IF_FIELD_NUM_ETHERNET_LENTGTH);
-
-          log(ID_PACKET_DATA, C_TRANSMIT_PROC_CALL & ": Transmitting payload." & format_command_idx(v_cmd.cmd_idx) & data_to_string(v_ethernet_frame), C_SCOPE, v_msg_id_panel);
-          blocking_send_to_bridge(v_ethernet_packet_raw(22 to 22+v_payload_length-1),                  C_IF_FIELD_NUM_ETHERNET_PAYLOAD);
-          blocking_send_to_bridge(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3), C_IF_FIELD_NUM_ETHERNET_FCS);
-
-          -- Interpacket gap
-          wait for vvc_config.bfm_config.interpacket_gap_time;
-
-          log(ID_PACKET_COMPLETE, C_TRANSMIT_PROC_CALL & ": Finished transmitting ethernet packet." & format_command_idx(v_cmd.cmd_idx), C_SCOPE, v_msg_id_panel);
-
+          -- Call the corresponding procedure in the support package.
+          send_ethernet_packet(proc_call            => "Ethernet transmit",
+                               vvc_cmd              => v_cmd,
+                               interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
+                               hvvc_to_bridge       => hvvc_to_bridge,
+                               bridge_to_hvvc       => bridge_to_hvvc,
+                               field_timeout_margin => vvc_config.field_timeout_margin,
+                               transaction_info     => transaction_info,
+                               scope                => C_SCOPE,
+                               msg_id_panel         => v_msg_id_panel);
 
         -- UVVM common operations
         --===================================

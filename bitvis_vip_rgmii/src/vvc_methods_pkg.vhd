@@ -262,7 +262,7 @@ package body vvc_methods_pkg is
         dtt_group.bt.transaction_status                         := IN_PROGRESS;
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
       when others =>
-        null;
+        alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;

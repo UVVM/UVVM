@@ -1,3 +1,3 @@
 # library bitvis_vip_hvvc_to_vvc_bridge
-../src/common_methods_pkg.vhd
+../src/support_pkg.vhd
 ../src/hvvc_to_vvc_bridge.vhd

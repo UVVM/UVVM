@@ -22,7 +22,7 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-package common_methods_pkg is
+package support_pkg is
 
   --==========================================================================================
   -- Methods
@@ -73,10 +73,10 @@ package common_methods_pkg is
     constant field_timeout_margin      : in  time
   );
 
-end package common_methods_pkg;
+end package support_pkg;
 
 
-package body common_methods_pkg is
+package body support_pkg is
 
   procedure hvvc_to_bridge_trigger(
     signal hvvc_to_bridge : out t_hvvc_to_bridge
@@ -159,4 +159,4 @@ package body common_methods_pkg is
   end procedure blocking_send_to_bridge;
 
 
-end package body common_methods_pkg;
+end package body support_pkg;

@@ -204,7 +204,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
 
         # Check with all testcases run with requirement
         for testcase in requirement.get_actual_testcase_list():
-            if testcase.get_result() == None:
+            if testcase.get_result() == testcase_not_run_string:
                 testcase_not_run_list.append(testcase)
             elif testcase.get_result() == testcase_fail_string:
                 testcase_fail_list.append(testcase)
@@ -214,17 +214,25 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 print("WARNING! Unknown result for testcase : %s." %(testcase.get_name()))
                 testcase_fail_list.append(testcase)
 
-    # Check with all defined testcases, and verify if they have a result
-    for testcase in testcase_container.get_list():
-        if testcase.get_result() == None:
-            testcase_not_run_list.append(testcase)
+        # Check with all testcases that should have been run 
+        # with the requirement, but have not.
+        for testcase in requirement.get_expected_testcase_list():
+            if not(testcase in requirement.get_actual_testcase_list()):
+                if testcase.get_result() == testcase_not_run_string:
+                    testcase_not_run_list.append(testcase)
+                elif testcase.get_result() == testcase_fail_string:
+                    testcase_fail_list.append(testcase)
+                elif testcase.get_result() == testcase_pass_string:
+                    testcase_pass_list.append(testcase)
+                else:
+                    print("WARNING! Unknown result for testcase : %s." %(testcase.get_name()))
+                    testcase_fail_list.append(testcase)
+
 
     # Check compliance for all requirements
     for requirement in requirement_container.get_list():
         if requirement.get_compliance() == not_tested_compliant_string:
             requirement_not_run_list.append(requirement)
-        elif requirement.get_compliance() == None:
-             requirement_not_run_list.append(requirement)
         elif requirement.get_compliance() == non_compliant_string:
             requirement_non_compliant_list.append(requirement)
         elif requirement.get_compliance() == compliant_string:
@@ -285,50 +293,55 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
         print("\n")
 
     #==========================================================================
-    # Write the results to CSV
+    # Write the results to CSVs
     #==========================================================================
+    filename = run_configuration.get("spec_cov")
+    spec_cov_req_filename = filename[: filename.rfind(".")] + "_req.csv"
+    spec_cov_tc_filename = filename[: filename.rfind(".")] + "_tc.csv"
+    spec_cov_req_tc_filename = filename[: filename.rfind(".")] + "_req_tc.csv"
 
+    # Write requirement with all testcases
     try:
-        with open(run_configuration.get("spec_cov"), mode='w', newline='') as spec_cov_file:
-            csv_writer = csv.writer(spec_cov_file, delimiter=delimiter)
+        with open(spec_cov_req_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Requirement", "Testcase(s)"])
+            csv_writer.writerow(["Requirement", "Testcases", "Compliance"])
             for requirement in requirement_container.get_list():
                 testcase_string = ""
                 for testcase in requirement.get_actual_testcase_list():
                     testcase_string += testcase.get_name() + " "
-
-                if requirement.get_actual_testcase_list() and (requirement.get_compliance() == compliant_string):
-                    csv_writer.writerow([requirement.get_name(), testcase_string])
-
-                # Insert blank line in CSV
-            csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-requirement(s)"])
-            for requirement in requirement_container.get_list():
-                sub_requirement_string = ""
-                for sub_requirement in requirement.get_sub_requirement_list():
-                    if sub_requirement.get_compliance() == compliant_string:
-                        sub_requirement_string += sub_requirement.get_name() + " "
-
-                if requirement.get_sub_requirement_list() and (requirement.get_compliance() == compliant_string):
-                    csv_writer.writerow([requirement.get_name(), sub_requirement_string])
-
-            # Insert blank line in CSV
-            csv_writer.writerow([])
-            csv_writer.writerow(["Testcase", "Requirement(s)"])
-            for testcase in testcase_container.get_list():
-                requirement_string = ""
-                if testcase.get_result() == testcase_pass_string:
-                    for requirement in testcase.get_actual_requirement_list():
-                        requirement_string += requirement.get_name() + " "
-                    if requirement_string:
-                        csv_writer.writerow([testcase.get_name(), requirement_string])
-
+                csv_writer.writerow([requirement.get_name(), testcase_string, requirement.get_compliance()])
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], run_configuration.get("spec_cov")))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_filename))
         abort(error_code = 1, msg = error_msg)
 
+    # Write testcase with all requirements
+    try:
+        with open(spec_cov_tc_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
 
+            csv_writer.writerow(["Testcase", "Requirements", "Result"])
+            for testcase in testcase_container.get_list():
+                requirement_string = ""
+                for requirement in testcase.get_actual_requirement_list():
+                    requirement_string += requirement.get_name() + " "
+                csv_writer.writerow([testcase.get_name(), requirement_string, testcase.get_result()])
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_filename))
+        abort(error_code = 1, msg = error_msg)
+
+    # Write testcase and requirement
+    try:
+        with open(spec_cov_req_tc_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
+
+            csv_writer.writerow(["Requirement", "Testcases", "Compliance"])
+            for requirement in requirement_container.get_list():
+                for testcase in requirement.get_actual_testcase_list():
+                    csv_writer.writerow([requirement.get_name(), testcase.get_name(), requirement.get_compliance()])
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_tc_filename))
+        abort(error_code = 1, msg = error_msg)
 
 
 
@@ -361,11 +374,10 @@ def build_specification_compliance_list(run_configuration, requirement_container
             if not(requirement.get_compliance()):
                 requirement.set_compliance(not_tested_compliant_string)
 
-            # Verify with all testcases
-            for testcase in testcase_container.get_list():
-                if requirement in testcase.get_actual_requirement_list():
-                    if testcase.get_result() == testcase_fail_string:
-                        requirement.set_compliance(non_compliant_string)
+            # Check status of all run testcases with requirement
+            for testcase in requirement.get_actual_testcase_list():
+                if testcase.get_result() == testcase_fail_string:
+                    requirement.set_compliance(non_compliant_string)
 
             # Verify with sub-reqiurements
             for sub_requirement in requirement.get_sub_requirement_list():
@@ -394,16 +406,26 @@ def build_specification_compliance_list(run_configuration, requirement_container
             if not(requirement.get_compliance()):
                 requirement.set_compliance(not_tested_compliant_string)
 
-            # Verify with all testcases
-            for testcase in testcase_container.get_list():
-                if requirement in testcase.get_actual_requirement_list():
-                    if testcase.get_result() == testcase_fail_string:
-                        requirement.set_compliance(non_compliant_string)
+            # Verify that required testcases have been run
+            if requirement.get_is_or_listed():
+                # One of the listed testcases for the requirement has been run
+                ok =  any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            else:
+                # All of the listed testcases for the requirement has been run
+                ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            if not(ok):
+                requirement.set_compliance(non_compliant_string)
 
-            # Verify that requirement has been run with all testcases
-            for testcase in requirement.get_expected_testcase_list():
-                if not(requirement in testcase.get_actual_requirement_list()):
-                    requirement.set_compliance(non_compliant_string)
+            ## Verify with all testcases
+            #for testcase in testcase_container.get_list():
+            #    if requirement in testcase.get_actual_requirement_list():
+            #        if testcase.get_result() == testcase_fail_string:
+            #            requirement.set_compliance(non_compliant_string)
+
+            ## Verify that requirement has been run with all testcases
+            #for testcase in requirement.get_expected_testcase_list():
+            #    if not(requirement in testcase.get_actual_requirement_list()):
+            #        requirement.set_compliance(non_compliant_string)
 
             # Verify with sub-reqiurements
             for sub_requirement in requirement.get_sub_requirement_list():
@@ -433,28 +455,28 @@ def build_specification_compliance_list(run_configuration, requirement_container
             if not(requirement.get_compliance()):
                 requirement.set_compliance(not_tested_compliant_string)
 
-            # Verify with all testcases
-            for testcase in testcase_container.get_list():
+            # Verify that required testcases have been run
+            if requirement.get_is_or_listed():
+                # One of the listed testcases for the requirement has been run
+                ok =  any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            else:
+                # All of the listed testcases for the requirement has been run
+                ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            if not(ok):
+                requirement.set_compliance(non_compliant_string)
 
-                # 1. all expected testcases
-                if requirement in testcase.get_expected_requirement_list():
-                    if testcase.get_result() == testcase_fail_string:
-                        requirement.set_compliance(non_compliant_string)
-
-                # 2. all actual testcases
-                if requirement in testcase.get_actual_requirement_list():
-                    if testcase.get_result() == testcase_fail_string:
-                        requirement.set_compliance(non_compliant_string)
-
-                # 3. only this requirement in testcase actual list
+            # Verify that only this requirement has run this testcase
+            for testcase in requirement.get_expected_testcase_list():
+                # All requirements that have been run with this testcase
                 for testcase_requirement in testcase.get_actual_requirement_list():
+                    # Check if any other requirements have been run with this testcase
                     if not(requirement.get_name().upper() == testcase_requirement.get_name().upper()):
                         requirement.set_compliance(non_compliant_string)
 
-            # Verify that requirement has been run with all testcases
-            for testcase in requirement.get_expected_testcase_list():
-                if not(requirement in testcase.get_actual_requirement_list()):
-                    requirement.set_compliance(non_compliant_string)
+            #for testcase in testcase_container.get_list():
+            #    for testcase_requirement in testcase.get_actual_requirement_list():
+            #        if not(requirement.get_name().upper() == testcase_requirement.get_name().upper()):
+            #            requirement.set_compliance(non_compliant_string)
 
             # Verify with sub-reqiurements
             for sub_requirement in requirement.get_sub_requirement_list():

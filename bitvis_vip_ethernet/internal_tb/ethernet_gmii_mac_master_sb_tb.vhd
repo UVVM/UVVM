@@ -94,7 +94,6 @@ begin
 
       variable v_send_data_raw   : t_byte_array(0 to get_payload_length+16-1);
       variable v_send_data_frame : t_ethernet_frame;
-      variable v_receive_data    : t_vvc_result;
       variable v_cmd_idx         : integer;
       variable v_payload_length  : positive;
     begin

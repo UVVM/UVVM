@@ -18,5 +18,5 @@ context hvvc_context is
   use bitvis_vip_ethernet.transaction_pkg.all;
   use bitvis_vip_ethernet.vvc_methods_pkg.all;
   use bitvis_vip_ethernet.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_ethernet.ethernet_bfm_pkg;
+  use bitvis_vip_ethernet.ethernet_bfm_pkg.all;
 end context;

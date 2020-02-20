@@ -43,9 +43,11 @@ end entity gmii_test_harness;
 
 architecture struct of gmii_test_harness is
 
-  signal clk        : std_logic;
-  signal i1_gmii_if : t_gmii_if;
-  signal i2_gmii_if : t_gmii_if;
+  signal clk           : std_logic;
+  signal i1_gmii_tx_if : t_gmii_tx_if;
+  signal i1_gmii_rx_if : t_gmii_rx_if;
+  signal i2_gmii_tx_if : t_gmii_tx_if;
+  signal i2_gmii_rx_if : t_gmii_rx_if;
 
 begin
 
@@ -76,8 +78,8 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => i1_gmii_if.gmii_to_dut_if,
-      gmii_from_dut_if => i1_gmii_if.gmii_from_dut_if
+      gmii_vvc_tx_if => i1_gmii_tx_if,
+      gmii_vvc_rx_if => i1_gmii_rx_if
     );
 
   i2_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
@@ -89,19 +91,19 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => i2_gmii_if.gmii_to_dut_if,
-      gmii_from_dut_if => i2_gmii_if.gmii_from_dut_if
+      gmii_vvc_tx_if => i2_gmii_tx_if,
+      gmii_vvc_rx_if => i2_gmii_rx_if
     );
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
-  i1_gmii_if.gmii_from_dut_if.gtxclk <= clk;
-  i1_gmii_if.gmii_to_dut_if.rxclk    <= clk;
-  i1_gmii_if.gmii_from_dut_if.txen   <= i2_gmii_if.gmii_to_dut_if.rxdv;
-  i1_gmii_if.gmii_from_dut_if.txd    <= i2_gmii_if.gmii_to_dut_if.rxd;
-  i2_gmii_if.gmii_from_dut_if.gtxclk <= clk;
-  i2_gmii_if.gmii_to_dut_if.rxclk    <= clk;
-  i2_gmii_if.gmii_from_dut_if.txen   <= i1_gmii_if.gmii_to_dut_if.rxdv;
-  i2_gmii_if.gmii_from_dut_if.txd    <= i1_gmii_if.gmii_to_dut_if.rxd;
+  i1_gmii_tx_if.gtxclk <= clk;
+  i1_gmii_rx_if.rxclk  <= clk;
+  i1_gmii_rx_if.rxdv   <= i2_gmii_tx_if.txen;
+  i1_gmii_rx_if.rxd    <= i2_gmii_tx_if.txd;
+  i2_gmii_tx_if.gtxclk <= clk;
+  i2_gmii_rx_if.rxclk  <= clk;
+  i2_gmii_rx_if.rxdv   <= i1_gmii_tx_if.txen;
+  i2_gmii_rx_if.rxd    <= i1_gmii_tx_if.txd;
 
 end struct;

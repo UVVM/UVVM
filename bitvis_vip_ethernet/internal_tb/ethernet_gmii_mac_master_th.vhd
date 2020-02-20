@@ -55,8 +55,8 @@ architecture struct of gmii_mac_master_test_harness is
 
   signal clk              : std_logic;
   signal reset            : std_logic;
-  signal gmii_to_dut_if   : t_gmii_to_dut_if;
-  signal gmii_from_dut_if : t_gmii_from_dut_if;
+  signal gmii_to_dut_if   : t_gmii_tx_if;
+  signal gmii_from_dut_if : t_gmii_rx_if;
 
 begin
 
@@ -64,8 +64,8 @@ begin
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
-  if_out.clk                   <= clk;
-  gmii_to_dut_if.rxclk <= clk;
+  if_out.clk            <= clk;
+  gmii_to_dut_if.gtxclk <= clk;
 
   -----------------------------
   -- vvc/executors
@@ -86,8 +86,8 @@ begin
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
     )
     port map(
-      gmii_to_dut_if   => gmii_to_dut_if,
-      gmii_from_dut_if => gmii_from_dut_if
+      gmii_vvc_tx_if => gmii_to_dut_if,
+      gmii_vvc_rx_if => gmii_from_dut_if
     );
 
   -----------------------------
@@ -99,62 +99,62 @@ begin
     )
     port map(
       -- Unbuffered 125 MHz clock input
-      clock_125_i      => clk,
+      clock_125_i        => clk,
       -- Asynchronous reset
-      reset_i          => reset,
+      reset_i            => reset,
       -- MAC address of this station
       -- Must not change after reset is deasserted
-      mac_address_i    => t_mac_address(reverse_bytes(std_ulogic_vector(GC_MAC_ADDRESS))),
+      mac_address_i      => t_mac_address(reverse_bytes(std_ulogic_vector(GC_MAC_ADDRESS))),
       -- MII (Media-independent interface)
-      mii_tx_clk_i     => clk,
-      mii_tx_er_o      => open,
-      mii_tx_en_o      => gmii_from_dut_if.txen,
-      mii_txd_o        => gmii_from_dut_if.txd,
-      mii_rx_clk_i     => clk,
-      mii_rx_er_i      => '0',
-      mii_rx_dv_i      => gmii_to_dut_if.rxdv,
-      mii_rxd_i        => gmii_to_dut_if.rxd,
+      mii_tx_clk_i       => clk,
+      mii_tx_er_o        => open,
+      mii_tx_en_o        => gmii_from_dut_if.rxdv,
+      mii_txd_o          => gmii_from_dut_if.rxd,
+      mii_rx_clk_i       => clk,
+      mii_rx_er_i        => '0',
+      mii_rx_dv_i        => gmii_to_dut_if.txen,
+      mii_rxd_i          => gmii_to_dut_if.txd,
 
-    -- GMII (Gigabit media-independent interface)
-    gmii_gtx_clk_o     => gmii_from_dut_if.gtxclk,
+      -- GMII (Gigabit media-independent interface)
+      gmii_gtx_clk_o     => gmii_from_dut_if.rxclk,
 
-    -- RGMII (Reduced pin count gigabit media-independent interface)
-    rgmii_tx_ctl_o     => open,
-    rgmii_rx_ctl_i     => '0',
+      -- RGMII (Reduced pin count gigabit media-independent interface)
+      rgmii_tx_ctl_o     => open,
+      rgmii_rx_ctl_i     => '0',
 
-    -- MII Management Interface
-    -- Clock, can be identical to clock_125_i
-    -- If not, adjust MIIM_CLOCK_DIVIDER accordingly
-    miim_clock_i       => clk,
-    mdc_o              => open,
-    mdio_io            => open,
-    -- Status, synchronous to miim_clock_i
-    link_up_o          => open,
-    speed_o            => open,
-    -- Also synchronous to miim_clock_i if used!
-    speed_override_i   => SPEED_1000MBPS,
+      -- MII Management Interface
+      -- Clock, can be identical to clock_125_i
+      -- If not, adjust MIIM_CLOCK_DIVIDER accordingly
+      miim_clock_i       => clk,
+      mdc_o              => open,
+      mdio_io            => open,
+      -- Status, synchronous to miim_clock_i
+      link_up_o          => open,
+      speed_o            => open,
+      -- Also synchronous to miim_clock_i if used!
+      speed_override_i   => SPEED_1000MBPS,
 
-    -- TX FIFO
-    tx_clock_i         => clk,
-    -- Synchronous reset
-    -- When asserted, the content of the buffer was lost.
-    -- When full is deasserted the next time, a packet size must be written.
-    -- The data of the packet previously being written is not available anymore then.
-    tx_reset_o         => if_out.tx_reset_o,
-    tx_data_i          => if_in.tx_data_i,
-    tx_wr_en_i         => if_in.tx_wr_en_i,
-    tx_full_o          => if_out.tx_full_o,
+      -- TX FIFO
+      tx_clock_i         => clk,
+      -- Synchronous reset
+      -- When asserted, the content of the buffer was lost.
+      -- When full is deasserted the next time, a packet size must be written.
+      -- The data of the packet previously being written is not available anymore then.
+      tx_reset_o         => if_out.tx_reset_o,
+      tx_data_i          => if_in.tx_data_i,
+      tx_wr_en_i         => if_in.tx_wr_en_i,
+      tx_full_o          => if_out.tx_full_o,
 
-    -- RX FIFO
-    rx_clock_i         => clk,
-    -- Synchronous reset
-    -- When asserted, the content of the buffer was lost.
-    -- When empty is deasserted the next time, a packet size must be read out.
-    -- The data of the packet previously being read out is not available anymore then.
-    rx_reset_o         => if_out.rx_reset_o,
-    rx_empty_o         => if_out.rx_empty_o,
-    rx_rd_en_i         => if_in.rx_rd_en_i,
-    rx_data_o          => if_out.rx_data_o
-  );
+      -- RX FIFO
+      rx_clock_i         => clk,
+      -- Synchronous reset
+      -- When asserted, the content of the buffer was lost.
+      -- When empty is deasserted the next time, a packet size must be read out.
+      -- The data of the packet previously being read out is not available anymore then.
+      rx_reset_o         => if_out.rx_reset_o,
+      rx_empty_o         => if_out.rx_empty_o,
+      rx_rd_en_i         => if_in.rx_rd_en_i,
+      rx_data_o          => if_out.rx_data_o
+    );
 
 end struct;

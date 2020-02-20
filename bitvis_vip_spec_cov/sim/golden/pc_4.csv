@@ -1,0 +1,7 @@
+NOTE: This coverage file is only valid when the last line is 'SUMMARY, TC_4, PASS'
+TESTCASE_NAME: TC_4
+DELIMITER: ,
+
+REQ_4,TC_4_FAIL,FAIL
+REQ_4,TC_4,PASS
+SUMMARY, TC_4, FAIL

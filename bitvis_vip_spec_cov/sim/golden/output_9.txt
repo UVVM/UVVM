@@ -1,31 +1,34 @@
-
-Configuration:
-----------------------------------------------
-requirement_list     : ../internal_tb/internal_sub_req_file.csv
-partial_cov          : ../sim/pc_8.csv
-requirement_map_list : ../internal_tb/internal_sub_req_map_file.csv
-spec_cov             : ../sim/sc_8_1.csv
-clean                : False
-strictness           : 1
-config               : ../internal_tb/internal_cfg_1_strict_1.txt
-
-
-SUMMARY:
-----------------------------------------------
-Number of compliant requirements     : 4
-Number of non compliant requirements : 0
-Number of non verified requirements  : 1
-Number of passing testcases : 4
-Number of failing testcases : 0
-Number of not run testcases : 0
-
-
-Compliant requirement(s) :
-UART_REQ_BR_A, UART_REQ_BR_B, UART_REQ_ODD, UART_REQ_EVEN, 
-
-Not verified requirement(s) :
-UART_REQ_GENERAL, 
-
-Passing testcase(s) :
-TC_SUB_REQ, TC_SUB_REQ, TC_SUB_REQ, TC_SUB_REQ, 
-
+
+Configuration:
+----------------------------------------------
+requirement_list     : ../internal_tb/internal_sub_req_file.csv
+partial_cov          : ../sim/pc_8.csv
+requirement_map_list : ../internal_tb/internal_sub_req_map_file.csv
+spec_cov             : ../sim/sc_8_1.csv
+clean                : False
+strictness           : 1
+config               : ../internal_tb/internal_cfg_1_strict_1.txt
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 2
+Number of non compliant requirements : 3
+Number of non verified requirements  : 0
+Number of passing testcases : 4
+Number of failing testcases : 0
+Number of not run testcases : 5
+
+
+Compliant requirement(s) :
+UART_REQ_BR_A, UART_REQ_BR_B, 
+
+Non compliant requirement(s) :
+UART_REQ_ODD, UART_REQ_EVEN, UART_REQ_GENERAL, 
+
+Passing testcase(s) :
+TC_SUB_REQ, TC_SUB_REQ, TC_SUB_REQ, TC_SUB_REQ, 
+
+Not run testcase(s) :
+TC_5, TC_6, TC_1, TC_2, TC_3, 
+

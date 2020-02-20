@@ -1,0 +1,9 @@
+Testcase,Requirements,Result
+TC_1, REQ_1 , PASS
+TC_2, , NOT RUN
+TC_3, , NOT RUN
+TC_4, , NOT RUN
+TC_4_FAIL, , NOT RUN
+TC_5, , NOT RUN
+TC_6, , NOT RUN
+TC_7, , NOT RUN

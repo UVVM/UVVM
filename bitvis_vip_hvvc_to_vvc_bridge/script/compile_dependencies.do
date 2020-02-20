@@ -14,8 +14,6 @@
 # Call compile scripts from dependent libraries
 #-----------------------------------------------------------------------
 set root_path "../.."
-do $root_path/script/compile_src.do $root_path/uvvm_util $root_path/uvvm_util/sim
-do $root_path/script/compile_src.do $root_path/uvvm_vvc_framework $root_path/uvvm_vvc_framework/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_scoreboard $root_path/bitvis_vip_scoreboard/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_gmii $root_path/bitvis_vip_gmii/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim

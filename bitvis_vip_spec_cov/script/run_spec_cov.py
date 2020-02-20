@@ -628,17 +628,6 @@ def build_specification_compliance_list(run_configuration, requirement_container
             if not(ok):
                 requirement.set_compliance(non_compliant_string)
 
-            ## Verify with all testcases
-            #for testcase in testcase_container.get_list():
-            #    if requirement in testcase.get_actual_requirement_list():
-            #        if testcase.get_result() == testcase_fail_string:
-            #            requirement.set_compliance(non_compliant_string)
-
-            ## Verify that requirement has been run with all testcases
-            #for testcase in requirement.get_expected_testcase_list():
-            #    if not(requirement in testcase.get_actual_requirement_list()):
-            #        requirement.set_compliance(non_compliant_string)
-
             # Verify with sub-reqiurements
             for sub_requirement in requirement.get_sub_requirement_list():
                 if sub_requirement.get_compliance() == non_compliant_string:
@@ -684,11 +673,6 @@ def build_specification_compliance_list(run_configuration, requirement_container
                     # Check if any other requirements have been run with this testcase
                     if not(requirement.get_name().upper() == testcase_requirement.get_name().upper()):
                         requirement.set_compliance(non_compliant_string)
-
-            #for testcase in testcase_container.get_list():
-            #    for testcase_requirement in testcase.get_actual_requirement_list():
-            #        if not(requirement.get_name().upper() == testcase_requirement.get_name().upper()):
-            #            requirement.set_compliance(non_compliant_string)
 
             # Verify with sub-reqiurements
             for sub_requirement in requirement.get_sub_requirement_list():

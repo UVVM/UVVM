@@ -343,8 +343,7 @@ def build_specification_compliance_list(run_configuration, requirement_container
     #==========================================================================
     if strictness == '0':
         for requirement in requirement_container.get_list():
-
-            # Start as compliant, if not already set
+            # Set as no tested compliance if not already set
             if not(requirement.get_compliance()):
                 requirement.set_compliance(not_tested_compliant_string)
 
@@ -358,12 +357,16 @@ def build_specification_compliance_list(run_configuration, requirement_container
             for sub_requirement in requirement.get_sub_requirement_list():
                 if sub_requirement.get_compliance() == non_compliant_string:
                     requirement.set_compliance(non_compliant_string)
+                elif requirement.get_compliance() == not_tested_compliant_string:
+                    requirement.set_compliance(sub_requirement.get_compliance())
 
             # Update super-requirement
             super_requirement = requirement.get_supert_requirement()
             if super_requirement:
                 if requirement.get_compliance() == non_compliant_string:
                     super_requirement.set_compliance(non_compliant_string)
+                elif super_requirement.get_compliance() == not_tested_compliant_string:
+                    super_requirement.set_compliance(requirement.get_compliance())
 
 
     #==========================================================================
@@ -373,7 +376,7 @@ def build_specification_compliance_list(run_configuration, requirement_container
     elif strictness == '1':
 
         for requirement in requirement_container.get_list():
-            # Start as compliant, if not already set
+            # Set as no tested compliance if not already set
             if not(requirement.get_compliance()):
                 requirement.set_compliance(not_tested_compliant_string)
 
@@ -392,12 +395,16 @@ def build_specification_compliance_list(run_configuration, requirement_container
             for sub_requirement in requirement.get_sub_requirement_list():
                 if sub_requirement.get_compliance() == non_compliant_string:
                     requirement.set_compliance(non_compliant_string)
+                elif requirement.get_compliance() == not_tested_compliant_string:
+                    requirement.set_compliance(sub_requirement.get_compliance())
 
             # Update super-requirement
             super_requirement = requirement.get_supert_requirement()
             if super_requirement:
                 if requirement.get_compliance() == non_compliant_string:
                     super_requirement.set_compliance(non_compliant_string)
+                elif super_requirement.get_compliance() == not_tested_compliant_string:
+                    super_requirement.set_compliance(requirement.get_compliance())
 
 
 
@@ -408,7 +415,7 @@ def build_specification_compliance_list(run_configuration, requirement_container
     #==========================================================================
     elif strictness == '2':
         for requirement in requirement_container.get_list():
-            # Start as compliant, if not already set
+            # Set as no tested compliance if not already set
             if not(requirement.get_compliance()):
                 requirement.set_compliance(not_tested_compliant_string)
 
@@ -439,12 +446,17 @@ def build_specification_compliance_list(run_configuration, requirement_container
             for sub_requirement in requirement.get_sub_requirement_list():
                 if sub_requirement.get_compliance() == non_compliant_string:
                     requirement.set_compliance(non_compliant_string)
+                elif requirement.get_compliance() == not_tested_compliant_string:
+                    requirement.set_compliance(sub_requirement.get_compliance())
 
             # Update super-requirement
             super_requirement = requirement.get_supert_requirement()
             if super_requirement:
                 if requirement.get_compliance() == non_compliant_string:
                     super_requirement.set_compliance(non_compliant_string)
+                elif super_requirement.get_compliance() == not_tested_compliant_string:
+                    super_requirement.set_compliance(requirement.get_compliance())
+
 
     else:
         msg = ("strictness level %d outside limits 0-2" %(strictness))

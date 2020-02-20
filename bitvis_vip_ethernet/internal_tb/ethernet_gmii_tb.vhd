@@ -55,7 +55,7 @@ begin
   p_main: process
     variable v_cmd_idx            : natural;
     variable v_send_data          : t_byte_array(0 to 150);
-    variable v_receive_data       : t_vvc_result;
+    variable v_receive_data       : bitvis_vip_ethernet.vvc_cmd_pkg.t_vvc_result;
   begin
 
     -- To avoid that log files from different test cases (run in separate

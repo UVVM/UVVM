@@ -59,6 +59,18 @@ def main(argv):
   tb.set_configs(configs)
   tb.run_simulation()
 
+  # Set testbench and run
+  tb.set_tb_name("ethernet_gmii_tb")
+  tb.run_simulation()
+
+  # Set testbench and run
+  tb.set_tb_name("ethernet_gmii_mac_master_tb")
+  tb.run_simulation()
+
+  # Set testbench and run
+  tb.set_tb_name("ethernet_gmii_mac_master_sb_tb")
+  tb.run_simulation()
+
   # Print simulation results
   tb.print_statistics()
 

@@ -24,12 +24,11 @@ context uvvm_util.uvvm_util_context;
 
 --========================================================================================================================
 --========================================================================================================================
-package ethernet_bfm_pkg is
+package support_pkg is
 
   --========================================================================================================================
-  -- Types and constants for ETHERNET BFM
+  -- Types and constants
   --========================================================================================================================
-  constant C_SCOPE             : string := "ETHERNET BFM";
   constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
   constant C_CRC_32_RESIDUE    : std_logic_vector(31 downto 0) := x"C704DD7B";
@@ -68,14 +67,14 @@ package ethernet_bfm_pkg is
   end record t_ethernet_frame_status;
 
   -- Configuration record to be assigned in the test harness.
-  type t_ethernet_bfm_config is record
+  type t_ethernet_if_config is record
     mac_destination      : unsigned(47 downto 0);
     mac_source           : unsigned(47 downto 0);
     fcs_error_severity   : t_alert_level;
     interpacket_gap_time : time;
   end record;
 
-  constant C_ETHERNET_BFM_CONFIG_DEFAULT : t_ethernet_bfm_config := (
+  constant C_ETHERNET_IF_CONFIG_DEFAULT : t_ethernet_if_config := (
     mac_destination      => (others => 'Z'),
     mac_source           => (others => 'Z'),
     fcs_error_severity   => ERROR,
@@ -84,7 +83,7 @@ package ethernet_bfm_pkg is
 
 
   --========================================================================================================================
-  -- BFM procedures
+  -- Functions and procedures
   --========================================================================================================================
   impure function generate_crc_32_complete(
     constant data : in t_byte_array
@@ -143,13 +142,13 @@ package ethernet_bfm_pkg is
     constant expected : in t_ethernet_frame
   ) return boolean;
 
-end package ethernet_bfm_pkg;
+end package support_pkg;
 
 
 --========================================================================================================================
 --========================================================================================================================
 
-package body ethernet_bfm_pkg is
+package body support_pkg is
 
   ---------------------------------------------------------------------------------
   -- generate_crc_32
@@ -317,5 +316,4 @@ package body ethernet_bfm_pkg is
            actual.fcs                           = expected.fcs;
   end function ethernet_match;
 
-end package body ethernet_bfm_pkg;
-
+end package body support_pkg;

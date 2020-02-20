@@ -56,16 +56,16 @@ begin
   -----------------------------
   i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX     => 1,
-      GC_INTERFACE        => GMII,
-      GC_VVC_INSTANCE_IDX => 1
+      GC_INSTANCE_IDX         => 1,
+      GC_PHY_INTERFACE        => GMII,
+      GC_PHY_VVC_INSTANCE_IDX => 1
     );
 
   i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX     => 2,
-      GC_INTERFACE        => GMII,
-      GC_VVC_INSTANCE_IDX => 2
+      GC_INSTANCE_IDX         => 2,
+      GC_PHY_INTERFACE        => GMII,
+      GC_PHY_VVC_INSTANCE_IDX => 2
     );
 
 

@@ -64,18 +64,18 @@ begin
   -----------------------------
   i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX        => 1,
-      GC_INTERFACE           => SBI,
-      GC_VVC_INSTANCE_IDX    => 1,
-      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
+      GC_INSTANCE_IDX         => 1,
+      GC_PHY_INTERFACE        => SBI,
+      GC_PHY_VVC_INSTANCE_IDX => 1,
+      GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
   i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
-      GC_INSTANCE_IDX        => 2,
-      GC_INTERFACE           => SBI,
-      GC_VVC_INSTANCE_IDX    => 2,
-      GC_DUT_IF_FIELD_CONFIG => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
+      GC_INSTANCE_IDX         => 2,
+      GC_PHY_INTERFACE        => SBI,
+      GC_PHY_VVC_INSTANCE_IDX => 2,
+      GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
 

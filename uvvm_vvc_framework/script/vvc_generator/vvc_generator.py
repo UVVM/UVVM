@@ -1341,7 +1341,7 @@ def add_methods_pkg_body(file_handle, vvc_name):
     file_handle.write("  --      gen_pulse(dtt_trigger, 0 ns, \"pulsing global DTT trigger\", scope, ID_NEVER);\n")
     print_linefeed(file_handle)
     file_handle.write("  --    when others =>\n")
-    file_handle.write("  --      null;\n")
+    file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\");\n")
     file_handle.write("  --  end case;\n")
     print_linefeed(file_handle)
     file_handle.write("    wait for 0 ns;\n")

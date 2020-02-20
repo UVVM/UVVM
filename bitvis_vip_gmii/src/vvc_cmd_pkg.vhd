@@ -39,6 +39,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     data_array            : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
     data_array_length     : natural;
+    num_bytes_read        : natural;
     -- Common VVC fields
     operation             : t_operation;
     proc_call             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -58,6 +59,7 @@ package vvc_cmd_pkg is
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
     data_array            => (others => (others => '0')),
     data_array_length     => 0,
+    num_bytes_read        => 0,
     -- Common VVC fields
     operation             => NO_OPERATION,
     proc_call             => (others => NUL),

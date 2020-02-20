@@ -251,7 +251,7 @@ begin
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
-          gmii_read(data_array    => v_result.data_array,
+          gmii_read(data_array    => v_result.data_array(0 to v_cmd.num_bytes_read-1),
                     data_len      => v_result.data_array_length,
                     msg           => format_msg(v_cmd),
                     gmii_rx_if    => gmii_vvc_rx_if,

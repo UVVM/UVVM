@@ -137,6 +137,15 @@ package vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant num_bytes        : in    positive;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  );
+
+  procedure gmii_read(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -207,6 +216,7 @@ package body vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant num_bytes        : in    positive;
     constant msg              : in    string;
     constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
@@ -217,7 +227,19 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
+    shared_vvc_cmd.num_bytes_read := num_bytes;
     send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+  procedure gmii_read(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+  begin
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, msg, scope);
   end procedure;
 
   procedure gmii_expect( 

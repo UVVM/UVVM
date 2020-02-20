@@ -20,7 +20,7 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-use work.ethernet_bfm_pkg.all;
+use work.support_pkg.all;
 
 --=================================================================================================
 --=================================================================================================

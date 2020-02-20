@@ -22,7 +22,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_pkg;
 
-use work.ethernet_bfm_pkg.all;
+use work.support_pkg.all;
 
 --==========================================================================================
 --==========================================================================================

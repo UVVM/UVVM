@@ -24,7 +24,7 @@ context uvvm_util.uvvm_util_context;
 
 --========================================================================================================================
 --========================================================================================================================
-package ethernet_bfm_pkg is
+package support_pkg is
 
   --========================================================================================================================
   -- Types and constants for ETHERNET BFM
@@ -143,13 +143,13 @@ package ethernet_bfm_pkg is
     constant expected : in t_ethernet_frame
   ) return boolean;
 
-end package ethernet_bfm_pkg;
+end package support_pkg;
 
 
 --========================================================================================================================
 --========================================================================================================================
 
-package body ethernet_bfm_pkg is
+package body support_pkg is
 
   ---------------------------------------------------------------------------------
   -- generate_crc_32
@@ -317,5 +317,4 @@ package body ethernet_bfm_pkg is
            actual.fcs                           = expected.fcs;
   end function ethernet_match;
 
-end package body ethernet_bfm_pkg;
-
+end package body support_pkg;

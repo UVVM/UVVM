@@ -472,7 +472,7 @@ package body vvc_methods_pkg is
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
 
       when others =>
-        null;
+        alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;

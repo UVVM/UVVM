@@ -61,7 +61,7 @@ class Requirement():
     def get_actual_testcase_list(self):
         return self.actual_testcase_list
 
-    def expected_testcase_from_actual_testcase_list(self, testcase_name):
+    def get_from_actual_testcase_list(self, testcase_name):
         for actual_testcase in self.actual_testcase_list:
             if actual_testcase.get_name().upper() == testcase_name.upper():
                 return actual_testcase
@@ -119,7 +119,7 @@ class Testcase():
         return self.actual_requirement_list
 
     def set_result(self, result):
-        self.result = result
+        self.result = result.upper()
     def get_result(self):
         return self.result
 
@@ -134,11 +134,6 @@ class Container():
         self.list.append(item)
     def get_list(self):
         return self.list
-
-    def set_result(self, result):
-        self.result = result
-    def get_result(self):
-        return self.result
 
     def get_item(self, name):
         for item in self.list:
@@ -549,13 +544,12 @@ def build_requirement_list(run_configuration, requirement_container, testcase_co
 
                     # Testcase(s)
                     elif idx >= 2:
+                        # Get testcase name
                         testcase_name = row[idx].strip()
                         # Fetch testcase from requirement actual testcase list
-                        testcase = requirement.expected_testcase_from_actual_testcase_list(testcase_name)
-                        # Fetch testcase from container if not in requirement actual testcase list
-                        if not(testcase):
-                            testcase = testcase_container.get_item(testcase_name)
-                        # Create a new testcase if not in testcase container
+                        testcase = requirement.get_from_actual_testcase_list(testcase_name)
+                        
+                        # Testcase was not found, i.e. testcase has not been run.
                         if not(testcase):
                             testcase = Testcase(testcase_name)
                             testcase_container.add(testcase)
@@ -613,7 +607,7 @@ def build_partial_coverage_list(run_configuration, requirement_container, testca
     
     testcase_container (Container()) : container for testcase objects
     """
-    # Get the global defined delimiter setting for CSV files.
+    # For setting the global defined delimiter setting for CSV files.
     global delimiter
 
     # Get the partial coverage file - note: can be a txt file with
@@ -669,6 +663,7 @@ def build_partial_coverage_list(run_configuration, requirement_container, testca
     try:
         for partial_coverage_file in partial_coverage_files:
 
+            # Find the SUMMARY: PASS line in current file
             partial_coverage_pass = find_partial_coverage_summary(partial_coverage_file)
 
             with open(partial_coverage_file) as csv_file:
@@ -694,7 +689,7 @@ def build_partial_coverage_list(run_configuration, requirement_container, testca
                         # Create testcase object
                         testcase = Testcase(testcase_name)
                         testcase_container.add(testcase)
-                        testcase.set_result(testcase_result.upper())
+                        testcase.set_result(testcase_result)
 
                         # Connect testcase <-> requirement
                         testcase.add_actual_requirement(requirement)

@@ -42,8 +42,8 @@ entity ethernet_transmit_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
     GC_CHANNEL                               : t_channel;
-    GC_INTERFACE                             : t_interface;
-    GC_VVC_INSTANCE_IDX                      : natural;
+    GC_PHY_INTERFACE                         : t_interface;
+    GC_PHY_VVC_INSTANCE_IDX                  : natural;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array;
     GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config := C_ETHERNET_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural               := 1000;
@@ -89,8 +89,8 @@ begin
 --========================================================================================================================
   i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
-      GC_INTERFACE           => GC_INTERFACE,
-      GC_INSTANCE_IDX        => GC_VVC_INSTANCE_IDX,
+      GC_INTERFACE           => GC_PHY_INTERFACE,
+      GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
       GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
       GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
       GC_SCOPE               => C_SCOPE

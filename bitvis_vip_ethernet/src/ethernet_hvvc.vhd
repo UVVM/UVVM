@@ -29,8 +29,8 @@ use work.support_pkg.all;
 entity ethernet_vvc is
   generic (
     GC_INSTANCE_IDX                          : natural;
-    GC_INTERFACE                             : t_interface;
-    GC_VVC_INSTANCE_IDX                      : natural;
+    GC_PHY_INTERFACE                         : t_interface;
+    GC_PHY_VVC_INSTANCE_IDX                  : natural;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array := C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT;
     GC_ETHERNET_BFM_CONFIG                   : t_ethernet_bfm_config                 := C_ETHERNET_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural                               := 1000;
@@ -53,8 +53,8 @@ begin
   generic map(
     GC_INSTANCE_IDX                          => GC_INSTANCE_IDX,
     GC_CHANNEL                               => TX,
-    GC_INTERFACE                             => GC_INTERFACE,
-    GC_VVC_INSTANCE_IDX                      => GC_VVC_INSTANCE_IDX,
+    GC_PHY_INTERFACE                         => GC_PHY_INTERFACE,
+    GC_PHY_VVC_INSTANCE_IDX                  => GC_PHY_VVC_INSTANCE_IDX,
     GC_DUT_IF_FIELD_CONFIG                   => GC_DUT_IF_FIELD_CONFIG,
     GC_ETHERNET_BFM_CONFIG                   => GC_ETHERNET_BFM_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,
@@ -70,8 +70,8 @@ begin
   generic map(
     GC_INSTANCE_IDX                          => GC_INSTANCE_IDX,
     GC_CHANNEL                               => RX,
-    GC_INTERFACE                             => GC_INTERFACE,
-    GC_VVC_INSTANCE_IDX                      => GC_VVC_INSTANCE_IDX,
+    GC_PHY_INTERFACE                         => GC_PHY_INTERFACE,
+    GC_PHY_VVC_INSTANCE_IDX                  => GC_PHY_VVC_INSTANCE_IDX,
     GC_DUT_IF_FIELD_CONFIG                   => GC_DUT_IF_FIELD_CONFIG,
     GC_ETHERNET_BFM_CONFIG                   => GC_ETHERNET_BFM_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,

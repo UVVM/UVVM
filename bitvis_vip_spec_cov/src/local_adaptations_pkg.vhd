@@ -33,7 +33,7 @@ package local_adaptations_pkg is
     -- VIP configuration record
     -------------------------------------------------------------------------------
     type t_spec_cov_config is record
-      missing_req_label_severity  : t_alert_level;  -- Alert level used when the log_req_cov() procedure does not find the specified
+      missing_req_label_severity  : t_alert_level;  -- Alert level used when the register_req_cov() procedure does not find the specified
                                                     -- requirement label in the requirement list.
       csv_delimiter               : character;      -- Character used as delimiter in the CSV files. Default is ",".
       max_requirements            : natural;        -- Maximum number of requirements in the req_map file used in initialized_req_cov().

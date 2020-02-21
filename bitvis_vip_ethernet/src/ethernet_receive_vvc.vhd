@@ -38,7 +38,7 @@ use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
 
 --==========================================================================================
-entity ethernet_transmit_vvc is
+entity ethernet_receive_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
     GC_CHANNEL                               : t_channel;
@@ -53,11 +53,11 @@ entity ethernet_transmit_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural               := 950;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level         := WARNING
   );
-end entity ethernet_transmit_vvc;
+end entity ethernet_receive_vvc;
 
 --==========================================================================================
 --==========================================================================================
-architecture behave of ethernet_transmit_vvc is
+architecture behave of ethernet_receive_vvc is
 
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
@@ -84,9 +84,9 @@ architecture behave of ethernet_transmit_vvc is
 
 begin
 
---========================================================================================================================
+--==========================================================================================
 -- HVVC-to-VVC Bridge
---========================================================================================================================
+--==========================================================================================
   i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
     generic map(
       GC_INTERFACE           => GC_PHY_INTERFACE,
@@ -210,6 +210,7 @@ begin
 --==========================================================================================
   cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
+    variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time := 0 ns;
     variable v_timestamp_end_of_last_bfm_access      : time := 0 ns;
@@ -253,7 +254,7 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
-      if v_cmd.operation = TRANSMIT then
+      if v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -277,20 +278,47 @@ begin
 
         -- VVC dedicated operations
         --===================================
-        when TRANSMIT =>
+        when RECEIVE =>
           -- Set DTT
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the support package.
-          send_ethernet_packet(proc_call            => "Ethernet transmit",
-                               vvc_cmd              => v_cmd,
-                               interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
-                               hvvc_to_bridge       => hvvc_to_bridge,
-                               bridge_to_hvvc       => bridge_to_hvvc,
-                               field_timeout_margin => vvc_config.field_timeout_margin,
-                               transaction_info     => transaction_info,
-                               scope                => C_SCOPE,
-                               msg_id_panel         => v_msg_id_panel);
+          priv_ethernet_receive_from_bridge(proc_call            => "Ethernet receive",
+                                            received_data        => v_result.ethernet_frame,
+                                            fcs_error            => v_result.ethernet_frame_status.fcs_error,
+                                            fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
+                                            cmd_idx              => v_cmd.cmd_idx,
+                                            hvvc_to_bridge       => hvvc_to_bridge,
+                                            bridge_to_hvvc       => bridge_to_hvvc,
+                                            field_timeout_margin => vvc_config.field_timeout_margin,
+                                            transaction_info     => transaction_info,
+                                            scope                => C_SCOPE,
+                                            msg_id_panel         => v_msg_id_panel);
+
+          if v_cmd.data_routing = TO_SB then
+            -- Send result to scoreboard
+            shared_ethernet_sb.check_received(GC_INSTANCE_IDX, v_result.ethernet_frame);
+          else
+            -- Store the result
+            work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
+                                                        cmd_idx       => v_cmd.cmd_idx,
+                                                        result        => v_result);
+          end if;
+
+        when EXPECT =>
+          -- Set DTT
+          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+
+          -- Call the corresponding procedure in the support package.
+          priv_ethernet_expect_from_bridge(proc_call            => "Ethernet expect",
+                                           vvc_cmd              => v_cmd,
+                                           fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
+                                           hvvc_to_bridge       => hvvc_to_bridge,
+                                           bridge_to_hvvc       => bridge_to_hvvc,
+                                           field_timeout_margin => vvc_config.field_timeout_margin,
+                                           transaction_info     => transaction_info,
+                                           scope                => C_SCOPE,
+                                           msg_id_panel         => v_msg_id_panel);
 
         -- UVVM common operations
         --===================================

@@ -24,7 +24,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
+context bitvis_vip_ethernet.vvc_context;
 use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 
 library bitvis_vip_sbi;
@@ -158,7 +158,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 9), "Send random data from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 9), "Send random data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 9));
     shared_ethernet_sb.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
@@ -168,7 +168,7 @@ begin
     for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1));
     shared_ethernet_sb.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
@@ -177,7 +177,7 @@ begin
     for i in 0 to 19 loop
       log(ID_LOG_HDR, "Send 1 byte of data from i1 to i2: byte " & to_string(i));
       v_send_data(0) := random(8);
-      ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
+      ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 0));
       shared_ethernet_sb.add_expected(2, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
@@ -200,7 +200,7 @@ begin
     for i in 0 to 44 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 44), "Send data from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 44), "Send data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 44));
     shared_ethernet_sb.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Receive data from instance 1.", TO_SB);
@@ -211,7 +211,7 @@ begin
     for i in 0 to 45 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 45), "Send data from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 45), "Send data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 45));
     shared_ethernet_sb.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Receive data from instance 1.", TO_SB);
@@ -231,7 +231,7 @@ begin
     for i in 0 to 46 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 1, TX, v_send_data(0 to 46), "Send data from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 46), "Send data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 46));
     shared_ethernet_sb.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Receive data from instance 1.", TO_SB);
@@ -245,7 +245,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 9), "Send random data from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 9), "Send random data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 9));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
@@ -255,7 +255,7 @@ begin
     for i in 0 to C_MAX_PAYLOAD_LENGTH-1 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 1.", TO_SB);
@@ -264,7 +264,7 @@ begin
     for i in 0 to 19 loop
       log(ID_LOG_HDR, "Send 1 byte of data from i2 to i1: byte " & to_string(i));
       v_send_data(0) := random(8);
-      ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 0), "Send random data from instance 2.");
+      ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 0), "Send random data from instance 2.");
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 0));
       shared_ethernet_sb.add_expected(1, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
@@ -285,7 +285,7 @@ begin
     for i in 0 to 44 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 44), "Send data from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 44), "Send data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 44));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive data from instance 2.", TO_SB);
@@ -295,7 +295,7 @@ begin
     for i in 0 to 45 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 45), "Send data from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 45), "Send data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 45));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive data from instance 2.", TO_SB);
@@ -305,7 +305,7 @@ begin
     for i in 0 to 46 loop
       v_send_data(i) := random(8);
     end loop;
-    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 46));
     shared_ethernet_sb.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive data from instance 2.", TO_SB);
@@ -326,7 +326,7 @@ begin
     await_value(clk, '1', 0 ns, 6 ns, ERROR, "Sync to clock.");
     insert_delay(ETHERNET_VVCT, 2, TX, 1 us, "Insert delay in instance 2.");
     v_time_stamp := now;
-    ethernet_send(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
     ethernet_expect(ETHERNET_VVCT, 1, RX, v_send_data(0 to 46), "Expect data from instance 2.");
     await_value(i2_sbi_if.wena, '1', 0 ns, 1.1 us, ERROR, "Await ethernet transfer.");
     check_value_in_range(now-v_time_stamp, 1 us, 1.01 us, ERROR, "Verify inserted delay.");

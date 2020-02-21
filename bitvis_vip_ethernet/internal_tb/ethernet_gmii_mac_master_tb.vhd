@@ -24,7 +24,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
+context bitvis_vip_ethernet.vvc_context;
 use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
 
 library mac_master;
@@ -159,7 +159,7 @@ begin
       -- FCS
       v_send_data_frame.fcs := not generate_crc_32_complete(reverse_vectors_in_array(v_data_raw(0 to 14+num_bytes_in_payload-1)));
 
-      ethernet_send(ETHERNET_VVCT, 1, TX, v_data_raw(14 to 14+num_bytes_in_payload-1), "Send random data from instance 1.");
+      ethernet_transmit(ETHERNET_VVCT, 1, TX, v_data_raw(14 to 14+num_bytes_in_payload-1), "Send random data from instance 1.");
 
       log(ID_LOG_HDR, "Fetch data from MAC Master");
 

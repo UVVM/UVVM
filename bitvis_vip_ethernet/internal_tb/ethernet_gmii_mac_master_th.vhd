@@ -28,7 +28,7 @@ library bitvis_vip_gmii;
 context bitvis_vip_gmii.vvc_context;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
+context bitvis_vip_ethernet.vvc_context;
 use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
 
 library mac_master;

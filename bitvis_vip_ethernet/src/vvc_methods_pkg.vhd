@@ -39,7 +39,7 @@ package vvc_methods_pkg is
   --==========================================================================================
   -- Types and constants for the ETHERNET VVC 
   --==========================================================================================
-  constant C_VVC_NAME     : string := "ETHERNET_HVVC";
+  constant C_VVC_NAME     : string := "ETHERNET_VVC";
 
   signal ETHERNET_VVCT    : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias  THIS_VVCT        : t_vvc_target_record is ETHERNET_VVCT;
@@ -52,7 +52,7 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
-  constant C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
+  constant C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_PACKET_INITIATE => ENABLED,
     ID_PACKET_COMPLETE => ENABLED,
     ID_PACKET_HDR      => ENABLED,
@@ -69,7 +69,7 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold          : natural;
     result_queue_count_threshold_severity : t_alert_level;
-    bfm_config                            : t_ethernet_if_config;  -- Configuration for the HVVC IF. See HVVC quick reference.
+    bfm_config                            : t_ethernet_if_config;  -- Configuration for the VVC IF. See VVC quick reference.
     msg_id_panel                          : t_msg_id_panel;        -- VVC dedicated message ID panel.
     field_timeout_margin                  : time;                  -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
   end record;
@@ -85,7 +85,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     bfm_config                            => C_ETHERNET_IF_CONFIG_DEFAULT,
-    msg_id_panel                          => C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT,
+    msg_id_panel                          => C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT,
     field_timeout_margin                  => 10 us
   );
 
@@ -136,7 +136,7 @@ package vvc_methods_pkg is
   --   and then the VVC executor will fetch the commands from the queue and handle the
   --   actual BFM execution.
   --==========================================================================================
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -149,7 +149,7 @@ package vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -161,7 +161,7 @@ package vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -223,12 +223,12 @@ package vvc_methods_pkg is
   );
 
   --==========================================================================================
-  -- Methods calling the HVVC-to-VVC bridge
+  -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   -- - These procedures are called from the HVVC to execute calls to the HVVC-to-VVC bridge.
   --   The bridge will then transfer the calls to the VVC in the physical layer which will
   --   execute the data transactions.
   --==========================================================================================
-  procedure send_ethernet_packet(
+  procedure priv_ethernet_transmit_to_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant interpacket_gap_time : in    time;
@@ -240,7 +240,7 @@ package vvc_methods_pkg is
     constant msg_id_panel         : in    t_msg_id_panel
   );
 
-  procedure receive_ethernet_packet(
+  procedure priv_ethernet_receive_from_bridge(
     constant proc_call            : in    string;
     variable received_data        : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
@@ -254,7 +254,7 @@ package vvc_methods_pkg is
     constant msg_id_panel         : in    t_msg_id_panel
   );
 
-  procedure expect_ethernet_packet(
+  procedure priv_ethernet_expect_from_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant fcs_error_severity   : in    t_alert_level;
@@ -297,7 +297,7 @@ package body vvc_methods_pkg is
   --==========================================================================================
   -- Methods dedicated to this VVC
   --==========================================================================================
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -309,7 +309,7 @@ package body vvc_methods_pkg is
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
-    constant proc_name : string := "ethernet_send";
+    constant proc_name : string := "ethernet_transmit";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
         & ", MAC dest: " & to_string(std_logic_vector'(mac_destination(0) & mac_destination(1) & mac_destination(2) & mac_destination(3)
         & mac_destination(4) & mac_destination(5)), HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(std_logic_vector'(mac_source(0)
@@ -327,9 +327,9 @@ package body vvc_methods_pkg is
     --shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
     --shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
-  end procedure ethernet_send;
+  end procedure ethernet_transmit;
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -341,11 +341,11 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
-    ethernet_send(VVCT, vvc_instance_idx, channel, mac_destination,
+    ethernet_transmit(VVCT, vvc_instance_idx, channel, mac_destination,
       shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
-  end procedure ethernet_send;
+  end procedure ethernet_transmit;
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -356,9 +356,9 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
-    ethernet_send(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
+    ethernet_transmit(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
       shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
-  end procedure ethernet_send;
+  end procedure ethernet_transmit;
 
 
   procedure ethernet_receive(
@@ -452,9 +452,9 @@ package body vvc_methods_pkg is
   end procedure ethernet_expect;
 
   --==========================================================================================
-  -- Methods calling the HVVC-to-VVC bridge
+  -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   --==========================================================================================
-  procedure send_ethernet_packet(
+  procedure priv_ethernet_transmit_to_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant interpacket_gap_time : in    time;
@@ -537,9 +537,9 @@ package body vvc_methods_pkg is
     wait for interpacket_gap_time;
 
     log(ID_PACKET_COMPLETE, proc_call & ": Finished transmitting ethernet packet." & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-  end procedure send_ethernet_packet;
+  end procedure priv_ethernet_transmit_to_bridge;
 
-  procedure receive_ethernet_packet(
+  procedure priv_ethernet_receive_from_bridge(
     constant proc_call            : in    string;
     variable received_data        : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
@@ -634,9 +634,9 @@ package body vvc_methods_pkg is
 
     log(ID_PACKET_COMPLETE, proc_call & ": Packet received. " & complete_to_string(received_data) & format_command_idx(cmd_idx), scope, msg_id_panel);
     check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
-  end procedure receive_ethernet_packet;
+  end procedure priv_ethernet_receive_from_bridge;
 
-  procedure expect_ethernet_packet(
+  procedure priv_ethernet_expect_from_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant fcs_error_severity   : in    t_alert_level;
@@ -675,17 +675,17 @@ package body vvc_methods_pkg is
 
     log(ID_PACKET_INITIATE, proc_call & ": Expecting ethernet packet. " & complete_to_string(v_expected_data) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
-    receive_ethernet_packet(proc_call            => proc_call,
-                            received_data        => v_received_data,
-                            fcs_error            => v_fcs_error,
-                            fcs_error_severity   => fcs_error_severity,
-                            cmd_idx              => vvc_cmd.cmd_idx,
-                            hvvc_to_bridge       => hvvc_to_bridge,
-                            bridge_to_hvvc       => bridge_to_hvvc,
-                            field_timeout_margin => field_timeout_margin,
-                            transaction_info     => transaction_info,
-                            scope                => scope,
-                            msg_id_panel         => msg_id_panel);
+    priv_ethernet_receive_from_bridge(proc_call            => proc_call,
+                                      received_data        => v_received_data,
+                                      fcs_error            => v_fcs_error,
+                                      fcs_error_severity   => fcs_error_severity,
+                                      cmd_idx              => vvc_cmd.cmd_idx,
+                                      hvvc_to_bridge       => hvvc_to_bridge,
+                                      bridge_to_hvvc       => bridge_to_hvvc,
+                                      field_timeout_margin => field_timeout_margin,
+                                      transaction_info     => transaction_info,
+                                      scope                => scope,
+                                      msg_id_panel         => msg_id_panel);
 
     -- Check received frame against expected frame
     v_frame_passed := compare_ethernet_frames(v_received_data, v_expected_data, vvc_cmd.alert_level,
@@ -694,7 +694,7 @@ package body vvc_methods_pkg is
     if v_frame_passed then
       log(ID_PACKET_COMPLETE, proc_call & " => OK. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
-  end procedure expect_ethernet_packet;
+  end procedure priv_ethernet_expect_from_bridge;
 
   --==============================================================================
   -- Direct Transaction Transfer methods

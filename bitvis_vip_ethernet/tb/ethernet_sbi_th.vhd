@@ -28,7 +28,7 @@ library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.hvvc_context;
+context bitvis_vip_ethernet.vvc_context;
 use bitvis_vip_ethernet.ethernet_sbi_pkg.all;
 
 --=================================================================================================

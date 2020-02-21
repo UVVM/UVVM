@@ -282,15 +282,15 @@ begin
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the support package.
-          send_ethernet_packet(proc_call            => "Ethernet transmit",
-                               vvc_cmd              => v_cmd,
-                               interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
-                               hvvc_to_bridge       => hvvc_to_bridge,
-                               bridge_to_hvvc       => bridge_to_hvvc,
-                               field_timeout_margin => vvc_config.field_timeout_margin,
-                               transaction_info     => transaction_info,
-                               scope                => C_SCOPE,
-                               msg_id_panel         => v_msg_id_panel);
+          priv_ethernet_transmit_to_bridge(proc_call            => "Ethernet transmit",
+                                           vvc_cmd              => v_cmd,
+                                           interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
+                                           hvvc_to_bridge       => hvvc_to_bridge,
+                                           bridge_to_hvvc       => bridge_to_hvvc,
+                                           field_timeout_margin => vvc_config.field_timeout_margin,
+                                           transaction_info     => transaction_info,
+                                           scope                => C_SCOPE,
+                                           msg_id_panel         => v_msg_id_panel);
 
         -- UVVM common operations
         --===================================

@@ -283,17 +283,17 @@ begin
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the support package.
-          receive_ethernet_packet(proc_call            => "Ethernet receive",
-                                  received_data        => v_result.ethernet_frame,
-                                  fcs_error            => v_result.ethernet_frame_status.fcs_error,
-                                  fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
-                                  cmd_idx              => v_cmd.cmd_idx,
-                                  hvvc_to_bridge       => hvvc_to_bridge,
-                                  bridge_to_hvvc       => bridge_to_hvvc,
-                                  field_timeout_margin => vvc_config.field_timeout_margin,
-                                  transaction_info     => transaction_info,
-                                  scope                => C_SCOPE,
-                                  msg_id_panel         => v_msg_id_panel);
+          priv_ethernet_receive_from_bridge(proc_call            => "Ethernet receive",
+                                            received_data        => v_result.ethernet_frame,
+                                            fcs_error            => v_result.ethernet_frame_status.fcs_error,
+                                            fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
+                                            cmd_idx              => v_cmd.cmd_idx,
+                                            hvvc_to_bridge       => hvvc_to_bridge,
+                                            bridge_to_hvvc       => bridge_to_hvvc,
+                                            field_timeout_margin => vvc_config.field_timeout_margin,
+                                            transaction_info     => transaction_info,
+                                            scope                => C_SCOPE,
+                                            msg_id_panel         => v_msg_id_panel);
 
           if v_cmd.data_routing = TO_SB then
             -- Send result to scoreboard
@@ -310,15 +310,15 @@ begin
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the support package.
-          expect_ethernet_packet(proc_call            => "Ethernet expect",
-                                 vvc_cmd              => v_cmd,
-                                 fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
-                                 hvvc_to_bridge       => hvvc_to_bridge,
-                                 bridge_to_hvvc       => bridge_to_hvvc,
-                                 field_timeout_margin => vvc_config.field_timeout_margin,
-                                 transaction_info     => transaction_info,
-                                 scope                => C_SCOPE,
-                                 msg_id_panel         => v_msg_id_panel);
+          priv_ethernet_expect_from_bridge(proc_call            => "Ethernet expect",
+                                           vvc_cmd              => v_cmd,
+                                           fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
+                                           hvvc_to_bridge       => hvvc_to_bridge,
+                                           bridge_to_hvvc       => bridge_to_hvvc,
+                                           field_timeout_margin => vvc_config.field_timeout_margin,
+                                           transaction_info     => transaction_info,
+                                           scope                => C_SCOPE,
+                                           msg_id_panel         => v_msg_id_panel);
 
         -- UVVM common operations
         --===================================

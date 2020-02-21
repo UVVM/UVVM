@@ -223,12 +223,12 @@ package vvc_methods_pkg is
   );
 
   --==========================================================================================
-  -- Methods calling the HVVC-to-VVC bridge
+  -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   -- - These procedures are called from the HVVC to execute calls to the HVVC-to-VVC bridge.
   --   The bridge will then transfer the calls to the VVC in the physical layer which will
   --   execute the data transactions.
   --==========================================================================================
-  procedure send_ethernet_packet(
+  procedure priv_ethernet_transmit_to_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant interpacket_gap_time : in    time;
@@ -240,7 +240,7 @@ package vvc_methods_pkg is
     constant msg_id_panel         : in    t_msg_id_panel
   );
 
-  procedure receive_ethernet_packet(
+  procedure priv_ethernet_receive_from_bridge(
     constant proc_call            : in    string;
     variable received_data        : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
@@ -254,7 +254,7 @@ package vvc_methods_pkg is
     constant msg_id_panel         : in    t_msg_id_panel
   );
 
-  procedure expect_ethernet_packet(
+  procedure priv_ethernet_expect_from_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant fcs_error_severity   : in    t_alert_level;
@@ -452,9 +452,9 @@ package body vvc_methods_pkg is
   end procedure ethernet_expect;
 
   --==========================================================================================
-  -- Methods calling the HVVC-to-VVC bridge
+  -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   --==========================================================================================
-  procedure send_ethernet_packet(
+  procedure priv_ethernet_transmit_to_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant interpacket_gap_time : in    time;
@@ -537,9 +537,9 @@ package body vvc_methods_pkg is
     wait for interpacket_gap_time;
 
     log(ID_PACKET_COMPLETE, proc_call & ": Finished transmitting ethernet packet." & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-  end procedure send_ethernet_packet;
+  end procedure priv_ethernet_transmit_to_bridge;
 
-  procedure receive_ethernet_packet(
+  procedure priv_ethernet_receive_from_bridge(
     constant proc_call            : in    string;
     variable received_data        : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
@@ -634,9 +634,9 @@ package body vvc_methods_pkg is
 
     log(ID_PACKET_COMPLETE, proc_call & ": Packet received. " & complete_to_string(received_data) & format_command_idx(cmd_idx), scope, msg_id_panel);
     check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
-  end procedure receive_ethernet_packet;
+  end procedure priv_ethernet_receive_from_bridge;
 
-  procedure expect_ethernet_packet(
+  procedure priv_ethernet_expect_from_bridge(
     constant proc_call            : in    string;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant fcs_error_severity   : in    t_alert_level;
@@ -675,17 +675,17 @@ package body vvc_methods_pkg is
 
     log(ID_PACKET_INITIATE, proc_call & ": Expecting ethernet packet. " & complete_to_string(v_expected_data) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
-    receive_ethernet_packet(proc_call            => proc_call,
-                            received_data        => v_received_data,
-                            fcs_error            => v_fcs_error,
-                            fcs_error_severity   => fcs_error_severity,
-                            cmd_idx              => vvc_cmd.cmd_idx,
-                            hvvc_to_bridge       => hvvc_to_bridge,
-                            bridge_to_hvvc       => bridge_to_hvvc,
-                            field_timeout_margin => field_timeout_margin,
-                            transaction_info     => transaction_info,
-                            scope                => scope,
-                            msg_id_panel         => msg_id_panel);
+    priv_ethernet_receive_from_bridge(proc_call            => proc_call,
+                                      received_data        => v_received_data,
+                                      fcs_error            => v_fcs_error,
+                                      fcs_error_severity   => fcs_error_severity,
+                                      cmd_idx              => vvc_cmd.cmd_idx,
+                                      hvvc_to_bridge       => hvvc_to_bridge,
+                                      bridge_to_hvvc       => bridge_to_hvvc,
+                                      field_timeout_margin => field_timeout_margin,
+                                      transaction_info     => transaction_info,
+                                      scope                => scope,
+                                      msg_id_panel         => msg_id_panel);
 
     -- Check received frame against expected frame
     v_frame_passed := compare_ethernet_frames(v_received_data, v_expected_data, vvc_cmd.alert_level,
@@ -694,7 +694,7 @@ package body vvc_methods_pkg is
     if v_frame_passed then
       log(ID_PACKET_COMPLETE, proc_call & " => OK. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
-  end procedure expect_ethernet_packet;
+  end procedure priv_ethernet_expect_from_bridge;
 
   --==============================================================================
   -- Direct Transaction Transfer methods

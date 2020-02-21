@@ -3,6 +3,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.7.3
+----------
+Released: 2020-XX-XX
+- Removed t_transaction_info from vvc_generator.py script.
+
 v2.7.2
 ----------
 Released: 2020-02-16

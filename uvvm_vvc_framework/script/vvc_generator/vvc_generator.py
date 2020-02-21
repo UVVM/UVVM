@@ -1123,9 +1123,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels):
         file_handle.write("  shared variable shared_"+vvc_name.lower()+"_vvc_status : t_vvc_status_array(t_channel'left"
                           " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => "
                           "C_VVC_STATUS_DEFAULT));\n")
-    print_linefeed(file_handle)
-    file_handle.write("  -- Scoreboard\n")
-    file_handle.write("  shared variable shared_"+vvc_name.lower()+"_sb : t_generic_sb;\n") 
+    file_handle.write("  shared variable shared_"+vvc_name.lower()+"_sb : t_generic_sb; -- Scoreboard\n") 
     print_linefeed(file_handle)
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")

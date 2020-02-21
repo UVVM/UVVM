@@ -43,7 +43,7 @@ package vvc_methods_pkg is
 
   signal ETHERNET_VVCT    : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias  THIS_VVCT        : t_vvc_target_record is ETHERNET_VVCT;
-  alias  t_bfm_config is t_ethernet_if_config;
+  alias  t_bfm_config is t_ethernet_protocol_config;
 
   -- Type found in UVVM-Util types_pkg
   constant C_ETHERNET_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
@@ -62,16 +62,16 @@ package vvc_methods_pkg is
 
   type t_vvc_config is
   record
-    inter_bfm_delay                       : t_inter_bfm_delay;     -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
-    cmd_queue_count_max                   : natural;               -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
-    cmd_queue_count_threshold             : natural;               -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
-    cmd_queue_count_threshold_severity    : t_alert_level;         -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
+    inter_bfm_delay                       : t_inter_bfm_delay;          -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural;                    -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural;                    -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level;              -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
     result_queue_count_max                : natural;
     result_queue_count_threshold          : natural;
     result_queue_count_threshold_severity : t_alert_level;
-    bfm_config                            : t_ethernet_if_config;  -- Configuration for the VVC IF. See VVC quick reference.
-    msg_id_panel                          : t_msg_id_panel;        -- VVC dedicated message ID panel.
-    field_timeout_margin                  : time;                  -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
+    bfm_config                            : t_ethernet_protocol_config; -- Configuration for the VVC protocol. See VVC quick reference.
+    msg_id_panel                          : t_msg_id_panel;             -- VVC dedicated message ID panel.
+    field_timeout_margin                  : time;                       -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -84,7 +84,7 @@ package vvc_methods_pkg is
     result_queue_count_max                => C_RESULT_QUEUE_COUNT_MAX,
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
-    bfm_config                            => C_ETHERNET_IF_CONFIG_DEFAULT,
+    bfm_config                            => C_ETHERNET_PROTOCOL_CONFIG_DEFAULT,
     msg_id_panel                          => C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT,
     field_timeout_margin                  => 10 us
   );
@@ -104,9 +104,9 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  shared variable shared_ethernet_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
-  shared variable shared_ethernet_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_ethernet_sb               : t_generic_sb; -- Scoreboard
+  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
+  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_ethernet_sb         : t_generic_sb; -- Scoreboard
 
 
   --==========================================================================================

@@ -67,14 +67,14 @@ package support_pkg is
   end record t_ethernet_frame_status;
 
   -- Configuration record to be assigned in the test harness.
-  type t_ethernet_if_config is record
+  type t_ethernet_protocol_config is record
     mac_destination      : unsigned(47 downto 0);
     mac_source           : unsigned(47 downto 0);
     fcs_error_severity   : t_alert_level;
     interpacket_gap_time : time;
   end record;
 
-  constant C_ETHERNET_IF_CONFIG_DEFAULT : t_ethernet_if_config := (
+  constant C_ETHERNET_PROTOCOL_CONFIG_DEFAULT : t_ethernet_protocol_config := (
     mac_destination      => (others => 'Z'),
     mac_source           => (others => 'Z'),
     fcs_error_severity   => ERROR,

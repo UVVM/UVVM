@@ -75,7 +75,6 @@ architecture behave of ethernet_transmit_vvc is
 
   alias vvc_config       : t_vvc_config       is shared_ethernet_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status       is shared_ethernet_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_ethernet_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
     -- DTT
   alias dtt_trigger      : std_logic           is global_ethernet_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
   alias dtt_info         : t_transaction_group is shared_ethernet_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
@@ -243,11 +242,6 @@ begin
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
-      -- Reset the transaction info for waveview
-      transaction_info := C_TRANSACTION_INFO_DEFAULT;
-      transaction_info.operation := v_cmd.operation;
-      transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
-
       -- Update v_msg_id_panel
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
@@ -288,7 +282,7 @@ begin
                                            hvvc_to_bridge       => hvvc_to_bridge,
                                            bridge_to_hvvc       => bridge_to_hvvc,
                                            field_timeout_margin => vvc_config.field_timeout_margin,
-                                           transaction_info     => transaction_info,
+                                           dtt_info             => dtt_info,
                                            scope                => C_SCOPE,
                                            msg_id_panel         => v_msg_id_panel);
 
@@ -328,8 +322,6 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-      -- Reset the transaction info for waveview
-      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
 
       -- Set DTT back to default values
       reset_dtt_info(dtt_info, v_cmd);

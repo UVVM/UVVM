@@ -104,29 +104,9 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  -- Transaction information to include in the wave view during simulation
-  type t_transaction_info is
-  record
-    operation      : t_operation;
-    msg            : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-    ethernet_frame : t_ethernet_frame;
-  end record;
-
-  type t_transaction_info_array is array (t_channel range <>, natural range <>) of t_transaction_info;
-
-  constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    operation      => NO_OPERATION,
-    msg            => (others => ' '),
-    ethernet_frame => C_ETHERNET_FRAME_DEFAULT
-  );
-
-
   shared variable shared_ethernet_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
   shared variable shared_ethernet_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_ethernet_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
-
-  -- Scoreboard
-  shared variable shared_ethernet_sb : t_generic_sb;
+  shared variable shared_ethernet_sb               : t_generic_sb; -- Scoreboard
 
 
   --==========================================================================================
@@ -235,7 +215,7 @@ package vvc_methods_pkg is
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
-    variable transaction_info     : inout t_transaction_info;
+    variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   );
@@ -249,7 +229,7 @@ package vvc_methods_pkg is
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
-    variable transaction_info     : inout t_transaction_info;
+    variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   );
@@ -261,7 +241,7 @@ package vvc_methods_pkg is
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
-    variable transaction_info     : inout t_transaction_info;
+    variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   );
@@ -461,7 +441,7 @@ package body vvc_methods_pkg is
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
-    variable transaction_info     : inout t_transaction_info;
+    variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is
@@ -511,8 +491,8 @@ package body vvc_methods_pkg is
     v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
     v_ethernet_frame.fcs := v_crc_32;
 
-    -- Add info to the transaction_for_waveview_struct
-    transaction_info.ethernet_frame := v_ethernet_frame;
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.fcs := v_crc_32;
 
     -- Send to bridge
     log(ID_PACKET_INITIATE, proc_call & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
@@ -548,7 +528,7 @@ package body vvc_methods_pkg is
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
-    variable transaction_info     : inout t_transaction_info;
+    variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is
@@ -580,8 +560,8 @@ package body vvc_methods_pkg is
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(8 to 13) := bridge_to_hvvc.data_bytes(0 to 5);
     received_data.mac_destination  := unsigned(to_slv(v_ethernet_packet_raw( 8 to 13)));
-    -- Add info to the transaction_for_waveview_struct
-    transaction_info.ethernet_frame.mac_destination := received_data.mac_destination;
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.mac_destination := received_data.mac_destination;
 
     -- Read MAC source
     -- Send to bridge
@@ -589,8 +569,8 @@ package body vvc_methods_pkg is
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(14 to 19) := bridge_to_hvvc.data_bytes(0 to 5);
     received_data.mac_source        := unsigned(to_slv(v_ethernet_packet_raw(14 to 19)));
-    -- Add info to the transaction_for_waveview_struct
-    transaction_info.ethernet_frame.mac_source := received_data.mac_source;
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.mac_source := received_data.mac_source;
 
     -- Read length
     -- Send to bridge
@@ -598,8 +578,8 @@ package body vvc_methods_pkg is
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(20 to 21) := bridge_to_hvvc.data_bytes(0 to 1);
     received_data.length            := to_integer(unsigned(to_slv(v_ethernet_packet_raw(20 to 21))));
-    -- Add info to the transaction_for_waveview_struct
-    transaction_info.ethernet_frame.length := received_data.length;
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.length := received_data.length;
 
     log(ID_PACKET_HDR, proc_call & ": Packet header received." & format_command_idx(cmd_idx) & hdr_to_string(received_data), scope, msg_id_panel);
 
@@ -619,8 +599,8 @@ package body vvc_methods_pkg is
     v_ethernet_packet_raw(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_bytes(0 to v_payload_length-1);
     received_data.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
     received_data.payload(0 to v_payload_length-1) := v_ethernet_packet_raw(22 to 22+v_payload_length-1);
-    -- Add info to the transaction_for_waveview_struct
-    transaction_info.ethernet_frame.payload := received_data.payload;
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.payload := received_data.payload;
 
     log(ID_PACKET_DATA, proc_call & ": Packet data received." & format_command_idx(cmd_idx) & data_to_string(received_data), scope, msg_id_panel);
 
@@ -629,7 +609,8 @@ package body vvc_methods_pkg is
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_bytes(0 to 3);
     received_data.fcs := to_slv(reverse_vectors_in_array(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1)));
-    transaction_info.ethernet_frame.fcs := received_data.fcs;
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.fcs := received_data.fcs;
     fcs_error := not check_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length+4-1)));
 
     log(ID_PACKET_COMPLETE, proc_call & ": Packet received. " & complete_to_string(received_data) & format_command_idx(cmd_idx), scope, msg_id_panel);
@@ -643,7 +624,7 @@ package body vvc_methods_pkg is
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
-    variable transaction_info     : inout t_transaction_info;
+    variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is
@@ -673,6 +654,9 @@ package body vvc_methods_pkg is
     v_expected_data.payload         := vvc_cmd.payload;
     v_expected_data.fcs             := not generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
 
+    -- Add info to the DTT
+    dtt_info.bt.ethernet_frame.fcs := v_expected_data.fcs;
+
     log(ID_PACKET_INITIATE, proc_call & ": Expecting ethernet packet. " & complete_to_string(v_expected_data) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     priv_ethernet_receive_from_bridge(proc_call            => proc_call,
@@ -683,7 +667,7 @@ package body vvc_methods_pkg is
                                       hvvc_to_bridge       => hvvc_to_bridge,
                                       bridge_to_hvvc       => bridge_to_hvvc,
                                       field_timeout_margin => field_timeout_margin,
-                                      transaction_info     => transaction_info,
+                                      dtt_info             => dtt_info,
                                       scope                => scope,
                                       msg_id_panel         => msg_id_panel);
 

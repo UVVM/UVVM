@@ -136,7 +136,7 @@ package vvc_methods_pkg is
   --   and then the VVC executor will fetch the commands from the queue and handle the
   --   actual BFM execution.
   --==========================================================================================
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -149,7 +149,7 @@ package vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -161,7 +161,7 @@ package vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   );
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -297,7 +297,7 @@ package body vvc_methods_pkg is
   --==========================================================================================
   -- Methods dedicated to this VVC
   --==========================================================================================
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -309,7 +309,7 @@ package body vvc_methods_pkg is
     constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
-    constant proc_name : string := "ethernet_send";
+    constant proc_name : string := "ethernet_transmit";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
         & ", MAC dest: " & to_string(std_logic_vector'(mac_destination(0) & mac_destination(1) & mac_destination(2) & mac_destination(3)
         & mac_destination(4) & mac_destination(5)), HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(std_logic_vector'(mac_source(0)
@@ -327,9 +327,9 @@ package body vvc_methods_pkg is
     --shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
     --shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
-  end procedure ethernet_send;
+  end procedure ethernet_transmit;
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -341,11 +341,11 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
-    ethernet_send(VVCT, vvc_instance_idx, channel, mac_destination,
+    ethernet_transmit(VVCT, vvc_instance_idx, channel, mac_destination,
       shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
-  end procedure ethernet_send;
+  end procedure ethernet_transmit;
 
-  procedure ethernet_send(
+  procedure ethernet_transmit(
     signal   VVCT                      : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
     constant channel                   : in    t_channel;
@@ -356,9 +356,9 @@ package body vvc_methods_pkg is
     constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
   ) is
   begin
-    ethernet_send(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
+    ethernet_transmit(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
       shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
-  end procedure ethernet_send;
+  end procedure ethernet_transmit;
 
 
   procedure ethernet_receive(

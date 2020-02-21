@@ -509,9 +509,9 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
     # Write the results to CSVs
     #==========================================================================
     filename = run_configuration.get("spec_cov")
-    spec_cov_req_filename = filename[: filename.rfind(".")] + "_req.csv"
-    spec_cov_tc_filename = filename[: filename.rfind(".")] + "_tc.csv"
-    spec_cov_req_tc_filename = filename[: filename.rfind(".")] + "_req_tc.csv"
+    spec_cov_req_filename = filename[: filename.rfind(".")] + ".req_vs_single_tc.csv"
+    spec_cov_tc_filename = filename[: filename.rfind(".")] + ".tc_vs_reqs.csv"
+    spec_cov_req_tc_filename = filename[: filename.rfind(".")] + ".req_vs_tcs.csv"
 
     # Write requirement with all testcases
     try:

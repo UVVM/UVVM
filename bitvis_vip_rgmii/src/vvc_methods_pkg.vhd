@@ -94,27 +94,9 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  -- Transaction information to include in the wave view during simulation
-  type t_transaction_info is
-  record
-    operation       : t_operation;
-    msg             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
-  end record;
-
-  type t_transaction_info_array is array (t_channel range <>, natural range <>) of t_transaction_info;
-
-  constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (
-    operation           =>  NO_OPERATION,
-    msg                 => (others => ' ')
-  );
-
-
   shared variable shared_rgmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_RGMII_VVC_CONFIG_DEFAULT));
   shared variable shared_rgmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_rgmii_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
-
-  -- Scoreboard
-  shared variable shared_rgmii_sb : t_generic_sb;
+  shared variable shared_rgmii_sb         : t_generic_sb; -- Scoreboard
 
 
   --==========================================================================================

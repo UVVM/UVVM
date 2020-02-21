@@ -71,10 +71,9 @@ architecture behave of gmii_rx_vvc is
 
   alias vvc_config : t_vvc_config is shared_gmii_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_gmii_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_gmii_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
     -- DTT
-  alias dtt_trigger             : std_logic           is global_gmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias dtt_info                : t_transaction_group is shared_gmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias dtt_trigger : std_logic           is global_gmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias dtt_info    : t_transaction_group is shared_gmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -216,11 +215,6 @@ begin
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
-      -- Reset the transaction info for waveview
-      transaction_info := C_TRANSACTION_INFO_DEFAULT;
-      transaction_info.operation := v_cmd.operation;
-      transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
-
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay 
       if v_cmd.operation = READ or v_cmd.operation = EXPECT then 
@@ -320,8 +314,6 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-      -- Reset the transaction info for waveview
-      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
 
       -- Set DTT back to default values
       reset_dtt_info(dtt_info, v_cmd);

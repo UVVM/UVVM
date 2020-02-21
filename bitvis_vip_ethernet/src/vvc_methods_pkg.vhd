@@ -39,7 +39,7 @@ package vvc_methods_pkg is
   --==========================================================================================
   -- Types and constants for the ETHERNET VVC 
   --==========================================================================================
-  constant C_VVC_NAME     : string := "ETHERNET_HVVC";
+  constant C_VVC_NAME     : string := "ETHERNET_VVC";
 
   signal ETHERNET_VVCT    : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias  THIS_VVCT        : t_vvc_target_record is ETHERNET_VVCT;
@@ -52,7 +52,7 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
-  constant C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
+  constant C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_PACKET_INITIATE => ENABLED,
     ID_PACKET_COMPLETE => ENABLED,
     ID_PACKET_HDR      => ENABLED,
@@ -69,7 +69,7 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold          : natural;
     result_queue_count_threshold_severity : t_alert_level;
-    bfm_config                            : t_ethernet_if_config;  -- Configuration for the HVVC IF. See HVVC quick reference.
+    bfm_config                            : t_ethernet_if_config;  -- Configuration for the VVC IF. See VVC quick reference.
     msg_id_panel                          : t_msg_id_panel;        -- VVC dedicated message ID panel.
     field_timeout_margin                  : time;                  -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
   end record;
@@ -85,7 +85,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     bfm_config                            => C_ETHERNET_IF_CONFIG_DEFAULT,
-    msg_id_panel                          => C_ETHERNET_HVVC_MSG_ID_PANEL_DEFAULT,
+    msg_id_panel                          => C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT,
     field_timeout_margin                  => 10 us
   );
 

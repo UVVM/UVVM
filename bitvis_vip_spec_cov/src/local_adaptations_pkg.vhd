@@ -36,7 +36,7 @@ package local_adaptations_pkg is
       missing_req_label_severity  : t_alert_level;  -- Alert level used when the register_req_cov() procedure does not find the specified
                                                     -- requirement label in the requirement list.
       csv_delimiter               : character;      -- Character used as delimiter in the CSV files. Default is ",".
-      max_requirements            : natural;        -- Maximum number of requirements in the req_map file used in initialized_req_cov().
+      max_requirements            : natural;        -- Maximum number of requirements in the req_map file used in initialize_req_cov().
       max_testcases_per_req       : natural;        -- Max number of testcases allowed per requirement. 
       csv_max_line_length         : positive;       -- Max length of each line in any CSV file.
     end record;                                       

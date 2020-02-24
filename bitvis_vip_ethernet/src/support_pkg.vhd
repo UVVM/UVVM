@@ -78,7 +78,7 @@ package support_pkg is
     mac_destination      => (others => 'Z'),
     mac_source           => (others => 'Z'),
     fcs_error_severity   => ERROR,
-    interpacket_gap_time => 768 ns
+    interpacket_gap_time => 96 ns -- Standard minimum interpacket gap (Gigabith Ethernet)
   );
 
 

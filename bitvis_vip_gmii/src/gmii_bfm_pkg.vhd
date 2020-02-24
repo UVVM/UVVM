@@ -62,7 +62,7 @@ package gmii_bfm_pkg is
 
   -- Define the default value for the BFM config
   constant C_GMII_BFM_CONFIG_DEFAULT : t_gmii_bfm_config := (
-    max_wait_cycles          => 10,
+    max_wait_cycles          => 12, -- Standard minimum interpacket gap (Gigabith Ethernet)
     max_wait_cycles_severity => ERROR,
     clock_period             => -1 ns,
     clock_period_margin      => 0 ns,

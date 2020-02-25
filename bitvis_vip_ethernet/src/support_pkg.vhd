@@ -40,7 +40,7 @@ package support_pkg is
   constant C_MAX_PACKET_LENGTH  : natural := C_MAX_FRAME_LENGTH + 8;
 
   -- IF field config number
-  constant C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD    : natural := 0;
+  constant C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD    : natural := 0;        --|ET:   IF?   NUM->IDX  ?C_ETHERNET_FIELD_IDX_PREAMBLE_SFD
   constant C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION : natural := 1;
   constant C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE      : natural := 2;
   constant C_IF_FIELD_NUM_ETHERNET_LENTGTH         : natural := 3;

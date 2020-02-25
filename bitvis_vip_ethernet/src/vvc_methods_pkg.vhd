@@ -444,24 +444,24 @@ package body vvc_methods_pkg is
     variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
-  ) is
-    constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
+  ) is                                                                       --|ET: In general: Why prefix packet, frame, etc with ethernet? Ikke gjennomført.
+    constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;                           --|ET: Strange name on constant
     variable v_ethernet_packet_raw  : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_ethernet_frame       : t_ethernet_frame;
     variable v_payload_length       : natural;
-    variable v_length               : std_logic_vector(15 downto 0);
+    variable v_length               : std_logic_vector(15 downto 0);               --|ET: Length of what
     variable v_crc_32               : std_logic_vector(31 downto 0);
   begin
     -- Preamble
     for i in 0 to 6 loop
-      v_ethernet_packet_raw(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);
+      v_ethernet_packet_raw(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);     --|ET: Why reverse from standard? 10101010 MSb first.
     end loop;
 
     -- SFD
     v_ethernet_packet_raw(7) := C_SFD;
 
     -- MAC destination
-    v_ethernet_packet_raw(8 to 13)   := to_byte_array(std_logic_vector(vvc_cmd.mac_destination));
+    v_ethernet_packet_raw(8 to 13)   := to_byte_array(std_logic_vector(vvc_cmd.mac_destination)); --|ET: Hvordan vet vi at dette blir riktig?  msB->lowB=LeftB
     v_ethernet_frame.mac_destination := vvc_cmd.mac_destination;
 
     -- MAC source
@@ -486,18 +486,18 @@ package body vvc_methods_pkg is
     end if;
 
     -- FCS
-    v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
-    v_crc_32 := not(v_crc_32);
+    v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
+    v_crc_32 := not(v_crc_32);                                                                                          --|ET: Because
     v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
     v_ethernet_frame.fcs := v_crc_32;
 
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_crc_32;
 
-    -- Send to bridge
-    log(ID_PACKET_INITIATE, proc_call & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    -- Send to bridge                --|ET: Suggest to start with ID_PACKET_PREAMBLE and maybe also INITIATE,  and finish with COMPLETE 
+    log(ID_PACKET_INITIATE, proc_call & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);                     --|ET: complete?     Initiate skal ikke skrive ut data. Kun kort oversikt. Hvordan skrives cmd_idx ut?
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(0 to 7),
-      C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+      C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);  --|ET: CURRENT_BYTE_IDX?
 
     log(ID_PACKET_HDR, proc_call & ": Transmitting header." & format_command_idx(vvc_cmd.cmd_idx) & hdr_to_string(v_ethernet_frame), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(8 to 13),
@@ -510,14 +510,17 @@ package body vvc_methods_pkg is
     log(ID_PACKET_DATA, proc_call & ": Transmitting payload." & format_command_idx(vvc_cmd.cmd_idx) & data_to_string(v_ethernet_frame), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22 to 22+v_payload_length-1),
       C_IF_FIELD_NUM_ETHERNET_PAYLOAD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+--|ET: Bør logge FCS også, men minimum legge inn kommentarer på at den sendes.
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3),
       C_IF_FIELD_NUM_ETHERNET_FCS, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
     -- Interpacket gap
-    wait for interpacket_gap_time;
+    wait for interpacket_gap_time;  --|ET: Er denne fast?
 
     log(ID_PACKET_COMPLETE, proc_call & ": Finished transmitting ethernet packet." & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
   end procedure priv_ethernet_transmit_to_bridge;
+
+--|ET: Skal vel ikke sende annet enn frame (ikke packet) dersom det sendes til en SBI el.l.?  
 
   procedure priv_ethernet_receive_from_bridge(
     constant proc_call            : in    string;
@@ -532,12 +535,12 @@ package body vvc_methods_pkg is
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is
-    constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;
-    variable v_preamble_sfd        : std_logic_vector(63 downto 0) := (others => '0');
-    variable v_ethernet_packet_raw : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;                   
+    variable v_preamble_sfd        : std_logic_vector(63 downto 0) := (others => '0');   --|ET: preamble_and_sfd ?
+    variable v_ethernet_packet_raw : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);         --|ET: Raw is "restricted word" in Ethernet?  ..._packet_bytes ?
     variable v_payload_length      : integer;
   begin
-    received_data := C_ETHERNET_FRAME_DEFAULT;
+    received_data := C_ETHERNET_FRAME_DEFAULT;   --|ET: received_frame.    Generelt: Skal 'data' brukes som navn her i det hele tatt?
 
     log(ID_PACKET_INITIATE, proc_call & ": Await ethernet packet." & format_command_idx(cmd_idx), scope, msg_id_panel);
 

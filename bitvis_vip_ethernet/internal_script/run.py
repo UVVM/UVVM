@@ -47,18 +47,6 @@ def main(argv):
   # Compile VIP, dependencies, DUTs, TBs etc
   tb.compile()
 
-  # Set testbench, config and run
-  tb.set_tb_name("ethernet_sbi_tb")
-  configs = create_config([4, 8, 9, 12, 16])
-  tb.set_configs(configs)
-  tb.run_simulation()
-
-  # Set testbench, config and run
-  tb.set_tb_name("ethernet_sbi_sb_tb")
-  configs = create_config([4, 8, 9, 12, 16])
-  tb.set_configs(configs)
-  tb.run_simulation()
-
   # Set testbench and run
   tb.set_tb_name("ethernet_gmii_tb")
   tb.run_simulation()
@@ -69,6 +57,18 @@ def main(argv):
 
   # Set testbench and run
   tb.set_tb_name("ethernet_gmii_mac_master_sb_tb")
+  tb.run_simulation()
+
+  # Set testbench, config and run
+  tb.set_tb_name("ethernet_sbi_tb")
+  configs = create_config([4, 8, 9, 12, 16])
+  tb.set_configs(configs)
+  tb.run_simulation()
+
+  # Set testbench, config and run
+  tb.set_tb_name("ethernet_sbi_sb_tb")
+  configs = create_config([4, 8, 9, 12, 16])
+  tb.set_configs(configs)
   tb.run_simulation()
 
   # Print simulation results

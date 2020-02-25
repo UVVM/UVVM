@@ -71,7 +71,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity : t_alert_level;
     bfm_config                            : t_ethernet_protocol_config; -- Configuration for the VVC protocol. See VVC quick reference.
     msg_id_panel                          : t_msg_id_panel;             -- VVC dedicated message ID panel.
-    field_timeout_margin                  : time;                       -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(access time) + field_timeout_margin
+    field_timeout_margin                  : time;                       -- Timeout margin while waiting for response from a field-access in HVVC-to-VVC Bridge, timeout is (number of accesses)*(max access time) + field_timeout_margin
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;

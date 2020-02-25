@@ -31,6 +31,7 @@ entity ethernet_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_PHY_INTERFACE                         : t_interface;
     GC_PHY_VVC_INSTANCE_IDX                  : natural;
+    GC_PHY_MAX_ACCESS_TIME                   : time                                  := 10 us;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array := C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT;
     GC_ETHERNET_PROTOCOL_CONFIG              : t_ethernet_protocol_config            := C_ETHERNET_PROTOCOL_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                   : natural                               := 1000;
@@ -55,6 +56,7 @@ begin
     GC_CHANNEL                               => TX,
     GC_PHY_INTERFACE                         => GC_PHY_INTERFACE,
     GC_PHY_VVC_INSTANCE_IDX                  => GC_PHY_VVC_INSTANCE_IDX,
+    GC_PHY_MAX_ACCESS_TIME                   => GC_PHY_MAX_ACCESS_TIME,
     GC_DUT_IF_FIELD_CONFIG                   => GC_DUT_IF_FIELD_CONFIG,
     GC_ETHERNET_PROTOCOL_CONFIG              => GC_ETHERNET_PROTOCOL_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,
@@ -72,6 +74,7 @@ begin
     GC_CHANNEL                               => RX,
     GC_PHY_INTERFACE                         => GC_PHY_INTERFACE,
     GC_PHY_VVC_INSTANCE_IDX                  => GC_PHY_VVC_INSTANCE_IDX,
+    GC_PHY_MAX_ACCESS_TIME                   => GC_PHY_MAX_ACCESS_TIME,
     GC_DUT_IF_FIELD_CONFIG                   => GC_DUT_IF_FIELD_CONFIG,
     GC_ETHERNET_PROTOCOL_CONFIG              => GC_ETHERNET_PROTOCOL_CONFIG,
     GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,

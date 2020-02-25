@@ -35,6 +35,7 @@ entity hvvc_to_vvc_bridge is
     GC_INSTANCE_IDX        : integer;
     GC_DUT_IF_FIELD_CONFIG : t_dut_if_field_config_direction_array;
     GC_MAX_NUM_BYTES       : positive;
+    GC_PHY_MAX_ACCESS_TIME : time;
     GC_SCOPE               : string
   );
   port(
@@ -113,15 +114,15 @@ begin
               --gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, hvvc_to_bridge.data_bytes(0 to hvvc_to_bridge.num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
               gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, hvvc_to_bridge.data_bytes(0 to hvvc_to_bridge.num_data_bytes-1), "Send data over GMII", GC_SCOPE);
               v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, TX, GC_SCOPE);
-              await_completion(GMII_VVCT, GC_INSTANCE_IDX, TX, v_cmd_idx, hvvc_to_bridge.num_data_bytes*shared_gmii_vvc_config(TX, GC_INSTANCE_IDX).bfm_config.clock_period+
-                hvvc_to_bridge.field_timeout_margin, "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, TX, v_cmd_idx, v_num_of_transfers*GC_PHY_MAX_ACCESS_TIME + hvvc_to_bridge.field_timeout_margin,
+                "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
 
             when RECEIVE =>
               --gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, hvvc_to_bridge.num_data_bytes, "Read data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
-              gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, "Read data over GMII", GC_SCOPE);
+              gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, hvvc_to_bridge.num_data_bytes, "Read data over GMII", GC_SCOPE);
               v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, RX, GC_SCOPE);
-              await_completion(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, hvvc_to_bridge.num_data_bytes*shared_gmii_vvc_config(RX, GC_INSTANCE_IDX).bfm_config.clock_period+
-                hvvc_to_bridge.field_timeout_margin, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+              await_completion(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_num_of_transfers*GC_PHY_MAX_ACCESS_TIME + hvvc_to_bridge.field_timeout_margin,
+                "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
               fetch_result(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
               bridge_to_hvvc.data_bytes(0 to hvvc_to_bridge.num_data_bytes-1) <= v_gmii_received_data.data_array(0 to hvvc_to_bridge.num_data_bytes-1);
 
@@ -163,11 +164,11 @@ begin
                 sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, v_sbi_send_data(v_data_width-1 downto 0), "Send data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
                 if shared_sbi_vvc_config(GC_INSTANCE_IDX).bfm_config.use_ready_signal then
-                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, hvvc_to_bridge.num_data_bytes*shared_sbi_vvc_config(GC_INSTANCE_IDX).bfm_config.clock_period*2+
-                    hvvc_to_bridge.field_timeout_margin, "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_PHY_MAX_ACCESS_TIME*2 + hvvc_to_bridge.field_timeout_margin,
+                    "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 else
-                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, hvvc_to_bridge.num_data_bytes*shared_sbi_vvc_config(GC_INSTANCE_IDX).bfm_config.clock_period+
-                    hvvc_to_bridge.field_timeout_margin, "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_PHY_MAX_ACCESS_TIME + hvvc_to_bridge.field_timeout_margin,
+                    "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 end if;
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
@@ -183,11 +184,11 @@ begin
                 sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", TO_RECEIVE_BUFFER, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
                 if shared_sbi_vvc_config(GC_INSTANCE_IDX).bfm_config.use_ready_signal then
-                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, hvvc_to_bridge.num_data_bytes*shared_sbi_vvc_config(GC_INSTANCE_IDX).bfm_config.clock_period*2+
-                    hvvc_to_bridge.field_timeout_margin, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_PHY_MAX_ACCESS_TIME*2 + hvvc_to_bridge.field_timeout_margin,
+                    "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 else
-                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, hvvc_to_bridge.num_data_bytes*shared_sbi_vvc_config(GC_INSTANCE_IDX).bfm_config.clock_period+
-                    hvvc_to_bridge.field_timeout_margin, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+                  await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_PHY_MAX_ACCESS_TIME + hvvc_to_bridge.field_timeout_margin,
+                    "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
                 end if;
                 fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
 

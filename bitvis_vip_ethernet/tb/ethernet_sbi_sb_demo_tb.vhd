@@ -1,13 +1,13 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
+--================================================================================================================================
+-- Copyright (c) 2020 by Bitvis AS.  All rights reserved.
 -- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
 -- contact Bitvis AS <support@bitvis.no>.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+-- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+-- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 -- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+--================================================================================================================================
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -42,10 +42,6 @@ architecture func of ethernet_sbi_sb_demo_tb is
 
   constant C_CLK_PERIOD   : time := 10 ns;    -- **** Trenger metode for setting av clk period
   constant C_SCOPE        : string := "ETHERNET over SBI SB TB";
-  alias i2_sbi_if is << signal .ethernet_sbi_sb_demo_tb.i_test_harness.i2_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0)) >>;
-  alias clk       is << signal .ethernet_sbi_sb_demo_tb.i_test_harness.clk : std_logic >>;
-
-
 
 begin
 
@@ -61,12 +57,8 @@ begin
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
-    variable v_alert_num_mismatch : boolean := false;
-    variable v_cmd_idx            : natural;
-    variable v_send_data          : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
-    variable v_receive_data       : bitvis_vip_ethernet.vvc_cmd_pkg.t_vvc_result;
-    variable v_time_stamp         : time;
-    variable v_ethernet_frame     : t_ethernet_frame;
+    variable v_send_data      : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
+    variable v_ethernet_frame : t_ethernet_frame;
 
     impure function make_ethernet_frame(
       constant mac_destination : in unsigned(47 downto 0);
@@ -86,7 +78,7 @@ begin
       v_ethernet_frame.mac_source := mac_source;
       v_data_raw(6 to 11) := to_byte_array(std_logic_vector(v_ethernet_frame.mac_source));
 
-      -- length
+      -- Length
       v_ethernet_frame.length  := v_length;
       v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_ethernet_frame.length, 16)));
 
@@ -95,7 +87,7 @@ begin
        v_payload_length := v_length;
       end if;
 
-      -- payload
+      -- Payload
       v_ethernet_frame.payload(0 to v_length-1) := payload(0 to v_length-1);
       v_data_raw(14 to 14+v_length-1) := payload(0 to v_length-1);
 
@@ -103,7 +95,7 @@ begin
       v_ethernet_frame.fcs := not generate_crc_32_complete(reverse_vectors_in_array(v_data_raw(0 to 14+v_payload_length-1)));
 
       return v_ethernet_frame;
-    end  function make_ethernet_frame;
+    end function make_ethernet_frame;
 
   begin
 
@@ -117,15 +109,7 @@ begin
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
-    -- Configure Ethernet SB
-    shared_ethernet_sb.set_scope("ETHERNET VVC");
-    shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
-    shared_ethernet_sb.enable(1);
-    shared_ethernet_sb.config(2, C_SB_CONFIG_DEFAULT);
-    shared_ethernet_sb.enable(2);
-
-    -- Configure of SBI SB is done in SBI VVC executor
-
+    -- Configuration of Ethernet and SBI SBs is done in their corresponding VVC executors
 
     log(ID_LOG_HDR_LARGE, "START SIMULATION OF ETHERNET VVC");
 

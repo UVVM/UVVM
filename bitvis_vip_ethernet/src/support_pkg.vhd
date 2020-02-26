@@ -39,13 +39,13 @@ package support_pkg is
   constant C_MAX_FRAME_LENGTH   : natural := C_MAX_PAYLOAD_LENGTH + 18;
   constant C_MAX_PACKET_LENGTH  : natural := C_MAX_FRAME_LENGTH + 8;
 
-  -- IF field config number
-  constant C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD    : natural := 0;        --|ET:   IF?   NUM->IDX  ?C_ETHERNET_FIELD_IDX_PREAMBLE_SFD
-  constant C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION : natural := 1;
-  constant C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE      : natural := 2;
-  constant C_IF_FIELD_NUM_ETHERNET_LENTGTH         : natural := 3;
-  constant C_IF_FIELD_NUM_ETHERNET_PAYLOAD         : natural := 4;
-  constant C_IF_FIELD_NUM_ETHERNET_FCS             : natural := 5;
+  -- IF field index config
+  constant C_ETHERNET_FIELD_IDX_PREAMBLE_SFD    : natural := 0;
+  constant C_ETHERNET_FIELD_IDX_MAC_DESTINATION : natural := 1;
+  constant C_ETHERNET_FIELD_IDX_MAC_SOURCE      : natural := 2;
+  constant C_ETHERNET_FIELD_IDX_LENGTH          : natural := 3;
+  constant C_ETHERNET_FIELD_IDX_PAYLOAD         : natural := 4;
+  constant C_ETHERNET_FIELD_IDX_FCS             : natural := 5;
 
   type t_ethernet_frame is record
     mac_destination : unsigned(47 downto 0);

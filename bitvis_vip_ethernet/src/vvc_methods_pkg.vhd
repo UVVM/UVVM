@@ -497,22 +497,22 @@ package body vvc_methods_pkg is
     -- Send to bridge                --|ET: Suggest to start with ID_PACKET_PREAMBLE and maybe also INITIATE,  and finish with COMPLETE 
     log(ID_PACKET_INITIATE, proc_call & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);                     --|ET: complete?     Initiate skal ikke skrive ut data. Kun kort oversikt. Hvordan skrives cmd_idx ut?
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(0 to 7),
-      C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);  --|ET: CURRENT_BYTE_IDX?
+      C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);  --|ET: CURRENT_BYTE_IDX?
 
     log(ID_PACKET_HDR, proc_call & ": Transmitting header." & format_command_idx(vvc_cmd.cmd_idx) & hdr_to_string(v_ethernet_frame), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(8 to 13),
-      C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+      C_ETHERNET_FIELD_IDX_MAC_DESTINATION, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(14 to 19),
-      C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+      C_ETHERNET_FIELD_IDX_MAC_SOURCE, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(20 to 21),
-      C_IF_FIELD_NUM_ETHERNET_LENTGTH, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+      C_ETHERNET_FIELD_IDX_LENGTH, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
     log(ID_PACKET_DATA, proc_call & ": Transmitting payload." & format_command_idx(vvc_cmd.cmd_idx) & data_to_string(v_ethernet_frame), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22 to 22+v_payload_length-1),
-      C_IF_FIELD_NUM_ETHERNET_PAYLOAD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+      C_ETHERNET_FIELD_IDX_PAYLOAD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 --|ET: Bør logge FCS også, men minimum legge inn kommentarer på at den sendes.
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3),
-      C_IF_FIELD_NUM_ETHERNET_FCS, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
+      C_ETHERNET_FIELD_IDX_FCS, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
     -- Interpacket gap
     wait for interpacket_gap_time;  --|ET: Er denne fast?
@@ -547,7 +547,7 @@ package body vvc_methods_pkg is
     -- Await preamble and SFD
     while true loop
       -- Fetch one byte at the time until SFD is found
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_IF_FIELD_NUM_ETHERNET_PREAMBLE_SFD,
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
       v_preamble_sfd := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_bytes(0);
       v_ethernet_packet_raw(1 to 7) := v_ethernet_packet_raw(0 to 6);
@@ -559,7 +559,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC destination
     -- Send to bridge
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_IF_FIELD_NUM_ETHERNET_MAC_DESTINATION,
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_DESTINATION,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(8 to 13) := bridge_to_hvvc.data_bytes(0 to 5);
     received_data.mac_destination  := unsigned(to_slv(v_ethernet_packet_raw( 8 to 13)));
@@ -568,7 +568,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC source
     -- Send to bridge
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_IF_FIELD_NUM_ETHERNET_MAC_SOURCE,
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_SOURCE,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(14 to 19) := bridge_to_hvvc.data_bytes(0 to 5);
     received_data.mac_source        := unsigned(to_slv(v_ethernet_packet_raw(14 to 19)));
@@ -577,7 +577,7 @@ package body vvc_methods_pkg is
 
     -- Read length
     -- Send to bridge
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_IF_FIELD_NUM_ETHERNET_LENTGTH,
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_ETHERNET_FIELD_IDX_LENGTH,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(20 to 21) := bridge_to_hvvc.data_bytes(0 to 1);
     received_data.length            := to_integer(unsigned(to_slv(v_ethernet_packet_raw(20 to 21))));
@@ -597,7 +597,7 @@ package body vvc_methods_pkg is
     end if;
 
     -- Read payload
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_IF_FIELD_NUM_ETHERNET_PAYLOAD,
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_bytes(0 to v_payload_length-1);
     received_data.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
@@ -608,7 +608,7 @@ package body vvc_methods_pkg is
     log(ID_PACKET_DATA, proc_call & ": Packet data received." & format_command_idx(cmd_idx) & data_to_string(received_data), scope, msg_id_panel);
 
     -- Read FCS
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_IF_FIELD_NUM_ETHERNET_FCS,
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_ETHERNET_FIELD_IDX_FCS,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_bytes(0 to 3);
     received_data.fcs := to_slv(reverse_vectors_in_array(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1)));

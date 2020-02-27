@@ -32,6 +32,9 @@ use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
 use work.ethernet_sb_pkg.all;
 
+library std;
+use std.textio.all;
+
 --==========================================================================================
 --==========================================================================================
 package vvc_methods_pkg is
@@ -52,11 +55,14 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
+  -- For debugging enable the rest of the msg ids in the test sequencer
   constant C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
     ID_PACKET_INITIATE => ENABLED,
     ID_PACKET_COMPLETE => ENABLED,
-    ID_PACKET_HDR      => ENABLED,
-    ID_PACKET_DATA     => ENABLED,
+    ID_PACKET_PREAMBLE => DISABLED,
+    ID_PACKET_HDR      => DISABLED,
+    ID_PACKET_DATA     => DISABLED,
+    ID_PACKET_CHECKSUM => DISABLED,
     others             => DISABLED
   );
 
@@ -209,9 +215,8 @@ package vvc_methods_pkg is
   --   execute the data transactions.
   --==========================================================================================
   procedure priv_ethernet_transmit_to_bridge(
-    constant proc_call            : in    string;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
     constant interpacket_gap_time : in    time;
+    constant vvc_cmd              : in    t_vvc_cmd_record;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
@@ -221,23 +226,22 @@ package vvc_methods_pkg is
   );
 
   procedure priv_ethernet_receive_from_bridge(
-    constant proc_call            : in    string;
     variable received_data        : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
     constant fcs_error_severity   : in    t_alert_level;
-    constant cmd_idx              : in    natural;
+    constant vvc_cmd              : in    t_vvc_cmd_record;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
     variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant msg_id_panel         : in    t_msg_id_panel;
+    constant ext_proc_call        : in    string := "" -- External proc_call. Overwrite if called from another procedure
   );
 
   procedure priv_ethernet_expect_from_bridge(
-    constant proc_call            : in    string;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
     constant fcs_error_severity   : in    t_alert_level;
+    constant vvc_cmd              : in    t_vvc_cmd_record;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
@@ -291,10 +295,9 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name : string := "ethernet_transmit";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-        & ", MAC dest: " & to_string(std_logic_vector'(mac_destination(0) & mac_destination(1) & mac_destination(2) & mac_destination(3)
-        & mac_destination(4) & mac_destination(5)), HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(std_logic_vector'(mac_source(0)
-        & mac_source(1) & mac_source(2) & mac_source(3)
-        & mac_source(4) & mac_source(5)), HEX, AS_IS, INCL_RADIX) & ")";
+        & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX)
+        & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX)
+        & ", length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -379,10 +382,9 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name : string := "ethernet_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-        & ", MAC dest: " & to_string(std_logic_vector'(mac_destination(0) & mac_destination(1) & mac_destination(2) & mac_destination(3)
-        & mac_destination(4) & mac_destination(5)), HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(std_logic_vector'(mac_source(0)
-        & mac_source(1) & mac_source(2) & mac_source(3)
-        & mac_source(4) & mac_source(5)), HEX, AS_IS, INCL_RADIX) & ")";
+        & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX)
+        & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX)
+        & ", length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -435,9 +437,8 @@ package body vvc_methods_pkg is
   -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   --==========================================================================================
   procedure priv_ethernet_transmit_to_bridge(
-    constant proc_call            : in    string;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
     constant interpacket_gap_time : in    time;
+    constant vvc_cmd              : in    t_vvc_cmd_record;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
@@ -445,6 +446,11 @@ package body vvc_methods_pkg is
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is                                                                       --|ET: In general: Why prefix packet, frame, etc with ethernet? Ikke gjennomført.
+    constant proc_name : string := "ethernet_transmit";
+    constant proc_call : string := proc_name
+        & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
+        & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
+        & ", length: " & to_string(vvc_cmd.length) & ")";
     constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;                           --|ET: Strange name on constant
     variable v_ethernet_packet_raw  : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_ethernet_frame       : t_ethernet_frame;
@@ -494,12 +500,16 @@ package body vvc_methods_pkg is
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_crc_32;
 
-    -- Send to bridge                --|ET: Suggest to start with ID_PACKET_PREAMBLE and maybe also INITIATE,  and finish with COMPLETE 
-    log(ID_PACKET_INITIATE, proc_call & ": Start transmitting ethernet packet. " & complete_to_string(v_ethernet_frame) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);                     --|ET: complete?     Initiate skal ikke skrive ut data. Kun kort oversikt. Hvordan skrives cmd_idx ut?
+    -- Send to bridge
+    log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) & 
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(0 to 7),
       C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);  --|ET: CURRENT_BYTE_IDX?
 
-    log(ID_PACKET_HDR, proc_call & ": Transmitting header." & format_command_idx(vvc_cmd.cmd_idx) & hdr_to_string(v_ethernet_frame), scope, msg_id_panel);
+    log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_ethernet_frame, HEADER), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(8 to 13),
       C_ETHERNET_FIELD_IDX_MAC_DESTINATION, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(14 to 19),
@@ -507,42 +517,56 @@ package body vvc_methods_pkg is
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(20 to 21),
       C_ETHERNET_FIELD_IDX_LENGTH, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
-    log(ID_PACKET_DATA, proc_call & ": Transmitting payload." & format_command_idx(vvc_cmd.cmd_idx) & data_to_string(v_ethernet_frame), scope, msg_id_panel);
+    log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_ethernet_frame, PAYLOAD), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22 to 22+v_payload_length-1),
       C_ETHERNET_FIELD_IDX_PAYLOAD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
---|ET: Bør logge FCS også, men minimum legge inn kommentarer på at den sendes.
+    log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_ethernet_frame, CHECKSUM), scope, msg_id_panel);
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3),
       C_ETHERNET_FIELD_IDX_FCS, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
     -- Interpacket gap
-    wait for interpacket_gap_time;  --|ET: Er denne fast?
+    wait for interpacket_gap_time;
 
-    log(ID_PACKET_COMPLETE, proc_call & ": Finished transmitting ethernet packet." & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
   end procedure priv_ethernet_transmit_to_bridge;
 
 --|ET: Skal vel ikke sende annet enn frame (ikke packet) dersom det sendes til en SBI el.l.?  
 
   procedure priv_ethernet_receive_from_bridge(
-    constant proc_call            : in    string;
     variable received_data        : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
     constant fcs_error_severity   : in    t_alert_level;
-    constant cmd_idx              : in    natural;
+    constant vvc_cmd              : in    t_vvc_cmd_record;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
     variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant msg_id_panel         : in    t_msg_id_panel;
+    constant ext_proc_call        : in    string := "" -- External proc_call. Overwrite if called from another procedure
   ) is
+    constant local_proc_name : string := "ethernet_receive";
+    constant local_proc_call : string := local_proc_name & "()";
     constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;                   
     variable v_preamble_sfd        : std_logic_vector(63 downto 0) := (others => '0');   --|ET: preamble_and_sfd ?
     variable v_ethernet_packet_raw : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);         --|ET: Raw is "restricted word" in Ethernet?  ..._packet_bytes ?
     variable v_payload_length      : integer;
+    variable v_proc_call           : line; -- Current proc_call, external or local
   begin
     received_data := C_ETHERNET_FRAME_DEFAULT;   --|ET: received_frame.    Generelt: Skal 'data' brukes som navn her i det hele tatt?
 
-    log(ID_PACKET_INITIATE, proc_call & ": Await ethernet packet." & format_command_idx(cmd_idx), scope, msg_id_panel);
+    -- Choose which procedure call to use (local or external)
+    if ext_proc_call = "" then
+      write(v_proc_call, local_proc_call);
+    else
+      write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+    end if;
+
+    log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) & 
+          format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Await preamble and SFD
     while true loop
@@ -556,6 +580,8 @@ package body vvc_methods_pkg is
         exit;
       end if;
     end loop;
+    log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & 
+          format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Read MAC destination
     -- Send to bridge
@@ -583,8 +609,8 @@ package body vvc_methods_pkg is
     received_data.length            := to_integer(unsigned(to_slv(v_ethernet_packet_raw(20 to 21))));
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.length := received_data.length;
-
-    log(ID_PACKET_HDR, proc_call & ": Packet header received." & format_command_idx(cmd_idx) & hdr_to_string(received_data), scope, msg_id_panel);
+    log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
+          format_command_idx(vvc_cmd.cmd_idx) & to_string(received_data, HEADER), scope, msg_id_panel);
 
     -- Check length and if payload is padded
     if received_data.length > C_MAX_PAYLOAD_LENGTH then
@@ -604,8 +630,8 @@ package body vvc_methods_pkg is
     received_data.payload(0 to v_payload_length-1) := v_ethernet_packet_raw(22 to 22+v_payload_length-1);
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.payload := received_data.payload;
-
-    log(ID_PACKET_DATA, proc_call & ": Packet data received." & format_command_idx(cmd_idx) & data_to_string(received_data), scope, msg_id_panel);
+    log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) & 
+          format_command_idx(vvc_cmd.cmd_idx) & to_string(received_data, PAYLOAD), scope, msg_id_panel);
 
     -- Read FCS
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_ETHERNET_FIELD_IDX_FCS,
@@ -615,15 +641,17 @@ package body vvc_methods_pkg is
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := received_data.fcs;
     fcs_error := not check_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length+4-1)));
+    log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
+          format_command_idx(vvc_cmd.cmd_idx) & to_string(received_data, CHECKSUM), scope, msg_id_panel);
 
-    log(ID_PACKET_COMPLETE, proc_call & ": Packet received. " & complete_to_string(received_data) & format_command_idx(cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
   end procedure priv_ethernet_receive_from_bridge;
 
   procedure priv_ethernet_expect_from_bridge(
-    constant proc_call            : in    string;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
     constant fcs_error_severity   : in    t_alert_level;
+    constant vvc_cmd              : in    t_vvc_cmd_record;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     constant field_timeout_margin : in    time;
@@ -631,6 +659,11 @@ package body vvc_methods_pkg is
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is
+    constant proc_name : string := "ethernet_expect";
+    constant proc_call : string := proc_name
+        & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
+        & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
+        & ", length: " & to_string(vvc_cmd.length) & ")";
     variable v_ethernet_packet_raw : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_payload_length      : integer;
     variable v_expected_data       : t_ethernet_frame;
@@ -660,19 +693,17 @@ package body vvc_methods_pkg is
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_expected_data.fcs;
 
-    log(ID_PACKET_INITIATE, proc_call & ": Expecting ethernet packet. " & complete_to_string(v_expected_data) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-
-    priv_ethernet_receive_from_bridge(proc_call            => proc_call,
-                                      received_data        => v_received_data,
+    priv_ethernet_receive_from_bridge(received_data        => v_received_data,
                                       fcs_error            => v_fcs_error,
                                       fcs_error_severity   => fcs_error_severity,
-                                      cmd_idx              => vvc_cmd.cmd_idx,
+                                      vvc_cmd              => vvc_cmd,
                                       hvvc_to_bridge       => hvvc_to_bridge,
                                       bridge_to_hvvc       => bridge_to_hvvc,
                                       field_timeout_margin => field_timeout_margin,
                                       dtt_info             => dtt_info,
                                       scope                => scope,
-                                      msg_id_panel         => msg_id_panel);
+                                      msg_id_panel         => msg_id_panel,
+                                      ext_proc_call        => proc_call);
 
     -- Check received frame against expected frame
     v_frame_passed := compare_ethernet_frames(v_received_data, v_expected_data, vvc_cmd.alert_level,

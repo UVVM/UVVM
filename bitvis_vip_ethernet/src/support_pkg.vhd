@@ -97,16 +97,13 @@ package support_pkg is
     constant payload_length : in positive
   ) return positive;
 
-  function hdr_to_string(
+  function to_string(
     constant ethernet_frame : in t_ethernet_frame
   ) return string;
 
-  function data_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string;
-
-  function complete_to_string(
-    constant ethernet_frame : in t_ethernet_frame
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame;
+    constant frame_field    : in t_frame_field
   ) return string;
 
   function to_slv(
@@ -178,35 +175,49 @@ package body support_pkg is
     return payload_length + 18;
   end function get_ethernet_frame_length;
 
-  function hdr_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-  begin
-    return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
-           LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
-           LF & "    length:          " & to_string(ethernet_frame.length);
-  end function hdr_to_string;
-
-  function data_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-    variable payload_string : string(1 to 21*ethernet_frame.length); --byte 1500: x"00"
-  begin
-    for i in 0 to ethernet_frame.length-1 loop
-      payload_string(i*21+1 to (i+1)*21) := LF & "    byte " & to_string(i, 4, RIGHT) & ": " & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX);
-    end loop;
-    return LF & "    Payload:" & payload_string;
-  end function data_to_string;
-
-  function complete_to_string(
+  function to_string(
     constant ethernet_frame : in t_ethernet_frame
   ) return string is
   begin
     return "MAC dest: "  & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           "; MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           "; length: "  & to_string(ethernet_frame.length) &
-           "; fcs: "     & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
-  end function complete_to_string;
+           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
+           ", length: "  & to_string(ethernet_frame.length) &
+           ", fcs: "     & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
+  end function to_string;
+
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame;
+    constant frame_field    : in t_frame_field
+  ) return string is
+    variable payload_string : string(1 to 14*ethernet_frame.length); --[1500]:x"00",
+    variable v_line         : line;
+    variable v_line_width   : natural;
+  begin
+    case frame_field is
+      when HEADER =>
+        return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) &
+               LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) &
+               LF & "    length:          " & to_string(ethernet_frame.length);
+
+      when PAYLOAD =>
+        write(v_line, string'("[" & to_string(0) & "]:" & to_string(ethernet_frame.payload(0), HEX, AS_IS, INCL_RADIX)));
+        if ethernet_frame.length > 1 then
+          for i in 1 to ethernet_frame.length-1 loop
+            write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX)));
+          end loop;
+        end if;
+        v_line_width := v_line'length;
+        payload_string(1 to v_line_width) := v_line.all;
+        deallocate(v_line);
+        return LF & payload_string(1 to v_line_width);
+
+      when CHECKSUM =>
+        return LF & "    FCS: " & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
+
+      when others =>
+        return "";
+    end case;
+  end function to_string;
 
   function to_slv(
     constant byte_array : in t_byte_array

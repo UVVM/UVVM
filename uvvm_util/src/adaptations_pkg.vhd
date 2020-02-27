@@ -107,18 +107,20 @@ package adaptations_pkg is
     -- Segment Ids, finest granularity of packet data
     ID_SEGMENT_INITIATE,      -- Notify that a segment is about to be transmitted or received
     ID_SEGMENT_COMPLETE,      -- Notify that a segment has been transmitted or received
-    ID_SEGMENT_HDR,           -- AS ID_SEGMENT_COMPLETE, but also writes header info
-    ID_SEGMENT_DATA,          -- AS ID_SEGMENT_COMPLETE, but also writes segment data (could be huge)
+    ID_SEGMENT_HDR,           -- Notify that a segment header has been transmitted or received. It also writes header info
+    ID_SEGMENT_DATA,          -- Notify that a segment data has been transmitted or received. It also writes segment data
     -- Packet Ids, medium granularity of packet data
     ID_PACKET_INITIATE,       -- Notify that a packet is about to be transmitted or received
+    ID_PACKET_PREAMBLE,       -- Notify that a packet preamble has been transmitted or received
     ID_PACKET_COMPLETE,       -- Notify that a packet has been transmitted or received
-    ID_PACKET_HDR,            -- AS ID_PACKET_COMPLETED, but also writes header info
-    ID_PACKET_DATA,           -- AS ID_PACKET_COMPLETED, but also writes packet data (could be huge)
+    ID_PACKET_HDR,            -- Notify that a packet header has been transmitted or received. It also writes header info
+    ID_PACKET_DATA,           -- Notify that a packet data has been transmitted or received. It also writes packet data
+    ID_PACKET_CHECKSUM,       -- Notify that a packet checksum has been transmitted or received
     -- Frame Ids, roughest granularity of packet data
     ID_FRAME_INITIATE,        -- Notify that a frame is about to be transmitted or received
     ID_FRAME_COMPLETE,        -- Notify that a frame has been transmitted or received
-    ID_FRAME_HDR,             -- AS ID_FRAME_COMPLETE, but also writes header info
-    ID_FRAME_DATA,            -- AS ID_FRAME_COMPLETE, but also writes frame data (could be huge)
+    ID_FRAME_HDR,             -- Notify that a frame header has been transmitted or received. It also writes header info
+    ID_FRAME_DATA,            -- Notify that a frame data has been transmitted or received. It also writes frame data
     -- OSVVM Ids
     ID_COVERAGE_MAKEBIN,      -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
     ID_COVERAGE_ADDBIN,       -- Log messages from AddBin/AddCross

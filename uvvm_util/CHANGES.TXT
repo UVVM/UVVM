@@ -3,6 +3,12 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.11.2
+----------
+Released: 2020-XX-XX
+- Added 2 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE and ID_PACKET_CHECKSUM.
+
+
 v2.11.1
 ----------
 Released: 2020-02-16

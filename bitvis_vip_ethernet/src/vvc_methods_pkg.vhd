@@ -492,7 +492,7 @@ package body vvc_methods_pkg is
     end if;
 
     -- FCS
-    v_crc_32 := generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
+    v_crc_32 := generate_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
     v_crc_32 := not(v_crc_32);                                                                                          --|ET: Because
     v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
     v_ethernet_frame.fcs := v_crc_32;
@@ -688,7 +688,7 @@ package body vvc_methods_pkg is
     v_expected_data.mac_source      := vvc_cmd.mac_source;
     v_expected_data.length          := vvc_cmd.length;
     v_expected_data.payload         := vvc_cmd.payload;
-    v_expected_data.fcs             := not generate_crc_32_complete(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
+    v_expected_data.fcs             := not generate_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
 
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_expected_data.fcs;

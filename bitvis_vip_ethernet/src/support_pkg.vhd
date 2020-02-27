@@ -31,8 +31,6 @@ package support_pkg is
   --========================================================================================================================
   constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
-  constant C_CRC_32_RESIDUE    : std_logic_vector(31 downto 0) := x"C704DD7B";
-  constant C_CRC_32_POLYNOMIAL : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
 
   constant C_MIN_PAYLOAD_LENGTH : natural := 46;
   constant C_MAX_PAYLOAD_LENGTH : natural := 1500;
@@ -75,8 +73,8 @@ package support_pkg is
   end record;
 
   constant C_ETHERNET_PROTOCOL_CONFIG_DEFAULT : t_ethernet_protocol_config := (
-    mac_destination      => (others => 'Z'),
-    mac_source           => (others => 'Z'),
+    mac_destination      => (others => '0'),
+    mac_source           => (others => '0'),
     fcs_error_severity   => ERROR,
     interpacket_gap_time => 96 ns -- Standard minimum interpacket gap (Gigabith Ethernet)
   );
@@ -85,7 +83,7 @@ package support_pkg is
   --========================================================================================================================
   -- Functions and procedures
   --========================================================================================================================
-  impure function generate_crc_32_complete(
+  impure function generate_crc_32(
     constant data : in t_byte_array
   ) return std_logic_vector;
 
@@ -147,25 +145,19 @@ end package support_pkg;
 
 package body support_pkg is
 
-  ---------------------------------------------------------------------------------
-  -- generate_crc_32
-  ---------------------------------------------------------------------------------
-  --
-  -- This function generate the IEEE 802.3 CRC32 for byte array input.
-  --
-  ---------------------------------------------------------------------------------
-  impure function generate_crc_32_complete(
+  -- This function generates the IEEE 802.3 CRC32 for byte array input.
+  impure function generate_crc_32(
     constant data : in t_byte_array
   ) return std_logic_vector is
   begin
     return generate_crc(data, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
-  end function generate_crc_32_complete;
+  end function generate_crc_32;
 
   impure function check_crc_32(
     constant data : in t_byte_array
   ) return boolean is
   begin
-    return generate_crc_32_complete(data) = C_CRC_32_RESIDUE;
+    return generate_crc_32(data) = C_CRC_32_RESIDUE;
   end function check_crc_32;
 
   function get_ethernet_frame_length(

@@ -78,6 +78,7 @@ end package support_pkg;
 
 package body support_pkg is
 
+  -- Sends a delta cycle pulse in the hvvc_to_bridge.trigger signal
   procedure hvvc_to_bridge_trigger(
     signal hvvc_to_bridge : out t_hvvc_to_bridge
   ) is
@@ -87,6 +88,7 @@ package body support_pkg is
     hvvc_to_bridge.trigger <= false;
   end procedure hvvc_to_bridge_trigger;
 
+  -- Send an operation to the bridge using a data array
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
@@ -109,6 +111,7 @@ package body support_pkg is
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
+  -- Send an operation to the bridge using number of data bytes
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
@@ -128,6 +131,7 @@ package body support_pkg is
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
+  -- Send an operation to the bridge using a data array and wait for bridge to finish
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
@@ -143,6 +147,7 @@ package body support_pkg is
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 
+  -- Send an operation to the bridge using number of data bytes and wait for bridge to finish
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;

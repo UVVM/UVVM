@@ -282,6 +282,15 @@ package adaptations_pkg is
     RANDOM_FAVOUR_EDGES
   );
 
+  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+    NA,               -- When channel is not relevant
+    ALL_CHANNELS,     -- When command shall be received by all channels
+    -- UVVM predefined channels.
+    RX, TX
+    -- User add more channels if needed below.
+
+  );
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 

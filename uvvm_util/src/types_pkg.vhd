@@ -46,7 +46,6 @@ package types_pkg is
   type positive_vector is array (natural range <>) of positive;
 
   -- Note: Most types below have a matching to_string() in 'string_methods_pkg.vhd'
-
   type t_info_target is (LOG_INFO, ALERT_INFO, USER_INFO);
   type t_alert_level is (NO_ALERT, NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
 
@@ -189,7 +188,6 @@ package types_pkg is
         alert_level_print : t_hierarchy_alert_level_print;
       end record;
 
-
   type t_bfm_delay_type is (NO_DELAY, TIME_FINISH2START, TIME_START2START);
 
   type t_inter_bfm_delay is
@@ -208,15 +206,6 @@ package types_pkg is
     TO_BUFFER,
     FROM_BUFFER,
     TO_RECEIVE_BUFFER); -- TO_FILE and FROM_FILE may be added later on
-
-  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
-    NA,               -- When channel is not relevant
-    ALL_CHANNELS,     -- When command shall be received by all channels
-    -- UVVM predefined channels.
-    RX, TX
-    -- User add more channels if needed below.
-
-  );
 
   type t_bfm_sync is (
     SYNC_ON_CLOCK_ONLY,
@@ -241,8 +230,6 @@ package types_pkg is
   type t_range_option is (SINGLE, AND_LOWER, AND_HIGHER);
 
   type t_tag_usage is (TAG, NO_TAG);
-
-
 
 end package types_pkg;
 

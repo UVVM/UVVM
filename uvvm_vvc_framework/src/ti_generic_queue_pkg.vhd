@@ -841,6 +841,10 @@ package body ti_generic_queue_pkg is
             vr_first_element(instance) := vr_first_element(instance).next_element;
           else  -- Removing an intermediate or last entry
             v_preceding_element_ptr.next_element := v_element_to_delete_ptr.next_element;
+            -- If the element is the last entry, update vr_last_element
+            if v_element_to_delete_ptr.next_element = null then
+              vr_last_element(instance) := v_preceding_element_ptr;
+            end if;
           end if;
 
 
@@ -905,6 +909,10 @@ package body ti_generic_queue_pkg is
             vr_first_element(instance) := vr_first_element(instance).next_element;
           else  -- Removing an intermediate or last entry
             v_preceding_element_ptr.next_element := v_element_to_delete_ptr.next_element;
+            -- If the element is the last entry, update vr_last_element
+            if v_element_to_delete_ptr.next_element = null then
+              vr_last_element(instance) := v_preceding_element_ptr;
+            end if;
           end if;
 
           -- Decrement number of elements

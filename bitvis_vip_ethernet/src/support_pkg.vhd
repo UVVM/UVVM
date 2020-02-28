@@ -29,8 +29,8 @@ package support_pkg is
   --========================================================================================================================
   -- Types and constants
   --========================================================================================================================
-  constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
-  constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
+  constant C_PREAMBLE           : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
+  constant C_SFD                : std_logic_vector( 7 downto 0) := x"D5";
 
   constant C_MIN_PAYLOAD_LENGTH : natural := 46;
   constant C_MAX_PAYLOAD_LENGTH : natural := 1500;
@@ -64,7 +64,7 @@ package support_pkg is
     fcs_error : boolean;
   end record t_ethernet_frame_status;
 
-  -- Configuration record to be assigned in the test harness.
+  -- Configuration record to be assigned in the test harness
   type t_ethernet_protocol_config is record
     mac_destination      : unsigned(47 downto 0);
     mac_source           : unsigned(47 downto 0);
@@ -84,11 +84,11 @@ package support_pkg is
   -- Functions and procedures
   --========================================================================================================================
   impure function generate_crc_32(
-    constant data : in t_byte_array
+    constant data_array : in t_byte_array
   ) return std_logic_vector;
 
   impure function check_crc_32(
-    constant data : in t_byte_array
+    constant data_array : in t_byte_array
   ) return boolean;
 
   function get_ethernet_frame_length(
@@ -145,21 +145,22 @@ end package support_pkg;
 
 package body support_pkg is
 
-  -- This function generates the IEEE 802.3 CRC32 for byte array input.
+  -- Generates the IEEE 802.3 CRC32 for byte array input
   impure function generate_crc_32(
-    constant data : in t_byte_array
+    constant data_array : in t_byte_array
   ) return std_logic_vector is
   begin
-    return generate_crc(data, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
+    return generate_crc(data_array, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
   end function generate_crc_32;
 
   impure function check_crc_32(
-    constant data : in t_byte_array
+    constant data_array : in t_byte_array
   ) return boolean is
   begin
-    return generate_crc_32(data) = C_CRC_32_RESIDUE;
+    return generate_crc_32(data_array) = C_CRC_32_RESIDUE;
   end function check_crc_32;
 
+  -- Returns the complete frame length
   function get_ethernet_frame_length(
     constant payload_length : in positive
   ) return positive is

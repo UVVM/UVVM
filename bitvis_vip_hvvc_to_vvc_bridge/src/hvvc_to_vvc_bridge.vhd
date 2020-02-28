@@ -45,29 +45,27 @@ entity hvvc_to_vvc_bridge is
 end entity hvvc_to_vvc_bridge;
 
 architecture func of hvvc_to_vvc_bridge is
-  constant C_UNSUPPORTED_OPERATION   : string         := "Unsupported operation";
-  constant C_UNSUPPORTED_INTERFACE   : string         := "Unsupported interface";
-  constant C_INTERFACE_CONFIG_LENGTH : positive       := GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'length;
+  constant C_UNSUPPORTED_OPERATION : string := "Unsupported operation";
+  constant C_UNSUPPORTED_INTERFACE : string := "Unsupported interface";
 begin
 
   p_executor : process
-    variable v_cmd_idx                    : integer;
-    variable v_gmii_received_data         : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
-    variable v_sbi_received_data          : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
-    variable v_sbi_send_data              : std_logic_vector(bitvis_vip_sbi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    variable v_direction                  : t_direction;
-    variable v_interface_config_idx       : natural := 0;
-    variable v_dut_address                : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
-    variable v_dut_address_increment      : integer;
-    variable v_num_of_transfers           : integer;
-    variable v_byte_idx                   : natural range 0 to GC_MAX_NUM_BYTES;
-    variable v_bit_idx                    : natural range 0 to 7;
-    variable v_data_width                 : positive;
+    variable v_cmd_idx                : integer;
+    variable v_gmii_received_data     : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
+    variable v_sbi_received_data      : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
+    variable v_sbi_send_data          : std_logic_vector(bitvis_vip_sbi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    variable v_direction              : t_direction;
+    variable v_dut_address            : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
+    variable v_dut_address_increment  : integer;
+    variable v_num_of_transfers       : integer;
+    variable v_byte_idx               : natural range 0 to GC_MAX_NUM_BYTES;
+    variable v_bit_idx                : natural range 0 to 7;
+    variable v_data_width             : positive;
   begin
 
     loop
 
-      -- Await cmd
+      -- Await cmd from the HVVC
       wait until hvvc_to_bridge.trigger = true;
 
       if hvvc_to_bridge.operation = TRANSMIT then -- Expand if other operations
@@ -76,26 +74,26 @@ begin
         v_direction := RECEIVE;
       end if;
 
-      -- If not configs are defined for all fields the last config is used
+      -- If no configs are defined for all fields the last config is used
       if hvvc_to_bridge.dut_if_field_idx > GC_DUT_IF_FIELD_CONFIG(v_direction)'high then
         -- Set address and address incrementation
         v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(v_direction)(GC_DUT_IF_FIELD_CONFIG(v_direction)'high).dut_address_increment;
         v_dut_address := GC_DUT_IF_FIELD_CONFIG(v_direction)(GC_DUT_IF_FIELD_CONFIG(v_direction)'high).dut_address +
-            (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
+          (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
         -- Set data width
         v_data_width := GC_DUT_IF_FIELD_CONFIG(v_direction)(GC_DUT_IF_FIELD_CONFIG(v_direction)'high).data_width;
       else
         -- Set address and address incrementation
         v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(v_direction)(hvvc_to_bridge.dut_if_field_idx).dut_address_increment;
         v_dut_address := GC_DUT_IF_FIELD_CONFIG(v_direction)(hvvc_to_bridge.dut_if_field_idx).dut_address +
-            (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
+          (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
         -- Set data width
         v_data_width := GC_DUT_IF_FIELD_CONFIG(v_direction)(hvvc_to_bridge.dut_if_field_idx).data_width;
       end if;
 
       -- Calculate number of transfers
       v_num_of_transfers := (hvvc_to_bridge.num_data_bytes*8)/v_data_width;
-      -- Extra transfer if remainder
+      -- Extra transfer if data bits remainder
       if ((hvvc_to_bridge.num_data_bytes*8) rem v_data_width) /= 0 then
         v_num_of_transfers := v_num_of_transfers+1;
       end if;
@@ -173,7 +171,6 @@ begin
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
 
-
             when RECEIVE =>
               v_byte_idx := 0;
               v_bit_idx  := 0;
@@ -209,7 +206,6 @@ begin
                 end loop;
                 v_dut_address := v_dut_address + v_dut_address_increment;
               end loop;
-
 
             when others =>
               alert(TB_ERROR, C_UNSUPPORTED_OPERATION);

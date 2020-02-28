@@ -226,7 +226,7 @@ package vvc_methods_pkg is
   );
 
   procedure priv_ethernet_receive_from_bridge(
-    variable received_data        : out   t_ethernet_frame;
+    variable received_frame       : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
     constant fcs_error_severity   : in    t_alert_level;
     constant vvc_cmd              : in    t_vvc_cmd_record;
@@ -445,57 +445,57 @@ package body vvc_methods_pkg is
     variable dtt_info             : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
-  ) is                                                                       --|ET: In general: Why prefix packet, frame, etc with ethernet? Ikke gjennomført.
+  ) is
     constant proc_name : string := "ethernet_transmit";
     constant proc_call : string := proc_name
         & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
         & ", length: " & to_string(vvc_cmd.length) & ")";
     constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;                           --|ET: Strange name on constant
-    variable v_ethernet_packet_raw  : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_ethernet_frame       : t_ethernet_frame;
-    variable v_payload_length       : natural;
-    variable v_length               : std_logic_vector(15 downto 0);               --|ET: Length of what
-    variable v_crc_32               : std_logic_vector(31 downto 0);
+    variable v_packet             : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    variable v_frame              : t_ethernet_frame;
+    variable v_payload_length     : natural;
+    variable v_payload_length_slv : std_logic_vector(15 downto 0);
+    variable v_crc_32             : std_logic_vector(31 downto 0);
   begin
     -- Preamble
     for i in 0 to 6 loop
-      v_ethernet_packet_raw(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);     --|ET: Why reverse from standard? 10101010 MSb first.
+      v_packet(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);     --|ET: Why reverse from standard? 10101010 MSb first.
     end loop;
 
     -- SFD
-    v_ethernet_packet_raw(7) := C_SFD;
+    v_packet(7) := C_SFD;
 
     -- MAC destination
-    v_ethernet_packet_raw(8 to 13)   := to_byte_array(std_logic_vector(vvc_cmd.mac_destination)); --|ET: Hvordan vet vi at dette blir riktig?  msB->lowB=LeftB
-    v_ethernet_frame.mac_destination := vvc_cmd.mac_destination;
+    v_packet(8 to 13)       := to_byte_array(std_logic_vector(vvc_cmd.mac_destination)); --|ET: Hvordan vet vi at dette blir riktig?  msB->lowB=LeftB
+    v_frame.mac_destination := vvc_cmd.mac_destination;
 
     -- MAC source
-    v_ethernet_packet_raw(14 to 19) := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
-    v_ethernet_frame.mac_source     := vvc_cmd.mac_source;
+    v_packet(14 to 19) := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
+    v_frame.mac_source := vvc_cmd.mac_source;
 
     -- Length
-    v_payload_length          := vvc_cmd.length;
-    v_length                  := std_logic_vector(to_unsigned(vvc_cmd.length, 16));
-    v_ethernet_packet_raw(20) := v_length(15 downto 8);
-    v_ethernet_packet_raw(21) := v_length(7 downto 0);
-    v_ethernet_frame.length   := vvc_cmd.length;
+    v_payload_length     := vvc_cmd.length;
+    v_payload_length_slv := std_logic_vector(to_unsigned(vvc_cmd.length, 16));
+    v_packet(20)         := v_payload_length_slv(15 downto 8);
+    v_packet(21)         := v_payload_length_slv(7 downto 0);
+    v_frame.length       := vvc_cmd.length;
 
     -- Payload
-    v_ethernet_packet_raw(22 to 22+vvc_cmd.length-1) := vvc_cmd.payload(0 to vvc_cmd.length-1);
-    v_ethernet_frame.payload := vvc_cmd.payload;
+    v_packet(22 to 22+vvc_cmd.length-1) := vvc_cmd.payload(0 to vvc_cmd.length-1);
+    v_frame.payload := vvc_cmd.payload;
 
     -- Pad if length is less than C_MIN_PAYLOAD_LENGTH(46)
     if vvc_cmd.length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_ethernet_packet_raw(22+vvc_cmd.length to 22+v_payload_length) := (others => (others => '0'));
+      v_packet(22+vvc_cmd.length to 22+v_payload_length) := (others => (others => '0'));
     end if;
 
     -- FCS
-    v_crc_32 := generate_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
+    v_crc_32 := generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
     v_crc_32 := not(v_crc_32);                                                                                          --|ET: Because
-    v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
-    v_ethernet_frame.fcs := v_crc_32;
+    v_packet(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
+    v_frame.fcs := v_crc_32;
 
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_crc_32;
@@ -505,25 +505,25 @@ package body vvc_methods_pkg is
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(0 to 7),
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(0 to 7),
       C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);  --|ET: CURRENT_BYTE_IDX?
 
     log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_ethernet_frame, HEADER), scope, msg_id_panel);
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(8 to 13),
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(8 to 13),
       C_ETHERNET_FIELD_IDX_MAC_DESTINATION, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(14 to 19),
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(14 to 19),
       C_ETHERNET_FIELD_IDX_MAC_SOURCE, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(20 to 21),
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(20 to 21),
       C_ETHERNET_FIELD_IDX_LENGTH, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
     log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_ethernet_frame, PAYLOAD), scope, msg_id_panel);
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22 to 22+v_payload_length-1),
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(22 to 22+v_payload_length-1),
       C_ETHERNET_FIELD_IDX_PAYLOAD, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
     log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_ethernet_frame, CHECKSUM), scope, msg_id_panel);
-    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+3),
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
+    blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(22+v_payload_length to 22+v_payload_length+3),
       C_ETHERNET_FIELD_IDX_FCS, C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
 
     -- Interpacket gap
@@ -536,7 +536,7 @@ package body vvc_methods_pkg is
 --|ET: Skal vel ikke sende annet enn frame (ikke packet) dersom det sendes til en SBI el.l.?  
 
   procedure priv_ethernet_receive_from_bridge(
-    variable received_data        : out   t_ethernet_frame;
+    variable received_frame       : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
     constant fcs_error_severity   : in    t_alert_level;
     constant vvc_cmd              : in    t_vvc_cmd_record;
@@ -551,13 +551,11 @@ package body vvc_methods_pkg is
     constant local_proc_name : string := "ethernet_receive";
     constant local_proc_call : string := local_proc_name & "()";
     constant C_CURRENT_BYTE_IDX_IN_FIELD : natural := 0;                   
-    variable v_preamble_sfd        : std_logic_vector(63 downto 0) := (others => '0');   --|ET: preamble_and_sfd ?
-    variable v_ethernet_packet_raw : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);         --|ET: Raw is "restricted word" in Ethernet?  ..._packet_bytes ?
-    variable v_payload_length      : integer;
-    variable v_proc_call           : line; -- Current proc_call, external or local
+    variable v_preamble_sfd   : std_logic_vector(63 downto 0) := (others => '0');   --|ET: preamble_and_sfd ?
+    variable v_packet         : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    variable v_payload_length : integer;
+    variable v_proc_call      : line; -- Current proc_call, external or local
   begin
-    received_data := C_ETHERNET_FRAME_DEFAULT;   --|ET: received_frame.    Generelt: Skal 'data' brukes som navn her i det hele tatt?
-
     -- Choose which procedure call to use (local or external)
     if ext_proc_call = "" then
       write(v_proc_call, local_proc_call);
@@ -565,88 +563,88 @@ package body vvc_methods_pkg is
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
+    received_frame := C_ETHERNET_FRAME_DEFAULT;
+
     log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) & 
-          format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Await preamble and SFD
     while true loop
       -- Fetch one byte at the time until SFD is found
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-      v_preamble_sfd := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_bytes(0);
-      v_ethernet_packet_raw(1 to 7) := v_ethernet_packet_raw(0 to 6);
-      v_ethernet_packet_raw(0)      := bridge_to_hvvc.data_bytes(0);
+      v_preamble_sfd   := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_bytes(0);
+      v_packet(1 to 7) := v_packet(0 to 6);
+      v_packet(0)      := bridge_to_hvvc.data_bytes(0);
       if v_preamble_sfd = C_PREAMBLE & C_SFD then
         exit;
       end if;
     end loop;
     log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & 
-          format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
-    -- Read MAC destination
-    -- Send to bridge
+    -- Read MAC destination from bridge
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_DESTINATION,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    v_ethernet_packet_raw(8 to 13) := bridge_to_hvvc.data_bytes(0 to 5);
-    received_data.mac_destination  := unsigned(to_slv(v_ethernet_packet_raw( 8 to 13)));
+    v_packet(8 to 13)              := bridge_to_hvvc.data_bytes(0 to 5);
+    received_frame.mac_destination := unsigned(to_slv(v_packet( 8 to 13)));
     -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.mac_destination := received_data.mac_destination;
+    dtt_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
 
-    -- Read MAC source
-    -- Send to bridge
+    -- Read MAC source from bridge
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_SOURCE,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    v_ethernet_packet_raw(14 to 19) := bridge_to_hvvc.data_bytes(0 to 5);
-    received_data.mac_source        := unsigned(to_slv(v_ethernet_packet_raw(14 to 19)));
+    v_packet(14 to 19)        := bridge_to_hvvc.data_bytes(0 to 5);
+    received_frame.mac_source := unsigned(to_slv(v_packet(14 to 19)));
     -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.mac_source := received_data.mac_source;
+    dtt_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
 
-    -- Read length
-    -- Send to bridge
+    -- Read length from bridge
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_ETHERNET_FIELD_IDX_LENGTH,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    v_ethernet_packet_raw(20 to 21) := bridge_to_hvvc.data_bytes(0 to 1);
-    received_data.length            := to_integer(unsigned(to_slv(v_ethernet_packet_raw(20 to 21))));
+    v_packet(20 to 21)    := bridge_to_hvvc.data_bytes(0 to 1);
+    received_frame.length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
     -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.length := received_data.length;
+    dtt_info.bt.ethernet_frame.length := received_frame.length;
     log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
-          format_command_idx(vvc_cmd.cmd_idx) & to_string(received_data, HEADER), scope, msg_id_panel);
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
 
     -- Check length and if payload is padded
-    if received_data.length > C_MAX_PAYLOAD_LENGTH then
+    if received_frame.length > C_MAX_PAYLOAD_LENGTH then
       alert(ERROR, "Payload is larger than maximum alowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);
     end if;
-    if received_data.length < C_MIN_PAYLOAD_LENGTH then
+    if received_frame.length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
     else
-      v_payload_length := received_data.length;
+      v_payload_length := received_frame.length;
     end if;
 
-    -- Read payload
+    -- Read payload from bridge
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    v_ethernet_packet_raw(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_bytes(0 to v_payload_length-1);
-    received_data.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
-    received_data.payload(0 to v_payload_length-1) := v_ethernet_packet_raw(22 to 22+v_payload_length-1);
+    v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_bytes(0 to v_payload_length-1);
+    received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
+    received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
     -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.payload := received_data.payload;
+    dtt_info.bt.ethernet_frame.payload := received_frame.payload;
     log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) & 
-          format_command_idx(vvc_cmd.cmd_idx) & to_string(received_data, PAYLOAD), scope, msg_id_panel);
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, PAYLOAD), scope, msg_id_panel);
 
-    -- Read FCS
+    -- Read FCS from bridge
     blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_ETHERNET_FIELD_IDX_FCS,
       C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-    v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_bytes(0 to 3);
-    received_data.fcs := to_slv(reverse_vectors_in_array(v_ethernet_packet_raw(22+v_payload_length to 22+v_payload_length+4-1)));
+    v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_bytes(0 to 3);
+    received_frame.fcs := to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)));
     -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.fcs := received_data.fcs;
-    fcs_error := not check_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length+4-1)));
+    dtt_info.bt.ethernet_frame.fcs := received_frame.fcs;
     log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
-          format_command_idx(vvc_cmd.cmd_idx) & to_string(received_data, CHECKSUM), scope, msg_id_panel);
+      format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
+
+    fcs_error := not check_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length+4-1)));
+    check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
 
     log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-    check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
   end procedure priv_ethernet_receive_from_bridge;
 
   procedure priv_ethernet_expect_from_bridge(
@@ -664,36 +662,37 @@ package body vvc_methods_pkg is
         & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
         & ", length: " & to_string(vvc_cmd.length) & ")";
-    variable v_ethernet_packet_raw : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_payload_length      : integer;
-    variable v_expected_data       : t_ethernet_frame;
-    variable v_received_data       : t_ethernet_frame;
-    variable v_fcs_error           : boolean;
-    variable v_frame_passed        : boolean;
+    variable v_packet         : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    variable v_payload_length : integer;
+    variable v_expected_frame : t_ethernet_frame;
+    variable v_received_frame : t_ethernet_frame;
+    variable v_fcs_error      : boolean;
+    variable v_frame_passed   : boolean;
   begin
     -- For FCS calculation
-    v_ethernet_packet_raw( 8 to 13)                  := to_byte_array(std_logic_vector(vvc_cmd.mac_destination));
-    v_ethernet_packet_raw(14 to 19)                  := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
-    v_ethernet_packet_raw(20 to 21)                  := to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.length, 16)));
-    v_ethernet_packet_raw(22 to 22+vvc_cmd.length-1) := vvc_cmd.payload(0 to vvc_cmd.length-1);
+    v_packet( 8 to 13)                  := to_byte_array(std_logic_vector(vvc_cmd.mac_destination));
+    v_packet(14 to 19)                  := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
+    v_packet(20 to 21)                  := to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.length, 16)));
+    v_packet(22 to 22+vvc_cmd.length-1) := vvc_cmd.payload(0 to vvc_cmd.length-1);
     if vvc_cmd.length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_ethernet_packet_raw(22+vvc_cmd.length to 22+v_payload_length) := (others => (others => '0'));
+      v_packet(22+vvc_cmd.length to 22+v_payload_length) := (others => (others => '0'));
     else
       v_payload_length := vvc_cmd.length;
     end if;
 
-    v_expected_data                 := C_ETHERNET_FRAME_DEFAULT;
-    v_expected_data.mac_destination := vvc_cmd.mac_destination;
-    v_expected_data.mac_source      := vvc_cmd.mac_source;
-    v_expected_data.length          := vvc_cmd.length;
-    v_expected_data.payload         := vvc_cmd.payload;
-    v_expected_data.fcs             := not generate_crc_32(reverse_vectors_in_array(v_ethernet_packet_raw(8 to 22+v_payload_length-1)));
+    v_expected_frame                 := C_ETHERNET_FRAME_DEFAULT;
+    v_expected_frame.mac_destination := vvc_cmd.mac_destination;
+    v_expected_frame.mac_source      := vvc_cmd.mac_source;
+    v_expected_frame.length          := vvc_cmd.length;
+    v_expected_frame.payload         := vvc_cmd.payload;
+    v_expected_frame.fcs             := not generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));
 
     -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.fcs := v_expected_data.fcs;
+    dtt_info.bt.ethernet_frame.fcs := v_expected_frame.fcs;
 
-    priv_ethernet_receive_from_bridge(received_data        => v_received_data,
+    -- Receive frame
+    priv_ethernet_receive_from_bridge(received_frame       => v_received_frame,
                                       fcs_error            => v_fcs_error,
                                       fcs_error_severity   => fcs_error_severity,
                                       vvc_cmd              => vvc_cmd,
@@ -706,7 +705,7 @@ package body vvc_methods_pkg is
                                       ext_proc_call        => proc_call);
 
     -- Check received frame against expected frame
-    v_frame_passed := compare_ethernet_frames(v_received_data, v_expected_data, vvc_cmd.alert_level,
+    v_frame_passed := compare_ethernet_frames(v_received_frame, v_expected_frame, vvc_cmd.alert_level,
       add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel, proc_call);
 
     if v_frame_passed then

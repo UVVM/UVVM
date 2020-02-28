@@ -86,20 +86,37 @@ begin
 
 --==========================================================================================
 -- HVVC-to-VVC Bridge
+-- Choose the correct architecture with the generic GC_PHY_INTERFACE
 --==========================================================================================
-  i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
-    generic map(
-      GC_INTERFACE           => GC_PHY_INTERFACE,
-      GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
-      GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
-      GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
-      GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
-      GC_SCOPE               => C_SCOPE
-    )
-    port map(
-      hvvc_to_bridge => hvvc_to_bridge,
-      bridge_to_hvvc => bridge_to_hvvc
-    );
+  gen_hvvc_bridge : if GC_PHY_INTERFACE = GMII generate
+    i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(GMII)
+      generic map(
+        GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
+        GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
+        GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
+        GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
+        GC_SCOPE               => C_SCOPE
+      )
+      port map(
+        hvvc_to_bridge => hvvc_to_bridge,
+        bridge_to_hvvc => bridge_to_hvvc
+      );
+  elsif GC_PHY_INTERFACE = SBI generate
+    i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(SBI)
+      generic map(
+        GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
+        GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
+        GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
+        GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
+        GC_SCOPE               => C_SCOPE
+      )
+      port map(
+        hvvc_to_bridge => hvvc_to_bridge,
+        bridge_to_hvvc => bridge_to_hvvc
+      );
+  else generate
+    alert(TB_ERROR, "Unsupported interface");
+  end generate gen_hvvc_bridge;
 
 
 --==========================================================================================

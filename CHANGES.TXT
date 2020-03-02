@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+
+v2 2020.03.02
+--------------------
+Released: 2020-03-02
+- Changed to Apache license.
+
+
 v2 2020.02.16
 --------------------
 Released: 2020-02-16
@@ -25,7 +32,6 @@ Released: 2020-02-16
 - Removed unused code from Clock Generator VVC executor.
 - Added missing generated generics from vvc_generator.py script.
 - Updated figure in UART Demo TB quick reference.
-
 
 
 v2020.01.24

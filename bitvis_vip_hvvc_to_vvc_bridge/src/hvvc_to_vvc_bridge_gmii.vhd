@@ -23,6 +23,8 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
+use work.support_pkg.all;
+
 library bitvis_vip_gmii;
 context bitvis_vip_gmii.vvc_context;
 
@@ -30,15 +32,10 @@ architecture GMII of hvvc_to_vvc_bridge is
 begin
 
   p_executor : process
-    variable v_cmd_idx                : integer;
-    variable v_gmii_received_data     : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
-    variable v_direction              : t_direction;
-    variable v_dut_address            : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
-    variable v_dut_address_increment  : integer;
-    variable v_num_of_transfers       : integer;
-    variable v_byte_idx               : natural range 0 to GC_MAX_NUM_BYTES;
-    variable v_bit_idx                : natural range 0 to 7;
-    variable v_data_width             : positive;
+    variable v_cmd_idx             : integer;
+    variable v_gmii_received_data  : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
+    variable v_num_of_transfers    : integer;
+    variable v_data_width          : positive;
   begin
 
     loop
@@ -46,28 +43,8 @@ begin
       -- Await cmd from the HVVC
       wait until hvvc_to_bridge.trigger = true;
 
-      if hvvc_to_bridge.operation = TRANSMIT then -- Expand if other operations
-        v_direction := TRANSMIT;
-      else
-        v_direction := RECEIVE;
-      end if;
-
-      -- If no configs are defined for all fields the last config is used
-      if hvvc_to_bridge.dut_if_field_idx > GC_DUT_IF_FIELD_CONFIG(v_direction)'high then
-        -- Set address and address incrementation
-        v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(v_direction)(GC_DUT_IF_FIELD_CONFIG(v_direction)'high).dut_address_increment;
-        v_dut_address := GC_DUT_IF_FIELD_CONFIG(v_direction)(GC_DUT_IF_FIELD_CONFIG(v_direction)'high).dut_address +
-          (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
-        -- Set data width
-        v_data_width := GC_DUT_IF_FIELD_CONFIG(v_direction)(GC_DUT_IF_FIELD_CONFIG(v_direction)'high).data_width;
-      else
-        -- Set address and address incrementation
-        v_dut_address_increment := GC_DUT_IF_FIELD_CONFIG(v_direction)(hvvc_to_bridge.dut_if_field_idx).dut_address_increment;
-        v_dut_address := GC_DUT_IF_FIELD_CONFIG(v_direction)(hvvc_to_bridge.dut_if_field_idx).dut_address +
-          (hvvc_to_bridge.current_byte_idx_in_field*v_dut_address_increment);
-        -- Set data width
-        v_data_width := GC_DUT_IF_FIELD_CONFIG(v_direction)(hvvc_to_bridge.dut_if_field_idx).data_width;
-      end if;
+      -- Get the next DUT data width from the config
+      get_data_width_config(GC_DUT_IF_FIELD_CONFIG, hvvc_to_bridge, v_data_width);
 
       -- Calculate number of transfers
       v_num_of_transfers := (hvvc_to_bridge.num_data_bytes*8)/v_data_width;
@@ -100,10 +77,7 @@ begin
 
       end case;
 
-      bridge_to_hvvc.trigger <= true;
-      wait for 0 ns;
-      bridge_to_hvvc.trigger <= false;
-
+      bridge_to_hvvc_trigger(bridge_to_hvvc);
     end loop;
 
   end process;

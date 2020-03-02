@@ -87,20 +87,37 @@ begin
 
 --==========================================================================================
 -- HVVC-to-VVC Bridge
+-- Choose the correct architecture with the generic GC_PHY_INTERFACE
 --==========================================================================================
-  i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge
-    generic map(
-      GC_INTERFACE           => GC_PHY_INTERFACE,
-      GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
-      GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
-      GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
-      GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
-      GC_SCOPE               => C_SCOPE
-    )
-    port map(
-      hvvc_to_bridge => hvvc_to_bridge,
-      bridge_to_hvvc => bridge_to_hvvc
-    );
+  gen_hvvc_bridge : if GC_PHY_INTERFACE = GMII generate
+    i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(GMII)
+      generic map(
+        GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
+        GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
+        GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
+        GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
+        GC_SCOPE               => C_SCOPE
+      )
+      port map(
+        hvvc_to_bridge => hvvc_to_bridge,
+        bridge_to_hvvc => bridge_to_hvvc
+      );
+  elsif GC_PHY_INTERFACE = SBI generate
+    i_hvvc_to_vvc_bridge : entity bitvis_vip_hvvc_to_vvc_bridge.hvvc_to_vvc_bridge(SBI)
+      generic map(
+        GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
+        GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
+        GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
+        GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
+        GC_SCOPE               => C_SCOPE
+      )
+      port map(
+        hvvc_to_bridge => hvvc_to_bridge,
+        bridge_to_hvvc => bridge_to_hvvc
+      );
+  else generate
+    alert(TB_ERROR, "Unsupported interface");
+  end generate gen_hvvc_bridge;
 
 
 --==========================================================================================
@@ -280,11 +297,11 @@ begin
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the support package.
-          priv_ethernet_receive_from_bridge(proc_call            => "Ethernet receive",
-                                            received_data        => v_result.ethernet_frame,
+          priv_ethernet_receive_from_bridge(received_frame       => v_result.ethernet_frame,
                                             fcs_error            => v_result.ethernet_frame_status.fcs_error,
                                             fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
-                                            cmd_idx              => v_cmd.cmd_idx,
+                                            vvc_cmd              => v_cmd,
+                                            dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                             hvvc_to_bridge       => hvvc_to_bridge,
                                             bridge_to_hvvc       => bridge_to_hvvc,
                                             field_timeout_margin => vvc_config.field_timeout_margin,
@@ -307,9 +324,9 @@ begin
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the support package.
-          priv_ethernet_expect_from_bridge(proc_call            => "Ethernet expect",
+          priv_ethernet_expect_from_bridge(fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
                                            vvc_cmd              => v_cmd,
-                                           fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
+                                           dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                            hvvc_to_bridge       => hvvc_to_bridge,
                                            bridge_to_hvvc       => bridge_to_hvvc,
                                            field_timeout_margin => vvc_config.field_timeout_margin,

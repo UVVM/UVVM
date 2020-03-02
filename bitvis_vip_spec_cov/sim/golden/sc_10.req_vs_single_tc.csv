@@ -1,8 +1,2 @@
-Requirement,Testcases,Compliance
-REQ_1, TC_1 , NON COMPLIANT
-REQ_2, , NOT VERIFIED
-REQ_3, , NOT VERIFIED
-REQ_4, , NOT VERIFIED
-REQ_5, , NOT VERIFIED
-REQ_6, , NOT VERIFIED
-REQ_7, , NOT VERIFIED
+Requirement,Testcase,Compliance
+REQ_1, TC_1, NON_COMPLIANT

@@ -755,6 +755,27 @@ architecture func of generic_queue_tb is
       check_value(queue_under_test.fetch(VOID), v_value, ERROR, "Check fetching the last element (without position)" , C_SCOPE);
     end procedure;
 
+    --------------------------------------------------------------------------------------
+    -- Test of deleting the last element
+    --------------------------------------------------------------------------------------
+    procedure test_of_delete_last_element(
+      constant dummy    : t_void
+    ) is
+    begin
+      log(ID_LOG_HDR, "Test of deleting the last element", C_SCOPE);
+
+      log(ID_SEQUENCER_SUB, "Adding two elements to the queue", C_SCOPE);
+      queue_under_test.add(0);
+      queue_under_test.add(1);
+      log(ID_SEQUENCER_SUB, "Deleting the last element from the queue", C_SCOPE);
+      queue_under_test.delete(POSITION, 2, SINGLE);
+      log(ID_SEQUENCER_SUB, "Adding another element to the queue", C_SCOPE);
+      queue_under_test.add(2);
+      check_value(queue_under_test.peek(POSITION, 1), 0, ERROR, "Checking the first element" , C_SCOPE);
+      check_value(queue_under_test.peek(POSITION, 2), 2, ERROR, "Checking the last element" , C_SCOPE);
+      log("Flushing the queue");
+      queue_under_test.flush(VOID);
+    end procedure test_of_delete_last_element;
 
     --------------------------------------------------------------------------------------
     -- Test of memory leakage in queue.
@@ -895,7 +916,6 @@ architecture func of generic_queue_tb is
 
     end procedure;
 
-
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
@@ -944,6 +964,7 @@ architecture func of generic_queue_tb is
 
     test_of_fetch_from_empty_queue(VOID);
     test_of_fetch_last_element(VOID);
+    test_of_delete_last_element(VOID);
     test_of_queue_max_count_manipulation(VOID);
     test_of_queue_fill_level_and_alerts(VOID);
 

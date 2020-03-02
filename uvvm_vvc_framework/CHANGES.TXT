@@ -7,6 +7,8 @@ v2.7.3
 ----------
 Released: 2020-XX-XX
 - Removed t_transaction_info from vvc_generator.py script.
+- Fixed bug in the generic queue where deleting the last element would make elements added
+  after the delete disappear.
 
 v2.7.2
 ----------

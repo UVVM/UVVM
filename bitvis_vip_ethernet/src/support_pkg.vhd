@@ -30,10 +30,8 @@ package support_pkg is
   --========================================================================================================================
   -- Types and constants
   --========================================================================================================================
-  constant C_PREAMBLE          : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
-  constant C_SFD               : std_logic_vector( 7 downto 0) := x"D5";
-  constant C_CRC_32_RESIDUE    : std_logic_vector(31 downto 0) := x"C704DD7B";
-  constant C_CRC_32_POLYNOMIAL : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
+  constant C_PREAMBLE           : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
+  constant C_SFD                : std_logic_vector( 7 downto 0) := x"D5";
 
   constant C_MIN_PAYLOAD_LENGTH : natural := 46;
   constant C_MAX_PAYLOAD_LENGTH : natural := 1500;
@@ -67,7 +65,7 @@ package support_pkg is
     fcs_error : boolean;
   end record t_ethernet_frame_status;
 
-  -- Configuration record to be assigned in the test harness.
+  -- Configuration record to be assigned in the test harness
   type t_ethernet_protocol_config is record
     mac_destination      : unsigned(47 downto 0);
     mac_source           : unsigned(47 downto 0);
@@ -76,8 +74,8 @@ package support_pkg is
   end record;
 
   constant C_ETHERNET_PROTOCOL_CONFIG_DEFAULT : t_ethernet_protocol_config := (
-    mac_destination      => (others => 'Z'),
-    mac_source           => (others => 'Z'),
+    mac_destination      => (others => '0'),
+    mac_source           => (others => '0'),
     fcs_error_severity   => ERROR,
     interpacket_gap_time => 96 ns -- Standard minimum interpacket gap (Gigabith Ethernet)
   );
@@ -86,28 +84,25 @@ package support_pkg is
   --========================================================================================================================
   -- Functions and procedures
   --========================================================================================================================
-  impure function generate_crc_32_complete(
-    constant data : in t_byte_array
+  impure function generate_crc_32(
+    constant data_array : in t_byte_array
   ) return std_logic_vector;
 
   impure function check_crc_32(
-    constant data : in t_byte_array
+    constant data_array : in t_byte_array
   ) return boolean;
 
   function get_ethernet_frame_length(
     constant payload_length : in positive
   ) return positive;
 
-  function hdr_to_string(
+  function to_string(
     constant ethernet_frame : in t_ethernet_frame
   ) return string;
 
-  function data_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string;
-
-  function complete_to_string(
-    constant ethernet_frame : in t_ethernet_frame
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame;
+    constant frame_field    : in t_frame_field
   ) return string;
 
   function to_slv(
@@ -151,27 +146,22 @@ end package support_pkg;
 
 package body support_pkg is
 
-  ---------------------------------------------------------------------------------
-  -- generate_crc_32
-  ---------------------------------------------------------------------------------
-  --
-  -- This function generate the IEEE 802.3 CRC32 for byte array input.
-  --
-  ---------------------------------------------------------------------------------
-  impure function generate_crc_32_complete(
-    constant data : in t_byte_array
+  -- Generates the IEEE 802.3 CRC32 for byte array input
+  impure function generate_crc_32(
+    constant data_array : in t_byte_array
   ) return std_logic_vector is
   begin
-    return generate_crc(data, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
-  end function generate_crc_32_complete;
+    return generate_crc(data_array, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
+  end function generate_crc_32;
 
   impure function check_crc_32(
-    constant data : in t_byte_array
+    constant data_array : in t_byte_array
   ) return boolean is
   begin
-    return generate_crc_32_complete(data) = C_CRC_32_RESIDUE;
+    return generate_crc_32(data_array) = C_CRC_32_RESIDUE;
   end function check_crc_32;
 
+  -- Returns the complete frame length
   function get_ethernet_frame_length(
     constant payload_length : in positive
   ) return positive is
@@ -179,35 +169,49 @@ package body support_pkg is
     return payload_length + 18;
   end function get_ethernet_frame_length;
 
-  function hdr_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-  begin
-    return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
-           LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & ";" &
-           LF & "    length:          " & to_string(ethernet_frame.length);
-  end function hdr_to_string;
-
-  function data_to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-    variable payload_string : string(1 to 21*ethernet_frame.length); --byte 1500: x"00"
-  begin
-    for i in 0 to ethernet_frame.length-1 loop
-      payload_string(i*21+1 to (i+1)*21) := LF & "    byte " & to_string(i, 4, RIGHT) & ": " & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX);
-    end loop;
-    return LF & "    Payload:" & payload_string;
-  end function data_to_string;
-
-  function complete_to_string(
+  function to_string(
     constant ethernet_frame : in t_ethernet_frame
   ) return string is
   begin
     return "MAC dest: "  & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           "; MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           "; length: "  & to_string(ethernet_frame.length) &
-           "; fcs: "     & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
-  end function complete_to_string;
+           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
+           ", length: "  & to_string(ethernet_frame.length) &
+           ", fcs: "     & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
+  end function to_string;
+
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame;
+    constant frame_field    : in t_frame_field
+  ) return string is
+    variable payload_string : string(1 to 14*ethernet_frame.length); --[1500]:x"00",
+    variable v_line         : line;
+    variable v_line_width   : natural;
+  begin
+    case frame_field is
+      when HEADER =>
+        return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) &
+               LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) &
+               LF & "    length:          " & to_string(ethernet_frame.length);
+
+      when PAYLOAD =>
+        write(v_line, string'("[" & to_string(0) & "]:" & to_string(ethernet_frame.payload(0), HEX, AS_IS, INCL_RADIX)));
+        if ethernet_frame.length > 1 then
+          for i in 1 to ethernet_frame.length-1 loop
+            write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX)));
+          end loop;
+        end if;
+        v_line_width := v_line'length;
+        payload_string(1 to v_line_width) := v_line.all;
+        deallocate(v_line);
+        return LF & payload_string(1 to v_line_width);
+
+      when CHECKSUM =>
+        return LF & "    FCS: " & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
+
+      when others =>
+        return "";
+    end case;
+  end function to_string;
 
   function to_slv(
     constant byte_array : in t_byte_array

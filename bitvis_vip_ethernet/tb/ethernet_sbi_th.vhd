@@ -51,8 +51,8 @@ architecture struct of sbi_test_harness is
   signal clk       : std_logic;
 
   constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 0) :=
-   (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, field_description => "transmitter field config")),
-    RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, field_description => "receiver field config   "))
+   (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, field_valid => true, field_description => "transmitter field config")),
+    RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, field_valid => true, field_description => "receiver field config   "))
     );
 
 begin

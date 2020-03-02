@@ -283,6 +283,15 @@ package adaptations_pkg is
     RANDOM_FAVOUR_EDGES
   );
 
+  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+    NA,               -- When channel is not relevant
+    ALL_CHANNELS,     -- When command shall be received by all channels
+    -- UVVM predefined channels.
+    RX, TX
+    -- User add more channels if needed below.
+
+  );
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
@@ -311,7 +320,22 @@ package adaptations_pkg is
     others  => DISABLED
   );
 
+  ------------------------------------------------------------------------
+  -- 
+  ------------------------------------------------------------------------
+  type t_frame_field is (
+    HEADER,
+    PAYLOAD,
+    CHECKSUM
+  );
 
+  ------------------------------------------------------------------------
+  -- CRC
+  ------------------------------------------------------------------------
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
+  -- CRC-32 (IEEE 802.3)
+  constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
+  constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B";
 
   --------------------------------------------------------------------------
   -- WARNING! The following is not intended for user modifications!
@@ -335,12 +359,6 @@ package adaptations_pkg is
     busy                  => false,
     last_cmd_idx_executed => -1
   );
-
-
-  ------------------------------------------------------------------------
-  -- CRC32
-  ------------------------------------------------------------------------
-  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
 
 end package adaptations_pkg;
 

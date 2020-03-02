@@ -300,6 +300,7 @@ begin
                                             fcs_error            => v_result.ethernet_frame_status.fcs_error,
                                             fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
                                             vvc_cmd              => v_cmd,
+                                            dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                             hvvc_to_bridge       => hvvc_to_bridge,
                                             bridge_to_hvvc       => bridge_to_hvvc,
                                             field_timeout_margin => vvc_config.field_timeout_margin,
@@ -324,6 +325,7 @@ begin
           -- Call the corresponding procedure in the support package.
           priv_ethernet_expect_from_bridge(fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
                                            vvc_cmd              => v_cmd,
+                                           dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                            hvvc_to_bridge       => hvvc_to_bridge,
                                            bridge_to_hvvc       => bridge_to_hvvc,
                                            field_timeout_margin => vvc_config.field_timeout_margin,

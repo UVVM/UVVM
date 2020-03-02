@@ -298,6 +298,7 @@ begin
           priv_ethernet_transmit_to_bridge(interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
                                            vvc_cmd              => v_cmd,
                                            hvvc_to_bridge       => hvvc_to_bridge,
+                                           dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(TRANSMIT),
                                            bridge_to_hvvc       => bridge_to_hvvc,
                                            field_timeout_margin => vvc_config.field_timeout_margin,                  --|ET: Not in QR
                                            dtt_info             => dtt_info,

@@ -1,19 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- A free license is hereby granted, free of charge, to any person obtaining
--- a copy of this VHDL code and associated documentation files (for 'Bitvis Utility Library'),
--- to use, copy, modify, merge, publish and/or distribute - subject to the following conditions:
---  - This copyright notice shall be included as is in all copies or substantial portions of the code and documentation
---  - The files included in Bitvis Utility Library may only be used as a part of this library as a whole
---  - The License file may not be modified
---  - The calls in the code to the license file ('show_license') may not be removed or modified.
---  - No other conditions whatsoever may be added to those of this License
-
--- BITVIS UTILITY LIBRARY AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
--- INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
--- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH BITVIS UTILITY LIBRARY.
---========================================================================================================================
+--================================================================================================================================
+-- Copyright 2020 Bitvis and Inventas AS
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
+--
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- VHDL unit     : Bitvis AVALON_MM Library : avalon_mm_spi_tb

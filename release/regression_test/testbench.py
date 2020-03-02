@@ -1,5 +1,8 @@
-from os.path import join, dirname
-import os, sys, subprocess, glob
+import os
+import sys
+import subprocess
+import glob
+import shutil
 import logging
 
 # Disable terminal output
@@ -451,6 +454,17 @@ class Testbench:
       self.num_failing_tests += 1
 
 
+    def save_run(self, testbench, test_name, config):
+      if test_name.lower() != 'all':
+        foldername = test_name
+      else:
+        foldername = testbench
+      if config:
+        foldername += "_" + config
+      #print("=====>>>  %s" %(foldername))
+      pass
+
+
 
 
     # Run simulations and check result
@@ -462,9 +476,6 @@ class Testbench:
       if len(self.configs) == 0: self.configs = [""]
 
       logging.basicConfig(level=logging.INFO, format='%(message)s')
-
-      # Remove any files stuck from previous run
-      self.cleanup("*");
 
       for test_name in self.tests:
         self.cleanup(test_name)
@@ -479,6 +490,7 @@ class Testbench:
           script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call, self.gui_mode)
 
+          self.save_run(self.tb, test_name, config)
           if self.check_result(test_name) == True:
             test_string += "PASS"
             logging.info(test_string)

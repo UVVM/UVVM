@@ -99,8 +99,11 @@ begin
       log(ID_LOG_HDR, "Testing register_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_3", "../internal_tb/internal_req_file.csv", "pc_3.csv");
+      -- 1: testing default testcase
       register_req_cov("REQ_3");
+      -- 2: testing unknown testcase
       register_req_cov("REQ_3", "TC_50", NA, "logging unknown testcase.", C_SCOPE);
+      -- 3: testing unknown requirement
       -- Increment expected alerts so test will pass with missing requirement
       increment_expected_alerts(TB_WARNING, 1);      
       register_req_cov("REQ_10", "TC_1", NA, "logging unknown requirement.", C_SCOPE);

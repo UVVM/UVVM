@@ -523,6 +523,10 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 testcase_string = ""
                 for testcase in requirement.get_actual_testcase_list():
                     testcase_string += testcase.get_name() + " "
+
+                if (requirement.get_compliance() == not_tested_compliant_string):
+                    for testcase in requirement.get_expected_testcase_list():
+                        testcase_string += testcase.get_name() + " "
                 csv_writer.writerow([requirement.get_name(), " " + testcase_string, " " + requirement.get_compliance()])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_tc_filename))
@@ -538,7 +542,12 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 requirement_string = ""
                 for requirement in testcase.get_actual_requirement_list():
                     requirement_string += requirement.get_name() + " "
+
+                if (testcase.get_result() == testcase_not_run_string):
+                    for requirement in testcase.get_expected_requirement_list():
+                        requirement_string += requirement.get_name() + " "
                 csv_writer.writerow([testcase.get_name(), " " + requirement_string, " " + testcase.get_result()])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_filename))
         abort(error_code = 1, msg = error_msg)

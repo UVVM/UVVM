@@ -1,4 +1,5 @@
 UART_REQ_BR_A, Baudrate 9k6
 UART_REQ_BR_B, Baudrate 19k2
-UART_REQ_ODD, Odd parity
-UART_REQ_EVEN, Even parity
+UART_REQ_ODD, Odd parity, TC_5
+UART_REQ_ODD, Odd parity, TC_6
+UART_REQ_EVEN, Even parity, TC_1, TC_2, TC_3

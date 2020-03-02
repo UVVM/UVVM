@@ -1,13 +1,14 @@
 --================================================================================================================================
--- Copyright (c) 2019 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
--- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
 --================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------
 -- Description : See library quick reference (under 'doc') and README-file(s)
@@ -71,10 +72,9 @@ architecture behave of rgmii_tx_vvc is
 
   alias vvc_config : t_vvc_config is shared_rgmii_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_rgmii_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_rgmii_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
     -- DTT
-  alias dtt_trigger             : std_logic           is global_rgmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias dtt_info                : t_transaction_group is shared_rgmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias dtt_trigger : std_logic           is global_rgmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias dtt_info    : t_transaction_group is shared_rgmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -215,11 +215,6 @@ begin
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
-      -- Reset the transaction info for waveview
-      transaction_info := C_TRANSACTION_INFO_DEFAULT;
-      transaction_info.operation := v_cmd.operation;
-      transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
-
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay 
       if v_cmd.operation = WRITE then 
@@ -292,8 +287,6 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-      -- Reset the transaction info for waveview
-      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
 
       -- Set DTT back to default values
       reset_dtt_info(dtt_info, v_cmd);

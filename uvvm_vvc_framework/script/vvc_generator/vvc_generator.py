@@ -1,5 +1,17 @@
-__author__ = 'Bitvis AS'
-__copyright__ = "Copyright 2017, Bitvis AS"
+#================================================================================================================================
+# Copyright 2020 Bitvis
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+# an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
+#================================================================================================================================
+# Note : Any functionality not explicitly described in the documentation is subject to change at any time
+#--------------------------------------------------------------------------------------------------------------------------------
+
+__author__ = 'Bitvis'
+__copyright__ = "Copyright 2020, Bitvis and Inventas AS"
 __version__ = "1.1.2"
 __email__ = "support@bitvis.no"
 
@@ -336,8 +348,6 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel):
     if vvc_channel.name == "NA":
       file_handle.write("  alias vvc_config : t_vvc_config is shared_"+vvc_name.lower()+"_vvc_config(GC_INSTANCE_IDX);\n")
       file_handle.write("  alias vvc_status : t_vvc_status is shared_"+vvc_name.lower()+"_vvc_status(GC_INSTANCE_IDX);\n")
-      file_handle.write("  alias transaction_info : t_transaction_info is "
-                        +"shared_"+vvc_name.lower()+"_transaction_info(GC_INSTANCE_IDX);\n")
       file_handle.write("    -- DTT\n")
       file_handle.write("  alias dtt_trigger             : std_logic           is global_" + vvc_name.lower() + "_vvc_transaction_trigger(GC_INSTANCE_IDX);\n")
       file_handle.write("  alias dtt_info                : t_transaction_group is shared_" + vvc_name.lower() + "_vvc_transaction_info(GC_INSTANCE_IDX);\n")
@@ -345,8 +355,6 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel):
     else:
       file_handle.write("  alias vvc_config : t_vvc_config is shared_"+vvc_name.lower()+"_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);\n")
       file_handle.write("  alias vvc_status : t_vvc_status is shared_"+vvc_name.lower()+"_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);\n")
-      file_handle.write("  alias transaction_info : t_transaction_info is "
-                        +"shared_"+vvc_name.lower()+"_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);\n")
       file_handle.write("    -- DTT\n")
       file_handle.write("  alias dtt_trigger             : std_logic           is global_" + vvc_name.lower() + "_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);\n")
       file_handle.write("  alias dtt_info                : t_transaction_group is shared_" + vvc_name.lower() + "_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);\n")
@@ -553,12 +561,6 @@ def add_vvc_executor(file_handle, vvc_channel):
     file_handle.write("      -- Notify activity watchdog\n")
     file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
     print_linefeed(file_handle)
-    file_handle.write("      -- Reset the transaction info for waveview\n")
-    file_handle.write("      transaction_info := C_TRANSACTION_INFO_DEFAULT;\n")
-    file_handle.write("      transaction_info.operation := v_cmd.operation;\n")
-    file_handle.write("      transaction_info.msg := pad_string(to_string(v_cmd.msg)"
-                      ", ' ', transaction_info.msg'length);\n")
-    print_linefeed(file_handle)
     file_handle.write("      -- Check if command is a BFM access\n")
     file_handle.write("      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay \n")
     file_handle.write("      --<USER_INPUT> Replace this if statement with a check of the current v_cmd.operation, in "
@@ -602,11 +604,6 @@ def add_vvc_executor(file_handle, vvc_channel):
     print_linefeed(file_handle)
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
     file_handle.write("        --     v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", \""+vvc_name.lower()+"_write() called with to wide data. \" & v_cmd.msg);\n")
-    file_handle.write("        --     -- Add info to the transaction_for_waveview_struct if needed\n")
-    file_handle.write("        --     transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := "
-                      "v_normalised_data;\n")
-    file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
-                      "v_normalised_addr;\n")
     file_handle.write("        --     -- Call the corresponding procedure in the BFM package.\n")
     file_handle.write("        --     "+vvc_name.lower()+"_write(addr_value    => v_normalised_addr,\n")
     file_handle.write("        --               data_value    => v_normalised_data,\n")
@@ -629,9 +626,6 @@ def add_vvc_executor(file_handle, vvc_channel):
     file_handle.write("        --    set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);\n")
     print_linefeed(file_handle)
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \""+vvc_name.lower()+"_write() called with to wide address. \" & v_cmd.msg);\n")
-    file_handle.write("        --     -- Add info to the transaction_for_waveview_struct if needed\n")
-    file_handle.write("        --     transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := "
-                      "v_normalised_addr;\n")
     file_handle.write("        --     -- Call the corresponding procedure in the BFM package.\n")
 
     if number_of_executors > 1:
@@ -736,8 +730,6 @@ def add_vvc_executor(file_handle, vvc_channel):
     file_handle.write("      end if;\n")
     print_linefeed(file_handle)
     file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
-    file_handle.write("      -- Reset the transaction info for waveview\n")
-    file_handle.write("      transaction_info   := C_TRANSACTION_INFO_DEFAULT;\n")
     print_linefeed(file_handle)
     file_handle.write("      -- Set DTT back to default values\n")
     file_handle.write("      reset_dtt_info(dtt_info, v_cmd);\n")
@@ -1130,44 +1122,12 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels):
     file_handle.write("    pending_cmd_cnt  => 0\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
-    file_handle.write("  -- Transaction information to include in the wave view during simulation\n")
-    file_handle.write("  type t_transaction_info is\n")
-    file_handle.write("  record\n")
-    file_handle.write("    operation       : t_operation;\n")
-    file_handle.write("    msg             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);\n")
-    file_handle.write("    --<USER_INPUT> Fields that could be useful to track in the waveview can be placed in this "
-                      "record.\n")
-    file_handle.write("    -- Example:\n")
-    file_handle.write("    -- addr            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);\n")
-    file_handle.write("    -- data            : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);\n")
-    file_handle.write("  end record;\n")
-    print_linefeed(file_handle)
-    if vvc_channels.__len__() == 1:
-        file_handle.write("  type t_transaction_info_array is array (natural range <>) of "
-                          "t_transaction_info;\n")
-    else:
-        file_handle.write("  type t_transaction_info_array is array (t_channel range <>, "
-                          "natural range <>) of t_transaction_info;\n")
-    print_linefeed(file_handle)
-    file_handle.write("  constant C_TRANSACTION_INFO_DEFAULT : t_transaction_info := (\n")
-    file_handle.write("    --<USER_INPUT> Set the data fields added to the t_transaction_info record to \n")
-    file_handle.write("    -- their default values here.\n")
-    file_handle.write("    -- Example:\n")
-    file_handle.write("    -- addr                => (others => '0'),\n")
-    file_handle.write("    -- data                => (others => '0'),\n")
-    file_handle.write("    operation           =>  NO_OPERATION,\n"),
-    file_handle.write("    msg                 => (others => ' ')\n")
-    file_handle.write("  );\n")
-    print_linefeed(file_handle)
     print_linefeed(file_handle)
     if vvc_channels.__len__() == 1:
         file_handle.write("  shared variable shared_"+vvc_name.lower()+"_vvc_config : t_vvc_config_array(0 to "
                           "C_MAX_VVC_INSTANCE_NUM-1) := (others => C_"+vvc_name.upper()+"_VVC_CONFIG_DEFAULT);\n")
         file_handle.write("  shared variable shared_"+vvc_name.lower()+"_vvc_status : t_vvc_status_array(0 to "
                           "C_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);\n")
-        file_handle.write("  shared variable shared_"+vvc_name.lower()+"_transaction_info : "
-                          "t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := "
-                          "(others => C_TRANSACTION_INFO_DEFAULT);\n")
     else:
         file_handle.write("  shared variable shared_"+vvc_name.lower()+"_vvc_config : t_vvc_config_array(t_channel'left"
                           " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => "
@@ -1175,12 +1135,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels):
         file_handle.write("  shared variable shared_"+vvc_name.lower()+"_vvc_status : t_vvc_status_array(t_channel'left"
                           " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => "
                           "C_VVC_STATUS_DEFAULT));\n")
-        file_handle.write("  shared variable shared_"+vvc_name.lower()+"_transaction_info : "
-                          "t_transaction_info_array(t_channel'left to t_channel'right, 0 to "
-                          "C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));\n")
-    print_linefeed(file_handle)
-    file_handle.write("  -- Scoreboard\n")
-    file_handle.write("  shared variable shared_"+vvc_name.lower()+"_sb : t_generic_sb;\n") 
+    file_handle.write("  shared variable shared_"+vvc_name.lower()+"_sb : t_generic_sb; -- Scoreboard\n") 
     print_linefeed(file_handle)
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")
@@ -1341,7 +1296,7 @@ def add_methods_pkg_body(file_handle, vvc_name):
     file_handle.write("  --      gen_pulse(dtt_trigger, 0 ns, \"pulsing global DTT trigger\", scope, ID_NEVER);\n")
     print_linefeed(file_handle)
     file_handle.write("  --    when others =>\n")
-    file_handle.write("  --      null;\n")
+    file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\");\n")
     file_handle.write("  --  end case;\n")
     print_linefeed(file_handle)
     file_handle.write("    wait for 0 ns;\n")

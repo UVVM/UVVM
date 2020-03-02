@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -107,18 +108,20 @@ package adaptations_pkg is
     -- Segment Ids, finest granularity of packet data
     ID_SEGMENT_INITIATE,      -- Notify that a segment is about to be transmitted or received
     ID_SEGMENT_COMPLETE,      -- Notify that a segment has been transmitted or received
-    ID_SEGMENT_HDR,           -- AS ID_SEGMENT_COMPLETE, but also writes header info
-    ID_SEGMENT_DATA,          -- AS ID_SEGMENT_COMPLETE, but also writes segment data (could be huge)
+    ID_SEGMENT_HDR,           -- Notify that a segment header has been transmitted or received. It also writes header info
+    ID_SEGMENT_DATA,          -- Notify that a segment data has been transmitted or received. It also writes segment data
     -- Packet Ids, medium granularity of packet data
     ID_PACKET_INITIATE,       -- Notify that a packet is about to be transmitted or received
+    ID_PACKET_PREAMBLE,       -- Notify that a packet preamble has been transmitted or received
     ID_PACKET_COMPLETE,       -- Notify that a packet has been transmitted or received
-    ID_PACKET_HDR,            -- AS ID_PACKET_COMPLETED, but also writes header info
-    ID_PACKET_DATA,           -- AS ID_PACKET_COMPLETED, but also writes packet data (could be huge)
+    ID_PACKET_HDR,            -- Notify that a packet header has been transmitted or received. It also writes header info
+    ID_PACKET_DATA,           -- Notify that a packet data has been transmitted or received. It also writes packet data
+    ID_PACKET_CHECKSUM,       -- Notify that a packet checksum has been transmitted or received
     -- Frame Ids, roughest granularity of packet data
     ID_FRAME_INITIATE,        -- Notify that a frame is about to be transmitted or received
     ID_FRAME_COMPLETE,        -- Notify that a frame has been transmitted or received
-    ID_FRAME_HDR,             -- AS ID_FRAME_COMPLETE, but also writes header info
-    ID_FRAME_DATA,            -- AS ID_FRAME_COMPLETE, but also writes frame data (could be huge)
+    ID_FRAME_HDR,             -- Notify that a frame header has been transmitted or received. It also writes header info
+    ID_FRAME_DATA,            -- Notify that a frame data has been transmitted or received. It also writes frame data
     -- OSVVM Ids
     ID_COVERAGE_MAKEBIN,      -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
     ID_COVERAGE_ADDBIN,       -- Log messages from AddBin/AddCross
@@ -280,6 +283,15 @@ package adaptations_pkg is
     RANDOM_FAVOUR_EDGES
   );
 
+  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+    NA,               -- When channel is not relevant
+    ALL_CHANNELS,     -- When command shall be received by all channels
+    -- UVVM predefined channels.
+    RX, TX
+    -- User add more channels if needed below.
+
+  );
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
@@ -308,7 +320,22 @@ package adaptations_pkg is
     others  => DISABLED
   );
 
+  ------------------------------------------------------------------------
+  -- 
+  ------------------------------------------------------------------------
+  type t_frame_field is (
+    HEADER,
+    PAYLOAD,
+    CHECKSUM
+  );
 
+  ------------------------------------------------------------------------
+  -- CRC
+  ------------------------------------------------------------------------
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
+  -- CRC-32 (IEEE 802.3)
+  constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
+  constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B";
 
   --------------------------------------------------------------------------
   -- WARNING! The following is not intended for user modifications!
@@ -332,12 +359,6 @@ package adaptations_pkg is
     busy                  => false,
     last_cmd_idx_executed => -1
   );
-
-
-  ------------------------------------------------------------------------
-  -- CRC32
-  ------------------------------------------------------------------------
-  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
 
 end package adaptations_pkg;
 

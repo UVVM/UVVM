@@ -395,9 +395,10 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
     """
     This method will write all the results to the specification coverage CSV files.
     The specification coverage file will have suffix : 
-        _req    : requirement with all testcases listed and compliance
-        _tc     : testcase with all requirements listed and result
-        _tc_req : testcase with requirement listed
+        .req_vs_single_tc : requirement(s) listed with a testcase and compliance
+        .req_vs_tcs       : requirement(s) listed with testcase(s) and compliance
+        .tc_vs_reqs       : testcase(s) listed with requirement(s) and result
+
 
     Parameters:
         

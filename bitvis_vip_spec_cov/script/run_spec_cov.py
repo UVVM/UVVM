@@ -379,10 +379,10 @@ class Container():
 #==========================================================================
 testcase_pass_string                = "PASS"
 testcase_fail_string                = "FAIL"
-testcase_not_run_string             = "NOT RUN"
+testcase_not_run_string             = "NOT_EXECUTED"
 compliant_string                    = "COMPLIANT"
-non_compliant_string                = "NON COMPLIANT"
-not_tested_compliant_string         = "NOT VERIFIED"
+non_compliant_string                = "NON_COMPLIANT"
+not_tested_compliant_string         = "NOT_TESTED"
 delimiter                           = "," # Default delimiter - will be updated from partial coverage file
 
 

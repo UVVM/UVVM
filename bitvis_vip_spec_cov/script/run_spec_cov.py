@@ -510,13 +510,13 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
     # Write the results to CSVs
     #==========================================================================
     filename = run_configuration.get("spec_cov")
-    spec_cov_req_filename = filename[: filename.rfind(".")] + ".req_vs_single_tc.csv"
-    spec_cov_tc_filename = filename[: filename.rfind(".")] + ".tc_vs_reqs.csv"
-    spec_cov_req_tc_filename = filename[: filename.rfind(".")] + ".req_vs_tcs.csv"
+    spec_cov_req_vs_single_tc_filename = filename[: filename.rfind(".")] + ".req_vs_single_tc.csv"
+    spec_cov_tc_vs_req_filename = filename[: filename.rfind(".")] + ".tc_vs_reqs.csv"
+    spec_cov_req_vs_tc_filename = filename[: filename.rfind(".")] + ".req_vs_tcs.csv"
 
-    # Write requirement with all testcases
+    # Write one requirement and one testcase per line
     try:
-        with open(spec_cov_req_tc_filename, mode='w', newline='') as to_file:
+        with open(spec_cov_req_vs_tc_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
@@ -530,12 +530,12 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                         testcase_string += testcase.get_name() + " "
                 csv_writer.writerow([requirement.get_name(), " " + testcase_string, " " + requirement.get_compliance()])
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_tc_filename))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
         abort(error_code = 1, msg = error_msg)
 
-    # Write testcase with all requirements
+    # Write one testcase with all requirements per line
     try:
-        with open(spec_cov_tc_filename, mode='w', newline='') as to_file:
+        with open(spec_cov_tc_vs_req_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
             csv_writer.writerow(["Testcase", "Requirement", "Result"])
@@ -550,12 +550,12 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 csv_writer.writerow([testcase.get_name(), " " + requirement_string, " " + testcase.get_result()])
 
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_filename))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_vs_req_filename))
         abort(error_code = 1, msg = error_msg)
 
-    # Write testcase and requirement
+    # Write one testcase with one requirement per line
     try:
-        with open(spec_cov_req_filename, mode='w', newline='') as to_file:
+        with open(spec_cov_req_vs_single_tc_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
@@ -563,7 +563,7 @@ def write_specification_coverage_file(run_configuration, requirement_container, 
                 for testcase in requirement.get_actual_testcase_list():
                     csv_writer.writerow([requirement.get_name(), " " + testcase.get_name(), " " + requirement.get_compliance()])
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_filename))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
 
 

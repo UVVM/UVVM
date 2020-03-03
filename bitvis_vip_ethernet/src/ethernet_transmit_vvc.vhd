@@ -68,8 +68,8 @@ architecture behave of ethernet_transmit_vvc is
   signal queue_is_increasing    : boolean := false;
   signal last_cmd_idx_executed  : natural := 0;
   signal terminate_current_cmd  : t_flag_record;
-  signal hvvc_to_bridge         : t_hvvc_to_bridge(data_bytes(0 to C_MAX_PACKET_LENGTH-1));
-  signal bridge_to_hvvc         : t_bridge_to_hvvc(data_bytes(0 to C_MAX_PACKET_LENGTH-1));
+  signal hvvc_to_bridge         : t_hvvc_to_bridge(data_words(0 to C_MAX_PACKET_LENGTH-1)(7 downto 0));
+  signal bridge_to_hvvc         : t_bridge_to_hvvc(data_words(0 to C_MAX_PACKET_LENGTH-1)(7 downto 0));
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -94,7 +94,7 @@ begin
       generic map(
         GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
         GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
-        GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
+        GC_MAX_NUM_WORDS       => C_MAX_PACKET_LENGTH,
         GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
         GC_SCOPE               => C_SCOPE
       )
@@ -107,7 +107,7 @@ begin
       generic map(
         GC_INSTANCE_IDX        => GC_PHY_VVC_INSTANCE_IDX,
         GC_DUT_IF_FIELD_CONFIG => GC_DUT_IF_FIELD_CONFIG,
-        GC_MAX_NUM_BYTES       => C_MAX_PACKET_LENGTH,
+        GC_MAX_NUM_WORDS       => C_MAX_PACKET_LENGTH,
         GC_PHY_MAX_ACCESS_TIME => GC_PHY_MAX_ACCESS_TIME,
         GC_SCOPE               => C_SCOPE
       )

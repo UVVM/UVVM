@@ -28,12 +28,12 @@ entity hvvc_to_vvc_bridge is
   generic(
     GC_INSTANCE_IDX        : integer;
     GC_DUT_IF_FIELD_CONFIG : t_dut_if_field_config_direction_array;
-    GC_MAX_NUM_BYTES       : positive;
+    GC_MAX_NUM_WORDS       : positive;
     GC_PHY_MAX_ACCESS_TIME : time;
     GC_SCOPE               : string
   );
   port(
-    hvvc_to_bridge : in  t_hvvc_to_bridge(data_bytes(0 to GC_MAX_NUM_BYTES-1));
-    bridge_to_hvvc : out t_bridge_to_hvvc(data_bytes(0 to GC_MAX_NUM_BYTES-1))
+    hvvc_to_bridge : in  t_hvvc_to_bridge;
+    bridge_to_hvvc : out t_bridge_to_hvvc
   );
 end entity hvvc_to_vvc_bridge;

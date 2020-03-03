@@ -33,6 +33,7 @@ package support_pkg is
   constant C_PREAMBLE           : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD                : std_logic_vector( 7 downto 0) := x"D5";
 
+  -- Sizes in bytes
   constant C_MIN_PAYLOAD_LENGTH : natural := 46;
   constant C_MAX_PAYLOAD_LENGTH : natural := 1500;
   constant C_MAX_FRAME_LENGTH   : natural := C_MAX_PAYLOAD_LENGTH + 18;

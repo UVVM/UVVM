@@ -150,11 +150,11 @@ eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/fixed_input_dela
 echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/input_buffer.vhd"
 eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/input_buffer.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/mii_gmii_io_spartan6.vhd"
-eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/mii_gmii_io_spartan6.vhd
-
 echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/output_buffer.vhd"
 eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/output_buffer.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/mii_gmii_io_spartan6.vhd"
+eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/mii_gmii_io_spartan6.vhd
 
 #echo "eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/single_signal_synchronizer_spartan6.vhd"
 #eval vcom  $compdirectives  $tb_path/ethernet_mac-master/xilinx/single_signal_synchronizer_spartan6.vhd

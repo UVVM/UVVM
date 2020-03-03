@@ -310,8 +310,8 @@ package ti_vvc_framework_support_pkg is
   type t_hvvc_to_bridge is record
     trigger                   : boolean;
     operation                 : t_vvc_operation;
-    num_data_bytes            : positive;
-    data_bytes                : t_byte_array;
+    num_data_words            : positive;
+    data_words                : t_slv_array;
     dut_if_field_idx          : natural;
     current_byte_idx_in_field : natural;
     msg_id_panel              : t_msg_id_panel;
@@ -320,7 +320,7 @@ package ti_vvc_framework_support_pkg is
 
   type t_bridge_to_hvvc is record
     trigger        : boolean;
-    data_bytes     : t_byte_array;
+    data_words     : t_slv_array;
   end record;
 
   type t_dut_if_field_config is record

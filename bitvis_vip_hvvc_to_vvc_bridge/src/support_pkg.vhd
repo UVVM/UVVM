@@ -40,7 +40,7 @@ package support_pkg is
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
-    constant data_bytes                : in  t_byte_array;
+    constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
@@ -50,7 +50,7 @@ package support_pkg is
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
-    constant num_data_bytes            : in  positive;
+    constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
@@ -61,7 +61,7 @@ package support_pkg is
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_vvc_operation;
-    constant data_bytes                : in  t_byte_array;
+    constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
@@ -72,7 +72,7 @@ package support_pkg is
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_vvc_operation;
-    constant num_data_bytes            : in  positive;
+    constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
@@ -121,18 +121,16 @@ package body support_pkg is
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
-    constant data_bytes                : in  t_byte_array;
+    constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
     constant field_timeout_margin      : in  time
   ) is
-    -- Need to normalize array range or Riviera Pro fails with error code: 'DAGGEN ERROR DAGGEN_0700: "Fatal error : INTERNAL CODE GENERATOR ERROR"'
-    constant C_NORMALIZED_DATA_BYTES : t_byte_array(0 to data_bytes'length-1) := data_bytes;
   begin
     hvvc_to_bridge.operation                            <= operation;
-    hvvc_to_bridge.num_data_bytes                       <= data_bytes'length;
-    hvvc_to_bridge.data_bytes(0 to data_bytes'length-1) <= C_NORMALIZED_DATA_BYTES;
+    hvvc_to_bridge.data_words(0 to data_words'length-1) <= data_words;
+    hvvc_to_bridge.num_data_words                       <= data_words'length;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
@@ -140,11 +138,11 @@ package body support_pkg is
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
-  -- Send an operation to the bridge using number of data bytes
+  -- Send an operation to the bridge using number of data words
   procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
-    constant num_data_bytes            : in  positive;
+    constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
@@ -152,7 +150,7 @@ package body support_pkg is
   ) is
   begin
     hvvc_to_bridge.operation                            <= operation;
-    hvvc_to_bridge.num_data_bytes                       <= num_data_bytes;
+    hvvc_to_bridge.num_data_words                       <= num_data_words;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.current_byte_idx_in_field            <= current_byte_idx_in_field;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
@@ -165,30 +163,30 @@ package body support_pkg is
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_vvc_operation;
-    constant data_bytes                : in  t_byte_array;
+    constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
     constant field_timeout_margin      : in  time
   ) is
   begin
-    send_to_bridge(hvvc_to_bridge, operation, data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel, field_timeout_margin);
+    send_to_bridge(hvvc_to_bridge, operation, data_words, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel, field_timeout_margin);
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 
-  -- Send an operation to the bridge using number of data bytes and wait for bridge to finish
+  -- Send an operation to the bridge using number of data words and wait for bridge to finish
   procedure blocking_send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
     constant operation                 : in  t_vvc_operation;
-    constant num_data_bytes            : in  positive;
+    constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
     constant current_byte_idx_in_field : in  natural;
     constant msg_id_panel              : in  t_msg_id_panel;
     constant field_timeout_margin      : in  time
   ) is
   begin
-    send_to_bridge(hvvc_to_bridge, operation, num_data_bytes, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel, field_timeout_margin);
+    send_to_bridge(hvvc_to_bridge, operation, num_data_words, dut_if_field_idx, current_byte_idx_in_field, msg_id_panel, field_timeout_margin);
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 

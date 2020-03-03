@@ -626,9 +626,9 @@ package body vvc_methods_pkg is
         -- Fetch one byte at the time until SFD is found
         blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD,
           C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-        v_preamble_sfd   := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_bytes(0);
+        v_preamble_sfd   := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
         v_packet(1 to 7) := v_packet(0 to 6);
-        v_packet(0)      := bridge_to_hvvc.data_bytes(0);
+        v_packet(0)      := bridge_to_hvvc.data_words(0);
         if v_preamble_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
@@ -641,7 +641,7 @@ package body vvc_methods_pkg is
     if v_mac_dest_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_DESTINATION,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-      v_packet(8 to 13)              := bridge_to_hvvc.data_bytes(0 to 5);
+      v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_destination := unsigned(to_slv(v_packet( 8 to 13)));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
@@ -651,7 +651,7 @@ package body vvc_methods_pkg is
     if v_mac_source_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_SOURCE,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-      v_packet(14 to 19)        := bridge_to_hvvc.data_bytes(0 to 5);
+      v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_source := unsigned(to_slv(v_packet(14 to 19)));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
@@ -661,7 +661,7 @@ package body vvc_methods_pkg is
     if v_length_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_ETHERNET_FIELD_IDX_LENGTH,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-      v_packet(20 to 21)    := bridge_to_hvvc.data_bytes(0 to 1);
+      v_packet(20 to 21)    := bridge_to_hvvc.data_words(0 to 1);
       received_frame.length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.length := received_frame.length;
@@ -683,7 +683,7 @@ package body vvc_methods_pkg is
     if v_payload_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-      v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_bytes(0 to v_payload_length-1);
+      v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_words(0 to v_payload_length-1);
       received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
       received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
       -- Add info to the DTT
@@ -696,7 +696,7 @@ package body vvc_methods_pkg is
     if v_fcs_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_ETHERNET_FIELD_IDX_FCS,
         C_CURRENT_BYTE_IDX_IN_FIELD, msg_id_panel, field_timeout_margin);
-      v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_bytes(0 to 3);
+      v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
       received_frame.fcs := to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.fcs := received_frame.fcs;

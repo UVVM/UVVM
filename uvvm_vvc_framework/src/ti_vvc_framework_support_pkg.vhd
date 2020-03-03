@@ -313,7 +313,6 @@ package ti_vvc_framework_support_pkg is
     num_data_words            : positive;
     data_words                : t_slv_array;
     dut_if_field_idx          : natural;
-    current_byte_idx_in_field : natural;
     msg_id_panel              : t_msg_id_panel;
     field_timeout_margin      : time;
   end record;

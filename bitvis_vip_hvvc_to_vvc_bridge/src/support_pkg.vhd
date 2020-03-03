@@ -42,8 +42,7 @@ package support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   );
 
   procedure send_to_bridge(
@@ -51,8 +50,7 @@ package support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   );
 
   procedure blocking_send_to_bridge(
@@ -61,8 +59,7 @@ package support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   );
 
   procedure blocking_send_to_bridge(
@@ -71,8 +68,7 @@ package support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   );
 
   procedure get_dut_address_config(
@@ -119,8 +115,7 @@ package body support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   ) is
   begin
     hvvc_to_bridge.operation                            <= operation;
@@ -128,7 +123,6 @@ package body support_pkg is
     hvvc_to_bridge.num_data_words                       <= data_words'length;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
-    hvvc_to_bridge.field_timeout_margin                 <= field_timeout_margin;
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
@@ -138,15 +132,13 @@ package body support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   ) is
   begin
     hvvc_to_bridge.operation                            <= operation;
     hvvc_to_bridge.num_data_words                       <= num_data_words;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
-    hvvc_to_bridge.field_timeout_margin                 <= field_timeout_margin;
     hvvc_to_bridge_trigger(hvvc_to_bridge);
   end procedure send_to_bridge;
 
@@ -157,11 +149,10 @@ package body support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant data_words                : in  t_slv_array;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   ) is
   begin
-    send_to_bridge(hvvc_to_bridge, operation, data_words, dut_if_field_idx, msg_id_panel, field_timeout_margin);
+    send_to_bridge(hvvc_to_bridge, operation, data_words, dut_if_field_idx, msg_id_panel);
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 
@@ -172,11 +163,10 @@ package body support_pkg is
     constant operation                 : in  t_vvc_operation;
     constant num_data_words            : in  positive;
     constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel;
-    constant field_timeout_margin      : in  time
+    constant msg_id_panel              : in  t_msg_id_panel
   ) is
   begin
-    send_to_bridge(hvvc_to_bridge, operation, num_data_words, dut_if_field_idx, msg_id_panel, field_timeout_margin);
+    send_to_bridge(hvvc_to_bridge, operation, num_data_words, dut_if_field_idx, msg_id_panel);
     wait until bridge_to_hvvc.trigger = true;
   end procedure blocking_send_to_bridge;
 

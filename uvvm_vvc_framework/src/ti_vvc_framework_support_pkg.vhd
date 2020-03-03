@@ -314,7 +314,6 @@ package ti_vvc_framework_support_pkg is
     data_words                : t_slv_array;
     dut_if_field_idx          : natural;
     msg_id_panel              : t_msg_id_panel;
-    field_timeout_margin      : time;
   end record;
 
   type t_bridge_to_hvvc is record

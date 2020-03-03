@@ -304,7 +304,6 @@ begin
                                             dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                             hvvc_to_bridge       => hvvc_to_bridge,
                                             bridge_to_hvvc       => bridge_to_hvvc,
-                                            field_timeout_margin => vvc_config.field_timeout_margin,
                                             dtt_info             => dtt_info,
                                             scope                => C_SCOPE,
                                             msg_id_panel         => v_msg_id_panel);
@@ -329,7 +328,6 @@ begin
                                            dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                            hvvc_to_bridge       => hvvc_to_bridge,
                                            bridge_to_hvvc       => bridge_to_hvvc,
-                                           field_timeout_margin => vvc_config.field_timeout_margin,
                                            dtt_info             => dtt_info,
                                            scope                => C_SCOPE,
                                            msg_id_panel         => v_msg_id_panel);

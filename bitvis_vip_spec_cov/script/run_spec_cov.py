@@ -10,12 +10,13 @@
 # Note : Any functionality not explicitly described in the documentation is subject to change at any time
 #--------------------------------------------------------------------------------------------------------------------------------
 
-import os
-# csv - Comma Separated Values - This format is most common format for import and export for spreadsheets and databases
-import csv
-# sys - SYSstem specific parameters - sys.argv the list of command line arguments
 import sys
+# Raise an exception if Python version is < 3.0
+if sys.version_info[0] < 3:
+    raise Exception("Python version 3 is required to run this script!")
 
+import os
+import csv
 
 #==========================================================================
 # Settings

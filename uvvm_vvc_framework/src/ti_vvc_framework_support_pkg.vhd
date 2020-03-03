@@ -379,7 +379,7 @@ package body ti_vvc_framework_support_pkg is
   begin
     flag.reset <= 'Z';
     flag.is_active <= 'Z';
-    gen_pulse(flag.set, 0 ns, "set flag");
+    gen_pulse(flag.set, 0 ns, "set flag", C_TB_SCOPE_DEFAULT, ID_NEVER);
   end procedure;
 
   procedure reset_flag(

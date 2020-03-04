@@ -30,7 +30,8 @@ entity hvvc_to_vvc_bridge is
     GC_DUT_IF_FIELD_CONFIG : t_dut_if_field_config_direction_array;
     GC_MAX_NUM_WORDS       : positive;
     GC_PHY_MAX_ACCESS_TIME : time;
-    GC_SCOPE               : string
+    GC_SCOPE               : string;
+    GC_WORD_ENDIANNESS     : t_word_endianness := LOWER_WORD_LEFT
   );
   port(
     hvvc_to_bridge : in  t_hvvc_to_bridge;

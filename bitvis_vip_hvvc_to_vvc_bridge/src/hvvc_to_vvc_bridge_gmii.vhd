@@ -33,6 +33,7 @@ begin
 
   p_executor : process
     constant c_data_words_width    : natural := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
+    variable v_byte_endianness     : t_byte_endianness;
     variable v_cmd_idx             : integer;
     variable v_gmii_received_data  : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
     variable v_num_of_transfers    : integer;
@@ -41,6 +42,12 @@ begin
     variable v_data_bytes          : t_byte_array(0 to GC_MAX_NUM_WORDS*c_data_words_width/8-1);
 
   begin
+
+    if GC_WORD_ENDIANNESS = LOWER_WORD_LEFT or GC_WORD_ENDIANNESS = LOWER_BYTE_LEFT then
+      v_byte_endianness := LOWER_BYTE_LEFT;
+    else
+      v_byte_endianness := LOWER_BYTE_RIGHT;
+    end if;
 
     loop
 
@@ -64,7 +71,7 @@ begin
 
         when TRANSMIT =>
           -- Convert from t_slv_array to t_byte_array
-          v_data_bytes(0 to v_num_data_bytes-1) := convert_slv_array_to_byte_array(hvvc_to_bridge.data_words(0 to hvvc_to_bridge.num_data_words-1), LOWER_BYTE_LEFT);
+          v_data_bytes(0 to v_num_data_bytes-1) := convert_slv_array_to_byte_array(hvvc_to_bridge.data_words(0 to hvvc_to_bridge.num_data_words-1), v_byte_endianness);
           --gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), "Send data over GMII", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
           gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), "Send data over GMII", GC_SCOPE);   --REVIEW ET: Shouldn't this include USE_PROVIDED_MSG_ID_PANEL
           v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, TX, GC_SCOPE);
@@ -77,7 +84,7 @@ begin
           await_completion(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_num_of_transfers*GC_PHY_MAX_ACCESS_TIME, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
           fetch_result(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
           -- Convert from t_byte_array back to t_slv_array
-          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words-1) <= convert_byte_array_to_slv_array(v_gmii_received_data.data_array(0 to v_num_data_bytes-1), c_data_words_width/8, LOWER_BYTE_LEFT);
+          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words-1) <= convert_byte_array_to_slv_array(v_gmii_received_data.data_array(0 to v_num_data_bytes-1), c_data_words_width/8, v_byte_endianness);
 
         when others =>
           alert(TB_ERROR, "Unsupported operation");

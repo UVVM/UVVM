@@ -296,7 +296,7 @@ begin
           -- Set DTT
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-          -- Call the corresponding procedure in the support package.
+          -- Call the corresponding procedure in the vvc_methods_pkg.
           priv_ethernet_receive_from_bridge(received_frame       => v_result.ethernet_frame,
                                             fcs_error            => v_result.ethernet_frame_status.fcs_error,
                                             fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
@@ -322,7 +322,7 @@ begin
           -- Set DTT
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-          -- Call the corresponding procedure in the support package.
+          -- Call the corresponding procedure in the vvc_methods_pkg.
           priv_ethernet_expect_from_bridge(fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
                                            vvc_cmd              => v_cmd,
                                            dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),

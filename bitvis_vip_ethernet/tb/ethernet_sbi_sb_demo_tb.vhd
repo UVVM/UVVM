@@ -41,7 +41,7 @@ end entity ethernet_sbi_sb_demo_tb;
 -- Test case architecture
 architecture func of ethernet_sbi_sb_demo_tb is
 
-  constant C_CLK_PERIOD   : time := 10 ns;    -- **** Trenger metode for setting av clk period
+  constant C_CLK_PERIOD   : time := 10 ns;
   constant C_SCOPE        : string := "ETHERNET over SBI SB TB";
 
 begin

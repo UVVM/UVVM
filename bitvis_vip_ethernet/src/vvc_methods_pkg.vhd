@@ -497,7 +497,9 @@ package body vvc_methods_pkg is
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_crc_32;
 
-    -- Check which fields are configured as valid
+    -- Check which fields are configured as valid. If there's a field which is not configured it will have
+    -- valid by default, e.g. when writing the whole packet to a FIFO and don't want to specify the address
+    -- of each field (which is the same) in the config.
     v_preamble_sfd_valid := true when C_ETHERNET_FIELD_IDX_PREAMBLE_SFD > dut_if_field_config'high else
                             dut_if_field_config(C_ETHERNET_FIELD_IDX_PREAMBLE_SFD).field_valid;
     v_mac_dest_valid     := true when C_ETHERNET_FIELD_IDX_MAC_DESTINATION > dut_if_field_config'high else
@@ -557,8 +559,6 @@ package body vvc_methods_pkg is
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
   end procedure priv_ethernet_transmit_to_bridge;
 
---|ET: Skal vel ikke sende annet enn frame (ikke packet) dersom det sendes til en SBI el.l.?  
-
   procedure priv_ethernet_receive_from_bridge(
     variable received_frame       : out   t_ethernet_frame;
     variable fcs_error            : out   boolean;
@@ -574,7 +574,7 @@ package body vvc_methods_pkg is
   ) is
     constant local_proc_name : string := "ethernet_receive";
     constant local_proc_call : string := local_proc_name & "()";
-    variable v_preamble_sfd       : std_logic_vector(63 downto 0) := (others => '0');   --|ET: preamble_and_sfd ?
+    variable v_preamble_sfd       : std_logic_vector(63 downto 0) := (others => '0');
     variable v_packet             : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_payload_length     : integer;
     variable v_proc_call          : line; -- Current proc_call, external or local
@@ -594,7 +594,9 @@ package body vvc_methods_pkg is
 
     received_frame := C_ETHERNET_FRAME_DEFAULT;
 
-    -- Check which fields are configured as valid
+    -- Check which fields are configured as valid. If there's a field which is not configured it will have
+    -- valid by default, e.g. when writing the whole packet to a FIFO and don't want to specify the address
+    -- of each field (which is the same) in the config.
     v_preamble_sfd_valid := true when C_ETHERNET_FIELD_IDX_PREAMBLE_SFD > dut_if_field_config'high else
                             dut_if_field_config(C_ETHERNET_FIELD_IDX_PREAMBLE_SFD).field_valid;
     v_mac_dest_valid     := true when C_ETHERNET_FIELD_IDX_MAC_DESTINATION > dut_if_field_config'high else

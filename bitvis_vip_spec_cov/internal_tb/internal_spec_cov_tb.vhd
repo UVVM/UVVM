@@ -73,7 +73,7 @@ begin
       log(ID_LOG_HDR, "Testing initialize_req_cov() with no requirement file.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_1", "pc_1.csv");
-      register_req_cov("REQ_1");
+      tick_off_spec_cov("REQ_1");
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -86,7 +86,7 @@ begin
       log(ID_LOG_HDR, "Testing initialize_req_cov() with a requirement file.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_2", "../internal_tb/internal_req_file.csv", "pc_2.csv");
-      register_req_cov("REQ_2");
+      tick_off_spec_cov("REQ_2");
       -- End testcase      
       finalize_req_cov(VOID);
 
@@ -94,20 +94,20 @@ begin
 
     elsif GC_TEST = "test_log_default_testcase_and_not_listed" then
       --
-      -- This test will test register_req_cov() with default and unknown testcase, and with 
+      -- This test will test tick_off_spec_cov() with default and unknown testcase, and with 
       -- unknown requirement label.
       --
-      log(ID_LOG_HDR, "Testing register_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
+      log(ID_LOG_HDR, "Testing tick_off_spec_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_3", "../internal_tb/internal_req_file.csv", "pc_3.csv");
       -- 1: testing default testcase
-      register_req_cov("REQ_3");
+      tick_off_spec_cov("REQ_3");
       -- 2: testing unknown testcase
-      register_req_cov("REQ_3", "TC_50", NA, "logging unknown testcase.", C_SCOPE);
+      tick_off_spec_cov("REQ_3", "TC_50", NA, "logging unknown testcase.", C_SCOPE);
       -- 3: testing unknown requirement
       -- Increment expected alerts so test will pass with missing requirement
       increment_expected_alerts(TB_WARNING, 1);      
-      register_req_cov("REQ_10", "TC_1", NA, "logging unknown requirement.", C_SCOPE);
+      tick_off_spec_cov("REQ_10", "TC_1", NA, "logging unknown requirement.", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
       
@@ -115,13 +115,13 @@ begin
 
     elsif GC_TEST = "test_log_testcase_pass_and_fail" then
       --
-      -- This test will test register_req_cov() with default (NA, i.e. PASS) and explicit FAIL.
+      -- This test will test tick_off_spec_cov() with default (NA, i.e. PASS) and explicit FAIL.
       --
-      log(ID_LOG_HDR, "Testing register_req_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
+      log(ID_LOG_HDR, "Testing tick_off_spec_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_4", "../internal_tb/internal_req_file.csv", "pc_4.csv");
-      register_req_cov("REQ_4", "TC_4_FAIL", FAIL);
-      register_req_cov("REQ_4", "TC_4");
+      tick_off_spec_cov("REQ_4", "TC_4_FAIL", FAIL);
+      tick_off_spec_cov("REQ_4", "TC_4");
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -131,12 +131,12 @@ begin
       --
       -- This test will test Spec Cov with an UVVM status error set prior to testcase.
       --
-      log(ID_LOG_HDR, "Testing register_req_cov() with UVVM status error triggered prior to initialize_req_cov().", C_SCOPE);
+      log(ID_LOG_HDR, "Testing tick_off_spec_cov() with UVVM status error triggered prior to initialize_req_cov().", C_SCOPE);
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
       -- Run testcase
       initialize_req_cov("TC_5", "../internal_tb/internal_req_file.csv", "pc_5.csv");   
-      register_req_cov("REQ_5");  
+      tick_off_spec_cov("REQ_5");  
       -- End testcase
       finalize_req_cov(VOID);
       -- Increment expected alerts so test will pass with provoked UVVM TB_ERROR
@@ -148,10 +148,10 @@ begin
       --
       -- This test will test Spec Cov with an UVVM status error set during testcase.
       --
-      log(ID_LOG_HDR, "Testing register_req_cov() with UVVM status error triggered after register_req_cov() and prior to finalize_req_cov().", C_SCOPE);
+      log(ID_LOG_HDR, "Testing tick_off_spec_cov() with UVVM status error triggered after tick_off_spec_cov() and prior to finalize_req_cov().", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_6", "../internal_tb/internal_req_file.csv", "pc_6.csv");   
-      register_req_cov("REQ_6", PASS);
+      tick_off_spec_cov("REQ_6", PASS);
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
       -- End testcase
@@ -187,10 +187,10 @@ begin
       log(ID_LOG_HDR, "Testing passing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
       -- Run testcase
       initialize_req_cov("TC_SUB_REQ", "../internal_tb/internal_sub_req_file.csv", "pc_8.csv");   
-      register_req_cov("UART_REQ_BR_A", NA);
-      register_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-      register_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", C_SCOPE);
-      register_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
+      tick_off_spec_cov("UART_REQ_BR_A", NA);
+      tick_off_spec_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
+      tick_off_spec_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", C_SCOPE);
+      tick_off_spec_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -202,10 +202,10 @@ begin
       log(ID_LOG_HDR, "Testing failing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
       -- Run testcase
       initialize_req_cov("TC_SUB_REQ", "../internal_tb/internal_sub_req_file.csv", "pc_9.csv");   
-      register_req_cov("UART_REQ_BR_A", NA);
-      register_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-      register_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", C_SCOPE);
-      register_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
+      tick_off_spec_cov("UART_REQ_BR_A", NA);
+      tick_off_spec_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
+      tick_off_spec_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", C_SCOPE);
+      tick_off_spec_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -218,7 +218,7 @@ begin
       log(ID_LOG_HDR, "Testing failing simulations with incomplete testcase.", C_SCOPE);  
       -- Run testcase
       initialize_req_cov("TC_1", "../internal_tb/internal_req_file.csv", "pc_10.csv");   
-      register_req_cov("REQ_1");  
+      tick_off_spec_cov("REQ_1");  
       log(ID_SEQUENCER, "\nProvoking 2 TB_ERRORs to stop simulations.", C_SCOPE);
       -- Provoking tb_error 2 times to make testcase fail and simulation abort
       provoke_uvvm_status_error(TB_ERROR);

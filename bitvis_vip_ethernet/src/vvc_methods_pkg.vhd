@@ -593,6 +593,7 @@ package body vvc_methods_pkg is
     end if;
 
     received_frame := C_ETHERNET_FRAME_DEFAULT;
+--REVIEW ET: I think perhaps 'valid' in say v_mac_source_valid is a good name. It is not a question of being valid. Must find better name.    
 
     -- Check which fields are configured as valid. If there's a field which is not configured it will have
     -- valid by default, e.g. when writing the whole packet to a FIFO and don't want to specify the address
@@ -603,7 +604,7 @@ package body vvc_methods_pkg is
                             dut_if_field_config(C_ETHERNET_FIELD_IDX_MAC_DESTINATION).field_valid;
     v_mac_source_valid   := true when C_ETHERNET_FIELD_IDX_MAC_SOURCE > dut_if_field_config'high else
                             dut_if_field_config(C_ETHERNET_FIELD_IDX_MAC_SOURCE).field_valid;
-    v_length_valid       := true when C_ETHERNET_FIELD_IDX_LENGTH > dut_if_field_config'high else
+    v_length_valid       := true when C_ETHERNET_FIELD_IDX_LENGTH > dut_if_field_config'high else           --REVIEW ET: --> ..payload_length.. here and other places
                             dut_if_field_config(C_ETHERNET_FIELD_IDX_LENGTH).field_valid;
     v_payload_valid      := true when C_ETHERNET_FIELD_IDX_PAYLOAD > dut_if_field_config'high else
                             dut_if_field_config(C_ETHERNET_FIELD_IDX_PAYLOAD).field_valid;
@@ -615,13 +616,13 @@ package body vvc_methods_pkg is
 
     -- Await preamble and SFD
     if v_preamble_sfd_valid then
-      while true loop
+      while true loop                                             --REVIEW ET: Why not just 'loop'?
         -- Fetch one byte at the time until SFD is found
-        blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, msg_id_panel);
+        blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, msg_id_panel);  --REVIEW ET: *_request_from_bridge() ???
         v_preamble_sfd   := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
-        v_packet(1 to 7) := v_packet(0 to 6);
+        v_packet(1 to 7) := v_packet(0 to 6);                 --REVIEW ET: Why do we continuously update v_packet. It will always be known after preamble match... 
         v_packet(0)      := bridge_to_hvvc.data_words(0);
-        if v_preamble_sfd = C_PREAMBLE & C_SFD then
+        if v_preamble_sfd = C_PREAMBLE & C_SFD then       --REVIEW ET: Change name to v_preamble_and_sfd  (I just misunderstood this as SFD inside preamble...)
           exit;
         end if;
       end loop;
@@ -660,7 +661,7 @@ package body vvc_methods_pkg is
 
     -- Check length and if payload is padded
     if received_frame.length > C_MAX_PAYLOAD_LENGTH then
-      alert(ERROR, "Payload is larger than maximum alowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);
+      alert(ERROR, "Payload is larger than maximum alowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);  --REVIEW ET: --> 'allowed'
     end if;
     if received_frame.length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
@@ -668,11 +669,11 @@ package body vvc_methods_pkg is
       v_payload_length := received_frame.length;
     end if;
 
-    -- Read payload from bridge
+    -- Read payload from bridge                       --REVIEW ET:  How is padding handled? (doesn't seem to be removed?)
     if v_payload_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD, msg_id_panel);
       v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_words(0 to v_payload_length-1);
-      received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates
+      received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates   --REVIEW ET:  and....?
       received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.payload := received_frame.payload;
@@ -690,7 +691,7 @@ package body vvc_methods_pkg is
       log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
 
-      fcs_error := not check_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length+4-1)));
+      fcs_error := not check_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length+4-1)));     
       check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
     end if;
 
@@ -737,7 +738,7 @@ package body vvc_methods_pkg is
     v_expected_frame.mac_source      := vvc_cmd.mac_source;
     v_expected_frame.length          := vvc_cmd.length;
     v_expected_frame.payload         := vvc_cmd.payload;
-    v_expected_frame.fcs             := not generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));
+    v_expected_frame.fcs             := not generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --REVIEW ET: Yields error in later comparison even if fcs of received frame is OK (for that received frame)
 
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_expected_frame.fcs;

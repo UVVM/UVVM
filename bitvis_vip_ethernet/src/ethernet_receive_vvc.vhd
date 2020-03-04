@@ -263,7 +263,7 @@ begin
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
-      -- Update v_msg_id_panel
+      -- Update v_msg_id_panel                                 --REVIEW ET: Should state why/if   AND is this just to prepare for a "H2VVC" like UDP
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -311,7 +311,7 @@ begin
           if v_cmd.data_routing = TO_SB then
             -- Send result to scoreboard
             shared_ethernet_sb.check_received(GC_INSTANCE_IDX, v_result.ethernet_frame);
-          else
+          else                                                                                         --REVIEW ET: Why not store if TO_SB
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
                                                         cmd_idx       => v_cmd.cmd_idx,

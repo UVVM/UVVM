@@ -39,11 +39,11 @@ package support_pkg is
   constant C_MAX_FRAME_LENGTH   : natural := C_MAX_PAYLOAD_LENGTH + 18;
   constant C_MAX_PACKET_LENGTH  : natural := C_MAX_FRAME_LENGTH + 8;
 
-  -- IF field index config
-  constant C_ETHERNET_FIELD_IDX_PREAMBLE_SFD    : natural := 0;
+  -- IF field index config                                         --REVIEW ET: Could we skip ETHERNET prefix?
+  constant C_ETHERNET_FIELD_IDX_PREAMBLE_SFD    : natural := 0;   --REVIEW ET: -->preamble_and_sfd
   constant C_ETHERNET_FIELD_IDX_MAC_DESTINATION : natural := 1;
   constant C_ETHERNET_FIELD_IDX_MAC_SOURCE      : natural := 2;
-  constant C_ETHERNET_FIELD_IDX_LENGTH          : natural := 3;
+  constant C_ETHERNET_FIELD_IDX_LENGTH          : natural := 3;    --REVIEW ET: +'payload'
   constant C_ETHERNET_FIELD_IDX_PAYLOAD         : natural := 4;
   constant C_ETHERNET_FIELD_IDX_FCS             : natural := 5;
 
@@ -310,7 +310,7 @@ package body support_pkg is
     return true;
   end function compare_ethernet_frames;
 
-  function ethernet_match(
+  function ethernet_match(                                      --REVIEW ET: What is the difference and why (and name)
     constant actual   : in t_ethernet_frame;
     constant expected : in t_ethernet_frame
   ) return boolean is

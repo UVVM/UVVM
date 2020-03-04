@@ -110,7 +110,7 @@ package body support_pkg is
   end procedure bridge_to_hvvc_trigger;
 
   -- Send an operation to the bridge using a data array
-  procedure send_to_bridge(
+  procedure send_to_bridge(                                           --REVIEW ET: Merge into blocking_*
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
     constant data_words                : in  t_slv_array;
@@ -196,7 +196,7 @@ package body support_pkg is
   end procedure get_dut_address_config;
 
   -- Returns the DUT data width config for a specific field
-  procedure get_data_width_config(
+  procedure get_data_width_config(                                           --REVIEW ET: Why not a function. (Would be more readable)  Applies also to similar procedures.
     constant dut_if_field_config : in  t_dut_if_field_config_direction_array;
     signal   hvvc_to_bridge      : in  t_hvvc_to_bridge;
     variable data_width          : out positive

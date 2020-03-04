@@ -85,6 +85,7 @@ package body support_pkg is
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
     gen_pulse(hvvc_to_bridge.trigger, 0 ns, "Pulsing hvvc_to_bridge trigger", scope, ID_NEVER);
     wait until bridge_to_hvvc.trigger = true;
+    wait for 0 ns; -- Wait for a delta cycle to allow gen_pulse() from bridge to finish executing
   end procedure blocking_send_to_bridge;
 
   -- Send an operation to the bridge using number of data words and wait for bridge to finish
@@ -104,6 +105,7 @@ package body support_pkg is
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
     gen_pulse(hvvc_to_bridge.trigger, 0 ns, "Pulsing hvvc_to_bridge trigger", scope, ID_NEVER);
     wait until bridge_to_hvvc.trigger = true;
+    wait for 0 ns; -- Wait for a delta cycle to allow gen_pulse() from bridge to finish executing
   end procedure blocking_send_to_bridge;
 
   -- Returns the DUT address config for a specific field

@@ -116,7 +116,7 @@ begin
         bridge_to_hvvc => bridge_to_hvvc
       );
   else generate
-    alert(TB_ERROR, "Unsupported interface");
+    alert(TB_FAILURE, "Unsupported interface");
   end generate gen_hvvc_bridge;
 
 

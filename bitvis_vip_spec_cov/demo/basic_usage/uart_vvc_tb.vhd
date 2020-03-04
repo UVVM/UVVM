@@ -124,7 +124,7 @@ architecture func of uart_vvc_tb is
     sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
     await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
     -- Log the requirement FPGA_SPEC_1 after test has completed
-    register_req_cov("FPGA_SPEC_1");
+    tick_off_spec_cov("FPGA_SPEC_1");
 
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE);
@@ -133,7 +133,7 @@ architecture func of uart_vvc_tb is
     uart_expect(UART_VVCT,1,RX,  x"55", "Expecting data on UART RX");
     await_completion(UART_VVCT,1,RX,  13 * C_BIT_PERIOD);
     -- Log the requirement FPGA_SPEC_2 after test has completed
-    register_req_cov("FPGA_SPEC_2");
+    tick_off_spec_cov("FPGA_SPEC_2");
     wait for 200 ns;  -- margin
 
 
@@ -145,7 +145,7 @@ architecture func of uart_vvc_tb is
     sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
     await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
     -- Log the requirement FPGA_SPEC_3 after test has completed
-    register_req_cov("FPGA_SPEC_3");
+    tick_off_spec_cov("FPGA_SPEC_3");
 
 
     log(ID_LOG_HDR, "Check single simultaneous transmit and receive", C_SCOPE);
@@ -158,7 +158,7 @@ architecture func of uart_vvc_tb is
     sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA");
     await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
     -- Log the requirement FPGA_SPEC_4 after test has completed
-    register_req_cov("FPGA_SPEC_4");
+    tick_off_spec_cov("FPGA_SPEC_4");
 
 
     -- End the requirement coverage process

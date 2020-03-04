@@ -29,46 +29,24 @@ package support_pkg is
   --==========================================================================================
   -- Methods
   --==========================================================================================
-  procedure hvvc_to_bridge_trigger(
-    signal hvvc_to_bridge : out t_hvvc_to_bridge
-  );
-
-  procedure bridge_to_hvvc_trigger(
-    signal bridge_to_hvvc : out t_bridge_to_hvvc
-  );
-
-  procedure send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_vvc_operation;
-    constant data_words                : in  t_slv_array;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
-  );
-
-  procedure send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_vvc_operation;
-    constant num_data_words            : in  positive;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
+  procedure blocking_send_to_bridge(
+    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
+    constant operation        : in  t_vvc_operation;
+    constant data_words       : in  t_slv_array;
+    constant dut_if_field_idx : in  integer;
+    constant scope            : in  string;
+    constant msg_id_panel     : in  t_msg_id_panel
   );
 
   procedure blocking_send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_vvc_operation;
-    constant data_words                : in  t_slv_array;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
-  );
-
-  procedure blocking_send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_vvc_operation;
-    constant num_data_words            : in  positive;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
+    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
+    constant operation        : in  t_vvc_operation;
+    constant num_data_words   : in  positive;
+    constant dut_if_field_idx : in  integer;
+    constant scope            : in  string;
+    constant msg_id_panel     : in  t_msg_id_panel
   );
 
   procedure get_dut_address_config(
@@ -110,7 +88,7 @@ package body support_pkg is
   end procedure bridge_to_hvvc_trigger;
 
   -- Send an operation to the bridge using a data array
-  procedure send_to_bridge(                                           --REVIEW ET: Merge into blocking_*
+  procedure send_to_bridge(
     signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
     constant operation                 : in  t_vvc_operation;
     constant data_words                : in  t_slv_array;
@@ -123,51 +101,29 @@ package body support_pkg is
     hvvc_to_bridge.num_data_words                       <= data_words'length;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
-    hvvc_to_bridge_trigger(hvvc_to_bridge);
-  end procedure send_to_bridge;
+    gen_pulse(hvvc_to_bridge.trigger, 0 ns, "Pulsing hvvc_to_bridge trigger", scope, ID_NEVER);
+    wait until bridge_to_hvvc.trigger = true;
+    wait for 0 ns; -- Wait for a delta cycle to allow gen_pulse() from bridge to finish executing
+  end procedure blocking_send_to_bridge;
 
-  -- Send an operation to the bridge using number of data words
-  procedure send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    constant operation                 : in  t_vvc_operation;
-    constant num_data_words            : in  positive;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
+  -- Send an operation to the bridge using number of data words and wait for bridge to finish
+  procedure blocking_send_to_bridge(
+    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
+    constant operation        : in  t_vvc_operation;
+    constant num_data_words   : in  positive;
+    constant dut_if_field_idx : in  integer;
+    constant scope            : in  string;
+    constant msg_id_panel     : in  t_msg_id_panel
   ) is
   begin
     hvvc_to_bridge.operation                            <= operation;
     hvvc_to_bridge.num_data_words                       <= num_data_words;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
-    hvvc_to_bridge_trigger(hvvc_to_bridge);
-  end procedure send_to_bridge;
-
-  -- Send an operation to the bridge using a data array and wait for bridge to finish
-  procedure blocking_send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_vvc_operation;
-    constant data_words                : in  t_slv_array;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
-  ) is
-  begin
-    send_to_bridge(hvvc_to_bridge, operation, data_words, dut_if_field_idx, msg_id_panel);
+    gen_pulse(hvvc_to_bridge.trigger, 0 ns, "Pulsing hvvc_to_bridge trigger", scope, ID_NEVER);
     wait until bridge_to_hvvc.trigger = true;
-  end procedure blocking_send_to_bridge;
-
-  -- Send an operation to the bridge using number of data words and wait for bridge to finish
-  procedure blocking_send_to_bridge(
-    signal   hvvc_to_bridge            : out t_hvvc_to_bridge;
-    signal   bridge_to_hvvc            : in  t_bridge_to_hvvc;
-    constant operation                 : in  t_vvc_operation;
-    constant num_data_words            : in  positive;
-    constant dut_if_field_idx          : in  integer;
-    constant msg_id_panel              : in  t_msg_id_panel
-  ) is
-  begin
-    send_to_bridge(hvvc_to_bridge, operation, num_data_words, dut_if_field_idx, msg_id_panel);
-    wait until bridge_to_hvvc.trigger = true;
+    wait for 0 ns; -- Wait for a delta cycle to allow gen_pulse() from bridge to finish executing
   end procedure blocking_send_to_bridge;
 
   -- Returns the DUT address config for a specific field

@@ -64,6 +64,7 @@ package vvc_methods_pkg is
     ID_PACKET_HDR      => DISABLED,
     ID_PACKET_DATA     => DISABLED,
     ID_PACKET_CHECKSUM => DISABLED,
+    ID_PACKET_GAP      => DISABLED,
     others             => DISABLED
   );
 
@@ -521,7 +522,7 @@ package body vvc_methods_pkg is
       log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(0 to 7),
-        C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, msg_id_panel);
+        C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, scope, msg_id_panel);
     end if;
     if v_mac_dest_valid or v_mac_source_valid or v_length_valid then
       log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
@@ -529,34 +530,36 @@ package body vvc_methods_pkg is
     end if;
     if v_mac_dest_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(8 to 13),
-        C_ETHERNET_FIELD_IDX_MAC_DESTINATION, msg_id_panel);
+        C_ETHERNET_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
     end if;
     if v_mac_source_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(14 to 19),
-        C_ETHERNET_FIELD_IDX_MAC_SOURCE, msg_id_panel);
+        C_ETHERNET_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
     end if;
     if v_length_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(20 to 21),
-        C_ETHERNET_FIELD_IDX_LENGTH, msg_id_panel);
+        C_ETHERNET_FIELD_IDX_LENGTH, scope, msg_id_panel);
     end if;
     if v_payload_valid then
       log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(22 to 22+v_payload_length-1),
-        C_ETHERNET_FIELD_IDX_PAYLOAD, msg_id_panel);
+        C_ETHERNET_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
     end if;
     if v_fcs_valid then
       log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, TRANSMIT, v_packet(22+v_payload_length to 22+v_payload_length+3),
-        C_ETHERNET_FIELD_IDX_FCS, msg_id_panel);
+        C_ETHERNET_FIELD_IDX_FCS, scope, msg_id_panel);
     end if;
-
-    -- Interpacket gap
-    wait for interpacket_gap_time;
 
     log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+
+    -- Interpacket gap
+    log(ID_PACKET_GAP, "Waiting for the interpacket gap. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    wait for interpacket_gap_time;
   end procedure priv_ethernet_transmit_to_bridge;
 
   procedure priv_ethernet_receive_from_bridge(
@@ -618,7 +621,7 @@ package body vvc_methods_pkg is
     if v_preamble_sfd_valid then
       while true loop                                             --REVIEW ET: Why not just 'loop'?
         -- Fetch one byte at the time until SFD is found
-        blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, msg_id_panel);  --REVIEW ET: *_request_from_bridge() ???
+        blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, scope, msg_id_panel);  --REVIEW ET: *_request_from_bridge() ???
         v_preamble_sfd   := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
         v_packet(1 to 7) := v_packet(0 to 6);                 --REVIEW ET: Why do we continuously update v_packet. It will always be known after preamble match... 
         v_packet(0)      := bridge_to_hvvc.data_words(0);
@@ -632,7 +635,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC destination from bridge
     if v_mac_dest_valid then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_DESTINATION, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
       v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_destination := unsigned(to_slv(v_packet( 8 to 13)));
       -- Add info to the DTT
@@ -641,7 +644,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC source from bridge
     if v_mac_source_valid then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_SOURCE, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 6, C_ETHERNET_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
       v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_source := unsigned(to_slv(v_packet(14 to 19)));
       -- Add info to the DTT
@@ -650,7 +653,7 @@ package body vvc_methods_pkg is
 
     -- Read length from bridge
     if v_length_valid then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_ETHERNET_FIELD_IDX_LENGTH, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_ETHERNET_FIELD_IDX_LENGTH, scope, msg_id_panel);
       v_packet(20 to 21)    := bridge_to_hvvc.data_words(0 to 1);
       received_frame.length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
       -- Add info to the DTT
@@ -671,7 +674,7 @@ package body vvc_methods_pkg is
 
     -- Read payload from bridge                       --REVIEW ET:  How is padding handled? (doesn't seem to be removed?)
     if v_payload_valid then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
       v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_words(0 to v_payload_length-1);
       received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates   --REVIEW ET:  and....?
       received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
@@ -683,7 +686,7 @@ package body vvc_methods_pkg is
 
     -- Read FCS from bridge
     if v_fcs_valid then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_ETHERNET_FIELD_IDX_FCS, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 4, C_ETHERNET_FIELD_IDX_FCS, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
       received_frame.fcs := to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)));
       -- Add info to the DTT

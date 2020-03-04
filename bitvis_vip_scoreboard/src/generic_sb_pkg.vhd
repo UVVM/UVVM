@@ -1611,6 +1611,9 @@ package body generic_sb_pkg is
       constant prefix            : string   := C_LOG_PREFIX & "     ";
       constant log_counter_width : positive := 8; -- shouldn't be smaller than 8 due to the counters names
       variable v_log_extra_space : integer  := 0;
+      constant C_MAX_QUEUE_INSTANCE_NUM_STRING     : string  := to_string(C_MAX_QUEUE_INSTANCE_NUM);
+      constant C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN : natural := C_MAX_QUEUE_INSTANCE_NUM_STRING'length;
+
 
         -- add simulation time stamp to scoreboard report header
         impure function timestamp_header(value : time; txt : string) return string is
@@ -1678,8 +1681,8 @@ package body generic_sb_pkg is
             write(v_line,
             justify(
               "instance: " &
-              justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
+              justify(to_string(i), right, C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+              fill_string(' ', 20-4-10-C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN) &
               justify(to_string(get_entered_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify(to_string(get_pending_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify(to_string(get_match_count(i))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1695,8 +1698,8 @@ package body generic_sb_pkg is
         write(v_line,
           justify(
             "instance: " &
-            justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
+            justify(to_string(instance), right, C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+            fill_string(' ', 20-4-10-C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN) &
             justify(to_string(get_entered_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_pending_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_match_count(instance))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &

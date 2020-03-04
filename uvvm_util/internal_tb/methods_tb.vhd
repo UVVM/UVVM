@@ -1661,7 +1661,7 @@ begin
         v_slv_array_as_byte(idx-1) := std_logic_vector(to_unsigned(idx, v_slv_array_as_byte(idx-1)'length));
       end loop;
       -- convert
-      v_byte_array := convert_slv_array_to_byte_array(v_slv_array_as_byte, true, LOWER_BYTE_LEFT);
+      v_byte_array := convert_slv_array_to_byte_array(v_slv_array_as_byte, LOWER_BYTE_LEFT);
       -- check result
       for idx in 1 to 10 loop
         v_byte := v_slv_array_as_byte(idx-1);
@@ -1675,7 +1675,7 @@ begin
         v_slv_desc_array_as_byte(idx-1) := std_logic_vector(to_unsigned(idx, v_slv_desc_array_as_byte(idx-1)'length));
       end loop;
       -- convert
-      v_byte_desc_array := convert_slv_array_to_byte_array(v_slv_desc_array_as_byte, false, LOWER_BYTE_LEFT);
+      v_byte_desc_array := convert_slv_array_to_byte_array(v_slv_desc_array_as_byte, LOWER_BYTE_LEFT);
       -- check result
       for idx in 1 to 10 loop
         v_byte := v_slv_desc_array_as_byte(idx-1);
@@ -1685,7 +1685,7 @@ begin
       log(ID_SEQUENCER, "Byte to byte testing, ascending byte vector, ascending t_byte_array");
       v_byte_array         := (others => (others => '0'));
       -- convert
-      v_byte_array(0 to 1) := convert_slv_array_to_byte_array(t_slv_array'(8x"A0", 8x"A1"), true, LOWER_BYTE_LEFT);
+      v_byte_array(0 to 1) := convert_slv_array_to_byte_array(t_slv_array'(8x"A0", 8x"A1"), LOWER_BYTE_LEFT);
       -- check result
       check_value(8x"A0" = v_byte_array(0), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(0));
       check_value(8x"A1" = v_byte_array(1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(1));
@@ -1697,7 +1697,7 @@ begin
         v_slv_array_as_3_byte(idx-1) := random(v_slv_array_as_3_byte(idx-1)'length);
       end loop;
       -- convert
-      v_byte_array(0 to 8) := convert_slv_array_to_byte_array(v_slv_array_as_3_byte(0 to 2), true, LOWER_BYTE_LEFT);
+      v_byte_array(0 to 8) := convert_slv_array_to_byte_array(v_slv_array_as_3_byte(0 to 2), LOWER_BYTE_LEFT);
       -- check result
       v_idx                := 0;
       for idx in 1 to 3 loop
@@ -1712,7 +1712,7 @@ begin
 
       log(ID_SEQUENCER, "3xbyte to byte testing, LOWER_BYTE_RIGHT, ascending t_byte_array");
       -- convert
-      v_byte_array(0 to 8) := convert_slv_array_to_byte_array(v_slv_array_as_3_byte(0 to 2), true, LOWER_BYTE_RIGHT);
+      v_byte_array(0 to 8) := convert_slv_array_to_byte_array(v_slv_array_as_3_byte(0 to 2), LOWER_BYTE_RIGHT);
       -- check result
       v_idx                := 0;
       for idx in 1 to 3 loop

@@ -979,7 +979,6 @@ package methods_pkg is
 
   function convert_slv_array_to_byte_array(
     constant slv_array        : t_slv_array;
-    constant ascending        : boolean           := false;
     constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array;
 
@@ -4245,84 +4244,85 @@ package body methods_pkg is
       shared_seed2 := seed2;
   end;
 
+  -- Converts a t_byte_array (any direction) to a t_slv_array (same direction)
   function convert_byte_array_to_slv_array(
     constant byte_array       : t_byte_array;
     constant bytes_in_word    : natural;
     constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_slv_array is
-    variable v_slv_array   : t_slv_array(0 to (byte_array'length/bytes_in_word)-1)((8*bytes_in_word)-1 downto 0);
-    variable v_byte_idx       : integer := 0;
-    variable v_num_bytes      : integer := byte_array'length/bytes_in_word;
+    constant c_num_words        : integer := byte_array'length/bytes_in_word;
+    variable v_ascending_array  : t_slv_array(0 to c_num_words-1)((8*bytes_in_word)-1 downto 0);
+    variable v_descending_array : t_slv_array(c_num_words-1 downto 0)((8*bytes_in_word)-1 downto 0);
+    variable v_byte_idx         : integer := 0;
   begin
-    for idx in 0 to v_num_bytes-1 loop
+    for slv_idx in 0 to c_num_words-1 loop
       if byte_endianness = LOWER_BYTE_LEFT then
         for byte_in_word in bytes_in_word downto 1 loop
-          v_slv_array(idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
+          v_ascending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8)  := byte_array(v_byte_idx);
+          v_descending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
           v_byte_idx := v_byte_idx + 1;
         end loop;
       else -- LOWER_BYTE_RIGHT
         for byte_in_word in 1 to bytes_in_word loop
-          v_slv_array(idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
+          v_ascending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8)  := byte_array(v_byte_idx);
+          v_descending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
           v_byte_idx := v_byte_idx + 1;
         end loop;
       end if;
     end loop;
-    return v_slv_array;
+
+    if byte_array'ascending then
+      return v_ascending_array;
+    else -- byte array is descending
+      return v_descending_array;
+    end if;
   end function;
 
+  -- Converts a t_slv_array (any direction) to a t_byte_array (same direction)
   function convert_slv_array_to_byte_array(
     constant slv_array        : t_slv_array;
-    constant ascending        : boolean           := false;
     constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array is
-    variable v_bytes_in_word      : integer := (slv_array(slv_array'low)'length/8);
-    variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
-    variable v_ascending_array    : t_byte_array(0 to v_byte_array_length-1);
-    variable v_descending_array   : t_byte_array(v_byte_array_length-1 downto 0);
-    variable v_ascending_vector   : boolean := false;
-    variable v_byte_number        : integer := 0;
-    variable v_offset             : natural := 0;
+    constant c_num_bytes_in_word   : integer := (slv_array(slv_array'low)'length/8);
+    constant c_byte_array_length   : integer := (slv_array'length * c_num_bytes_in_word);
+    constant c_vector_is_ascending : boolean := slv_array(slv_array'low)'ascending;
+    variable v_ascending_array     : t_byte_array(0 to c_byte_array_length-1);
+    variable v_descending_array    : t_byte_array(c_byte_array_length-1 downto 0);
+    variable v_byte_idx            : integer := 0;
+    variable v_offset              : natural := 0;
   begin
-    -- The ascending parameter should match the array direction. We could also just remove the ascending
-    -- parameter and use the t'ascending attribute.
-    bitvis_assert((slv_array'ascending and ascending) or (not(slv_array'ascending) and not(ascending)), ERROR,
-      "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
-
-    v_ascending_vector := slv_array(slv_array'low)'ascending;
     -- Use this offset in case the slv_array doesn't start at 0
     v_offset := slv_array'low;
 
-    if byte_endianness = LOWER_BYTE_LEFT then
-      for slv_idx in 0 to slv_array'length-1 loop
-        for byte in v_bytes_in_word downto 1 loop
-          if v_ascending_vector then
-            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
-            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+    for slv_idx in 0 to slv_array'length-1 loop
+      if byte_endianness = LOWER_BYTE_LEFT then
+        for byte in c_num_bytes_in_word downto 1 loop
+          if c_vector_is_ascending then
+            v_ascending_array(v_byte_idx)  := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_idx) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
           else -- SLV vector is descending
-            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
-            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_ascending_array(v_byte_idx)  := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_idx) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
           end if;
-          v_byte_number := v_byte_number + 1;
+          v_byte_idx := v_byte_idx + 1;
         end loop;
-      end loop;
-    else -- LOWER_BYTE_RIGHT
-      for slv_idx in 0 to slv_array'length-1 loop
-        for byte in 1 to v_bytes_in_word loop
-          if v_ascending_vector then
-            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
-            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+      else -- LOWER_BYTE_RIGHT
+        for byte in 1 to c_num_bytes_in_word loop
+          if c_vector_is_ascending then
+            v_ascending_array(v_byte_idx)  := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_idx) := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
           else -- SLV vector is descending
-            v_ascending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
-            v_descending_array(v_byte_number) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_ascending_array(v_byte_idx)  := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_idx) := slv_array(slv_idx+v_offset)((8*byte)-1 downto (byte-1)*8);
           end if;
-          v_byte_number := v_byte_number + 1;
+          v_byte_idx := v_byte_idx + 1;
         end loop;
-      end loop;
-    end if;
+      end if;
+    end loop;
 
-    if ascending then
+    if slv_array'ascending then
       return v_ascending_array;
-    else -- descending
+    else -- SLV array is descending
       return v_descending_array;
     end if;
   end function;

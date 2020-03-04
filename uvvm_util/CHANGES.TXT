@@ -8,6 +8,7 @@ v2.11.2
 Released: 2020-XX-XX
 - Added 2 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE and ID_PACKET_CHECKSUM.
 - Moved t_channel from types_pkg to adaptations_pkg.
+- Changed t_byte_endianness elements names and added an alias t_word_endianness.
 
 
 v2.11.1

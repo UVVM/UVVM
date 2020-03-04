@@ -86,7 +86,8 @@ package types_pkg is
   type t_when_to_start_transfer is (START_TRANSFER_IMMEDIATE, START_TRANSFER_ON_NEXT_SS);
   type t_action_between_words is (RELEASE_LINE_BETWEEN_WORDS, HOLD_LINE_BETWEEN_WORDS);
 
-  type t_byte_endianness is (FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT);
+  type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT);
+  alias t_word_endianness is t_byte_endianness;
 
   type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
 

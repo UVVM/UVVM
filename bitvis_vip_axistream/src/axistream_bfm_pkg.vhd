@@ -102,7 +102,7 @@ package axistream_bfm_pkg is
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
-    byte_endianness             => FIRST_BYTE_LEFT,
+    byte_endianness             => LOWER_BYTE_LEFT,
     valid_low_at_word_num       => 0,
     valid_low_duration          => 0,
     check_packet_length         => false,

@@ -974,13 +974,13 @@ package methods_pkg is
   function convert_byte_array_to_slv_array(
     constant byte_array       : t_byte_array;
     constant bytes_in_word    : natural;
-    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_slv_array;
 
   function convert_slv_array_to_byte_array(
     constant slv_array        : t_slv_array;
     constant ascending        : boolean           := false;
-    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array;
 
   function reverse_vector(
@@ -4248,19 +4248,19 @@ package body methods_pkg is
   function convert_byte_array_to_slv_array(
     constant byte_array       : t_byte_array;
     constant bytes_in_word    : natural;
-    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_slv_array is
     variable v_slv_array   : t_slv_array(0 to (byte_array'length/bytes_in_word)-1)((8*bytes_in_word)-1 downto 0);
     variable v_byte_idx       : integer := 0;
     variable v_num_bytes      : integer := byte_array'length/bytes_in_word;
   begin
     for idx in 0 to v_num_bytes-1 loop
-      if byte_endianness = FIRST_BYTE_LEFT then
+      if byte_endianness = LOWER_BYTE_LEFT then
         for byte_in_word in bytes_in_word downto 1 loop
           v_slv_array(idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
           v_byte_idx := v_byte_idx + 1;
         end loop;
-      else -- FIRST_BYTE_RIGHT
+      else -- LOWER_BYTE_RIGHT
         for byte_in_word in 1 to bytes_in_word loop
           v_slv_array(idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
           v_byte_idx := v_byte_idx + 1;
@@ -4273,7 +4273,7 @@ package body methods_pkg is
   function convert_slv_array_to_byte_array(
     constant slv_array        : t_slv_array;
     constant ascending        : boolean           := false;
-    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness  : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array is
     variable v_bytes_in_word      : integer := (slv_array(slv_array'low)'length/8);
     variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
@@ -4292,7 +4292,7 @@ package body methods_pkg is
     -- Use this offset in case the slv_array doesn't start at 0
     v_offset := slv_array'low;
 
-    if byte_endianness = FIRST_BYTE_LEFT then
+    if byte_endianness = LOWER_BYTE_LEFT then
       for slv_idx in 0 to slv_array'length-1 loop
         for byte in v_bytes_in_word downto 1 loop
           if v_ascending_vector then
@@ -4305,7 +4305,7 @@ package body methods_pkg is
           v_byte_number := v_byte_number + 1;
         end loop;
       end loop;
-    else -- FIRST_BYTE_RIGHT
+    else -- LOWER_BYTE_RIGHT
       for slv_idx in 0 to slv_array'length-1 loop
         for byte in 1 to v_bytes_in_word loop
           if v_ascending_vector then

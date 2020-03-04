@@ -116,7 +116,7 @@ begin
         bridge_to_hvvc => bridge_to_hvvc
       );
   else generate
-    alert(TB_ERROR, "Unsupported interface");
+    alert(TB_FAILURE, "Unsupported interface");
   end generate gen_hvvc_bridge;
 
 
@@ -295,7 +295,7 @@ begin
           -- Set DTT
           set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
 
-          -- Call the corresponding procedure in the support package.
+          -- Call the corresponding procedure in the vvc_methods_pkg.
           priv_ethernet_transmit_to_bridge(interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
                                            vvc_cmd              => v_cmd,
                                            hvvc_to_bridge       => hvvc_to_bridge,

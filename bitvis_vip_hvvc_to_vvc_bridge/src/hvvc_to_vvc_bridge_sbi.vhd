@@ -132,7 +132,7 @@ begin
 
       end case;
 
-      bridge_to_hvvc_trigger(bridge_to_hvvc);
+      gen_pulse(bridge_to_hvvc.trigger, 0 ns, "Pulsing bridge_to_hvvc trigger", GC_SCOPE, ID_NEVER);
     end loop;
 
   end process;

@@ -153,7 +153,7 @@ begin
       constant c_byte_array_length : integer           := (expected'length * c_bytes_in_word);
       variable v_expected          : t_byte_array(0 to c_byte_array_length-1);
     begin
-      v_expected := convert_slv_array_to_byte_array(expected, true, c_byte_endianness);
+      v_expected := convert_slv_array_to_byte_array(expected, c_byte_endianness);
       for byte_idx in 0 to numb_bytes_received-1 loop
         check_value(received(byte_idx) = v_expected(byte_idx), error, msg, C_TB_SCOPE_DEFAULT);
       end loop;
@@ -349,12 +349,12 @@ begin
       -- VVC call
       -- tuser, tstrb etc = default
       axistream_transmit(AXISTREAM_VVCT, 0, data_array, "transmit,i="&to_string(i));
-      axistream_expect_bytes (AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, true, v_byte_endianness), "expect,  i="&to_string(i));
+      axistream_expect_bytes (AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, v_byte_endianness), "expect,  i="&to_string(i));
 
       if GC_INCLUDE_TUSER then
         -- tuser = something. tstrb etc = default
         axistream_transmit(AXISTREAM_VVCT, 0, data_array, user_array, "transmit, tuser set,i="&to_string(i));
-        axistream_expect_bytes (AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, true, v_byte_endianness), user_array, "expect,   tuser set,i="&to_string(i));
+        axistream_expect_bytes (AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, v_byte_endianness), user_array, "expect,   tuser set,i="&to_string(i));
 
         -- test _receive, Check that tuser is fetched correctly
         axistream_transmit(AXISTREAM_VVCT, 0, data_array, user_array, "transmit before receive, Check that tuser is fetched correctly,i="&to_string(i));
@@ -375,7 +375,7 @@ begin
         increment_expected_alerts(warning, 1);
         axistream_transmit(AXISTREAM_VVCT, 0, data_array, v_user_array, "transmit, data wrogn ,i="&to_string(i));
         v_idx                       := random(0, v_numBytes-1);
-        v_data_array_as_byte        := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness);
+        v_data_array_as_byte        := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
         v_data_array_as_byte(v_idx) := not v_data_array_as_byte(v_idx);
         axistream_expect_bytes (AXISTREAM_VVCT, 1, v_data_array_as_byte, v_user_array, "expect, data wrong ,i="&to_string(i), warning);
 
@@ -384,7 +384,7 @@ begin
         axistream_transmit(AXISTREAM_VVCT, 0, data_array, v_user_array, "transmit, tuser wrogn ,i="&to_string(i));
         v_idx               := random(0, v_numWords-1);
         v_user_array(v_idx) := not v_user_array(v_idx);
-        axistream_expect_bytes (AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, true, v_byte_endianness), v_user_array, "expect, tuser wrong ,i="&to_string(i), warning);
+        axistream_expect_bytes (AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, v_byte_endianness), v_user_array, "expect, tuser wrong ,i="&to_string(i), warning);
       end if;
     end procedure;
 

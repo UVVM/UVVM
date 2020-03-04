@@ -443,7 +443,7 @@ package body vvc_methods_pkg is
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending, data_array(0 to N)()
+      v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
       -- call t_byte_array overloaded procedure
       axistream_transmit_bytes(VVCT, vvc_instance_idx, v_data_array, user_array, strb_array, id_array, dest_array, msg, scope);
     end if;
@@ -674,7 +674,7 @@ package body vvc_methods_pkg is
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending, data_array(0 to N)()
+      v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
       -- call t_byte_array overloaded procedure
       axistream_expect_bytes(VVCT, vvc_instance_idx, v_data_array, user_array, strb_array, id_array, dest_array, msg, alert_level, scope);
     end if;

@@ -37,7 +37,7 @@ end entity ethernet_gmii_tb;
 -- Test case architecture
 architecture func of ethernet_gmii_tb is
 
-  constant C_CLK_PERIOD   : time := 8 ns;    -- **** Trenger metode for setting av clk period
+  constant C_CLK_PERIOD   : time := 8 ns;
   constant C_SCOPE        : string := "GMII_VVC_TB";
 
 begin

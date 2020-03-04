@@ -64,6 +64,7 @@ package vvc_methods_pkg is
     ID_PACKET_HDR      => DISABLED,
     ID_PACKET_DATA     => DISABLED,
     ID_PACKET_CHECKSUM => DISABLED,
+    ID_PACKET_GAP      => DISABLED,
     others             => DISABLED
   );
 
@@ -552,11 +553,13 @@ package body vvc_methods_pkg is
         C_ETHERNET_FIELD_IDX_FCS, scope, msg_id_panel);
     end if;
 
-    -- Interpacket gap
-    wait for interpacket_gap_time;
-
     log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+
+    -- Interpacket gap
+    log(ID_PACKET_GAP, "Waiting for the interpacket gap. " & add_msg_delimiter(vvc_cmd.msg) &
+      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    wait for interpacket_gap_time;
   end procedure priv_ethernet_transmit_to_bridge;
 
   procedure priv_ethernet_receive_from_bridge(

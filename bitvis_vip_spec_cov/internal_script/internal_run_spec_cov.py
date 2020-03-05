@@ -55,6 +55,7 @@ test_list = [
 
 
 def remove_specification_coverage_files():
+    print("Removing old run_spec_cov.py run files...")
     for filename in os.listdir("."):
         if filename[0:3] == "sc_":
             if filename.endswith(".csv"):
@@ -66,7 +67,9 @@ def remove_specification_coverage_files():
                 os.remove(filename)
 
 def run_tests():
+    print("Running tests...")
     for idx, test in enumerate(test_list):
+        print("Test %d : %s" %(idx, test))
         output = subprocess.check_output(test, stderr=subprocess.PIPE)
         # Save output for golden check        
         with open("output_" + str(idx + 1) + ".txt", 'w') as file:

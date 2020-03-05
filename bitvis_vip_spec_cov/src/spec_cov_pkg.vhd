@@ -46,7 +46,7 @@ package spec_cov_pkg is
   );
 
 
-  procedure tick_off_spec_cov(
+  procedure tick_off_req_cov(
     constant requirement : string;
     constant testcase    : string;
     constant test_status : t_test_status  := NA;
@@ -54,7 +54,7 @@ package spec_cov_pkg is
     constant scope       : string         := C_SCOPE
   );
   -- Overloading procedure
-  procedure tick_off_spec_cov(
+  procedure tick_off_req_cov(
     constant requirement : string;
     constant test_status : t_test_status  := NA;
     constant msg         : string         := "";
@@ -181,7 +181,7 @@ package body spec_cov_pkg is
   --
   -- Log the requirement and testcase
   --
-  procedure tick_off_spec_cov(
+  procedure tick_off_req_cov(
     constant requirement : string;
     constant testcase    : string;
     constant test_status : t_test_status  := NA;
@@ -192,7 +192,7 @@ package body spec_cov_pkg is
     variable v_requirement_status       : t_test_status;
   begin
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
-      alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling tick_off_spec_cov().", scope);
+      alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
       return;
     end if;
 
@@ -217,18 +217,18 @@ package body spec_cov_pkg is
     -- Log to file
     write(v_requirement_to_file_line, requirement & C_CSV_DELIMITER & testcase & C_CSV_DELIMITER & priv_test_status_to_string(v_requirement_status));
     writeline(RESULT_FILE, v_requirement_to_file_line);
-  end procedure tick_off_spec_cov;
+  end procedure tick_off_req_cov;
 
   -- Overloading procedure
-  procedure tick_off_spec_cov(
+  procedure tick_off_req_cov(
     constant requirement : string;
     constant test_status : t_test_status  := NA;
     constant msg         : string         := "";
     constant scope       : string         := C_SCOPE
   ) is 
   begin
-    tick_off_spec_cov(requirement, priv_get_default_testcase_name , test_status, msg, scope);
-  end procedure tick_off_spec_cov;
+    tick_off_req_cov(requirement, priv_get_default_testcase_name , test_status, msg, scope);
+  end procedure tick_off_req_cov;
   
   
   --

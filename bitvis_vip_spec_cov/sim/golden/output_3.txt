@@ -17,7 +17,7 @@ Number of non compliant requirements : 0
 Number of non verified requirements  : 6
 Number of passing testcases : 3
 Number of failing testcases : 0
-Number of not run testcases : 7
+Number of not run testcases : 6
 
 
 Compliant requirement(s) :
@@ -30,5 +30,5 @@ Passing testcase(s) :
 TC_3, TC_50, TC_1, 
 
 Not run testcase(s) :
-TC_1, TC_2, TC_4, TC_4_FAIL, TC_5, TC_6, TC_7, 
+TC_2, TC_4, TC_4_FAIL, TC_5, TC_6, TC_7, 
 

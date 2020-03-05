@@ -15,16 +15,13 @@ SUMMARY:
 Number of compliant requirements     : 0
 Number of non compliant requirements : 5
 Number of non verified requirements  : 0
-Number of passing testcases : 3
+Number of passing testcases : 0
 Number of failing testcases : 1
 Number of not run testcases : 5
 
 
 Non compliant requirement(s) :
 UART_REQ_BR_A, UART_REQ_BR_B, UART_REQ_ODD, UART_REQ_EVEN, UART_REQ_GENERAL, 
-
-Passing testcase(s) :
-TC_SUB_REQ, TC_SUB_REQ, TC_SUB_REQ, 
 
 Failing testcase(s) :
 TC_SUB_REQ, 

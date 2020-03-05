@@ -70,7 +70,7 @@ package vvc_methods_pkg is
 
   type t_vvc_config is
   record
-    inter_bfm_delay                       : t_inter_bfm_delay;          -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    inter_bfm_delay                       : t_inter_bfm_delay;          -- Minimum delay between protocol accesses from the VVC. If parameter delay_type is set to NO_DELAY, protocol accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural;                    -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;                    -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level;              -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
@@ -451,17 +451,17 @@ package body vvc_methods_pkg is
         & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
         & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
-    variable v_packet             : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_frame              : t_ethernet_frame;
-    variable v_payload_length     : natural;
-    variable v_payload_length_slv : std_logic_vector(15 downto 0);
-    variable v_crc_32             : std_logic_vector(31 downto 0);
-    variable v_preamble_sfd_valid : boolean;
-    variable v_mac_dest_valid     : boolean;
-    variable v_mac_source_valid   : boolean;
-    variable v_length_valid       : boolean;
-    variable v_payload_valid      : boolean;
-    variable v_fcs_valid          : boolean;
+    variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    variable v_frame                : t_ethernet_frame;
+    variable v_payload_length       : natural;
+    variable v_payload_length_slv   : std_logic_vector(15 downto 0);
+    variable v_crc_32               : std_logic_vector(31 downto 0);
+    variable v_use_preamble_and_sfd : boolean;
+    variable v_use_mac_dest         : boolean;
+    variable v_use_mac_source       : boolean;
+    variable v_use_payload_length   : boolean;
+    variable v_use_payload          : boolean;
+    variable v_use_fcs              : boolean;
   begin
     -- Preamble
     for i in 0 to 6 loop
@@ -498,59 +498,60 @@ package body vvc_methods_pkg is
     -- Add info to the DTT
     dtt_info.bt.ethernet_frame.fcs := v_crc_32;
 
-    -- Check which fields are configured as valid. If there's a field which is not configured it will have
-    -- valid by default, e.g. when writing the whole packet to a FIFO and don't want to specify the address
-    -- of each field (which is the same) in the config.
-    v_preamble_sfd_valid := true when C_ETHERNET_FIELD_IDX_PREAMBLE_SFD > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_PREAMBLE_SFD).field_valid;
-    v_mac_dest_valid     := true when C_ETHERNET_FIELD_IDX_MAC_DESTINATION > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_MAC_DESTINATION).field_valid;
-    v_mac_source_valid   := true when C_ETHERNET_FIELD_IDX_MAC_SOURCE > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_MAC_SOURCE).field_valid;
-    v_length_valid       := true when C_ETHERNET_FIELD_IDX_LENGTH > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_LENGTH).field_valid;
-    v_payload_valid      := true when C_ETHERNET_FIELD_IDX_PAYLOAD > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_PAYLOAD).field_valid;
-    v_fcs_valid          := true when C_ETHERNET_FIELD_IDX_FCS > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_FCS).field_valid;
+    -- Check which fields should be used (sent or requested to/from the bridge) according to config.
+    -- If there's a field which is not configured it will be used by default, e.g. when writing
+    -- the whole packet to a FIFO and don't want to specify the address of each field (which is
+    -- the same) in the config.
+    v_use_preamble_and_sfd := true when C_FIELD_IDX_PREAMBLE_AND_SFD > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_PREAMBLE_AND_SFD).use_field;
+    v_use_mac_dest         := true when C_FIELD_IDX_MAC_DESTINATION > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_MAC_DESTINATION).use_field;
+    v_use_mac_source       := true when C_FIELD_IDX_MAC_SOURCE > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_MAC_SOURCE).use_field;
+    v_use_payload_length   := true when C_FIELD_IDX_PAYLOAD_LENGTH > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_PAYLOAD_LENGTH).use_field;
+    v_use_payload          := true when C_FIELD_IDX_PAYLOAD > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_PAYLOAD).use_field;
+    v_use_fcs              := true when C_FIELD_IDX_FCS > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_FCS).use_field;
 
     log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) & 
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
-    -- Send only valid configured fields to the bridge
-    if v_preamble_sfd_valid then
+    -- Send only configured fields to the bridge
+    if v_use_preamble_and_sfd then
       log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7),
-        C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, scope, msg_id_panel);
+        C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
     end if;
-    if v_mac_dest_valid or v_mac_source_valid or v_length_valid then
+    if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
       log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
     end if;
-    if v_mac_dest_valid then
+    if v_use_mac_dest then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13),
-        C_ETHERNET_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
+        C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
     end if;
-    if v_mac_source_valid then
+    if v_use_mac_source then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(14 to 19),
-        C_ETHERNET_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
+        C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
     end if;
-    if v_length_valid then
+    if v_use_payload_length then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(20 to 21),
-        C_ETHERNET_FIELD_IDX_LENGTH, scope, msg_id_panel);
+        C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
     end if;
-    if v_payload_valid then
+    if v_use_payload then
       log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22+v_payload_length-1),
-        C_ETHERNET_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
+        C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
     end if;
-    if v_fcs_valid then
+    if v_use_fcs then
       log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+3),
-        C_ETHERNET_FIELD_IDX_FCS, scope, msg_id_panel);
+        C_FIELD_IDX_FCS, scope, msg_id_panel);
     end if;
 
     log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
@@ -577,16 +578,16 @@ package body vvc_methods_pkg is
   ) is
     constant local_proc_name : string := "ethernet_receive";
     constant local_proc_call : string := local_proc_name & "()";
-    variable v_preamble_sfd       : std_logic_vector(63 downto 0) := (others => '0');
-    variable v_packet             : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_payload_length     : integer;
-    variable v_proc_call          : line; -- Current proc_call, external or local
-    variable v_preamble_sfd_valid : boolean;
-    variable v_mac_dest_valid     : boolean;
-    variable v_mac_source_valid   : boolean;
-    variable v_length_valid       : boolean;
-    variable v_payload_valid      : boolean;
-    variable v_fcs_valid          : boolean;
+    variable v_preamble_and_sfd     : std_logic_vector(63 downto 0) := (others => '0');
+    variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    variable v_payload_length       : integer;
+    variable v_proc_call            : line; -- Current proc_call, external or local
+    variable v_use_preamble_and_sfd : boolean;
+    variable v_use_mac_dest         : boolean;
+    variable v_use_mac_source       : boolean;
+    variable v_use_payload_length   : boolean;
+    variable v_use_payload          : boolean;
+    variable v_use_fcs              : boolean;
   begin
     -- Choose which procedure call to use (local or external)
     if ext_proc_call = "" then
@@ -596,36 +597,36 @@ package body vvc_methods_pkg is
     end if;
 
     received_frame := C_ETHERNET_FRAME_DEFAULT;
---REVIEW ET: I think perhaps 'valid' in say v_mac_source_valid is a good name. It is not a question of being valid. Must find better name.    
 
-    -- Check which fields are configured as valid. If there's a field which is not configured it will have
-    -- valid by default, e.g. when writing the whole packet to a FIFO and don't want to specify the address
-    -- of each field (which is the same) in the config.
-    v_preamble_sfd_valid := true when C_ETHERNET_FIELD_IDX_PREAMBLE_SFD > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_PREAMBLE_SFD).field_valid;
-    v_mac_dest_valid     := true when C_ETHERNET_FIELD_IDX_MAC_DESTINATION > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_MAC_DESTINATION).field_valid;
-    v_mac_source_valid   := true when C_ETHERNET_FIELD_IDX_MAC_SOURCE > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_MAC_SOURCE).field_valid;
-    v_length_valid       := true when C_ETHERNET_FIELD_IDX_LENGTH > dut_if_field_config'high else           --REVIEW ET: --> ..payload_length.. here and other places
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_LENGTH).field_valid;
-    v_payload_valid      := true when C_ETHERNET_FIELD_IDX_PAYLOAD > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_PAYLOAD).field_valid;
-    v_fcs_valid          := true when C_ETHERNET_FIELD_IDX_FCS > dut_if_field_config'high else
-                            dut_if_field_config(C_ETHERNET_FIELD_IDX_FCS).field_valid;
+    -- Check which fields should be used (sent or requested to/from the bridge) according to config.
+    -- If there's a field which is not configured it will be used by default, e.g. when writing
+    -- the whole packet to a FIFO and don't want to specify the address of each field (which is
+    -- the same) in the config.
+    v_use_preamble_and_sfd := true when C_FIELD_IDX_PREAMBLE_AND_SFD > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_PREAMBLE_AND_SFD).use_field;
+    v_use_mac_dest         := true when C_FIELD_IDX_MAC_DESTINATION > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_MAC_DESTINATION).use_field;
+    v_use_mac_source       := true when C_FIELD_IDX_MAC_SOURCE > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_MAC_SOURCE).use_field;
+    v_use_payload_length   := true when C_FIELD_IDX_PAYLOAD_LENGTH > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_PAYLOAD_LENGTH).use_field;
+    v_use_payload          := true when C_FIELD_IDX_PAYLOAD > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_PAYLOAD).use_field;
+    v_use_fcs              := true when C_FIELD_IDX_FCS > dut_if_field_config'high else
+                              dut_if_field_config(C_FIELD_IDX_FCS).use_field;
 
     log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) & 
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
-    -- Await preamble and SFD
-    if v_preamble_sfd_valid then
-      while true loop                                             --REVIEW ET: Why not just 'loop'?
+    -- Await preamble and SFD (if configured)
+    if v_use_preamble_and_sfd then
+      loop
         -- Fetch one byte at the time until SFD is found
-        blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_ETHERNET_FIELD_IDX_PREAMBLE_SFD, scope, msg_id_panel);
-        v_preamble_sfd   := v_preamble_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
-        v_packet(1 to 7) := v_packet(0 to 6);                 --REVIEW ET: Why do we continuously update v_packet. It will always be known after preamble match... 
-        v_packet(0)      := bridge_to_hvvc.data_words(0);
-        if v_preamble_sfd = C_PREAMBLE & C_SFD then       --REVIEW ET: Change name to v_preamble_and_sfd  (I just misunderstood this as SFD inside preamble...)
+        blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
+        v_preamble_and_sfd := v_preamble_and_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
+        v_packet(1 to 7)   := v_packet(0 to 6);                 --REVIEW ET: Why do we continuously update v_packet. It will always be known after preamble match... 
+        v_packet(0)        := bridge_to_hvvc.data_words(0);
+        if v_preamble_and_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
       end loop;
@@ -633,27 +634,27 @@ package body vvc_methods_pkg is
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
 
-    -- Read MAC destination from bridge
-    if v_mac_dest_valid then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_ETHERNET_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
+    -- Read MAC destination from bridge (if configured)
+    if v_use_mac_dest then
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
       v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_destination := unsigned(to_slv(v_packet( 8 to 13)));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
     end if;
 
-    -- Read MAC source from bridge
-    if v_mac_source_valid then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_ETHERNET_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
+    -- Read MAC source from bridge (if configured)
+    if v_use_mac_source then
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
       v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_source := unsigned(to_slv(v_packet(14 to 19)));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
     end if;
 
-    -- Read payload length from bridge
-    if v_length_valid then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_ETHERNET_FIELD_IDX_LENGTH, scope, msg_id_panel);
+    -- Read payload length from bridge (if configured)
+    if v_use_payload_length then
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
       v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
       received_frame.payload_length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
       -- Add info to the DTT
@@ -672,9 +673,9 @@ package body vvc_methods_pkg is
       v_payload_length := received_frame.payload_length;
     end if;
 
-    -- Read payload from bridge                       --REVIEW ET:  How is padding handled? (doesn't seem to be removed?)
-    if v_payload_valid then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_ETHERNET_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
+    -- Read payload from bridge (if configured)       --REVIEW ET:  How is padding handled? (doesn't seem to be removed?)
+    if v_use_payload then
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
       v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_words(0 to v_payload_length-1);
       received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates   --REVIEW ET:  and....?
       received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
@@ -684,9 +685,9 @@ package body vvc_methods_pkg is
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, PAYLOAD), scope, msg_id_panel);
     end if;
 
-    -- Read FCS from bridge
-    if v_fcs_valid then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_ETHERNET_FIELD_IDX_FCS, scope, msg_id_panel);
+    -- Read FCS from bridge (if configured)
+    if v_use_fcs then
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
       received_frame.fcs := to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)));
       -- Add info to the DTT

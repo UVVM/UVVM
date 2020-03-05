@@ -325,7 +325,7 @@ package ti_vvc_framework_support_pkg is
     dut_address                : unsigned;
     dut_address_increment      : integer;
     data_width                 : positive;
-    field_valid                : boolean;
+    use_field                  : boolean;
     field_description          : string;
   end record;
 
@@ -333,7 +333,7 @@ package ti_vvc_framework_support_pkg is
     dut_address                => (others => '0'),
     dut_address_increment      => 0,
     data_width                 => 8,
-    field_valid                => true,
+    use_field                  => true,
     field_description          => "default");
 
   type t_dut_if_field_config_array is array (natural range <>) of t_dut_if_field_config;

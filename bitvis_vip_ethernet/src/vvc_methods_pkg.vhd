@@ -470,10 +470,10 @@ package body vvc_methods_pkg is
     -- SFD
     v_packet(7) := C_SFD;
     -- MAC destination
-    v_packet(8 to 13)       := to_byte_array(std_logic_vector(vvc_cmd.mac_destination)); --|ET: Hvordan vet vi at dette blir riktig?  msB->lowB=LeftB
+    v_packet(8 to 13)       := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_destination), LOWER_BYTE_LEFT);
     v_frame.mac_destination := vvc_cmd.mac_destination;
     -- MAC source
-    v_packet(14 to 19) := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
+    v_packet(14 to 19) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_source), LOWER_BYTE_LEFT);
     v_frame.mac_source := vvc_cmd.mac_source;
     -- Payload length
     v_payload_length       := vvc_cmd.payload_length;
@@ -492,7 +492,7 @@ package body vvc_methods_pkg is
     -- FCS
     v_crc_32 := generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
     v_crc_32 := not(v_crc_32);                                                                                          --|ET: Because
-    v_packet(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(to_byte_array(v_crc_32));
+    v_packet(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(convert_slv_to_byte_array(v_crc_32, LOWER_BYTE_LEFT));
     v_frame.fcs := v_crc_32;
 
     -- Add info to the DTT
@@ -638,7 +638,7 @@ package body vvc_methods_pkg is
     if v_use_mac_dest then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
       v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
-      received_frame.mac_destination := unsigned(to_slv(v_packet( 8 to 13)));
+      received_frame.mac_destination := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
     end if;
@@ -647,7 +647,7 @@ package body vvc_methods_pkg is
     if v_use_mac_source then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
       v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
-      received_frame.mac_source := unsigned(to_slv(v_packet(14 to 19)));
+      received_frame.mac_source := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
     end if;
@@ -656,7 +656,7 @@ package body vvc_methods_pkg is
     if v_use_payload_length then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
       v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
-      received_frame.payload_length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
+      received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
       log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
@@ -689,7 +689,7 @@ package body vvc_methods_pkg is
     if v_use_fcs then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
-      received_frame.fcs := to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)));
+      received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);
       -- Add info to the DTT
       dtt_info.bt.ethernet_frame.fcs := received_frame.fcs;
       log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
@@ -726,9 +726,9 @@ package body vvc_methods_pkg is
     variable v_frame_passed   : boolean;
   begin
     -- For FCS calculation
-    v_packet( 8 to 13) := to_byte_array(std_logic_vector(vvc_cmd.mac_destination));
-    v_packet(14 to 19) := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
-    v_packet(20 to 21) := to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16)));
+    v_packet( 8 to 13) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_destination), LOWER_BYTE_LEFT);
+    v_packet(14 to 19) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_source), LOWER_BYTE_LEFT);
+    v_packet(20 to 21) := convert_slv_to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16)), LOWER_BYTE_LEFT);
     v_packet(22 to 22+vvc_cmd.payload_length-1) := vvc_cmd.payload(0 to vvc_cmd.payload_length-1);
     if vvc_cmd.payload_length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;

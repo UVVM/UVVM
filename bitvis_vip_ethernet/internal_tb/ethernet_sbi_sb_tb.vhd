@@ -86,15 +86,15 @@ begin
     begin
       -- MAC destination
       v_ethernet_frame.mac_destination := mac_destination;
-      v_data_raw(0 to 5) := to_byte_array(std_logic_vector(v_ethernet_frame.mac_destination));
+      v_data_raw(0 to 5) := convert_slv_to_byte_array(std_logic_vector(v_ethernet_frame.mac_destination), LOWER_BYTE_LEFT);
 
       -- MAC source
       v_ethernet_frame.mac_source := mac_source;
-      v_data_raw(6 to 11) := to_byte_array(std_logic_vector(v_ethernet_frame.mac_source));
+      v_data_raw(6 to 11) := convert_slv_to_byte_array(std_logic_vector(v_ethernet_frame.mac_source), LOWER_BYTE_LEFT);
 
       -- payload length
       v_ethernet_frame.payload_length := v_length;
-      v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_ethernet_frame.payload_length, 16)));
+      v_data_raw(12 to 13) := convert_slv_to_byte_array(std_logic_vector(to_unsigned(v_ethernet_frame.payload_length, 16)), LOWER_BYTE_LEFT);
 
       -- Padding if needed
       if v_length > C_MIN_PAYLOAD_LENGTH then

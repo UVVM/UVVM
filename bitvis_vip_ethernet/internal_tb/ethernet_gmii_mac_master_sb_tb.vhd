@@ -101,20 +101,20 @@ begin
       log(ID_SEQUENCER, "Start sending " & to_string(num_bytes_in_payload) & " bytes of data from Ethernet MAC Master to VVC");
 
       -- First two bytes indicates to Ethernet MAC master how many bytes there are in the Ethernet packet.
-      v_send_data_raw(0 to 1) := to_byte_array(std_logic_vector(to_unsigned(num_bytes_in_payload+14, 16)));
+      v_send_data_raw(0 to 1) := convert_slv_to_byte_array(std_logic_vector(to_unsigned(num_bytes_in_payload+14, 16)), LOWER_BYTE_LEFT);
 
 
       -- MAC destination
       v_send_data_frame.mac_destination := x"00_00_00_00_00_01";
-      v_send_data_raw(2 to 7) := to_byte_array(std_logic_vector(v_send_data_frame.mac_destination));
+      v_send_data_raw(2 to 7) := convert_slv_to_byte_array(std_logic_vector(v_send_data_frame.mac_destination), LOWER_BYTE_LEFT);
 
       -- MAC source
       v_send_data_frame.mac_source := x"00_00_00_00_00_02";
-      v_send_data_raw(8 to 13) := to_byte_array(std_logic_vector(v_send_data_frame.mac_source));
+      v_send_data_raw(8 to 13) := convert_slv_to_byte_array(std_logic_vector(v_send_data_frame.mac_source), LOWER_BYTE_LEFT);
 
       -- payload length
       v_send_data_frame.payload_length := num_bytes_in_payload;
-      v_send_data_raw(14 to 15) := to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.payload_length, 16)));
+      v_send_data_raw(14 to 15) := convert_slv_to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.payload_length, 16)), LOWER_BYTE_LEFT);
 
       -- payload
       for i in 0 to num_bytes_in_payload-1 loop
@@ -174,15 +174,15 @@ begin
 
       -- MAC destination
       v_send_data_frame.mac_destination := x"00_00_00_00_00_02";
-      v_data_raw(0 to 5) := to_byte_array(std_logic_vector(v_send_data_frame.mac_destination));
+      v_data_raw(0 to 5) := convert_slv_to_byte_array(std_logic_vector(v_send_data_frame.mac_destination), LOWER_BYTE_LEFT);
 
       -- MAC source
       v_send_data_frame.mac_source := x"00_00_00_00_00_01";
-      v_data_raw(6 to 11)     := to_byte_array(std_logic_vector(v_send_data_frame.mac_source));
+      v_data_raw(6 to 11)     := convert_slv_to_byte_array(std_logic_vector(v_send_data_frame.mac_source), LOWER_BYTE_LEFT);
 
       -- payload length
       v_send_data_frame.payload_length := num_bytes_in_payload;
-      v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.payload_length, 16)));
+      v_data_raw(12 to 13) := convert_slv_to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.payload_length, 16)), LOWER_BYTE_LEFT);
 
       -- payload
       for i in 0 to num_bytes_in_payload-1 loop
@@ -208,10 +208,10 @@ begin
 
       log(ID_LOG_HDR, "Fetch data from MAC Master finished");
 
-      v_receive_data_frame.mac_destination                      :=            unsigned(to_slv(v_data_raw(    2 to  7)));
-      v_receive_data_frame.mac_source                           :=            unsigned(to_slv(v_data_raw(    8 to 13)));
-      v_receive_data_frame.payload_length                       := to_integer(unsigned(to_slv(v_data_raw(   14 to 15))));
-      v_receive_data_frame.payload(0 to num_bytes_in_payload-1) :=                            v_data_raw(   16 to 16+num_bytes_in_payload-1);
+      v_receive_data_frame.mac_destination                      := unsigned(convert_byte_array_to_slv(v_data_raw(2 to 7), LOWER_BYTE_LEFT));
+      v_receive_data_frame.mac_source                           := unsigned(convert_byte_array_to_slv(v_data_raw(8 to 13), LOWER_BYTE_LEFT));
+      v_receive_data_frame.payload_length                       := to_integer(unsigned(convert_byte_array_to_slv(v_data_raw(14 to 15), LOWER_BYTE_LEFT)));
+      v_receive_data_frame.payload(0 to num_bytes_in_payload-1) := v_data_raw(16 to 16+num_bytes_in_payload-1);
       v_receive_data_frame.fcs                                  := v_send_data_frame.fcs;
 
       compare_ethernet_frames(v_receive_data_frame, v_send_data_frame, ERROR, "Comparing received and expected frames", C_SCOPE, shared_msg_id_panel, "Compare Ethernet frames:");

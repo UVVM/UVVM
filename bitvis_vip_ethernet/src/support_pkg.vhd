@@ -50,7 +50,7 @@ package support_pkg is
   type t_ethernet_frame is record
     mac_destination : unsigned(47 downto 0);
     mac_source      : unsigned(47 downto 0);
-    length          : integer;
+    payload_length  : integer;
     payload         : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     fcs             : std_logic_vector(31 downto 0);
   end record t_ethernet_frame;
@@ -58,7 +58,7 @@ package support_pkg is
   constant C_ETHERNET_FRAME_DEFAULT : t_ethernet_frame := (
     mac_destination => (others => '0'),
     mac_source      => (others => '0'),
-    length          => 0,
+    payload_length  => 0,
     payload         => (others => (others => '0')),
     fcs             => (others => '0'));
 
@@ -174,17 +174,17 @@ package body support_pkg is
     constant ethernet_frame : in t_ethernet_frame
   ) return string is
   begin
-    return "MAC dest: "  & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
+    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
            ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           ", length: "  & to_string(ethernet_frame.length) &
-           ", fcs: "     & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
+           ", payload length: " & to_string(ethernet_frame.payload_length) &
+           ", fcs: " & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
   end function to_string;
 
   function to_string(
     constant ethernet_frame : in t_ethernet_frame;
     constant frame_field    : in t_frame_field
   ) return string is
-    variable payload_string : string(1 to 14*ethernet_frame.length); --[1500]:x"00",
+    variable payload_string : string(1 to 14*ethernet_frame.payload_length); --[1500]:x"00",
     variable v_line         : line;
     variable v_line_width   : natural;
   begin
@@ -192,12 +192,12 @@ package body support_pkg is
       when HEADER =>
         return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) &
                LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) &
-               LF & "    length:          " & to_string(ethernet_frame.length);
+               LF & "    payload length:  " & to_string(ethernet_frame.payload_length);
 
       when PAYLOAD =>
         write(v_line, string'("[" & to_string(0) & "]:" & to_string(ethernet_frame.payload(0), HEX, AS_IS, INCL_RADIX)));
-        if ethernet_frame.length > 1 then
-          for i in 1 to ethernet_frame.length-1 loop
+        if ethernet_frame.payload_length > 1 then
+          for i in 1 to ethernet_frame.payload_length-1 loop
             write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX)));
           end loop;
         end if;
@@ -273,8 +273,8 @@ package body support_pkg is
   begin
     check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination"              & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_HDR,  msg_id_panel, proc_call);
     check_value(actual.mac_source,      expected.mac_source,      alert_level, "Verify MAC source"                   & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_HDR,  msg_id_panel, proc_call);
-    check_value(actual.length,          expected.length,          alert_level, "Verify length"                       & LF & msg, scope,                      ID_PACKET_HDR,  msg_id_panel, proc_call);
-    for i in 0 to actual.length-1 loop
+    check_value(actual.payload_length,  expected.payload_length,  alert_level, "Verify payload length"               & LF & msg, scope,                      ID_PACKET_HDR,  msg_id_panel, proc_call);
+    for i in 0 to actual.payload_length-1 loop
       check_value(actual.payload(i),    expected.payload(i),      alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
     end loop;
     check_value(actual.fcs,             expected.fcs,             alert_level, "Verify FCS"                          & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
@@ -296,10 +296,10 @@ package body support_pkg is
     if not check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
       return false;
     end if;
-    if not check_value(actual.length, expected.length, alert_level, "Verify length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(actual.payload_length, expected.payload_length, alert_level, "Verify payload length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call) then
       return false;
     end if;
-    for i in 0 to actual.length-1 loop
+    for i in 0 to actual.payload_length-1 loop
       if not check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
         return false;
       end if;
@@ -315,11 +315,11 @@ package body support_pkg is
     constant expected : in t_ethernet_frame
   ) return boolean is
   begin
-    return actual.mac_destination               = expected.mac_destination                 and
-           actual.mac_source                    = expected.mac_source                      and
-           actual.length                        = expected.length                          and
-           actual.payload(0 to actual.length-1) = expected.payload(0 to expected.length-1) and
-           actual.fcs                           = expected.fcs;
+    return actual.mac_destination = expected.mac_destination and
+           actual.mac_source      = expected.mac_source      and
+           actual.payload_length  = expected.payload_length  and
+           actual.payload(0 to actual.payload_length-1) = expected.payload(0 to expected.payload_length-1) and
+           actual.fcs             = expected.fcs;
   end function ethernet_match;
 
 end package body support_pkg;

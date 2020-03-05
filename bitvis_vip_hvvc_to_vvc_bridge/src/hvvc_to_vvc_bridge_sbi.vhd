@@ -39,7 +39,7 @@ begin
     variable v_dut_address            : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
     variable v_dut_address_increment  : integer;
     variable v_dut_data_width         : positive;
-    variable v_num_of_transfers       : integer;
+    variable v_num_transfers          : integer;
     variable v_word_idx               : natural range 0 to GC_MAX_NUM_WORDS;
     variable v_bit_idx                : natural range 0 to c_data_words_width-1;
     variable v_num_data_bytes         : positive;
@@ -58,10 +58,10 @@ begin
       get_data_width_config(GC_DUT_IF_FIELD_CONFIG, hvvc_to_bridge, v_dut_data_width);
 
       -- Calculate number of transfers
-      v_num_of_transfers := (hvvc_to_bridge.num_data_words*c_data_words_width)/v_dut_data_width;
+      v_num_transfers := (hvvc_to_bridge.num_data_words*c_data_words_width)/v_dut_data_width;
       -- Extra transfer if data bits remainder
       if ((hvvc_to_bridge.num_data_words*c_data_words_width) rem v_dut_data_width) /= 0 then
-        v_num_of_transfers := v_num_of_transfers+1;
+        v_num_transfers := v_num_transfers+1;
       end if;
       -- Calculate number of bytes for this operation
       v_num_data_bytes := hvvc_to_bridge.num_data_words*c_data_words_width/8;
@@ -73,7 +73,7 @@ begin
           v_word_idx := 0;
           v_bit_idx  := 0;
           -- Loop through transfers
-          for i in 0 to v_num_of_transfers-1 loop
+          for i in 0 to v_num_transfers-1 loop
             -- Fill the data vector
             v_sbi_send_data := (others => '0');
             for send_data_idx in 0 to v_dut_data_width-1 loop
@@ -102,7 +102,7 @@ begin
           v_word_idx := 0;
           v_bit_idx  := 0;
           -- Loop through bytes
-          for i in 0 to v_num_of_transfers-1 loop
+          for i in 0 to v_num_transfers-1 loop
             -- Read data over SBI
             sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", TO_RECEIVE_BUFFER, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);

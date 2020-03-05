@@ -92,9 +92,9 @@ begin
       v_ethernet_frame.mac_source := mac_source;
       v_data_raw(6 to 11) := to_byte_array(std_logic_vector(v_ethernet_frame.mac_source));
 
-      -- length
-      v_ethernet_frame.length  := v_length;
-      v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_ethernet_frame.length, 16)));
+      -- payload length
+      v_ethernet_frame.payload_length := v_length;
+      v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_ethernet_frame.payload_length, 16)));
 
       -- Padding if needed
       if v_length > C_MIN_PAYLOAD_LENGTH then

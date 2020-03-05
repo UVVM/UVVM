@@ -94,7 +94,7 @@ begin
       -- MAC source
       v_send_data_raw(8 to 13) := to_byte_array(x"00_00_00_00_00_02");
 
-      -- length
+      -- payload length
       v_send_data_raw(14 to 15) := to_byte_array(std_logic_vector(to_unsigned(num_bytes_in_payload, 16)));
 
       -- payload
@@ -148,9 +148,9 @@ begin
       v_send_data_frame.mac_source := x"00_00_00_00_00_01";
       v_data_raw(6 to 11)     := to_byte_array(std_logic_vector(v_send_data_frame.mac_source));
 
-      -- length
-      v_send_data_frame.length  := num_bytes_in_payload;
-      v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.length, 16)));
+      -- payload length
+      v_send_data_frame.payload_length := num_bytes_in_payload;
+      v_data_raw(12 to 13) := to_byte_array(std_logic_vector(to_unsigned(v_send_data_frame.payload_length, 16)));
 
       -- payload
       for i in 0 to num_bytes_in_payload-1 loop
@@ -178,7 +178,7 @@ begin
 
       v_receive_data_frame.mac_destination                      :=            unsigned(to_slv(v_data_raw(    2 to  7)));
       v_receive_data_frame.mac_source                           :=            unsigned(to_slv(v_data_raw(    8 to 13)));
-      v_receive_data_frame.length                               := to_integer(unsigned(to_slv(v_data_raw(   14 to 15))));
+      v_receive_data_frame.payload_length                       := to_integer(unsigned(to_slv(v_data_raw(   14 to 15))));
       v_receive_data_frame.payload(0 to num_bytes_in_payload-1) :=                            v_data_raw(   16 to 16+num_bytes_in_payload-1);
       v_receive_data_frame.fcs                                  := v_send_data_frame.fcs;
 

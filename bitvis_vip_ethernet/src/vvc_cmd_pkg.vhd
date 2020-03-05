@@ -41,7 +41,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     mac_destination           : unsigned(47 downto 0);
     mac_source                : unsigned(47 downto 0);
-    length                    : natural range 0 to C_MAX_PAYLOAD_LENGTH;       --REVIEW ET: +'payload'
+    payload_length            : natural range 0 to C_MAX_PAYLOAD_LENGTH;
     payload                   : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
     -- Common VVC fields
     operation                 : t_operation;
@@ -65,7 +65,7 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     mac_destination           => (others => '0'),
     mac_source                => (others => '0'),
-    length                    => 0,
+    payload_length            => 0,
     payload                   => (others => (others => '0')),
     -- Common VVC fields
     operation                 => NO_OPERATION,

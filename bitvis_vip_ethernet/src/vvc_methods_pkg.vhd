@@ -297,7 +297,7 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
         & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", length: " & to_string(payload'length) & ")";
+        & ", payload length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -305,7 +305,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
     shared_vvc_cmd.mac_destination                := mac_destination;
     shared_vvc_cmd.mac_source                     := mac_source;
-    shared_vvc_cmd.length                         := payload'length;
+    shared_vvc_cmd.payload_length                 := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
     --shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
     --shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
@@ -384,7 +384,7 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
         & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", length: " & to_string(payload'length) & ")";
+        & ", payload length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -392,7 +392,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
     shared_vvc_cmd.mac_destination                := mac_destination;
     shared_vvc_cmd.mac_source                     := mac_source;
-    shared_vvc_cmd.length                         := payload'length;
+    shared_vvc_cmd.payload_length                 := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
     shared_vvc_cmd.alert_level                    := alert_level;
     --shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
@@ -450,7 +450,7 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name
         & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", length: " & to_string(vvc_cmd.length) & ")";
+        & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
     variable v_packet             : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_frame              : t_ethernet_frame;
     variable v_payload_length     : natural;
@@ -475,19 +475,19 @@ package body vvc_methods_pkg is
     -- MAC source
     v_packet(14 to 19) := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
     v_frame.mac_source := vvc_cmd.mac_source;
-    -- Length
-    v_payload_length     := vvc_cmd.length;
-    v_payload_length_slv := std_logic_vector(to_unsigned(vvc_cmd.length, 16));
-    v_packet(20)         := v_payload_length_slv(15 downto 8);
-    v_packet(21)         := v_payload_length_slv(7 downto 0);
-    v_frame.length       := vvc_cmd.length;
+    -- Payload length
+    v_payload_length       := vvc_cmd.payload_length;
+    v_payload_length_slv   := std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16));
+    v_packet(20)           := v_payload_length_slv(15 downto 8);
+    v_packet(21)           := v_payload_length_slv(7 downto 0);
+    v_frame.payload_length := vvc_cmd.payload_length;
     -- Payload
-    v_packet(22 to 22+vvc_cmd.length-1) := vvc_cmd.payload(0 to vvc_cmd.length-1);
+    v_packet(22 to 22+vvc_cmd.payload_length-1) := vvc_cmd.payload(0 to vvc_cmd.payload_length-1);
     v_frame.payload := vvc_cmd.payload;
-    -- Pad if length is less than C_MIN_PAYLOAD_LENGTH(46)
-    if vvc_cmd.length < C_MIN_PAYLOAD_LENGTH then
+    -- Pad if payload length is less than C_MIN_PAYLOAD_LENGTH(46)
+    if vvc_cmd.payload_length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_packet(22+vvc_cmd.length to 22+v_payload_length) := (others => (others => '0'));
+      v_packet(22+vvc_cmd.payload_length to 22+v_payload_length) := (others => (others => '0'));
     end if;
     -- FCS
     v_crc_32 := generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
@@ -651,25 +651,25 @@ package body vvc_methods_pkg is
       dtt_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
     end if;
 
-    -- Read length from bridge
+    -- Read payload length from bridge
     if v_length_valid then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, RECEIVE, 2, C_ETHERNET_FIELD_IDX_LENGTH, scope, msg_id_panel);
-      v_packet(20 to 21)    := bridge_to_hvvc.data_words(0 to 1);
-      received_frame.length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
+      v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
+      received_frame.payload_length := to_integer(unsigned(to_slv(v_packet(20 to 21))));
       -- Add info to the DTT
-      dtt_info.bt.ethernet_frame.length := received_frame.length;
+      dtt_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
       log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
     end if;
 
-    -- Check length and if payload is padded
-    if received_frame.length > C_MAX_PAYLOAD_LENGTH then
-      alert(ERROR, "Payload is larger than maximum alowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);  --REVIEW ET: --> 'allowed'
+    -- Check payload length and if payload is padded
+    if received_frame.payload_length > C_MAX_PAYLOAD_LENGTH then
+      alert(ERROR, "Payload is larger than maximum allowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);
     end if;
-    if received_frame.length < C_MIN_PAYLOAD_LENGTH then
+    if received_frame.payload_length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
     else
-      v_payload_length := received_frame.length;
+      v_payload_length := received_frame.payload_length;
     end if;
 
     -- Read payload from bridge                       --REVIEW ET:  How is padding handled? (doesn't seem to be removed?)
@@ -716,7 +716,7 @@ package body vvc_methods_pkg is
     constant proc_call : string := proc_name
         & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", length: " & to_string(vvc_cmd.length) & ")";
+        & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
     variable v_packet         : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_payload_length : integer;
     variable v_expected_frame : t_ethernet_frame;
@@ -725,21 +725,21 @@ package body vvc_methods_pkg is
     variable v_frame_passed   : boolean;
   begin
     -- For FCS calculation
-    v_packet( 8 to 13)                  := to_byte_array(std_logic_vector(vvc_cmd.mac_destination));
-    v_packet(14 to 19)                  := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
-    v_packet(20 to 21)                  := to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.length, 16)));
-    v_packet(22 to 22+vvc_cmd.length-1) := vvc_cmd.payload(0 to vvc_cmd.length-1);
-    if vvc_cmd.length < C_MIN_PAYLOAD_LENGTH then
+    v_packet( 8 to 13) := to_byte_array(std_logic_vector(vvc_cmd.mac_destination));
+    v_packet(14 to 19) := to_byte_array(std_logic_vector(vvc_cmd.mac_source));
+    v_packet(20 to 21) := to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16)));
+    v_packet(22 to 22+vvc_cmd.payload_length-1) := vvc_cmd.payload(0 to vvc_cmd.payload_length-1);
+    if vvc_cmd.payload_length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_packet(22+vvc_cmd.length to 22+v_payload_length) := (others => (others => '0'));
+      v_packet(22+vvc_cmd.payload_length to 22+v_payload_length) := (others => (others => '0'));
     else
-      v_payload_length := vvc_cmd.length;
+      v_payload_length := vvc_cmd.payload_length;
     end if;
 
     v_expected_frame                 := C_ETHERNET_FRAME_DEFAULT;
     v_expected_frame.mac_destination := vvc_cmd.mac_destination;
     v_expected_frame.mac_source      := vvc_cmd.mac_source;
-    v_expected_frame.length          := vvc_cmd.length;
+    v_expected_frame.payload_length  := vvc_cmd.payload_length;
     v_expected_frame.payload         := vvc_cmd.payload;
     v_expected_frame.fcs             := not generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --REVIEW ET: Yields error in later comparison even if fcs of received frame is OK (for that received frame)
 
@@ -783,7 +783,7 @@ package body vvc_methods_pkg is
         dtt_group.bt.operation                              := vvc_cmd.operation;
         dtt_group.bt.ethernet_frame.mac_destination         := vvc_cmd.mac_destination;
         dtt_group.bt.ethernet_frame.mac_source              := vvc_cmd.mac_source;
-        dtt_group.bt.ethernet_frame.length                  := vvc_cmd.length;
+        dtt_group.bt.ethernet_frame.payload_length          := vvc_cmd.payload_length;
         dtt_group.bt.ethernet_frame.payload                 := vvc_cmd.payload;
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;

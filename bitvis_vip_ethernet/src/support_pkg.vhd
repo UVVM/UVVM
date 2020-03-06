@@ -116,16 +116,6 @@ package support_pkg is
     constant proc_call    : in string
   );
 
-  impure function compare_ethernet_frames(
-    constant actual       : in t_ethernet_frame;
-    constant expected     : in t_ethernet_frame;
-    constant alert_level  : in t_alert_level;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
-  ) return boolean;
-
   function ethernet_match(
     constant actual   : in t_ethernet_frame;
     constant expected : in t_ethernet_frame
@@ -206,6 +196,7 @@ package body support_pkg is
     end case;
   end function to_string;
 
+  -- Compares two ethernet frames
   procedure compare_ethernet_frames(
     constant actual       : in t_ethernet_frame;
     constant expected     : in t_ethernet_frame;
@@ -225,37 +216,8 @@ package body support_pkg is
     check_value(actual.fcs,             expected.fcs,             alert_level, "Verify FCS"                          & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
   end procedure compare_ethernet_frames;
 
-  impure function compare_ethernet_frames(
-    constant actual       : in t_ethernet_frame;
-    constant expected     : in t_ethernet_frame;
-    constant alert_level  : in t_alert_level;
-    constant msg          : in string;
-    constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
-  ) return boolean is
-  begin
-    if not check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    if not check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    if not check_value(actual.payload_length, expected.payload_length, alert_level, "Verify payload length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    for i in 0 to actual.payload_length-1 loop
-      if not check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-        return false;
-      end if;
-    end loop;
-    if not check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
-      return false;
-    end if;
-    return true;
-  end function compare_ethernet_frames;
-
-  function ethernet_match(                                      --REVIEW ET: What is the difference and why (and name)
+  -- Compares two ethernet frames and returns true if they are equal (used in scoreboard)
+  function ethernet_match(
     constant actual   : in t_ethernet_frame;
     constant expected : in t_ethernet_frame
   ) return boolean is

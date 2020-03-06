@@ -147,8 +147,8 @@ package body vvc_cmd_pkg is
     result : t_vvc_result
   ) return string is
   begin
-    return "MAC destination: " & to_string(result.ethernet_frame.mac_destination, HEX) &
-           ", MAC source: "    & to_string(result.ethernet_frame.mac_source, HEX);
+    return to_string(result.ethernet_frame, HEADER) &
+           LF & "    FCS error:  " & to_string(result.ethernet_frame_status.fcs_error);
   end;
 
 end package body vvc_cmd_pkg;

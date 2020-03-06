@@ -1,4 +1,37 @@
-import sys, subprocess, os
+import sys
+import subprocess
+import os
+import glob
+import shutil
+
+
+
+def delete_sim_content(path):
+  keep_files = ["bitvis_irqc.mpf"]
+
+  num_files_deleted = 0
+  num_paths_deleted = 0
+  files = glob.glob(path + "/*", recursive=True)
+
+  for file in files:
+    file = file.replace('\\', '/')
+    if not(file in keep_files):
+
+      try:
+        if os.path.isfile(file):
+          os.remove(file)
+          num_files_deleted += 1
+        elif os.path.isdir(file):
+          shutil.rmtree(file)
+          num_paths_deleted += 1    
+
+      except OSError as e:
+        print("Unable to remove %s from /sim folder [%s]." %(file, e.strerror))
+
+    else:
+      print("Keeping: %s" %(file))
+
+  print("Removed: %d files, %s dirs." %(num_files_deleted, num_paths_deleted))
 
 
 def cd_to_module(module):
@@ -10,6 +43,7 @@ def cd_to_module(module):
     if not os.path.exists(sim_path):
         os.mkdir(sim_path)
 
+    delete_sim_content(sim_path)
     os.chdir(sim_path)
 
 
@@ -52,8 +86,11 @@ def main():
   modules = get_module_list()
   num_failing_tests = 0
 
-  for module in modules:
-    print("Starting %s. Total number of failing tests: %i." %(module, num_failing_tests))
+  for idx, module in enumerate(modules):
+    print("\n%s" %(50*'-'))
+    print("Running module %d: %s." %(idx + 1, module))
+    print("Num failing tests in regression run: %d" %(num_failing_tests))
+
     cd_to_module(module)
     num_failing_tests += simulate_module(module)
 

@@ -230,6 +230,9 @@ begin
     variable v_slv_array_as_3_byte    : t_slv_array(0 to 9)(23 downto 0);
     variable v_byte_desc_array        : t_byte_array(9 downto 0);
     variable v_slv_desc_array_as_byte : t_slv_array(9 downto 0)(7 downto 0);
+    -- convert slv to/from t_byte_array
+    variable v_slv                    : std_logic_vector(8*v_byte_array'length-1 downto 0);
+    variable v_slv_not_byte_multiple  : std_logic_vector(8*v_byte_array'length-5 downto 0);
 
     --alias uvvm_status is shared_uvvm_status.simulation_successful;
     alias found_unexpected_simulation_warnings_or_worse is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
@@ -1725,6 +1728,93 @@ begin
         v_idx  := v_idx + 3;
       end loop;
 
+      -------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing and verifying convert_byte_array_to_slv");
+      -------------------------------------------------------------------------------------
+
+      log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_LEFT");
+      v_slv := (others => '0');
+      -- fill byte array
+      for idx in 0 to 9 loop
+        v_byte_array(idx) := std_logic_vector(to_unsigned(idx, v_byte_array(idx)'length));
+      end loop;
+      -- convert
+      v_slv := convert_byte_array_to_slv(v_byte_array, LOWER_BYTE_LEFT);
+      -- check result
+      for idx in 0 to 9 loop
+        v_byte := v_slv(8*(10-idx)-1 downto 8*(9-idx));
+        check_value(v_byte = v_byte_array(idx), error, "Checking convert_byte_array_to_slv() result, byte #" & to_string(idx));
+      end loop;
+
+      log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_RIGHT");
+      v_slv := (others => '0');
+      -- fill byte array
+      for idx in 0 to 9 loop
+        v_byte_array(idx) := std_logic_vector(to_unsigned(idx, v_byte_array(idx)'length));
+      end loop;
+      -- convert
+      v_slv := convert_byte_array_to_slv(v_byte_array, LOWER_BYTE_RIGHT);
+      -- check result
+      for idx in 0 to 9 loop
+        v_byte := v_slv(8*(idx+1)-1 downto 8*idx);
+        check_value(v_byte = v_byte_array(idx), error, "Checking convert_byte_array_to_slv() result, byte #" & to_string(idx));
+      end loop;
+
+      -------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing and verifying convert_slv_to_byte_array");
+      -------------------------------------------------------------------------------------
+
+      log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_LEFT");
+      v_byte_array := (others => (others => '0'));
+      -- fill slv
+      for idx in 0 to 9 loop
+        v_slv(8*(10-idx)-1 downto 8*(9-idx)) := std_logic_vector(to_unsigned(idx, 8));
+      end loop;
+      -- convert
+      v_byte_array := convert_slv_to_byte_array(v_slv, LOWER_BYTE_LEFT);
+      -- check result
+      for idx in 0 to 9 loop
+        v_byte := v_slv(8*(10-idx)-1 downto 8*(9-idx));
+        check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
+      end loop;
+
+      log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_LEFT - Check padding when std_logic_vector not multiple of byte");
+      v_byte_array := (others => (others => '0'));
+      -- fill slv
+      v_slv_not_byte_multiple := (others => '1');
+      -- convert
+      v_byte_array := convert_slv_to_byte_array(v_slv_not_byte_multiple, LOWER_BYTE_LEFT);
+      -- check result
+      for idx in 0 to 9 loop
+        v_byte := (others => '1') when idx < 9 else "1111ZZZZ";
+        check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
+      end loop;
+
+      log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_RIGHT");
+      v_byte_array := (others => (others => '0'));
+      -- fill slv
+      for idx in 0 to 9 loop
+        v_slv(8*(idx+1)-1 downto 8*idx) := std_logic_vector(to_unsigned(idx, 8));
+      end loop;
+      -- convert
+      v_byte_array := convert_slv_to_byte_array(v_slv, LOWER_BYTE_RIGHT);
+      -- check result
+      for idx in 0 to 9 loop
+        v_byte := v_slv(8*(idx+1)-1 downto 8*idx);
+        check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
+      end loop;
+
+      log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_RIGHT - Check padding when std_logic_vector not multiple of byte");
+      v_byte_array := (others => (others => '0'));
+      -- fill slv
+      v_slv_not_byte_multiple := (others => '1');
+      -- convert
+      v_byte_array := convert_slv_to_byte_array(v_slv_not_byte_multiple, LOWER_BYTE_RIGHT);
+      -- check result
+      for idx in 0 to 9 loop
+        v_byte := (others => '1') when idx < 9 else "1111ZZZZ";
+        check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
+      end loop;
 
     elsif GC_TEST = "random_functions" then
       --------------------------------------------------------------------------

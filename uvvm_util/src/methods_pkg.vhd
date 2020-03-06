@@ -971,6 +971,16 @@ package methods_pkg is
     constant scope : string         := C_TB_SCOPE_DEFAULT
   );
 
+  function convert_byte_array_to_slv(
+    constant byte_array      : t_byte_array;
+    constant byte_endianness : t_byte_endianness
+  ) return std_logic_vector;
+
+  function convert_slv_to_byte_array(
+    constant slv             : std_logic_vector;
+    constant byte_endianness : t_byte_endianness
+  ) return t_byte_array;
+
   function convert_byte_array_to_slv_array(
     constant byte_array       : t_byte_array;
     constant bytes_in_word    : natural;
@@ -4243,6 +4253,61 @@ package body methods_pkg is
       shared_seed1 := seed1;
       shared_seed2 := seed2;
   end;
+
+  -- Converts a t_byte_array (ascending) to a std_logic_vector
+  function convert_byte_array_to_slv(
+    constant byte_array      : t_byte_array;
+    constant byte_endianness : t_byte_endianness
+  ) return std_logic_vector is
+    constant c_num_bytes           : integer := byte_array'length;
+    alias    normalized_byte_array : t_byte_array(0 to c_num_bytes-1) is byte_array;
+    variable v_slv                 : std_logic_vector(8*c_num_bytes-1 downto 0);
+  begin
+    assert byte_array'ascending report "byte_array must be ascending" severity ERROR;
+
+    for byte_idx in 0 to c_num_bytes-1 loop
+      if byte_endianness = LOWER_BYTE_LEFT then
+        v_slv(8*(c_num_bytes-byte_idx)-1 downto 8*(c_num_bytes-1-byte_idx)) := normalized_byte_array(byte_idx);
+      else -- LOWER_BYTE_RIGHT
+        v_slv(8*(byte_idx+1)-1 downto 8*byte_idx) := normalized_byte_array(byte_idx);
+      end if;
+    end loop;
+    return v_slv;
+  end function;
+
+  -- Converts a std_logic_vector to a t_byte_array (ascending)
+  function convert_slv_to_byte_array(
+    constant slv             : std_logic_vector;
+    constant byte_endianness : t_byte_endianness
+  ) return t_byte_array is
+    variable v_num_bytes     : integer := slv'length/8+1; -- +1 in case there's a division remainder
+    alias    normalized_slv  : std_logic_vector(slv'length-1 downto 0) is slv;
+    variable v_byte_array    : t_byte_array(0 to v_num_bytes-1);
+    variable v_slv_idx       : integer := normalized_slv'high;
+    variable v_slv_idx_min   : integer;
+  begin
+    -- Adjust value if there was no remainder
+    if (slv'length rem 8) = 0 then
+      v_num_bytes := v_num_bytes-1;
+    end if;
+
+    for byte_idx in 0 to v_num_bytes-1 loop
+      for bit_idx in 7 downto 0 loop
+        if v_slv_idx = -1 then
+          v_byte_array(byte_idx)(bit_idx) := 'Z'; -- Pads 'Z'
+        else
+          if byte_endianness = LOWER_BYTE_LEFT then
+            v_byte_array(byte_idx)(bit_idx) := normalized_slv(v_slv_idx);
+          else -- LOWER_BYTE_RIGHT
+            v_slv_idx_min := MINIMUM(8*byte_idx+bit_idx, normalized_slv'high); -- avoid indexing outside the slv
+            v_byte_array(byte_idx)(bit_idx) := normalized_slv(v_slv_idx_min);
+          end if;
+          v_slv_idx := v_slv_idx-1;
+        end if;
+      end loop;
+    end loop;
+    return v_byte_array(0 to v_num_bytes-1);
+  end function;
 
   -- Converts a t_byte_array (any direction) to a t_slv_array (same direction)
   function convert_byte_array_to_slv_array(

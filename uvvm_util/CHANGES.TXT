@@ -10,6 +10,7 @@ Released: 2020-XX-XX
 - Moved t_channel from types_pkg to adaptations_pkg.
 - Changed t_byte_endianness elements names and added an alias t_word_endianness.
 - Removed unnecessary ascending parameter in convert_slv_array_to_byte_array function.
+- Added functions convert_byte_array_to_slv and convert_slv_to_byte_array to methods_pkg.
 
 
 v2.11.1

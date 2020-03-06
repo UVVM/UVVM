@@ -106,14 +106,6 @@ package support_pkg is
     constant frame_field    : in t_frame_field
   ) return string;
 
-  function to_slv(
-    constant byte_array : in t_byte_array
-  ) return std_logic_vector;
-
-  function to_byte_array(
-    constant data : in std_logic_vector
-  ) return t_byte_array;
-
   procedure compare_ethernet_frames(
     constant actual       : in t_ethernet_frame;
     constant expected     : in t_ethernet_frame;
@@ -213,53 +205,6 @@ package body support_pkg is
         return "";
     end case;
   end function to_string;
-
-  function to_slv(
-    constant byte_array : in t_byte_array
-  ) return std_logic_vector is
-    constant C_NUM_BYTES           : integer := byte_array'length;
-    variable normalized_byte_array : t_byte_array(0 to C_NUM_BYTES-1) ;
-    variable v_return_val          : std_logic_vector(8*C_NUM_BYTES-1 downto 0);
-  begin
-    normalized_byte_array := byte_array;
-    for i in 0 to C_NUM_BYTES-1 loop
-      v_return_val(8*(C_NUM_BYTES-i)-1 downto 8*(C_NUM_BYTES-i-1)) := normalized_byte_array(i);
-    end loop;
-    return v_return_val;
-  end function to_slv;
-
-  function get_num_bytes(
-    constant num_bits : in positive
-  ) return positive is
-    variable v_num_bytes : positive;
-  begin
-    v_num_bytes := num_bits/8;
-    if (num_bits rem 8) /= 0 then
-      v_num_bytes := v_num_bytes+1;
-    end if;
-    return v_num_bytes;
-  end function get_num_bytes;
-
-  function to_byte_array(
-    constant data : in std_logic_vector
-  ) return t_byte_array is
-    alias    normalized_data : std_logic_vector(data'length-1 downto 0) is data;
-    constant C_NUM_BYTES     : positive := get_num_bytes(data'length);
-    variable v_byte_array    : t_byte_array(0 to C_NUM_BYTES-1);
-    variable v_bit_idx       : integer := normalized_data'high;
-  begin
-    for byte_idx in 0 to C_NUM_BYTES-1 loop
-      for i in 7 downto 0 loop
-        if v_bit_idx = -1 then
-          v_byte_array(byte_idx)(i) := 'Z'; -- Pads 'Z'
-        else
-          v_byte_array(byte_idx)(i) := normalized_data(v_bit_idx);
-          v_bit_idx := v_bit_idx-1;
-        end if;
-      end loop;
-    end loop;
-    return v_byte_array;
-  end function to_byte_array;
 
   procedure compare_ethernet_frames(
     constant actual       : in t_ethernet_frame;

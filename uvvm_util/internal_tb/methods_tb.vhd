@@ -2332,7 +2332,17 @@ begin
       check_value(sl, '1', error, "Check what the value was after the pulse");
       wait for 100 ns;
 
-
+      log(ID_SEQUENCER, "Check that gen_pulse() outputs TB_ERROR for combination NON_BLOCKING + 0 ns duration", "");
+      sl <= '0';
+      wait for 0 ns;
+      set_alert_stop_limit(TB_ERROR, get_alert_stop_limit(TB_ERROR) + 1);
+      increment_expected_alerts(TB_ERROR, 1);  -- expect TB_ERROR
+      gen_pulse(sl, '1', 0 ns, NON_BLOCKING, "NON_BLOCKING pulse for a delta cycle (0 ns)");
+      wait for 0 ns;
+      check_value(sl, '0', error, "pulse for 0 ns, blocking mode, pulse done", C_SCOPE);
+      check_value(sl'last_event, 0 ns, error, "pulse for 0 ns. Check that it actually pulsed for a delta cycle", C_SCOPE);
+      check_value(sl'last_value, '1', error, "pulse for 0 ns, check that it actually pulsed for a delta cycle", C_SCOPE);
+      wait for 100 ns;
 
       -- Verify that clock_counter wraps when reaching natural'right.
       --wait until clk500M = '1';

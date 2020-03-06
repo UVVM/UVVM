@@ -102,7 +102,7 @@ package axistream_bfm_pkg is
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
-    byte_endianness             => FIRST_BYTE_LEFT,
+    byte_endianness             => LOWER_BYTE_LEFT,
     valid_low_at_word_num       => 0,
     valid_low_duration          => 0,
     check_packet_length         => false,
@@ -902,7 +902,7 @@ package body axistream_bfm_pkg is
     v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte", scope, ID_NEVER, msg_id_panel);
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, true, v_byte_endianness); -- data_array is ascending
+      v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
       -- call t_byte_array overloaded procedure
       axistream_transmit_bytes(v_data_array, user_array, strb_array, id_array, dest_array, msg, clk, axistream_if, scope, msg_id_panel, config);
     end if;
@@ -1905,7 +1905,7 @@ package body axistream_bfm_pkg is
 
     if v_check_ok then
       -- copy byte(s) from t_slv_array to t_byte_array
-      v_exp_data_array := convert_slv_array_to_byte_array(exp_data_array, true, v_byte_endianness); -- exp_data_array is ascending
+      v_exp_data_array := convert_slv_array_to_byte_array(exp_data_array, v_byte_endianness);
 
       -- call t_byte_array overloaded procedure
       axistream_expect_bytes(v_exp_data_array,

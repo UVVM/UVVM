@@ -3,11 +3,14 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.11.2
+v2.12.0
 ----------
-Released: 2020-XX-XX
-- Added 2 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE and ID_PACKET_CHECKSUM.
+Released: 2020-03-06
+- Added 3 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE, ID_PACKET_CHECKSUM and ID_PACKET_GAP.
 - Moved t_channel from types_pkg to adaptations_pkg.
+- Changed t_byte_endianness elements names and added an alias t_word_endianness.
+- Removed unnecessary ascending parameter in convert_slv_array_to_byte_array function.
+- Added functions convert_byte_array_to_slv and convert_slv_to_byte_array to methods_pkg.
 
 
 v2.11.1

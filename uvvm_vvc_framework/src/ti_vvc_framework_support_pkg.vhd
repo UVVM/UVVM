@@ -310,24 +310,22 @@ package ti_vvc_framework_support_pkg is
   type t_hvvc_to_bridge is record
     trigger                   : boolean;
     operation                 : t_vvc_operation;
-    num_data_bytes            : positive;
-    data_bytes                : t_byte_array;
+    num_data_words            : positive;
+    data_words                : t_slv_array;
     dut_if_field_idx          : natural;
-    current_byte_idx_in_field : natural;
     msg_id_panel              : t_msg_id_panel;
-    field_timeout_margin      : time;
   end record;
 
   type t_bridge_to_hvvc is record
     trigger        : boolean;
-    data_bytes     : t_byte_array;
+    data_words     : t_slv_array;
   end record;
 
   type t_dut_if_field_config is record
     dut_address                : unsigned;
     dut_address_increment      : integer;
     data_width                 : positive;
-    field_valid                : boolean;
+    use_field                  : boolean;
     field_description          : string;
   end record;
 
@@ -335,7 +333,7 @@ package ti_vvc_framework_support_pkg is
     dut_address                => (others => '0'),
     dut_address_increment      => 0,
     data_width                 => 8,
-    field_valid                => true,
+    use_field                  => true,
     field_description          => "default");
 
   type t_dut_if_field_config_array is array (natural range <>) of t_dut_if_field_config;
@@ -379,7 +377,7 @@ package body ti_vvc_framework_support_pkg is
   begin
     flag.reset <= 'Z';
     flag.is_active <= 'Z';
-    gen_pulse(flag.set, 0 ns, "set flag");
+    gen_pulse(flag.set, 0 ns, "set flag", C_TB_SCOPE_DEFAULT, ID_NEVER);
   end procedure;
 
   procedure reset_flag(

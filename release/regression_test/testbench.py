@@ -477,13 +477,22 @@ class Testbench:
 
       logging.basicConfig(level=logging.INFO, format='%(message)s')
 
-      for test_name in self.tests:
+      total_num_tests = len(self.tests)
+      total_num_configs = len(self.configs)
+
+      for test_idx, test_name in enumerate(self.tests):
         self.cleanup(test_name)
       
-        for config in self.configs:
+        for config_idx, config in enumerate(self.configs):
           self.increment_num_tests()
           
-          test_string = "[" +  self.tb + "] test=" + test_name + " : "
+          # Progress counter: (testcase / tot_testcases, config / total_configs)
+          if config:
+            run_str = ("(%d/%d, %d/%d)" %(test_idx+1, total_num_tests, config_idx+1, total_num_configs))
+          else:
+            run_str = ("(%d/%d)" %(test_idx+1, total_num_tests))
+
+          test_string = run_str + " [" +  self.tb + "] test=" + test_name + " : "
           if config:
             test_string += config + " : "           
 

@@ -35,15 +35,40 @@ begin
     constant c_data_words_width       : natural := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
     variable v_cmd_idx                : integer;
     variable v_sbi_received_data      : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
-    variable v_sbi_send_data          : std_logic_vector(bitvis_vip_sbi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     variable v_dut_address            : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
     variable v_dut_address_increment  : integer;
     variable v_dut_data_width         : positive;
     variable v_num_transfers          : integer;
-    variable v_word_idx               : natural range 0 to GC_MAX_NUM_WORDS;
-    variable v_bit_idx                : natural range 0 to c_data_words_width-1;
     variable v_num_data_bytes         : positive;
-    variable v_data_bytes             : t_byte_array(0 to GC_MAX_NUM_WORDS*c_data_words_width/8-1);
+    variable v_data_slv               : std_logic_vector(GC_MAX_NUM_WORDS*c_data_words_width-1 downto 0);
+
+    -- Converts a t_slv_array to a std_logic_vector (word endianness is LOWER_WORD_RIGHT)
+    function convert_slv_array_to_slv(
+      constant slv_array   : t_slv_array
+    ) return std_logic_vector is
+      constant c_num_words : integer := slv_array'length;
+      constant c_word_len  : integer := slv_array(slv_array'low)'length;
+      variable v_slv       : std_logic_vector(c_num_words*c_word_len-1 downto 0);
+    begin
+      for word_idx in 0 to c_num_words-1 loop
+        v_slv(c_word_len*(word_idx+1)-1 downto c_word_len*word_idx) := slv_array(word_idx);
+      end loop;
+      return v_slv;
+    end function;
+
+    -- Converts a std_logic_vector to a t_slv_array (word endianness is LOWER_WORD_RIGHT)
+    function convert_slv_to_slv_array(
+      constant slv         : std_logic_vector;
+      constant word_len    : integer
+    ) return t_slv_array is
+      constant c_num_words : integer := slv'length/word_len;
+      variable v_slv_array : t_slv_array(0 to c_num_words-1)(word_len-1 downto 0);
+    begin
+      for word_idx in 0 to c_num_words-1 loop
+        v_slv_array(word_idx) := slv(word_len*(word_idx+1)-1 downto word_len*word_idx);
+      end loop;
+      return v_slv_array;
+    end function;
 
   begin
 
@@ -70,62 +95,31 @@ begin
       case hvvc_to_bridge.operation is
 
         when TRANSMIT =>
-          v_word_idx := 0;
-          v_bit_idx  := 0;
+          -- Convert from t_slv_array to std_logic_vector (word endianness is LOWER_WORD_RIGHT)
+          v_data_slv(hvvc_to_bridge.num_data_words*c_data_words_width-1 downto 0) := convert_slv_array_to_slv(hvvc_to_bridge.data_words(0 to hvvc_to_bridge.num_data_words-1));
+
           -- Loop through transfers
           for i in 0 to v_num_transfers-1 loop
-            -- Fill the data vector
-            v_sbi_send_data := (others => '0');
-            for send_data_idx in 0 to v_dut_data_width-1 loop
-              if v_word_idx = hvvc_to_bridge.num_data_words then
-                exit; -- No more data
-              else
-                v_sbi_send_data(send_data_idx) := hvvc_to_bridge.data_words(v_word_idx)(v_bit_idx);
-              end if;
-
-              if v_bit_idx = c_data_words_width-1 then
-                v_word_idx := v_word_idx+1;
-                v_bit_idx  := 0;
-              else
-                v_bit_idx := v_bit_idx+1;
-              end if;
-            end loop;
-
-            -- Send data over SBI
-            sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, v_sbi_send_data(v_dut_data_width-1 downto 0), "Send data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
+            sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, v_data_slv(v_dut_data_width*(i+1)-1 downto v_dut_data_width*i),
+              "Send data over SBI", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
             await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_PHY_MAX_ACCESS_TIME, "Wait for write to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
             v_dut_address := v_dut_address + v_dut_address_increment;
           end loop;
 
         when RECEIVE =>
-          v_word_idx := 0;
-          v_bit_idx  := 0;
-          -- Loop through bytes
+          -- Loop through transfers
           for i in 0 to v_num_transfers-1 loop
-            -- Read data over SBI
             sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", TO_RECEIVE_BUFFER, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
             await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_PHY_MAX_ACCESS_TIME, "Wait for read to finish.", GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
             fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, USE_PROVIDED_MSG_ID_PANEL, hvvc_to_bridge.msg_id_panel);
-
-            -- Fill data bytes to HVVC
-            for receive_data_idx in 0 to v_dut_data_width-1 loop
-               if v_word_idx = hvvc_to_bridge.num_data_words then
-                exit; -- No more data
-              else
-                bridge_to_hvvc.data_words(v_word_idx)(v_bit_idx) <= v_sbi_received_data(receive_data_idx);
-              end if;
-
-              if v_bit_idx = c_data_words_width-1 then
-                v_word_idx := v_word_idx+1;
-                v_bit_idx := 0;
-              else
-                v_bit_idx := v_bit_idx+1;
-              end if;
-            end loop;
+            v_data_slv(v_dut_data_width*(i+1)-1 downto v_dut_data_width*i) := v_sbi_received_data(v_dut_data_width-1 downto 0);
             v_dut_address := v_dut_address + v_dut_address_increment;
           end loop;
+
+          -- Convert from std_logic_vector to t_slv_array (word endianness is LOWER_WORD_RIGHT)
+          bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words-1) <= convert_slv_to_slv_array(v_data_slv(hvvc_to_bridge.num_data_words*c_data_words_width-1 downto 0), c_data_words_width);
 
         when others =>
           alert(TB_ERROR, "Unsupported operation");

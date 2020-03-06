@@ -723,7 +723,7 @@ package body vvc_methods_pkg is
     variable v_expected_frame : t_ethernet_frame;
     variable v_received_frame : t_ethernet_frame;
     variable v_fcs_error      : boolean;
-    variable v_frame_passed   : boolean;
+    variable v_frame_passed   : boolean := true;
   begin
     -- For FCS calculation
     v_packet( 8 to 13) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_destination), LOWER_BYTE_LEFT);
@@ -761,8 +761,28 @@ package body vvc_methods_pkg is
                                       ext_proc_call        => proc_call);
 
     -- Check received frame against expected frame
-    v_frame_passed := compare_ethernet_frames(v_received_frame, v_expected_frame, vvc_cmd.alert_level,
-      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel, proc_call);
+    if not check_value(v_received_frame.mac_destination, v_expected_frame.mac_destination, vvc_cmd.alert_level, "Verify MAC destination. " &
+      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+      v_frame_passed := false;
+    end if;
+    if not check_value(v_received_frame.mac_source, v_expected_frame.mac_source, vvc_cmd.alert_level, "Verify MAC source. " &
+      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+      v_frame_passed := false;
+    end if;
+    if not check_value(v_received_frame.payload_length, v_expected_frame.payload_length, vvc_cmd.alert_level, "Verify payload length. " &
+      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, ID_NEVER, msg_id_panel, proc_call) then
+      v_frame_passed := false;
+    end if;
+    for i in 0 to v_received_frame.payload_length-1 loop
+      if not check_value(v_received_frame.payload(i), v_expected_frame.payload(i), vvc_cmd.alert_level, "Verify payload byte " & to_string(i) & ". " &
+        add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+        v_frame_passed := false;
+      end if;
+    end loop;
+    if not check_value(v_received_frame.fcs, v_expected_frame.fcs, vvc_cmd.alert_level, "Verify FCS. " &
+      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+      v_frame_passed := false;
+    end if;
 
     if v_frame_passed then
       log(ID_PACKET_COMPLETE, proc_call & " => OK. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);

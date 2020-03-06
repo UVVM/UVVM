@@ -1,5 +1,5 @@
 uvvm_util
-uvvm_vvc_framewor
+uvvm_vvc_framework
 bitvis_vip_scoreboard
 bitvis_vip_avalon_mm
 bitvis_vip_avalon_st

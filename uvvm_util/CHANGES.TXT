@@ -5,7 +5,7 @@ UVVM Utility Library - Overview on Versions and Changes
 
 v2.12.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-03-06
 - Added 3 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE, ID_PACKET_CHECKSUM and ID_PACKET_GAP.
 - Moved t_channel from types_pkg to adaptations_pkg.
 - Changed t_byte_endianness elements names and added an alias t_word_endianness.

@@ -10,6 +10,23 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2020.03.06
+--------------------
+Released: 2020-03-06
+- Added 3 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE, ID_PACKET_CHECKSUM and ID_PACKET_GAP.
+- Moved t_channel from types_pkg to adaptations_pkg.
+- Changed t_byte_endianness elements names and added an alias t_word_endianness.
+- Removed unnecessary ascending parameter in convert_slv_array_to_byte_array function.
+- Added functions convert_byte_array_to_slv and convert_slv_to_byte_array to methods_pkg.
+- Removed t_transaction_info from vvc_generator.py script.
+- Fixed bug in the generic queue where deleting the last element would make elements added
+  after the delete disappear.
+- Added a read procedure with the number of bytes to read as a parameter for GMII VIP.
+- Removed deprecated t_transaction_info in GMII VIP, RGMII VIP and Avalon Stream VIP.
+- Updated default max_wait_cycles in GMII VIP.
+
+
+
 v2 2020.03.02
 --------------------
 Released: 2020-03-02

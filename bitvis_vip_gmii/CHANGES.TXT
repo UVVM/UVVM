@@ -3,7 +3,7 @@ Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and
 
 v0.1.1
 ----------
-Released: 2020-XX-XX
+Released: 2020-03-06
 - Added a read procedure with the number of bytes to read as a parameter.
 - Removed deprecated t_transaction_info.
 - Updated default max_wait_cycles.

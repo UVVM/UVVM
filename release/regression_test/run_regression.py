@@ -15,7 +15,9 @@ def delete_sim_content(path):
 
   for file in files:
     file = file.replace('\\', '/')
-    if not(file in keep_files):
+
+    filename = file[file.rfind('/') + 1:].lower()
+    if not(filename in keep_files):
 
       try:
         if os.path.isfile(file):

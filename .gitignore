@@ -6,3 +6,7 @@
 
 # python
 release/regression_test/__pycache__/
+
+# VS Code
+uvvm_internal.code-workspace
+vhdl_ls.toml

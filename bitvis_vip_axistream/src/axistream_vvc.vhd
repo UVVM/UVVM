@@ -135,8 +135,8 @@ begin
          v_cmd_has_been_acked := false; -- Clear flag
          -- update shared_vvc_last_received_cmd_idx with received command index
          shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-         -- Select between a provided msg_id_panel from the test sequencer via a command or the default
-         -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
+         -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+         -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
          v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
          -- 2a. Put command on the queue if intended for the executor
@@ -161,10 +161,10 @@ begin
                   work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
                when DISABLE_LOG_MSG =>
-                  uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, v_msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE);
+                  uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE);
 
                when ENABLE_LOG_MSG =>
-                  uvvm_util.methods_pkg.enable_log_msg(v_local_vvc_cmd.msg_id, v_msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE);
+                  uvvm_util.methods_pkg.enable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE);
 
                when FLUSH_COMMAND_QUEUE =>
                   work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
@@ -240,8 +240,8 @@ begin
          transaction_info.operation := v_cmd.operation;
          transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-         -- Select between a provided msg_id_panel from the test sequencer via a command or the default
-         -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
+         -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+         -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
          v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
          -- Check if command is a BFM access

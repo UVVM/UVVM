@@ -105,7 +105,8 @@ begin
 --==========================================================================================
   cmd_interpreter : process
      variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-     variable v_local_vvc_cmd        : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+     variable v_msg_id_panel       : t_msg_id_panel;
   begin
 
     -- 0. Initialize the process prior to first command
@@ -116,6 +117,8 @@ begin
     -- Register VVC in activity watchdog register
     vvc_idx_for_activity_watchdog <= shared_activity_watchdog.priv_register_vvc(name      => "AVALON_ST",
                                                                                 instance  => GC_INSTANCE_IDX);
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
@@ -123,10 +126,13 @@ begin
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, vvc_config.msg_id_panel);
+      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
       v_cmd_has_been_acked := false; -- Clear flag
-      -- update shared_vvc_last_received_cmd_idx with received command index
+      -- Update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
+      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
@@ -199,6 +205,7 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_data_array_ptr                         : t_slv_array_ptr;
+    variable v_msg_id_panel                           : t_msg_id_panel;
 
   begin
 
@@ -211,6 +218,8 @@ begin
     AVALON_ST_SB.enable(GC_INSTANCE_IDX, "SB AVALON_ST Enabled");
     AVALON_ST_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
     AVALON_ST_SB.enable_log_msg(ID_DATA);
+    -- Set initial value of v_msg_id_panel to msg_id_panel in config
+    v_msg_id_panel := vvc_config.msg_id_panel;
 
     loop
 
@@ -219,10 +228,14 @@ begin
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
+      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
+
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
+      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay 
@@ -237,7 +250,8 @@ begin
                                                                          command_is_bfm_access              => v_prev_command_was_bfm_access,
                                                                          timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
                                                                          timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                                                         scope                              => C_SCOPE);
+                                                                         scope                              => C_SCOPE,
+                                                                         msg_id_panel                       => v_msg_id_panel);
 
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
@@ -265,7 +279,7 @@ begin
                                clk           => clk,
                                avalon_st_if  => avalon_st_vvc_if,
                                scope         => C_SCOPE,
-                               msg_id_panel  => vvc_config.msg_id_panel,
+                               msg_id_panel  => v_msg_id_panel,
                                config        => vvc_config.bfm_config);
             deallocate(v_data_array_ptr);
           else
@@ -286,7 +300,7 @@ begin
                               clk           => clk,
                               avalon_st_if  => avalon_st_vvc_if,
                               scope         => C_SCOPE,
-                              msg_id_panel  => vvc_config.msg_id_panel,
+                              msg_id_panel  => v_msg_id_panel,
                               config        => vvc_config.bfm_config);
             for i in 0 to v_cmd.data_array_length-1 loop
               v_result.data_array(i)(v_cmd.data_array_word_size-1 downto 0) := v_data_array_ptr(i);
@@ -327,7 +341,7 @@ begin
                              avalon_st_if => avalon_st_vvc_if,
                              alert_level  => v_cmd.alert_level,
                              scope        => C_SCOPE,
-                             msg_id_panel => vvc_config.msg_id_panel,
+                             msg_id_panel => v_msg_id_panel,
                              config       => vvc_config.bfm_config);
             deallocate(v_data_array_ptr);
           else
@@ -337,14 +351,14 @@ begin
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
-          log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, vvc_config.msg_id_panel);
+          log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
             wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
             check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
-                        C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+                        C_SCOPE, ID_NEVER, v_msg_id_panel);
             wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
           end if;
 
@@ -364,7 +378,7 @@ begin
 
       -- Reset terminate flag if any occurred
       if (terminate_current_cmd.is_active = '1') then
-        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, vvc_config.msg_id_panel);
+        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, v_msg_id_panel);
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 

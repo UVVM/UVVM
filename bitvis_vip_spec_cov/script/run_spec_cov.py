@@ -134,11 +134,11 @@ class Requirement():
 
         testcase_list = self.actual_testcase_list + self.expected_testcase_list
         for testcase in testcase_list:
-            if testcase.get_result() == testcase_pass_string:
+            if (testcase.get_result() == testcase_pass_string) and not(testcase in passing_testcase_list):
                 passing_testcase_list.append(testcase)
-            elif testcase.get_result() == testcase_fail_string:
+            elif (testcase.get_result() == testcase_fail_string) and not(testcase in failing_testcase_list):
                 failing_testcase_list.append(testcase)
-            elif testcase.get_result() == testcase_not_run_string:
+            elif (testcase.get_result() == testcase_not_run_string) and not(testcase in not_run_testcase_list):
                 not_run_testcase_list.append(testcase)
 
         all_testcase_list = passing_testcase_list + failing_testcase_list + not_run_testcase_list
@@ -441,7 +441,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
     spec_cov_tc_vs_req_filename = filename[: filename.rfind(".")] + ".tc_vs_reqs.csv"
     spec_cov_req_vs_tc_filename = filename[: filename.rfind(".")] + ".req_vs_tcs.csv"
 
-    # Write one testcase with one requirement per line
+    # Write one requirement with one testcase per line
     try:
         with open(spec_cov_req_vs_single_tc_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
@@ -501,7 +501,6 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                 requirement_string = ""
                 for requirement in testcase.get_all_requirement_list():
                     requirement_string += requirement.get_name() + " "
-
                 csv_writer.writerow([testcase.get_name(), " " + requirement_string, " " + testcase.get_result()])
 
             # Create a table with each testcase and a requirement

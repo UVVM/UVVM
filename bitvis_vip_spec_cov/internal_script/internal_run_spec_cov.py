@@ -31,6 +31,8 @@
 #                           |                  |                  |          |                       |                                                        | UART_REQ_EVEN |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
 # internal_req_file.csv	    | REQ_1	           | TC_1             | pc_10.csv|                       | Testing failing simulations with incomplete testcase.  |               |                             | sc_10.csv
+#---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
+# internal_req_file.csv	    | REQ_1/2/3/4      | TC_1             | pc_11.csv|                       | Testing multiple REQs with one testcase.               |               |                             | sc_11.csv
 #===========================|==================|==================|==========|=======================|========================================================|===============|=============================|=============
 
 import subprocess
@@ -50,7 +52,8 @@ test_list = [
             ["python3", "../script/run_spec_cov.py", "--config", "../internal_tb/internal_cfg_2_strict_0.txt"],
             ["python3", "../script/run_spec_cov.py", "--config", "../internal_tb/internal_cfg_2_strict_1.txt"],
             ["python3", "../script/run_spec_cov.py", "--config", "../internal_tb/internal_cfg_2_strict_2.txt"],
-            ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_10.csv", "-s", "../sim/sc_10.csv"]
+            ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_10.csv", "-s", "../sim/sc_10.csv"],
+            ["python3", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../internal_tb/internal_req_file.csv", "-p", "../sim/pc_11.csv", "-s", "../sim/sc_11.csv"]
             ]
 
 

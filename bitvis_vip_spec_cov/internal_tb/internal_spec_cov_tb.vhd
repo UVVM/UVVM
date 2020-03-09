@@ -226,7 +226,20 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-
+      elsif GC_TEST = "test_testcase_with_multiple_reqs" then
+        --
+        -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
+        --
+        log(ID_LOG_HDR, "Testing logging multiple requirements with one testcase.", C_SCOPE);  
+        -- Run testcase
+        initialize_req_cov("TC_1", "../internal_tb/internal_req_file.csv", "pc_11.csv");   
+        tick_off_req_cov("REQ_1");  
+        tick_off_req_cov("REQ_2");
+        tick_off_req_cov("REQ_3");
+        tick_off_req_cov("REQ_4");
+        -- End testcase
+        finalize_req_cov(VOID);
+  
     else
       --
       -- The Generic Test is unknown.

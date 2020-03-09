@@ -5542,6 +5542,7 @@ package body methods_pkg is
       wait for pulse_duration;
       target <= init_value;
     else
+      check_value(pulse_duration /= 0 ns, TB_ERROR, "gen_pulse: The combination of NON_BLOCKING mode and 0 ns pulse duration results in the pulse being ignored.", scope, ID_NEVER);
       target <= transport init_value after pulse_duration;
     end if;
     log(msg_id, "Pulsed to " & to_string(pulse_value) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);
@@ -5667,6 +5668,7 @@ package body methods_pkg is
       wait for pulse_duration;
       target <= init_value;
     else
+      check_value(pulse_duration /= 0 ns, TB_ERROR, "gen_pulse: The combination of NON_BLOCKING mode and 0 ns pulse duration results in the pulse being ignored.", scope, ID_NEVER);
       target <= transport init_value after pulse_duration;
     end if;
     log(msg_id, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & " for " & to_string(pulse_duration) & ". " & add_msg_delimiter(msg), scope);

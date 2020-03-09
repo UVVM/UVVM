@@ -146,7 +146,8 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel from the test sequencer via a command or the default
+      -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
@@ -232,7 +233,8 @@ begin
       -- Notify activity watchdog - Clock Generator VVC will not register activity
       --activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel from the test sequencer via a command or the default
+      -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- 2. Execute the fetched command

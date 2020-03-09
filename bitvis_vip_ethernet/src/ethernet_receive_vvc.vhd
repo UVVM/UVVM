@@ -162,7 +162,8 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- Update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel from the test sequencer via a command or the default
+      -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
@@ -263,7 +264,8 @@ begin
       -- Notify activity watchdog
       activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
 
-      -- Update v_msg_id_panel                                 --REVIEW ET: Should state why/if   AND is this just to prepare for a "H2VVC" like UDP
+      -- Select between a provided msg_id_panel from the test sequencer via a command or the default
+      -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -311,7 +313,7 @@ begin
           if v_cmd.data_routing = TO_SB then
             -- Send result to scoreboard
             shared_ethernet_sb.check_received(GC_INSTANCE_IDX, v_result.ethernet_frame);
-          else                                                                                         --REVIEW ET: Why not store if TO_SB
+          else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
                                                         cmd_idx       => v_cmd.cmd_idx,

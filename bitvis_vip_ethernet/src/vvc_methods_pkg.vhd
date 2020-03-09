@@ -112,7 +112,7 @@ package vvc_methods_pkg is
 
   shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
   shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_ethernet_sb         : t_generic_sb; -- Scoreboard
+  shared variable ETHERNET_SB         : t_generic_sb; -- Scoreboard
 
 
   --==========================================================================================

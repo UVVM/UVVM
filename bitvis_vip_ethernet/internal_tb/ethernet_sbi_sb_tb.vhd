@@ -129,11 +129,11 @@ begin
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
 
-    shared_ethernet_sb.set_scope("ETHERNET VVC");
-    shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
-    shared_ethernet_sb.enable(1);
-    shared_ethernet_sb.config(2, C_SB_CONFIG_DEFAULT);
-    shared_ethernet_sb.enable(2);
+    ETHERNET_SB.set_scope("ETHERNET VVC");
+    ETHERNET_SB.config(1, C_SB_CONFIG_DEFAULT);
+    ETHERNET_SB.enable(1);
+    ETHERNET_SB.config(2, C_SB_CONFIG_DEFAULT);
+    ETHERNET_SB.enable(2);
 
 
     shared_sbi_sb.set_scope("SBI VVC");
@@ -161,7 +161,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 9), "Send random data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 9));
-    shared_ethernet_sb.add_expected(2, v_ethernet_frame);
+    ETHERNET_SB.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
     await_completion(ETHERNET_VVCT, 2, RX, 2 us, "Wait for read to finish.");
 
@@ -171,7 +171,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1));
-    shared_ethernet_sb.add_expected(2, v_ethernet_frame);
+    ETHERNET_SB.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
 
@@ -180,7 +180,7 @@ begin
       v_send_data(0) := random(8);
       ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 0), "Send random data from instance 1.");
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 0));
-      shared_ethernet_sb.add_expected(2, v_ethernet_frame);
+      ETHERNET_SB.add_expected(2, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 2, RX, "Read random data from instance 1.", TO_SB);
       await_completion(ETHERNET_VVCT, 2, RX, 2 ms, "Wait for read to finish.");
       await_completion(ETHERNET_VVCT, 1, TX, 2 ms, "Wait for send to finish.");
@@ -203,7 +203,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 44), "Send data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 44));
-    shared_ethernet_sb.add_expected(2, v_ethernet_frame);
+    ETHERNET_SB.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Receive data from instance 1.", TO_SB);
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
@@ -214,7 +214,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 45), "Send data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 45));
-    shared_ethernet_sb.add_expected(2, v_ethernet_frame);
+    ETHERNET_SB.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Receive data from instance 1.", TO_SB);
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
 
@@ -234,7 +234,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 1, TX, v_send_data(0 to 46), "Send data from instance 1.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 1).bfm_config.mac_source, v_send_data(0 to 46));
-    shared_ethernet_sb.add_expected(2, v_ethernet_frame);
+    ETHERNET_SB.add_expected(2, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 2, RX, "Receive data from instance 1.", TO_SB);
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for read to finish.");
 
@@ -248,7 +248,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 9), "Send random data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 9));
-    shared_ethernet_sb.add_expected(1, v_ethernet_frame);
+    ETHERNET_SB.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
     await_completion(ETHERNET_VVCT, 1, RX, 2 ms, "Wait for read to finish.");
 
@@ -258,7 +258,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1), "Send random data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to C_MAX_PAYLOAD_LENGTH-1));
-    shared_ethernet_sb.add_expected(1, v_ethernet_frame);
+    ETHERNET_SB.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 1.", TO_SB);
     await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
 
@@ -267,7 +267,7 @@ begin
       v_send_data(0) := random(8);
       ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 0), "Send random data from instance 2.");
       v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 0));
-      shared_ethernet_sb.add_expected(1, v_ethernet_frame);
+      ETHERNET_SB.add_expected(1, v_ethernet_frame);
       ethernet_receive(ETHERNET_VVCT, 1, RX, "Read random data from instance 2.", TO_SB);
       await_completion(ETHERNET_VVCT, 1, RX, 2 ms, "Wait for read to finish.");
     end loop;
@@ -288,7 +288,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 44), "Send data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 44));
-    shared_ethernet_sb.add_expected(1, v_ethernet_frame);
+    ETHERNET_SB.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive data from instance 2.", TO_SB);
     await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
 
@@ -298,7 +298,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 45), "Send data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 45));
-    shared_ethernet_sb.add_expected(1, v_ethernet_frame);
+    ETHERNET_SB.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive data from instance 2.", TO_SB);
     await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
 
@@ -308,7 +308,7 @@ begin
     end loop;
     ethernet_transmit(ETHERNET_VVCT, 2, TX, v_send_data(0 to 46), "Send data from instance 2.");
     v_ethernet_frame := make_ethernet_frame(shared_ethernet_vvc_config(TX, 2).bfm_config.mac_destination, shared_ethernet_vvc_config(TX, 2).bfm_config.mac_source, v_send_data(0 to 46));
-    shared_ethernet_sb.add_expected(1, v_ethernet_frame);
+    ETHERNET_SB.add_expected(1, v_ethernet_frame);
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive data from instance 2.", TO_SB);
     await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for read to finish.");
 
@@ -341,7 +341,7 @@ begin
     -----------------------------------------------------------------------------
     wait for 1000 ns;             -- to allow some time for completion
     shared_sbi_sb.report_counters(ALL_ENABLED_INSTANCES);
-    shared_ethernet_sb.report_counters(ALL_ENABLED_INSTANCES);
+    ETHERNET_SB.report_counters(ALL_ENABLED_INSTANCES);
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 

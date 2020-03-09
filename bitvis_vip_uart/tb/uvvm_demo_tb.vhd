@@ -306,10 +306,10 @@ begin
       end loop;
 
       -- Print report of Scoreboard counters
-      shared_uart_sb.report_counters(VOID);
+      UART_SB.report_counters(VOID);
 
       -- Empty SB for next test
-      shared_uart_sb.reset("Empty SB for next test");
+      UART_SB.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -372,10 +372,10 @@ begin
       end loop;
 
       -- Print report of Scoreboard counters
-      shared_uart_sb.report_counters(VOID);
+      UART_SB.report_counters(VOID);
 
       -- Empty SB for next test
-      shared_uart_sb.reset("Empty SB for next test");
+      UART_SB.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;

@@ -226,10 +226,10 @@ begin
 
 
     -- Setup SBI scoreboard
-    shared_sbi_sb.set_scope("SBI_VVC");
-    shared_sbi_sb.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
-    shared_sbi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_sbi_sb.enable_log_msg(ID_DATA);
+    SBI_SB.set_scope("SBI_VVC");
+    SBI_SB.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
+    SBI_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    SBI_SB.enable_log_msg(ID_DATA);
 
     loop
 
@@ -339,7 +339,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_recevide
-            shared_sbi_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            SBI_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,

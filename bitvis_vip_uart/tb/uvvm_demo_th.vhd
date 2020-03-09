@@ -241,7 +241,7 @@ begin
         case sbi_dtt_info.bt.operation is
           when WRITE =>
               -- add to UART scoreboard
-              shared_uart_sb.add_expected(sbi_dtt_info.bt.data(C_DATA_WIDTH-1 downto 0));
+              UART_SB.add_expected(sbi_dtt_info.bt.data(C_DATA_WIDTH-1 downto 0));
 
           when READ =>
             null;

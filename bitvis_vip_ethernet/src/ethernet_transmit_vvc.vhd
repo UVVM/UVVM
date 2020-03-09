@@ -244,10 +244,10 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup ETHERNET scoreboard
-    shared_ethernet_sb.set_scope("ETHERNET VVC");
-    shared_ethernet_sb.enable(GC_INSTANCE_IDX, "SB ETHERNET Enabled");
-    shared_ethernet_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_ethernet_sb.enable_log_msg(ID_DATA);
+    ETHERNET_SB.set_scope("ETHERNET VVC");
+    ETHERNET_SB.enable(GC_INSTANCE_IDX, "SB ETHERNET Enabled");
+    ETHERNET_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    ETHERNET_SB.enable_log_msg(ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 

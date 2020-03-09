@@ -126,7 +126,7 @@ package vvc_methods_pkg is
   shared variable shared_avalon_mm_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable shared_avalon_mm_sb : t_generic_sb;
+  shared variable AVALON_MM_SB : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 

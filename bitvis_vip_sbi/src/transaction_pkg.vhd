@@ -96,8 +96,8 @@ package transaction_pkg is
 
   -- Transaction group
   type t_transaction_group is record
-    bt : t_transaction;
-    ct : t_transaction;
+    bt : t_base_transaction;
+    ct : t_compound_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (

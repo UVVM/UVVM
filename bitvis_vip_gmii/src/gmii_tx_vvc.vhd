@@ -198,10 +198,10 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup GMII scoreboard
-    shared_gmii_sb.set_scope("GMII VVC");
-    shared_gmii_sb.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
-    shared_gmii_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_gmii_sb.enable_log_msg(ID_DATA);
+    GMII_SB.set_scope("GMII VVC");
+    GMII_SB.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
+    GMII_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    GMII_SB.enable_log_msg(ID_DATA);
 
     loop
 

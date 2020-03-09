@@ -218,10 +218,10 @@ begin
       v_msg_id_panel := vvc_config.msg_id_panel;
 
       -- Setup AXIStream scoreboard
-      shared_axistream_sb.set_scope("AXISTREAM_VVC");
-      shared_axistream_sb.enable(GC_INSTANCE_IDX, "SB AXISTREAM Enabled");
-      shared_axistream_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-      shared_axistream_sb.enable_log_msg(ID_DATA);
+      AXISTREAM_SB.set_scope("AXISTREAM_VVC");
+      AXISTREAM_SB.enable(GC_INSTANCE_IDX, "SB AXISTREAM Enabled");
+      AXISTREAM_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+      AXISTREAM_SB.enable_log_msg(ID_DATA);
 
       loop
          
@@ -319,7 +319,7 @@ begin
                   if v_cmd.data_routing = TO_SB then
                     -- call SB check_received
                     alert(tb_warning, "Scoreboard type for AXIStream RECEIVE data not implemented");
-                    --shared_axistream_sb.check_received(GC_INSTANCE_IDX, v_result.data_array(GC_DATA_WIDTH-1 downto 0)); -- SB type not implemented
+                    --AXISTREAM_SB.check_received(GC_INSTANCE_IDX, v_result.data_array(GC_DATA_WIDTH-1 downto 0)); -- SB type not implemented
                   else                            
                      -- Store the result
                      work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,

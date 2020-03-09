@@ -207,10 +207,10 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup AVALON_ST scoreboard
-    shared_avalon_st_sb.set_scope("AVALON_ST VVC");
-    shared_avalon_st_sb.enable(GC_INSTANCE_IDX, "SB AVALON_ST Enabled");
-    shared_avalon_st_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_avalon_st_sb.enable_log_msg(ID_DATA);
+    AVALON_ST_SB.set_scope("AVALON_ST VVC");
+    AVALON_ST_SB.enable(GC_INSTANCE_IDX, "SB AVALON_ST Enabled");
+    AVALON_ST_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    AVALON_ST_SB.enable_log_msg(ID_DATA);
 
     loop
 
@@ -299,7 +299,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_receive
               alert(tb_warning, "Scoreboard type for Avalon-Stream RECEIVE data not implemented");
-              --shared_avalon_st_sb.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
+              --AVALON_ST_SB.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
             else
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,

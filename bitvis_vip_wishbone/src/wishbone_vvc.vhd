@@ -208,10 +208,10 @@ begin
 
 
     -- Setup WISHBONE scoreboard
-    shared_wishbone_sb.set_scope("WISHBONE_VVC");
-    shared_wishbone_sb.enable(GC_INSTANCE_IDX, "SB WISHBONE Enabled");
-    shared_wishbone_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_wishbone_sb.enable_log_msg(ID_DATA);
+    WISHBONE_SB.set_scope("WISHBONE_VVC");
+    WISHBONE_SB.enable(GC_INSTANCE_IDX, "SB WISHBONE Enabled");
+    WISHBONE_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    WISHBONE_SB.enable_log_msg(ID_DATA);
 
 
     loop
@@ -292,7 +292,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            shared_wishbone_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH - 1 downto 0)); 
+            WISHBONE_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH - 1 downto 0)); 
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,

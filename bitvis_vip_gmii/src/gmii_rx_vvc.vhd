@@ -199,10 +199,10 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup GMII scoreboard
-    shared_gmii_sb.set_scope("GMII VVC");
-    shared_gmii_sb.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
-    shared_gmii_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_gmii_sb.enable_log_msg(ID_DATA);
+    GMII_SB.set_scope("GMII VVC");
+    GMII_SB.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
+    GMII_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    GMII_SB.enable_log_msg(ID_DATA);
 
     loop
 
@@ -258,7 +258,7 @@ begin
           if v_cmd.data_routing = TO_SB then
             -- call SB check_receive
             alert(tb_warning, "Scoreboard type for GMII READ not implemented");
-            --shared_gmii_sb.check_received(GC_INSTANCE_IDX, v_result(GC_DATA_WIDTH-1 downto 0));
+            --GMII_SB.check_received(GC_INSTANCE_IDX, v_result(GC_DATA_WIDTH-1 downto 0));
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,

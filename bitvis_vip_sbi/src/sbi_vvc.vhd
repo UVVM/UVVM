@@ -138,7 +138,8 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- update v_msg_id_panel
+      -- Select between a provided msg_id_panel from the test sequencer via a command or the default
+      -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
@@ -248,7 +249,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- update v_msg_id_panel
+      -- Select between a provided msg_id_panel from the test sequencer via a command or the default
+      -- VVC msg_id_panel in the config. This is to correctly handle the logging when using HVVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access

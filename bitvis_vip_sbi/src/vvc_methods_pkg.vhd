@@ -462,6 +462,7 @@ package body vvc_methods_pkg is
       when POLL_UNTIL =>
         dtt_group.ct.operation                                  := vvc_cmd.operation;
         dtt_group.ct.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
+        dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
         dtt_group.ct.randomisation                              := vvc_cmd.randomisation;
         dtt_group.ct.num_words                                  := vvc_cmd.num_words;
         dtt_group.ct.max_polls                                  := vvc_cmd.max_polls;

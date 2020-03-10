@@ -406,7 +406,7 @@ package body vvc_methods_pkg is
     constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
-      when WRITE | READ | CHECK | RESET | LOCK | UNLOCK =>
+      when WRITE | CHECK | RESET | LOCK | UNLOCK =>
         dtt_group.bt.operation                                          := vvc_cmd.operation;
         dtt_group.bt.addr(vvc_cmd.addr'length-1 downto 0)               := vvc_cmd.addr;
         dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)               := vvc_cmd.data;
@@ -415,6 +415,16 @@ package body vvc_methods_pkg is
         dtt_group.bt.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                                 := IN_PROGRESS;
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+
+      when READ =>
+        dtt_group.ct.operation                                          := vvc_cmd.operation;
+        dtt_group.ct.addr(vvc_cmd.addr'length-1 downto 0)               := vvc_cmd.addr;
+        dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)               := vvc_cmd.data;
+        dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+        dtt_group.ct.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+        dtt_group.ct.transaction_status                                 := IN_PROGRESS;
+        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
@@ -427,8 +437,12 @@ package body vvc_methods_pkg is
     constant vvc_cmd      : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
-      when WRITE | READ | CHECK | RESET | LOCK | UNLOCK =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+      when WRITE | CHECK | RESET | LOCK | UNLOCK =>
+        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+
+      when READ =>
+        dtt_group.ct := C_COMPOUND_TRANSACTION_SET_DEFAULT;
+
       when others =>
         null;
     end case;

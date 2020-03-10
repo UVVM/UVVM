@@ -90,8 +90,8 @@ package transaction_pkg is
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
 
-  -- Compound transaction
-  type t_compound_transaction is record
+  -- Sub transaction
+  type t_sub_transaction is record
     operation           : t_operation;
     addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
@@ -99,7 +99,7 @@ package transaction_pkg is
     transaction_status  : t_transaction_status;
   end record;
 
-  constant C_COMPOUND_TRANSACTION_SET_DEFAULT : t_compound_transaction := (
+  constant C_SUB_TRANSACTION_SET_DEFAULT : t_sub_transaction := (
     operation           => NO_OPERATION,
     addr                => (others => '0'),
     data                => (others => '0'),
@@ -111,12 +111,12 @@ package transaction_pkg is
   -- Transaction group
   type t_transaction_group is record
     bt : t_base_transaction;
-    ct : t_compound_transaction;
+    st : t_sub_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT,
-    ct => C_COMPOUND_TRANSACTION_SET_DEFAULT
+    st => C_SUB_TRANSACTION_SET_DEFAULT
     );
 
   -- Global DTT trigger signal

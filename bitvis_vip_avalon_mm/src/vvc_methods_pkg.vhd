@@ -417,12 +417,12 @@ package body vvc_methods_pkg is
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
 
       when READ =>
-        dtt_group.ct.operation                                          := vvc_cmd.operation;
-        dtt_group.ct.addr(vvc_cmd.addr'length-1 downto 0)               := vvc_cmd.addr;
-        dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)               := vvc_cmd.data;
-        dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
-        dtt_group.ct.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
-        dtt_group.ct.transaction_status                                 := IN_PROGRESS;
+        dtt_group.st.operation                                          := vvc_cmd.operation;
+        dtt_group.st.addr(vvc_cmd.addr'length-1 downto 0)               := vvc_cmd.addr;
+        dtt_group.st.data(vvc_cmd.data'length-1 downto 0)               := vvc_cmd.data;
+        dtt_group.st.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+        dtt_group.st.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+        dtt_group.st.transaction_status                                 := IN_PROGRESS;
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
 
       when others =>
@@ -441,7 +441,7 @@ package body vvc_methods_pkg is
         dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when READ =>
-        dtt_group.ct := C_COMPOUND_TRANSACTION_SET_DEFAULT;
+        dtt_group.ct := C_SUB_TRANSACTION_SET_DEFAULT;
 
       when others =>
         null;

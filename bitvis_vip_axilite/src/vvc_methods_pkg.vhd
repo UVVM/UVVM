@@ -131,7 +131,7 @@ package vvc_methods_pkg is
   shared variable shared_axilite_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable shared_axilite_sb : t_generic_sb;
+  shared variable AXILITE_SB : t_generic_sb;
 
 
   --==========================================================================================
@@ -339,6 +339,7 @@ package body vvc_methods_pkg is
         dtt_group.bt.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                                 := IN_PROGRESS;
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
@@ -352,7 +353,7 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | CHECK =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;

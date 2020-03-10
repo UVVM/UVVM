@@ -131,7 +131,7 @@ begin
       -- FCS
       v_send_data_frame.fcs := not generate_crc_32(reverse_vectors_in_array(v_send_data_raw(2 to 16+v_payload_length-1)));
 
-      shared_ethernet_sb.add_expected(1, v_send_data_frame);
+      ETHERNET_SB.add_expected(1, v_send_data_frame);
 
       if if_out.tx_reset_o = '1' then
         wait until if_out.tx_reset_o = '0';
@@ -227,9 +227,9 @@ begin
 
     await_uvvm_initialization(VOID);
 
-    shared_ethernet_sb.config(1, C_SB_CONFIG_DEFAULT);
-    shared_ethernet_sb.enable(1);
-    shared_ethernet_sb.set_scope("ETHERNET VVC");
+    ETHERNET_SB.config(1, C_SB_CONFIG_DEFAULT);
+    ETHERNET_SB.enable(1);
+    ETHERNET_SB.set_scope("ETHERNET VVC");
 
     if_in.rx_rd_en_i <= '0';
 
@@ -294,7 +294,7 @@ begin
     -- Ending the simulation
     -----------------------------------------------------------------------------
     wait for 1000 ns;             -- to allow some time for completion
-    shared_ethernet_sb.report_counters(1);
+    ETHERNET_SB.report_counters(1);
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 

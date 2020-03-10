@@ -125,7 +125,8 @@ begin
       v_cmd_has_been_acked                                  := false;  -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
 
@@ -210,10 +211,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup I2C scoreboard
-    shared_i2c_sb.set_scope("I2C_VVC");
-    shared_i2c_sb.enable(GC_INSTANCE_IDX, "SB I2C Enabled");
-    shared_i2c_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_i2c_sb.enable_log_msg(ID_DATA);
+    I2C_SB.set_scope("I2C_VVC");
+    I2C_SB.enable(GC_INSTANCE_IDX, "SB I2C Enabled");
+    I2C_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    I2C_SB.enable_log_msg(ID_DATA);
 
     while true loop
 
@@ -232,7 +233,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -311,7 +313,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               alert(tb_warning, "Scoreboard type for I2C MASTER_RECEIVE data not implemented");
-              --shared_i2c_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+              --I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -406,7 +408,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               alert(tb_warning, "Scoreboard type for I2C SLAVE_RECEIVE data not implemented");
-              --shared_i2c_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+              --I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,

@@ -112,7 +112,7 @@ package vvc_methods_pkg is
 
   shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
   shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_ethernet_sb         : t_generic_sb; -- Scoreboard
+  shared variable ETHERNET_SB         : t_generic_sb; -- Scoreboard
 
 
   --==========================================================================================
@@ -307,8 +307,8 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.mac_source                     := mac_source;
     shared_vvc_cmd.payload_length                 := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
-    --shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
-    --shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
+    shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure ethernet_transmit;
 
@@ -362,8 +362,8 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.data_routing               := data_routing;
-    --shared_vvc_cmd.use_provided_msg_id_panel  := use_provided_msg_id_panel;
-    --shared_vvc_cmd.msg_id_panel               := msg_id_panel;
+    shared_vvc_cmd.use_provided_msg_id_panel  := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel               := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure ethernet_receive;
 
@@ -395,8 +395,8 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.payload_length                 := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
     shared_vvc_cmd.alert_level                    := alert_level;
-    --shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
-    --shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
+    shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
+    shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
   end procedure ethernet_expect;
 

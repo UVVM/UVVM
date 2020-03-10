@@ -128,7 +128,8 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
@@ -215,10 +216,10 @@ begin
 
 
     -- Setup UART scoreboard
-    shared_uart_sb.set_scope("UART VVC");
-    shared_uart_sb.enable(GC_INSTANCE_IDX, "SB UART Enabled");
-    shared_uart_sb.enable_log_msg(ID_DATA);
-    shared_uart_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    UART_SB.set_scope("UART VVC");
+    UART_SB.enable(GC_INSTANCE_IDX, "SB UART Enabled");
+    UART_SB.enable_log_msg(ID_DATA);
+    UART_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
 
 
     loop
@@ -238,7 +239,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -282,7 +284,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            UART_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,

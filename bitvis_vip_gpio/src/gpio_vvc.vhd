@@ -126,7 +126,8 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
@@ -211,10 +212,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup GPIO scoreboard
-    shared_gpio_sb.set_scope("GPIO_VVC");
-    shared_gpio_sb.enable(GC_INSTANCE_IDX, "SB GPIO Enabled");
-    shared_gpio_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_gpio_sb.enable_log_msg(ID_DATA);
+    GPIO_SB.set_scope("GPIO_VVC");
+    GPIO_SB.enable(GC_INSTANCE_IDX, "SB GPIO Enabled");
+    GPIO_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    GPIO_SB.enable_log_msg(ID_DATA);
 
     loop
 
@@ -233,7 +234,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -287,7 +289,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            shared_gpio_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0)); 
+            GPIO_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0)); 
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -339,7 +341,7 @@ begin
         else
           -- Delay specified using integer
           check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
-                      C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+                      C_SCOPE, ID_NEVER, v_msg_id_panel);
           wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
         end if;
 

@@ -130,7 +130,8 @@ begin
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
 
@@ -221,10 +222,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup SPI scoreboard
-    shared_spi_sb.set_scope("SPI_VVC");
-    shared_spi_sb.enable(GC_INSTANCE_IDX, "SB SPI Enabled");
-    shared_spi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_spi_sb.enable_log_msg(ID_DATA);
+    SPI_SB.set_scope("SPI_VVC");
+    SPI_SB.enable(GC_INSTANCE_IDX, "SB SPI Enabled");
+    SPI_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    SPI_SB.enable_log_msg(ID_DATA);
 
     loop
 
@@ -243,7 +244,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -322,7 +324,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_SB.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -432,7 +434,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_SB.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -512,7 +514,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_SB.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -618,7 +620,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_SB.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,

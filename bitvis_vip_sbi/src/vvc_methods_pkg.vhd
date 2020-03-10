@@ -122,7 +122,7 @@ package vvc_methods_pkg is
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable shared_sbi_sb : t_generic_sb;
+  shared variable SBI_SB : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -453,20 +453,19 @@ package body vvc_methods_pkg is
         dtt_group.bt.operation                                  := vvc_cmd.operation;
         dtt_group.bt.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
         dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
-        dtt_group.bt.randomisation                              := vvc_cmd.randomisation;
-        dtt_group.bt.num_words                                  := vvc_cmd.num_words;
         dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
         dtt_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
         dtt_group.bt.transaction_status                         := IN_PROGRESS;
         gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
 
+
       when POLL_UNTIL =>
         dtt_group.ct.operation                                  := vvc_cmd.operation;
         dtt_group.ct.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
         dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
-        dtt_group.bt.randomisation                              := vvc_cmd.randomisation;
-        dtt_group.bt.num_words                                  := vvc_cmd.num_words;
-        dtt_group.bt.max_polls                                  := vvc_cmd.max_polls;
+        dtt_group.ct.randomisation                              := vvc_cmd.randomisation;
+        dtt_group.ct.num_words                                  := vvc_cmd.num_words;
+        dtt_group.ct.max_polls                                  := vvc_cmd.max_polls;
         dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
         dtt_group.ct.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
         dtt_group.ct.transaction_status                         := IN_PROGRESS;
@@ -486,10 +485,10 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | CHECK =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when POLL_UNTIL =>
-        dtt_group.ct := C_TRANSACTION_SET_DEFAULT;
+        dtt_group.ct := C_COMPOUND_TRANSACTION_SET_DEFAULT;
 
       when others =>
         null;

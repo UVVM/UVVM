@@ -98,7 +98,7 @@ package vvc_methods_pkg is
 
   shared variable shared_avalon_st_vvc_config : t_vvc_config_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_AVALON_ST_VVC_CONFIG_DEFAULT);
   shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_avalon_st_sb         : t_generic_sb; -- Scoreboard
+  shared variable AVALON_ST_SB         : t_generic_sb; -- Scoreboard
 
 
   --==========================================================================================
@@ -340,7 +340,7 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;

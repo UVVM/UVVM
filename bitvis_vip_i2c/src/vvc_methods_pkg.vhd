@@ -644,7 +644,7 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when MASTER_TRANSMIT | MASTER_RECEIVE | MASTER_CHECK |
            SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;

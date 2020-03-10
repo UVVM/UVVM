@@ -45,8 +45,8 @@ end entity uart_monitor;
 
 architecture behave of uart_monitor is
 
-  alias tx_transaction_info       : t_transaction is shared_uart_monitor_transaction_info(TX, GC_INSTANCE_IDX).bt;
-  alias rx_transaction_info       : t_transaction is shared_uart_monitor_transaction_info(RX, GC_INSTANCE_IDX).bt;
+  alias tx_transaction_info       : t_base_transaction is shared_uart_monitor_transaction_info(TX, GC_INSTANCE_IDX).bt;
+  alias rx_transaction_info       : t_base_transaction is shared_uart_monitor_transaction_info(RX, GC_INSTANCE_IDX).bt;
 
   alias tx_transaction_trigger    : std_logic     is global_uart_monitor_transaction_trigger(TX, GC_INSTANCE_IDX);
   alias rx_transaction_trigger    : std_logic     is global_uart_monitor_transaction_trigger(RX, GC_INSTANCE_IDX);
@@ -60,7 +60,7 @@ architecture behave of uart_monitor is
     constant  operation           : in    t_operation;
     constant  C_LOG_PREFIX        : in    string;
     signal    transaction_trigger : inout std_logic;
-    variable  transaction_info    : inout t_transaction;
+    variable  transaction_info    : inout t_base_transaction;
     signal    uart_line           : in    std_logic;
     variable  monitor_config      : in    t_uart_monitor_config
   ) is

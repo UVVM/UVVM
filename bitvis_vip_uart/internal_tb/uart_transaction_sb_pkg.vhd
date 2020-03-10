@@ -28,18 +28,18 @@ use work.vvc_cmd_pkg.all;
 
 package local_pkg is
   function uart_transaction_to_string(
-    constant value : in t_transaction
+    constant value : in t_base_transaction
   ) return string;
 
   function uart_transaction_match(
-    constant value    : in t_transaction;
-    constant expected : in t_transaction
+    constant value    : in t_base_transaction;
+    constant expected : in t_base_transaction
   ) return boolean;
 end package local_pkg;
 
 package body local_pkg is
   function uart_transaction_to_string(
-    constant value : in t_transaction
+    constant value : in t_base_transaction
   ) return string is
   begin
     return "operation: "           & to_string(value.operation) &
@@ -49,8 +49,8 @@ package body local_pkg is
   end function uart_transaction_to_string;
 
   function uart_transaction_match(
-    constant value    : in t_transaction;
-    constant expected : in t_transaction
+    constant value    : in t_base_transaction;
+    constant expected : in t_base_transaction
   ) return boolean is
   begin
     return (value.operation                   = expected.operation)                   and
@@ -86,6 +86,6 @@ use work.transaction_pkg.all;
 --
 ------------------------------------------------------------------------------------------
 package uart_transaction_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map ( t_element         => t_transaction,
+  generic map ( t_element         => t_base_transaction,
                 element_match     => uart_transaction_match,
                 to_string_element => uart_transaction_to_string);

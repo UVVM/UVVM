@@ -74,8 +74,8 @@ package transaction_pkg is
     cmd_idx => -1
     );
 
-  -- Transaction
-  type t_transaction is record
+  -- Base transaction
+  type t_base_transaction is record
     operation                    : t_operation;
     addr                         : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
     data                         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_LENGTH-1);
@@ -87,7 +87,7 @@ package transaction_pkg is
     transaction_status           : t_transaction_status;
   end record;
 
-  constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
+  constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation                    => NO_OPERATION,
     addr                         => (others => '0'),
     data                         => (others => (others => '0')),
@@ -101,11 +101,11 @@ package transaction_pkg is
 
   -- Transaction group
   type t_transaction_group is record
-    bt : t_transaction;
+    bt : t_base_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT
+    bt => C_BASE_TRANSACTION_SET_DEFAULT
     );
 
   -- Global DTT trigger signal

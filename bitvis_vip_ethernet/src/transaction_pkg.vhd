@@ -74,15 +74,15 @@ package transaction_pkg is
     cmd_idx => -1
     );
 
-  -- Transaction
-  type t_transaction is record
+  -- Base transaction
+  type t_base_transaction is record
     operation           : t_operation;
     ethernet_frame      : t_ethernet_frame;
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
-  constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
+  constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation           => NO_OPERATION,
     ethernet_frame      => C_ETHERNET_FRAME_DEFAULT,
     vvc_meta            => C_VVC_META_DEFAULT,
@@ -91,7 +91,7 @@ package transaction_pkg is
 
   -- Transaction group
   type t_transaction_group is record
-    bt : t_transaction;
+    bt : t_base_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (

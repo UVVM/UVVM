@@ -83,8 +83,8 @@ package transaction_pkg is
     stop_bit_error    => false
     );
 
-  -- Transaction
-  type t_transaction is record
+  -- Base transaction
+  type t_base_transaction is record
     operation          : t_operation;
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     vvc_meta           : t_vvc_meta;
@@ -92,7 +92,7 @@ package transaction_pkg is
     error_info         : t_error_info;
   end record;
 
-  constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
+  constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation           => NO_OPERATION,
     data                => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
@@ -102,13 +102,11 @@ package transaction_pkg is
 
   -- Transaction info group
   type t_transaction_group is record
-    bt : t_transaction;
-    ct : t_transaction;
+    bt : t_base_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT,
-    ct => C_TRANSACTION_SET_DEFAULT
+    bt => C_BASE_TRANSACTION_SET_DEFAULT
     );
 
 
@@ -134,7 +132,7 @@ package transaction_pkg is
                                                           (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
   alias t_uart_operation   is t_operation;
-  alias t_uart_transaction is t_transaction;
-  alias C_UART_TRANSACTION_INFO_SET_DEFAULT is C_TRANSACTION_SET_DEFAULT;
+  alias t_uart_transaction is t_base_transaction;
+  alias C_UART_TRANSACTION_INFO_SET_DEFAULT is C_BASE_TRANSACTION_SET_DEFAULT;
 
 end package transaction_pkg;

@@ -75,9 +75,9 @@ architecture behave of gpio_vvc is
   alias vvc_config       : t_vvc_config is shared_gpio_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_gpio_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_gpio_transaction_info(GC_INSTANCE_IDX);
-    -- DTT
-  alias dtt_trigger   : std_logic           is global_gpio_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias dtt_info      : t_transaction_group is shared_gpio_vvc_transaction_info(GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger : std_logic           is global_gpio_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info         : t_transaction_group is shared_gpio_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -263,8 +263,8 @@ begin
       case v_cmd.operation is
 
         when SET =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "gpio_set() called with to wide data. " & v_cmd.msg);
@@ -277,8 +277,8 @@ begin
                    msg_id_panel => v_msg_id_panel);
 
         when GET =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc_transaction_info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           gpio_get(data_value   => v_read_data(GC_DATA_WIDTH-1 downto 0),
                    msg          => format_msg(v_cmd),
@@ -299,8 +299,8 @@ begin
 
 
         when CHECK =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_check() called with to wide data. " & v_cmd.msg);
@@ -314,8 +314,8 @@ begin
                      msg_id_panel => v_msg_id_panel);
 
         when EXPECT =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_expect() called with to wide data. " & v_cmd.msg);
@@ -369,8 +369,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
 

@@ -117,8 +117,8 @@ package vvc_methods_pkg is
   );
 
 
-  shared variable shared_sbi_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM-1)             := (others => C_SBI_VVC_CONFIG_DEFAULT);
-  shared variable shared_sbi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM-1)             := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_sbi_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM-1)             := (others => C_SBI_VVC_CONFIG_DEFAULT);
+  shared variable shared_sbi_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM-1)             := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
@@ -203,19 +203,19 @@ package vvc_methods_pkg is
 
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction Info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record);
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record);
 
 
   --==============================================================================
@@ -439,63 +439,62 @@ package body vvc_methods_pkg is
 
 
   --==============================================================================
-  -- DTT procedures
+  -- Transaction Info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | CHECK =>
-        dtt_group.bt.operation                                  := vvc_cmd.operation;
-        dtt_group.bt.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
-        dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
-        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
-        dtt_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
-        dtt_group.bt.transaction_status                         := IN_PROGRESS;
-        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
-
+        vvc_transaction_info_group.bt.operation                                  := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
+        vvc_transaction_info_group.bt.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
+        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status                         := IN_PROGRESS;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when POLL_UNTIL =>
-        dtt_group.ct.operation                                  := vvc_cmd.operation;
-        dtt_group.ct.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
-        dtt_group.ct.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
-        dtt_group.ct.randomisation                              := vvc_cmd.randomisation;
-        dtt_group.ct.num_words                                  := vvc_cmd.num_words;
-        dtt_group.ct.max_polls                                  := vvc_cmd.max_polls;
-        dtt_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
-        dtt_group.ct.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
-        dtt_group.ct.transaction_status                         := IN_PROGRESS;
-        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+        vvc_transaction_info_group.ct.operation                                  := vvc_cmd.operation;
+        vvc_transaction_info_group.ct.address(vvc_cmd.addr'length-1 downto 0)    := vvc_cmd.addr;
+        vvc_transaction_info_group.ct.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
+        vvc_transaction_info_group.ct.randomisation                              := vvc_cmd.randomisation;
+        vvc_transaction_info_group.ct.num_words                                  := vvc_cmd.num_words;
+        vvc_transaction_info_group.ct.max_polls                                  := vvc_cmd.max_polls;
+        vvc_transaction_info_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
+        vvc_transaction_info_group.ct.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.ct.transaction_status                         := IN_PROGRESS;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;
-  end procedure set_global_dtt;
+  end procedure set_global_vvc_transaction_info;
 
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record) is
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | CHECK =>
-        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when POLL_UNTIL =>
-        dtt_group.ct := C_COMPOUND_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.ct := C_COMPOUND_TRANSACTION_SET_DEFAULT;
 
       when others =>
         null;
     end case;
 
     wait for 0 ns;
-  end procedure reset_dtt_info;
+  end procedure reset_vvc_transaction_info;
 
 
   --==============================================================================

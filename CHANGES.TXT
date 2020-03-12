@@ -14,6 +14,8 @@ v2 2020.XX.XX
 --------------------
 Released: 2020-XX-XX
 - Changed VVC SB name to <IF>_SB in all VVCs with scoreboarding.
+- Renamed all DTT related to vvc_transaction_info in all VIPs.
+
 
 
 v2 2020.03.06

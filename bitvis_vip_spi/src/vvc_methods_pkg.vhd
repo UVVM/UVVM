@@ -332,18 +332,18 @@ package vvc_methods_pkg is
     );
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record);
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
   -- Activity Watchdog
@@ -948,53 +948,53 @@ package body vvc_methods_pkg is
   end procedure;
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when MASTER_TRANSMIT_AND_RECEIVE | MASTER_TRANSMIT_AND_CHECK | MASTER_TRANSMIT_ONLY |
            MASTER_RECEIVE_ONLY | MASTER_CHECK_ONLY | SLAVE_TRANSMIT_AND_RECEIVE |
            SLAVE_TRANSMIT_AND_CHECK | SLAVE_TRANSMIT_ONLY | SLAVE_RECEIVE_ONLY | SLAVE_CHECK_ONLY =>
-        dtt_group.bt.operation                             := vvc_cmd.operation;
-        dtt_group.bt.data                                  := vvc_cmd.data;
-        dtt_group.bt.data_exp                              := vvc_cmd.data_exp;
-        dtt_group.bt.num_words                             := vvc_cmd.num_words;
-        dtt_group.bt.word_length                           := vvc_cmd.word_length;
-        dtt_group.bt.when_to_start_transfer                := vvc_cmd.when_to_start_transfer;
-        dtt_group.bt.action_when_transfer_is_done          := vvc_cmd.action_when_transfer_is_done;
-        dtt_group.bt.action_between_words                  := vvc_cmd.action_between_words;
-        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        dtt_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        dtt_group.bt.transaction_status                    := IN_PROGRESS;
-        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+        vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.data                                  := vvc_cmd.data;
+        vvc_transaction_info_group.bt.data_exp                              := vvc_cmd.data_exp;
+        vvc_transaction_info_group.bt.num_words                             := vvc_cmd.num_words;
+        vvc_transaction_info_group.bt.word_length                           := vvc_cmd.word_length;
+        vvc_transaction_info_group.bt.when_to_start_transfer                := vvc_cmd.when_to_start_transfer;
+        vvc_transaction_info_group.bt.action_when_transfer_is_done          := vvc_cmd.action_when_transfer_is_done;
+        vvc_transaction_info_group.bt.action_between_words                  := vvc_cmd.action_between_words;
+        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status                    := IN_PROGRESS;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;
-  end procedure set_global_dtt;
+  end procedure set_global_vvc_transaction_info;
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record) is
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when MASTER_TRANSMIT_AND_RECEIVE | MASTER_TRANSMIT_AND_CHECK | MASTER_TRANSMIT_ONLY |
            MASTER_RECEIVE_ONLY | MASTER_CHECK_ONLY | SLAVE_TRANSMIT_AND_RECEIVE |
            SLAVE_TRANSMIT_AND_CHECK | SLAVE_TRANSMIT_ONLY | SLAVE_RECEIVE_ONLY | SLAVE_CHECK_ONLY =>
-        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;
 
     wait for 0 ns;
-  end procedure reset_dtt_info;
+  end procedure reset_vvc_transaction_info;
 
   --==============================================================================
   -- Activity Watchdog

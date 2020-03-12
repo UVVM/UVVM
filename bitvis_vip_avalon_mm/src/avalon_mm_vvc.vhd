@@ -85,9 +85,9 @@ architecture behave of avalon_mm_vvc is
   alias vvc_config                    : t_vvc_config is shared_avalon_mm_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status                    : t_vvc_status is shared_avalon_mm_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info              : t_transaction_info is shared_avalon_mm_transaction_info(GC_INSTANCE_IDX);
-    -- DTT
-  alias dtt_trigger   : std_logic           is global_avalon_mm_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias dtt_info      : t_transaction_group is shared_avalon_mm_vvc_transaction_info(GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger  : std_logic           is global_avalon_mm_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info          : t_transaction_group is shared_avalon_mm_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -287,8 +287,8 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with to wide address. " & v_cmd.msg);
@@ -314,8 +314,8 @@ begin
                           config              => vvc_config.bfm_config);
 
         when READ =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_read() called with to wide address. " & v_cmd.msg);
@@ -361,8 +361,8 @@ begin
           end if;
 
         when CHECK =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_check() called with to wide address. " & v_cmd.msg);
@@ -400,8 +400,8 @@ begin
           end if;
 
         when RESET =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
           avalon_mm_reset(clk                 => clk,
@@ -413,8 +413,8 @@ begin
                           config              => vvc_config.bfm_config);
 
         when LOCK =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
           avalon_mm_lock( avalon_mm_if        => avalon_mm_vvc_master_if,
@@ -424,8 +424,8 @@ begin
                           config              => vvc_config.bfm_config);
 
         when UNLOCK =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
           avalon_mm_unlock( avalon_mm_if      => avalon_mm_vvc_master_if,
@@ -473,8 +473,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info   := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
   end process;
@@ -525,8 +525,8 @@ begin
 
       case v_cmd.operation is
         when READ =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Initiate read response
           avalon_mm_read_response(addr_value          => v_normalised_addr,
@@ -550,8 +550,8 @@ begin
           end if;
 
         when CHECK =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Initiate check response
           avalon_mm_check_response( addr_value          => v_normalised_addr,
@@ -570,8 +570,8 @@ begin
 
       last_read_response_idx_executed <= v_cmd.cmd_idx;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
 

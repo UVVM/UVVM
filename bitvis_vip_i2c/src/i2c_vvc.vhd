@@ -76,9 +76,9 @@ architecture behave of i2c_vvc is
   alias vvc_config       : t_vvc_config is shared_i2c_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_i2c_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_i2c_transaction_info(GC_INSTANCE_IDX);
-    -- DTT
-  alias dtt_trigger   : std_logic           is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias dtt_info      : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger  : std_logic           is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info          : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -269,8 +269,8 @@ begin
         --===================================
         when MASTER_TRANSMIT =>
           if GC_MASTER_MODE then        -- master transmit
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -291,8 +291,8 @@ begin
 
         when MASTER_RECEIVE =>
           if GC_MASTER_MODE then        -- master receive
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
@@ -326,8 +326,8 @@ begin
 
         when MASTER_CHECK =>
           if GC_MASTER_MODE then        -- master check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -349,8 +349,8 @@ begin
 
         when MASTER_QUICK_CMD =>
           if GC_MASTER_MODE then        -- master check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.exp_ack                      := v_cmd.exp_ack;
@@ -372,8 +372,8 @@ begin
 
         when SLAVE_TRANSMIT =>
           if not GC_MASTER_MODE then    -- slave transmit
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -390,8 +390,8 @@ begin
 
         when SLAVE_RECEIVE =>
           if not GC_MASTER_MODE then    -- requires slave mode
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.num_bytes := v_cmd.num_bytes;
 
@@ -421,8 +421,8 @@ begin
 
         when SLAVE_CHECK =>
           if not GC_MASTER_MODE then    -- slave check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -477,8 +477,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
   end process;

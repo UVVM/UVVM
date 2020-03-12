@@ -220,7 +220,7 @@ package vvc_methods_pkg is
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
-    variable dtt_info             : inout t_transaction_group;
+    variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   );
@@ -233,7 +233,7 @@ package vvc_methods_pkg is
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
-    variable dtt_info             : inout t_transaction_group;
+    variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel;
     constant ext_proc_call        : in    string := "" -- External proc_call. Overwrite if called from another procedure
@@ -245,24 +245,24 @@ package vvc_methods_pkg is
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
-    variable dtt_info             : inout t_transaction_group;
+    variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   );
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record);
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
   -- Activity Watchdog
@@ -437,14 +437,14 @@ package body vvc_methods_pkg is
   -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   --==========================================================================================
   procedure priv_ethernet_transmit_to_bridge(
-    constant interpacket_gap_time : in    time;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
-    constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
-    variable dtt_info             : inout t_transaction_group;
-    constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant interpacket_gap_time  : in    time;
+    constant vvc_cmd               : in    t_vvc_cmd_record;
+    constant dut_if_field_config   : in    t_dut_if_field_config_array;
+    signal   hvvc_to_bridge        : out   t_hvvc_to_bridge;
+    signal   bridge_to_hvvc        : in    t_bridge_to_hvvc;
+    variable vvc_transaction_info  : inout t_transaction_group;
+    constant scope                 : in    string;
+    constant msg_id_panel          : in    t_msg_id_panel
   ) is
     constant proc_name : string := "ethernet_transmit";
     constant proc_call : string := proc_name
@@ -495,8 +495,8 @@ package body vvc_methods_pkg is
     v_packet(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(convert_slv_to_byte_array(v_crc_32, LOWER_BYTE_LEFT));
     v_frame.fcs := v_crc_32;
 
-    -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.fcs := v_crc_32;
+    -- Add info to the vvc_transaction_info
+    vvc_transaction_info.bt.ethernet_frame.fcs := v_crc_32;
 
     -- Check which fields should be used (sent or requested to/from the bridge) according to config.
     -- If there's a field which is not configured it will be used by default, e.g. when writing
@@ -571,7 +571,7 @@ package body vvc_methods_pkg is
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
-    variable dtt_info             : inout t_transaction_group;
+    variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel;
     constant ext_proc_call        : in    string := "" -- External proc_call. Overwrite if called from another procedure
@@ -639,8 +639,8 @@ package body vvc_methods_pkg is
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
       v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_destination := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
-      -- Add info to the DTT
-      dtt_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
+      -- Add info to the vvc_transaction_info
+      vvc_transaction_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
     end if;
 
     -- Read MAC source from bridge (if configured)
@@ -648,8 +648,8 @@ package body vvc_methods_pkg is
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
       v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_source := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
-      -- Add info to the DTT
-      dtt_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
+      -- Add info to the vvc_transaction_info
+      vvc_transaction_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
     end if;
 
     -- Read payload length from bridge (if configured)
@@ -657,8 +657,8 @@ package body vvc_methods_pkg is
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
       v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
       received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
-      -- Add info to the DTT
-      dtt_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
+      -- Add info to the vvc_transaction_info
+      vvc_transaction_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
       log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
     end if;
@@ -679,8 +679,8 @@ package body vvc_methods_pkg is
       v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_words(0 to v_payload_length-1);
       received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates   --REVIEW ET:  and....?
       received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
-      -- Add info to the DTT
-      dtt_info.bt.ethernet_frame.payload := received_frame.payload;
+      -- Add info to the vvc_transaction_info
+      vvc_transaction_info.bt.ethernet_frame.payload := received_frame.payload;
       log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, PAYLOAD), scope, msg_id_panel);
     end if;
@@ -690,8 +690,8 @@ package body vvc_methods_pkg is
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
       received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);
-      -- Add info to the DTT
-      dtt_info.bt.ethernet_frame.fcs := received_frame.fcs;
+      -- Add info to the vvc_transaction_info
+      vvc_transaction_info.bt.ethernet_frame.fcs := received_frame.fcs;
       log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
 
@@ -709,7 +709,7 @@ package body vvc_methods_pkg is
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
     signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
-    variable dtt_info             : inout t_transaction_group;
+    variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
     constant msg_id_panel         : in    t_msg_id_panel
   ) is
@@ -744,8 +744,8 @@ package body vvc_methods_pkg is
     v_expected_frame.payload         := vvc_cmd.payload;
     v_expected_frame.fcs             := not generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --REVIEW ET: Yields error in later comparison even if fcs of received frame is OK (for that received frame)
 
-    -- Add info to the DTT
-    dtt_info.bt.ethernet_frame.fcs := v_expected_frame.fcs;
+    -- Add info to the vvc_transaction_info
+    vvc_transaction_info.bt.ethernet_frame.fcs := v_expected_frame.fcs;
 
     -- Receive frame
     priv_ethernet_receive_from_bridge(received_frame       => v_received_frame,
@@ -755,7 +755,7 @@ package body vvc_methods_pkg is
                                       dut_if_field_config  => dut_if_field_config,
                                       hvvc_to_bridge       => hvvc_to_bridge,
                                       bridge_to_hvvc       => bridge_to_hvvc,
-                                      dtt_info             => dtt_info,
+                                      vvc_transaction_info => vvc_transaction_info,
                                       scope                => scope,
                                       msg_id_panel         => msg_id_panel,
                                       ext_proc_call        => proc_call);
@@ -790,46 +790,46 @@ package body vvc_methods_pkg is
   end procedure priv_ethernet_expect_from_bridge;
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        dtt_group.bt.operation                              := vvc_cmd.operation;
-        dtt_group.bt.ethernet_frame.mac_destination         := vvc_cmd.mac_destination;
-        dtt_group.bt.ethernet_frame.mac_source              := vvc_cmd.mac_source;
-        dtt_group.bt.ethernet_frame.payload_length          := vvc_cmd.payload_length;
-        dtt_group.bt.ethernet_frame.payload                 := vvc_cmd.payload;
-        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
-        dtt_group.bt.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
-        dtt_group.bt.transaction_status                     := IN_PROGRESS;
-        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+        vvc_transaction_info_group.bt.operation                              := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.ethernet_frame.mac_destination         := vvc_cmd.mac_destination;
+        vvc_transaction_info_group.bt.ethernet_frame.mac_source              := vvc_cmd.mac_source;
+        vvc_transaction_info_group.bt.ethernet_frame.payload_length          := vvc_cmd.payload_length;
+        vvc_transaction_info_group.bt.ethernet_frame.payload                 := vvc_cmd.payload;
+        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status                     := IN_PROGRESS;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;
-  end procedure set_global_dtt;
+  end procedure set_global_vvc_transaction_info;
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record) is
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        dtt_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;
 
     wait for 0 ns;
-  end procedure reset_dtt_info;
+  end procedure reset_vvc_transaction_info;
 
   --==============================================================================
   -- Activity Watchdog

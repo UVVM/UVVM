@@ -77,9 +77,9 @@ architecture behave of uart_rx_vvc is
   alias vvc_config              : t_vvc_config        is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
   alias vvc_status              : t_vvc_status        is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
   alias transaction_info        : t_transaction_info  is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
-  -- DTT
-  alias dtt_trigger             : std_logic           is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
-  alias dtt_info                : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger : std_logic           is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
+  alias vvc_transaction_info         : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -268,8 +268,8 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
            
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
@@ -293,8 +293,8 @@ begin
               
 
         when EXPECT =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -349,8 +349,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================

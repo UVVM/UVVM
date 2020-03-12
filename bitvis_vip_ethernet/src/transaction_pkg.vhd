@@ -95,7 +95,7 @@ package transaction_pkg is
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT
+    bt => C_BASE_TRANSACTION_SET_DEFAULT
     );
 
   subtype t_sub_channel is t_channel range RX to TX;

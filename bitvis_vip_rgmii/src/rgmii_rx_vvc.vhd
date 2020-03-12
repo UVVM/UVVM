@@ -72,9 +72,9 @@ architecture behave of rgmii_rx_vvc is
 
   alias vvc_config : t_vvc_config is shared_rgmii_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_rgmii_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
-    -- DTT
-  alias dtt_trigger : std_logic           is global_rgmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
-  alias dtt_info    : t_transaction_group is shared_rgmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
+    -- Transaction info
+  alias vvc_transaction_info_trigger : std_logic           is global_rgmii_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_transaction_info         : t_transaction_group is shared_rgmii_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -256,8 +256,8 @@ begin
         -- VVC dedicated operations
         --===================================
         when READ =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
           rgmii_read(data_array    => v_result.data_array,
@@ -281,8 +281,8 @@ begin
           end if;
 
         when EXPECT =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
           rgmii_expect(data_exp      => v_cmd.data_array(0 to v_cmd.data_array_length-1),
@@ -330,8 +330,8 @@ begin
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
   end process;

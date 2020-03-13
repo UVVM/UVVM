@@ -1,6 +1,11 @@
 Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v1.0.2
+----------
+Released: 2020-XX-XX
+- Fixed logging to show the correct total number of words/symbols.
+
 v1.0.1
 ----------
 Released: 2020-03-06

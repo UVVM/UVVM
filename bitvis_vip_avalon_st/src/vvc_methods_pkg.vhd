@@ -206,7 +206,7 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name : string := "avalon_st_transmit";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-              & ", " & to_string(data_array'length) & " sym, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
+              & ", " & to_string(data_array'length) & " words, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
     constant c_data_word_size  : natural := data_array(data_array'low)'length;
     variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) :=
       normalize_and_check(channel_value, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", proc_call & ". " & msg);
@@ -275,7 +275,7 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name : string := "avalon_st_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-              & ", " & to_string(data_exp'length) & " sym, ch:" & to_string(channel_exp, DEC, AS_IS) & ")";
+              & ", " & to_string(data_exp'length) & " words, ch:" & to_string(channel_exp, DEC, AS_IS) & ")";
     constant c_data_word_size  : natural := data_exp(data_exp'low)'length;
     variable v_normalized_chan : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) :=
       normalize_and_check(channel_exp, shared_vvc_cmd.channel_value, ALLOW_NARROWER, "channel", "shared_vvc_cmd.channel", proc_call & ". " & msg);

@@ -131,6 +131,18 @@ begin
     await_completion(AVALON_MM_VVCT,2, 100 ns, "Waiting for checks to complete");
 
 
+    log("Write, read back and check data with Scoreboard on one VVC");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"10", "Write to Avalon MM 1");
+    AVALON_MM_SB.add_expected(x"00000010");
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout", TO_SB);
+
+    await_completion(AVALON_MM_VVCT,1, v_cmd_idx, 100 ns, "Wait for sbi_read to finish");
+
+    --fetch_result(AVALON_MM_VVCT,1 , v_cmd_idx, v_data, v_is_ok, "Fetching read-result");
+    --check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
+    --check_value(v_data(31 downto 0), x"10", ERROR, "Readback data via fetch_result()");
+
+
     log("Write, read back and check data with avalon_mm_read on one VVC");
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"10", "Write to Avalon MM 1");
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout");

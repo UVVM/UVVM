@@ -31,6 +31,7 @@ package generic_sb_support_pkg is
     overdue_check_alert_level : t_alert_level;
     overdue_check_time_limit  : time;
     ignore_initial_garbage    : boolean;
+    element_width             : positive;
   end record;
 
   type t_sb_config_array is array(integer range <>) of t_sb_config;
@@ -40,6 +41,7 @@ package generic_sb_support_pkg is
                                                  allow_out_of_order        => false,
                                                  overdue_check_alert_level => ERROR,
                                                  overdue_check_time_limit  => 0 ns,
-                                                 ignore_initial_garbage    => false);
+                                                 ignore_initial_garbage    => false,
+                                                 element_width             => 8);
 
 end package generic_sb_support_pkg;

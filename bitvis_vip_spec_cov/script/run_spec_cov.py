@@ -17,6 +17,7 @@ if sys.version_info[0] < 3:
 
 import os
 import csv
+import glob
 
 #==========================================================================
 # Settings
@@ -101,7 +102,7 @@ class Requirement():
             self.actual_testcase_list.append(testcase)
         # Update testcase result if testcase already exists
         else:
-            for actual_testcase in self.actual_testcase_list():
+            for actual_testcase in self.actual_testcase_list:
                 if actual_testcase.get_name().upper() == testcase.get_name().upper():
                     actual_testcase.set_result(testcase.get_result())
         # Update for any super-requirement
@@ -798,14 +799,29 @@ def build_partial_coverage_list(run_configuration, container):
         else:
             partial_coverage_files.append(partial_coverage_file_name)
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], map_partial_coverage_file_namename))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file_name))
         abort(error_code = 1, msg = error_msg)
+
+    #==========================================================================
+    # Check if listed files are files, i.e. files listed using wildcards,
+    # and add any wildcard matches.
+    #==========================================================================
+    for pc_file in partial_coverage_files:
+        if not(os.path.isfile(pc_file)):
+            # Remove the wildcard item from list
+            partial_coverage_files.remove(pc_file)
+            # Search for files matching wildcard
+            for wildcard_file in glob.glob(pc_file):
+                # Add any mathing files if not already in list
+                if os.path.isfile(wildcard_file) and not(wildcard_file in partial_coverage_files):
+                    # Adjust path for windows and add to list
+                    wildcard_file = wildcard_file.replace('\\', '/')
+                    partial_coverage_files.append(wildcard_file)            
 
     #==========================================================================
     # Get the delimiter from the partial_cov file
     #==========================================================================
     partial_coverage_pass = False
-
     try:
         with open(partial_coverage_files[0]) as partial_coverage_file:
             lines = partial_coverage_file.readlines()
@@ -860,7 +876,6 @@ def build_partial_coverage_list(run_configuration, container):
                         # Connect: requirement <-> testcase
                         testcase.add_actual_requirement(requirement)
                         requirement.add_actual_testcase(testcase)
-
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file))

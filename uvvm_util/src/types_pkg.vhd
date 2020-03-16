@@ -214,8 +214,6 @@ package types_pkg is
     SYNC_WITH_SETUP_AND_HOLD
   );
 
-  type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
-
   type t_test_status is (NA, PASS, FAIL);
   
   -------------------------------------

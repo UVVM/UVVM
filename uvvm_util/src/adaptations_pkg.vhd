@@ -175,6 +175,11 @@ package adaptations_pkg is
     others              => ENABLED
   );
 
+  -- Message Id panel with all IDs as NA. (used in Hierarchical-VVCs)
+  constant C_UNUSED_MSG_ID_PANEL : t_msg_id_panel := (
+    others => NA
+  );
+
   -- If false, OSVVM uses the default message id panel. If true, it uses a separate message id panel.
   constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
 

@@ -451,6 +451,18 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             for requirement in container.get_requirement_list():
                 for testcase in requirement.get_sorted_testcase_list():
                     csv_writer.writerow([requirement.get_name(), " " + testcase.get_name(), " " + requirement.get_compliance()])
+            # Create a table with the super-requirement mapping to sub-requirements
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            csv_writer.writerow(["Requirement", "Sub-Requirement", "Compliance"])
+            for requirement in container.get_requirement_list():
+                sub_requirement_string = ""
+                for sub_requirement in requirement.get_sub_requirement_list():
+                    sub_requirement_string += " " + sub_requirement.get_name()
+                if sub_requirement_string:
+                    csv_writer.writerow([requirement.get_name(), " " + sub_requirement_string, " " + requirement.get_compliance()])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -1015,12 +1027,12 @@ def validate_run_configuration(run_configuration):
     """
     # Validate 
     if run_configuration.get("strictness") > 0:
-        if run_configuration.get("requirement_file") == None:
-            msg = ("Strictness level %d require a requiement file" %(run_configuration.get("strictness")))
+        if run_configuration.get("requirement_list") == None:
+            msg = ("Strictness level %d require a requirement file" %(run_configuration.get("strictness")))
             abort(error_code = 1, msg = msg)
 
     if run_configuration.get("partial_cov") == None:
-        msg = ("Missing argument for parital coverage file")
+        msg = ("Missing argument for partial coverage file")
         abort(error_code = 1, msg = msg)
 
     if run_configuration.get("spec_cov") == None:
@@ -1043,9 +1055,9 @@ def run_housekeeping(run_configuration):
     # Abort cleaning if --clean argument was passed along with
     # other legal arguments.
     if (
-        run_configuration.get("requirement_file") or 
+        run_configuration.get("requirement_list") or 
         run_configuration.get("partial_cov") or 
-        run_configuration.get("requiremenet_map_list") or 
+        run_configuration.get("requirement_map_list") or 
         run_configuration.get("spec_cov") or
         run_configuration.get("strictness") != '0' or
         run_configuration.get("config")

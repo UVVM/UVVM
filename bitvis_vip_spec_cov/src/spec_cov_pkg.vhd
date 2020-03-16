@@ -192,7 +192,7 @@ package body spec_cov_pkg is
     variable v_requirement_status       : t_test_status;
   begin
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
-      alert(TB_ERROR, "Requirements have not been parsed. Please used initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
+      alert(TB_ERROR, "Requirements have not been parsed. Please use initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
       return;
     end if;
 
@@ -238,7 +238,6 @@ package body spec_cov_pkg is
     constant VOID : t_void
   ) is
     variable v_checksum_string : line;
-    constant c_summary_string  : string := priv_get_summary_string;
   begin
     -- Free used memory
     log(ID_SPEC_COV, "Freeing stored requirements from memory", C_SCOPE);
@@ -341,7 +340,7 @@ package body spec_cov_pkg is
       shared_requirements_in_array := shared_requirements_in_array + 1;
     end loop;
         
-    log(ID_SPEC_COV, "Closing requirement to testcase map file", C_SCOPE);
+    log(ID_SPEC_COV, "Closing requirement file", C_SCOPE);
     shared_csv_file.dispose;
   end procedure priv_read_and_parse_csv_file;
 

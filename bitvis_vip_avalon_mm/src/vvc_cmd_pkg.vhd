@@ -53,8 +53,7 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    use_provided_msg_id_panel : t_use_provided_msg_id_panel;
-    msg_id_panel              : t_msg_id_panel;
+    parent_msg_id_panel       : t_msg_id_panel;
     -- VVC dedicated fields
     addr                      : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
     data                      : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
@@ -81,8 +80,7 @@ package vvc_cmd_pkg is
     timeout                   => 0 ns,
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
-    use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
-    msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel       => C_UNUSED_MSG_ID_PANEL
     );
 
   --===============================================================================================

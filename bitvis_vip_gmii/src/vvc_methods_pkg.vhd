@@ -108,47 +108,43 @@ package vvc_methods_pkg is
   --   actual BFM execution.
   --==========================================================================================
   procedure gmii_write(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant data_array                : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_array          : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_read(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant num_bytes                 : in    positive;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_read(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant data_exp                  : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel;
-    constant alert_level               : in    t_alert_level               := ERROR
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_exp            : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant alert_level         : in    t_alert_level  := ERROR
   );
 
   --==============================================================================
@@ -183,18 +179,18 @@ package body vvc_methods_pkg is
   -- Methods dedicated to this VVC
   --==========================================================================================
   procedure gmii_write( 
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant data_array                : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_array          : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "gmii_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
              & ", " & to_string(data_array'length) & " bytes)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -202,61 +198,64 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.data_array(0 to data_array'length-1) := data_array;
     shared_vvc_cmd.data_array_length                    := data_array'length;
-    shared_vvc_cmd.use_provided_msg_id_panel            := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel                         := msg_id_panel;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel                  := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure gmii_read(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant num_bytes                 : in    positive;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "gmii_read";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.num_bytes_read            := num_bytes;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.num_bytes_read      := num_bytes;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure gmii_read(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
   begin
-    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, msg, scope, parent_msg_id_panel);
   end procedure;
 
   procedure gmii_expect( 
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant data_exp                  : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel;
-    constant alert_level               : in    t_alert_level := ERROR
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_exp            : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL; -- Only intended for usage by parent HVVCs
+    constant alert_level         : in    t_alert_level  := ERROR
   ) is
     constant proc_name : string := "gmii_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
              & ", " & to_string(data_exp'length) & " bytes)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -265,9 +264,11 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data_array(0 to data_exp'length-1) := data_exp;
     shared_vvc_cmd.data_array_length                  := data_exp'length;
     shared_vvc_cmd.alert_level                        := alert_level;
-    shared_vvc_cmd.use_provided_msg_id_panel          := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel                       := msg_id_panel;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel                := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   --==============================================================================

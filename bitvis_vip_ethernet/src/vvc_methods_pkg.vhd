@@ -123,89 +123,75 @@ package vvc_methods_pkg is
   --   actual BFM execution.
   --==========================================================================================
   procedure ethernet_transmit(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant mac_source                : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant mac_source       : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_transmit(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_transmit(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_receive(
-    signal   VVCT                       : inout t_vvc_target_record;
-    constant vvc_instance_idx           : in    integer;
-    constant channel                    : in    t_channel;
-    constant msg                        : in    string;
-    constant data_routing               : in    t_data_routing              := TO_RECEIVE_BUFFER;
-    constant scope                      : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel  : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel               : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant data_routing     : in    t_data_routing := TO_RECEIVE_BUFFER;
+    constant scope            : in    string         := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant mac_source                : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant mac_source       : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := ERROR;
+    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := ERROR;
+    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := ERROR;
+    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   --==========================================================================================
@@ -282,16 +268,14 @@ package body vvc_methods_pkg is
   -- Methods dedicated to this VVC
   --==========================================================================================
   procedure ethernet_transmit(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant mac_source                : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant mac_source       : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_transmit";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
@@ -307,52 +291,44 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.mac_source                     := mac_source;
     shared_vvc_cmd.payload_length                 := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
-    shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
   end procedure ethernet_transmit;
 
   procedure ethernet_transmit(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_transmit(VVCT, vvc_instance_idx, channel, mac_destination,
-      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
   end procedure ethernet_transmit;
 
   procedure ethernet_transmit(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_transmit(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
-      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope, use_provided_msg_id_panel, msg_id_panel);
+      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
   end procedure ethernet_transmit;
 
 
   procedure ethernet_receive(
-    signal   VVCT                       : inout t_vvc_target_record;
-    constant vvc_instance_idx           : in    integer;
-    constant channel                    : in    t_channel;
-    constant msg                        : in    string;
-    constant data_routing               : in    t_data_routing              := TO_RECEIVE_BUFFER;
-    constant scope                      : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel  : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel               : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant data_routing     : in    t_data_routing := TO_RECEIVE_BUFFER;
+    constant scope            : in    string         := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_receive";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
@@ -362,23 +338,19 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.data_routing               := data_routing;
-    shared_vvc_cmd.use_provided_msg_id_panel  := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel               := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
   end procedure ethernet_receive;
 
   procedure ethernet_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant mac_source                : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant mac_source       : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := ERROR;
+    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
@@ -395,42 +367,36 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.payload_length                 := payload'length;
     shared_vvc_cmd.payload(0 to payload'length-1) := payload;
     shared_vvc_cmd.alert_level                    := alert_level;
-    shared_vvc_cmd.use_provided_msg_id_panel      := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel                   := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
   end procedure ethernet_expect;
 
   procedure ethernet_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant mac_destination           : in    unsigned(47 downto 0);
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant mac_destination  : in    unsigned(47 downto 0);
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := ERROR;
+    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel, mac_destination,
-      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
+      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope);
   end procedure ethernet_expect;
 
   procedure ethernet_expect(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant channel                   : in    t_channel;
-    constant payload                   : in    t_byte_array;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant payload          : in    t_byte_array;
+    constant msg              : in    string;
+    constant alert_level      : in    t_alert_level := ERROR;
+    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source,
-      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope, use_provided_msg_id_panel, msg_id_panel);
+      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope);
   end procedure ethernet_expect;
 
   --==========================================================================================

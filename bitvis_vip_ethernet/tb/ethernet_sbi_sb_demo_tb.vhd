@@ -93,7 +93,7 @@ begin
       v_data_raw(14 to 14+v_length-1) := payload(0 to v_length-1);
 
       -- FCS
-      v_ethernet_frame.fcs := not generate_crc_32(reverse_vectors_in_array(v_data_raw(0 to 14+v_payload_length-1)));
+      v_ethernet_frame.fcs := not generate_crc_32(v_data_raw(0 to 14+v_payload_length-1));
 
       return v_ethernet_frame;
     end function make_ethernet_frame;
@@ -140,11 +140,10 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write byte " & to_string(i) & " to FIFO");
-      --shared_sbi_sb.add_expected(2, to_sb_result(v_send_data(0)));
-      shared_sbi_sb.add_expected(2, v_send_data(0));
+      SBI_SB.add_expected(2, v_send_data(0));
       sbi_read(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_GET, 8), "Read byte " & to_string(i) & " from FIFO", TO_SB);
     end loop;
-    shared_sbi_sb.report_counters(ALL_ENABLED_INSTANCES);
+    SBI_SB.report_counters(ALL_ENABLED_INSTANCES);
     await_completion(SBI_VVCT, 2, 1 ms, "Wait for read to finish");
 
     log(ID_LOG_HDR, "Send 46 byte of data (min payload size) from i1, check with expect in i2");
@@ -162,8 +161,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write data to FIFO");
-      --shared_sbi_sb.add_expected(1, to_sb_result(v_send_data(0)));
-      shared_sbi_sb.add_expected(1, v_send_data(0));
+      SBI_SB.add_expected(1, v_send_data(0));
       sbi_read(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_GET, 8), "Read data from FIFO", TO_SB);
       await_completion(SBI_VVCT, 1, 2 us, "Wait for read to finish");
     end loop;
@@ -187,8 +185,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write data to FIFO");
-      --shared_sbi_sb.add_expected(2, to_sb_result(v_send_data(0)));
-      shared_sbi_sb.add_expected(2, v_send_data(0));
+      SBI_SB.add_expected(2, v_send_data(0));
       sbi_read(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_GET, 8), "Read data from FIFO", TO_SB);
       await_completion(SBI_VVCT, 2, 1 us, "Wait for read to finish");
     end loop;
@@ -208,8 +205,7 @@ begin
     for i in 0 to 9 loop
       v_send_data(0) := random(8);
       sbi_write(SBI_VVCT, 2, to_unsigned(C_ADDR_FIFO_PUT, 8), v_send_data(0), "Write data to FIFO");
-      --shared_sbi_sb.add_expected(1, to_sb_result(v_send_data(0)));
-      shared_sbi_sb.add_expected(1, v_send_data(0));
+      SBI_SB.add_expected(1, v_send_data(0));
       sbi_read(SBI_VVCT, 1, to_unsigned(C_ADDR_FIFO_GET, 8), "Read data from FIFO", TO_SB);
       await_completion(SBI_VVCT, 1, 1 us, "Wait for read to finish");
     end loop;
@@ -218,7 +214,7 @@ begin
     -- Ending the simulation
     --------------------------------------------------------------------------------------
     wait for 1000 ns;  -- to allow some time for completion
-    shared_sbi_sb.report_counters(ALL_ENABLED_INSTANCES);
+    SBI_SB.report_counters(ALL_ENABLED_INSTANCES);
     ETHERNET_SB.report_counters(ALL_ENABLED_INSTANCES);
     report_alert_counters(VOID);
     log(ID_LOG_HDR, "SIMULATION COMPLETED");

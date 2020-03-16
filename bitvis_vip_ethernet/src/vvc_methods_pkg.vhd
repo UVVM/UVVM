@@ -454,7 +454,6 @@ package body vvc_methods_pkg is
     variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
     variable v_frame                : t_ethernet_frame;
     variable v_payload_length       : natural;
-    variable v_payload_length_slv   : std_logic_vector(15 downto 0);
     variable v_crc_32               : std_logic_vector(31 downto 0);
     variable v_use_preamble_and_sfd : boolean;
     variable v_use_mac_dest         : boolean;
@@ -463,36 +462,41 @@ package body vvc_methods_pkg is
     variable v_use_payload          : boolean;
     variable v_use_fcs              : boolean;
   begin
-    -- Preamble
-    for i in 0 to 6 loop
-      v_packet(i) := C_PREAMBLE(55-(i*8) downto 55-(i*8)-7);     --|ET: Why reverse from standard? 10101010 MSb first.
-    end loop;
-    -- SFD
-    v_packet(7) := C_SFD;
-    -- MAC destination
+    -- Preamble (LSb first)
+    v_packet(0 to 6)        := convert_slv_to_byte_array(C_PREAMBLE, LOWER_BYTE_LEFT);
+    -- SFD (LSb first)
+    v_packet(7)             := C_SFD;
+
+    -- MAC destination (LSb first)
     v_packet(8 to 13)       := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_destination), LOWER_BYTE_LEFT);
     v_frame.mac_destination := vvc_cmd.mac_destination;
-    -- MAC source
-    v_packet(14 to 19) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_source), LOWER_BYTE_LEFT);
-    v_frame.mac_source := vvc_cmd.mac_source;
-    -- Payload length
-    v_payload_length       := vvc_cmd.payload_length;
-    v_payload_length_slv   := std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16));
-    v_packet(20)           := v_payload_length_slv(15 downto 8);
-    v_packet(21)           := v_payload_length_slv(7 downto 0);
-    v_frame.payload_length := vvc_cmd.payload_length;
-    -- Payload
+    -- MAC source (LSb first)
+    v_packet(14 to 19)      := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_source), LOWER_BYTE_LEFT);
+    v_frame.mac_source      := vvc_cmd.mac_source;
+    -- Payload length (LSb first)
+    v_packet(20 to 21)      := convert_slv_to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16)), LOWER_BYTE_LEFT);
+    v_frame.payload_length  := vvc_cmd.payload_length;
+    v_payload_length        := vvc_cmd.payload_length;
+    -- Check payload length is within limits
+    if vvc_cmd.payload_length > C_MAX_PAYLOAD_LENGTH then
+      alert(ERROR, "Payload is larger than maximum allowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);
+    end if;
+
+    -- Payload (LSb first)
     v_packet(22 to 22+vvc_cmd.payload_length-1) := vvc_cmd.payload(0 to vvc_cmd.payload_length-1);
-    v_frame.payload := vvc_cmd.payload;
-    -- Pad if payload length is less than C_MIN_PAYLOAD_LENGTH(46)
+    v_frame.payload         := vvc_cmd.payload;
+    -- Add padding bytes if payload length is less than C_MIN_PAYLOAD_LENGTH
     if vvc_cmd.payload_length < C_MIN_PAYLOAD_LENGTH then
       v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_packet(22+vvc_cmd.payload_length to 22+v_payload_length) := (others => (others => '0'));
+      v_packet(22+vvc_cmd.payload_length to 22+v_payload_length-1) := (others => (others => '0'));
     end if;
-    -- FCS
-    v_crc_32 := generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --|ET:Complete? Vectors? (=bytes?)
-    v_crc_32 := not(v_crc_32);                                                                                          --|ET: Because
-    v_packet(22+v_payload_length to 22+v_payload_length+3) := reverse_vectors_in_array(convert_slv_to_byte_array(v_crc_32, LOWER_BYTE_LEFT));
+
+    -- Calculate the FCS with the MAC addresses, payload length and payload data
+    v_crc_32 := generate_crc_32(v_packet(8 to 22+v_payload_length-1));
+    -- Post complement the CRC according to Ethernet standard
+    v_crc_32 := not(v_crc_32);
+    -- FCS (MSb first). Convert slv to byte_array with MSB first and then reverse the bits in each byte so MSb is transmitted first
+    v_packet(22+v_payload_length to 22+v_payload_length+4-1) := reverse_vectors_in_array(convert_slv_to_byte_array(v_crc_32, LOWER_BYTE_LEFT));
     v_frame.fcs := v_crc_32;
 
     -- Add info to the vvc_transaction_info
@@ -550,7 +554,7 @@ package body vvc_methods_pkg is
     if v_use_fcs then
       log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+3),
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+4-1),
         C_FIELD_IDX_FCS, scope, msg_id_panel);
     end if;
 
@@ -624,12 +628,11 @@ package body vvc_methods_pkg is
         -- Fetch one byte at the time until SFD is found
         blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
         v_preamble_and_sfd := v_preamble_and_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
-        v_packet(1 to 7)   := v_packet(0 to 6);                 --REVIEW ET: Why do we continuously update v_packet. It will always be known after preamble match... 
-        v_packet(0)        := bridge_to_hvvc.data_words(0);
         if v_preamble_and_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
       end loop;
+      v_packet(0 to 7) := convert_slv_to_byte_array(v_preamble_and_sfd, LOWER_BYTE_LEFT);
       log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
@@ -657,28 +660,27 @@ package body vvc_methods_pkg is
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
       v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
       received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
+      v_payload_length              := received_frame.payload_length;
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
+    end if;
+    if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
       log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
     end if;
-
-    -- Check payload length and if payload is padded
-    if received_frame.payload_length > C_MAX_PAYLOAD_LENGTH then
+    -- Check payload length is within limits
+    if v_payload_length > C_MAX_PAYLOAD_LENGTH then
       alert(ERROR, "Payload is larger than maximum allowed length, " & to_string(C_MAX_PAYLOAD_LENGTH) & " octets (bytes).", scope);
     end if;
-    if received_frame.payload_length < C_MIN_PAYLOAD_LENGTH then
-      v_payload_length := C_MIN_PAYLOAD_LENGTH;
-    else
-      v_payload_length := received_frame.payload_length;
-    end if;
 
-    -- Read payload from bridge (if configured)       --REVIEW ET:  How is padding handled? (doesn't seem to be removed?)
+    -- Read payload from bridge (if configured)
     if v_use_payload then
+      if v_payload_length < C_MIN_PAYLOAD_LENGTH then
+        v_payload_length := C_MIN_PAYLOAD_LENGTH;
+      end if;
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
-      v_packet(22 to 22+v_payload_length-1)           := bridge_to_hvvc.data_words(0 to v_payload_length-1);
-      received_frame.payload                          := (others => (others => '-')); -- Riviera pro don't allow non-static and others in aggregates   --REVIEW ET:  and....?
-      received_frame.payload(0 to v_payload_length-1) := v_packet(22 to 22+v_payload_length-1);
+      v_packet(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_words(0 to v_payload_length-1);
+      received_frame.payload(0 to received_frame.payload_length-1) := v_packet(22 to 22+received_frame.payload_length-1); -- Discard padding bytes
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.payload := received_frame.payload;
       log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) & 
@@ -689,13 +691,14 @@ package body vvc_methods_pkg is
     if v_use_fcs then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
+      -- For the FCS the MSb is received first, so we need to reverse the bits in each byte
       received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.fcs := received_frame.fcs;
       log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
-
-      fcs_error := not check_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length+4-1)));     
+      -- Check the CRC of the received frame
+      fcs_error := not check_crc_32(v_packet(8 to 22+v_payload_length+4-1));
       check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
     end if;
 
@@ -718,34 +721,15 @@ package body vvc_methods_pkg is
         & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
         & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
         & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
-    variable v_packet         : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
-    variable v_payload_length : integer;
-    variable v_expected_frame : t_ethernet_frame;
+    variable v_expected_frame : t_ethernet_frame := C_ETHERNET_FRAME_DEFAULT;
     variable v_received_frame : t_ethernet_frame;
     variable v_fcs_error      : boolean;
     variable v_frame_passed   : boolean := true;
   begin
-    -- For FCS calculation
-    v_packet( 8 to 13) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_destination), LOWER_BYTE_LEFT);
-    v_packet(14 to 19) := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_source), LOWER_BYTE_LEFT);
-    v_packet(20 to 21) := convert_slv_to_byte_array(std_logic_vector(to_unsigned(vvc_cmd.payload_length, 16)), LOWER_BYTE_LEFT);
-    v_packet(22 to 22+vvc_cmd.payload_length-1) := vvc_cmd.payload(0 to vvc_cmd.payload_length-1);
-    if vvc_cmd.payload_length < C_MIN_PAYLOAD_LENGTH then
-      v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_packet(22+vvc_cmd.payload_length to 22+v_payload_length) := (others => (others => '0'));
-    else
-      v_payload_length := vvc_cmd.payload_length;
-    end if;
-
-    v_expected_frame                 := C_ETHERNET_FRAME_DEFAULT;
     v_expected_frame.mac_destination := vvc_cmd.mac_destination;
     v_expected_frame.mac_source      := vvc_cmd.mac_source;
     v_expected_frame.payload_length  := vvc_cmd.payload_length;
     v_expected_frame.payload         := vvc_cmd.payload;
-    v_expected_frame.fcs             := not generate_crc_32(reverse_vectors_in_array(v_packet(8 to 22+v_payload_length-1)));  --REVIEW ET: Yields error in later comparison even if fcs of received frame is OK (for that received frame)
-
-    -- Add info to the vvc_transaction_info
-    vvc_transaction_info.bt.ethernet_frame.fcs := v_expected_frame.fcs;
 
     -- Receive frame
     priv_ethernet_receive_from_bridge(received_frame       => v_received_frame,
@@ -779,8 +763,7 @@ package body vvc_methods_pkg is
         v_frame_passed := false;
       end if;
     end loop;
-    if not check_value(v_received_frame.fcs, v_expected_frame.fcs, vvc_cmd.alert_level, "Verify FCS. " &
-      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+    if v_fcs_error then
       v_frame_passed := false;
     end if;
 

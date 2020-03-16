@@ -30,6 +30,7 @@ package support_pkg is
   --========================================================================================================================
   -- Types and constants
   --========================================================================================================================
+  -- The preamble & SFD sequence is represented with the LSb transmitted first
   constant C_PREAMBLE           : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD                : std_logic_vector( 7 downto 0) := x"D5";
 
@@ -129,14 +130,20 @@ end package support_pkg;
 
 package body support_pkg is
 
-  -- Generates the IEEE 802.3 CRC32 for byte array input
+  -- Returns the IEEE 802.3 CRC32 for an ascending byte array input with LSb first.
   impure function generate_crc_32(
     constant data_array : in t_byte_array
   ) return std_logic_vector is
   begin
-    return generate_crc(data_array, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
+    -- The function generate_crc() generates CRC from high to low (MSb first),
+    -- however the Ethernet standard uses LSb first for the frame data so we need
+    -- to reverse the bits in each byte.
+    return generate_crc(reverse_vectors_in_array(data_array), C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
   end function generate_crc_32;
 
+  -- Generates the IEEE 802.3 CRC32 for an ascending byte array containing
+  -- the frame data and the FCS. Returns true if the result is equal to the
+  -- expected residue.
   impure function check_crc_32(
     constant data_array : in t_byte_array
   ) return boolean is

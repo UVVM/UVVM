@@ -333,10 +333,10 @@ package adaptations_pkg is
   ------------------------------------------------------------------------
   -- CRC
   ------------------------------------------------------------------------
-  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
   -- CRC-32 (IEEE 802.3)
-  constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
-  constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B";
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
+  constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0'); --0x04C11DB7
+  constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B"; -- using left shifting CRC
 
   --------------------------------------------------------------------------
   -- WARNING! The following is not intended for user modifications!

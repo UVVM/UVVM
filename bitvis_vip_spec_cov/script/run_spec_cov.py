@@ -455,7 +455,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement", "Compliance"])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
@@ -473,7 +473,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
         with open(spec_cov_req_vs_tc_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
+            csv_writer.writerow(["Requirement", "Testcase(s)", "Compliance"])
             for requirement in container.get_requirement_list():
                 testcase_string = ""
                 for testcase in requirement.get_sorted_testcase_list():
@@ -491,7 +491,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement", "Compliance"])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
@@ -508,7 +508,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
         with open(spec_cov_tc_vs_req_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Testcase", "Requirement", "Result"])
+            csv_writer.writerow(["Testcase", "Requirement(s)", "Result"])
 
             for testcase in container.get_testcase_list():
                 requirement_string = ""

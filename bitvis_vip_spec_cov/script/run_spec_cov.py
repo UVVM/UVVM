@@ -515,19 +515,6 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                 for requirement in testcase.get_all_requirement_list():
                     requirement_string += requirement.get_name() + " "
                 csv_writer.writerow([testcase.get_name(), " " + requirement_string, " " + testcase.get_result()])
-
-            # Create a table with each testcase and a requirement
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Testcase", "Requirement", "Result"])
-            for testcase in container.get_testcase_list():
-                # Get the first requirement, as any requirement is OK
-                requirement_list = testcase.get_actual_requirement_list()
-                requirement_name = ""
-                if requirement_list:
-                    requirement_name = requirement_list[0].get_name()
-                    csv_writer.writerow([testcase.get_name(), " " + requirement_name, " " + testcase.get_result()])
                 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_vs_req_filename))

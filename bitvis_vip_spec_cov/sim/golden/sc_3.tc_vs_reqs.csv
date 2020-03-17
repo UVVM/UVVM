@@ -1,4 +1,4 @@
-Testcase,Requirement,Result
+Testcase,Requirement(s),Result
 TC_3, REQ_3 , PASS
 TC_50, REQ_3 , PASS
 TC_1, REQ_10 REQ_1 , PASS
@@ -8,10 +8,3 @@ TC_4_FAIL, REQ_4 , NOT_EXECUTED
 TC_5, REQ_5 , NOT_EXECUTED
 TC_6, REQ_6 , NOT_EXECUTED
 TC_7, REQ_7 , NOT_EXECUTED
-
-
-
-Testcase,Requirement,Result
-TC_3, REQ_3, PASS
-TC_50, REQ_3, PASS
-TC_1, REQ_10, PASS

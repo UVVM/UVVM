@@ -308,25 +308,25 @@ package ti_vvc_framework_support_pkg is
   type t_direction is (TRANSMIT, RECEIVE);
 
   type t_hvvc_to_bridge is record
-    trigger                   : boolean;
-    operation                 : t_vvc_operation;
-    num_data_words            : positive;
-    data_words                : t_slv_array;
-    dut_if_field_idx          : natural;
-    msg_id_panel              : t_msg_id_panel;
+    trigger          : boolean;          -- Trigger signal
+    operation        : t_vvc_operation;  -- Operation of the VVC
+    num_data_words   : positive;         -- Number of data words transferred
+    data_words       : t_slv_array;      -- Data sent to the VVC
+    dut_if_field_idx : natural;          -- Index of the interface field
+    msg_id_panel     : t_msg_id_panel;   -- Message ID panel of the HVVC
   end record;
 
   type t_bridge_to_hvvc is record
-    trigger        : boolean;
-    data_words     : t_slv_array;
+    trigger          : boolean;          -- Trigger signal
+    data_words       : t_slv_array;      -- Data received from the VVC
   end record;
 
   type t_dut_if_field_config is record
-    dut_address                : unsigned;
-    dut_address_increment      : integer;
-    data_width                 : positive;
-    use_field                  : boolean;
-    field_description          : string;
+    dut_address           : unsigned;    -- Address of the DUT IF field
+    dut_address_increment : integer;     -- Incrementation of the address on each access
+    data_width            : positive;    -- Width of the data per transfer
+    use_field             : boolean;     -- Used by the HVVC to send/request fields to/from the bridge or ignore them when not applicable
+    field_description     : string;      -- Description of the DUT IF field
   end record;
 
   constant C_DUT_IF_FIELD_CONFIG_DEFAULT : t_dut_if_field_config(dut_address(0 downto 0)) := (

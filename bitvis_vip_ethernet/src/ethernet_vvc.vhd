@@ -50,8 +50,8 @@ architecture struct of ethernet_vvc is
 
 begin
 
-  -- ETHERNET TRANSMIT VVC
-  i_ethernet_transmit: entity work.ethernet_transmit_vvc
+  -- ETHERNET TX VVC
+  i_ethernet_tx: entity work.ethernet_tx_vvc
   generic map(
     GC_INSTANCE_IDX                          => GC_INSTANCE_IDX,
     GC_CHANNEL                               => TX,
@@ -68,8 +68,8 @@ begin
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY => GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
 
-  -- ETHERNET RECEIVE VVC
-  i_ethernet_receive: entity work.ethernet_receive_vvc
+  -- ETHERNET RX VVC
+  i_ethernet_rx: entity work.ethernet_rx_vvc
   generic map(
     GC_INSTANCE_IDX                          => GC_INSTANCE_IDX,
     GC_CHANNEL                               => RX,

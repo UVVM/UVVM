@@ -39,7 +39,7 @@ use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
 
 --==========================================================================================
-entity ethernet_receive_vvc is
+entity ethernet_tx_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
     GC_CHANNEL                               : t_channel;
@@ -55,11 +55,11 @@ entity ethernet_receive_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                               := 950;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                         := WARNING
   );
-end entity ethernet_receive_vvc;
+end entity ethernet_tx_vvc;
 
 --==========================================================================================
 --==========================================================================================
-architecture behave of ethernet_receive_vvc is
+architecture behave of ethernet_tx_vvc is
 
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
@@ -230,7 +230,6 @@ begin
 --==========================================================================================
   cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time := 0 ns;
     variable v_timestamp_end_of_last_bfm_access      : time := 0 ns;
@@ -270,7 +269,7 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
-      if v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
+      if v_cmd.operation = TRANSMIT then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -294,41 +293,15 @@ begin
 
         -- VVC dedicated operations
         --===================================
-        when RECEIVE =>
+        when TRANSMIT =>
           -- Set vvc_transaction_info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the vvc_methods_pkg.
-          priv_ethernet_receive_from_bridge(received_frame       => v_result.ethernet_frame,
-                                            fcs_error            => v_result.ethernet_frame_status.fcs_error,
-                                            fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
-                                            vvc_cmd              => v_cmd,
-                                            dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
-                                            hvvc_to_bridge       => hvvc_to_bridge,
-                                            bridge_to_hvvc       => bridge_to_hvvc,
-                                            vvc_transaction_info => vvc_transaction_info,
-                                            scope                => C_SCOPE,
-                                            msg_id_panel         => v_msg_id_panel);
-
-          if v_cmd.data_routing = TO_SB then
-            -- Send result to scoreboard
-            ETHERNET_SB.check_received(GC_INSTANCE_IDX, v_result.ethernet_frame);
-          else
-            -- Store the result
-            work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
-                                                        cmd_idx       => v_cmd.cmd_idx,
-                                                        result        => v_result);
-          end if;
-
-        when EXPECT =>
-          -- Set vvc_transaction_info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-
-          -- Call the corresponding procedure in the vvc_methods_pkg.
-          priv_ethernet_expect_from_bridge(fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
+          priv_ethernet_transmit_to_bridge(interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
                                            vvc_cmd              => v_cmd,
-                                           dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                            hvvc_to_bridge       => hvvc_to_bridge,
+                                           dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(TRANSMIT),
                                            bridge_to_hvvc       => bridge_to_hvvc,
                                            vvc_transaction_info => vvc_transaction_info,
                                            scope                => C_SCOPE,

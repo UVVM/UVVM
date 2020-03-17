@@ -298,6 +298,9 @@ package adaptations_pkg is
 
   );
 
+  -- Hierarchical-VVCs supported interfaces
+  type t_interface is (SBI, GMII);
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 

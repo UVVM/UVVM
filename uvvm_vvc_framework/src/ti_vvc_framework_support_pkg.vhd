@@ -302,10 +302,8 @@ package ti_vvc_framework_support_pkg is
   -- ============================================================================
   -- Hierarchical VVC (HVVC)
   -- ============================================================================
-
-  type t_vvc_operation is (TRANSMIT, RECEIVE);
-  type t_interface is (SBI, GMII);
-  type t_direction is (TRANSMIT, RECEIVE);
+  type t_vvc_operation is (TRANSMIT, RECEIVE); -- Type of operation to be executed by the VVC
+  type t_direction is (TRANSMIT, RECEIVE);     -- Direction of the interface (used by the IF field config)
 
   type t_hvvc_to_bridge is record
     trigger          : boolean;          -- Trigger signal

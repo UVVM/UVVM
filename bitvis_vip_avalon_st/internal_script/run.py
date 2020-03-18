@@ -49,9 +49,11 @@ def main(argv):
   tb.compile()
 
   # Define tests
-  tests = [ "test_packet_data",
+  tests = [ #"test_packet_data",
+            #"test_avalon_st_sb",
             "test_stream_data",
-            "test_setup_and_hold_times"]
+            #"test_setup_and_hold_times"
+          ]
 
   # Set testbench, config and run
   tb.set_tb_name("avalon_st_bfm_tb")

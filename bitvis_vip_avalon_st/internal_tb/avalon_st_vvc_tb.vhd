@@ -27,6 +27,9 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_avalon_st;
 context bitvis_vip_avalon_st.vvc_context;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
 
 -- Test case entity
 entity avalon_st_vvc_tb is
@@ -69,6 +72,10 @@ architecture func of avalon_st_vvc_tb is
                                               data(GC_DATA_WIDTH-1 downto 0),
                                               data_error(GC_ERROR_WIDTH-1 downto 0),
                                               empty(C_EMPTY_WIDTH-1 downto 0));
+
+  alias t_vvc_result is work.vvc_cmd_pkg.t_vvc_result;
+
+
 
 begin
 
@@ -117,6 +124,45 @@ begin
         data_array(i) := random(data_array(0)'length);
       end loop;
     end procedure;
+
+    impure function get_sb_record_item(
+      constant channel_value : in  std_logic_vector;
+      constant data_array    : in  t_slv_array
+    ) return t_vvc_result is    
+
+      constant c_data_word_size  : natural := data_array(data_array'low)'length;
+      constant c_channel_value_default : std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0) := (others => '0');
+      -- helper variables
+      variable v_return           : t_vvc_result;
+      --variable v_normalized_chan  : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) :=
+      --  normalize_and_check(channel_value, c_channel_value_default, ALLOW_NARROWER, "channel", "c_channel_value_default", "get_sb_record_item called with to wide channel"); --, proc_call & ". " & msg);
+      --variable v_normalized_data  : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0) := data_array;
+  
+    begin
+      v_return.channel_value := (others => '0');
+      v_return.channel_value(channel_value'length-1 downto 0) := channel_value;
+
+      v_return.data_array := (others => (others => '0'));
+      for idx in 0 to data_array'high loop
+        v_return.data_array(idx)(data_array(idx)'length-1 downto 0) := data_array(idx);
+      end loop;
+
+      v_return.data_array_length    := v_return.data_array'length;
+      v_return.data_array_word_size := data_array(data_array'low)'length;
+
+
+      --v_return.channel_value        := v_normalized_chan;
+      --v_return.data_array           := v_normalized_data;
+      --v_return.data_array_length    := v_normalized_data'length;
+      --v_return.data_array_word_size := data_array(data_array'low)'length;
+      return v_return;
+    end function get_sb_record_item;
+
+    constant c_debug : t_vvc_result := (
+      channel_value        => (others => '0'),
+      data_array           => (others => (others => '0')),
+      data_array_length    => C_VVC_CMD_DATA_MAX_WORDS,
+      data_array_word_size => C_VVC_CMD_WORD_MAX_LENGTH);
 
   begin
 
@@ -320,6 +366,7 @@ begin
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_packet, "");
       wait for (v_avl_st_bfm_config.max_wait_cycles+1)*C_CLK_PERIOD;
 
+
     elsif GC_TEST = "test_stream_data" then
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet): VVC->DUT->VVC");
@@ -357,10 +404,12 @@ begin
       log(ID_LOG_HDR, "Testing shortest streams possible");
       for i in 0 to 3 loop
         for j in 0 to i loop
+          --AVALON_ST_SB.add_expected(get_sb_record_item(x"0", v_data_stream(0 to 4)));
           avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 0), "");
         end loop;
         for j in 0 to i loop
           avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(0 to 0), "");
+          --avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 5, v_data_stream(0)'length, TO_SB, "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       end loop;

@@ -309,16 +309,17 @@ package body vvc_methods_pkg is
 
 
   procedure avalon_st_receive (
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data_array_len   : in    natural;
-    constant data_word_size   : in    natural;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data_array_len      : in    natural;
+    constant data_word_size      : in    natural;
+    constant msg                 : in    string;
+    constant scope               : in    string := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
   begin
     -- call overloaded procedure
-    avalon_st_receive(VVCT, vvc_instance_idx, data_array_len, data_word_size, TO_BUFFER, msg, scope);
+    avalon_st_receive(VVCT, vvc_instance_idx, data_array_len, data_word_size, TO_BUFFER, msg, scope, parent_msg_id_panel);
   end procedure;
 
 

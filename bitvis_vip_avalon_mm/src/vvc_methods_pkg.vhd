@@ -179,8 +179,8 @@ package vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant addr               : in unsigned;
-    constant msg                : in string;
     constant data_routing       : in t_data_routing;
+    constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
 
@@ -335,8 +335,8 @@ package body vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant addr               : in unsigned;
-    constant msg                : in string;
     constant data_routing       : in t_data_routing;
+    constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   ) is
     constant proc_name : string := "avalon_mm_read";

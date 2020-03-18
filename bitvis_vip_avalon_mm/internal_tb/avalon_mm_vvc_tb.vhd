@@ -143,7 +143,7 @@ begin
     AVALON_MM_SB.add_expected(pad_sb_slv(v_data_8));
 
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
-    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout", TO_SB);   
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout");   
 
     await_completion(AVALON_MM_VVCT,1, 10000 ns, "Wait for avalon_mm_read to finish");
     AVALON_MM_SB.report_counters(VOID);

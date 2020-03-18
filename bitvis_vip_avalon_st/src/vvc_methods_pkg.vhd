@@ -26,7 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
+--use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 use work.local_adaptations_pkg.all;
 use work.avalon_st_bfm_pkg.all;
@@ -98,7 +98,21 @@ package vvc_methods_pkg is
 
   shared variable shared_avalon_st_vvc_config : t_vvc_config_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_AVALON_ST_VVC_CONFIG_DEFAULT);
   shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable AVALON_ST_SB         : t_generic_sb; -- Scoreboard
+  
+  --==============================================================================
+  -- Scoreboard 
+  --==============================================================================
+  function avalon_st_element_to_string(
+    constant value : in t_vvc_result
+  ) return string;
+
+
+  package avalon_st_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+  generic map (t_element         => t_vvc_result,
+               element_match     => "=",
+               to_string_element => avalon_st_element_to_string);
+            
+  shared variable AVALON_ST_SB         : avalon_st_sb_pkg.t_generic_sb;
 
 
   --==========================================================================================
@@ -133,6 +147,18 @@ package vvc_methods_pkg is
   ---------------------------------------------------------------------------------------------
   -- Avalon-ST Receive
   ---------------------------------------------------------------------------------------------
+  procedure avalon_st_receive (
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data_array_len      : in    natural;
+    constant data_word_size      : in    natural;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+
   procedure avalon_st_receive (
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
@@ -257,6 +283,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx    : in    integer;
     constant data_array_len      : in    natural;
     constant data_word_size      : in    natural;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -273,11 +300,31 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data_array_length    := data_array_len;
     shared_vvc_cmd.data_array_word_size := data_word_size;
     shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
+    shared_vvc_cmd.data_routing         := data_routing;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
+
+
+  procedure avalon_st_receive (
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant data_array_len   : in    natural;
+    constant data_word_size   : in    natural;
+    constant msg              : in    string;
+    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+  begin
+    -- call overloaded procedure
+    avalon_st_receive(VVCT, vvc_instance_idx, data_array_len, data_word_size, TO_BUFFER, msg, scope);
+  end procedure;
+
+
+
+
+
 
   ---------------------------------------------------------------------------------------------
   -- Avalon-ST Expect
@@ -332,6 +379,21 @@ package body vvc_methods_pkg is
   begin
     avalon_st_expect(VVCT, vvc_instance_idx, channel_exp, data_exp, msg, scope, alert_level, parent_msg_id_panel);
   end procedure;
+
+
+  --==============================================================================
+  -- Scoreboard methods
+  --==============================================================================
+  function avalon_st_element_to_string(
+    constant value : in t_vvc_result
+  ) return string is
+    constant c_return : string := "channel_value : " & to_string(value.channel_value, HEX, KEEP_LEADING_0, INCL_RADIX) & 
+                                  ", data_array_width : " & to_string(value.data_array_length) & 
+                                  ", data_array_word_size : " & to_string(value.data_array_word_size) & ".";
+  begin
+    return c_return;
+  end function;
+
 
   --==============================================================================
   -- Transaction info methods

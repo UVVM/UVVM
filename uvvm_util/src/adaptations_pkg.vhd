@@ -309,7 +309,7 @@ package adaptations_pkg is
   constant C_MAX_QUEUE_INSTANCE_NUM : positive := 100; -- Maximum number of instances
   constant C_SB_TAG_WIDTH           : positive := 128; -- Number of characters in SB tag
   constant C_SB_SOURCE_WIDTH        : positive := 128; -- Number of characters in SB source element
-  constant C_SB_SLV_WIDTH           : positive :=   8; -- Width of the SLV in the predefined SLV SB
+  constant C_SB_SLV_WIDTH           : positive := 128; -- Width of the SLV in the predefined SLV SB
 
   -- Default message Id panel intended for use in SB
   constant C_SB_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (

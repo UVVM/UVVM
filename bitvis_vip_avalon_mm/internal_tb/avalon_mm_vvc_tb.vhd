@@ -27,6 +27,12 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
+
+
+
 -- Test case entity
 entity avalon_mm_vvc_tb is
   generic (
@@ -57,6 +63,7 @@ begin
     constant C_SCOPE      : string             := C_TB_SCOPE_DEFAULT;
     variable v_cmd_idx    : natural;
     variable v_data       : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    variable v_data_8     : std_logic_vector(7 downto 0) := (others => '0');
     variable v_is_ok      : boolean;
     variable v_timestamp  : time;
 
@@ -132,15 +139,14 @@ begin
 
 
     log("Write, read back and check data with Scoreboard on one VVC");
-    avalon_mm_write(AVALON_MM_VVCT, 1, "0", x"10", "Write to Avalon MM 1");
-    AVALON_MM_SB.add_expected(x"00000010");
-    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout", TO_SB);
+    v_data_8 := x"10";
+    AVALON_MM_SB.add_expected(pad_sb_slv(v_data_8));
 
-    await_completion(AVALON_MM_VVCT,1, v_cmd_idx, 100 ns, "Wait for sbi_read to finish");
+    avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout");   
 
-    --fetch_result(AVALON_MM_VVCT,1 , v_cmd_idx, v_data, v_is_ok, "Fetching read-result");
-    --check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
-    --check_value(v_data(31 downto 0), x"10", ERROR, "Readback data via fetch_result()");
+    await_completion(AVALON_MM_VVCT,1, 10000 ns, "Wait for avalon_mm_read to finish");
+    AVALON_MM_SB.report_counters(VOID);
 
 
     log("Write, read back and check data with avalon_mm_read on one VVC");

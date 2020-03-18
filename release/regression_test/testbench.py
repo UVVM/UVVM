@@ -366,7 +366,7 @@ class Testbench:
 
 
     # Clean-up
-    def cleanup(self, test_name):
+    def cleanup(self, test_name=None):
       """
       Remove generated files from test in testbench
 
@@ -379,8 +379,8 @@ class Testbench:
           if 'alert' or 'log' in item.lower():
             os.remove(item)
 
-        if os.path.isfile('transcript'):
-          os.remove('transcript')
+      if os.path.isfile('transcript'):
+        os.remove('transcript')
 
 
 
@@ -424,7 +424,7 @@ class Testbench:
 
 
           # Was this a failing test?
-          if not(check_ok) and is_log_file:
+          if not(check_ok):# and is_log_file:
             print("Failing test: %s" %(item))
             num_failing_tests += 1
 
@@ -484,6 +484,7 @@ class Testbench:
         self.cleanup(test_name)
       
         for config_idx, config in enumerate(self.configs):
+          self.cleanup(test_name)
           self.increment_num_tests()
           
           # Progress counter: (testcase / tot_testcases, config / total_configs)

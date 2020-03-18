@@ -126,15 +126,6 @@ package vvc_methods_pkg is
   shared variable shared_avalon_mm_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
 
-  ---- Scoreboard
-  --package slv_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  --generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
-  --             element_match     => std_match,
-  --             to_string_element => to_string,
-  --             sb_config_default => C_SB_CONFIG_DEFAULT);
-  --use slv_sb_pkg.all;
-  --shared variable AVALON_MM_SB  : slv_sb_pkg.t_generic_sb;
-
   shared variable AVALON_MM_SB : t_generic_sb;
 
   --==========================================================================================
@@ -171,6 +162,7 @@ package vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant addr               : in unsigned;
+    constant data_routing       : in t_data_routing;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -179,7 +171,6 @@ package vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant addr               : in unsigned;
-    constant data_routing       : in t_data_routing;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
   );
@@ -312,29 +303,6 @@ package body vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant addr               : in unsigned;
-    constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
-  ) is
-    constant proc_name : string := "avalon_mm_read";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-        & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
-        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr",proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-  begin
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.operation                          := READ;
-    shared_vvc_cmd.addr                               := v_normalised_addr;
-    send_command_to_vvc(VVCT, scope => scope);
-  end procedure;
-
-  
-  procedure avalon_mm_read(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
     constant data_routing       : in t_data_routing;
     constant msg                : in string;
     constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
@@ -353,6 +321,19 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.addr         := v_normalised_addr;
     shared_vvc_cmd.data_routing := data_routing;
     send_command_to_vvc(VVCT, scope => scope);
+  end procedure;
+
+
+  procedure avalon_mm_read(
+    signal   VVCT               : inout t_vvc_target_record;
+    constant vvc_instance_idx   : in integer;
+    constant addr               : in unsigned;
+    constant msg                : in string;
+    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+  ) is
+  begin
+    -- call overloading procedure
+    avalon_mm_read(VVCT, vvc_instance_idx, addr, TO_BUFFER, msg, scope);
   end procedure;
 
 

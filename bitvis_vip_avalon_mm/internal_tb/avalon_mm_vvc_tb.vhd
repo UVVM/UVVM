@@ -140,7 +140,7 @@ begin
 
     log("Write, read back and check data with Scoreboard on one VVC");
     v_data_8 := x"10";
-    AVALON_MM_SB.add_expected(sb_pad(v_data_8));
+    AVALON_MM_SB.add_expected(pad_sb_slv(v_data_8));
 
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Reading without expected timeout", TO_SB);   

@@ -25,7 +25,7 @@ context uvvm_util.uvvm_util_context;
 package generic_sb_support_pkg is
 
 
-  function sb_pad(
+  function pad_sb_slv(
     constant pad_data   : std_logic_vector;
     constant pad_width  : positive := C_SB_SLV_WIDTH
   ) return std_logic_vector;
@@ -57,7 +57,7 @@ end package generic_sb_support_pkg;
 package body generic_sb_support_pkg is
 
 
-  function sb_pad(
+  function pad_sb_slv(
     constant pad_data   : std_logic_vector;
     constant pad_width  : positive := C_SB_SLV_WIDTH
   ) return std_logic_vector is
@@ -74,6 +74,6 @@ package body generic_sb_support_pkg is
       v_des_slv(pad_data'length-1 downto 0) := pad_data;
       return v_des_slv;
     end if;
-  end function sb_pad;
+  end function pad_sb_slv;
 
 end package body generic_sb_support_pkg;

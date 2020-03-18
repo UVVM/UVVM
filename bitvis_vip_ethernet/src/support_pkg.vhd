@@ -99,12 +99,12 @@ package support_pkg is
   ) return positive;
 
   function to_string(
-    constant ethernet_frame : in t_ethernet_frame
+    constant ethernet_frame : in t_ethernet_frame;
+    constant frame_field    : in t_frame_field
   ) return string;
 
   function to_string(
-    constant ethernet_frame : in t_ethernet_frame;
-    constant frame_field    : in t_frame_field
+    constant ethernet_frame : in t_ethernet_frame
   ) return string;
 
   procedure compare_ethernet_frames(
@@ -159,16 +159,7 @@ package body support_pkg is
     return payload_length + 18;
   end function get_ethernet_frame_length;
 
-  function to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-  begin
-    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           ", payload length: " & to_string(ethernet_frame.payload_length) &
-           ", fcs: " & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
-  end function to_string;
-
+  -- Returns a string with a specific field from the frame
   function to_string(
     constant ethernet_frame : in t_ethernet_frame;
     constant frame_field    : in t_frame_field
@@ -201,6 +192,16 @@ package body support_pkg is
       when others =>
         return "";
     end case;
+  end function to_string;
+
+  -- Returns a string with the main frame info (used in scoreboard)
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame
+  ) return string is
+  begin
+    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
+           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
+           ", payload length: " & to_string(ethernet_frame.payload_length);
   end function to_string;
 
   -- Compares two ethernet frames

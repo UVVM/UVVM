@@ -5,6 +5,9 @@ v1.0.2
 ----------
 Released: 2020-XX-XX
 - Fixed logging to show the correct total number of words/symbols.
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
 
 v1.0.1
 ----------

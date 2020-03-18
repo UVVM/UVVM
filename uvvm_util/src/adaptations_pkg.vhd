@@ -31,9 +31,9 @@ package adaptations_pkg is
 
   constant C_UVVM_TIMEOUT    : time := 100 us; -- General timeout for UVVM wait statements
 
-  -------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Log format
-  -------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   --UVVM: [<ID>]  <time>  <Scope>        Msg
   --PPPPPPPPIIIIII TTTTTTTT  SSSSSSSSSSSSSS MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   constant C_LOG_PREFIX : string := "UVVM: "; -- Note: ': ' is recommended as final characters
@@ -55,8 +55,8 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_TB_SCOPE_DEFAULT         : string := "TB seq."; -- Default scope in test sequencer
-  constant C_VVC_CMD_SCOPE_DEFAULT    : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
+  constant C_TB_SCOPE_DEFAULT       : string := "TB seq."; -- Default scope in test sequencer
+  constant C_VVC_CMD_SCOPE_DEFAULT  : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
@@ -66,16 +66,15 @@ package adaptations_pkg is
 
   constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true; -- true: break using std.env.stop, false: break using failure
 
-  shared variable shared_default_log_destination        : t_log_destination  := CONSOLE_AND_LOG;
+  shared variable shared_default_log_destination : t_log_destination := CONSOLE_AND_LOG;
 
-
-  -------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Verbosity control
   -- NOTE: Do not enter new IDs without proper evaluation:
   --       1. Is it - or could it be covered by an existing ID
   --       2. Could it be combined with other needs for a more general new ID
   --       Feel free to suggest new ID for future versions of UVVM Utility Library (support@bitvis.no)
-  -------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   type t_msg_id is (
     -- Bitvis utility methods
     NO_ID,                    -- Used as default prior to setting actual ID when transfering ID as a field in a record
@@ -159,7 +158,7 @@ package adaptations_pkg is
     -- Special purpose - Not really IDs
     ALL_MESSAGES              -- Applies to ALL message ID apart from ID_NEVER
     );
-  type  t_msg_id_panel is array (t_msg_id'left to t_msg_id'right) of t_enabled;
+  type t_msg_id_panel is array (t_msg_id'left to t_msg_id'right) of t_enabled;
 
   constant C_TB_MSG_ID_DEFAULT : t_msg_id := ID_SEQUENCER; -- msg ID used when calling the log method without any msg ID switch.
 
@@ -175,31 +174,26 @@ package adaptations_pkg is
     others              => ENABLED
   );
 
-  -- Message Id panel with all IDs as NA. (used in Hierarchical-VVCs)
-  constant C_UNUSED_MSG_ID_PANEL : t_msg_id_panel := (
-    others => NA
-  );
-
   -- If false, OSVVM uses the default message id panel. If true, it uses a separate message id panel.
   constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
 
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
   constant C_MSG_ID_INDENT : t_msg_id_indent := (
-    ID_IMMEDIATE_CMD_WAIT     => "  ..",
-    ID_CMD_INTERPRETER        => "  "   & NUL & NUL,
-    ID_CMD_INTERPRETER_WAIT   => "  ..",
-    ID_CMD_EXECUTOR           => "  "   & NUL & NUL,
-    ID_CMD_EXECUTOR_WAIT      => "  ..",
-    ID_UVVM_SEND_CMD      => "->"   & NUL & NUL,
-    ID_UVVM_CMD_ACK       => "    ",
-    others                => ""     & NUL & NUL & NUL & NUL
+    ID_IMMEDIATE_CMD_WAIT   => "  ..",
+    ID_CMD_INTERPRETER      => "  "   & NUL & NUL,
+    ID_CMD_INTERPRETER_WAIT => "  ..",
+    ID_CMD_EXECUTOR         => "  "   & NUL & NUL,
+    ID_CMD_EXECUTOR_WAIT    => "  ..",
+    ID_UVVM_SEND_CMD        => "->"   & NUL & NUL,
+    ID_UVVM_CMD_ACK         => "    ",
+    others                  => ""     & NUL & NUL & NUL & NUL
   );
 
   constant C_MSG_DELIMITER : character := ''';
 
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Alert counters
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Default values. These can be overwritten in each sequencer by using
   -- set_alert_attention or set_alert_stop_limit (see quick ref).
   constant C_DEFAULT_ALERT_ATTENTION : t_alert_attention := (others => REGARD);
@@ -208,9 +202,9 @@ package adaptations_pkg is
   constant C_DEFAULT_STOP_LIMIT : t_alert_counters := (note to manual_check => 0,
                                                        others               => 1);
 
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical alerts
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   constant C_ENABLE_HIERARCHICAL_ALERTS : boolean := false;
   constant C_BASE_HIERARCHY_LEVEL : string(1 to 5) := "Total";
 
@@ -219,23 +213,22 @@ package adaptations_pkg is
                                                 (others => 0),
                                                 (others => true));
 
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Synchronisation
-  -------------------------------------------------------------------------
-  constant C_NUM_SYNC_FLAGS     : positive := 100; -- Maximum number of sync flags
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_NUM_SYNC_FLAGS : positive := 100; -- Maximum number of sync flags
 
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Deprecate
-  -------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- These values are used to indicate outdated sub-programs
-  constant C_DEPRECATE_SETTING : t_deprecate_setting := DEPRECATE_ONCE;
+  constant C_DEPRECATE_SETTING : t_deprecate_setting := DEPRECATE_ONCE; --REVIEW EC: are these 2 lines meant to be modified by the user? otherwise move to the last section
   shared variable deprecated_subprogram_list : t_deprecate_list := (others=>(others => ' '));
 
-
-  ------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations
-  ------------------------------------------------------------------------
-  constant C_SCOPE          : string := C_TB_SCOPE_DEFAULT & "(uvvm)";
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_SCOPE : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; --REVIEW EC: is this used at all? either remove or place in the Log format section before C_TB_SCOPE_DEFAULT
 
   signal global_show_msg_for_uvvm_cmd  : boolean := true;
 
@@ -247,7 +240,7 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_THRESHOLD            : natural       := 18;
   constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 8;
   constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers
-  constant C_MAX_TB_VVC_NUM                          : natural       := 20; -- Max number of VVCs in testbench (including all channels)
+  constant C_MAX_TB_VVC_NUM                          : natural       := 20; -- Max number of VVCs in testbench (including all channels) --REVIEW EC: why is this bigger than C_MAX_VVC_INSTANCE_NUM, and what's the difference between them?
 
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH                     : positive      := 20;
@@ -289,22 +282,18 @@ package adaptations_pkg is
     RANDOM_FAVOUR_EDGES
   );
 
-  type t_channel is ( -- NOTE: Add more types of channels when needed for a VVC
+  type t_channel is (
     NA,               -- When channel is not relevant
     ALL_CHANNELS,     -- When command shall be received by all channels
     -- UVVM predefined channels.
     RX, TX
-    -- User add more channels if needed below.
-
+    -- User can add more channels if needed below.
   );
-
-  -- Hierarchical-VVCs supported interfaces
-  type t_interface is (SBI, GMII);
 
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
-  type t_vvc is record
+  type t_vvc is record --REVIEW EC: not used anywhere, remove?
     instance  : integer;
     channel   : t_channel;
   end record t_vvc;
@@ -314,9 +303,9 @@ package adaptations_pkg is
 
   constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
 
-  ------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- Scoreboard adaptations
-  ------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   constant C_MAX_QUEUE_INSTANCE_NUM : positive := 100; -- Maximum number of instances
   constant C_SB_TAG_WIDTH           : positive := 128; -- Number of characters in SB tag
   constant C_SB_SOURCE_WIDTH        : positive := 128; -- Number of characters in SB source element
@@ -329,26 +318,38 @@ package adaptations_pkg is
     others  => DISABLED
   );
 
-  ------------------------------------------------------------------------
-  -- 
-  ------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Hierarchical-VVCs
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- HVVC supported interfaces
+  type t_interface is (SBI, GMII);
+
+  -- For frame-based communication
   type t_frame_field is (
     HEADER,
     PAYLOAD,
     CHECKSUM
   );
 
-  ------------------------------------------------------------------------
+  -- Message Id panel with all IDs as NA
+  constant C_UNUSED_MSG_ID_PANEL : t_msg_id_panel := (
+    others => NA
+  );
+
+  --------------------------------------------------------------------------------------------------------------------------------
   -- CRC
-  ------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
   -- CRC-32 (IEEE 802.3)
   constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
   constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0'); --0x04C11DB7
   constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B"; -- using left shifting CRC
 
-  --------------------------------------------------------------------------
-  -- WARNING! The following is not intended for user modifications!
-  --------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- *****************************************************************************************************************************
+  -- WARNING!
+  -- The code below is not intended for user modifications!
+  -- *****************************************************************************************************************************
+  --------------------------------------------------------------------------------------------------------------------------------
   type t_vvc_id is record
     name      : string(1 to C_MAX_VVC_NAME_LENGTH);
     instance  : natural;

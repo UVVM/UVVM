@@ -17,6 +17,7 @@ if sys.version_info[0] < 3:
 
 import os
 import csv
+import glob
 
 #==========================================================================
 # Settings
@@ -101,7 +102,7 @@ class Requirement():
             self.actual_testcase_list.append(testcase)
         # Update testcase result if testcase already exists
         else:
-            for actual_testcase in self.actual_testcase_list():
+            for actual_testcase in self.actual_testcase_list:
                 if actual_testcase.get_name().upper() == testcase.get_name().upper():
                     actual_testcase.set_result(testcase.get_result())
         # Update for any super-requirement
@@ -450,6 +451,18 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             for requirement in container.get_requirement_list():
                 for testcase in requirement.get_sorted_testcase_list():
                     csv_writer.writerow([requirement.get_name(), " " + testcase.get_name(), " " + requirement.get_compliance()])
+            # Create a table with the super-requirement mapping to sub-requirements
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
+            for requirement in container.get_requirement_list():
+                sub_requirement_string = ""
+                for sub_requirement in requirement.get_sub_requirement_list():
+                    sub_requirement_string += " " + sub_requirement.get_name()
+                if sub_requirement_string:
+                    csv_writer.writerow([requirement.get_name(), " " + sub_requirement_string, " " + requirement.get_compliance()])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -460,7 +473,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
         with open(spec_cov_req_vs_tc_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
+            csv_writer.writerow(["Requirement", "Testcase(s)", "Compliance"])
             for requirement in container.get_requirement_list():
                 testcase_string = ""
                 for testcase in requirement.get_sorted_testcase_list():
@@ -478,7 +491,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement", "Compliance"])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
@@ -495,26 +508,13 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
         with open(spec_cov_tc_vs_req_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
 
-            csv_writer.writerow(["Testcase", "Requirement", "Result"])
+            csv_writer.writerow(["Testcase", "Requirement(s)", "Result"])
 
             for testcase in container.get_testcase_list():
                 requirement_string = ""
                 for requirement in testcase.get_all_requirement_list():
                     requirement_string += requirement.get_name() + " "
                 csv_writer.writerow([testcase.get_name(), " " + requirement_string, " " + testcase.get_result()])
-
-            # Create a table with each testcase and a requirement
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Testcase", "Requirement", "Result"])
-            for testcase in container.get_testcase_list():
-                # Get the first requirement, as any requirement is OK
-                requirement_list = testcase.get_actual_requirement_list()
-                requirement_name = ""
-                if requirement_list:
-                    requirement_name = requirement_list[0].get_name()
-                    csv_writer.writerow([testcase.get_name(), " " + requirement_name, " " + testcase.get_result()])
                 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_vs_req_filename))
@@ -798,14 +798,29 @@ def build_partial_coverage_list(run_configuration, container):
         else:
             partial_coverage_files.append(partial_coverage_file_name)
     except:
-        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], map_partial_coverage_file_namename))
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file_name))
         abort(error_code = 1, msg = error_msg)
+
+    #==========================================================================
+    # Check if listed files are files, i.e. files listed using wildcards,
+    # and add any wildcard matches.
+    #==========================================================================
+    for pc_file in partial_coverage_files:
+        if not(os.path.isfile(pc_file)):
+            # Remove the wildcard item from list
+            partial_coverage_files.remove(pc_file)
+            # Search for files matching wildcard
+            for wildcard_file in glob.glob(pc_file):
+                # Add any mathing files if not already in list
+                if os.path.isfile(wildcard_file) and not(wildcard_file in partial_coverage_files):
+                    # Adjust path for windows and add to list
+                    wildcard_file = wildcard_file.replace('\\', '/')
+                    partial_coverage_files.append(wildcard_file)            
 
     #==========================================================================
     # Get the delimiter from the partial_cov file
     #==========================================================================
     partial_coverage_pass = False
-
     try:
         with open(partial_coverage_files[0]) as partial_coverage_file:
             lines = partial_coverage_file.readlines()
@@ -860,7 +875,6 @@ def build_partial_coverage_list(run_configuration, container):
                         # Connect: requirement <-> testcase
                         testcase.add_actual_requirement(requirement)
                         requirement.add_actual_testcase(testcase)
-
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], partial_coverage_file))
@@ -1000,12 +1014,12 @@ def validate_run_configuration(run_configuration):
     """
     # Validate 
     if run_configuration.get("strictness") > 0:
-        if run_configuration.get("requirement_file") == None:
-            msg = ("Strictness level %d require a requiement file" %(run_configuration.get("strictness")))
+        if run_configuration.get("requirement_list") == None:
+            msg = ("Strictness level %d require a requirement file" %(run_configuration.get("strictness")))
             abort(error_code = 1, msg = msg)
 
     if run_configuration.get("partial_cov") == None:
-        msg = ("Missing argument for parital coverage file")
+        msg = ("Missing argument for partial coverage file")
         abort(error_code = 1, msg = msg)
 
     if run_configuration.get("spec_cov") == None:
@@ -1028,9 +1042,9 @@ def run_housekeeping(run_configuration):
     # Abort cleaning if --clean argument was passed along with
     # other legal arguments.
     if (
-        run_configuration.get("requirement_file") or 
+        run_configuration.get("requirement_list") or 
         run_configuration.get("partial_cov") or 
-        run_configuration.get("requiremenet_map_list") or 
+        run_configuration.get("requirement_map_list") or 
         run_configuration.get("spec_cov") or
         run_configuration.get("strictness") != '0' or
         run_configuration.get("config")

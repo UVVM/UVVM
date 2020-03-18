@@ -175,6 +175,11 @@ package adaptations_pkg is
     others              => ENABLED
   );
 
+  -- Message Id panel with all IDs as NA. (used in Hierarchical-VVCs)
+  constant C_UNUSED_MSG_ID_PANEL : t_msg_id_panel := (
+    others => NA
+  );
+
   -- If false, OSVVM uses the default message id panel. If true, it uses a separate message id panel.
   constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
 
@@ -293,6 +298,9 @@ package adaptations_pkg is
 
   );
 
+  -- Hierarchical-VVCs supported interfaces
+  type t_interface is (SBI, GMII);
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 
@@ -333,10 +341,10 @@ package adaptations_pkg is
   ------------------------------------------------------------------------
   -- CRC
   ------------------------------------------------------------------------
-  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
   -- CRC-32 (IEEE 802.3)
-  constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0');
-  constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B";
+  constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
+  constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32|26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0'); --0x04C11DB7
+  constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B"; -- using left shifting CRC
 
   --------------------------------------------------------------------------
   -- WARNING! The following is not intended for user modifications!

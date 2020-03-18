@@ -106,7 +106,7 @@ begin
       v_data_raw(14 to 14+v_length-1) := payload(0 to v_length-1);
 
       -- FCS
-      v_ethernet_frame.fcs := not generate_crc_32(reverse_vectors_in_array(v_data_raw(0 to 14+v_payload_length-1)));
+      v_ethernet_frame.fcs := not generate_crc_32(v_data_raw(0 to 14+v_payload_length-1));
 
       return v_ethernet_frame;
     end  function make_ethernet_frame;

@@ -163,7 +163,7 @@ package ti_vvc_framework_support_pkg is
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
     constant quietness          : in t_quietness := NON_QUIET;
-    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string      := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -175,7 +175,7 @@ package ti_vvc_framework_support_pkg is
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
     constant quietness          : in t_quietness := NON_QUIET;
-    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string      := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -185,7 +185,7 @@ package ti_vvc_framework_support_pkg is
   procedure flush_command_queue(
     signal VVC_BROADCAST        : inout std_logic;
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -196,7 +196,7 @@ package ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in natural;  -- in clock cycles
     constant msg                : in string  := "";
-    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string  := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -207,7 +207,7 @@ package ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in time;
     constant msg                : in string  := "";
-    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string  := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -218,7 +218,7 @@ package ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant timeout            : in time;
     constant msg                : in string  := "";
-    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string  := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -228,7 +228,7 @@ package ti_vvc_framework_support_pkg is
   procedure terminate_current_command(
     signal VVC_BROADCAST        : inout std_logic;
     constant msg                : in string  := "";
-    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string  := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -238,7 +238,7 @@ package ti_vvc_framework_support_pkg is
   procedure terminate_all_commands(
     signal VVC_BROADCAST        : inout std_logic;
     constant msg                : in string  := "";
-    constant scope              : in string  := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string  := C_VVC_CMD_SCOPE_DEFAULT
   );
   -------------------------------------------
   -- transmit_broadcast
@@ -254,7 +254,7 @@ package ti_vvc_framework_support_pkg is
     constant delay              : in time         := 0 ns;
     constant delay_int          : in integer      := -1;
     constant timeout            : in time         := std.env.resolution_limit;
-    constant scope              : in string       := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string       := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -------------------------------------------
@@ -302,31 +302,29 @@ package ti_vvc_framework_support_pkg is
   -- ============================================================================
   -- Hierarchical VVC (HVVC)
   -- ============================================================================
-
-  type t_vvc_operation is (TRANSMIT, RECEIVE);
-  type t_interface is (SBI, GMII);
-  type t_direction is (TRANSMIT, RECEIVE);
+  type t_vvc_operation is (TRANSMIT, RECEIVE); -- Type of operation to be executed by the VVC
+  type t_direction is (TRANSMIT, RECEIVE);     -- Direction of the interface (used by the IF field config)
 
   type t_hvvc_to_bridge is record
-    trigger                   : boolean;
-    operation                 : t_vvc_operation;
-    num_data_words            : positive;
-    data_words                : t_slv_array;
-    dut_if_field_idx          : natural;
-    msg_id_panel              : t_msg_id_panel;
+    trigger          : boolean;          -- Trigger signal
+    operation        : t_vvc_operation;  -- Operation of the VVC
+    num_data_words   : positive;         -- Number of data words transferred
+    data_words       : t_slv_array;      -- Data sent to the VVC
+    dut_if_field_idx : natural;          -- Index of the interface field
+    msg_id_panel     : t_msg_id_panel;   -- Message ID panel of the HVVC
   end record;
 
   type t_bridge_to_hvvc is record
-    trigger        : boolean;
-    data_words     : t_slv_array;
+    trigger          : boolean;          -- Trigger signal
+    data_words       : t_slv_array;      -- Data received from the VVC
   end record;
 
   type t_dut_if_field_config is record
-    dut_address                : unsigned;
-    dut_address_increment      : integer;
-    data_width                 : positive;
-    use_field                  : boolean;
-    field_description          : string;
+    dut_address           : unsigned;    -- Address of the DUT IF field
+    dut_address_increment : integer;     -- Incrementation of the address on each access
+    data_width            : positive;    -- Width of the data per transfer
+    use_field             : boolean;     -- Used by the HVVC to send/request fields to/from the bridge or ignore them when not applicable
+    field_description     : string;      -- Description of the DUT IF field
   end record;
 
   constant C_DUT_IF_FIELD_CONFIG_DEFAULT : t_dut_if_field_config(dut_address(0 downto 0)) := (
@@ -411,7 +409,7 @@ package body ti_vvc_framework_support_pkg is
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
     constant quietness          : in t_quietness := NON_QUIET;
-    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string      := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "enable_log_msg";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_upper(to_string(msg_id)) & ")";
@@ -425,7 +423,7 @@ package body ti_vvc_framework_support_pkg is
     constant msg_id             : in t_msg_id;
     constant msg                : in string := "";
     constant quietness          : in t_quietness := NON_QUIET;
-    constant scope              : in string      := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string      := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "disable_log_msg";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_upper(to_string(msg_id)) & ")";
@@ -437,7 +435,7 @@ package body ti_vvc_framework_support_pkg is
   procedure flush_command_queue(
     signal VVC_BROADCAST        : inout std_logic;
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "flush_command_queue";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
@@ -450,7 +448,7 @@ package body ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in natural;  -- in clock cycles
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "insert_delay";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_string(delay) & ")";
@@ -463,7 +461,7 @@ package body ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant delay              : in time;
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "insert_delay";
     constant proc_call : string := proc_name & "(VVC_BROADCAST, " & to_string(delay) & ")";
@@ -475,7 +473,7 @@ package body ti_vvc_framework_support_pkg is
     signal VVC_BROADCAST        : inout std_logic;
     constant timeout            : in time;
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
@@ -486,7 +484,7 @@ package body ti_vvc_framework_support_pkg is
   procedure terminate_current_command(
     signal VVC_BROADCAST        : inout std_logic;
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "terminate_current_command";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
@@ -497,7 +495,7 @@ package body ti_vvc_framework_support_pkg is
   procedure terminate_all_commands(
     signal VVC_BROADCAST        : inout std_logic;
     constant msg                : in string := "";
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "terminate_all_commands";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
@@ -516,7 +514,8 @@ package body ti_vvc_framework_support_pkg is
     constant delay              : in time         := 0 ns;
     constant delay_int          : in integer      := -1;
     constant timeout            : in time         := std.env.resolution_limit;
-    constant scope              : in string       := C_TB_SCOPE_DEFAULT & "(uvvm)") is
+    constant scope              : in string       := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
   begin
     await_semaphore_in_delta_cycles(protected_semaphore);
 

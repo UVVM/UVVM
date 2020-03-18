@@ -138,14 +138,14 @@ package vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure stop_clock(
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure set_clock_period(
@@ -153,7 +153,7 @@ package vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant clock_period       : in time;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure set_clock_high_time(
@@ -161,7 +161,7 @@ package vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant clock_high_time    : in time;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
 
@@ -189,7 +189,7 @@ package body vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "start_clock";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -203,7 +203,7 @@ package body vvc_methods_pkg is
     signal   VVCT               : inout t_vvc_target_record;
     constant vvc_instance_idx   : in integer;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "stop_clock";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -218,7 +218,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx   : in integer;
     constant clock_period       : in time;
     constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "set_clock_period";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -234,7 +234,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx : in integer;
     constant clock_high_time  : in time;
     constant msg              : in string;
-    constant scope            : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "set_clock_high_time";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all

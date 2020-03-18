@@ -148,24 +148,26 @@ package vvc_methods_pkg is
 
   -- multi-byte
   procedure i2c_master_transmit(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- single byte
   procedure i2c_master_transmit(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- *****************************************************************************
@@ -176,20 +178,22 @@ package vvc_methods_pkg is
 
   -- multi-byte
   procedure i2c_slave_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- single byte
   procedure i2c_slave_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
 
@@ -200,13 +204,14 @@ package vvc_methods_pkg is
   -- *****************************************************************************
 
   procedure i2c_master_receive(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant num_bytes                    : in    natural;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- *****************************************************************************
@@ -217,31 +222,33 @@ package vvc_methods_pkg is
 
   -- multi-byte
   procedure i2c_master_check(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant alert_level                  : in    t_alert_level                  := error;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- single byte
   procedure i2c_master_check(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant alert_level                  : in    t_alert_level                  := error;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
 
   procedure i2c_master_quick_command(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant msg                          : in    string;
@@ -249,7 +256,8 @@ package vvc_methods_pkg is
     constant exp_ack                      : in    boolean                        := true;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant alert_level                  : in    t_alert_level                  := error;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- *****************************************************************************
@@ -258,11 +266,12 @@ package vvc_methods_pkg is
   --
   -- *****************************************************************************
   procedure i2c_slave_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant num_bytes        : in    natural;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant num_bytes           : in    natural;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- *****************************************************************************
@@ -273,33 +282,36 @@ package vvc_methods_pkg is
 
   -- multi-byte
   procedure i2c_slave_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    t_byte_array;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant rw_bit              : in    std_logic      := '0';  -- Default write bit
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   -- single byte
   procedure i2c_slave_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant rw_bit              : in    std_logic      := '0';  -- Default write bit
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure i2c_slave_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant rw_bit           : in    std_logic;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant rw_bit              : in    std_logic;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   --==============================================================================
@@ -340,19 +352,21 @@ package body vvc_methods_pkg is
 
   -- master transmit
   procedure i2c_master_transmit(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -362,17 +376,22 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data(0 to data'length - 1)   := data;
     shared_vvc_cmd.num_bytes                    := data'length;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure i2c_master_transmit(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -382,19 +401,21 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_master_transmit(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, scope);
+    i2c_master_transmit(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, scope, parent_msg_id_panel);
   end procedure;
 
   -- slave transmit
   procedure i2c_slave_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -402,15 +423,20 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_TRANSMIT);
     shared_vvc_cmd.data(0 to data'length - 1) := data;
     shared_vvc_cmd.num_bytes                  := data'length;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel        := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure i2c_slave_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     variable v_byte : std_logic_vector(7 downto 0) := (others => '0');
     -- Normalize to the 8 bit data width
@@ -418,24 +444,26 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_slave_transmit(VVCT, vvc_instance_idx, v_byte_array, msg, scope);
+    i2c_slave_transmit(VVCT, vvc_instance_idx, v_byte_array, msg, scope, parent_msg_id_panel);
   end procedure;
 
   -- master receive
   procedure i2c_master_receive(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant num_bytes                    : in    natural;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_NARROWER, "addr", "shared_vvc_cmd.addr", msg);
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -444,44 +472,56 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.addr                         := v_normalized_addr;
     shared_vvc_cmd.num_bytes                    := num_bytes;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure i2c_slave_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant num_bytes        : in    natural;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant num_bytes           : in    natural;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_RECEIVE);
-    shared_vvc_cmd.num_bytes := num_bytes;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.num_bytes           := num_bytes;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   -- master check
   procedure i2c_master_check(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    t_byte_array;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant alert_level                  : in    t_alert_level                  := error;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -492,18 +532,23 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.num_bytes                    := data'length;
     shared_vvc_cmd.alert_level                  := alert_level;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure i2c_master_check(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant alert_level                  : in    t_alert_level                  := error;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -513,11 +558,11 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_master_check(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, alert_level, scope);
+    i2c_master_check(VVCT, vvc_instance_idx, addr, v_byte_array, msg, action_when_transfer_is_done, alert_level, scope, parent_msg_id_panel);
   end procedure;
 
   procedure i2c_master_quick_command(
-    signal VVCT                           : inout t_vvc_target_record;
+    signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant addr                         : in    unsigned;
     constant msg                          : in    string;
@@ -525,13 +570,15 @@ package body vvc_methods_pkg is
     constant exp_ack                      : in    boolean                        := true;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant alert_level                  : in    t_alert_level                  := error;
-    constant scope                        : in    string                         := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name         : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call         : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     -- Normalize to the 10 bit addr width
     variable v_normalized_addr : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -542,21 +589,27 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.alert_level                  := alert_level;
     shared_vvc_cmd.rw_bit                       := rw_bit;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   -- slave check
   procedure i2c_slave_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    t_byte_array;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant rw_bit              : in    std_logic      := '0';  -- Default write bit
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -566,17 +619,22 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.num_bytes                  := data'length;
     shared_vvc_cmd.alert_level                := alert_level;
     shared_vvc_cmd.rw_bit                     := rw_bit;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel        := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure i2c_slave_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant rw_bit           : in    std_logic     := '0';  -- Default write bit
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant rw_bit              : in    std_logic      := '0';  -- Default write bit
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
@@ -586,24 +644,25 @@ package body vvc_methods_pkg is
       normalize_and_check(data, v_byte, ALLOW_NARROWER, "data", "v_byte", msg);
     variable v_byte_array : t_byte_array(0 to 0) := (0 => v_normalized_data);
   begin
-    i2c_slave_check(VVCT, vvc_instance_idx, v_byte_array, msg, alert_level, rw_bit, scope);
+    i2c_slave_check(VVCT, vvc_instance_idx, v_byte_array, msg, alert_level, rw_bit, scope, parent_msg_id_panel);
   end procedure;
 
 
   -- slave check
   procedure i2c_slave_check(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant rw_bit           : in    std_logic;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant rw_bit              : in    std_logic;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) & ")";
     variable v_dummy_byte_array : t_byte_array(0 to -1);  -- Empty byte array to indicate that data is not checked
   begin
-    i2c_slave_check(VVCT, vvc_instance_idx, v_dummy_byte_array, msg, alert_level, rw_bit, scope);
+    i2c_slave_check(VVCT, vvc_instance_idx, v_dummy_byte_array, msg, alert_level, rw_bit, scope, parent_msg_id_panel);
   end procedure;
 
   --==============================================================================

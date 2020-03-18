@@ -39,7 +39,7 @@ use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
 
 --==========================================================================================
-entity ethernet_receive_vvc is
+entity ethernet_rx_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
     GC_CHANNEL                               : t_channel;
@@ -55,11 +55,11 @@ entity ethernet_receive_vvc is
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                               := 950;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                         := WARNING
   );
-end entity ethernet_receive_vvc;
+end entity ethernet_rx_vvc;
 
 --==========================================================================================
 --==========================================================================================
-architecture behave of ethernet_receive_vvc is
+architecture behave of ethernet_rx_vvc is
 
   constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
@@ -306,7 +306,7 @@ begin
                                             dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                             hvvc_to_bridge       => hvvc_to_bridge,
                                             bridge_to_hvvc       => bridge_to_hvvc,
-                                            vvc_transaction_info             => vvc_transaction_info,
+                                            vvc_transaction_info => vvc_transaction_info,
                                             scope                => C_SCOPE,
                                             msg_id_panel         => v_msg_id_panel);
 
@@ -330,7 +330,7 @@ begin
                                            dut_if_field_config  => GC_DUT_IF_FIELD_CONFIG(RECEIVE),
                                            hvvc_to_bridge       => hvvc_to_bridge,
                                            bridge_to_hvvc       => bridge_to_hvvc,
-                                           vvc_transaction_info             => vvc_transaction_info,
+                                           vvc_transaction_info => vvc_transaction_info,
                                            scope                => C_SCOPE,
                                            msg_id_panel         => v_msg_id_panel);
 

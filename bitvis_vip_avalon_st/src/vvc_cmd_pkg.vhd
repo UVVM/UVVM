@@ -57,8 +57,7 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    use_provided_msg_id_panel : t_use_provided_msg_id_panel;
-    msg_id_panel              : t_msg_id_panel;
+    parent_msg_id_panel       : t_msg_id_panel;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -80,8 +79,7 @@ package vvc_cmd_pkg is
     alert_level               => FAILURE,
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
-    use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
-    msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel       => C_UNUSED_MSG_ID_PANEL
   );
 
   --==========================================================================================

@@ -130,37 +130,41 @@ package vvc_methods_pkg is
   --==========================================================================================
 
   procedure gpio_set(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant data         : in    std_logic_vector;
-    constant msg          : in    string := "";
-    constant scope        : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string         := "";
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure gpio_get(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant msg          : in    string := "";
-    constant scope        : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant msg                 : in    string         := "";
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure gpio_check(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant data_exp     : in    std_logic_vector;
-    constant msg          : in    string        := "";
-    constant alert_level  : in    t_alert_level := error;
-    constant scope        : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant data_exp            : in    std_logic_vector;
+    constant msg                 : in    string         := "";
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure gpio_expect(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant data_exp     : in    std_logic_vector;
-    constant timeout      : in    time          := 1 us;
-    constant msg          : in    string        := "";
-    constant alert_level  : in    t_alert_level := error;
-    constant scope        : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant data_exp            : in    std_logic_vector;
+    constant timeout             : in    time           := 1 us;
+    constant msg                 : in    string         := "";
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   --==============================================================================
@@ -199,99 +203,123 @@ package body vvc_methods_pkg is
 
 
   procedure gpio_set(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant data         : in    std_logic_vector;
-    constant msg          : in    string := "";
-    constant scope        : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string         := "";
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := "gpio_set";
     constant proc_call : string := proc_name & "(" & to_string(VVC, instance_idx)  -- First part common for all
                                    & ", " & ", " & to_string(data, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";                                   
     variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
       normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVC, instance_idx, proc_call, msg, QUEUED, SET);
-    shared_vvc_cmd.operation := SET;
-    shared_vvc_cmd.data      := v_normalised_data;
-    send_command_to_vvc(VVC, scope => scope);
+    shared_vvc_cmd.operation           := SET;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVC, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure gpio_get(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant msg          : in    string := "";
-    constant scope        : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant msg                 : in    string         := "";
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := "gpio_get";
     constant proc_call : string := proc_name & "(" & to_string(VVC, instance_idx)  -- First part common for all
                                    & ", " & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVC, instance_idx, proc_call, msg, QUEUED, GET);
-    shared_vvc_cmd.operation := GET;
-    send_command_to_vvc(VVC, scope => scope);
+    shared_vvc_cmd.operation           := GET;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVC, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure gpio_check(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant data_exp     : in    std_logic_vector;
-    constant msg          : in    string        := "";
-    constant alert_level  : in    t_alert_level := error;
-    constant scope        : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant data_exp            : in    std_logic_vector;
+    constant msg                 : in    string         := "";
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := "gpio_check";
     constant proc_call : string := proc_name & "(" & to_string(VVC, instance_idx)  -- First part common for all
                                    & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";                                   
     variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data_exp'length-1 downto 0) :=
       normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVC, instance_idx, proc_call, msg, QUEUED, CHECK);
-    shared_vvc_cmd.data_exp    := v_normalised_data;
-    shared_vvc_cmd.alert_level := alert_level;
-    shared_vvc_cmd.operation   := CHECK;
-    send_command_to_vvc(VVC, scope => scope);
+    shared_vvc_cmd.data_exp            := v_normalised_data;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.operation           := CHECK;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVC, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure gpio_expect(
-    signal VVC            : inout t_vvc_target_record;
-    constant instance_idx : in    integer;
-    constant data_exp     : in    std_logic_vector;
-    constant timeout      : in    time          := 1 us;
-    constant msg          : in    string        := "";
-    constant alert_level  : in    t_alert_level := error;
-    constant scope        : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVC                 : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant data_exp            : in    std_logic_vector;
+    constant timeout             : in    time           := 1 us;
+    constant msg                 : in    string         := "";
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := "gpio_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVC, instance_idx)  -- First part common for all
                                    & ", " & to_string(data_exp, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";                                   
     variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data_exp'length-1 downto 0) :=
       normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVC, instance_idx, proc_call, msg, QUEUED, EXPECT);
-    shared_vvc_cmd.data_exp    := v_normalised_data;
-    shared_vvc_cmd.timeout     := timeout;
-    shared_vvc_cmd.alert_level := alert_level;
-    send_command_to_vvc(VVC, scope => scope);
+    shared_vvc_cmd.data_exp            := v_normalised_data;
+    shared_vvc_cmd.timeout             := timeout;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVC, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   --==============================================================================

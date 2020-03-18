@@ -9,6 +9,9 @@ Released: 2020-XX-XX
   default -1 ns.
 - VVC command insert_delay() will raise a TB_ERROR when called if the 
   bfm_config.clock_period has not been set.  
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
 
 v2.0.0
 ----------

@@ -134,71 +134,68 @@ package vvc_methods_pkg is
   --==========================================================================================
 
   procedure sbi_write(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant addr                      : in    unsigned;
-    constant data                      : in    std_logic_vector;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-
 
   procedure sbi_write(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant num_words          : in natural;
-    constant randomisation      : in t_randomisation;
-    constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant num_words           : in    natural;
+    constant randomisation       : in    t_randomisation;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure sbi_read(
-    signal   VVCT                       : inout t_vvc_target_record;
-    constant vvc_instance_idx           : in    integer;
-    constant addr                       : in    unsigned;
-    constant msg                        : in    string;
-    constant data_routing               : in    t_data_routing              := TO_RECEIVE_BUFFER;
-    constant scope                      : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel  : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel               : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant msg                 : in    string;
+    constant data_routing        : in    t_data_routing := TO_RECEIVE_BUFFER;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure sbi_read(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
-    );
+    signal VVCT                  : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
 
   procedure sbi_check(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant addr                      : in    unsigned;
-    constant data                      : in    std_logic_vector;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure sbi_poll_until(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant addr                      : in    unsigned;
-    constant data                      : in    std_logic_vector;
-    constant msg                       : in    string;
-    constant max_polls                 : in    integer                     := 100;
-    constant timeout                   : in    time                        := 1 us;  -- To assure a given timeout
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant max_polls           : in    integer        := 100;
+    constant timeout             : in    time           := 1 us;  -- To assure a given timeout
+    constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
 
@@ -249,14 +246,13 @@ package body vvc_methods_pkg is
   --==============================================================================
 
   procedure sbi_write(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant addr                      : in    unsigned;
-    constant data                      : in    std_logic_vector;
-    constant msg                       : in    string;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -265,110 +261,126 @@ package body vvc_methods_pkg is
         normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
     variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
         normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
-    shared_vvc_cmd.operation                          := WRITE;
-    shared_vvc_cmd.addr                               := v_normalised_addr;
-    shared_vvc_cmd.data                               := v_normalised_data;
-    shared_vvc_cmd.use_provided_msg_id_panel          := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel                       := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    shared_vvc_cmd.operation           := WRITE;
+    shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure sbi_write(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant addr               : in unsigned;
-    constant num_words          : in natural;
-    constant randomisation      : in t_randomisation;
-    constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant num_words           : in    natural;
+    constant randomisation       : in    t_randomisation;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", RANDOM)";
     variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
         normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, WRITE);
-    shared_vvc_cmd.operation                          := WRITE;
-    shared_vvc_cmd.addr                               := v_normalised_addr;
-    shared_vvc_cmd.randomisation                      := randomisation;
-    shared_vvc_cmd.num_words                          := num_words;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.operation           := WRITE;
+    shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.randomisation       := randomisation;
+    shared_vvc_cmd.num_words           := num_words;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure sbi_read(
-    signal   VVCT                       : inout t_vvc_target_record;
-    constant vvc_instance_idx           : in    integer;
-    constant addr                       : in    unsigned;
-    constant msg                        : in    string;
-    constant data_routing               : in    t_data_routing              := TO_RECEIVE_BUFFER;
-    constant scope                      : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel  : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel               : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant msg                 : in    string;
+    constant data_routing        : in    t_data_routing := TO_RECEIVE_BUFFER;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
         & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
         normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.addr                       := v_normalised_addr;
-    shared_vvc_cmd.data_routing               := data_routing;
-    shared_vvc_cmd.use_provided_msg_id_panel  := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel               := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure sbi_read(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant addr             : in    unsigned;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal VVCT                  : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
       normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.operation    := READ;
-    shared_vvc_cmd.addr         := v_normalised_addr;
-    shared_vvc_cmd.data_routing := data_routing;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.operation           := READ;
+    shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure sbi_check(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant addr                      : in    unsigned;
-    constant data                      : in    std_logic_vector;
-    constant msg                       : in    string;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -377,6 +389,7 @@ package body vvc_methods_pkg is
         normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
     variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
         normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -384,27 +397,28 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, CHECK);
-    shared_vvc_cmd.addr                      := v_normalised_addr;
-    shared_vvc_cmd.data                      := v_normalised_data;
-    shared_vvc_cmd.alert_level               := alert_level;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
   procedure sbi_poll_until(
-    signal   VVCT                      : inout t_vvc_target_record;
-    constant vvc_instance_idx          : in    integer;
-    constant addr                      : in    unsigned;
-    constant data                      : in    std_logic_vector;
-    constant msg                       : in    string;
-    constant max_polls                 : in    integer                     := 100;
-    constant timeout                   : in    time                        := 1 us;
-    constant alert_level               : in    t_alert_level               := ERROR;
-    constant scope                     : in    string                      := C_VVC_CMD_SCOPE_DEFAULT;
-    constant use_provided_msg_id_panel : in    t_use_provided_msg_id_panel := DO_NOT_USE_PROVIDED_MSG_ID_PANEL;
-    constant msg_id_panel              : in    t_msg_id_panel              := shared_msg_id_panel
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant max_polls           : in    integer        := 100;
+    constant timeout             : in    time           := 1 us;
+    constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
@@ -413,19 +427,22 @@ package body vvc_methods_pkg is
         normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
     variable v_normalised_data    : std_logic_vector(shared_vvc_cmd.data'length-1 downto 0) :=
         normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, POLL_UNTIL);
-    shared_vvc_cmd.addr                      := v_normalised_addr;
-    shared_vvc_cmd.data                      := v_normalised_data;
-    shared_vvc_cmd.max_polls                 := max_polls;
-    shared_vvc_cmd.timeout                   := timeout;
-    shared_vvc_cmd.alert_level               := alert_level;
-    shared_vvc_cmd.use_provided_msg_id_panel := use_provided_msg_id_panel;
-    shared_vvc_cmd.msg_id_panel              := msg_id_panel;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, msg_id_panel);
+    shared_vvc_cmd.addr                := v_normalised_addr;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.max_polls           := max_polls;
+    shared_vvc_cmd.timeout             := timeout;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   function to_sb_result(

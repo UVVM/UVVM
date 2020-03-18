@@ -505,8 +505,10 @@ package body td_vvc_entity_support_pkg is
     constant vvc_config : in t_vvc_config
   ) return t_msg_id_panel is
   begin
-    --if command.use_provided_msg_id_panel = USE_PROVIDED_MSG_ID_PANEL then
-    --  return command.msg_id_panel;
+    -- If the parent_msg_id_panel is set then use it,
+    -- otherwise use the VVCs msg_id_panel from its config.
+    --if command.parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+    --  return command.parent_msg_id_panel;
     --else
     --  return vvc_config.msg_id_panel;
     --end if;

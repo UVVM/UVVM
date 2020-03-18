@@ -50,7 +50,7 @@ package types_pkg is
   type t_info_target is (LOG_INFO, ALERT_INFO, USER_INFO);
   type t_alert_level is (NO_ALERT, NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
 
-  type t_enabled      is (ENABLED, DISABLED);
+  type t_enabled      is (ENABLED, DISABLED, NA);
   type t_attention    is (REGARD, EXPECT, IGNORE);
   type t_radix        is (BIN, HEX, DEC, HEX_BIN_IF_INVALID);
   type t_radix_prefix is (EXCL_RADIX, INCL_RADIX);
@@ -213,8 +213,6 @@ package types_pkg is
     SYNC_ON_CLOCK_ONLY,
     SYNC_WITH_SETUP_AND_HOLD
   );
-
-  type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
 
   type t_test_status is (NA, PASS, FAIL);
   

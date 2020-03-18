@@ -3,6 +3,13 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.1
+----------
+Released: 2020-XX-XX
+- Added NA element to type t_enabled.
+- Added C_UNUSED_MSG_ID_PANEL to adaptations_pkg.
+- Removed type t_use_provided_msg_id_panel.
+
 v2.12.0
 ----------
 Released: 2020-03-06

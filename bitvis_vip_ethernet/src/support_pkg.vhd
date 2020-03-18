@@ -30,6 +30,7 @@ package support_pkg is
   --========================================================================================================================
   -- Types and constants
   --========================================================================================================================
+  -- The preamble & SFD sequence is represented with the LSb transmitted first
   constant C_PREAMBLE           : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
   constant C_SFD                : std_logic_vector( 7 downto 0) := x"D5";
 
@@ -98,12 +99,12 @@ package support_pkg is
   ) return positive;
 
   function to_string(
-    constant ethernet_frame : in t_ethernet_frame
+    constant ethernet_frame : in t_ethernet_frame;
+    constant frame_field    : in t_frame_field
   ) return string;
 
   function to_string(
-    constant ethernet_frame : in t_ethernet_frame;
-    constant frame_field    : in t_frame_field
+    constant ethernet_frame : in t_ethernet_frame
   ) return string;
 
   procedure compare_ethernet_frames(
@@ -129,14 +130,20 @@ end package support_pkg;
 
 package body support_pkg is
 
-  -- Generates the IEEE 802.3 CRC32 for byte array input
+  -- Returns the IEEE 802.3 CRC32 for an ascending byte array input with LSb first.
   impure function generate_crc_32(
     constant data_array : in t_byte_array
   ) return std_logic_vector is
   begin
-    return generate_crc(data_array, C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
+    -- The function generate_crc() generates CRC from high to low (MSb first),
+    -- however the Ethernet standard uses LSb first for the frame data so we need
+    -- to reverse the bits in each byte.
+    return generate_crc(reverse_vectors_in_array(data_array), C_CRC_32_START_VALUE, C_CRC_32_POLYNOMIAL);
   end function generate_crc_32;
 
+  -- Generates the IEEE 802.3 CRC32 for an ascending byte array containing
+  -- the frame data and the FCS. Returns true if the result is equal to the
+  -- expected residue.
   impure function check_crc_32(
     constant data_array : in t_byte_array
   ) return boolean is
@@ -152,16 +159,7 @@ package body support_pkg is
     return payload_length + 18;
   end function get_ethernet_frame_length;
 
-  function to_string(
-    constant ethernet_frame : in t_ethernet_frame
-  ) return string is
-  begin
-    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           ", payload length: " & to_string(ethernet_frame.payload_length) &
-           ", fcs: " & to_string(ethernet_frame.fcs, HEX, AS_IS, INCL_RADIX);
-  end function to_string;
-
+  -- Returns a string with a specific field from the frame
   function to_string(
     constant ethernet_frame : in t_ethernet_frame;
     constant frame_field    : in t_frame_field
@@ -194,6 +192,16 @@ package body support_pkg is
       when others =>
         return "";
     end case;
+  end function to_string;
+
+  -- Returns a string with the main frame info (used in scoreboard)
+  function to_string(
+    constant ethernet_frame : in t_ethernet_frame
+  ) return string is
+  begin
+    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
+           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
+           ", payload length: " & to_string(ethernet_frame.payload_length);
   end function to_string;
 
   -- Compares two ethernet frames

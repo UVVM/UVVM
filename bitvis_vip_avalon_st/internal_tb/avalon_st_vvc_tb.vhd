@@ -413,6 +413,7 @@ begin
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       end loop;
+      --AVALON_ST_SB.report_counters(VOID);
 
       log(ID_LOG_HDR, "Testing different stream sizes and channels");
       for i in 0 to 15 loop

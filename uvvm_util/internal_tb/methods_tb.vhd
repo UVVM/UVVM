@@ -3403,7 +3403,189 @@ begin
       log(ID_SEQUENCER, "Watchdog D still running", C_SCOPE);
       increment_expected_alerts(error);
       wait for 1 ns;
+    elsif GC_TEST = "optional_alert_level" then
+        -- This GC_TEST contains duplicates of the testcases for:
+        --      GC_TEST = check_value
+        --      GC_TEST = check_value_in_range (NOT PORTED YET)
+        --      GC_TEST = check_stable (NOT PORTED YET)
+        --      GC_TEST = await_change (NOT PORTED YET)
+        --      GC_TEST = await_value (NOT PORTED YET)
+        --      GC_TEST = await_stable (NOT PORTED YET)
+        -- with all testcases called without alert_level parameter. 
+        -- Update date (19/03/20). 
+      --------------------------------------------------------------------------------------
+      -- Verifying check_value overloads without alert_level
+      --------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying check_value overloads without alert_level", "C_SCOPE");
+      -- Boolean
+      v_b     := check_value(14 > 6,"A must be higher than B, OK", C_SCOPE);
+      check_value(v_b,"check_value with return value shall return true when OK", C_SCOPE);
+      -- SLV
+      v_slv5a := "01111";
+      v_slv5b := "01111";
+      check_value(v_slv5a, v_slv5b,"My msg1, OK", C_SCOPE);
+      v_slv5b := "01110";
+      check_value(v_slv5a, v_slv5b,"My msg2, Fail", C_SCOPE);
+      check_value(std_logic_vector'("100101"), "10010-","My msg3a, OK", C_SCOPE);
+      check_value(std_logic_vector'("100101"), "100101","My msg3b, OK", C_SCOPE);
+      v_b     := check_value(std_logic_vector'("100101"), "100100","My msg3c, Fail", C_SCOPE);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(std_logic_vector'("10010"), "10010","My msg (none), OK", C_SCOPE);
+      check_value(std_logic_vector'("10010"), "10010","My msg HEX, OK", C_SCOPE, HEX);
+      check_value(std_logic_vector'("10010"), "10010","My msg BIN, OK", C_SCOPE, BIN);
+      check_value(std_logic_vector'("110010"), "111010","My msg (none), Fail", C_SCOPE);
+      check_value(std_logic_vector'("110010"), "111010","My msg HEX, Fail", C_SCOPE, HEX);
+      check_value(std_logic_vector'("110010"), "111010","My msg BIN, Fail", C_SCOPE, BIN);
+      check_value(std_logic_vector'("110010"), "10010","My msg (none), Fail", C_SCOPE);
+      check_value(std_logic_vector'("10010"), "110010","My msg HEX, Fail", C_SCOPE, HEX);
+      check_value(std_logic_vector'("10010"), "0010010","My msg BIN, OK", C_SCOPE, BIN);
+      check_value(std_logic_vector'("0010010"), "010010","My msg BIN, OK", C_SCOPE, BIN);
 
+      check_value(std_logic_vector'("0000010010"), "000010010","My msg BIN, OK", C_SCOPE, BIN);
+      check_value(std_logic_vector'("0000010010"), "000010010","My msg HEX, OK", C_SCOPE, HEX);
+      check_value(std_logic_vector'("0000010010"), "000010-10","My msg HEX, OK", C_SCOPE, HEX);
+
+      check_value(std_logic_vector'("0000010010"), "000010010","My msg BIN, AS_IS, OK", C_SCOPE, BIN, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "000010010","My msg HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "000010-10","My msg HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "00--10-10","My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_STD,"My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_EXACT,"My msg dontcare-in-extended-width HEX, AS_IS, Fail", C_SCOPE, HEX, AS_IS);
+
+      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z,"Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
+
+      check_value(std_logic_vector'("0000010010"), "0000010010","My msg HEX_BIN_IF_INVALID, OK", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("0000011111"), "0000010010","My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("00000U00U0"), "0000010010","My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
+      increment_expected_alerts(error, 2);
+
+      -- wide vector
+      check_value(slv128, slv128,"Test wide vector, HEX, OK", C_SCOPE, HEX, AS_IS);
+      check_value(slv128, slv128,"Test wide vector, DEC, OK", C_SCOPE, DEC, AS_IS);
+
+      -- boolean
+      -- As function
+      v_b := check_value(true, true,"Boolean check true vs true, OK");
+      check_value(v_b,"check_value should return true");
+      v_b := check_value(true, false,"Boolean check true vs false, Fail");
+      check_value(not v_b,"check_value should return false");
+      v_b := check_value(false, true,"Boolean check false vs true, Fail");
+      check_value(not v_b,"check_value should return false");
+      v_b := check_value(false, false,"Boolean check false vs false, OK");
+      check_value(v_b,"check_value should return true");
+      increment_expected_alerts(error, 2);
+
+      -- As procedure
+      check_value(true, true,"Boolean check true vs true, OK");
+      check_value(true, false,"Boolean check true vs false, Fail");
+      check_value(false, true,"Boolean check false vs true, Fail");
+      check_value(false, false,"Boolean check false vs false, OK");
+      increment_expected_alerts(error, 2);
+
+      -- Unsigned
+      v_u5a := "01100";
+      v_u5b := "11100";
+      v_u6  := "101100";
+      check_value(v_u5a, v_u5a,"My msg U, BIN, AS_IS, OK", C_SCOPE, BIN);
+      check_value(v_u5a, v_u5b,"My msg U, BIN, AS_IS, Fail", C_SCOPE, BIN);
+      v_b   := check_value(v_u5a, v_u6,"My msg U, BIN, AS_IS, Fail", C_SCOPE, BIN);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+
+      -- signed
+      v_s8 := "10101100";
+      check_value(v_s8, v_s8,"My msg S, BIN, AS_IS, OK", C_SCOPE, BIN);
+      v_b  := check_value(v_s8, "10101101","My msg S, BIN, AS_IS, Fail", C_SCOPE, BIN);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+
+      -- Integer
+      v_ia := 5;
+      v_ib := 23456;
+      check_value(v_ia, 5,"My msg I, OK", C_SCOPE);
+      check_value(v_ia, 12345,"My msg I, Fail", C_SCOPE);
+      v_b  := check_value(v_ia, v_ib,"My msg I, Fail", C_SCOPE);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+
+      -- Real
+      v_r := 5222.01;
+      check_value(v_r, 5222.01,"My msg I, OK", C_SCOPE);
+      v_b := check_value(v_r, 1421.02,"My msg I, Fail", C_SCOPE);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+
+      -- Std_logic
+      v_b := check_value('1', '1',"My msg SL, OK", C_SCOPE);
+      check_value(v_b,"check_value with return value shall return true when OK", C_SCOPE);
+      v_b := check_value('1', '0',"My msg SL, Fail", C_SCOPE);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value('0', '-',"My msg SL, OK, use default match_strictness", C_SCOPE);
+      check_value('1', '-', MATCH_STD,"My msg SL, OK", C_SCOPE);
+      check_value('L', '0', MATCH_STD,"My msg SL, OK", C_SCOPE);
+      check_value('1', 'H', MATCH_EXACT,"My msg SL, Fail", C_SCOPE);
+      check_value('-', '1', MATCH_EXACT,"My msg SL, Fail", C_SCOPE);
+      check_value('Z', 'Z', MATCH_STD_INCL_Z,"Check MATCH_STD_INCL_Z", C_SCOPE);
+
+      -- time
+      v_t := 15 ns;
+      v_b := check_value(15 ns, 74 ps,"My msg I, Fail", C_SCOPE);
+      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(15 ns, 14 ns,"My msg I, Fail", C_SCOPE);
+      check_value(v_t, 15 ns,"My msg I, OK", C_SCOPE);
+      check_value(v_t, 15.0 ns,"My msg I, OK", C_SCOPE);
+      check_value(v_t, 15000 ps,"My msg I, OK", C_SCOPE);
+      check_value(v_t, 74 ps,"My msg I, Fail", C_SCOPE);
+
+      increment_expected_alerts(error, 12);
+      increment_expected_alerts(error, 8);
+
+      -- Check UVVM successful status
+      check_value(found_unexpected_simulation_warnings_or_worse, 0,"Check shared_uvvm_status.found_unexpected_simulation_warnings_or_worse correctly updated");
+      check_value(found_unexpected_simulation_errors_or_worse, 0,"Check shared_uvvm_status.found_unexpected_simulation_errors_or_worse correctly updated");
+
+      -- Check value reporting with padding of short SLV
+      increment_expected_alerts(error,3);
+      check_value(std_logic_vector'("00110010"), std_logic_vector'("0010"),"Check padding of different check_value SLV lengths (actual>expected)");
+      check_value(std_logic_vector'("1010"), std_logic_vector'("00110010"),"Check padding of different check_value SLV lengths (actual<expected)");
+      check_value(std_logic_vector'("00001010"), std_logic_vector'("00110010"),"Check padding of different check_value SLV lengths (actual=expected)");
+
+      ----------------------------------------------------------------------------
+      -- Check value with unequal array indexes for t_slv/signed/unsigned_array
+      ----------------------------------------------------------------------------
+      -- Verify check_value array index conversion
+      v_exp_slv_array(0)   := x"A";
+      v_exp_slv_array(1)   := x"B";
+      v_value_slv_array(2) := x"A";
+      v_value_slv_array(3) := x"B";
+      check_value(v_value_slv_array, v_exp_slv_array,"check_value with t_slv_array of different array indexes");
+
+      v_exp_signed_array(0)   := x"C";
+      v_exp_signed_array(1)   := x"D";
+      v_value_signed_array(2) := x"C";
+      v_value_signed_array(3) := x"D";
+      check_value(v_value_signed_array, v_exp_signed_array,"check_value with t_signed_array of different array indexes");
+
+      v_exp_unsigned_array(0)   := x"E";
+      v_exp_unsigned_array(1)   := x"F";
+      v_value_unsigned_array(2) := x"E";
+      v_value_unsigned_array(3) := x"F";
+      check_value(v_value_unsigned_array, v_exp_unsigned_array,"check_value with t_unsigned_array of different array indexes");
+
+      -- Verify check_value with array conversion catch errors
+      increment_expected_alerts(error,3);
+      v_exp_slv_array(1)      := x"C";
+      v_exp_signed_array(1)   := x"A";
+      v_exp_unsigned_array(1) := x"D";
+      check_value(v_value_slv_array, v_exp_slv_array,"check_value with t_slv_array of different array indexes");
+      check_value(v_value_signed_array, v_exp_signed_array,"check_value with t_signed_array of different array indexes");
+      check_value(v_value_unsigned_array, v_exp_unsigned_array,"check_value with t_unsigned_array of different array indexes");
+
+      -- verify warning with arrays of different directions and unequal lengths
+      v_exp_slv_array        := (others => "1010");
+      v_exp_slv_array_4      := (others => "1010");
+      v_exp_slv_array_revers := (others => "1010");
+      increment_expected_alerts(warning, 2);
+      check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array lenghts");
+      check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array directions");
+
+  
     else
       alert(tb_error, "Unsupported test");
     end if;

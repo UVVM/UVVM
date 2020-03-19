@@ -69,7 +69,8 @@ def main(argv):
             "hierarchical_alerts",
             "setting_output_file_name",
             "synchronization_methods",
-            "watchdog_timer"
+            "watchdog_timer",
+            "optional_alert_level"
             ]
 
   # Setup testbench and run

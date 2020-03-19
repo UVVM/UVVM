@@ -58,7 +58,7 @@ package transaction_pkg is
 
   --==========================================================================================
   --
-  -- DTT - Direct Transaction Transfer types, constants and global signal
+  --  Trsansaction info types, constants and global signal
   --
   --==========================================================================================
 
@@ -104,12 +104,12 @@ package transaction_pkg is
     bt => C_BASE_TRANSACTION_SET_DEFAULT
     );
 
-  -- Global DTT trigger signal
+  -- Global transaction info trigger signal
   type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
   signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => '0');
 
-  -- Shared DTT info variable
+  -- Shared transaction info variable
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;
   shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := 
                                                           (others => C_TRANSACTION_GROUP_DEFAULT);

@@ -172,8 +172,8 @@ architecture behave of uart_monitor is
         transaction_info.transaction_status := SUCCEEDED;
       end if;
 
-      -- Pulse DTT trigger signal for updated transaction information
-      gen_pulse(transaction_trigger, 0 ns, BLOCKING, "pulsing monitor DTT trigger");
+      -- Pulse transaction info trigger signal for updated transaction information
+      gen_pulse(transaction_trigger, 0 ns, BLOCKING, "pulsing monitor transaction info trigger");
 
       -- Await non-active line if no stop bit has been detected
       if (and(v_stop_bit_error) or (interface_config.num_stop_bits = STOP_BITS_ONE and v_stop_bit_error(0))) and uart_line /= '1' then

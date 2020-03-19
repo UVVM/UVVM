@@ -224,7 +224,10 @@ package body uart_bfm_pkg is
         tx <= odd_parity(data_value);
       end if;
     end if;
-    wait for config.bit_time;
+
+    if (config.parity /= PARITY_NONE) then
+      wait for config.bit_time;
+    end if;
 
 
     -- Set stop bits

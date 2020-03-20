@@ -1597,6 +1597,8 @@ begin
       await_value(r, 17.0, 1 ns, 2 ns, error, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
       increment_expected_alerts(error, 3);
 
+      
+
     elsif GC_TEST = "byte_and_slv_arrays" then
       -------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Testing and verifying convert_byte_array_to_slv_array");
@@ -3406,13 +3408,13 @@ begin
     elsif GC_TEST = "optional_alert_level" then
         -- This GC_TEST contains duplicates of the testcases for:
         --      GC_TEST = check_value
-        --      GC_TEST = check_value_in_range (NOT PORTED YET)
-        --      GC_TEST = check_stable (NOT PORTED YET)
-        --      GC_TEST = await_change (NOT PORTED YET)
+        --      GC_TEST = check_value_in_range 
+        --      GC_TEST = check_stable 
+        --      GC_TEST = await_change 
         --      GC_TEST = await_value (NOT PORTED YET)
         --      GC_TEST = await_stable (NOT PORTED YET)
         -- with all testcases called without alert_level parameter. 
-        -- Update date (19/03/20). 
+        -- Update date (20/03/20). 
 
       --------------------------------------------------------------------------------------
       -- CHECK_VALUE(): Verifying check_value overloads without alert_level
@@ -3658,9 +3660,9 @@ begin
       wait for 20 ns;
       check_stable(slv8, 30 ns, "Stable slv OK", C_SCOPE);
       increment_expected_alerts(error, 7);
-      
+
      --------------------------------------------------------------------------------------
-      -- Verifying await_change
+      -- AWAIT_CHANGE(): Verifying await_change
       --------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying await_change");
       bol <= transport false after 2 ns;
@@ -3746,6 +3748,170 @@ begin
       await_change(r, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
       increment_expected_alerts(error, 2);      
   
+--------------------------------------------------------------------------------------
+-- AWAIT_VALUE(): Verifying await_value
+--------------------------------------------------------------------------------------
+      -- await_value : SLV
+      log(ID_LOG_HDR, "Verifying await_value");
+      slv8 <= "00000000";
+      slv8 <= transport "00000001" after 2 ns;
+      await_value(slv8, "00000001", 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      wait for 10 ns;
+      slv8 <= transport "00000010" after 3 ns;
+      await_value(slv8, "00000010", 3 ns, 5 ns, "Change within time window 1, OK", C_SCOPE);
+      slv8 <= transport "00000011" after 4 ns;
+      await_value(slv8, "000000011", 3 ns, 5 ns, "Change within time window 2, leading zero, OK", C_SCOPE);
+      slv8 <= transport "00000100" after 5 ns;
+      await_value(slv8, "0000100", 3 ns, 5 ns, "Change within time window 3, leading zero, OK", C_SCOPE);
+      slv8 <= transport "00000101" after 6 ns;
+      await_value(slv8, "00000101", 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      slv8 <= transport "00000110" after 1 ns;
+      slv8 <= transport "00000111" after 2 ns;
+      slv8 <= transport "00001000" after 4 ns;
+      await_value(slv8, "00001000", 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      await_value(slv8, "100010011", 3 ns, 5 ns, "Different width, Fail", C_SCOPE);
+      slv8 <= transport "00001001" after 0 ns;
+      await_value(slv8, "00001001", 0 ns, 1 ns, "Changed immediately, OK", C_SCOPE);
+      wait for 10 ns;
+      slv8 <= transport "00001111" after 0 ns;
+      slv8 <= transport "10000000" after 1 ns;
+      await_value(slv8, "00001111", 0 ns, 0 ns, "Changed immediately, OK. Log in BIN", C_SCOPE, BIN);
+      await_value(slv8, "00001111", 0 ns, 1 ns, "Val=exp already, No signal'event. OK. Log in HEX", C_SCOPE, HEX);
+      await_value(slv8, "00001111", 0 ns, 2 ns, "Val=exp already, No signal'event. OK. Log in DECimal", C_SCOPE, DEC);
+      slv8 <= "10000000";
+      wait for 1 ns;
+      await_value(slv8, "10000000", 0 ns, 0 ns, "Val=exp already, No signal'event. OK. ", C_SCOPE, HEX);
+      await_value(slv8, "10000000", 1 ns, 2 ns, "Val=exp already, min_time>0ns, Fail. ", C_SCOPE, HEX);
+
+      slv8 <= transport "00000011" after 4 ns;
+      await_value(slv8, "00000011", MATCH_EXACT, 3 ns, 5 ns, "Change within time window 2, exact match, OK", C_SCOPE);
+      wait for 10 ns;
+      slv8 <= transport "10110001" after 4 ns;
+      await_value(slv8, "10--0001", MATCH_STD, 3 ns, 5 ns, "Change within time window 2, STD match, OK", C_SCOPE);
+
+      increment_expected_alerts(error, 4);
+
+      -- await_value : unsigned
+      u8 <= "00000000";
+      u8 <= transport "00000001" after 2 ns;
+      await_value(u8, "00000001", 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      u8 <= transport "00000010" after 3 ns;
+      await_value(u8, "00000010", 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      u8 <= transport "00000101" after 6 ns;
+      await_value(u8, "00000101", 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      u8 <= transport "00001111" after 0 ns;
+      u8 <= transport "10000000" after 1 ns;
+      await_value(u8, "00001111", 0 ns, 0 ns, "Changed immediately, OK. Log in BIN", C_SCOPE, BIN);
+      await_value(u8, "00001111", 0 ns, 0 ns, "Changed immediately, OK. Log in HEX", C_SCOPE, HEX);
+      await_value(u8, "00001111", 0 ns, 2 ns, "Changed immediately, OK. Log in DECimal", C_SCOPE, DEC);
+      increment_expected_alerts(error, 2);
+
+      -- await_value : signed
+      s8 <= "00000000";
+      s8 <= transport "00000001" after 2 ns;
+      await_value(s8, "00000001", 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      s8 <= transport "00000010" after 3 ns;
+      await_value(s8, "00000010", 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      s8 <= transport "00000101" after 6 ns;
+      await_value(s8, "00000101", 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      s8 <= transport "00001111" after 0 ns;
+      await_value(s8, "00001111", 0 ns, 1 ns, "Changed immediately, OK. Log in DECimal", C_SCOPE, DEC);
+      increment_expected_alerts(error, 2);
+
+      -- await_value : boolean
+      bol <= false;
+      bol <= transport true  after 2 ns;
+      await_value(bol, true, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      wait for 10 ns;
+      bol <= transport false after 3 ns;
+      await_value(bol, false, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      bol <= transport true  after 6 ns;
+      await_value(bol, true, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      bol <= transport false after 0 ns;
+      await_value(bol, false, 0 ns, 1 ns, "Changed immediately, OK. ", C_SCOPE);
+      bol <= true;
+      wait for 0 ns;
+      bol <= transport false after 1 ns;
+      await_value(bol, true, 0 ns, 2 ns, "Val=exp already, No signal'event. OK. ", C_SCOPE);
+      bol <= true;
+      wait for 0 ns;
+      await_value(bol, true, 1 ns, 2 ns, "Val=exp already, min_time>0ns, Fail. ", C_SCOPE);
+
+      increment_expected_alerts(error, 3);
+
+      -- await_value : std_logic
+      sl <= '0';
+      sl <= transport '1' after 2 ns;
+      await_value(sl, '1', 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '0' after 3 ns;
+      await_value(sl, '0', 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      sl <= transport '1' after 6 ns;
+      await_value(sl, '1', 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '0' after 0 ns;
+      wait for 0 ns;
+      sl <= transport '1' after 1 ns;
+      await_value(sl, '0', 0 ns, 2 ns, "Changed immediately, OK. ", C_SCOPE);
+      sl <= '1';
+      wait for 10 ns;
+      await_value(sl, '1', 1 ns, 2 ns, "Val=exp already, min_time>0ns, Fail. ", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport 'L' after 3 ns;
+      await_value(sl, '0', MATCH_STD, 3 ns, 5 ns, "Change within time window to weak, expecting forced, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 3 ns;
+      await_value(sl, 'H', MATCH_STD, 3 ns, 5 ns, "Change within time window to forced, expecting weak, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '0' after 3 ns;
+      await_value(sl, 'L', MATCH_EXACT, 3 ns, 5 ns, "Change within time window to forced, expecting weak, FAIL", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport 'H' after 3 ns;
+      await_value(sl, '1', MATCH_EXACT, 3 ns, 5 ns, "Change within time window to weak, expecting forced, FAIL", C_SCOPE);
+      wait for 10 ns;
+      increment_expected_alerts(error, 5);
+
+      -- await_value : integer
+      i <= 0;
+      i <= transport 1  after 2 ns;
+      await_value(i, 1, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      i <= transport 2  after 3 ns;
+      await_value(i, 2, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      i <= transport 3  after 6 ns;
+      await_value(i, 3, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      i <= transport 15 after 0 ns;
+      wait for 0 ns;
+      i <= transport 16 after 1 ns;
+      await_value(i, 15, 0 ns, 2 ns, "Val=exp already, no signal'event, OK. ", C_SCOPE);
+      wait for 10 ns;
+      i <= 17;
+      wait for 0 ns;
+      await_value(i, 17, 1 ns, 2 ns, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
+      increment_expected_alerts(error, 3);
+
+      -- await_value : real
+      r <= 0.0;
+      r <= transport 1.0  after 2 ns;
+      await_value(r, 1.0, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      r <= transport 2.0  after 3 ns;
+      await_value(r, 2.0, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      r <= transport 3.0  after 6 ns;
+      await_value(r, 3.0, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      r <= transport 15.0 after 0 ns;
+      wait for 0 ns;
+      r <= transport 16.0 after 1 ns;
+      await_value(r, 15.0, 0 ns, 2 ns, "Val=exp already, no signal'event, OK. ", C_SCOPE);
+      wait for 10 ns;
+      r <= 17.0;
+      wait for 0 ns;
+      await_value(r, 17.0, 1 ns, 2 ns, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
+      increment_expected_alerts(error, 3);
+      
     else
       alert(tb_error, "Unsupported test");
     end if;

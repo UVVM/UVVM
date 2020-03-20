@@ -1727,6 +1727,7 @@ procedure check_stable(
     constant value_type  : string          := "real"
   );
 
+-- Await Value procedures
   procedure await_value (
     signal   target       : boolean;
     constant exp          : boolean;
@@ -1845,6 +1846,118 @@ procedure check_stable(
     constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   );
 
+-- Await Value Overloads without Mandatory Alert_Level
+procedure await_value (
+  signal   target       : boolean;
+  constant exp          : boolean;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : std_logic;
+  constant exp          : std_logic;
+  constant match_strictness : t_match_strictness;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : std_logic;
+  constant exp          : std_logic;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : std_logic_vector;
+  constant exp          : std_logic_vector;
+  constant match_strictness : t_match_strictness;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : std_logic_vector;
+  constant exp          : std_logic_vector;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : unsigned;
+  constant exp          : unsigned;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : signed;
+  constant exp          : signed;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : integer;
+  constant exp          : integer;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_value (
+  signal   target       : real;
+  constant exp          : real;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+);
+
+
+-- Await Stable Procedures
   procedure await_stable (
     signal   target           : boolean;
     constant stable_req       : time;                  -- Minimum stable requirement
@@ -1935,6 +2048,10 @@ procedure check_stable(
     constant msg_id           : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   );
+
+-----------------------------------------------------
+-- Pulse Generation Procedures
+-----------------------------------------------------
 
   procedure gen_pulse(
     signal   target             : inout std_logic;
@@ -2119,6 +2236,9 @@ procedure check_stable(
     constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel
   );
 
+-----------------------------------------------------
+-- Clock Generator Procedures
+-----------------------------------------------------
   procedure clock_generator(
     signal   clock_signal          : inout std_logic;
     constant clock_period          : in    time;
@@ -2189,7 +2309,9 @@ procedure check_stable(
     constant clock_high_time : in    time
   );
 
-  -- Adjustable clock generators
+-----------------------------------------------------
+-- Adjustable Clock Generator Procedures
+-----------------------------------------------------  
   procedure adjustable_clock_generator(
     signal   clock_signal          : inout std_logic;
     signal   clock_ena             : in    boolean;
@@ -6369,9 +6491,9 @@ begin
   check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
 end;
   
-  --------------------------------------------------------------------------------
-  -- await_value
-  --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- await_value
+--------------------------------------------------------------------------------
   -- Potential improvements
   --  - Adding an option that the signal must last for more than one delta cycle
   --    or a specified time
@@ -6649,8 +6771,267 @@ end;
     check_time_window((target = exp), now-start_time, min_time, max_time, alert_level, name, msg, scope, msg_id, msg_id_panel);
   end;
 
-  -- Helper procedure:
-  -- Convert time from 'FROM_LAST_EVENT' to 'FROM_NOW'
+-- Await Value Overloads without alert_level
+procedure await_value (
+  signal   target       : boolean;
+  constant exp          : boolean;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "boolean";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  if (target /= exp) then
+    wait until (target = exp) for max_time;
+  end if;
+  check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_value (
+  signal   target       : std_logic;
+  constant exp          : std_logic;
+  constant match_strictness : t_match_strictness;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "std_logic";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+  variable success      : boolean := false;
+begin
+  success := false;
+
+  if match_strictness = MATCH_EXACT then
+    if (target /= exp) then
+      wait until (target = exp) for max_time;
+    end if;
+    if (target = exp) then
+      success := true;
+    end if;
+  else
+    if ((exp = '1' or exp = 'H') and (target /= '1') and (target /= 'H')) then
+      wait until (target = '1' or target = 'H') for max_time;
+    elsif ((exp = '0' or exp = 'L') and (target /= '0') and (target /= 'L')) then
+      wait until (target = '0' or target = 'L') for max_time;
+    end if;
+
+    if ((exp = '1' or exp = 'H') and (target = '1' or target = 'H')) then
+      success := true;
+    elsif ((exp = '0' or exp = 'L') and (target = '0' or target = 'L')) then
+      success := true;
+    end if;
+  end if;
+  check_time_window(success, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_value (
+  signal   target       : std_logic;
+  constant exp          : std_logic;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "std_logic";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  await_value(target, exp, MATCH_EXACT, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_value (
+  signal   target       : std_logic_vector;
+  constant exp          : std_logic_vector;
+  constant match_strictness : t_match_strictness;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "slv";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  -- AS_IS format has been deprecated and will be removed in the near future
+  if format = AS_IS then
+    deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
+  end if;
+
+  if matching_widths(target, exp) then
+    if match_strictness = MATCH_STD then
+      if not matching_values(target, exp) then
+        wait until matching_values(target, exp) for max_time;
+      end if;
+      check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+    else
+      if (target /= exp) then
+        wait until (target = exp) for max_time;
+      end if;
+      check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+    end if;
+
+  else
+    alert(ERROR, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+  end if;
+end;
+
+procedure await_value (
+  signal   target       : std_logic_vector;
+  constant exp          : std_logic_vector;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "slv";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  await_value(target, exp, MATCH_STD, min_time, max_time, ERROR, msg, scope, radix, format, msg_id, msg_id_panel);
+end;
+
+procedure await_value (
+  signal   target       : unsigned;
+  constant exp          : unsigned;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "unsigned";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  -- AS_IS format has been deprecated and will be removed in the near future
+  if format = AS_IS then
+    deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
+  end if;
+
+  if matching_widths(target, exp) then
+    if not matching_values(target, exp) then
+      wait until matching_values(target, exp) for max_time;
+    end if;
+    check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  else
+    alert(ERROR, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+  end if;
+end;
+
+procedure await_value (
+  signal   target       : signed;
+  constant exp          : signed;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant radix        : t_radix         := HEX_BIN_IF_INVALID;
+  constant format       : t_format_zeros  := SKIP_LEADING_0;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string          := "signed";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  -- AS_IS format has been deprecated and will be removed in the near future
+  if format = AS_IS then
+    deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
+  end if;
+
+  if matching_widths(target, exp) then
+    if not matching_values(target, exp) then
+      wait until matching_values(target, exp) for max_time;
+    end if;
+    check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  else
+    alert(ERROR, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+  end if;
+end;
+
+procedure await_value (
+  signal   target       : integer;
+  constant exp          : integer;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "integer";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  if (target /= exp) then
+    wait until (target = exp) for max_time;
+  end if;
+  check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_value (
+  signal   target       : real;
+  constant exp          : real;
+  constant min_time     : time;
+  constant max_time     : time;
+  constant msg          : string;
+  constant scope        : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type   : string := "real";
+  constant start_time   : time   := now;
+  constant v_exp_str    : string := to_string(exp);
+  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+begin
+  if (target /= exp) then
+    wait until (target = exp) for max_time;
+  end if;
+  check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+
+-- Helper procedure:
+-- Convert time from 'FROM_LAST_EVENT' to 'FROM_NOW'
   procedure await_stable_calc_time (
     constant target_last_event                : time;
     constant stable_req                       : time;                  -- Minimum stable requirement

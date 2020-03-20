@@ -3411,14 +3411,14 @@ begin
         --      GC_TEST = check_value_in_range 
         --      GC_TEST = check_stable 
         --      GC_TEST = await_change 
-        --      GC_TEST = await_value (NOT PORTED YET)
-        --      GC_TEST = await_stable (NOT PORTED YET)
+        --      GC_TEST = await_value 
+        --      GC_TEST = await_stable 
         -- with all testcases called without alert_level parameter. 
         -- Update date (20/03/20). 
 
-      --------------------------------------------------------------------------------------
-      -- CHECK_VALUE(): Verifying check_value overloads without alert_level
-      --------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+-- CHECK_VALUE(): Verifying check_value overloads without alert_level
+--------------------------------------------------------------------------------------
 
       log(ID_LOG_HDR, "Verifying check_value() overloads without alert_level", "C_SCOPE");
       -- Boolean
@@ -3587,9 +3587,9 @@ begin
       check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array lenghts");
       check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array directions");
 
-     --------------------------------------------------------------------------
-      -- CHECK_VALUE_IN_RANGE(): Check_value_in_range
-      --------------------------------------------------------------------------
+--------------------------------------------------------------------------
+-- CHECK_VALUE_IN_RANGE(): Check_value_in_range without alert_level
+--------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying check_value_in_range() overloads without alert_level", "C_SCOPE");
 
       -- check_value_in_range : integer
@@ -3626,10 +3626,10 @@ begin
       check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
       increment_expected_alerts(error);
 
-      --------------------------------------------------------------------------------------
-      -- CHECK_STABLE():  Verifying check_stable
-      --------------------------------------------------------------------------------------
-      log(ID_LOG_HDR, "Verifying check_stable without alert level", C_SCOPE);
+--------------------------------------------------------------------------------------
+-- CHECK_STABLE():  Verifying check_stable without alert level
+--------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying check_stable overloads without alert level", C_SCOPE);
       bol  <= true;
       slv8 <= (others => '1');
       u8   <= (others => '1');
@@ -3661,10 +3661,10 @@ begin
       check_stable(slv8, 30 ns, "Stable slv OK", C_SCOPE);
       increment_expected_alerts(error, 7);
 
-     --------------------------------------------------------------------------------------
-      -- AWAIT_CHANGE(): Verifying await_change
-      --------------------------------------------------------------------------------------
-      log(ID_LOG_HDR, "Verifying await_change");
+--------------------------------------------------------------------------------------
+-- AWAIT_CHANGE(): Verifying await_change without alert_level
+--------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying await_change overloads without alert_level");
       bol <= transport false after 2 ns;
       await_change(bol, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
       bol <= transport true  after 3 ns;
@@ -3749,10 +3749,10 @@ begin
       increment_expected_alerts(error, 2);      
   
 --------------------------------------------------------------------------------------
--- AWAIT_VALUE(): Verifying await_value
+-- AWAIT_VALUE(): Verifying await_value without alert_level
 --------------------------------------------------------------------------------------
       -- await_value : SLV
-      log(ID_LOG_HDR, "Verifying await_value");
+      log(ID_LOG_HDR, "Verifying await_value overloads without alert_level");
       slv8 <= "00000000";
       slv8 <= transport "00000001" after 2 ns;
       await_value(slv8, "00000001", 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
@@ -3911,6 +3911,487 @@ begin
       wait for 0 ns;
       await_value(r, 17.0, 1 ns, 2 ns, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
       increment_expected_alerts(error, 3);
+
+--------------------------------------------------------------------------------------
+-- AWAIT_STABLE(): Verifying await_value without alert_level
+--------------------------------------------------------------------------------------
+      --------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying await_stable overloads without alert_level");
+      --------------------------------------------------------------------------------------
+
+      --
+      -- await_stable(boolean)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      bol <= transport bol after 30 ns;  -- No 'Event
+      await_stable(bol, 50 ns, FROM_NOW, 51 ns, FROM_NOW, "bol: No 'event, Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      bol <= transport not bol after 30 ns;
+      await_stable(bol, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "bol: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      bol <= transport not bol after 30 ns;
+      await_stable(bol, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "bol: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(bol, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "bol: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(bol, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "bol: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      bol <= not bol;
+      wait for 10 ns;
+      await_stable(bol, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "bol: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      bol <= not bol;
+      await_stable(bol, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "bol: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      bol <= not bol;
+      wait for 11 ns;
+      bol <= transport not bol after 10 ns;
+      await_stable(bol, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "bol: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      bol <= not bol;
+      wait for 10 ns;
+      bol <= transport not bol after 10 ns;
+      await_stable(bol, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "bol: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      bol <= not bol;
+      wait for 100 ns;
+      bol <= transport not bol after 10 ns;
+      await_stable(bol, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "bol: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      bol <= not bol;
+      wait for 100 ns;
+      bol <= transport not bol after 10 ns;
+      await_stable(bol, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "bol: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      bol <= not bol;
+      wait for 10 ns;
+      await_stable(bol, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "bol: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      bol <= not bol;
+      wait for 10 ns;
+      await_stable(bol, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "bol: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      bol <= not bol;
+      wait for 10 ns;
+      await_stable(bol, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "bol: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      --
+      -- await_stable(std_logic)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      await_stable(sl, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "sl: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      sl <= transport not sl after 30 ns;
+      await_stable(sl, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "sl: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      sl <= transport not sl after 30 ns;
+      await_stable(sl, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "sl: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(sl, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "sl: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(sl, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "sl: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      sl <= not sl;
+      wait for 10 ns;
+      await_stable(sl, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "sl: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      sl <= not sl;
+      await_stable(sl, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "sl: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      sl <= not sl;
+      wait for 11 ns;
+      sl <= transport not sl after 10 ns;
+      await_stable(sl, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "sl: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      sl <= not sl;
+      wait for 10 ns;
+      sl <= transport not sl after 10 ns;
+      await_stable(sl, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "sl: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      sl <= not sl;
+      wait for 100 ns;
+      sl <= transport not sl after 10 ns;
+      await_stable(sl, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "sl: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      sl <= not sl;
+      wait for 100 ns;
+      sl <= transport not sl after 10 ns;
+      await_stable(sl, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "sl: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      sl <= not sl;
+      wait for 10 ns;
+      await_stable(sl, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "sl: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      sl <= not sl;
+      wait for 10 ns;
+      await_stable(sl, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "sl: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      sl <= not sl;
+      wait for 10 ns;
+      await_stable(sl, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "sl: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      --
+      -- await_stable(std_logic_vector)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      await_stable(slv8, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "slv8: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      slv8 <= transport not slv8 after 30 ns;
+      await_stable(slv8, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "slv8: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      slv8 <= transport not slv8 after 30 ns;
+      await_stable(slv8, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "slv8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(slv8, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "slv8: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(slv8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "slv8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      slv8 <= not slv8;
+      wait for 10 ns;
+      await_stable(slv8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "slv8: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      slv8 <= not slv8;
+      await_stable(slv8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "slv8: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      slv8 <= not slv8;
+      wait for 11 ns;
+      slv8 <= transport not slv8 after 10 ns;
+      await_stable(slv8, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "slv8: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      slv8 <= not slv8;
+      wait for 10 ns;
+      slv8 <= transport not slv8 after 10 ns;
+      await_stable(slv8, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "slv8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      slv8 <= not slv8;
+      wait for 100 ns;
+      slv8 <= transport not slv8 after 10 ns;
+      await_stable(slv8, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "slv8: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      slv8 <= not slv8;
+      wait for 100 ns;
+      slv8 <= transport not slv8 after 10 ns;
+      await_stable(slv8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "slv8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      slv8 <= not slv8;
+      wait for 10 ns;
+      await_stable(slv8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "slv8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      slv8 <= not slv8;
+      wait for 10 ns;
+      await_stable(slv8, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "slv8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      slv8 <= not slv8;
+      wait for 10 ns;
+      await_stable(slv8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "slv8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+
+      --
+      -- await_stable(unsigned)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      await_stable(u8, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "u8: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      u8 <= transport not u8 after 30 ns;
+      await_stable(u8, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "u8: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      u8 <= transport not u8 after 30 ns;
+      await_stable(u8, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "u8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(u8, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "u8: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(u8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "u8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      u8 <= not u8;
+      wait for 10 ns;
+      await_stable(u8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "u8: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      u8 <= not u8;
+      await_stable(u8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "u8: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      u8 <= not u8;
+      wait for 11 ns;
+      u8 <= transport not u8 after 10 ns;
+      await_stable(u8, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "u8: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      u8 <= not u8;
+      wait for 10 ns;
+      u8 <= transport not u8 after 10 ns;
+      await_stable(u8, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "u8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      u8 <= not u8;
+      wait for 100 ns;
+      u8 <= transport not u8 after 10 ns;
+      await_stable(u8, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "u8: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      u8 <= not u8;
+      wait for 100 ns;
+      u8 <= transport not u8 after 10 ns;
+      await_stable(u8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "u8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      u8 <= not u8;
+      wait for 10 ns;
+      await_stable(u8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "u8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      u8 <= not u8;
+      wait for 10 ns;
+      await_stable(u8, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "u8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      u8 <= not u8;
+      wait for 10 ns;
+      await_stable(u8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "u8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+
+      --
+      -- await_stable(signed)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      await_stable(s8, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "s8: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      s8 <= transport not s8 after 30 ns;
+      await_stable(s8, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "s8: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      s8 <= transport not s8 after 30 ns;
+      await_stable(s8, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "s8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(s8, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "s8: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(s8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "s8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      s8 <= not s8;
+      wait for 10 ns;
+      await_stable(s8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "s8: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      s8 <= not s8;
+      await_stable(s8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "s8: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      s8 <= not s8;
+      wait for 11 ns;
+      s8 <= transport not s8 after 10 ns;
+      await_stable(s8, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "s8: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      s8 <= not s8;
+      wait for 10 ns;
+      s8 <= transport not s8 after 10 ns;
+      await_stable(s8, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "s8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      s8 <= not s8;
+      wait for 100 ns;
+      s8 <= transport not s8 after 10 ns;
+      await_stable(s8, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "s8: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      s8 <= not s8;
+      wait for 100 ns;
+      s8 <= transport not s8 after 10 ns;
+      await_stable(s8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "s8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      s8 <= not s8;
+      wait for 10 ns;
+      await_stable(s8, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "s8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      s8 <= not s8;
+      wait for 10 ns;
+      await_stable(s8, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "s8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      s8 <= not s8;
+      wait for 10 ns;
+      await_stable(s8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "s8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+
+      --
+      -- await_stable(integer)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      await_stable(i, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "i: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      i <= transport i+1 after 30 ns;
+      await_stable(i, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "i: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      i <= transport i+1 after 30 ns;
+      await_stable(i, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "i: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(i, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "i: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(i, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "i: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      i <= i+1;
+      wait for 10 ns;
+      await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      i <= i+1;
+      await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      i <= i+1;
+      wait for 11 ns;
+      i <= transport i+1 after 10 ns;
+      await_stable(i, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      i <= i+1;
+      wait for 10 ns;
+      i <= transport i+1 after 10 ns;
+      await_stable(i, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "i: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      i <= i+1;
+      wait for 100 ns;
+      i <= transport i+1 after 10 ns;
+      await_stable(i, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "i: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      i <= i+1;
+      wait for 100 ns;
+      i <= transport i+1 after 10 ns;
+      await_stable(i, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "i: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      i <= i+1;
+      wait for 10 ns;
+      await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      i <= i+1;
+      wait for 10 ns;
+      await_stable(i, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      i <= i+1;
+      wait for 10 ns;
+      await_stable(i, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      --
+      -- await_stable(real)
+      --
+
+      -- FROM_NOW, FROM_NOW
+      await_stable(r, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "r: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
+
+      r <= transport r+1.0 after 30 ns;
+      await_stable(r, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "r: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
+
+      r <= transport r+1.0 after 30 ns;
+      await_stable(r, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "r: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(r, 50 ns, FROM_NOW, 1 ns, FROM_NOW, "r: Timeout before stable_req, FROM_NOW, FROM_NOW, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      await_stable(r, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "r: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_NOW
+      r <= r+1.0;
+      wait for 10 ns;
+      await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
+
+      wait for 50 ns;
+      r <= r+1.0;
+      await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
+
+      r <= r+1.0;
+      wait for 11 ns;
+      r <= transport r+1.0 after 10 ns;
+      await_stable(r, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
+
+      r <= r+1.0;
+      wait for 10 ns;
+      r <= transport r+1.0 after 10 ns;
+      await_stable(r, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "r: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      -- FROM_NOW, FROM_LAST_EVENT
+      r <= r+1.0;
+      wait for 100 ns;
+      r <= transport r+1.0 after 10 ns;
+      await_stable(r, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "r: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+      r <= r+1.0;
+      wait for 100 ns;
+      r <= transport r+1.0 after 10 ns;
+      await_stable(r, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "r: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
+
+
+      -- FROM_LAST_EVENT, FROM_LAST_EVENT
+      r <= r+1.0;
+      wait for 10 ns;
+      await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      r <= r+1.0;
+      wait for 10 ns;
+      await_stable(r, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
+
+      r <= r+1.0;
+      wait for 10 ns;
+      await_stable(r, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
       
     else
       alert(tb_error, "Unsupported test");

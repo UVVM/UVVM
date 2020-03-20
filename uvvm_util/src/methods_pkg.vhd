@@ -1561,7 +1561,7 @@ procedure check_stable(
 
 
 
-  -- ============================================================================
+-- ============================================================================
 -- Time consuming checks
 -- ============================================================================
 
@@ -2048,6 +2048,92 @@ procedure await_value (
     constant msg_id           : t_msg_id        := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   );
+
+-- Await Stable Procedures without Mandatory Alert_Level
+-- Await Stable Procedures
+procedure await_stable (
+  signal   target           : boolean;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_stable (
+  signal   target           : std_logic;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_stable (
+  signal   target           : std_logic_vector;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_stable (
+  signal   target           : unsigned;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_stable (
+  signal   target           : signed;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_stable (
+  signal   target           : integer;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
+
+procedure await_stable (
+  signal   target           : real;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+);
 
 -----------------------------------------------------
 -- Pulse Generation Procedures
@@ -7136,15 +7222,15 @@ end;
     end if;
   end;
 
-
-  -- Wait until the target signal has been stable for at least 'stable_req'
-  -- Report an error if this does not occurr within the time specified by 'timeout'.
-  -- Note : 'Stable' refers to that the signal has not had an event (i.e. not changed value).
-  -- Description of arguments:
-  -- stable_req_from = FROM_NOW        : Target must be stable 'stable_req' from now
-  -- stable_req_from = FROM_LAST_EVENT : Target must be stable 'stable_req' from the last event of target.
-  -- timeout_from    = FROM_NOW        : The timeout argument is given in time from now
-  -- timeout_from    = FROM_LAST_EVENT : The timeout argument is given in time the last event of target.
+-- Await Stable Procedures
+-- Wait until the target signal has been stable for at least 'stable_req'
+-- Report an error if this does not occurr within the time specified by 'timeout'.
+-- Note : 'Stable' refers to that the signal has not had an event (i.e. not changed value).
+-- Description of arguments:
+-- stable_req_from = FROM_NOW        : Target must be stable 'stable_req' from now
+-- stable_req_from = FROM_LAST_EVENT : Target must be stable 'stable_req' from the last event of target.
+-- timeout_from    = FROM_NOW        : The timeout argument is given in time from now
+-- timeout_from    = FROM_LAST_EVENT : The timeout argument is given in time the last event of target.
   procedure await_stable (
     signal   target           : boolean;
     constant stable_req       : time;                  -- Minimum stable requirement
@@ -7580,6 +7666,434 @@ end;
 
     end loop;
   end;
+
+-- Procedure overloads for await_stable() without mandatory Alert_Level
+procedure await_stable (
+  signal   target           : boolean;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "boolean";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occurr
+  while not v_stable_req_met loop
+    wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
+
+procedure await_stable (
+  signal   target           : std_logic;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "std_logic";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occurr
+  while not v_stable_req_met loop
+    wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
+
+procedure await_stable (
+  signal   target           : std_logic_vector;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "std_logic_vector";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occurr
+  while not v_stable_req_met loop
+      wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
+
+procedure await_stable (
+  signal   target           : unsigned;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "unsigned";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occurr
+  while not v_stable_req_met loop
+    wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
+
+procedure await_stable (
+  signal   target           : signed;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "signed";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occurr
+  while not v_stable_req_met loop
+    wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
+
+procedure await_stable (
+  signal   target           : integer;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "integer";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occur
+  while not v_stable_req_met loop
+    wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
+
+procedure await_stable (
+  signal   target           : real;
+  constant stable_req       : time;                  -- Minimum stable requirement
+  constant stable_req_from  : t_from_point_in_time;  -- Which point in time stable_req starts
+  constant timeout          : time;                  -- Timeout if stable_req not achieved
+  constant timeout_from     : t_from_point_in_time;  -- Which point in time the timeout starts
+  constant msg              : string;
+  constant scope            : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id           : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
+  ) is
+  constant value_type                : string := "real";
+  constant start_time                : time   := now;
+  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
+                                                 ", " & to_string(timeout, ns) & ")";
+  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
+  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
+  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+begin
+
+  -- Use a helper procedure to simplify overloading
+  await_stable_calc_time(
+    target_last_event                 => target'last_event,
+    stable_req                        => stable_req,
+    stable_req_from                   => stable_req_from,
+    timeout                           => timeout,
+    timeout_from                      => timeout_from,
+    stable_req_from_now               => v_stable_req_from_now,
+    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+    alert_level                       => ERROR,
+    msg                               => msg,
+    scope                             => scope,
+    msg_id                            => msg_id,
+    msg_id_panel                      => msg_id_panel,
+    caller_name                       => name,
+    stable_req_met                    => v_stable_req_met);
+
+  -- Start waiting for target'event or stable_req time, unless :
+  --  - stable_req already achieved, or
+  --  - it is already too late to be stable for stable_req before timeout will occur
+  while not v_stable_req_met loop
+    wait until target'event for v_stable_req_from_now;
+
+    -- Use a helper procedure to simplify overloading
+    await_stable_checks (
+      start_time                        => start_time,
+      stable_req                        => stable_req,
+      stable_req_from_now               => v_stable_req_from_now,
+      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
+      time_since_last_event             => target'last_event,
+      alert_level                       => ERROR,
+      msg                               => msg,
+      scope                             => scope,
+      msg_id                            => msg_id,
+      msg_id_panel                      => msg_id_panel,
+      caller_name                       => name,
+      stable_req_met                    => v_stable_req_met);
+
+  end loop;
+end;
 
   -----------------------------------------------------------------------------------
   -- gen_pulse(sl)

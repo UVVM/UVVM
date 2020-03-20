@@ -673,7 +673,8 @@ impure function check_value(
   constant value_type  : string          := "t_unsigned_array"
   ) return boolean ; 
  
-    -- procedure version of check_value (no return value)
+-- overloads for procedure version of check_value (no return value)
+
   procedure check_value(
     constant value       : boolean;
     constant alert_level : t_alert_level;
@@ -1037,7 +1038,7 @@ impure function check_value(
   -- 
   
   
-    -- Check_value_in_range
+-- Check_value_in_range
   impure function check_value_in_range (
     constant value        : integer;
     constant min_value    : integer;
@@ -1090,6 +1091,7 @@ impure function check_value(
     ) return boolean;
 
   impure function check_value_in_range (
+
     constant value        : real;
     constant min_value    : real;
     constant max_value    : real;
@@ -1101,8 +1103,66 @@ impure function check_value(
     constant caller_name  : string         := "check_value_in_range()"
     ) return boolean;
 
+-- Function overloads for check_value_in_range without mandatory alert_level
+impure function check_value_in_range (
+  constant value        : integer;
+  constant min_value    : integer;
+  constant max_value    : integer;
+  constant msg          : string;
+  constant scope        : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  constant caller_name  : string         := "check_value_in_range()";
+  constant value_type   : string         := "integer"
+  ) return boolean;
+
+impure function check_value_in_range (
+  constant value        : unsigned;
+  constant min_value    : unsigned;
+  constant max_value    : unsigned;
+  constant msg          : string;
+  constant scope        : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  constant caller_name  : string         := "check_value_in_range()";
+  constant value_type   : string         := "unsigned"
+  ) return boolean;
+
+impure function check_value_in_range (
+  constant value        : signed;
+  constant min_value    : signed;
+  constant max_value    : signed;
+  constant msg          : string;
+  constant scope        : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  constant caller_name  : string         := "check_value_in_range()";
+  constant value_type   : string         := "signed"
+  ) return boolean;
+
+impure function check_value_in_range (
+  constant value        : time;
+  constant min_value    : time;
+  constant max_value    : time;
+  constant msg          : string;
+  constant scope        : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  constant caller_name  : string         := "check_value_in_range()"
+  ) return boolean;
+
+impure function check_value_in_range (
+  constant value        : real;
+  constant min_value    : real;
+  constant max_value    : real;
+  constant msg          : string;
+  constant scope        : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id       : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  constant caller_name  : string         := "check_value_in_range()"
+  ) return boolean;
   
-  -- Procedure overloads for check_value_in_range
+-- Procedure overloads for check_value_in_range
   procedure check_value_in_range (
     constant value       : integer;
     constant min_value   : integer;
@@ -1156,6 +1216,62 @@ impure function check_value(
     constant min_value   : real;
     constant max_value   : real;
     constant alert_level : t_alert_level;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+  );
+
+  -- Procedure overloads for check_value_in_range without mandatory alert_level
+  procedure check_value_in_range (
+    constant value       : integer;
+    constant min_value   : integer;
+    constant max_value   : integer;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name  : string         := "check_value_in_range()"
+  );
+
+  procedure check_value_in_range (
+    constant value       : unsigned;
+    constant min_value   : unsigned;
+    constant max_value   : unsigned;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+  );
+
+  procedure check_value_in_range (
+    constant value       : signed;
+    constant min_value   : signed;
+    constant max_value   : signed;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+  );
+
+  procedure check_value_in_range (
+    constant value       : time;
+    constant min_value   : time;
+    constant max_value   : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+  );
+
+  procedure check_value_in_range (
+    constant value       : real;
+    constant min_value   : real;
+    constant max_value   : real;
     constant msg         : string;
     constant scope       : string          := C_TB_SCOPE_DEFAULT;
     constant msg_id      : t_msg_id        := ID_POS_ACK;
@@ -1364,7 +1480,10 @@ impure function check_value(
   ) return boolean;
 
 
--- ============================================================================
+
+
+
+  -- ============================================================================
 -- Time consuming checks
 -- ============================================================================
 
@@ -4376,10 +4495,6 @@ package body methods_pkg is
     end if;
   end;
 
-  
-
-
-
   ----------------------------------------------------------------------
   -- Overloads to allow check_value to be called without alert_level
   ----------------------------------------------------------------------
@@ -4800,6 +4915,151 @@ package body methods_pkg is
       return false;
     end if;
   end;
+
+  -- check_value_in_range without mandatory alert_level
+  impure function check_value_in_range (
+    constant value        : integer;
+    constant min_value    : integer;
+    constant max_value    : integer;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "check_value_in_range()";
+    constant value_type   : string         := "integer"
+    ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
+    variable v_check_ok      : boolean;
+  begin
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
+  end;
+
+  impure function check_value_in_range (
+    constant value        : unsigned;
+    constant min_value    : unsigned;
+    constant max_value    : unsigned;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "check_value_in_range()";
+    constant value_type   : string         := "unsigned"
+    ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
+  begin
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
+  end;
+
+  impure function check_value_in_range (
+    constant value        : signed;
+    constant min_value    : signed;
+    constant max_value    : signed;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "check_value_in_range()";
+    constant value_type   : string         := "signed"
+    ) return boolean is
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
+  begin
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
+  end;
+
+  impure function check_value_in_range (
+    constant value        : time;
+    constant min_value    : time;
+    constant max_value    : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "check_value_in_range()"
+    ) return boolean is
+    constant value_type      : string   := "time";
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
+    variable v_check_ok      : boolean;
+  begin
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
+  end;
+
+  impure function check_value_in_range (
+    constant value        : real;
+    constant min_value    : real;
+    constant max_value    : real;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "check_value_in_range()"
+    ) return boolean is
+    constant value_type      : string   := "real";
+    constant v_value_str     : string   := to_string(value);
+    constant v_min_value_str : string   := to_string(min_value);
+    constant v_max_value_str : string   := to_string(max_value);
+    variable v_check_ok      : boolean;
+  begin
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR,
+      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, scope,
+      ID_NEVER, msg_id_panel, caller_name);
+
+    if (value >= min_value and value <= max_value) then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+        return true;
+    else
+      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      return false;
+    end if;
+  end;
   --------------------------------------------------------------------------------
   -- check_value_in_range procedures :
   -- Call the corresponding function and discard the return value
@@ -4849,7 +5109,6 @@ package body methods_pkg is
   begin
     v_check_ok := check_value_in_range(value, min_value, max_value, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
-
   procedure check_value_in_range (
     constant value       : time;
     constant min_value   : time;
@@ -4865,7 +5124,6 @@ package body methods_pkg is
   begin
     v_check_ok := check_value_in_range(value, min_value, max_value, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
-
   procedure check_value_in_range (
     constant value       : real;
     constant min_value   : real;
@@ -4880,6 +5138,78 @@ package body methods_pkg is
     variable v_check_ok  : boolean;
   begin
     v_check_ok := check_value_in_range(value, min_value, max_value, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
+  end;
+  
+  -- check_value_in_range procedures without mandatory alert_level
+  procedure check_value_in_range (
+    constant value       : integer;
+    constant min_value   : integer;
+    constant max_value   : integer;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+  end;
+  procedure check_value_in_range (
+    constant value       : unsigned;
+    constant min_value   : unsigned;
+    constant max_value   : unsigned;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+  end;
+  procedure check_value_in_range (
+    constant value       : signed;
+    constant min_value   : signed;
+    constant max_value   : signed;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+  end;
+  procedure check_value_in_range (
+    constant value       : time;
+    constant min_value   : time;
+    constant max_value   : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+  end;
+  procedure check_value_in_range (
+    constant value       : real;
+    constant min_value   : real;
+    constant max_value   : real;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant caller_name : string          := "check_value_in_range()"
+    ) is
+    variable v_check_ok  : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   --------------------------------------------------------------------------------

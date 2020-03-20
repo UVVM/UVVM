@@ -3413,10 +3413,12 @@ begin
         --      GC_TEST = await_stable (NOT PORTED YET)
         -- with all testcases called without alert_level parameter. 
         -- Update date (19/03/20). 
+
       --------------------------------------------------------------------------------------
-      -- Verifying check_value overloads without alert_level
+      -- CHECK_VALUE(): Verifying check_value overloads without alert_level
       --------------------------------------------------------------------------------------
-      log(ID_LOG_HDR, "Verifying check_value overloads without alert_level", "C_SCOPE");
+
+      log(ID_LOG_HDR, "Verifying check_value() overloads without alert_level", "C_SCOPE");
       -- Boolean
       v_b     := check_value(14 > 6,"A must be higher than B, OK", C_SCOPE);
       check_value(v_b,"check_value with return value shall return true when OK", C_SCOPE);
@@ -3546,9 +3548,7 @@ begin
       check_value(std_logic_vector'("1010"), std_logic_vector'("00110010"),"Check padding of different check_value SLV lengths (actual<expected)");
       check_value(std_logic_vector'("00001010"), std_logic_vector'("00110010"),"Check padding of different check_value SLV lengths (actual=expected)");
 
-      ----------------------------------------------------------------------------
       -- Check value with unequal array indexes for t_slv/signed/unsigned_array
-      ----------------------------------------------------------------------------
       -- Verify check_value array index conversion
       v_exp_slv_array(0)   := x"A";
       v_exp_slv_array(1)   := x"B";
@@ -3585,6 +3585,44 @@ begin
       check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array lenghts");
       check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array directions");
 
+     --------------------------------------------------------------------------
+      -- CHECK_VALUE_IN_RANGE(): Check_value_in_range
+      --------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying check_value_in_range() overloads without alert_level", "C_SCOPE");
+
+      -- check_value_in_range : integer
+      v_ia := 3;
+      check_value_in_range(v_ia, 3, 4, "Check_value_in_range, OK", C_SCOPE);
+      v_b  := check_value_in_range(v_ia, 2, 3, "Check_value_in_range, OK", C_SCOPE);
+      check_value(v_b, "check_value with return value shall return true when OK", C_SCOPE);
+      v_b  := check_value_in_range(v_ia, 4, 5, "Check_value_in_range, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
+
+      increment_expected_alerts(error, 1);
+
+      -- check_value_in_range : unsigned
+      v_u32 := x"80000000";             -- +2^31 (2147483648)
+      check_value_in_range(v_u32, x"00000001", x"80000001", "Check 2147483648 between 1 and 2147483649, OK", C_SCOPE);
+      check_value_in_range(v_u32, x"00000001", x"7FFFFFFF", "Check 2147483648 between 1 and 2147483647, Fail", C_SCOPE);
+      v_b   := check_value_in_range(v_u32, x"00000001", x"7FFFFFFF", "Check 2147483648 between 1 and 2147483647, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      -- check_value_in_range : signed
+      v_s32 := x"80000001";             -- -2^31 (-2147483647)
+      check_value_in_range(v_s32, x"80000000", x"00000001", "Check -2147483647 between -2147483648 and 1, OK", C_SCOPE);
+      check_value_in_range(v_s32, x"80000002", x"00000001", "Check -2147483647 between -2147483646 and 1, Fail", C_SCOPE);
+      increment_expected_alerts(error, 1);
+
+
+      -- check_value_in_range : time
+      v_t := 3 ns;
+      check_value_in_range(v_t, 2 ns, 5 ns, "Check time in range, OK", C_SCOPE);
+      v_b := check_value_in_range(v_t, 3 ns, 5 ns, "Check time in range, OK", C_SCOPE);
+      check_value(v_b, "check_value with return value shall return true when OK", C_SCOPE);
+      v_b := check_value_in_range(v_t, 4 ns, 5 ns, "Check time in range, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
+      increment_expected_alerts(error);
   
     else
       alert(tb_error, "Unsupported test");

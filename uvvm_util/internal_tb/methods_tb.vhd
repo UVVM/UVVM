@@ -3659,6 +3659,92 @@ begin
       check_stable(slv8, 30 ns, "Stable slv OK", C_SCOPE);
       increment_expected_alerts(error, 7);
       
+     --------------------------------------------------------------------------------------
+      -- Verifying await_change
+      --------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying await_change");
+      bol <= transport false after 2 ns;
+      await_change(bol, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      bol <= transport true  after 3 ns;
+      await_change(bol, 3 ns, 5 ns, "Change within time window 1, OK", C_SCOPE);
+      bol <= transport false after 4 ns;
+      await_change(bol, 3 ns, 5 ns, "Change within time window 2, OK", C_SCOPE);
+      bol <= transport true  after 5 ns;
+      await_change(bol, 3 ns, 5 ns, "Change within time window 3, OK", C_SCOPE);
+      await_change(bol, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      sl <= transport '0' after 2 ns;
+      await_change(sl, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      sl <= transport '1' after 3 ns;
+      await_change(sl, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      sl <= transport '0' after 4 ns;
+      await_change(sl, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      sl <= transport '1' after 5 ns;
+      await_change(sl, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      sl <= transport '1' after 6 ns;
+      await_change(sl, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      slv8 <= transport "00000001" after 2 ns;
+      await_change(slv8, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      slv8 <= transport "00000010" after 3 ns;
+      await_change(slv8, 3 ns, 5 ns, "Change within time window 1, OK", C_SCOPE);
+      slv8 <= transport "00000011" after 4 ns;
+      await_change(slv8, 3 ns, 5 ns, "Change within time window 2, OK", C_SCOPE);
+      slv8 <= transport "00000100" after 5 ns;
+      await_change(slv8, 3 ns, 5 ns, "Change within time window 3, OK", C_SCOPE);
+      slv8 <= transport "00000101" after 6 ns;
+      await_change(slv8, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      u8 <= transport "00000001" after 2 ns;
+      await_change(u8, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      u8 <= transport "00000010" after 3 ns;
+      await_change(u8, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      u8 <= transport "00000011" after 4 ns;
+      await_change(u8, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      u8 <= transport "00000100" after 5 ns;
+      await_change(u8, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      u8 <= transport "00000101" after 6 ns;
+      await_change(u8, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      s8 <= transport "00000001" after 2 ns;
+      await_change(s8, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      s8 <= transport "00000010" after 3 ns;
+      await_change(s8, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      s8 <= transport "00000011" after 4 ns;
+      await_change(s8, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      s8 <= transport "00000100" after 5 ns;
+      await_change(s8, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      s8 <= transport "00000101" after 6 ns;
+      await_change(s8, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      i <= transport 1 after 2 ns;
+      await_change(i, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      i <= transport 2 after 3 ns;
+      await_change(i, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      i <= transport 3 after 4 ns;
+      await_change(i, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      i <= transport 4 after 5 ns;
+      await_change(i, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      i <= transport 5 after 6 ns;
+      await_change(i, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);
+
+      r <= transport 1.0 after 2 ns;
+      await_change(r, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
+      r <= transport 2.0 after 3 ns;
+      await_change(r, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      r <= transport 3.0 after 4 ns;
+      await_change(r, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      r <= transport 4.0 after 5 ns;
+      await_change(r, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
+      r <= transport 5.0 after 6 ns;
+      await_change(r, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
+      increment_expected_alerts(error, 2);      
   
     else
       alert(tb_error, "Unsupported test");

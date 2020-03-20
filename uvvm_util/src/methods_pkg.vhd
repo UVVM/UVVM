@@ -1649,6 +1649,84 @@ procedure check_stable(
     constant value_type  : string          := "real"
   );
 
+  -- Procedure overloads for await_change without mandatory alert_level
+  procedure await_change(
+    signal   target      : boolean;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "boolean"
+  );
+
+  procedure await_change(
+    signal   target      : std_logic;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "std_logic"
+  );
+
+  procedure await_change(
+    signal   target      : std_logic_vector;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "slv"
+  );
+
+  procedure await_change(
+    signal   target      : unsigned;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "unsigned"
+  );
+
+  procedure await_change(
+    signal   target      : signed;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "signed"
+  );
+
+  procedure await_change(
+    signal   target      : integer;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "integer"
+  );
+
+  procedure await_change(
+    signal   target      : real;
+    constant min_time    : time;
+    constant max_time    : time;
+    constant msg         : string;
+    constant scope       : string          := C_TB_SCOPE_DEFAULT;
+    constant msg_id      : t_msg_id        := ID_POS_ACK;
+    constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+    constant value_type  : string          := "real"
+  );
+
   procedure await_value (
     signal   target       : boolean;
     constant exp          : boolean;
@@ -5623,16 +5701,15 @@ begin
   end if;
 end;
 
+----------------------------------------------------------------------------
+-- check_time_window is used to check if a given condition occurred between
+-- min_time and max_time
+-- Usage: wait for requested condition until max_time is reached, then call check_time_window().
+-- The input 'success' is needed to distinguish between the following cases:
+--      - the signal reached success condition at max_time,
+--      - max_time was reached with no success condition
+----------------------------------------------------------------------------
 
-
-
---
-  -- check_time_window is used to check if a given condition occurred between
-  -- min_time and max_time
-  -- Usage: wait for requested condition until max_time is reached, then call check_time_window().
-  -- The input 'success' is needed to distinguish between the following cases:
-  --      - the signal reached success condition at max_time,
-  --      - max_time was reached with no success condition
   procedure check_time_window(
     constant success          : boolean; -- F.ex target'event, or target=exp
     constant elapsed_time     : time;
@@ -5661,9 +5738,9 @@ end;
     end if;
   end;
 
-  ----------------------------------------------------------------------------
-  -- Random functions
-  ----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+-- Random functions
+----------------------------------------------------------------------------
   -- Return a random std_logic_vector, using overload for the integer version of random()
   impure function random (
     constant length : integer
@@ -6159,6 +6236,139 @@ end;
     check_time_window(target'event, now-start_time, min_time, max_time, alert_level, name, msg, scope, msg_id, msg_id_panel);
   end;
 
+-- Await Change overloads without mandatory alert level
+procedure await_change(
+  signal   target      : boolean;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "boolean"
+  ) is
+  constant name        : string := "await_change(" & value_type & ", " &
+                                      to_string(min_time, ns) & ", " &
+                                      to_string(max_time, ns) & ")";
+  constant start_time     : time   := now;
+begin
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_change(
+  signal   target      : std_logic;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "std_logic"
+  ) is
+  constant name           : string := "await_change(" & value_type & ", " &
+                                      to_string(min_time, ns) & ", " &
+                                      to_string(max_time, ns) & ")";
+  constant start_time     : time   := now;
+begin
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_change(
+  signal   target      : std_logic_vector;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "slv"
+  ) is
+  constant name           : string := "await_change(" & value_type & ", " &
+                                      to_string(min_time, ns) & ", " &
+                                      to_string(max_time, ns) & ")";
+  constant start_time     : time   := now;
+begin
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_change(
+  signal   target      : unsigned;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "unsigned"
+  ) is
+  constant name           : string := "await_change(" & value_type & ", " &
+                                      to_string(min_time, ns) & ", " &
+                                      to_string(max_time, ns) & ")";
+  constant start_time     : time   := now;
+begin
+  -- Note that overloading by casting target to slv without creating a new signal doesn't work
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_change(
+  signal   target      : signed;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "signed"
+  ) is
+  constant name           : string := "await_change(" & value_type & ", " &
+                                      to_string(min_time, ns) & ", " &
+                                      to_string(max_time, ns) & ")";
+  constant start_time     : time   := now;
+begin
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_change(
+  signal   target      : integer;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "integer"
+  ) is
+  constant name        : string := "await_change(" & value_type & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+  constant start_time  : time   := now;
+begin
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+
+procedure await_change(
+  signal   target      : real;
+  constant min_time    : time;
+  constant max_time    : time;
+  constant msg         : string;
+  constant scope       : string         := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id       := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
+  constant value_type  : string         := "real"
+  ) is
+  constant name        : string := "await_change(" & value_type & ", " &
+      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+  constant start_time  : time   := now;
+begin
+  wait on target for max_time;
+  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+end;
+  
   --------------------------------------------------------------------------------
   -- await_value
   --------------------------------------------------------------------------------

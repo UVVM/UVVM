@@ -1279,7 +1279,7 @@ impure function check_value_in_range (
     constant caller_name : string          := "check_value_in_range()"
   );
 
-  -- Check_stable
+-- Check_stable
   procedure check_stable(
     signal   target      : boolean;
     constant stable_req  : time;
@@ -1363,6 +1363,84 @@ impure function check_value_in_range (
     constant caller_name : string          := "check_stable()";
     constant value_type  : string          := "real"
     );
+
+-- Procedure overloads for check_stable without mandatory alert_level
+procedure check_stable(
+  signal   target      : boolean;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "boolean"
+  );
+
+procedure check_stable(
+  signal   target      : std_logic_vector;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "slv"
+  );
+
+procedure check_stable(
+  signal   target      : unsigned;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "unsigned"
+  );
+
+procedure check_stable(
+  signal   target      : signed;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "signed"
+  );
+
+procedure check_stable(
+  signal   target      : std_logic;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "std_logic"
+  );
+
+procedure check_stable(
+  signal   target      : integer;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "integer"
+  );
+
+procedure check_stable(
+  signal   target      : real;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "real"
+  );
 
   impure function random (
     constant length : integer
@@ -5383,7 +5461,172 @@ package body methods_pkg is
     end if;
   end;
 
+-- check stable overloads without mandatory alert level
+procedure check_stable(
+  signal   target      : boolean;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "boolean"
+  ) is
+  constant value_string       : string := to_string(target);
+  constant last_value_string  : string := to_string(target'last_value);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
 
+procedure check_stable(
+  signal   target      : std_logic_vector;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "slv"
+  ) is
+  constant value_string       : string := 'x' & to_string(target, HEX);
+  constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
+
+procedure check_stable(
+  signal   target      : unsigned;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "unsigned"
+  ) is
+  constant value_string       : string := 'x' & to_string(target, HEX);
+  constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
+
+procedure check_stable(
+  signal   target      : signed;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "signed"
+  ) is
+  constant value_string       : string := 'x' & to_string(target, HEX);
+  constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
+
+procedure check_stable(
+  signal   target      : std_logic;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "std_logic"
+  ) is
+  constant value_string       : string := to_string(target);
+  constant last_value_string  : string := to_string(target'last_value);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
+
+procedure check_stable(
+  signal   target      : integer;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "integer"
+  ) is
+  constant value_string       : string := to_string(target);
+  constant last_value_string  : string := to_string(target'last_value);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK." & value_string & " stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
+
+procedure check_stable(
+  signal   target      : real;
+  constant stable_req  : time;
+  constant msg         : string;
+  constant scope       : string          := C_TB_SCOPE_DEFAULT;
+  constant msg_id      : t_msg_id        := ID_POS_ACK;
+  constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
+  constant caller_name : string          := "check_stable()";
+  constant value_type  : string          := "real"
+  ) is
+  constant value_string       : string := to_string(target);
+  constant last_value_string  : string := to_string(target'last_value);
+  constant last_change        : time   := target'last_event;
+  constant last_change_string : string := to_string(last_change, ns);
+begin
+  if (last_change >= stable_req) then
+    log(msg_id, caller_name & " => OK." & value_string & " stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+  else
+    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+  end if;
+end;
+
+
+
+
+--
   -- check_time_window is used to check if a given condition occurred between
   -- min_time and max_time
   -- Usage: wait for requested condition until max_time is reached, then call check_time_window().

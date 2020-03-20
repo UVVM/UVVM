@@ -3623,6 +3623,42 @@ begin
       v_b := check_value_in_range(v_t, 4 ns, 5 ns, "Check time in range, Fail", C_SCOPE);
       check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
       increment_expected_alerts(error);
+
+      --------------------------------------------------------------------------------------
+      -- CHECK_STABLE():  Verifying check_stable
+      --------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying check_stable without alert level", C_SCOPE);
+      bol  <= true;
+      slv8 <= (others => '1');
+      u8   <= (others => '1');
+      s8   <= (others => '1');
+      i    <= 14;
+      r    <= 1337.14;
+      sl   <= '1';
+      wait for 10 ns;
+      check_stable(bol, 9 ns, "Stable boolean OK", C_SCOPE);
+      check_stable(slv8, 9 ns, "Stable slv OK", C_SCOPE);
+      check_stable(u8, 9 ns, "Stable unsigned OK", C_SCOPE);
+      check_stable(s8, 9 ns, "Stable signed OK", C_SCOPE);
+      check_stable(i, 9 ns, "Stable integer OK", C_SCOPE);
+      check_stable(r, 9 ns, "Stable real OK", C_SCOPE);
+      check_stable(sl, 9 ns, "Stable std_logic OK", C_SCOPE);
+      check_stable(bol, 11 ns, "Stable boolean Fail", C_SCOPE);
+      check_stable(slv8, 11 ns, "Stable slv Fail", C_SCOPE);
+      check_stable(u8, 11 ns, "Stable unsigned Fail", C_SCOPE);
+      check_stable(s8, 11 ns, "Stable signed Fail", C_SCOPE);
+      check_stable(i, 11 ns, "Stable integer Fail", C_SCOPE);
+      check_stable(r, 11 ns, "Stable real Fail", C_SCOPE);
+      check_stable(sl, 11 ns, "Stable std_logic Fail", C_SCOPE);
+
+      slv8 <= "11001100";
+      wait for 20 ns;
+      check_stable(slv8, 20 ns, "Stable slv OK", C_SCOPE);
+      slv8 <= "11001100";
+      wait for 20 ns;
+      check_stable(slv8, 30 ns, "Stable slv OK", C_SCOPE);
+      increment_expected_alerts(error, 7);
+      
   
     else
       alert(tb_error, "Unsupported test");

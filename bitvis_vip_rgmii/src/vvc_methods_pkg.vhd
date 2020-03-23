@@ -132,8 +132,8 @@ package vvc_methods_pkg is
     constant channel             : in    t_channel;
     constant data_exp            : in    t_byte_array;
     constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
@@ -224,8 +224,8 @@ package body vvc_methods_pkg is
     constant channel             : in    t_channel;
     constant data_exp            : in    t_byte_array;
     constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "rgmii_expect";

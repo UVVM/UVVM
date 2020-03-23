@@ -178,8 +178,8 @@ package vvc_methods_pkg is
     constant channel_exp         : in    std_logic_vector;
     constant data_exp            : in    t_slv_array;
     constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
@@ -188,8 +188,8 @@ package vvc_methods_pkg is
     constant vvc_instance_idx    : in    integer;
     constant data_exp            : in    t_slv_array;
     constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
@@ -336,8 +336,8 @@ package body vvc_methods_pkg is
     constant channel_exp         : in    std_logic_vector;
     constant data_exp            : in    t_slv_array;
     constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "avalon_st_expect";
@@ -372,13 +372,13 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx    : in    integer;
     constant data_exp            : in    t_slv_array;
     constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant channel_exp    : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) := (others => '0');
   begin
-    avalon_st_expect(VVCT, vvc_instance_idx, channel_exp, data_exp, msg, scope, alert_level, parent_msg_id_panel);
+    avalon_st_expect(VVCT, vvc_instance_idx, channel_exp, data_exp, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
 
 

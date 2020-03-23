@@ -24,6 +24,7 @@ Released: 2020-XX-XX
 - Added parent_msg_id_panel optional parameter to all VVC procedures for future HVVC support.
 - Replaced default scope in VVC commands with C_VVC_CMD_SCOPE_DEFAULT so that it is
   configurable from adaptations_pkg.
+- Moved alert_level parameter placement in Avalon-ST, GMII and RGMII VVC expect procedures.
 
 
 v2 2020.03.06

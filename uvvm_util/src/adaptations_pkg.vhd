@@ -55,8 +55,8 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
-  constant C_SCOPE                  : string := C_TB_SCOPE_DEFAULT & "(uvvm)";
   constant C_TB_SCOPE_DEFAULT       : string := "TB seq."; -- Default scope in test sequencer
+  constant C_SCOPE                  : string := C_TB_SCOPE_DEFAULT & "(uvvm)";
   constant C_VVC_CMD_SCOPE_DEFAULT  : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
   constant C_LOG_TIME_TRUNC_WARNING : boolean := true; -- Yields a single TB_WARNING if time stamp truncated. Otherwise none

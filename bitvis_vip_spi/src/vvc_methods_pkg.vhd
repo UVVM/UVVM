@@ -146,12 +146,33 @@ package vvc_methods_pkg is
     signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant data                         : in    std_logic_vector;
+    constant data_routing                 : in    t_data_routing;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
+  procedure spi_master_transmit_and_receive(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant data                         : in    std_logic_vector;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
   -- Multi-word
+  procedure spi_master_transmit_and_receive(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant data                         : in    t_slv_array;
+    constant data_routing                 : in    t_data_routing;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
   procedure spi_master_transmit_and_receive(
     signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
@@ -214,6 +235,18 @@ package vvc_methods_pkg is
   procedure spi_master_receive_only(
     signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
+    constant data_routing                 : in    t_data_routing;
+    constant msg                          : in    string;
+    constant num_words                    : in    positive := 1;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
+
+  procedure spi_master_receive_only(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
     constant msg                          : in    string;
     constant num_words                    : in    positive := 1;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
@@ -254,12 +287,32 @@ package vvc_methods_pkg is
     signal   VVCT                   : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
     constant data                   : in    std_logic_vector;
+    constant data_routing           : in    t_data_routing;
+    constant msg                    : in    string;
+    constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
+    constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
+  procedure spi_slave_transmit_and_receive(
+    signal   VVCT                   : inout t_vvc_target_record;
+    constant vvc_instance_idx       : in    integer;
+    constant data                   : in    std_logic_vector;
     constant msg                    : in    string;
     constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
   -- Multi-word
+  procedure spi_slave_transmit_and_receive(
+    signal   VVCT                   : inout t_vvc_target_record;
+    constant vvc_instance_idx       : in    integer;
+    constant data                   : in    t_slv_array;
+    constant data_routing           : in    t_data_routing;
+    constant msg                    : in    string;
+    constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
+    constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
   procedure spi_slave_transmit_and_receive(
     signal   VVCT                   : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
@@ -316,6 +369,16 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
+  procedure spi_slave_receive_only(
+    signal   VVCT                   : inout t_vvc_target_record;
+    constant vvc_instance_idx       : in    integer;
+    constant data_routing           : in    t_data_routing;
+    constant msg                    : in    string;
+    constant num_words              : in    positive := 1;
+    constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
+    constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
   procedure spi_slave_receive_only(
     signal   VVCT                   : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
@@ -393,6 +456,7 @@ package body vvc_methods_pkg is
     signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant data                         : in    std_logic_vector;
+    constant data_routing                 : in    t_data_routing;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
@@ -416,6 +480,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data(0)(v_word_length-1 downto 0) := v_normalized_data(0)(v_word_length-1 downto 0);
     shared_vvc_cmd.num_words                         := v_num_words;
     shared_vvc_cmd.word_length                       := v_word_length;
+    shared_vvc_cmd.data_routing                      := data_routing;
     shared_vvc_cmd.action_when_transfer_is_done      := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words              := RELEASE_LINE_BETWEEN_WORDS;
     shared_vvc_cmd.parent_msg_id_panel               := parent_msg_id_panel;
@@ -425,11 +490,25 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
+  procedure spi_master_transmit_and_receive(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant data                         : in    std_logic_vector;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, scope, parent_msg_id_panel);
+  end procedure;
+
   -- Multi-word
   procedure spi_master_transmit_and_receive(
     signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
     constant data                         : in    t_slv_array;
+    constant data_routing                 : in    t_data_routing;
     constant msg                          : in    string;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
@@ -454,6 +533,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data                         := v_normalized_data;
     shared_vvc_cmd.num_words                    := v_num_words;
     shared_vvc_cmd.word_length                  := v_word_length;
+    shared_vvc_cmd.data_routing                 := data_routing;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words         := action_between_words;
     shared_vvc_cmd.parent_msg_id_panel          := parent_msg_id_panel;
@@ -461,6 +541,20 @@ package body vvc_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure spi_master_transmit_and_receive(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant data                         : in    t_slv_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    spi_master_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel);
   end procedure;
 
   -- Single-word
@@ -629,6 +723,7 @@ package body vvc_methods_pkg is
   procedure spi_master_receive_only(
     signal   VVCT                         : inout t_vvc_target_record;
     constant vvc_instance_idx             : in    integer;
+    constant data_routing                 : in    t_data_routing;
     constant msg                          : in    string;
     constant num_words                    : in    positive := 1;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
@@ -645,6 +740,7 @@ package body vvc_methods_pkg is
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, MASTER_RECEIVE_ONLY);
+    shared_vvc_cmd.data_routing                 := data_routing;
     shared_vvc_cmd.num_words                    := num_words;
     shared_vvc_cmd.action_when_transfer_is_done := action_when_transfer_is_done;
     shared_vvc_cmd.action_between_words         := action_between_words;
@@ -653,6 +749,20 @@ package body vvc_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure spi_master_receive_only(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant msg                          : in    string;
+    constant num_words                    : in    positive := 1;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
+    constant action_between_words         : in    t_action_between_words         := HOLD_LINE_BETWEEN_WORDS;
+    constant scope                        : in    string                         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel                 := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    spi_master_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, action_when_transfer_is_done, action_between_words, scope, parent_msg_id_panel);
   end procedure;
 
   -- Single-word
@@ -743,6 +853,7 @@ package body vvc_methods_pkg is
     signal   VVCT                   : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
     constant data                   : in    std_logic_vector;
+    constant data_routing           : in    t_data_routing;
     constant msg                    : in    string;
     constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
@@ -766,6 +877,7 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data(0)(v_word_length-1 downto 0) := v_normalized_data(0)(v_word_length-1 downto 0);
     shared_vvc_cmd.num_words                         := v_num_words;
     shared_vvc_cmd.word_length                       := v_word_length;
+    shared_vvc_cmd.data_routing                      := data_routing;
     shared_vvc_cmd.when_to_start_transfer            := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel               := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
@@ -774,11 +886,25 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
+  procedure spi_slave_transmit_and_receive(
+    signal   VVCT                   : inout t_vvc_target_record;
+    constant vvc_instance_idx       : in    integer;
+    constant data                   : in    std_logic_vector;
+    constant msg                    : in    string;
+    constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
+    constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel);
+  end procedure;
+
   -- Multi-word
   procedure spi_slave_transmit_and_receive(
     signal   VVCT                   : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
     constant data                   : in    t_slv_array;
+    constant data_routing           : in    t_data_routing;
     constant msg                    : in    string;
     constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
@@ -802,12 +928,26 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data                   := v_normalized_data;
     shared_vvc_cmd.num_words              := v_num_words;
     shared_vvc_cmd.word_length            := v_word_length;
+    shared_vvc_cmd.data_routing           := data_routing;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure spi_slave_transmit_and_receive(
+    signal   VVCT                   : inout t_vvc_target_record;
+    constant vvc_instance_idx       : in    integer;
+    constant data                   : in    t_slv_array;
+    constant msg                    : in    string;
+    constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
+    constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    spi_slave_transmit_and_receive(VVCT, vvc_instance_idx, data, NA, msg, when_to_start_transfer, scope, parent_msg_id_panel);
   end procedure;
 
   -- Single-word
@@ -972,6 +1112,7 @@ package body vvc_methods_pkg is
   procedure spi_slave_receive_only(
     signal   VVCT                   : inout t_vvc_target_record;
     constant vvc_instance_idx       : in    integer;
+    constant data_routing           : in    t_data_routing;
     constant msg                    : in    string;
     constant num_words              : in    positive := 1;
     constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
@@ -987,6 +1128,7 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SLAVE_RECEIVE_ONLY);
+    shared_vvc_cmd.data_routing           := data_routing;
     shared_vvc_cmd.num_words              := num_words;
     shared_vvc_cmd.when_to_start_transfer := when_to_start_transfer;
     shared_vvc_cmd.parent_msg_id_panel    := parent_msg_id_panel;
@@ -994,6 +1136,19 @@ package body vvc_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure spi_slave_receive_only(
+    signal   VVCT                   : inout t_vvc_target_record;
+    constant vvc_instance_idx       : in    integer;
+    constant msg                    : in    string;
+    constant num_words              : in    positive := 1;
+    constant when_to_start_transfer : in    t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
+    constant scope                  : in    string                   := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel    : in    t_msg_id_panel           := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    spi_slave_receive_only(VVCT, vvc_instance_idx, NA, msg, num_words, when_to_start_transfer, scope, parent_msg_id_panel);
   end procedure;
 
   -- Single-word

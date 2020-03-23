@@ -25,6 +25,7 @@ Released: 2020-XX-XX
 - Replaced default scope in VVC commands with C_VVC_CMD_SCOPE_DEFAULT so that it is
   configurable from adaptations_pkg.
 - Moved alert_level parameter placement in Avalon-ST, GMII and RGMII VVC expect procedures.
+- Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
 
 
 v2 2020.03.06

@@ -141,6 +141,15 @@ package vvc_methods_pkg is
   procedure gpio_get(
     signal   VVCT                : inout t_vvc_target_record;
     constant instance_idx        : in    integer;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string         := "";
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
+
+  procedure gpio_get(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
     constant msg                 : in    string         := "";
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -235,6 +244,7 @@ package body vvc_methods_pkg is
   procedure gpio_get(
     signal   VVCT                : inout t_vvc_target_record;
     constant instance_idx        : in    integer;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string         := "";
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -250,11 +260,24 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, instance_idx, proc_call, msg, QUEUED, GET);
     shared_vvc_cmd.operation           := GET;
+    shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+
+  procedure gpio_get(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant instance_idx        : in    integer;
+    constant msg                 : in    string         := "";
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    ) is
+  begin
+    gpio_get(VVCT, instance_idx, NA, msg, scope, parent_msg_id_panel);
   end procedure;
 
 

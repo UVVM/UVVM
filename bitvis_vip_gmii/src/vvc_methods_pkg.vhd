@@ -122,6 +122,17 @@ package vvc_methods_pkg is
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
     constant num_bytes           : in    positive;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -210,6 +221,7 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
     constant num_bytes           : in    positive;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -223,6 +235,7 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
     shared_vvc_cmd.num_bytes_read      := num_bytes;
+    shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
@@ -234,12 +247,25 @@ package body vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
   begin
-    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, msg, scope, parent_msg_id_panel);
+    gmii_read(VVCT, vvc_instance_idx, channel, num_bytes, NA, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, NA, msg, scope, parent_msg_id_panel);
   end procedure;
 
   procedure gmii_expect( 

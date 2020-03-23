@@ -9,6 +9,7 @@ Released: 2020-XX-XX
   for future HVVC support.
 - Renamed Direct Transaction Transfer to transaction info.
 - Moved alert_level parameter placement in rgmii_expect() VVC procedure.
+- Added data_routing parameter to VVC read procedure for sending data to scoreboard.
 
 v0.1.1
 ----------

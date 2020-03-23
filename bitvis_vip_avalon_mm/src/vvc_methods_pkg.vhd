@@ -164,6 +164,7 @@ package vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant addr                : in    unsigned;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -173,7 +174,6 @@ package vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant addr                : in    unsigned;
-    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -318,35 +318,6 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
-  
-  procedure avalon_mm_read(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in    integer;
-    constant addr                : in    unsigned;
-    constant msg                 : in    string;
-    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    constant proc_name : string := "avalon_mm_read";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-        & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr    : unsigned(shared_vvc_cmd.addr'length-1 downto 0) :=
-        normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr",proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-  begin
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.operation           := READ;
-    shared_vvc_cmd.addr                := v_normalised_addr;
-    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
-    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-      v_msg_id_panel := parent_msg_id_panel;
-    end if;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
-  end procedure;
-
 
   procedure avalon_mm_read(
     signal   VVCT                : inout t_vvc_target_record;
@@ -376,6 +347,19 @@ package body vvc_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+
+  procedure avalon_mm_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant addr                : in    unsigned;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    avalon_mm_read(VVCT, vvc_instance_idx, addr, NA, msg, scope, parent_msg_id_panel);
   end procedure;
 
 

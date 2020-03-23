@@ -156,9 +156,17 @@ package vvc_methods_pkg is
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant data_routing     : in    t_data_routing;
     constant msg              : in    string;
-    constant data_routing     : in    t_data_routing := TO_RECEIVE_BUFFER;
-    constant scope            : in    string         := C_VVC_CMD_SCOPE_DEFAULT
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure ethernet_receive(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
@@ -321,14 +329,13 @@ package body vvc_methods_pkg is
       shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
   end procedure ethernet_transmit;
 
-
   procedure ethernet_receive(
     signal   VVCT             : inout t_vvc_target_record;
     constant vvc_instance_idx : in    integer;
     constant channel          : in    t_channel;
+    constant data_routing     : in    t_data_routing;
     constant msg              : in    string;
-    constant data_routing     : in    t_data_routing := TO_RECEIVE_BUFFER;
-    constant scope            : in    string         := C_VVC_CMD_SCOPE_DEFAULT
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_receive";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
@@ -337,8 +344,19 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.data_routing               := data_routing;
+    shared_vvc_cmd.data_routing := data_routing;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
+  end procedure ethernet_receive;
+
+  procedure ethernet_receive(
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in    integer;
+    constant channel          : in    t_channel;
+    constant msg              : in    string;
+    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    ethernet_receive(VVCT, vvc_instance_idx, channel, NA, msg, scope);
   end procedure ethernet_receive;
 
   procedure ethernet_expect(

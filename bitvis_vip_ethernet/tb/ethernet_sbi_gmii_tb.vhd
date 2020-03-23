@@ -146,7 +146,7 @@ begin
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
-    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY.", TO_SB);
+    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for send to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
@@ -158,7 +158,7 @@ begin
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
-    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY.", TO_SB);
+    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for send to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
@@ -170,7 +170,7 @@ begin
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
-    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY.", TO_SB);
+    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for send to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 

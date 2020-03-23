@@ -65,12 +65,6 @@ def main(argv):
   tb.set_configs(configs)
   tb.run_simulation()
 
-  # Set testbench, config and run
-  tb.set_tb_name("ethernet_sbi_sb_tb")
-  configs = create_config([4, 8, 9, 12, 16])
-  tb.set_configs(configs)
-  tb.run_simulation()
-
   # Print simulation results
   tb.print_statistics()
 

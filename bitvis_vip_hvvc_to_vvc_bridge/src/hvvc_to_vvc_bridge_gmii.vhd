@@ -74,12 +74,12 @@ begin
           v_data_bytes(0 to v_num_data_bytes-1) := convert_slv_array_to_byte_array(hvvc_to_bridge.data_words(0 to hvvc_to_bridge.num_data_words-1), v_byte_endianness);
           gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), "Send data over GMII", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, TX, GC_SCOPE);
-          await_completion(GMII_VVCT, GC_INSTANCE_IDX, TX, v_cmd_idx, v_num_transfers*GC_PHY_MAX_ACCESS_TIME, "Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+          await_completion(GMII_VVCT, GC_INSTANCE_IDX, TX, v_cmd_idx, (GC_MAX_NUM_WORDS+v_num_transfers)*GC_PHY_MAX_ACCESS_TIME, "Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
 
         when RECEIVE =>
           gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, v_num_data_bytes, "Read data over GMII", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, RX, GC_SCOPE);
-          await_completion(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_num_transfers*GC_PHY_MAX_ACCESS_TIME, "Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+          await_completion(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, (GC_MAX_NUM_WORDS+v_num_transfers)*GC_PHY_MAX_ACCESS_TIME, "Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           fetch_result(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_gmii_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           -- Convert from t_byte_array back to t_slv_array
           bridge_to_hvvc.data_words(0 to hvvc_to_bridge.num_data_words-1) <= convert_byte_array_to_slv_array(v_gmii_received_data.data_array(0 to v_num_data_bytes-1), c_data_words_width/8, v_byte_endianness);

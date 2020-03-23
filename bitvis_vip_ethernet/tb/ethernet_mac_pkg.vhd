@@ -10,25 +10,29 @@
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
-------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+-- Description : See library quick reference (under 'doc') and README-file(s)
+---------------------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-package ethernet_sbi_pkg is
+package ethernet_mac_pkg is
 
   -- Register map
-  constant C_ADDR_FIFO_PUT       : integer := 0;
-  constant C_ADDR_FIFO_GET       : integer := 1;
-  constant C_ADDR_FIFO_COUNT     : integer := 2;
-  constant C_ADDR_FIFO_PEEK      : integer := 3;
-  constant C_ADDR_FIFO_FLUSH     : integer := 4;
-  constant C_ADDR_FIFO_MAX_COUNT : integer := 5;
+  constant C_ETH_ADDR_INVALID  : unsigned(7 downto 0) := x"00";
+  constant C_ETH_ADDR_MAC_DEST : unsigned(7 downto 0) := x"01";
+  constant C_ETH_ADDR_MAC_SRC  : unsigned(7 downto 0) := x"02";
+  constant C_ETH_ADDR_PAY_LEN  : unsigned(7 downto 0) := x"03";
+  constant C_ETH_ADDR_PAYLOAD  : unsigned(7 downto 0) := x"04";
+  constant C_ETH_ADDR_DUMMY    : unsigned(7 downto 0) := x"05";
 
-end package ethernet_sbi_pkg;
+  -- SBI config
+  constant C_SBI_ADDR_WIDTH : integer := 8;
+  constant C_SBI_DATA_WIDTH : integer := 8;
 
-package body ethernet_sbi_pkg is
-end package body ethernet_sbi_pkg;
+end package ethernet_mac_pkg;
+
+package body ethernet_mac_pkg is
+end package body ethernet_mac_pkg;

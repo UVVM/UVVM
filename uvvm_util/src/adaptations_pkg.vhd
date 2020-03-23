@@ -55,6 +55,7 @@ package adaptations_pkg is
   constant C_SINGLE_LINE_ALERT  : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG    : boolean := false; -- If true prints log messages on a single line.
 
+  constant C_SCOPE                  : string := C_TB_SCOPE_DEFAULT & "(uvvm)";
   constant C_TB_SCOPE_DEFAULT       : string := "TB seq."; -- Default scope in test sequencer
   constant C_VVC_CMD_SCOPE_DEFAULT  : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; -- Default scope in VVC commands
 
@@ -219,17 +220,8 @@ package adaptations_pkg is
   constant C_NUM_SYNC_FLAGS : positive := 100; -- Maximum number of sync flags
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Deprecate
-  --------------------------------------------------------------------------------------------------------------------------------
-  -- These values are used to indicate outdated sub-programs
-  constant C_DEPRECATE_SETTING : t_deprecate_setting := DEPRECATE_ONCE; --REVIEW EC: are these 2 lines meant to be modified by the user? otherwise move to the last section
-  shared variable deprecated_subprogram_list : t_deprecate_list := (others=>(others => ' '));
-
-  --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_SCOPE : string := C_TB_SCOPE_DEFAULT & "(uvvm)"; --REVIEW EC: is this used at all? either remove or place in the Log format section before C_TB_SCOPE_DEFAULT
-
   signal global_show_msg_for_uvvm_cmd  : boolean := true;
 
   constant C_CMD_QUEUE_COUNT_MAX                     : natural       := 20;  -- (VVC Command queue)  May be overwritten for dedicated VVC
@@ -240,7 +232,7 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_THRESHOLD            : natural       := 18;
   constant C_MAX_VVC_INSTANCE_NUM                    : natural       := 8;
   constant C_MAX_NUM_SEQUENCERS                      : natural       := 10; -- Max number of sequencers
-  constant C_MAX_TB_VVC_NUM                          : natural       := 20; -- Max number of VVCs in testbench (including all channels) --REVIEW EC: why is this bigger than C_MAX_VVC_INSTANCE_NUM, and what's the difference between them?
+  constant C_MAX_TB_VVC_NUM                          : natural       := 20; -- Max number of VVCs in testbench (including all channels)
 
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH                     : positive      := 20;
@@ -292,11 +284,6 @@ package adaptations_pkg is
 
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
-
-  type t_vvc is record --REVIEW EC: not used anywhere, remove?
-    instance  : integer;
-    channel   : t_channel;
-  end record t_vvc;
 
   constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
   constant ALL_ENABLED_INSTANCES : integer := -3;
@@ -369,6 +356,10 @@ package adaptations_pkg is
     busy                  => false,
     last_cmd_idx_executed => -1
   );
+
+  -- These values are used to indicate outdated sub-programs
+  constant C_DEPRECATE_SETTING : t_deprecate_setting := DEPRECATE_ONCE;
+  shared variable deprecated_subprogram_list : t_deprecate_list := (others=>(others => ' '));
 
 end package adaptations_pkg;
 

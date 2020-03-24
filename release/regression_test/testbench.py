@@ -32,6 +32,7 @@ class Testbench:
       self.num_failing_tests = 0
       self.configs = []
       self.tests = []
+      self.exp_failing_testcase = []
       self.do_cleanup = True
       self.simulator = "MODELSIM"
       self.env_var = os.environ.copy()
@@ -425,7 +426,7 @@ class Testbench:
 
           # Was this a failing test?
           if not(check_ok):# and is_log_file:
-            print("Failing test: %s" %(item))
+            print("WARNING! Failing test: %s" %(item))
             num_failing_tests += 1
 
         except:
@@ -465,6 +466,11 @@ class Testbench:
       pass
 
 
+    def add_expected_failing_testcase(self, testcase):
+      self.exp_failing_testcase.append(testcase.lower())
+
+    def is_expected_failing_testcase(self, testcase):
+      return testcase.lower() in self.exp_failing_testcase
 
 
     # Run simulations and check result
@@ -502,6 +508,17 @@ class Testbench:
 
           self.save_run(self.tb, test_name, config)
           if self.check_result(test_name) == True:
+            if self.is_expected_failing_testcase(test_name):
+              test_string += "FAILED"
+              logging.warning(test_string)
+              self.increment_num_failing_tests()
+            else:
+              test_string += "PASS"
+              logging.info(test_string)
+              self.cleanup(test_name)
+
+          elif self.is_expected_failing_testcase(test_name):
+            print("Expecting failing test: %s" %(test_name))
             test_string += "PASS"
             logging.info(test_string)
             self.cleanup(test_name)

@@ -319,7 +319,7 @@ begin
                   if v_cmd.data_routing = TO_SB then
                     -- call SB check_received
                     alert(tb_warning, "Scoreboard type for AXIStream RECEIVE data not implemented");
-                    --AXISTREAM_SB.check_received(GC_INSTANCE_IDX, v_result.data_array(GC_DATA_WIDTH-1 downto 0)); -- SB type not implemented
+                    --AXISTREAM_SB.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
                   else                            
                      -- Store the result
                      work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,

@@ -313,7 +313,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               alert(tb_warning, "Scoreboard type for I2C MASTER_RECEIVE data not implemented");
-              --I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+              --I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); -- SB type not implemented
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -408,7 +408,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               alert(tb_warning, "Scoreboard type for I2C SLAVE_RECEIVE data not implemented");
-              --I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+              --I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); -- SB type not implemented
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,

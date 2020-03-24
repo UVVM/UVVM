@@ -816,6 +816,7 @@ begin
       check_value(v_exp_slv_array, v_exp_slv_array_4, tb_warning, "check_value with different array lenghts");
       check_value(v_exp_slv_array, v_exp_slv_array_4, tb_warning, "check_value with different array directions");
 
+      report_check_counters(VOID);
 
     elsif GC_TEST = "check_stable" then
       --------------------------------------------------------------------------------------
@@ -852,6 +853,8 @@ begin
       wait for 20 ns;
       check_stable(slv8, 30 ns, error, "Stable slv OK", C_SCOPE);
       increment_expected_alerts(error, 7);
+
+      report_check_counters(VOID);
 
     elsif GC_TEST = "await_stable" then
       --------------------------------------------------------------------------------------
@@ -1955,7 +1958,8 @@ begin
       check_value(not v_b, error, "check_value with return value shall return false when Fail", C_SCOPE);
       increment_expected_alerts(error);
 
-
+      report_check_counters(VOID);
+      
     elsif GC_TEST = "string_methods" then
       --------------------------------------------------------------------------
       -- Checking some details of string_methods

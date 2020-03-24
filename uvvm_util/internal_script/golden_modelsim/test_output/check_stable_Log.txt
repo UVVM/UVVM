@@ -50,9 +50,12 @@ UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
 UVVM:                ID_SEGMENT_HDR               : ENABLED
 UVVM:                ID_SEGMENT_DATA              : ENABLED
 UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_PREAMBLE           : ENABLED
 UVVM:                ID_PACKET_COMPLETE           : ENABLED
 UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_PACKET_CHECKSUM           : ENABLED
+UVVM:                ID_PACKET_GAP                : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED
@@ -166,6 +169,18 @@ UVVM:
 UVVM: ID_POS_ACK                        31.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
 UVVM: ID_POS_ACK                        51.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
 UVVM: ID_UTIL_SETUP                     51.0 ns  TB seq.                        incremented expected ERRORs by 7. 
+UVVM: ID_SEQUENCER                      51.0 ns  TB seq.                        =====>>> report_check_counters()
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                CHECK_VALUE           :         32    
+UVVM:                CHECK_VALUE_IN_RANGE  :          0    
+UVVM:                CHECK_STABLE          :         16    
+UVVM:                CHECK_TIME_WINDOW     :          0    
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***

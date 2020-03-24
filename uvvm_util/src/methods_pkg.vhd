@@ -279,12 +279,8 @@ package methods_pkg is
     constant scope        : string  := C_TB_SCOPE_DEFAULT
   );
 
-  procedure increment_check_counter(
-    constant check_type : t_check_type
-  );
-
   procedure report_check_counters(
-    constant dummy : t_void
+    constant dummy : in t_void
   );
 
   procedure report_check_counters(
@@ -2805,24 +2801,15 @@ shared variable protected_check_counters : t_protected_check_counters;
     set_alert_stop_limit(alert_level, v_alert_stop_limit + number);
   end ;
 
-  procedure increment_check_counter(
-    constant check_type : t_check_type
-  ) is
-  begin
-
-  end procedure increment_check_counter;
-
-
   procedure report_check_counters(
-    constant order : t_order
+    constant order : in t_order
   ) is
   begin
-    log("=====>>> report_check_counters()");
     protected_check_counters.to_string(order);
   end procedure report_check_counters;
 
   procedure report_check_counters(
-    constant dummy : t_void
+    constant dummy : in t_void
   ) is
   begin
     report_check_counters(FINAL);

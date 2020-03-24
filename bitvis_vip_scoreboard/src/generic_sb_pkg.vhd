@@ -1677,7 +1677,7 @@ package body generic_sb_pkg is
           left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
             write(v_line,
             justify(

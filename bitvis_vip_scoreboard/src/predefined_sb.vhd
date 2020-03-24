@@ -14,7 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
+------------------------------------------------------------------------------------------
+-- Local package
+------------------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -37,20 +39,6 @@ package body local_pkg is
   end function;
 end package body local_pkg;
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
-
-use work.generic_sb_pkg;
-use work.local_pkg.all;
-
-------------------------------------------------------------------------------------------
--- Package declarations
-------------------------------------------------------------------------------------------
-
 ------------------------------------------------------------------------------------------
 --
 --  slv_sb_pkg
@@ -59,13 +47,41 @@ use work.local_pkg.all;
 --    the constant C_SB_SLV_WIDTH located under scoreboard adaptions in adaptions_pkg.
 --
 ------------------------------------------------------------------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+use work.local_pkg.all;
+
 package slv_sb_pkg is new work.generic_sb_pkg
   generic map (t_element         => std_logic_vector(C_SB_SLV_WIDTH-1 downto 0),
                element_match     => std_match,
                to_string_element => slv_to_string);
 
 
+------------------------------------------------------------------------------------------
+--
+--  slv8_sb_pkg
+--
+--    Predefined scoreboard package for std_logic_vector(7 downto 0).
+--
+------------------------------------------------------------------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+use work.local_pkg.all;
+
+package slv8_sb_pkg is new work.generic_sb_pkg
+  generic map (t_element         => std_logic_vector(7 downto 0),
+               element_match     => std_match,
+               to_string_element => slv_to_string);
 
 ------------------------------------------------------------------------------------------
 --

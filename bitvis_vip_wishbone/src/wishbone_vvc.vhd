@@ -301,7 +301,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            WISHBONE_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH - 1 downto 0)); 
+            WISHBONE_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,

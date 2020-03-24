@@ -344,7 +344,6 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
-
   procedure uart_receive(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
@@ -354,23 +353,9 @@ package body vvc_methods_pkg is
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-                                   & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation           := RECEIVE;
-    shared_vvc_cmd.alert_level         := alert_level;
-    shared_vvc_cmd.data_routing        := NA;
-    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
-    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-      v_msg_id_panel := parent_msg_id_panel;
-    end if;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+    uart_receive(VVCT, vvc_instance_idx, channel, NA, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
-
-
 
   procedure uart_expect(
     signal   VVCT                : inout t_vvc_target_record;

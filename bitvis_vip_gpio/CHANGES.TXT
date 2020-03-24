@@ -9,6 +9,7 @@ Released: 2020-XX-XX
   for future HVVC support.
 - Renamed Direct Transaction Transfer to transaction info.
 - Renamed signal VVC to VVCT in VVC's procedures to match the documentation.
+- Added data_routing parameter to VVC get procedure for sending data to scoreboard.
 
 v1.5.2
 ----------

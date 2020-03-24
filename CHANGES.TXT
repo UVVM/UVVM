@@ -15,6 +15,17 @@ v2 2020.XX.XX
 Released: 2020-XX-XX
 - Changed VVC SB name to <IF>_SB in all VVCs with scoreboarding.
 - Renamed Direct Transaction Transfer to transaction info.
+- Fixed logging in Avalon-ST VIP to show the correct total number of words/symbols.
+- Renamed signal VVC to VVCT in GPIO VVC procedures to match the documentation.
+- Added NA element to type t_enabled.
+- Added C_UNUSED_MSG_ID_PANEL and removed t_vvc record in adaptations_pkg.
+- Removed type t_use_provided_msg_id_panel.
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel.
+- Added parent_msg_id_panel optional parameter to all VVC procedures for future HVVC support.
+- Replaced default scope in VVC commands with C_VVC_CMD_SCOPE_DEFAULT so that it is
+  configurable from adaptations_pkg.
+- Moved alert_level parameter placement in Avalon-ST, GMII and RGMII VVC expect procedures.
+- Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
 
 
 v2 2020.03.06
@@ -31,7 +42,6 @@ Released: 2020-03-06
 - Added a read procedure with the number of bytes to read as a parameter for GMII VIP.
 - Removed deprecated t_transaction_info in GMII VIP, RGMII VIP and Avalon Stream VIP.
 - Updated default max_wait_cycles in GMII VIP.
-
 
 
 v2 2020.03.02

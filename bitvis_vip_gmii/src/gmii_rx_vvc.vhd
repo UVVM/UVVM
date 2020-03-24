@@ -270,9 +270,9 @@ begin
 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
-            -- call SB check_receive
+            -- call SB check_received
             alert(tb_warning, "Scoreboard type for GMII READ not implemented");
-            --GMII_SB.check_received(GC_INSTANCE_IDX, v_result(GC_DATA_WIDTH-1 downto 0));
+            --GMII_SB.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,

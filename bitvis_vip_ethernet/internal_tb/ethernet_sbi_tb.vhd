@@ -61,11 +61,11 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.ethernet_sbi_th
+  i_test_harness : entity bitvis_vip_ethernet.ethernet_th(struct_sbi)
     generic map(
-      GC_CLK_PERIOD => C_CLK_PERIOD,
-      GC_ADDR_WIDTH => C_ADDR_WIDTH,
-      GC_DATA_WIDTH => GC_DATA_WIDTH
+      GC_CLK_PERIOD     => C_CLK_PERIOD,
+      GC_SBI_ADDR_WIDTH => C_ADDR_WIDTH,
+      GC_SBI_DATA_WIDTH => GC_DATA_WIDTH
     );
 
   ------------------------------------------------

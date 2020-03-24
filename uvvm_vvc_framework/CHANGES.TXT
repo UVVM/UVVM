@@ -8,6 +8,7 @@ Released: 2020-XX-XX
 - Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
   td_vvc_framework_common_methods_pkg procedures.
 - Updated vvc_generator.py script to implement usage of parent_msg_id_panel.
+- Moved alert_level parameter placement in VVC procedure example in vvc_generator.py script.
 
 v2.7.3
 ----------

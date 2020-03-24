@@ -9,6 +9,7 @@ Released: 2020-XX-XX
   vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
   for future HVVC support.
 - Renamed Direct Transaction Transfer to transaction info.
+- Moved alert_level parameter placement in avalon_st_expect() VVC procedure.
 
 v1.0.1
 ----------

@@ -26,31 +26,33 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
+use work.ethernet_sbi_pkg.all;
+
+library bitvis_vip_gmii;
+use bitvis_vip_gmii.gmii_bfm_pkg.all;
 
 library bitvis_vip_ethernet;
-
-use work.ethernet_sbi_pkg.all;
 
 
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity ethernet_sbi_th is
+entity ethernet_th is
   generic(
-    GC_CLK_PERIOD : time;
-    GC_ADDR_WIDTH : positive;
-    GC_DATA_WIDTH : positive
+    GC_CLK_PERIOD     : time;
+    GC_SBI_ADDR_WIDTH : positive := 8;
+    GC_SBI_DATA_WIDTH : positive := 8
   );
-end entity ethernet_sbi_th;
+end entity ethernet_th;
 
 --=================================================================================================
--- Test harness architecture
+-- Test harness architecture for SBI interface
 --=================================================================================================
-architecture struct of ethernet_sbi_th is
+architecture struct_sbi of ethernet_th is
 
   signal clk       : std_logic;
-  signal i1_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
-  signal i2_sbi_if : t_sbi_if(addr(GC_ADDR_WIDTH-1 downto 0), wdata(GC_DATA_WIDTH-1 downto 0), rdata(GC_DATA_WIDTH-1 downto 0));
+  signal i1_sbi_if : t_sbi_if(addr(GC_SBI_ADDR_WIDTH-1 downto 0), wdata(GC_SBI_DATA_WIDTH-1 downto 0), rdata(GC_SBI_DATA_WIDTH-1 downto 0));
+  signal i2_sbi_if : t_sbi_if(addr(GC_SBI_ADDR_WIDTH-1 downto 0), wdata(GC_SBI_DATA_WIDTH-1 downto 0), rdata(GC_SBI_DATA_WIDTH-1 downto 0));
 
   -- Configuration for the Ethernet MAC field addresses
   constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) :=
@@ -89,8 +91,8 @@ begin
 
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH   => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH   => GC_DATA_WIDTH,
+      GC_ADDR_WIDTH   => GC_SBI_ADDR_WIDTH,
+      GC_DATA_WIDTH   => GC_SBI_DATA_WIDTH,
       GC_INSTANCE_IDX => 1
     )
     port map(
@@ -109,8 +111,8 @@ begin
 
   i2_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
     generic map(
-      GC_ADDR_WIDTH   => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH   => GC_DATA_WIDTH,
+      GC_ADDR_WIDTH   => GC_SBI_ADDR_WIDTH,
+      GC_DATA_WIDTH   => GC_SBI_DATA_WIDTH,
       GC_INSTANCE_IDX => 2
     )
     port map(
@@ -123,10 +125,10 @@ begin
   -----------------------------
   i_sbi_fifo : entity work.sbi_fifo
     generic map(
-      GC_DATA_WIDTH_1  => GC_DATA_WIDTH,
-      GC_ADDR_WIDTH_1  => GC_ADDR_WIDTH,
-      GC_DATA_WIDTH_2  => GC_DATA_WIDTH,
-      GC_ADDR_WIDTH_2  => GC_ADDR_WIDTH
+      GC_DATA_WIDTH_1  => GC_SBI_DATA_WIDTH,
+      GC_ADDR_WIDTH_1  => GC_SBI_ADDR_WIDTH,
+      GC_DATA_WIDTH_2  => GC_SBI_DATA_WIDTH,
+      GC_ADDR_WIDTH_2  => GC_SBI_ADDR_WIDTH
     )
     port map(
       clk      => clk,
@@ -134,4 +136,74 @@ begin
       sbi_if_2 => i2_sbi_if
     );
 
-end architecture struct;
+end architecture struct_sbi;
+
+
+--=================================================================================================
+-- Test harness architecture for GMII interface
+--=================================================================================================
+architecture struct_gmii of ethernet_th is
+
+  signal clk           : std_logic;
+  signal i1_gmii_tx_if : t_gmii_tx_if;
+  signal i1_gmii_rx_if : t_gmii_rx_if;
+  signal i2_gmii_tx_if : t_gmii_tx_if;
+  signal i2_gmii_rx_if : t_gmii_rx_if;
+
+begin
+
+  ------------------------------------------
+  -- Clock generator
+  ------------------------------------------
+  p_clk : clock_generator(clk, GC_CLK_PERIOD);
+
+  -----------------------------
+  -- VVC/executors
+  -----------------------------
+  i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
+    generic map(
+      GC_INSTANCE_IDX         => 1,
+      GC_PHY_INTERFACE        => GMII,
+      GC_PHY_VVC_INSTANCE_IDX => 1,
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2 -- add some margin
+    );
+
+  i1_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
+    generic map(
+      GC_INSTANCE_IDX => 1
+    )
+    port map(
+      gmii_vvc_tx_if => i1_gmii_tx_if,
+      gmii_vvc_rx_if => i1_gmii_rx_if
+    );
+
+  i2_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
+    generic map(
+      GC_INSTANCE_IDX         => 2,
+      GC_PHY_INTERFACE        => GMII,
+      GC_PHY_VVC_INSTANCE_IDX => 2,
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2 -- add some margin
+    );
+
+  i2_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
+    generic map(
+      GC_INSTANCE_IDX => 2
+    )
+    port map(
+      gmii_vvc_tx_if => i2_gmii_tx_if,
+      gmii_vvc_rx_if => i2_gmii_rx_if
+    );
+
+  -----------------------------
+  -- DUT
+  -----------------------------
+  i1_gmii_tx_if.gtxclk <= clk;
+  i1_gmii_rx_if.rxclk  <= clk;
+  i1_gmii_rx_if.rxdv   <= i2_gmii_tx_if.txen;
+  i1_gmii_rx_if.rxd    <= i2_gmii_tx_if.txd;
+  i2_gmii_tx_if.gtxclk <= clk;
+  i2_gmii_rx_if.rxclk  <= clk;
+  i2_gmii_rx_if.rxdv   <= i1_gmii_tx_if.txen;
+  i2_gmii_rx_if.rxd    <= i1_gmii_tx_if.txd;
+
+end architecture struct_gmii;

@@ -310,8 +310,9 @@ begin
                                             scope                => C_SCOPE,
                                             msg_id_panel         => v_msg_id_panel);
 
+          -- Request SB check result
           if v_cmd.data_routing = TO_SB then
-            -- Send result to scoreboard
+            -- call SB check_received
             ETHERNET_SB.check_received(GC_INSTANCE_IDX, v_result.ethernet_frame);
           else
             -- Store the result

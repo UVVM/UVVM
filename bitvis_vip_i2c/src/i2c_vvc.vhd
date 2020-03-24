@@ -214,7 +214,7 @@ begin
     I2C_SB.set_scope("I2C_VVC");
     I2C_SB.enable(GC_INSTANCE_IDX, "SB I2C Enabled");
     I2C_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    I2C_SB.enable_log_msg(ID_DATA);
+    I2C_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     while true loop
 

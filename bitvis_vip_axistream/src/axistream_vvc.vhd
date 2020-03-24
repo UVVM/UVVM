@@ -221,7 +221,7 @@ begin
       AXISTREAM_SB.set_scope("AXISTREAM_VVC");
       AXISTREAM_SB.enable(GC_INSTANCE_IDX, "SB AXISTREAM Enabled");
       AXISTREAM_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-      AXISTREAM_SB.enable_log_msg(ID_DATA);
+      AXISTREAM_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
       loop
          

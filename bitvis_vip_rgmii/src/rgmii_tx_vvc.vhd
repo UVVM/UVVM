@@ -208,7 +208,7 @@ begin
     RGMII_SB.set_scope("RGMII VVC");
     RGMII_SB.enable(GC_INSTANCE_IDX, "SB RGMII Enabled");
     RGMII_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    RGMII_SB.enable_log_msg(ID_DATA);
+    RGMII_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 

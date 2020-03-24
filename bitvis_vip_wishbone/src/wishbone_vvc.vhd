@@ -216,7 +216,7 @@ begin
     WISHBONE_SB.set_scope("WISHBONE_VVC");
     WISHBONE_SB.enable(GC_INSTANCE_IDX, "SB WISHBONE Enabled");
     WISHBONE_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    WISHBONE_SB.enable_log_msg(ID_DATA);
+    WISHBONE_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
 
     loop

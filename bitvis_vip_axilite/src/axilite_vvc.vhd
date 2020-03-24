@@ -221,7 +221,7 @@ begin
     AXILITE_SB.set_scope("AXILITE_VVC");
     AXILITE_SB.enable(GC_INSTANCE_IDX, "SB AXILITE Enabled");
     AXILITE_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    AXILITE_SB.enable_log_msg(ID_DATA);
+    AXILITE_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 

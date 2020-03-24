@@ -209,7 +209,7 @@ begin
     GMII_SB.set_scope("GMII VVC");
     GMII_SB.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
     GMII_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    GMII_SB.enable_log_msg(ID_DATA);
+    GMII_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 

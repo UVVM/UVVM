@@ -225,7 +225,7 @@ begin
     SPI_SB.set_scope("SPI_VVC");
     SPI_SB.enable(GC_INSTANCE_IDX, "SB SPI Enabled");
     SPI_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    SPI_SB.enable_log_msg(ID_DATA);
+    SPI_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 

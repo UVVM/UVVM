@@ -169,7 +169,6 @@ UVVM:
 UVVM: ID_POS_ACK                        31.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
 UVVM: ID_POS_ACK                        51.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
 UVVM: ID_UTIL_SETUP                     51.0 ns  TB seq.                        incremented expected ERRORs by 7. 
-UVVM: ID_SEQUENCER                      51.0 ns  TB seq.                        =====>>> report_check_counters()
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***

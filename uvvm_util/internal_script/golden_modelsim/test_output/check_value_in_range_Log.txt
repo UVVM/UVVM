@@ -162,7 +162,6 @@ UVVM:
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
 UVVM:                                                                           Fail'
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        =====>>> report_check_counters()
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***

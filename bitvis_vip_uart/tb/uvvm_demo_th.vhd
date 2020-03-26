@@ -241,7 +241,7 @@ begin
         case sbi_vvc_transaction_info.bt.operation is
           when WRITE =>
               -- add to UART scoreboard
-              UART_SB.add_expected(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0));
+              UART_SB.add_expected(pad_sb_slv(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0)));
 
           when READ =>
             null;
@@ -273,7 +273,7 @@ begin
                 (uart_tx_transaction_info.bt.error_info.stop_bit_error = false) then
 
                 -- Add to SBI scoreboard
-                SBI_SB.add_expected(uart_tx_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0));
+                SBI_SB.add_expected(pad_sb_slv(uart_tx_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0)));
                 -- Wait for UART Transmit to finish before SBI VVC start
                 insert_delay(SBI_VVCT, 1, 12*GC_BIT_PERIOD, "Wait for UART TX to finish");
                 -- Request SBI Read

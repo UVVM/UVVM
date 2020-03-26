@@ -18,6 +18,7 @@ Released: 2020-XX-XX
 - Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
 - Fixed SB report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.
 - Added a new predefined scoreboard slv8_sb_pkg.
+- Added checks in all SB procedures to give an error if the instance is not enabled.
 - Renamed Direct Transaction Transfer to transaction info.
 - Fixed logging in Avalon-ST VIP to show the correct total number of words/symbols.
 - Renamed signal VVC to VVCT in GPIO VVC procedures to match the documentation.

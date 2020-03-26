@@ -60,6 +60,9 @@ def main(argv):
   # Setup testbench and run
   tb.set_tb_name("spec_cov_tb")
   tb.add_tests(tests)
+  # This test should be aborted by UVVM due to alert count vs expected mismatch
+  tb.add_expected_failing_testcase("test_incomplete_testcase") 
+  # Start simulations
   tb.run_simulation()
 
 

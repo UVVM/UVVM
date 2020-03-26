@@ -14,6 +14,10 @@ v2 2020.XX.XX
 --------------------
 Released: 2020-XX-XX
 - Changed VVC SB name to <IF>_SB in all VVCs with scoreboarding.
+- Added VVC index to enable_log_msg() calls for all VVCs with scoreboarding.
+- Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
+- Fixed SB report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.
+- Added a new predefined scoreboard slv8_sb_pkg.
 - Renamed Direct Transaction Transfer to transaction info.
 - Fixed logging in Avalon-ST VIP to show the correct total number of words/symbols.
 - Renamed signal VVC to VVCT in GPIO VVC procedures to match the documentation.
@@ -25,7 +29,7 @@ Released: 2020-XX-XX
 - Replaced default scope in VVC commands with C_VVC_CMD_SCOPE_DEFAULT so that it is
   configurable from adaptations_pkg.
 - Moved alert_level parameter placement in Avalon-ST, GMII and RGMII VVC expect procedures.
-- Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
+- Added CHECK counters and report_check_counters() method to UVVM Utility library.
 
 
 v2 2020.03.06

@@ -50,9 +50,12 @@ UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
 UVVM:                ID_SEGMENT_HDR               : ENABLED
 UVVM:                ID_SEGMENT_DATA              : ENABLED
 UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_PREAMBLE           : ENABLED
 UVVM:                ID_PACKET_COMPLETE           : ENABLED
 UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_PACKET_CHECKSUM           : ENABLED
+UVVM:                ID_PACKET_GAP                : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED
@@ -487,6 +490,23 @@ UVVM:
 UVVM: ID_GEN_PULSE                    3725.0 ns  TB seq.                        Pulsed to 1 for 10000 ps. 'Test pulse sl to a value it was already.'
 UVVM: ID_POS_ACK                      3725.0 ns  TB seq.                        check_value() => OK, for std_logic '1' (exp: '1'). 'Check what the value was during the pulse.'
 UVVM: ID_POS_ACK                      3725.0 ns  TB seq.                        check_value() => OK, for std_logic '1' (exp: '1'). 'Check what the value was after the pulse'
+UVVM: ID_SEQUENCER                    3825.0 ns  (non scoped)                   Check that gen_pulse() outputs TB_ERROR for combination NON_BLOCKING + 0 ns duration
+UVVM: ID_UTIL_SETUP                   3825.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:          3825 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was false. 'gen_pulse: The combination of NON_BLOCKING mode and 0 ns pulse duration results in the pulse being
+UVVM:                    ignored.'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_GEN_PULSE                    3825.0 ns  TB seq.                        Pulsed to 1 for 0 ps. 'NON_BLOCKING pulse for a delta cycle (0 ns)'
+UVVM: ID_POS_ACK                      3825.0 ns  TB seq                         check_value() => OK, for std_logic '0' (exp: '0'). 'pulse for 0 ns, blocking mode, pulse done'
+UVVM: ID_POS_ACK                      3825.0 ns  TB seq                         check_value() => OK, for time 0 ps. 'pulse for 0 ns. Check that it actually pulsed for a delta
+UVVM:                                                                           cycle'
+UVVM: ID_POS_ACK                      3825.0 ns  TB seq                         check_value() => OK, for std_logic '1' (exp: '1'). 'pulse for 0 ns, check that it actually
+UVVM:                                                                           pulsed for a delta cycle'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
@@ -498,7 +518,7 @@ UVVM:                WARNING      :      0         0         0         ok
 UVVM:                TB_WARNING   :      0         0         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
-UVVM:                TB_ERROR     :      4         4         0         ok
+UVVM:                TB_ERROR     :      5         5         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================
@@ -514,7 +534,7 @@ UVVM:                WARNING      :      0         0         0         ok
 UVVM:                TB_WARNING   :      0         0         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
-UVVM:                TB_ERROR     :      4         4         0         ok
+UVVM:                TB_ERROR     :      5         5         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================
@@ -524,5 +544,5 @@ UVVM:
 UVVM:      
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                      4825.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: ID_LOG_HDR                      4925.0 ns  TB seq                         SIMULATION COMPLETED
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

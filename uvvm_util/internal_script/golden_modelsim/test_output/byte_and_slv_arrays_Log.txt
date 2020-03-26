@@ -50,9 +50,12 @@ UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
 UVVM:                ID_SEGMENT_HDR               : ENABLED
 UVVM:                ID_SEGMENT_DATA              : ENABLED
 UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_PREAMBLE           : ENABLED
 UVVM:                ID_PACKET_COMPLETE           : ENABLED
 UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_PACKET_CHECKSUM           : ENABLED
+UVVM:                ID_PACKET_GAP                : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED
@@ -114,7 +117,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM:                                                                           #8'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array() result, byte
 UVVM:                                                                           #9'
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte-to-3xbyte testing, FIRST_BYTE_LEFT
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte-to-3xbyte testing, LOWER_BYTE_LEFT
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #0'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #2'
@@ -124,7 +127,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #6'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #7'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #8'
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte-to-3xbyte testing, FIRST_BYTE_RIGHT
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte-to-3xbyte testing, LOWER_BYTE_RIGHT
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #0'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv_array(), byte #2'
@@ -163,7 +166,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte to byte testing, ascending byte vector, ascending t_byte_array
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #0'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #1'
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        3xbyte to byte testing, FIRST_BYTE_LEFT, ascending t_byte_array
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        3xbyte to byte testing, LOWER_BYTE_LEFT, ascending t_byte_array
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #0'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #2'
@@ -173,7 +176,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #6'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #7'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #8'
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        3xbyte to byte testing, FIRST_BYTE_RIGHT, ascending t_byte_array
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        3xbyte to byte testing, LOWER_BYTE_RIGHT, ascending t_byte_array
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #0'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #1'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #2'
@@ -183,6 +186,80 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #6'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #7'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_array_to_byte_array(), byte #8'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  TB seq.                        Testing and verifying convert_byte_array_to_slv
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte endianness: LOWER_BYTE_LEFT
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #0'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #1'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #2'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #3'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #4'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #5'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #6'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #7'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #8'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #9'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte endianness: LOWER_BYTE_RIGHT
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #0'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #1'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #2'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #3'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #4'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #5'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #6'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #7'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #8'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_byte_array_to_slv() result, byte #9'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  TB seq.                        Testing and verifying convert_slv_to_byte_array
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte endianness: LOWER_BYTE_LEFT
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #0'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #1'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #2'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #3'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #4'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #5'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #6'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #7'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #8'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #9'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte endianness: LOWER_BYTE_LEFT - Check padding when std_logic_vector not multiple of byte
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #0'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #1'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #2'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #3'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #4'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #5'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #6'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #7'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #8'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #9'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte endianness: LOWER_BYTE_RIGHT
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #0'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #1'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #2'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #3'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #4'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #5'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #6'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #7'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #8'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #9'
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Byte endianness: LOWER_BYTE_RIGHT - Check padding when std_logic_vector not multiple of byte
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #0'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #1'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #2'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #3'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #4'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #5'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #6'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #7'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #8'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking convert_slv_to_byte_array() result, byte #9'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***

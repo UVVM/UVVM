@@ -217,7 +217,7 @@ begin
     AVALON_ST_SB.set_scope("AVALON_ST VVC");
     AVALON_ST_SB.enable(GC_INSTANCE_IDX, "SB AVALON_ST Enabled");
     AVALON_ST_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    AVALON_ST_SB.enable_log_msg(ID_DATA);
+    AVALON_ST_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 

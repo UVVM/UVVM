@@ -279,6 +279,13 @@ package methods_pkg is
     constant scope        : string  := C_TB_SCOPE_DEFAULT
   );
 
+  procedure report_check_counters(
+    constant dummy : in t_void
+  );
+
+  procedure report_check_counters(
+    constant order  : in t_order
+  );
 
 -- ============================================================================
 -- Deprecate message
@@ -3204,7 +3211,12 @@ package body methods_pkg is
     shared_default_log_destination := log_destination;
   end;
 
+-- ============================================================================
+-- Check counters related
+-- ============================================================================
 
+-- Shared variable for all the check counters
+shared variable protected_check_counters : t_protected_check_counters;
 
 
 -- ============================================================================
@@ -3622,6 +3634,21 @@ package body methods_pkg is
     set_alert_stop_limit(alert_level, v_alert_stop_limit + number);
   end ;
 
+  procedure report_check_counters(
+    constant order : in t_order
+  ) is
+  begin
+    protected_check_counters.to_string(order);
+  end procedure report_check_counters;
+
+  procedure report_check_counters(
+    constant dummy : in t_void
+  ) is
+  begin
+    report_check_counters(FINAL);
+  end procedure report_check_counters;
+
+
 
 -- ============================================================================
 -- Deprecation message
@@ -3794,6 +3821,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()"
     ) return boolean is
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     if value then
       log(msg_id, caller_name & " => OK, for boolean true. " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -3815,6 +3844,8 @@ package body methods_pkg is
     constant v_value_str : string := to_string(value);
     constant v_exp_str   : string := to_string(exp);
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     if value = exp then
       log(msg_id, caller_name & " => OK, for boolean " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
@@ -3840,6 +3871,8 @@ package body methods_pkg is
     constant v_exp_str   : string  := to_string(exp);
     variable v_failed    : boolean := false;
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     case match_strictness is
 
       when MATCH_STD =>
@@ -3921,6 +3954,8 @@ package body methods_pkg is
     end function pad_short_string;
 
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
       deprecate(get_procedure_name_from_instance_name(value'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
@@ -4042,6 +4077,8 @@ package body methods_pkg is
     constant v_value_str : string := to_string(value);
     constant v_exp_str   : string := to_string(exp);
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     if value = exp then
       log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
@@ -4065,6 +4102,8 @@ package body methods_pkg is
     constant v_value_str : string := to_string(value);
     constant v_exp_str   : string := to_string(exp);
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     if value = exp then
       log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
@@ -4088,6 +4127,8 @@ package body methods_pkg is
     constant v_value_str : string := to_string(value);
     constant v_exp_str   : string := to_string(exp);
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     if value = exp then
         log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
         return true;
@@ -4109,6 +4150,8 @@ package body methods_pkg is
     ) return boolean is
     constant value_type  : string          := "string";
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     if value = exp then
         log(msg_id, caller_name & " => OK, for " & value_type & " '" & value & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
         return true;
@@ -4132,7 +4175,11 @@ package body methods_pkg is
     constant value_type  : string          := "t_slv_array"
     ) return boolean is
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     for idx in exp'range loop
+      -- do not count CHECK_VALUE multiple times
+      protected_check_counters.decrement(CHECK_VALUE);
       if not(check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
         return false;
       end if;
@@ -4154,7 +4201,11 @@ package body methods_pkg is
     constant value_type  : string          := "t_signed_array"
     ) return boolean is
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     for idx in exp'range loop
+      -- do not count CHECK_VALUE multiple times
+      protected_check_counters.decrement(CHECK_VALUE);
       if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
         return false;
       end if;
@@ -4176,7 +4227,11 @@ package body methods_pkg is
     constant value_type  : string          := "t_unsigned_array"
     ) return boolean is
   begin
+    protected_check_counters.increment(CHECK_VALUE);
+
     for idx in exp'range loop
+      -- do not count CHECK_VALUE multiple times
+      protected_check_counters.decrement(CHECK_VALUE);
       if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
         return false;
       end if;
@@ -4964,9 +5019,13 @@ package body methods_pkg is
     constant v_max_value_str : string   := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
+    protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
+
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
       " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
+    protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
         log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -4993,9 +5052,13 @@ package body methods_pkg is
     constant v_min_value_str : string   := to_string(min_value);
     constant v_max_value_str : string   := to_string(max_value);
   begin
+    protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
+
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
       " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
+    protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
         log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -5022,9 +5085,13 @@ package body methods_pkg is
     constant v_min_value_str : string   := to_string(min_value);
     constant v_max_value_str : string   := to_string(max_value);
   begin
+    protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
+
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
       " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
+    protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
         log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -5052,9 +5119,13 @@ package body methods_pkg is
     constant v_max_value_str : string   := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
+    protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
+
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
       " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
+    protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
         log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -5082,10 +5153,14 @@ package body methods_pkg is
     constant v_max_value_str : string   := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
+    protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
+
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR,
       " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, scope,
       ID_NEVER, msg_id_panel, caller_name);
+    -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
+    protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
         log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -5346,6 +5421,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5370,6 +5447,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+    
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5394,6 +5473,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5418,6 +5499,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5442,6 +5525,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5466,6 +5551,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK." & value_string & " stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5490,6 +5577,8 @@ package body methods_pkg is
     constant last_change        : time   := target'last_event;
     constant last_change_string : string := to_string(last_change, ns);
   begin
+    protected_check_counters.increment(CHECK_STABLE);
+
     if (last_change >= stable_req) then
       log(msg_id, caller_name & " => OK." & value_string & " stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
@@ -5619,8 +5708,12 @@ end;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
     ) is
   begin
+    protected_check_counters.increment(CHECK_TIME_WINDOW);
+
     -- Sanity check
     check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & LF & msg, scope, ID_NEVER, msg_id_panel, name);
+    -- do not count CHECK_VALUE from CHECK_TIME_WINDOW
+    protected_check_counters.decrement(CHECK_VALUE);
 
     if elapsed_time < min_time then
       alert(alert_level, name & " => Failed. Condition occurred too early, after " &
@@ -6784,7 +6877,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,
@@ -6848,7 +6940,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,
@@ -6910,7 +7001,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,
@@ -6972,7 +7062,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,
@@ -7034,7 +7123,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,
@@ -7096,7 +7184,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,
@@ -7158,7 +7245,6 @@ end;
     variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
   begin
-
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event                 => target'last_event,

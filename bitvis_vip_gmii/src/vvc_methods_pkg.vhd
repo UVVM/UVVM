@@ -26,7 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
+use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 
 use work.gmii_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -133,6 +133,16 @@ package vvc_methods_pkg is
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
     constant num_bytes           : in    positive;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -254,6 +264,19 @@ package body vvc_methods_pkg is
   ) is
   begin
     gmii_read(VVCT, vvc_instance_idx, channel, num_bytes, NA, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, data_routing, msg, scope, parent_msg_id_panel);
   end procedure;
 
   procedure gmii_read(

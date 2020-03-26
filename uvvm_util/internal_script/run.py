@@ -77,6 +77,7 @@ def main(argv):
   tb.set_tb_name("methods_tb")
   tb.add_tests(tests)
   tb.set_cleanup(False)
+  tb.add_expected_failing_testcase("setting_output_file_name")
   tb.run_simulation()
 
 

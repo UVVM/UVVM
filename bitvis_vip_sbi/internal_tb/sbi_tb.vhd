@@ -27,6 +27,10 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
+
 -- Test case entity
 entity sbi_tb is
   generic (
@@ -164,6 +168,26 @@ begin
       check_value(v_data(7 downto 0), x"12", ERROR, "Readback data via fetch_result()");
 
       await_completion(SBI_VVCT,2, 100 ns, "Await execution");
+
+    elsif GC_TEST = "scoreboard_test" then
+      log(ID_LOG_HDR, "Scoreboard test", C_SCOPE);
+      --==========================================================================
+      log("Write with both interfaces");
+      sbi_write(SBI_VVCT,1, C_ADDR_FIFO_PUT, x"85", "Write on FIFO 1");
+      SBI_SB.add_expected(2, pad_sb_slv(x"85"));
+      sbi_write(SBI_VVCT,2, C_ADDR_FIFO_PUT, x"EC", "Write on FIFO 2");
+      SBI_SB.add_expected(1, pad_sb_slv(x"EC"));
+      await_completion(SBI_VVCT,2, 16 ns, "Await execution");
+
+      log("Read and check FIFO 1 using SBI IF 2");
+      sbi_read(SBI_VVCT,2, C_ADDR_FIFO_GET, TO_SB, "Read from FIFO 1 and store result in VVC's SB");
+      await_completion(SBI_VVCT,2, 100 ns, "Wait for sbi_read to finish");
+
+      log("Read and check FIFO 2 using SBI IF 1");
+      sbi_read(SBI_VVCT,1, C_ADDR_FIFO_GET, TO_SB, "Read from FIFO 2 and store result in VVC's SB");
+      await_completion(SBI_VVCT,1, 100 ns, "Wait for sbi_read to finish");
+
+      SBI_SB.report_counters(ALL_ENABLED_INSTANCES);
 
     elsif GC_TEST = "test_of_poll_until" then
       log(ID_LOG_HDR, "Test of poll until", C_SCOPE);

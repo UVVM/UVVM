@@ -229,7 +229,7 @@ begin
     SBI_SB.set_scope("SBI_VVC");
     SBI_SB.enable(GC_INSTANCE_IDX, "SB SBI Enabled");
     SBI_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    SBI_SB.enable_log_msg(ID_DATA);
+    SBI_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 

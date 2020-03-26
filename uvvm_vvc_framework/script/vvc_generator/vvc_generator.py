@@ -553,7 +553,7 @@ def add_vvc_executor(file_handle, vvc_channel):
     file_handle.write("     "+vvc_name.upper()+"_SB.set_scope(\""+vvc_name.upper()+" VVC\");\n")
     file_handle.write("     "+vvc_name.upper()+"_SB.enable(GC_INSTANCE_IDX, \"SB "+vvc_name.upper()+" Enabled\");\n")
     file_handle.write("     "+vvc_name.upper()+"_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);\n")
-    file_handle.write("     "+vvc_name.upper()+"_SB.enable_log_msg(ID_DATA);\n")
+    file_handle.write("     "+vvc_name.upper()+"_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);\n")
     file_handle.write("    -- Set initial value of v_msg_id_panel to msg_id_panel in config\n")
     file_handle.write("    v_msg_id_panel := vvc_config.msg_id_panel;\n")
     print_linefeed(file_handle)

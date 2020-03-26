@@ -175,6 +175,15 @@ package types_pkg is
     STOP_BITS_TWO
   );
 
+
+  type t_check_type is (CHECK_VALUE, 
+                        CHECK_VALUE_IN_RANGE, 
+                        CHECK_STABLE,
+                        CHECK_TIME_WINDOW);
+  type t_check_counters_array is array (CHECK_VALUE to t_check_type'right) of natural;
+
+
+
   -------------------------------------
   -- BFMs and above
   -------------------------------------

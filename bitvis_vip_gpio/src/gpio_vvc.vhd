@@ -215,7 +215,7 @@ begin
     GPIO_SB.set_scope("GPIO_VVC");
     GPIO_SB.enable(GC_INSTANCE_IDX, "SB GPIO Enabled");
     GPIO_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    GPIO_SB.enable_log_msg(ID_DATA);
+    GPIO_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 

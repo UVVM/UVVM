@@ -234,7 +234,8 @@ begin
     -- Setup Avalon MM scoreboard
     AVALON_MM_SB.set_scope("AVALON_MM_VVC");
     AVALON_MM_SB.enable(GC_INSTANCE_IDX, "SB AVALON MM Enabled");
-    AVALON_MM_SB.enable_log_msg(ID_DATA);
+    AVALON_MM_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    AVALON_MM_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 

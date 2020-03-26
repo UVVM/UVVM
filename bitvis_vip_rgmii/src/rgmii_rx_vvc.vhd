@@ -209,7 +209,7 @@ begin
     RGMII_SB.set_scope("RGMII VVC");
     RGMII_SB.enable(GC_INSTANCE_IDX, "SB RGMII Enabled");
     RGMII_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    RGMII_SB.enable_log_msg(ID_DATA);
+    RGMII_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -271,8 +271,9 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            alert(tb_warning, "Scoreboard type for RGMII READ not implemented");
-            --RGMII_SB.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
+            for i in 0 to v_result.data_array_length-1 loop
+              RGMII_SB.check_received(GC_INSTANCE_IDX, v_result.data_array(i));
+            end loop;
           else
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,

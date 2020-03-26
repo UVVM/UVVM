@@ -31,6 +31,10 @@ context bitvis_vip_sbi.vvc_context;
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
+
 -- Test case entity
 entity uart_vvc_new_tb is
   generic (
@@ -41,19 +45,15 @@ end entity;
 -- Test case architecture
 architecture func of uart_vvc_new_tb is
 
-
-
   constant C_CLK_PERIOD : time := 10 ns;
   constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD; -- default in design and BFM
 
   constant C_SCOPE     : string  := C_TB_SCOPE_DEFAULT;
 
-
   constant C_ADDR_RX_DATA    : unsigned(3 downto 0) := x"0";
   constant C_ADDR_RX_DATA_VALID : unsigned(3 downto 0) := x"1";
   constant C_ADDR_TX_DATA    : unsigned(3 downto 0) := x"2";
   constant C_ADDR_TX_READY   : unsigned(3 downto 0) := x"3";
-
 
   begin
 
@@ -165,6 +165,17 @@ architecture func of uart_vvc_new_tb is
     check_value(v_received_data(7 downto 0), x"56", ERROR, "Readback data via fetch_result()");
     await_completion(UART_VVCT,1,RX,  13 * C_BIT_PERIOD);
     wait for 10*C_BIT_PERIOD;  -- margin
+
+
+    log(ID_LOG_HDR, "Check of uart_receive() using Scoreboard", C_SCOPE);
+    ------------------------------------------------------------
+    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"38", "TX_DATA");
+    UART_SB.add_expected(1, pad_sb_slv(x"38"));
+    uart_receive(UART_VVCT, 1, RX, TO_SB, "Receive inside VVC's SB", ERROR);
+    await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+    wait for 10*C_BIT_PERIOD;  -- margin
+
+    UART_SB.report_counters(ALL_ENABLED_INSTANCES);
 
 
     log(ID_LOG_HDR, "Test of advanced uart_expect()", C_SCOPE);

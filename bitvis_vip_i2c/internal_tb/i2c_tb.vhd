@@ -1027,6 +1027,31 @@ begin  -- architecture behav
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '1');
       await_completion(I2C_VVCT, 3, 50 ms);
 
+    elsif GC_TEST = "scoreboard_test" then
+      log(ID_LOG_HDR, "Checking internal scoreboard", C_TB_SCOPE_DEFAULT);
+      -- Need higher inter-bfm delay for multi-byte
+      shared_i2c_vvc_config(0).inter_bfm_delay.delay_type    := TIME_START2START;
+      shared_i2c_vvc_config(0).inter_bfm_delay.delay_in_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time * 11 * (v_byte_array'length + 1);
+      shared_i2c_vvc_config(1).inter_bfm_delay.delay_type    := TIME_START2START;
+      shared_i2c_vvc_config(1).inter_bfm_delay.delay_in_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time * 11 * (v_byte_array'length + 1);
+
+      i2c_slave_transmit(I2C_VVCT, 1, v_byte_array, "Slave to Master transmit");
+      for i in 0 to v_byte_array'length-1 loop
+        I2C_SB.add_expected(0, v_byte_array(i));
+      end loop;
+      i2c_master_receive(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_byte_array'length, TO_SB, "Slave to Master check using SB");
+      await_completion(I2C_VVCT, 0, 50 ms);
+
+      i2c_slave_receive(I2C_VVCT, 1, v_byte_array'length, TO_SB, "Master to Slave check using SB");
+      i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_byte_array, "Master to Slave transmit");
+      for i in 0 to v_byte_array'length-1 loop
+        I2C_SB.add_expected(1, v_byte_array(i));
+      end loop;
+      await_completion(I2C_VVCT, 1, 50 ms);
+
+      wait for 1000 ns;
+      I2C_SB.report_counters(ALL_ENABLED_INSTANCES);
+
     else
       alert(tb_error, "Unsupported test " & GC_TEST);
     end if;

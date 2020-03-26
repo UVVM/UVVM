@@ -38,7 +38,6 @@ package generic_sb_support_pkg is
     overdue_check_alert_level : t_alert_level;
     overdue_check_time_limit  : time;
     ignore_initial_garbage    : boolean;
-    element_width             : positive;
   end record;
 
   type t_sb_config_array is array(integer range <>) of t_sb_config;
@@ -48,8 +47,7 @@ package generic_sb_support_pkg is
                                                  allow_out_of_order        => false,
                                                  overdue_check_alert_level => ERROR,
                                                  overdue_check_time_limit  => 0 ns,
-                                                 ignore_initial_garbage    => false,
-                                                 element_width             => 8);
+                                                 ignore_initial_garbage    => false);
 
 end package generic_sb_support_pkg;
 
@@ -57,23 +55,17 @@ end package generic_sb_support_pkg;
 package body generic_sb_support_pkg is
 
 
+  -- Return a descending std_logic_vector with zeros padded on the left side
   function pad_sb_slv(
     constant pad_data   : std_logic_vector;
     constant pad_width  : positive := C_SB_SLV_WIDTH
   ) return std_logic_vector is
-
-    variable v_asc_slv : std_logic_vector(0 to pad_width-1) := (others => '0');
-    variable v_des_slv : std_logic_vector(pad_width-1 downto 0) := (others => '0');
+    variable v_padded_slv : std_logic_vector(pad_width-1 downto 0) := (others => '0');
   begin
     check_value(pad_data'length <= pad_width, TB_WARNING, "check: pad_data width exceed pad_width");
 
-    if pad_data'ascending then
-      v_asc_slv(0 to pad_data'length-1) := pad_data;
-      return v_asc_slv;
-    else
-      v_des_slv(pad_data'length-1 downto 0) := pad_data;
-      return v_des_slv;
-    end if;
+    v_padded_slv(pad_data'length-1 downto 0) := pad_data;
+    return v_padded_slv;
   end function pad_sb_slv;
 
 end package body generic_sb_support_pkg;

@@ -6,6 +6,7 @@ v2.0.4
 Released: 2020-XX-XX
 - Fixed report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.
 - Added a new predefined scoreboard slv8_sb_pkg.
+- Added checks in all SB procedures to give an error if the instance is not enabled.
 
 v2.0.3
 ----------

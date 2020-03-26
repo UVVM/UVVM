@@ -4198,11 +4198,7 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()"
     ) return boolean is
   begin
-    if value then
-      log(msg_id, caller_name & " => OK, for boolean true. " & add_msg_delimiter(msg), scope, msg_id_panel);
-    else
-      alert(ERROR, caller_name & " => Failed. Boolean was false. " & add_msg_delimiter(msg), scope);
-    end if;
+    value := check_value(value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
     return value;
   end;
 
@@ -4215,16 +4211,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+      variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    if value = exp then
-      log(msg_id, caller_name & " => OK, for boolean " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      return true;
-    else
-      alert(ERROR, caller_name & " => Failed. Boolean was " & v_value_str & ". Expected " & v_exp_str & ". " & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4237,42 +4227,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant value_type  : string          := "std_logic";
-    constant v_value_str : string  := to_string(value);
-    constant v_exp_str   : string  := to_string(exp);
-    variable v_failed    : boolean := false;
+    variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    case match_strictness is
-
-      when MATCH_STD =>
-        if std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
-        else
-          v_failed := true;
-        end if;
-
-      when MATCH_STD_INCL_Z =>
-        if (value = 'Z' and exp = 'Z') or std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
-        else
-          v_failed := true;
-        end if;
-
-      when others =>
-        if value = exp then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
-        else
-          v_failed := true;
-        end if;
-
-    end case;
-
-    if v_failed = true then
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was '"  & v_value_str & "'. Expected '" & v_exp_str & "'" & LF & msg, scope);
-      return false;
-    else
-      return true;
-    end if;
+    v_check_ok := check_value(value, exp, match_strictness, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4284,11 +4242,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant value_type  : string          := "std_logic";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    return check_value(value, exp, MATCH_STD, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    v_check_ok := check_value(value, exp, MATCH_STD, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4304,64 +4261,9 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "slv"
     ) return boolean is
-    -- Normalise vectors to (N downto 0)
-    alias    a_value     : std_logic_vector(value'length - 1 downto 0) is value;
-    alias    a_exp       : std_logic_vector(exp'length - 1 downto 0) is exp;
-    constant v_value_str : string := to_string(a_value, radix, format,INCL_RADIX);
-    constant v_exp_str   : string := to_string(a_exp, radix, format,INCL_RADIX);
-    variable v_check_ok  : boolean := true;  -- as default prior to checking
-    variable v_trigger_alert : boolean := false; -- trigger alert and log message
-
-    -- Match length of short string with long string
-    function pad_short_string(short, long : string) return string is
-      variable v_padding : string(1 to (long'length - short'length)) := (others => '0');
-    begin
-      -- Include leading 'x"'
-      return short(1 to 2) & v_padding & short(3 to short'length);
-    end function pad_short_string;
-
-  begin
-    -- AS_IS format has been deprecated and will be removed in the near future
-    if format = AS_IS then
-      deprecate(get_procedure_name_from_instance_name(value'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
-    end if;
-
-    v_check_ok := matching_values(a_value, a_exp, match_strictness);
-
-    if v_check_ok then
-      if v_value_str = v_exp_str then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
-      else
-        -- H,L or - is present in v_exp_str
-        if match_strictness = MATCH_STD then
-          log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & "' (exp: " & v_exp_str & "'). " & add_msg_delimiter(msg),
-              scope, msg_id_panel);
-        else
-          v_trigger_alert := true; -- alert and log
-        end if;
-      end if;
-    else
-      v_trigger_alert := true; -- alert and log
-    end if;
-    -- trigger alert and log message
-    if v_trigger_alert then
-      if v_value_str'length > v_exp_str'length then
-        if radix = HEX_BIN_IF_INVALID then
-          alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
-        else
-          alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & pad_short_string(v_exp_str,v_value_str) & "." & LF & msg, scope);
-        end if;
-      elsif v_value_str'length < v_exp_str'length then
-        if radix = HEX_BIN_IF_INVALID then
-          alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
-        else
-          alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & pad_short_string(v_value_str,v_exp_str) & ". Expected " & v_exp_str & "." & LF & msg, scope);
-        end if;
-      else
-        alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
-      end if;
-    end if;
-
+    variable v_check_ok : boolean := true;  -- as default prior to checking
+   begin
+    v_check_ok := check_value(value, exp, match_strictness, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
 
@@ -4377,14 +4279,10 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "slv"
     ) return boolean is
-    -- Normalise vectors to (N downto 0)
-    alias    a_value     : std_logic_vector(value'length - 1 downto 0) is value;
-    alias    a_exp       : std_logic_vector(exp'length - 1 downto 0) is exp;
-    constant v_value_str : string := to_string(a_value, radix, format);
-    constant v_exp_str   : string := to_string(a_exp, radix, format);
-    variable v_check_ok  : boolean := true;  -- as default prior to checking
+    variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    return check_value(value, exp, MATCH_STD, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4418,7 +4316,7 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "signed"
     ) return boolean is
-    variable v_check_ok  : boolean;
+    variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
     v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), ERROR, msg, scope,
                               radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -4434,17 +4332,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant value_type  : string          := "int";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    if value = exp then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4456,17 +4347,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant value_type  : string          := "real";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    variable v_check_ok : boolean := true;  -- as default prior to checking     
   begin
-    if value = exp then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4478,17 +4362,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant value_type  : string          := "time";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    variable v_check_ok : boolean := true;  -- as default prior to checking     
   begin
-    if value = exp then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected " & v_exp_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4500,15 +4377,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-    constant value_type  : string          := "string";
+    variable v_check_ok : boolean := true;  -- as default prior to checking     
   begin
-    if value = exp then
-        log(msg_id, caller_name & " => OK, for " & value_type & " '" & value & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was '"  & value & "'. Expected '" & exp & "'" & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4523,13 +4395,10 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_slv_array"
     ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking      
   begin
-    for idx in exp'range loop
-      if not(check_value(value(idx), exp(idx), ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
-        return false;
-      end if;
-    end loop;
-    return true;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4544,13 +4413,10 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_signed_array"
     ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking      
   begin
-    for idx in exp'range loop
-      if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
-        return false;
-      end if;
-    end loop;
-    return true;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4565,13 +4431,10 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_unsigned_array"
     ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking      
   begin
-    for idx in exp'range loop
-      if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
-        return false;
-      end if;
-    end loop;
-    return true;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
 
@@ -5056,20 +4919,9 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_slv_array"
     ) is
-    variable v_check_ok     : boolean;
-    variable v_len_check_ok : boolean := (value'length = exp'length);
-    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
-    -- adjust for array index differences
-    variable v_adj_idx      : integer := (value'low - exp'low);
+    variable v_check_ok  : boolean;
   begin
-    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
-
-    if v_len_check_ok and v_dir_check_ok then
-      for idx in exp'range loop
-        v_check_ok := check_value(value(idx + v_adj_idx), exp(idx), ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-      end loop;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -5084,20 +4936,9 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_signed_array"
     ) is
-    variable v_check_ok     : boolean;
-    variable v_len_check_ok : boolean := (value'length = exp'length);
-    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
-    -- adjust for array index differences
-    variable v_adj_idx      : integer := (value'low - exp'low);
+    variable v_check_ok  : boolean;
   begin
-    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
-
-    if v_len_check_ok and v_dir_check_ok then
-      for idx in exp'range loop
-        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-      end loop;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -5112,20 +4953,9 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_unsigned_array"
     ) is
-    variable v_check_ok     : boolean;
-    variable v_len_check_ok : boolean := (value'length = exp'length);
-    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
-    -- adjust for array index differences
-    variable v_adj_idx      : integer := (value'low - exp'low);
+    variable v_check_ok  : boolean;
   begin
-    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
-
-    if v_len_check_ok and v_dir_check_ok then
-      for idx in exp'range loop
-        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-      end loop;
-    end if;
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   ------------------------------------------------------------------------
@@ -5281,6 +5111,7 @@ package body methods_pkg is
   end;
 
   -- check_value_in_range without mandatory alert_level
+
   impure function check_value_in_range (
     constant value        : integer;
     constant min_value    : integer;
@@ -5292,22 +5123,10 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "integer"
     ) return boolean is
-    constant v_value_str     : string   := to_string(value);
-    constant v_min_value_str : string   := to_string(min_value);
-    constant v_max_value_str : string   := to_string(max_value);
-    variable v_check_ok      : boolean;
+     variable v_check_ok      : boolean;
   begin
-    -- Sanity check
-    check_value(max_value >= min_value, TB_ERROR, scope,
-      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
-
-    if (value >= min_value and value <= max_value) then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value_in_range (
@@ -5321,21 +5140,10 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "unsigned"
     ) return boolean is
-    constant v_value_str     : string   := to_string(value);
-    constant v_min_value_str : string   := to_string(min_value);
-    constant v_max_value_str : string   := to_string(max_value);
+      variable v_check_ok      : boolean;   
   begin
-    -- Sanity check
-    check_value(max_value >= min_value, TB_ERROR, scope,
-      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
-
-    if (value >= min_value and value <= max_value) then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value_in_range (
@@ -5349,21 +5157,10 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "signed"
     ) return boolean is
-    constant v_value_str     : string   := to_string(value);
-    constant v_min_value_str : string   := to_string(min_value);
-    constant v_max_value_str : string   := to_string(max_value);
+    variable v_check_ok      : boolean;   
   begin
-    -- Sanity check
-    check_value(max_value >= min_value, TB_ERROR, scope,
-      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
-
-    if (value >= min_value and value <= max_value) then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value_in_range (
@@ -5376,23 +5173,10 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value_in_range()"
     ) return boolean is
-    constant value_type      : string   := "time";
-    constant v_value_str     : string   := to_string(value);
-    constant v_min_value_str : string   := to_string(min_value);
-    constant v_max_value_str : string   := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
-    -- Sanity check
-    check_value(max_value >= min_value, TB_ERROR, scope,
-      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
-
-    if (value >= min_value and value <= max_value) then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
 
   impure function check_value_in_range (
@@ -5405,24 +5189,10 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value_in_range()"
     ) return boolean is
-    constant value_type      : string   := "real";
-    constant v_value_str     : string   := to_string(value);
-    constant v_min_value_str : string   := to_string(min_value);
-    constant v_max_value_str : string   := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
-    -- Sanity check
-    check_value(max_value >= min_value, TB_ERROR,
-      " => min_value (" & v_min_value_str & ") must be less than max_value("& v_max_value_str & ")" & LF & msg, scope,
-      ID_NEVER, msg_id_panel, caller_name);
-
-    if (value >= min_value and value <= max_value) then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-        return true;
-    else
-      alert(ERROR, caller_name & " => Failed. " & value_type & "  Was "  & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
-      return false;
-    end if;
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
   --------------------------------------------------------------------------------
   -- check_value_in_range procedures :
@@ -5503,7 +5273,7 @@ package body methods_pkg is
   begin
     v_check_ok := check_value_in_range(value, min_value, max_value, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
-  
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- check_value_in_range procedures without mandatory alert_level
   procedure check_value_in_range (
     constant value       : integer;
@@ -5515,9 +5285,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value_in_range()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
   procedure check_value_in_range (
     constant value       : unsigned;
@@ -5529,9 +5298,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value_in_range()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
   procedure check_value_in_range (
     constant value       : signed;
@@ -5543,9 +5311,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value_in_range()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
   procedure check_value_in_range (
     constant value       : time;
@@ -5557,9 +5324,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value_in_range()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
   procedure check_value_in_range (
     constant value       : real;
@@ -5571,9 +5337,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value_in_range()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   --------------------------------------------------------------------------------
@@ -5758,17 +5523,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "boolean"
   ) is
-  constant value_string       : string := to_string(target);
-  constant last_value_string  : string := to_string(target'last_value);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
 begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);  
 end;
 
 procedure check_stable(
@@ -5781,17 +5537,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "slv"
   ) is
-  constant value_string       : string := 'x' & to_string(target, HEX);
-  constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
 begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);  
 end;
 
 procedure check_stable(
@@ -5804,17 +5551,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "unsigned"
   ) is
-  constant value_string       : string := 'x' & to_string(target, HEX);
-  constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
 begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);  
 end;
 
 procedure check_stable(
@@ -5827,17 +5565,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "signed"
   ) is
-  constant value_string       : string := 'x' & to_string(target, HEX);
-  constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
 begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);  
 end;
 
 procedure check_stable(
@@ -5850,17 +5579,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "std_logic"
   ) is
-  constant value_string       : string := to_string(target);
-  constant last_value_string  : string := to_string(target'last_value);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
 begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);  
 end;
 
 procedure check_stable(
@@ -5873,17 +5593,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "integer"
   ) is
-  constant value_string       : string := to_string(target);
-  constant last_value_string  : string := to_string(target'last_value);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
 begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK." & value_string & " stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
 end;
 
 procedure check_stable(
@@ -5896,17 +5607,8 @@ procedure check_stable(
   constant caller_name : string          := "check_stable()";
   constant value_type  : string          := "real"
   ) is
-  constant value_string       : string := to_string(target);
-  constant last_value_string  : string := to_string(target'last_value);
-  constant last_change        : time   := target'last_event;
-  constant last_change_string : string := to_string(last_change, ns);
-begin
-  if (last_change >= stable_req) then
-    log(msg_id, caller_name & " => OK." & value_string & " stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-  else
-    alert(ERROR, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-          value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-  end if;
+ begin
+  check_stable(target, stable_req, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
 end;
 
 ----------------------------------------------------------------------------
@@ -6455,13 +6157,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "boolean"
   ) is
-  constant name        : string := "await_change(" & value_type & ", " &
-                                      to_string(min_time, ns) & ", " &
-                                      to_string(max_time, ns) & ")";
-  constant start_time     : time   := now;
 begin
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
 
 procedure await_change(
@@ -6474,13 +6171,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "std_logic"
   ) is
-  constant name           : string := "await_change(" & value_type & ", " &
-                                      to_string(min_time, ns) & ", " &
-                                      to_string(max_time, ns) & ")";
-  constant start_time     : time   := now;
 begin
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
 
 procedure await_change(
@@ -6493,13 +6185,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "slv"
   ) is
-  constant name           : string := "await_change(" & value_type & ", " &
-                                      to_string(min_time, ns) & ", " &
-                                      to_string(max_time, ns) & ")";
-  constant start_time     : time   := now;
 begin
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
 
 procedure await_change(
@@ -6512,14 +6199,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "unsigned"
   ) is
-  constant name           : string := "await_change(" & value_type & ", " &
-                                      to_string(min_time, ns) & ", " &
-                                      to_string(max_time, ns) & ")";
-  constant start_time     : time   := now;
 begin
-  -- Note that overloading by casting target to slv without creating a new signal doesn't work
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
 
 procedure await_change(
@@ -6532,13 +6213,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "signed"
   ) is
-  constant name           : string := "await_change(" & value_type & ", " &
-                                      to_string(min_time, ns) & ", " &
-                                      to_string(max_time, ns) & ")";
-  constant start_time     : time   := now;
 begin
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
 
 procedure await_change(
@@ -6551,12 +6227,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "integer"
   ) is
-  constant name        : string := "await_change(" & value_type & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-  constant start_time  : time   := now;
 begin
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
 
 procedure await_change(
@@ -6569,12 +6241,8 @@ procedure await_change(
   constant msg_id_panel: t_msg_id_panel := shared_msg_id_panel;
   constant value_type  : string         := "real"
   ) is
-  constant name        : string := "await_change(" & value_type & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-  constant start_time  : time   := now;
 begin
-  wait on target for max_time;
-  check_time_window(target'event, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_change(target, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel, value_type);
 end;
   
 --------------------------------------------------------------------------------
@@ -6868,16 +6536,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "boolean";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
 begin
-  if (target /= exp) then
-    wait until (target = exp) for max_time;
-  end if;
-  check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_value (
@@ -6891,36 +6551,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "std_logic";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-  variable success      : boolean := false;
 begin
-  success := false;
-
-  if match_strictness = MATCH_EXACT then
-    if (target /= exp) then
-      wait until (target = exp) for max_time;
-    end if;
-    if (target = exp) then
-      success := true;
-    end if;
-  else
-    if ((exp = '1' or exp = 'H') and (target /= '1') and (target /= 'H')) then
-      wait until (target = '1' or target = 'H') for max_time;
-    elsif ((exp = '0' or exp = 'L') and (target /= '0') and (target /= 'L')) then
-      wait until (target = '0' or target = 'L') for max_time;
-    end if;
-
-    if ((exp = '1' or exp = 'H') and (target = '1' or target = 'H')) then
-      success := true;
-    elsif ((exp = '0' or exp = 'L') and (target = '0' or target = 'L')) then
-      success := true;
-    end if;
-  end if;
-  check_time_window(success, now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_value (
@@ -6933,13 +6565,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "std_logic";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
 begin
-  await_value(target, exp, MATCH_EXACT, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_value (
@@ -6955,33 +6582,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "slv";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
 begin
-  -- AS_IS format has been deprecated and will be removed in the near future
-  if format = AS_IS then
-    deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
-  end if;
-
-  if matching_widths(target, exp) then
-    if match_strictness = MATCH_STD then
-      if not matching_values(target, exp) then
-        wait until matching_values(target, exp) for max_time;
-      end if;
-      check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
-    else
-      if (target /= exp) then
-        wait until (target = exp) for max_time;
-      end if;
-      check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
-    end if;
-
-  else
-    alert(ERROR, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
-  end if;
+  await_value(target, exp, match_strictness, min_time, max_time, ERROR, msg, scope, radix, format, msg_id, msg_id_panel);
 end;
 
 procedure await_value (
@@ -6996,13 +6598,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "slv";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
 begin
-  await_value(target, exp, MATCH_STD, min_time, max_time, ERROR, msg, scope, radix, format, msg_id, msg_id_panel);
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, radix, format, msg_id, msg_id_panel);
 end;
 
 procedure await_value (
@@ -7017,26 +6614,9 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "unsigned";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-begin
-  -- AS_IS format has been deprecated and will be removed in the near future
-  if format = AS_IS then
-    deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
-  end if;
-
-  if matching_widths(target, exp) then
-    if not matching_values(target, exp) then
-      wait until matching_values(target, exp) for max_time;
-    end if;
-    check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
-  else
-    alert(ERROR, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
-  end if;
-end;
+ begin
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, radix, format, msg_id, msg_id_panel);
+ end;
 
 procedure await_value (
   signal   target       : signed;
@@ -7050,25 +6630,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string          := "signed";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
 begin
-  -- AS_IS format has been deprecated and will be removed in the near future
-  if format = AS_IS then
-    deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
-  end if;
-
-  if matching_widths(target, exp) then
-    if not matching_values(target, exp) then
-      wait until matching_values(target, exp) for max_time;
-    end if;
-    check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
-  else
-    alert(ERROR, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
-  end if;
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, radix, format, msg_id, msg_id_panel);
 end;
 
 procedure await_value (
@@ -7081,17 +6644,9 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "integer";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-begin
-  if (target /= exp) then
-    wait until (target = exp) for max_time;
-  end if;
-  check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
-end;
+  begin
+    await_value(target, exp, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
+  end;
 
 procedure await_value (
   signal   target       : real;
@@ -7103,16 +6658,8 @@ procedure await_value (
   constant msg_id       : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type   : string := "real";
-  constant start_time   : time   := now;
-  constant v_exp_str    : string := to_string(exp);
-  constant name         : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-      to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-begin
-  if (target /= exp) then
-    wait until (target = exp) for max_time;
-  end if;
-  check_time_window((target = exp), now-start_time, min_time, max_time, ERROR, name, msg, scope, msg_id, msg_id_panel);
+ begin
+  await_value(target, exp, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 
@@ -7679,54 +7226,8 @@ procedure await_stable (
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type                : string := "boolean";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
 begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occurr
-  while not v_stable_req_met loop
-    wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
+  await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_stable (
@@ -7740,55 +7241,9 @@ procedure await_stable (
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type                : string := "std_logic";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
-begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occurr
-  while not v_stable_req_met loop
-    wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
-end;
+  begin
+    await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
+  end;
 
 procedure await_stable (
   signal   target           : std_logic_vector;
@@ -7800,55 +7255,9 @@ procedure await_stable (
   constant scope            : string          := C_TB_SCOPE_DEFAULT;
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
-  ) is
-  constant value_type                : string := "std_logic_vector";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
+  ) is  
 begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occurr
-  while not v_stable_req_met loop
-      wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
+  await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_stable (
@@ -7862,54 +7271,8 @@ procedure await_stable (
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type                : string := "unsigned";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
 begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occurr
-  while not v_stable_req_met loop
-    wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
+  await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_stable (
@@ -7923,54 +7286,8 @@ procedure await_stable (
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type                : string := "signed";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
 begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occurr
-  while not v_stable_req_met loop
-    wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
+  await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_stable (
@@ -7984,54 +7301,8 @@ procedure await_stable (
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type                : string := "integer";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
-begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occur
-  while not v_stable_req_met loop
-    wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
+ begin
+  await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_stable (
@@ -8045,54 +7316,8 @@ procedure await_stable (
   constant msg_id           : t_msg_id        := ID_POS_ACK;
   constant msg_id_panel     : t_msg_id_panel  := shared_msg_id_panel
   ) is
-  constant value_type                : string := "real";
-  constant start_time                : time   := now;
-  constant name                      : string := "await_stable(" & value_type & ", " & to_string(stable_req, ns) &
-                                                 ", " & to_string(timeout, ns) & ")";
-  variable v_stable_req_from_now     : time;             -- Stable_req relative to now.
-  variable v_timeout_from_proc_entry : time;             -- Timeout relative to time of procedure entry
-  variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
 begin
-
-  -- Use a helper procedure to simplify overloading
-  await_stable_calc_time(
-    target_last_event                 => target'last_event,
-    stable_req                        => stable_req,
-    stable_req_from                   => stable_req_from,
-    timeout                           => timeout,
-    timeout_from                      => timeout_from,
-    stable_req_from_now               => v_stable_req_from_now,
-    timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-    alert_level                       => ERROR,
-    msg                               => msg,
-    scope                             => scope,
-    msg_id                            => msg_id,
-    msg_id_panel                      => msg_id_panel,
-    caller_name                       => name,
-    stable_req_met                    => v_stable_req_met);
-
-  -- Start waiting for target'event or stable_req time, unless :
-  --  - stable_req already achieved, or
-  --  - it is already too late to be stable for stable_req before timeout will occur
-  while not v_stable_req_met loop
-    wait until target'event for v_stable_req_from_now;
-
-    -- Use a helper procedure to simplify overloading
-    await_stable_checks (
-      start_time                        => start_time,
-      stable_req                        => stable_req,
-      stable_req_from_now               => v_stable_req_from_now,
-      timeout_from_await_stable_entry   => v_timeout_from_proc_entry,
-      time_since_last_event             => target'last_event,
-      alert_level                       => ERROR,
-      msg                               => msg,
-      scope                             => scope,
-      msg_id                            => msg_id,
-      msg_id_panel                      => msg_id_panel,
-      caller_name                       => name,
-      stable_req_met                    => v_stable_req_met);
-
-  end loop;
+  await_stable(target, stable_req, stable_req_from, timeout, timeout_from, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
   -----------------------------------------------------------------------------------

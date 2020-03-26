@@ -62,7 +62,8 @@ def main(argv):
            "spi_master_dut_to_slave_VVC",
            "spi_slave_vvc_to_master_dut",
            "spi_master_vvc_to_slave_dut",
-           "spi_slave_dut_to_master_vvc"]
+           "spi_slave_dut_to_master_vvc",
+           "scoreboard_test"]
 
   # Setup testbench and run
   tb.set_tb_name("spi_vvc_tb")

@@ -53,6 +53,7 @@ def main(argv):
   # Define tests
   tests = [ "simple_write_and_check",
             "simple_write_and_read",
+            "scoreboard_test",
             "test_of_poll_until",
             "extended_write_and_read",
             "read_of_previous_value",

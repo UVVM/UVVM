@@ -31,8 +31,6 @@ library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 
-
-
 -- Test case entity
 entity avalon_mm_vvc_tb is
   generic (
@@ -140,13 +138,18 @@ begin
 
     log("Write, read back and check data with Scoreboard on one VVC");
     v_data_8 := x"10";
-    AVALON_MM_SB.add_expected(pad_sb_slv(v_data_8));
 
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
-    avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout");   
-
+    AVALON_MM_SB.add_expected(1, pad_sb_slv(v_data_8));
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout using SB");   
     await_completion(AVALON_MM_VVCT,1, 10000 ns, "Wait for avalon_mm_read to finish");
-    AVALON_MM_SB.report_counters(VOID);
+
+    avalon_mm_write(AVALON_MM_VVCT, 2, "0", v_data_8, "Write to Avalon MM 2");
+    AVALON_MM_SB.add_expected(2, pad_sb_slv(v_data_8));
+    avalon_mm_read(AVALON_MM_VVCT, 2, "0", TO_SB, "Reading without expected timeout using SB");   
+    await_completion(AVALON_MM_VVCT,2, 10000 ns, "Wait for avalon_mm_read to finish");
+
+    AVALON_MM_SB.report_counters(ALL_ENABLED_INSTANCES);
 
 
     log("Write, read back and check data with avalon_mm_read on one VVC");

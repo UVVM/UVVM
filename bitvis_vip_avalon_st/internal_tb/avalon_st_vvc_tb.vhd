@@ -404,16 +404,13 @@ begin
       log(ID_LOG_HDR, "Testing shortest streams possible");
       for i in 0 to 3 loop
         for j in 0 to i loop
-          --AVALON_ST_SB.add_expected(get_sb_record_item(x"0", v_data_stream(0 to 4)));
           avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_stream(0 to 0), "");
         end loop;
         for j in 0 to i loop
           avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_stream(0 to 0), "");
-          --avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 5, v_data_stream(0)'length, TO_SB, "");
         end loop;
         await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       end loop;
-      --AVALON_ST_SB.report_counters(VOID);
 
       log(ID_LOG_HDR, "Testing different stream sizes and channels");
       for i in 0 to 15 loop

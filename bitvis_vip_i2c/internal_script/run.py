@@ -68,7 +68,8 @@ def main(argv):
             "receive_and_fetch_result",
             "multi-byte-send-and-receive-with-restart",
             "master-slave-vvc-quick-command",
-            "master_quick_cmd_I2C_7bit_dut_test"]
+            "master_quick_cmd_I2C_7bit_dut_test",
+            "scoreboard_test"]
   tb.add_tests(tests)
 
   # Setup testbench and run

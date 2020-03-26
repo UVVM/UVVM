@@ -4197,9 +4197,10 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
+    variable v_check_ok : boolean;  
   begin
-    value := check_value(value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
-    return value;
+    v_check_ok := check_value(value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    return v_check_ok;
   end;
 
   impure function check_value(
@@ -4211,9 +4212,9 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) return boolean is
-      variable v_check_ok : boolean := true;  -- as default prior to checking
+      variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, scope, msg_id, msg_id_panel, caller_name);
+    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
   end;
 
@@ -4734,9 +4735,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
       ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4748,9 +4748,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4763,9 +4762,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, match_strictness, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, match_strictness, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4777,9 +4775,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, MATCH_STD, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, MATCH_STD, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4795,9 +4792,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "slv"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, match_strictness, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, match_strictness, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4812,9 +4808,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "slv"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4829,9 +4824,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "unsigned"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4846,9 +4840,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "signed"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4860,9 +4853,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4874,9 +4866,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4888,9 +4879,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4902,9 +4892,8 @@ package body methods_pkg is
     constant msg_id_panel: t_msg_id_panel  := shared_msg_id_panel;
     constant caller_name : string          := "check_value()"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
+    check_value(value, exp, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
 
   procedure check_value(
@@ -4919,9 +4908,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_slv_array"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4936,9 +4924,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_signed_array"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4953,9 +4940,8 @@ package body methods_pkg is
     constant caller_name : string          := "check_value()";
     constant value_type  : string          := "t_unsigned_array"
     ) is
-    variable v_check_ok  : boolean;
   begin
-    v_check_ok := check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, ERROR, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   ------------------------------------------------------------------------
@@ -5175,7 +5161,7 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok      : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
   end;
 
@@ -5191,7 +5177,7 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok      : boolean;
   begin
-    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value_in_range(value, min_value, max_value, ERROR, msg, scope, msg_id, msg_id_panel, caller_name);
     return v_check_ok;
   end;
   --------------------------------------------------------------------------------

@@ -6538,7 +6538,7 @@ procedure await_value (
   constant msg_id_panel : t_msg_id_panel  := shared_msg_id_panel
   ) is
 begin
-  await_value(target, exp, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
+  await_value(target, exp, match_strictness, min_time, max_time, ERROR, msg, scope, msg_id, msg_id_panel);
 end;
 
 procedure await_value (

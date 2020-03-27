@@ -453,7 +453,7 @@ package body string_methods_pkg is
       end loop;
       -- Remove leading space if any
       v_formatted_val := pad_string(remove_initial_chars(val,v_num_leading_space),' ',v_formatted_val'length,LEFT);
-      v_val_length := remove_initial_chars(val,v_num_leading_space)'length;
+      v_val_length    := v_val_length - v_num_leading_space;
     else
       v_formatted_val := val;
     end if;
@@ -498,7 +498,7 @@ package body string_methods_pkg is
       end loop;
       -- Remove leading space if any
       v_formatted_val := pad_string(remove_initial_chars(val,v_num_leading_space),' ',v_formatted_val'length,LEFT);
-      v_val_length := remove_initial_chars(val,v_num_leading_space)'length;
+      v_val_length    := v_val_length - v_num_leading_space;
     else
       v_formatted_val := val;
     end if;

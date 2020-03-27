@@ -150,7 +150,7 @@ begin
 
       end loop;
 
-      ethernet_receive(ETHERNET_VVCT, 1, RX, "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master", TO_SB);
+      ethernet_receive(ETHERNET_VVCT, 1, RX, TO_SB, "Read " & to_string(num_bytes_in_payload) & " bytes of random data from Ethernet MAC Master");
       v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 1, RX);
 
       wait until rising_edge(if_out.clk);

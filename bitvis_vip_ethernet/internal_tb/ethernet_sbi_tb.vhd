@@ -207,7 +207,7 @@ begin
       ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 2.");
       v_expected_frame := make_ethernet_frame(x"00_00_00_00_00_01", x"00_00_00_00_00_02", v_payload_data(0 to v_payload_len-1));
       ETHERNET_SB.add_expected(1, v_expected_frame);
-      ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive a frame at instance 1 and put it in the Scoreboard.", TO_SB);
+      ethernet_receive(ETHERNET_VVCT, 1, RX, TO_SB, "Receive a frame at instance 1 and put it in the Scoreboard.");
       await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for send to finish.");
       await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for receive to finish.");
     end loop;

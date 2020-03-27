@@ -110,7 +110,7 @@ begin
         when RECEIVE =>
           -- Loop through transfers
           for i in 0 to v_num_transfers-1 loop
-            sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", TO_RECEIVE_BUFFER, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
             await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);

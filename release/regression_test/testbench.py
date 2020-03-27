@@ -245,8 +245,12 @@ class Testbench:
         
         if ('ALDEC' in arg) or ('RIVIERA' in arg) or ('RIVIERAPRO' in arg):
           self.simulator = 'RIVIERAPRO'
+        elif ('-ALDEC' in arg) or ('-RIVIERA' in arg) or ('-RIVIERAPRO' in arg):
+          self.simulator = 'RIVIERAPRO'
         
         if ('MODELSIM') in arg:
+          self.simulator = 'MODELSIM'
+        elif ('-MODELSIM') in arg:
           self.simulator = 'MODELSIM'
         
         if ('-G' in arg) or ('-GUI' in arg):

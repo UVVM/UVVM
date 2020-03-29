@@ -1,9 +1,9 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
-v3.6.1
+v3.7.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-03-30
 - Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
   vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
   for future HVVC support.

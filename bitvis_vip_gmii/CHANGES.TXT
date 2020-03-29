@@ -1,9 +1,9 @@
 Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
-v0.1.2
+v0.2.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-03-20
 - Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
   vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
   for future HVVC support.

@@ -2,9 +2,9 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.7.4
+v2.8.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-03-30
 - Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
   td_vvc_framework_common_methods_pkg procedures.
 - Updated vvc_generator.py script to implement usage of parent_msg_id_panel.

@@ -241,7 +241,7 @@ begin
         case sbi_vvc_transaction_info.bt.operation is
           when WRITE =>
               -- add to UART scoreboard
-              UART_SB.add_expected(pad_sb_slv(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0)));
+              UART_SB.add_expected(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0));
 
           when READ =>
             null;

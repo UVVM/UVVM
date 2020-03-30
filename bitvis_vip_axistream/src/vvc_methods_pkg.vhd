@@ -113,7 +113,8 @@ package vvc_methods_pkg is
   shared variable shared_axistream_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable AXISTREAM_SB : t_generic_sb;
+  shared variable AXISTREAM_VVC_SB : t_generic_sb;
+
 
   --==========================================================================================
   -- Methods dedicated to this VVC 

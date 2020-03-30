@@ -232,10 +232,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup Avalon MM scoreboard
-    AVALON_MM_SB.set_scope("AVALON_MM_VVC");
-    AVALON_MM_SB.enable(GC_INSTANCE_IDX, "SB AVALON MM Enabled");
-    AVALON_MM_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    AVALON_MM_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    AVALON_MM_VVC_SB.set_scope("AVALON_MM_VVC_SB");
+    AVALON_MM_VVC_SB.enable(GC_INSTANCE_IDX, "AVALON_MM VVC SB Enabled");
+    AVALON_MM_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    AVALON_MM_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -351,7 +351,7 @@ begin
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              AVALON_MM_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+              AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
@@ -541,7 +541,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            AVALON_MM_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+            AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,

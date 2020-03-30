@@ -188,19 +188,19 @@ begin
     log(ID_LOG_HDR, "Testing scoreboard");
     gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to 19), "");
     for i in 0 to 19 loop
-      GMII_SB.add_expected(C_VVC_IDX, v_data_array(i));
+      GMII_VVC_SB.add_expected(C_VVC_IDX, v_data_array(i));
     end loop;
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, TO_SB, "Sending received data to SB");
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
     gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to 9), "");
     for i in 0 to 9 loop
-      GMII_SB.add_expected(C_VVC_IDX, v_data_array(i));
+      GMII_VVC_SB.add_expected(C_VVC_IDX, v_data_array(i));
     end loop;
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, 10, TO_SB, "Sending received data to SB");
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
-    GMII_SB.report_counters(ALL_ENABLED_INSTANCES);
+    GMII_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

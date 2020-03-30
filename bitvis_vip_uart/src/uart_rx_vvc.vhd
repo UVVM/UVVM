@@ -216,10 +216,10 @@ begin
 
 
     -- Setup UART scoreboard
-    UART_SB.set_scope("UART VVC");
-    UART_SB.enable(GC_INSTANCE_IDX, "SB UART Enabled");
-    UART_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
-    UART_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    UART_VVC_SB.set_scope("UART_VVC_SB");
+    UART_VVC_SB.enable(GC_INSTANCE_IDX, "UART VVC SB Enabled");
+    UART_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    UART_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
 
 
     loop
@@ -284,7 +284,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            UART_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,

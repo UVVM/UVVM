@@ -206,10 +206,10 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
     -- Setup GMII scoreboard
-    GMII_SB.set_scope("GMII VVC");
-    GMII_SB.enable(GC_INSTANCE_IDX, "SB GMII Enabled");
-    GMII_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    GMII_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    GMII_VVC_SB.set_scope("GMII_VVC_SB");
+    GMII_VVC_SB.enable(GC_INSTANCE_IDX, "GMII VVC SB Enabled");
+    GMII_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    GMII_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -272,7 +272,7 @@ begin
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
             for i in 0 to v_result.data_array_length-1 loop
-              GMII_SB.check_received(GC_INSTANCE_IDX, v_result.data_array(i));
+              GMII_VVC_SB.check_received(GC_INSTANCE_IDX, v_result.data_array(i));
             end loop;
           else
             -- Store the result

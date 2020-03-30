@@ -140,16 +140,16 @@ begin
     v_data_8 := x"10";
 
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
-    AVALON_MM_SB.add_expected(1, pad_sb_slv(v_data_8));
+    AVALON_MM_VVC_SB.add_expected(1, pad_sb_slv(v_data_8));
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout using SB");   
     await_completion(AVALON_MM_VVCT,1, 10000 ns, "Wait for avalon_mm_read to finish");
 
     avalon_mm_write(AVALON_MM_VVCT, 2, "0", v_data_8, "Write to Avalon MM 2");
-    AVALON_MM_SB.add_expected(2, pad_sb_slv(v_data_8));
+    AVALON_MM_VVC_SB.add_expected(2, pad_sb_slv(v_data_8));
     avalon_mm_read(AVALON_MM_VVCT, 2, "0", TO_SB, "Reading without expected timeout using SB");   
     await_completion(AVALON_MM_VVCT,2, 10000 ns, "Wait for avalon_mm_read to finish");
 
-    AVALON_MM_SB.report_counters(ALL_ENABLED_INSTANCES);
+    AVALON_MM_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
 
     log("Write, read back and check data with avalon_mm_read on one VVC");

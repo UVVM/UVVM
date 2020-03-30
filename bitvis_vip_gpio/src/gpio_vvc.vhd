@@ -212,10 +212,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup GPIO scoreboard
-    GPIO_SB.set_scope("GPIO_VVC");
-    GPIO_SB.enable(GC_INSTANCE_IDX, "SB GPIO Enabled");
-    GPIO_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    GPIO_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    GPIO_VVC_SB.set_scope("GPIO_VVC_SB");
+    GPIO_VVC_SB.enable(GC_INSTANCE_IDX, "GPIO VVC SB Enabled");
+    GPIO_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    GPIO_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -289,7 +289,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            GPIO_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+            GPIO_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,

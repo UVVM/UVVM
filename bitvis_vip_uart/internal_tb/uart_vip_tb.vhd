@@ -170,12 +170,12 @@ architecture func of uart_vvc_new_tb is
     log(ID_LOG_HDR, "Check of uart_receive() using Scoreboard", C_SCOPE);
     ------------------------------------------------------------
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"38", "TX_DATA");
-    UART_SB.add_expected(1, x"38");
+    UART_VVC_SB.add_expected(1, x"38");
     uart_receive(UART_VVCT, 1, RX, TO_SB, "Receive inside VVC's SB", ERROR);
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     wait for 10*C_BIT_PERIOD;  -- margin
 
-    UART_SB.report_counters(ALL_ENABLED_INSTANCES);
+    UART_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
 
     log(ID_LOG_HDR, "Test of advanced uart_expect()", C_SCOPE);

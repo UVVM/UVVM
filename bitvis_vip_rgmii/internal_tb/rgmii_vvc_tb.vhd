@@ -193,12 +193,12 @@ begin
     log(ID_LOG_HDR, "Testing scoreboard");
     rgmii_write(RGMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to 19), "");
     for i in 0 to 19 loop
-      RGMII_SB.add_expected(C_VVC_IDX, v_data_array(i));
+      RGMII_VVC_SB.add_expected(C_VVC_IDX, v_data_array(i));
     end loop;
     rgmii_read(RGMII_VVCT, C_VVC_IDX, RX, TO_SB, "Sending received data to SB");
     await_completion(RGMII_VVCT, C_VVC_IDX, RX, 10 us);
 
-    RGMII_SB.report_counters(ALL_ENABLED_INSTANCES);
+    RGMII_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

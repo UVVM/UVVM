@@ -1263,17 +1263,17 @@ begin  -- architecture behav
 
       tx_word := random(GC_DATA_WIDTH);
       spi_master_transmit_only(SPI_VVCT, C_SPI_VVC_0, tx_word, "SPI Master transmit");
-      SPI_SB.add_expected(C_SPI_VVC_1, pad_sb_slv(tx_word));
+      SPI_VVC_SB.add_expected(C_SPI_VVC_1, pad_sb_slv(tx_word));
       spi_slave_receive_only(SPI_VVCT, C_SPI_VVC_1, TO_SB, "SPI Slave receive data and send to SB");
       await_slave_rx_completion(50 ms);
 
       tx_word := random(GC_DATA_WIDTH);
       spi_slave_transmit_only(SPI_VVCT, C_SPI_VVC_1, tx_word, "SPI Slave transmit");
-      SPI_SB.add_expected(C_SPI_VVC_0, pad_sb_slv(tx_word));
+      SPI_VVC_SB.add_expected(C_SPI_VVC_0, pad_sb_slv(tx_word));
       spi_master_receive_only(SPI_VVCT, C_SPI_VVC_0, TO_SB, "SPI Master receive data and send to SB");
       await_master_rx_completion(50 ms);
 
-      SPI_SB.report_counters(ALL_ENABLED_INSTANCES);
+      SPI_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
     else
       alert(tb_error, "Unsupported test");

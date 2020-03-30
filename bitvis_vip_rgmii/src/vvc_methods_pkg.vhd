@@ -95,9 +95,12 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
+
   shared variable shared_rgmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_RGMII_VVC_CONFIG_DEFAULT));
   shared variable shared_rgmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable RGMII_SB         : t_generic_sb; -- Scoreboard
+
+  -- Scoreboard
+  shared variable RGMII_VVC_SB : t_generic_sb;
 
 
   --==========================================================================================

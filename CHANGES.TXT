@@ -13,7 +13,7 @@ CHANGES.TXT in each module's sub-directory.
 v2 2020.XX.XX
 --------------------
 Released: 2020-XX-XX
-- Changed VVC SB name to <IF>_SB in all VVCs with scoreboarding.
+- Changed VVC SB name to <IF>_VVC_SB in all VVCs with scoreboarding.
 - Added VVC index to enable_log_msg() calls for all VVCs with scoreboarding.
 - Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
 - Fixed SB report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.

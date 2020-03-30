@@ -1037,7 +1037,7 @@ begin  -- architecture behav
 
       i2c_slave_transmit(I2C_VVCT, 1, v_byte_array, "Slave to Master transmit");
       for i in 0 to v_byte_array'length-1 loop
-        I2C_SB.add_expected(0, v_byte_array(i));
+        I2C_VVC_SB.add_expected(0, v_byte_array(i));
       end loop;
       i2c_master_receive(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_byte_array'length, TO_SB, "Slave to Master check using SB");
       await_completion(I2C_VVCT, 0, 50 ms);
@@ -1045,12 +1045,12 @@ begin  -- architecture behav
       i2c_slave_receive(I2C_VVCT, 1, v_byte_array'length, TO_SB, "Master to Slave check using SB");
       i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_byte_array, "Master to Slave transmit");
       for i in 0 to v_byte_array'length-1 loop
-        I2C_SB.add_expected(1, v_byte_array(i));
+        I2C_VVC_SB.add_expected(1, v_byte_array(i));
       end loop;
       await_completion(I2C_VVCT, 1, 50 ms);
 
       wait for 1000 ns;
-      I2C_SB.report_counters(ALL_ENABLED_INSTANCES);
+      I2C_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
     else
       alert(tb_error, "Unsupported test " & GC_TEST);

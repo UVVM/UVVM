@@ -211,10 +211,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup I2C scoreboard
-    I2C_SB.set_scope("I2C_VVC");
-    I2C_SB.enable(GC_INSTANCE_IDX, "SB I2C Enabled");
-    I2C_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    I2C_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    I2C_VVC_SB.set_scope("I2C_VVC_SB");
+    I2C_VVC_SB.enable(GC_INSTANCE_IDX, "I2C VVC SB Enabled");
+    I2C_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    I2C_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     while true loop
 
@@ -313,7 +313,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               for i in 0 to v_cmd.num_bytes-1 loop
-                I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
               end loop;
             else                            
               -- Store the result
@@ -409,7 +409,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               for i in 0 to v_cmd.num_bytes-1 loop
-                I2C_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
               end loop;
             else                            
               -- Store the result

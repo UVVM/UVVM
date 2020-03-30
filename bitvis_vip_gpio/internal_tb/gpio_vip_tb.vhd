@@ -292,7 +292,7 @@ begin
     log("Testing get on GPIO VVC 1 using SB");
     v_set_data    := x"5A";
     set_gpio(gpio_1_input, v_set_data, "GPIO 1 input");
-    GPIO_SB.add_expected(1, pad_sb_slv(v_set_data));
+    GPIO_VVC_SB.add_expected(1, pad_sb_slv(v_set_data));
     -- Perform get, which stores the data in the VVC's Scoreboard
     gpio_get(GPIO_VVCT, 1, TO_SB, "Readback inside VVC using SB");
     await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
@@ -301,13 +301,13 @@ begin
     log("Testing get on GPIO VVC 2 using SB");
     v_set_data    := x"B8";
     gpio_set(GPIO_VVCT, 2, v_set_data, "Setting GPIO 2 input.");
-    GPIO_SB.add_expected(2, pad_sb_slv(v_set_data));
+    GPIO_VVC_SB.add_expected(2, pad_sb_slv(v_set_data));
     -- Perform get, which stores the data in the VVC's Scoreboard
     gpio_get(GPIO_VVCT, 2, TO_SB, "Readback inside VVC using SB");
     await_completion(GPIO_VVCT, 2, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
     wait for C_CLK_PERIOD*4;                                   -- Margin
 
-    GPIO_SB.report_counters(ALL_ENABLED_INSTANCES);
+    GPIO_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
 
 
     --------------------------------------------------------------------------------------

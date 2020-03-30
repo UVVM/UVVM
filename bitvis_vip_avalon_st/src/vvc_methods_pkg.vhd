@@ -96,6 +96,7 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
+
   shared variable shared_avalon_st_vvc_config : t_vvc_config_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_AVALON_ST_VVC_CONFIG_DEFAULT);
   shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);
   
@@ -106,13 +107,12 @@ package vvc_methods_pkg is
     constant value : in t_vvc_result
   ) return string;
 
-
   package avalon_st_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
   generic map (t_element         => t_vvc_result,
                element_match     => "=",
                to_string_element => avalon_st_element_to_string);
             
-  shared variable AVALON_ST_SB         : avalon_st_sb_pkg.t_generic_sb;
+  shared variable AVALON_ST_VVC_SB : avalon_st_sb_pkg.t_generic_sb;
 
 
   --==========================================================================================

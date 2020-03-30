@@ -9,6 +9,11 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2020.03.30b
+--------------------
+Released: 2020-03-30b
+- Fixed random data in UART TX VVC and SBI VVC.
+
 
 v2 2020.03.30
 --------------------

@@ -1,6 +1,14 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.5.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Added data_routing parameter to VVC receive procedure for sending data to scoreboard.
 
 v2.4.2
 ----------

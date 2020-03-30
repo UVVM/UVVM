@@ -1,6 +1,13 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.1.0
+----------
+Released: 2020-03-30
+- Fixed report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.
+- Added a new predefined scoreboard slv8_sb_pkg.
+- Added checks in all SB procedures to give an error if the instance is not enabled.
+
 v2.0.3
 ----------
 Released: 2020-02-16

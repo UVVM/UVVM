@@ -61,7 +61,7 @@ package transaction_pkg is
 
   --==========================================================================================
   --
-  -- DTT - Direct Transaction Transfer types, constants and global signal
+  -- Transaction info types, constants and global signal
   --
   --==========================================================================================
 
@@ -81,8 +81,8 @@ package transaction_pkg is
     cmd_idx => -1
     );
 
-  -- Transaction
-  type t_transaction is record
+  -- Base transaction
+  type t_base_transaction is record
     operation           : t_operation;
     data_array          : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
     user_array          : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
@@ -93,7 +93,7 @@ package transaction_pkg is
     transaction_status  : t_transaction_status;
   end record;
 
-  constant C_TRANSACTION_SET_DEFAULT : t_transaction := (
+  constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation           => NO_OPERATION,
     data_array          => (others => (others => '0')),
     user_array          => (others => (others => '0')),
@@ -106,21 +106,19 @@ package transaction_pkg is
 
   -- Transaction group
   type t_transaction_group is record
-    bt : t_transaction;
-    ct : t_transaction;
+    bt : t_base_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_TRANSACTION_SET_DEFAULT,
-    ct => C_TRANSACTION_SET_DEFAULT
+    bt => C_BASE_TRANSACTION_SET_DEFAULT
     );
 
-  -- Global DTT trigger signal
+  -- Global transaction info trigger signal
   type t_axistream_transaction_trigger_array is array (natural range <>) of std_logic;
   signal global_axistream_vvc_transaction_trigger : t_axistream_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => '0');
 
-  -- Shared DTT info variable
+  -- Shared transaction info variable
   type t_axistream_transaction_group_array is array (natural range <>) of t_transaction_group;
   shared variable shared_axistream_vvc_transaction_info : t_axistream_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                           (others => C_TRANSACTION_GROUP_DEFAULT);

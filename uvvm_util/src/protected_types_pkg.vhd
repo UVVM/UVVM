@@ -46,17 +46,36 @@ package protected_types_pkg is
       );
   end protected t_protected_alert_attention_counters;
 
+
   type t_protected_semaphore is protected
     impure function get_semaphore return boolean;
     procedure release_semaphore;
   end protected t_protected_semaphore;
 
-  type t_protected_acknowledge_cmd_idx is protected
 
+  type t_protected_acknowledge_cmd_idx is protected
     impure function set_index(index : integer) return boolean;
     impure function get_index return integer;
     procedure release_index;
   end protected  t_protected_acknowledge_cmd_idx;
+
+
+  type t_protected_check_counters is protected
+    procedure increment(
+      check_type : t_check_type;
+      number     : natural := 1
+    );
+    procedure decrement(
+      check_type : t_check_type;
+      number     : integer := -1
+    );
+    impure function get(
+      check_type : t_check_type
+    ) return natural;
+    procedure to_string(
+      order : t_order
+    );
+  end protected t_protected_check_counters;
 
 end package protected_types_pkg;
 
@@ -147,5 +166,43 @@ package body protected_types_pkg is
       v_priv_idx := -1;
     end procedure;
   end protected body t_protected_acknowledge_cmd_idx;
+
+
+  --------------------------------------------------------------------------------
+  type t_protected_check_counters is protected body
+    variable priv_check_counters : t_check_counters_array;
+
+    procedure increment(
+      check_type : t_check_type;
+      number     : natural := 1
+    ) is
+    begin
+      priv_check_counters(check_type) := priv_check_counters(check_type) + number;
+    end;
+
+    procedure decrement(
+      check_type : t_check_type;
+      number     : integer := -1
+    ) is
+    begin
+      priv_check_counters(check_type) := priv_check_counters(check_type) - number;
+    end;
+
+    impure function get(
+      check_type : t_check_type
+    ) return natural is
+    begin
+      return priv_check_counters(check_type);
+    end;
+
+    procedure to_string(
+      order  : t_order
+      ) is
+    begin
+      to_string(priv_check_counters, order);
+    end;
+
+  end protected body t_protected_check_counters;
+
 
 end package body protected_types_pkg;

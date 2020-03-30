@@ -77,9 +77,9 @@ architecture behave of spi_vvc is
   alias vvc_config       : t_vvc_config is shared_spi_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_spi_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_spi_transaction_info(GC_INSTANCE_IDX);
-    -- DTT
-  alias dtt_trigger   : std_logic           is global_spi_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias dtt_info      : t_transaction_group is shared_spi_vvc_transaction_info(GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger  : std_logic           is global_spi_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info          : t_transaction_group is shared_spi_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -130,7 +130,8 @@ begin
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
 
@@ -221,10 +222,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup SPI scoreboard
-    shared_spi_sb.set_scope("SPI_VVC");
-    shared_spi_sb.enable(GC_INSTANCE_IDX, "SB SPI Enabled");
-    shared_spi_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_spi_sb.enable_log_msg(ID_DATA);
+    SPI_VVC_SB.set_scope("SPI_VVC_SB");
+    SPI_VVC_SB.enable(GC_INSTANCE_IDX, "SPI VVC SB Enabled");
+    SPI_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    SPI_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
@@ -243,7 +244,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -287,8 +289,8 @@ begin
         --===================================
         when MASTER_TRANSMIT_AND_RECEIVE =>
           if GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.tx_data := v_cmd.data;
 
@@ -322,7 +324,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -335,8 +337,8 @@ begin
 
         when MASTER_TRANSMIT_AND_CHECK =>
           if GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
@@ -371,8 +373,8 @@ begin
 
         when MASTER_TRANSMIT_ONLY =>
           if GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
@@ -404,8 +406,8 @@ begin
 
         when MASTER_RECEIVE_ONLY =>
           if GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -432,7 +434,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -446,8 +448,8 @@ begin
 
         when MASTER_CHECK_ONLY =>
           if GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -479,8 +481,8 @@ begin
 
         when SLAVE_TRANSMIT_AND_RECEIVE =>
           if not GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
@@ -512,7 +514,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -525,8 +527,8 @@ begin
 
         when SLAVE_TRANSMIT_AND_CHECK =>
           if not GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -561,8 +563,8 @@ begin
 
         when SLAVE_TRANSMIT_ONLY =>
           if not GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -591,8 +593,8 @@ begin
 
         when SLAVE_RECEIVE_ONLY =>
           if not GC_MASTER_MODE then
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -618,7 +620,7 @@ begin
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                shared_spi_sb.check_received(GC_INSTANCE_IDX, v_result(i)(GC_DATA_WIDTH-1 downto 0)); 
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
               else                            
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
@@ -632,8 +634,8 @@ begin
 
         when SLAVE_CHECK_ONLY =>
           if not GC_MASTER_MODE then    -- slave check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -697,8 +699,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
   end process;

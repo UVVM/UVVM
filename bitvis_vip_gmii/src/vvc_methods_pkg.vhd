@@ -26,7 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
+use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 
 use work.gmii_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -95,9 +95,12 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
+
   shared variable shared_gmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_GMII_VVC_CONFIG_DEFAULT));
   shared variable shared_gmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_gmii_sb         : t_generic_sb; -- Scoreboard
+
+  -- Scoreboard
+  shared variable GMII_VVC_SB : t_generic_sb;
 
 
   --==========================================================================================
@@ -108,54 +111,79 @@ package vvc_methods_pkg is
   --   actual BFM execution.
   --==========================================================================================
   procedure gmii_write(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_array       : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_array          : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_read(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant num_bytes        : in    positive;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_read(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_expect(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_exp         : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)";
-    constant alert_level      : in    t_alert_level := ERROR
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_exp            : in    t_byte_array;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record);
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
   -- Activity Watchdog
@@ -175,16 +203,18 @@ package body vvc_methods_pkg is
   -- Methods dedicated to this VVC
   --==========================================================================================
   procedure gmii_write( 
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_array       : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_array          : in    t_byte_array;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "gmii_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
              & ", " & to_string(data_array'length) & " bytes)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -192,51 +222,92 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.data_array(0 to data_array'length-1) := data_array;
     shared_vvc_cmd.data_array_length                    := data_array'length;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel                  := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure gmii_read(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant num_bytes        : in    positive;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "gmii_read";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.num_bytes_read := num_bytes;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.num_bytes_read      := num_bytes;
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure gmii_read(
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_bytes           : in    positive;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
   begin
-    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, msg, scope);
+    gmii_read(VVCT, vvc_instance_idx, channel, num_bytes, NA, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, data_routing, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure gmii_read(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    gmii_read(VVCT, vvc_instance_idx, channel, C_VVC_CMD_DATA_MAX_BYTES, NA, msg, scope, parent_msg_id_panel);
   end procedure;
 
   procedure gmii_expect( 
-    signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_exp         : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)";
-    constant alert_level      : in    t_alert_level := ERROR
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_exp            : in    t_byte_array;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := ERROR;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := "gmii_expect";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
              & ", " & to_string(data_exp'length) & " bytes)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -245,47 +316,51 @@ package body vvc_methods_pkg is
     shared_vvc_cmd.data_array(0 to data_exp'length-1) := data_exp;
     shared_vvc_cmd.data_array_length                  := data_exp'length;
     shared_vvc_cmd.alert_level                        := alert_level;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel                := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | EXPECT =>
-        dtt_group.bt.operation                                  := vvc_cmd.operation;
-        dtt_group.bt.data_array                                 := vvc_cmd.data_array;
-        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
-        dtt_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
-        dtt_group.bt.transaction_status                         := IN_PROGRESS;
-        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+        vvc_transaction_info_group.bt.operation                                  := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.data_array                                 := vvc_cmd.data_array;
+        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status                         := IN_PROGRESS;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;
-  end procedure set_global_dtt;
+  end procedure set_global_vvc_transaction_info;
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record) is
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | EXPECT =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
         null;
     end case;
 
     wait for 0 ns;
-  end procedure reset_dtt_info;
+  end procedure reset_vvc_transaction_info;
 
   --==============================================================================
   -- Activity Watchdog

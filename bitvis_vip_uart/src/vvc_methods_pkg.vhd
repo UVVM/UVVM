@@ -26,7 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
+use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 
 
 use work.uart_bfm_pkg.all;
@@ -145,12 +145,13 @@ package vvc_methods_pkg is
     msg       => (others => ' ')
     );
 
+
   shared variable shared_uart_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1)       := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
   shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1)       := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
 
   -- Scoreboard
-  shared variable shared_uart_sb : t_generic_sb;
+  shared variable UART_VVC_SB : t_generic_sb;
 
   
   --==========================================================================================
@@ -163,69 +164,74 @@ package vvc_methods_pkg is
   --==========================================================================================
 
   procedure uart_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure uart_transmit(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant channel            : in t_channel;
-    constant num_words          : in natural;
-    constant randomisation      : in t_randomisation;
-    constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_words           : in    natural;
+    constant randomisation       : in    t_randomisation;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   procedure uart_expect(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant max_receptions   : in    natural       := 1;
-    constant timeout          : in    time          := -1 ns;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant max_receptions      : in    natural        := 1;
+    constant timeout             : in    time           := -1 ns;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record);
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
   -- Activity Watchdog
@@ -251,114 +257,125 @@ package body vvc_methods_pkg is
 
 
   procedure uart_transmit(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant scope            : in    string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
                                    & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0) :=
       normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.operation := TRANSMIT;
-    shared_vvc_cmd.data      := v_normalised_data;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.operation           := TRANSMIT;
+    shared_vvc_cmd.data                := v_normalised_data;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure uart_transmit(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant channel            : in t_channel;
-    constant num_words          : in natural;
-    constant randomisation      : in t_randomisation;
-    constant msg                : in string;
-    constant scope              : in string := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant num_words           : in    natural;
+    constant randomisation       : in    t_randomisation;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
         & ", RANDOM)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.operation          := TRANSMIT;
-    -- Randomisation spesific
-    shared_vvc_cmd.randomisation      := randomisation;
-    shared_vvc_cmd.num_words          := num_words;
-    -- Send to VVC
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.operation           := TRANSMIT;
+    -- Randomisation specific
+    shared_vvc_cmd.randomisation       := randomisation;
+    shared_vvc_cmd.num_words           := num_words;
+
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
   procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level   := error;
-    constant scope            : in    string          := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level   := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
                                    & ")";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation    := RECEIVE;
-    shared_vvc_cmd.alert_level  := alert_level;
-    shared_vvc_cmd.data_routing := data_routing;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.operation           := RECEIVE;
+    shared_vvc_cmd.alert_level         := alert_level;
+    shared_vvc_cmd.data_routing        := data_routing;
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
-
 
   procedure uart_receive(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant msg                 : in    string;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-                                   & ")";
   begin
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation    := RECEIVE;
-    shared_vvc_cmd.alert_level  := alert_level;
-    shared_vvc_cmd.data_routing := NA;
-    send_command_to_vvc(VVCT, scope => scope);
+    uart_receive(VVCT, vvc_instance_idx, channel, NA, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
 
-
-
   procedure uart_expect(
-    signal VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data             : in    std_logic_vector;
-    constant msg              : in    string;
-    constant max_receptions   : in    natural       := 1;
-    constant timeout          : in    time          := -1 ns;
-    constant alert_level      : in    t_alert_level := error;
-    constant scope            : in    string        := C_TB_SCOPE_DEFAULT & "(uvvm)"
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant channel             : in    t_channel;
+    constant data                : in    std_logic_vector;
+    constant msg                 : in    string;
+    constant max_receptions      : in    natural        := 1;
+    constant timeout             : in    time           := -1 ns;
+    constant alert_level         : in    t_alert_level  := error;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
                                    & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_normalised_data : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0) :=
       normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -373,37 +390,41 @@ package body vvc_methods_pkg is
     else
       shared_vvc_cmd.timeout := timeout;
     end if;
-    send_command_to_vvc(VVCT, scope => scope);
+    shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
 
 
   --==============================================================================
-  -- Direct Transaction Transfer methods
+  -- Transaction info methods
   --==============================================================================
-  procedure set_global_dtt(
-    signal dtt_trigger    : inout std_logic;
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record;
-    constant vvc_config   : in t_vvc_config;
-    constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  procedure set_global_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        dtt_group.bt.operation                                  := vvc_cmd.operation;
-        dtt_group.bt.data(vvc_cmd.data'length-1 downto 0)       := vvc_cmd.data;
-        dtt_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)      := vvc_cmd.msg;
-        dtt_group.bt.vvc_meta.cmd_idx                           := vvc_cmd.cmd_idx;
-        dtt_group.bt.transaction_status                         := IN_PROGRESS;
-        dtt_group.bt.error_info.parity_bit_error                := false;
-        dtt_group.bt.error_info.stop_bit_error                  := false;
+        vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.data(vvc_cmd.data'length-1 downto 0)  := vvc_cmd.data;
+        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status                    := IN_PROGRESS;
+        vvc_transaction_info_group.bt.error_info.parity_bit_error           := false;
+        vvc_transaction_info_group.bt.error_info.stop_bit_error             := false;
 
         if vvc_cmd.operation = TRANSMIT then
-          dtt_group.bt.error_info.parity_bit_error              := vvc_config.bfm_config.error_injection.parity_bit_error;
-          dtt_group.bt.error_info.stop_bit_error                := vvc_config.bfm_config.error_injection.stop_bit_error;
+          vvc_transaction_info_group.bt.error_info.parity_bit_error         := vvc_config.bfm_config.error_injection.parity_bit_error;
+          vvc_transaction_info_group.bt.error_info.stop_bit_error           := vvc_config.bfm_config.error_injection.stop_bit_error;
         end if;
 
-        gen_pulse(dtt_trigger, 0 ns, "pulsing global DTT trigger", scope, ID_NEVER);
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
 
       when others =>
@@ -411,23 +432,23 @@ package body vvc_methods_pkg is
     end case;
 
     wait for 0 ns;
-  end procedure set_global_dtt;
+  end procedure set_global_vvc_transaction_info;
 
 
-  procedure reset_dtt_info(
-    variable dtt_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record) is
+  procedure reset_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        dtt_group.bt := C_TRANSACTION_SET_DEFAULT;
+        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when others =>
         null;
     end case;
 
     wait for 0 ns;
-  end procedure reset_dtt_info;
+  end procedure reset_vvc_transaction_info;
 
 
   --==============================================================================

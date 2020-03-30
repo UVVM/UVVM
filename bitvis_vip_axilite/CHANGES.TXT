@@ -1,6 +1,15 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v2.6.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Added data_routing parameter to VVC read procedure for sending data to scoreboard.
+
 v2.5.1
 ----------
 Released: 2020-02-16

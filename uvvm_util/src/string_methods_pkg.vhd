@@ -293,11 +293,22 @@ package string_methods_pkg is
     justified : side    := right
       ) return string;
 
+  function to_string(
+    val       : t_check_type;
+    width     : natural;
+    justified : side    := right
+    ) return string;
+    
   procedure to_string(
     val   : t_alert_attention_counters;
     order : t_order := FINAL
     );
 
+  procedure to_string(
+    val   : t_check_counters_array;
+    order : t_order := FINAL
+    );
+    
   function ascii_to_char(
     ascii_pos   : integer range 0 to 255;
     ascii_allow : t_ascii_allow := ALLOW_ALL
@@ -442,7 +453,7 @@ package body string_methods_pkg is
       end loop;
       -- Remove leading space if any
       v_formatted_val := pad_string(remove_initial_chars(val,v_num_leading_space),' ',v_formatted_val'length,LEFT);
-      v_val_length := remove_initial_chars(val,v_num_leading_space)'length;
+      v_val_length    := v_val_length - v_num_leading_space;
     else
       v_formatted_val := val;
     end if;
@@ -487,7 +498,7 @@ package body string_methods_pkg is
       end loop;
       -- Remove leading space if any
       v_formatted_val := pad_string(remove_initial_chars(val,v_num_leading_space),' ',v_formatted_val'length,LEFT);
-      v_val_length := remove_initial_chars(val,v_num_leading_space)'length;
+      v_val_length    := v_val_length - v_num_leading_space;
     else
       v_formatted_val := val;
     end if;
@@ -1373,6 +1384,17 @@ package body string_methods_pkg is
       return to_upper(justify(t_attention'image(val), justified, width));
     end;
 
+    function to_string(
+      val       : t_check_type;
+      width     : natural;
+      justified : side    := right
+    ) return string is
+      constant inner_string : string  := t_check_type'image(val);
+    begin
+      return to_upper(justify(inner_string, justified, width));
+    end function;
+
+
   -- function to_string(
     -- dummy : t_void
   -- ) return string is
@@ -1446,6 +1468,48 @@ package body string_methods_pkg is
     writeline(OUTPUT, v_line);
     writeline(LOG_FILE, v_line_copy);
   end;
+
+  procedure to_string(
+    val   : t_check_counters_array;
+    order : t_order := FINAL
+    ) is
+      variable v_line                       : line;
+      variable v_line_copy                  : line;
+      variable v_more_than_expected_alerts  : boolean := false;
+      variable v_less_than_expected_alerts  : boolean := false;
+      constant prefix                       : string := C_LOG_PREFIX & "     ";
+    begin
+      if order = INTERMEDIATE then
+        write(v_line,
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
+            "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+      else -- order=FINAL
+        write(v_line,
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF &
+            "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+      end if;
+
+      for i in CHECK_VALUE to t_check_type'right loop
+        write(v_line, "          " & to_upper(to_string(i, 22, LEFT)) & ": ");
+        write(v_line, to_string(integer'(val(i)), 10, RIGHT, KEEP_LEADING_SPACE) & "    ");
+        write(v_line, "" & LF);
+      end loop;
+
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
+  
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-prefix'length);
+      prefix_lines(v_line, prefix);
+  
+      -- Write the info string to the target file
+      write (v_line_copy, v_line.all);  -- copy line
+      writeline(OUTPUT, v_line);
+      writeline(LOG_FILE, v_line_copy);
+    end;
+
 
   -- Convert from ASCII to character
   -- Inputs:

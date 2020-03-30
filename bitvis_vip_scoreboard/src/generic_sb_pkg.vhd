@@ -517,6 +517,7 @@ package generic_sb_pkg is
 
   end protected t_generic_sb;
 
+
 end package generic_sb_pkg;
 
 
@@ -726,9 +727,10 @@ package body generic_sb_pkg is
     ) is
       constant proc_name : string := "enable";
     begin
-      -- Check if instance is within range
+      -- Check if instance is within range and not already enabled
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
+        check_value(not vr_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already enabled", vr_scope, ID_NEVER);
       end if;
 
       if ext_proc_call = "" then
@@ -802,9 +804,10 @@ package body generic_sb_pkg is
     ) is
       constant proc_name : string := "disable";
     begin
-      -- Check if instance is within range
+      -- Check if instance is within range and not already disabled
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
+        check_value(vr_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already disabled", vr_scope, ID_NEVER);
       end if;
 
       if instance = ALL_INSTANCES then
@@ -1286,6 +1289,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return boolean is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_sb_queue.is_empty(instance);
     end function is_empty;
 
@@ -1310,6 +1315,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_entered_cnt(instance);
     end function get_entered_count;
 
@@ -1337,6 +1344,8 @@ package body generic_sb_pkg is
       if vr_entered_cnt(instance) = -1 then
         return -1;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         return vr_sb_queue.get_count(instance);
       end if;
     end function get_pending_count;
@@ -1361,6 +1370,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_match_cnt(instance);
     end function get_match_count;
 
@@ -1384,6 +1395,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_mismatch_cnt(instance);
     end function get_mismatch_count;
 
@@ -1408,6 +1421,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_drop_cnt(instance);
     end function get_drop_count;
 
@@ -1432,6 +1447,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_initial_garbage_cnt(instance);
     end function get_initial_garbage_count;
 
@@ -1456,6 +1473,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_delete_cnt(instance);
     end function get_delete_count;
 
@@ -1480,6 +1499,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_overdue_check_cnt(instance);
     end function get_overdue_check_count;
 
@@ -1535,6 +1556,8 @@ package body generic_sb_pkg is
           vr_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         if ext_proc_call = "" then
           log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled.", vr_scope & "," & to_string(instance));
         else
@@ -1573,6 +1596,8 @@ package body generic_sb_pkg is
           vr_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         if ext_proc_call = "" then
           log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled.", vr_scope & "," & to_string(instance));
         else
@@ -1676,7 +1701,7 @@ package body generic_sb_pkg is
           left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
             write(v_line,
             justify(
@@ -1695,6 +1720,8 @@ package body generic_sb_pkg is
           end if;
         end loop;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         write(v_line,
           justify(
             "instance: " &

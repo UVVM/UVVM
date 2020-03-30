@@ -235,12 +235,12 @@ package body avalon_st_bfm_pkg is
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "avalon_st_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " sym, ch:" &
-                                   to_string(channel_value, DEC, AS_IS) & ")";
     constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
+    constant proc_name : string := "avalon_st_transmit";
+    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " words/" & to_string(data_array'length*c_symbols_per_beat) &
+                                   " sym, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
     -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
@@ -423,11 +423,12 @@ package body avalon_st_bfm_pkg is
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
   ) is  
-    constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " sym)";
     constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
+    constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
+    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " words/" &
+                                         to_string(data_array'length*c_symbols_per_beat) & " sym)";
     -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0) := (others => '0');
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0);
@@ -647,10 +648,11 @@ package body avalon_st_bfm_pkg is
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
+    constant c_data_word_size   : natural := data_exp(data_exp'low)'length;
+    constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
     constant proc_name : string := "avalon_st_expect";
-    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym, ch:" &
-                                   to_string(channel_exp, DEC, AS_IS) & ")";
-    constant c_data_word_size     : natural := data_exp(data_exp'low)'length;
+    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " words/" & to_string(data_exp'length*c_symbols_per_beat) &
+                                   " sym, ch:" & to_string(channel_exp, DEC, AS_IS) & ")";
     -- Helper variables
     variable v_normalized_chan    : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_exp, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);

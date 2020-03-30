@@ -76,9 +76,9 @@ architecture behave of i2c_vvc is
   alias vvc_config       : t_vvc_config is shared_i2c_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_i2c_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_i2c_transaction_info(GC_INSTANCE_IDX);
-    -- DTT
-  alias dtt_trigger   : std_logic           is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias dtt_info      : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger  : std_logic           is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info          : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -125,7 +125,8 @@ begin
       v_cmd_has_been_acked                                  := false;  -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
 
@@ -210,10 +211,10 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup I2C scoreboard
-    shared_i2c_sb.set_scope("I2C_VVC");
-    shared_i2c_sb.enable(GC_INSTANCE_IDX, "SB I2C Enabled");
-    shared_i2c_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_i2c_sb.enable_log_msg(ID_DATA);
+    I2C_VVC_SB.set_scope("I2C_VVC_SB");
+    I2C_VVC_SB.enable(GC_INSTANCE_IDX, "I2C VVC SB Enabled");
+    I2C_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    I2C_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     while true loop
 
@@ -232,7 +233,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -267,8 +269,8 @@ begin
         --===================================
         when MASTER_TRANSMIT =>
           if GC_MASTER_MODE then        -- master transmit
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -289,8 +291,8 @@ begin
 
         when MASTER_RECEIVE =>
           if GC_MASTER_MODE then        -- master receive
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
@@ -310,8 +312,9 @@ begin
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              alert(tb_warning, "Scoreboard type for I2C MASTER_RECEIVE data not implemented");
-              --shared_i2c_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+              for i in 0 to v_cmd.num_bytes-1 loop
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+              end loop;
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -324,8 +327,8 @@ begin
 
         when MASTER_CHECK =>
           if GC_MASTER_MODE then        -- master check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -347,8 +350,8 @@ begin
 
         when MASTER_QUICK_CMD =>
           if GC_MASTER_MODE then        -- master check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.exp_ack                      := v_cmd.exp_ack;
@@ -370,8 +373,8 @@ begin
 
         when SLAVE_TRANSMIT =>
           if not GC_MASTER_MODE then    -- slave transmit
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -388,8 +391,8 @@ begin
 
         when SLAVE_RECEIVE =>
           if not GC_MASTER_MODE then    -- requires slave mode
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.num_bytes := v_cmd.num_bytes;
 
@@ -405,8 +408,9 @@ begin
                                           -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              alert(tb_warning, "Scoreboard type for I2C SLAVE_RECEIVE data not implemented");
-              --shared_i2c_sb.check_received(GC_INSTANCE_IDX, v_read_data(0 to v_cmd.num_bytes-1)); 
+              for i in 0 to v_cmd.num_bytes-1 loop
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+              end loop;
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -419,8 +423,8 @@ begin
 
         when SLAVE_CHECK =>
           if not GC_MASTER_MODE then    -- slave check
-            -- Set DTT
-            set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -475,8 +479,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
   end process;

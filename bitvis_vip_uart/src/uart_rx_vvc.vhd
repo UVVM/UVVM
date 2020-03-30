@@ -77,9 +77,9 @@ architecture behave of uart_rx_vvc is
   alias vvc_config              : t_vvc_config        is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
   alias vvc_status              : t_vvc_status        is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
   alias transaction_info        : t_transaction_info  is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
-  -- DTT
-  alias dtt_trigger             : std_logic           is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
-  alias dtt_info                : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger : std_logic           is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
+  alias vvc_transaction_info         : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
@@ -128,7 +128,8 @@ begin
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
@@ -215,10 +216,10 @@ begin
 
 
     -- Setup UART scoreboard
-    shared_uart_sb.set_scope("UART VVC");
-    shared_uart_sb.enable(GC_INSTANCE_IDX, "SB UART Enabled");
-    shared_uart_sb.enable_log_msg(ID_DATA);
-    shared_uart_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    UART_VVC_SB.set_scope("UART_VVC_SB");
+    UART_VVC_SB.enable(GC_INSTANCE_IDX, "UART VVC SB Enabled");
+    UART_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+    UART_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
 
 
     loop
@@ -238,7 +239,8 @@ begin
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -266,8 +268,8 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is  -- Only operations in the dedicated record are relevant
         when RECEIVE =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
            
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
@@ -282,7 +284,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            shared_uart_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,
@@ -291,8 +293,8 @@ begin
               
 
         when EXPECT =>
-          -- Set DTT
-          set_global_dtt(dtt_trigger, dtt_info, v_cmd, vvc_config);
+          -- Set transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address and data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -347,8 +349,8 @@ begin
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
 
-      -- Set DTT back to default values
-      reset_dtt_info(dtt_info, v_cmd);
+      -- Set transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================

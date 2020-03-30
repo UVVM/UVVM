@@ -1,6 +1,15 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.6.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Renamed signal VVC to VVCT in VVC's procedures to match the documentation.
+- Added data_routing parameter to VVC get procedure for sending data to scoreboard.
 
 v1.5.2
 ----------

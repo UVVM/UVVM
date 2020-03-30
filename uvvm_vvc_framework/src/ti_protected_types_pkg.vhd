@@ -81,7 +81,7 @@ package body ti_protected_types_pkg is
 
     impure function priv_are_all_vvc_inactive return boolean is
     begin
-      check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVC in activity watchdog register");
+      check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVC in activity watchdog register", C_TB_SCOPE_DEFAULT, ID_NEVER);
 
       for idx in 0 to priv_last_registered_vvc_idx loop
         if priv_registered_vvc(idx).vvc_state.busy = true then

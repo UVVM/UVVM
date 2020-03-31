@@ -97,8 +97,9 @@ package transaction_pkg is
     bt => C_BASE_TRANSACTION_SET_DEFAULT
     );
 
-  -- Global transaction info trigger signal
+  -- Type is defined as array to coincide with channel based VVCs
   type t_gpio_transaction_trigger_array is array (natural range <>) of std_logic;
+  -- Global transaction info trigger signal
   signal global_gpio_vvc_transaction_trigger  : t_gpio_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                 (others => '0');
   

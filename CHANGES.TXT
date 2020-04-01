@@ -14,6 +14,9 @@ v2 2020.XX.XX
 --------------------
 Released: 2020-XX-XX
 - Updated Util QR check_value() with MATCH_STD_INCL_Z option.
+- Renamed Simple Watchdog to General Watchdog.
+- Removed logging message from Activity Watchdog for when number of 
+  expected VVCs match actual number.
 
 
 v2 2020.03.30b

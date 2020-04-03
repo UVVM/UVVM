@@ -27,9 +27,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_avalon_st;
 context bitvis_vip_avalon_st.vvc_context;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 
 -- Test case entity
 entity avalon_st_vvc_tb is
@@ -125,38 +122,6 @@ begin
       end loop;
     end procedure;
 
-    impure function get_sb_record_item(
-      constant channel_value : in  std_logic_vector;
-      constant data_array    : in  t_slv_array
-    ) return t_vvc_result is    
-
-      constant c_data_word_size  : natural := data_array(data_array'low)'length;
-      constant c_channel_value_default : std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0) := (others => '0');
-      -- helper variables
-      variable v_return           : t_vvc_result;
-      --variable v_normalized_chan  : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0) :=
-      --  normalize_and_check(channel_value, c_channel_value_default, ALLOW_NARROWER, "channel", "c_channel_value_default", "get_sb_record_item called with to wide channel"); --, proc_call & ". " & msg);
-      --variable v_normalized_data  : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0) := data_array;
-  
-    begin
-      v_return.channel_value := (others => '0');
-      v_return.channel_value(channel_value'length-1 downto 0) := channel_value;
-
-      v_return.data_array := (others => (others => '0'));
-      for idx in 0 to data_array'high loop
-        v_return.data_array(idx)(data_array(idx)'length-1 downto 0) := data_array(idx);
-      end loop;
-
-      v_return.data_array_length    := v_return.data_array'length;
-      v_return.data_array_word_size := data_array(data_array'low)'length;
-
-
-      --v_return.channel_value        := v_normalized_chan;
-      --v_return.data_array           := v_normalized_data;
-      --v_return.data_array_length    := v_normalized_data'length;
-      --v_return.data_array_word_size := data_array(data_array'low)'length;
-      return v_return;
-    end function get_sb_record_item;
 
     constant c_debug : t_vvc_result := (
       channel_value        => (others => '0'),

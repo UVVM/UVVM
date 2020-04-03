@@ -19,6 +19,7 @@ Released: 2020-XX-XX
   expected VVCs match actual number.
 - Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
 - Added dependency list in compile_src.do scripts.
+- Added reference to verbosity control in VVC and SB QRs.
 
 
 v2 2020.03.30b

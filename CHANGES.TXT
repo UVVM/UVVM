@@ -17,6 +17,8 @@ Released: 2020-XX-XX
 - Renamed Simple Watchdog to General Watchdog.
 - Removed logging message from Activity Watchdog for when number of 
   expected VVCs match actual number.
+- Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
+- Added dependency list in compile_src.do scripts.
 
 
 v2 2020.03.30b

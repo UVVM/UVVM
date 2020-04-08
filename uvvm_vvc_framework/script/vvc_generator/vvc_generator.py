@@ -63,22 +63,26 @@ def is_input_vhdl_legal(requested_vvc_name):
 
 # Get the basic or advanced VVC generation.
 def get_generating_level():
-    print("\n\rPlease select basic or advanced VVC.")
-    advanced_level_selected = None
-    while advanced_level_selected == None:
-        raw_input = input("\rSelect [b]asic og [a]dvanced VVC, press enter for default(a): ")
+    print("\n\rThe VVC is generated with essential code for running with UVVM as default, but can be")
+    print("generated with extended UVVM features such as Scoreboard, transaction info and activity watchdog.")
+    extended_selection = None
+    while extended_selection == None:
+        raw_input = input("\rGenerate VVC with extended UVVM features? [y/n]: ")
         if raw_input == "":
-            advanced_level_selected = True
+            extended_selection = False
         else:
             try:
-                if raw_input.lower() == "a":
-                    advanced_level_selected = True
-                elif raw_input.lower() == "b":
-                    advanced_level_selected = False
+                if raw_input.lower() == "y":
+                    extended_selection = True
+                elif raw_input.lower() == "n":
+                    extended_selection = False
+                else:
+                    print("Please select 'Y' for essential VVC or 'N' for extended VVC!")
             except:
-                print("Please select 'a' for advanced VVC or 'b' for basic VVC!")
+                print("Please select 'Y' for essential VVC or 'N' for extended VVC!")
                 continue
-    return advanced_level_selected
+
+    return extended_selection
 
 
 # Get the number of channels in the VVC, if multi-channel VVC.
@@ -239,7 +243,7 @@ def add_vvc_header(file_handle):
 
 
 # Adds included libraries to a leaf VVC
-def add_leaf_includes(file_handle, vvc_name, advanced_vvc_generating):
+def add_leaf_includes(file_handle, vvc_name, extended_vvc_selection):
     file_handle.write("library ieee;\n")
     file_handle.write("use ieee.std_logic_1164.all;\n")
     file_handle.write("use ieee.numeric_std.all;\n")
@@ -251,7 +255,7 @@ def add_leaf_includes(file_handle, vvc_name, advanced_vvc_generating):
     file_handle.write("use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("library bitvis_vip_scoreboard;\n")
         file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
         print_linefeed(file_handle)
@@ -330,7 +334,7 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
     file_handle.write(division_line+"\n")
 
 
-def add_architecture_declaration(file_handle, vvc_name, vvc_channel, advanced_vvc_generating):
+def add_architecture_declaration(file_handle, vvc_name, vvc_channel, extended_vvc_selection):
 
     number_of_executors = vvc_channel.number_of_executors()
 
@@ -372,7 +376,7 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, advanced_vv
       file_handle.write("  alias vvc_config : t_vvc_config is shared_"+vvc_name.lower()+"_vvc_config(GC_INSTANCE_IDX);\n")
       file_handle.write("  alias vvc_status : t_vvc_status is shared_"+vvc_name.lower()+"_vvc_status(GC_INSTANCE_IDX);\n")
 
-      if advanced_vvc_generating:
+      if extended_vvc_selection:
         file_handle.write("    -- vvc_transaction_info\n")
         file_handle.write("  alias vvc_transaction_info_trigger             : std_logic           is global_" + vvc_name.lower() + "_vvc_transaction_trigger(GC_INSTANCE_IDX);\n")
         file_handle.write("  alias vvc_transaction_info                : t_transaction_group is shared_" + vvc_name.lower() + "_vvc_transaction_info(GC_INSTANCE_IDX);\n")
@@ -381,12 +385,12 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, advanced_vv
       file_handle.write("  alias vvc_config : t_vvc_config is shared_"+vvc_name.lower()+"_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);\n")
       file_handle.write("  alias vvc_status : t_vvc_status is shared_"+vvc_name.lower()+"_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);\n")
 
-      if advanced_vvc_generating:
+      if extended_vvc_selection:
         file_handle.write("    -- vvc_transaction_info\n")
         file_handle.write("  alias vvc_transaction_info_trigger             : std_logic           is global_" + vvc_name.lower() + "_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);\n")
         file_handle.write("  alias vvc_transaction_info                : t_transaction_group is shared_" + vvc_name.lower() + "_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);\n")
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("  -- Activity Watchdog\n")    
         file_handle.write("  signal vvc_idx_for_activity_watchdog : integer;\n")
         print_linefeed(file_handle)
@@ -426,7 +430,7 @@ def add_vvc_constructor(file_handle, vvc_name):
     print_linefeed(file_handle)
 
 
-def add_vvc_interpreter(file_handle, vvc_channel, advanced_vvc_generating):
+def add_vvc_interpreter(file_handle, vvc_channel, extended_vvc_selection):
 
     number_of_executors = vvc_channel.number_of_executors()
 
@@ -448,7 +452,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, advanced_vvc_generating):
     else:
       file_handle.write("    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;\n")
     print_linefeed(file_handle)
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("    -- Register VVC in activity watchdog register\n")
         file_handle.write("    vvc_idx_for_activity_watchdog <= shared_activity_watchdog.priv_register_vvc(name      => \"" + vvc_name.upper() + "\",\n")
     if vvc_channel.name != "NA":
@@ -553,7 +557,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, advanced_vvc_generating):
     print_linefeed(file_handle)
 
 
-def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
+def add_vvc_executor(file_handle, vvc_channel, extended_vvc_selection):
 
     number_of_executors = vvc_channel.number_of_executors()
 
@@ -580,7 +584,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
     file_handle.write("    work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("    -- Setup "+vvc_name.upper()+" scoreboard\n")
         file_handle.write("    "+vvc_name.upper()+"_VVC_SB.set_scope(\""+vvc_name.upper()+"_VVC_SB\");\n")
         file_handle.write("    "+vvc_name.upper()+"_VVC_SB.enable(GC_INSTANCE_IDX, \""+vvc_name.upper()+" VVC SB Enabled\");\n")
@@ -593,7 +597,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
     file_handle.write("    loop\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("      -- Notify activity watchdog\n")
         file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
@@ -604,7 +608,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
                       ", vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("      -- Notify activity watchdog\n")
         file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
@@ -654,7 +658,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
     file_handle.write("        -- Example:\n")
     file_handle.write("        --   when WRITE =>\n")
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("        --    -- Set transaction info\n")
         file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);\n")
         print_linefeed(file_handle)
@@ -680,7 +684,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
 
     file_handle.write("        --   when READ =>\n")
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("        --    -- Set vvc_transaction_info\n")
         file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);\n")
         print_linefeed(file_handle)
@@ -716,7 +720,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
         file_handle.write("        --                       config              => vvc_config.bfm_config);\n")
         print_linefeed(file_handle)
 
-        if advanced_vvc_generating:
+        if extended_vvc_selection:
             file_handle.write("        --     -- Request SB check result\n")
             file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
             file_handle.write("        --       -- call SB check_received\n")
@@ -746,7 +750,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
         file_handle.write("        --              config        => vvc_config.bfm_config);\n")
         print_linefeed(file_handle)
 
-        if advanced_vvc_generating:
+        if extended_vvc_selection:
             file_handle.write("        --     -- Request SB check result\n")
             file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
             file_handle.write("        --       -- call SB check_received\n")
@@ -808,7 +812,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
     file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("      -- Set vvc_transaction_info back to default values\n")
         file_handle.write("      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
         print_linefeed(file_handle)
@@ -821,7 +825,7 @@ def add_vvc_executor(file_handle, vvc_channel, advanced_vvc_generating):
     print_linefeed(file_handle)
 
 
-def add_vvc_pipeline_step(file_handle, queue_name, advanced_vvc_generating):
+def add_vvc_pipeline_step(file_handle, queue_name, extended_vvc_selection):
     file_handle.write(division_line+"\n")
     file_handle.write("-- Pipelined step\n")
     file_handle.write("-- - Fetch and execute the commands in the "+queue_name+" executor\n")
@@ -847,7 +851,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, advanced_vvc_generating):
     file_handle.write("    loop\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("      -- Notify activity watchdog\n")
         file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
@@ -862,7 +866,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, advanced_vvc_generating):
     file_handle.write("      v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("      -- Notify activity watchdog\n")
         file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
@@ -875,7 +879,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, advanced_vvc_generating):
     file_handle.write("        -- Example of pipelined step used for read operations on the Avalon interface:\n")
     file_handle.write("        --   when READ =>\n")
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("        --    -- Set vvc_transaction_info\n")
         file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);\n")
         print_linefeed(file_handle)
@@ -896,7 +900,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, advanced_vvc_generating):
     print_linefeed(file_handle)
     file_handle.write("        --   when CHECK =>\n")
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("        --    -- Set vvc_transaction_info\n")
         file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);\n")
         print_linefeed(file_handle)
@@ -920,7 +924,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, advanced_vvc_generating):
     file_handle.write("      last_read_response_idx_executed <= v_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("      -- Set vvc_transaction_info back to default values\n")
         file_handle.write("      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
         print_linefeed(file_handle)
@@ -1131,7 +1135,7 @@ def add_vvc_cmd_pkg_body(file_handle):
     print_linefeed(file_handle)
 
 
-def add_methods_pkg_includes(file_handle, vvc_name, advanced_vvc_generating):
+def add_methods_pkg_includes(file_handle, vvc_name, extended_vvc_selection):
     file_handle.write("library ieee;\n")
     file_handle.write("use ieee.std_logic_1164.all;\n")
     file_handle.write("use ieee.numeric_std.all;\n")
@@ -1142,7 +1146,7 @@ def add_methods_pkg_includes(file_handle, vvc_name, advanced_vvc_generating):
     file_handle.write("library uvvm_vvc_framework;\n")
     file_handle.write("use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;\n")
     print_linefeed(file_handle)
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("library bitvis_vip_scoreboard;\n")
         file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
         file_handle.write("use bitvis_vip_scoreboard.slv_sb_pkg.all;\n")
@@ -1156,7 +1160,7 @@ def add_methods_pkg_includes(file_handle, vvc_name, advanced_vvc_generating):
     file_handle.write(division_line+"\n")
 
 
-def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, advanced_vvc_generating):
+def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, extended_vvc_selection):
     file_handle.write("package vvc_methods_pkg is\n")
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")
@@ -1241,7 +1245,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, advanced_vvc_gen
                           " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => "
                           "C_VVC_STATUS_DEFAULT));\n")
     print_linefeed(file_handle)
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("  -- Scoreboard\n") 
         file_handle.write("  shared variable "+vvc_name.upper()+"_VVC_SB : t_generic_sb;\n") 
         print_linefeed(file_handle)
@@ -1280,7 +1284,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, advanced_vvc_gen
     file_handle.write("  -- );\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("  --==============================================================================\n")
         file_handle.write("  -- Transaction info methods\n")
         file_handle.write("  --==============================================================================\n")
@@ -1310,7 +1314,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, advanced_vvc_gen
     print_linefeed(file_handle)
 
 
-def add_methods_pkg_body(file_handle, vvc_name, advanced_vvc_generating):
+def add_methods_pkg_body(file_handle, vvc_name, extended_vvc_selection):
     print_linefeed(file_handle)
     file_handle.write("package body vvc_methods_pkg is\n")
     print_linefeed(file_handle)
@@ -1388,7 +1392,7 @@ def add_methods_pkg_body(file_handle, vvc_name, advanced_vvc_generating):
     file_handle.write("  -- end procedure;\n")
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("  --==============================================================================\n")
         file_handle.write("  -- Transaction info methods\n")
         file_handle.write("  --==============================================================================\n")
@@ -1553,12 +1557,12 @@ def generate_bfm_skeleton(vvc_name):
     f.close()
 
 
-def generate_vvc_methods_pkg_file(vvc_name, vvc_channels, advanced_vvc_generating):
+def generate_vvc_methods_pkg_file(vvc_name, vvc_channels, extended_vvc_selection):
     f = open("output/vvc_methods_pkg.vhd", 'w')
     add_vvc_header(f)
-    add_methods_pkg_includes(f, vvc_name, advanced_vvc_generating)
-    add_methods_pkg_header(f,vvc_name,vvc_channels, advanced_vvc_generating)
-    add_methods_pkg_body(f, vvc_name, advanced_vvc_generating)
+    add_methods_pkg_includes(f, vvc_name, extended_vvc_selection)
+    add_methods_pkg_header(f,vvc_name,vvc_channels, extended_vvc_selection)
+    add_methods_pkg_body(f, vvc_name, extended_vvc_selection)
     f.close()
 
 
@@ -1571,7 +1575,7 @@ def generate_vvc_cmd_pkg_file():
     f.close()
 
 
-def add_transaction_pkg(file_handle, vvc_name, vvc_channels, advanced_vvc_generating):
+def add_transaction_pkg(file_handle, vvc_name, vvc_channels, extended_vvc_selection):
     add_vvc_header(file_handle)
     file_handle.write("library ieee;\n")
     file_handle.write("use ieee.std_logic_1164.all;\n")
@@ -1615,7 +1619,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, advanced_vvc_genera
     print_linefeed(file_handle)
     print_linefeed(file_handle)
 
-    if advanced_vvc_generating:
+    if extended_vvc_selection:
         file_handle.write("  --==========================================================================================\n")
         file_handle.write("  --\n")
         file_handle.write("  -- vvc_transaction_info - Transaction info types, constants and global signal\n")
@@ -1699,9 +1703,9 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, advanced_vvc_genera
     file_handle.write("end package transaction_pkg;\n")
 
 
-def generate_transaction_pkg_file(vvc_name, vvc_channels, advanced_vvc_generating):
+def generate_transaction_pkg_file(vvc_name, vvc_channels, extended_vvc_selection):
     f = open("output/transaction_pkg.vhd", 'w')
-    add_transaction_pkg(f, vvc_name, vvc_channels, advanced_vvc_generating)
+    add_transaction_pkg(f, vvc_name, vvc_channels, extended_vvc_selection)
     f.close()
 
 def add_vvc_context(file_handle, vvc_name):
@@ -1721,7 +1725,7 @@ def generate_vvc_context_file(vvc_name):
     add_vvc_context(f, vvc_name)
     f.close()
 
-def generate_vvc_file(vvc_name, vvc_channels, advanced_vvc_generating):
+def generate_vvc_file(vvc_name, vvc_channels, extended_vvc_selection):
 
     # Create main VVC, or leaf VVCs if multiple channels
     for channel in vvc_channels:
@@ -1735,15 +1739,15 @@ def generate_vvc_file(vvc_name, vvc_channels, advanced_vvc_generating):
         f = open(vvc_file_name, 'w')
 
         add_vvc_header(f)
-        add_leaf_includes(f,vvc_name, advanced_vvc_generating)
+        add_leaf_includes(f,vvc_name, extended_vvc_selection)
         add_vvc_entity(f,vvc_name,channel.name)
-        add_architecture_declaration(f, vvc_name, channel, advanced_vvc_generating)
+        add_architecture_declaration(f, vvc_name, channel, extended_vvc_selection)
         add_vvc_constructor(f, vvc_name)
-        add_vvc_interpreter(f, channel, advanced_vvc_generating)
-        add_vvc_executor(f, channel, advanced_vvc_generating)
+        add_vvc_interpreter(f, channel, extended_vvc_selection)
+        add_vvc_executor(f, channel, extended_vvc_selection)
         if (num_of_queues > 1):
             for i in range(1, num_of_queues):
-                add_vvc_pipeline_step(f, channel.executor_names[i], advanced_vvc_generating)
+                add_vvc_pipeline_step(f, channel.executor_names[i], extended_vvc_selection)
 
         add_vvc_terminator(f)
         add_end_of_architecture(f)
@@ -1773,7 +1777,7 @@ if __name__ == '__main__':
     vvc_channels = []
     vvc_name = get_vvc_name()
 
-    advanced_vvc_generating = get_generating_level()
+    extended_vvc_selection = get_generating_level()
     number_of_channels = get_number_of_channels()
     vvc_channels = set_channels(number_of_channels)
     number_of_channels_with_multiple_executors = 0
@@ -1833,12 +1837,14 @@ if __name__ == '__main__':
     if not os.path.exists("output"):
         os.makedirs("output")
 
-    generate_vvc_file(vvc_name, vvc_channels, advanced_vvc_generating)
+    generate_vvc_file(vvc_name, vvc_channels, extended_vvc_selection)
     generate_vvc_cmd_pkg_file()
-    generate_vvc_methods_pkg_file(vvc_name, vvc_channels, advanced_vvc_generating)
+    generate_vvc_methods_pkg_file(vvc_name, vvc_channels, extended_vvc_selection)
     generate_bfm_skeleton(vvc_name)
-    generate_transaction_pkg_file(vvc_name, vvc_channels, advanced_vvc_generating)
+    generate_transaction_pkg_file(vvc_name, vvc_channels, extended_vvc_selection)
     generate_vvc_context_file(vvc_name)
 
     print("\nThe vvc_generator script is now finished")
     print("The generated VVC can be found in the output folder")
+    print("Note: generated code is provided as starting point for building a VVC.")
+    print("      Please follow the instructions marked '--<USER_INPUT>' in the generated files.")

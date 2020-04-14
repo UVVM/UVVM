@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -26,18 +25,20 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_gmii;
-context bitvis_vip_gmii.vvc_context;
+use bitvis_vip_gmii.gmii_bfm_pkg.all;
 
 library bitvis_vip_ethernet;
-context bitvis_vip_ethernet.vvc_context;
-use bitvis_vip_ethernet.ethernet_gmii_mac_master_pkg.all;
+use work.ethernet_gmii_mac_master_pkg.all;
 
 library mac_master;
 use mac_master.ethernet_types.all;
 use mac_master.utility.all;
 
+
 --=================================================================================================
-entity gmii_mac_master_test_harness is
+-- Test harness entity
+--=================================================================================================
+entity ethernet_gmii_mac_master_th is
   generic(
     GC_CLK_PERIOD  : time;
     GC_MAC_ADDRESS : unsigned(47 downto 0)
@@ -46,13 +47,12 @@ entity gmii_mac_master_test_harness is
     if_in  : in  t_if_in;
     if_out : out t_if_out
   );
-end entity gmii_mac_master_test_harness;
-
+end entity ethernet_gmii_mac_master_th;
 
 --=================================================================================================
+-- Test harness architecture
 --=================================================================================================
-
-architecture struct of gmii_mac_master_test_harness is
+architecture struct of ethernet_gmii_mac_master_th is
 
   signal clk              : std_logic;
   signal reset            : std_logic;
@@ -61,30 +61,30 @@ architecture struct of gmii_mac_master_test_harness is
 
 begin
 
-  reset <= '1' after 0 ns, '0' after 10 ns;
-
+  ------------------------------------------
+  -- Clock generator
+  ------------------------------------------
   p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
   if_out.clk            <= clk;
   gmii_to_dut_if.gtxclk <= clk;
 
+  reset <= '1' after 0 ns, '0' after 10 ns;
+
   -----------------------------
-  -- vvc/executors
+  -- VVC/executors
   -----------------------------
   i_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
     generic map(
       GC_INSTANCE_IDX         => 1,
       GC_PHY_INTERFACE        => GMII,
-      GC_PHY_VVC_INSTANCE_IDX => 1
+      GC_PHY_VVC_INSTANCE_IDX => 1,
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2 -- add some margin
     );
 
   i_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
     generic map(
-      GC_INSTANCE_IDX                       => 1,
-      GC_GMII_BFM_CONFIG                    => C_GMII_BFM_CONFIG_DEFAULT,
-      GC_CMD_QUEUE_COUNT_MAX                => 500,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => 450,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => WARNING
+      GC_INSTANCE_IDX => 1
     )
     port map(
       gmii_vvc_tx_if => gmii_to_dut_if,
@@ -106,6 +106,7 @@ begin
       -- MAC address of this station
       -- Must not change after reset is deasserted
       mac_address_i      => t_mac_address(reverse_bytes(std_ulogic_vector(GC_MAC_ADDRESS))),
+
       -- MII (Media-independent interface)
       mii_tx_clk_i       => clk,
       mii_tx_er_o        => open,
@@ -158,4 +159,4 @@ begin
       rx_data_o          => if_out.rx_data_o
     );
 
-end struct;
+end architecture struct;

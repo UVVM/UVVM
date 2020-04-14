@@ -56,18 +56,18 @@ architecture struct_sbi of ethernet_th is
 
   -- Configuration for the Ethernet MAC field addresses
   constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) :=
-    (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, use_field => false, field_description => "TX Preamble and SFD"),
-                  1 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX MAC destination "),
-                  2 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX MAC source      "),
-                  3 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX payload length  "),
-                  4 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX payload         "),
-                  5 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX FCS             ")),
-    RECEIVE =>   (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, use_field => false, field_description => "RX Preamble and SFD"),
-                  1 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX MAC destination "),
-                  2 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX MAC source      "),
-                  3 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX payload length  "),
-                  4 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX payload         "),
-                  5 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX FCS             "))
+    (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => false, field_description => "TX Preamble and SFD"),
+                  1 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC destination "),
+                  2 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC source      "),
+                  3 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload length  "),
+                  4 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload         "),
+                  5 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX FCS             ")),
+    RECEIVE =>   (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => false, field_description => "RX Preamble and SFD"),
+                  1 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX MAC destination "),
+                  2 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX MAC source      "),
+                  3 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX payload length  "),
+                  4 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX payload         "),
+                  5 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX FCS             "))
     );
 
 begin

@@ -111,10 +111,10 @@ package support_pkg is
     constant actual       : in t_ethernet_frame;
     constant expected     : in t_ethernet_frame;
     constant alert_level  : in t_alert_level;
+    constant msg_id       : in t_msg_id;
     constant msg          : in string;
     constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
+    constant msg_id_panel : in t_msg_id_panel
   );
 
   function ethernet_match(
@@ -209,19 +209,27 @@ package body support_pkg is
     constant actual       : in t_ethernet_frame;
     constant expected     : in t_ethernet_frame;
     constant alert_level  : in t_alert_level;
+    constant msg_id       : in t_msg_id;
     constant msg          : in string;
     constant scope        : in string;
-    constant msg_id_panel : in t_msg_id_panel;
-    constant proc_call    : in string
+    constant msg_id_panel : in t_msg_id_panel
   ) is
+    constant proc_call  : string  := "compare_ethernet_frames()";
+    variable v_check_ok : boolean := true;
   begin
-    check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination"              & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_HDR,  msg_id_panel, proc_call);
-    check_value(actual.mac_source,      expected.mac_source,      alert_level, "Verify MAC source"                   & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_HDR,  msg_id_panel, proc_call);
-    check_value(actual.payload_length,  expected.payload_length,  alert_level, "Verify payload length"               & LF & msg, scope,                      ID_PACKET_HDR,  msg_id_panel, proc_call);
+    v_check_ok := v_check_ok and check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+    v_check_ok := v_check_ok and check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+    v_check_ok := v_check_ok and check_value(actual.payload_length, expected.payload_length, alert_level, "Verify payload length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call);
     for i in 0 to actual.payload_length-1 loop
-      check_value(actual.payload(i),    expected.payload(i),      alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
+      v_check_ok := v_check_ok and check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
     end loop;
-    check_value(actual.fcs,             expected.fcs,             alert_level, "Verify FCS"                          & LF & msg, scope, HEX, KEEP_LEADING_0, ID_PACKET_DATA, msg_id_panel, proc_call);
+    v_check_ok := v_check_ok and check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+
+    if v_check_ok then
+      log(msg_id, proc_call & ". " & add_msg_delimiter(msg) & " => OK");
+    else
+      log(msg_id, proc_call & ". " & add_msg_delimiter(msg) & " => FAILED");
+    end if;
   end procedure compare_ethernet_frames;
 
   -- Compares two ethernet frames and returns true if they are equal (used in scoreboard)

@@ -63,18 +63,18 @@ architecture struct of ethernet_sbi_gmii_th is
 
   -- Configuration for the Ethernet MAC field addresses (only applicable for SBI, use default for GMII).
   constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) :=
-    (TRANSMIT => (0 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => false, field_description => "TX Preamble and SFD"),
-                  1 => (dut_address => C_ETH_ADDR_MAC_DEST, dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX MAC destination "),
-                  2 => (dut_address => C_ETH_ADDR_MAC_SRC,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX MAC source      "),
-                  3 => (dut_address => C_ETH_ADDR_PAY_LEN,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX payload length  "),
-                  4 => (dut_address => C_ETH_ADDR_PAYLOAD,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "TX payload         "),
-                  5 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => false, field_description => "TX FCS             ")),
-    RECEIVE =>   (0 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  1 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  2 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  3 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  4 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX NOT USING ADDR  "),
-                  5 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => 8, use_field => true,  field_description => "RX NOT USING ADDR  "))
+    (TRANSMIT => (0 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => false, field_description => "TX Preamble and SFD"),
+                  1 => (dut_address => C_ETH_ADDR_MAC_DEST, dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC destination "),
+                  2 => (dut_address => C_ETH_ADDR_MAC_SRC,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC source      "),
+                  3 => (dut_address => C_ETH_ADDR_PAY_LEN,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload length  "),
+                  4 => (dut_address => C_ETH_ADDR_PAYLOAD,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload         "),
+                  5 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => false, field_description => "TX FCS             ")),
+    RECEIVE =>   (0 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
+                  1 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
+                  2 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
+                  3 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
+                  4 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "),
+                  5 => (dut_address => C_ETH_ADDR_INVALID,  dut_address_increment => 0, data_width => C_SBI_DATA_WIDTH, use_field => true,  field_description => "RX NOT USING ADDR  "))
     );
 
 begin

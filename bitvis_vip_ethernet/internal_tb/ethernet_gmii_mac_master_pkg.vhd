@@ -14,13 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
 
 library mac_master;
 use mac_master.ethernet_types.all;
@@ -43,3 +39,6 @@ package ethernet_gmii_mac_master_pkg is
   end record;
 
 end package ethernet_gmii_mac_master_pkg;
+
+package body ethernet_gmii_mac_master_pkg is
+end package body ethernet_gmii_mac_master_pkg;

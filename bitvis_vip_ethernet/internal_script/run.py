@@ -48,15 +48,11 @@ def main(argv):
   tb.compile()
 
   # Set testbench and run
-  tb.set_tb_name("ethernet_gmii_tb")
-  tb.run_simulation()
-
-  # Set testbench and run
   tb.set_tb_name("ethernet_gmii_mac_master_tb")
   tb.run_simulation()
 
   # Set testbench and run
-  tb.set_tb_name("ethernet_gmii_mac_master_sb_tb")
+  tb.set_tb_name("ethernet_gmii_tb")
   tb.run_simulation()
 
   # Set testbench, config and run

@@ -26,15 +26,6 @@ num_failing_tests = 0
 # User edit starts here: define tests and run
 #=============================================================================================
 
-# Create testbench configuration with TB generics
-def create_config(data_widths):
-  config = []
-
-  for data_width in product(data_widths):
-    config.append(str(data_width))
-
-  return config
-
 
 def main(argv):
   global num_failing_tests
@@ -57,8 +48,7 @@ def main(argv):
 
   # Set testbench, config and run
   tb.set_tb_name("ethernet_sbi_tb")
-  configs = create_config([4, 8, 9, 12, 16])
-  tb.set_configs(configs)
+  tb.set_configs([4, 8, 9, 12, 16])
   tb.run_simulation()
 
   # Print simulation results

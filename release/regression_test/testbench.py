@@ -199,9 +199,9 @@ class Testbench:
       Adds a testbench configuration, i.e. generics.
 
       Args:
-        config (list): testbench configuration.
+        config (int/string): testbench configuration.
       """
-      self.configs.append(config)
+      self.configs.append(str(config))
 
 
     def set_configs(self, configs):
@@ -214,7 +214,7 @@ class Testbench:
       self.remove_configs()
       for config in configs:
         self.add_config(config)
-
+      
 
     def get_configs(self):
       """
@@ -492,11 +492,11 @@ class Testbench:
 
       for test_idx, test_name in enumerate(self.tests):
         self.cleanup(test_name)
-      
-        for config_idx, config in enumerate(self.configs):
+
+        for config_idx, config in enumerate(self.get_configs()):
           self.cleanup(test_name)
           self.increment_num_tests()
-          
+
           # Progress counter: (testcase / tot_testcases, config / total_configs)
           if config:
             run_str = ("(%d/%d, %d/%d)" %(test_idx+1, total_num_tests, config_idx+1, total_num_configs))

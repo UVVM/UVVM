@@ -28,15 +28,6 @@ num_failing_tests = 0
 #
 #=============================================================================================
 
-# Create testbench configuration with TB generics
-def create_config(data_widths):
-  config = []
-  for data_width in product(data_widths):
-    config.append(str(data_width))
-
-  return config
-
-
 def main(argv):
   global num_failing_tests
 

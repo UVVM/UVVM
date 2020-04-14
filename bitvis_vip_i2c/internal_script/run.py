@@ -27,14 +27,6 @@ num_failing_tests = 0
 # User edit starts here: define tests and run
 #=============================================================================================
 
-# Create testbench configuration with TB generics
-def create_config(modes, data_widths, data_array_widths):
-  config = []
-  for mode, data_width, data_array_width in product(modes, data_widths, data_array_widths):
-    config.append(str(mode) + ' ' + str(data_width) + ' ' + str(data_array_width))
-
-  return config
-
 
 def main(argv):
   global num_failing_tests

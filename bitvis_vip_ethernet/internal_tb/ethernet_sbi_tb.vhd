@@ -152,10 +152,10 @@ begin
       for i in 0 to v_payload_len-1 loop
         v_payload_data(i) := random(8);
       end loop;
-      log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from i1 to i2 (need padding)");
-      ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 1.");
+      log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i1 to i2 (need padding)");
+      ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
       ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
-      await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+      await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
       await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
     end loop;
 
@@ -163,31 +163,31 @@ begin
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from i1 to i2 (minimum size)");
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 1.");
+    log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i1 to i2 (minimum size)");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     v_payload_len := C_MAX_PAYLOAD_LENGTH;
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from i1 to i2 (maximum size)");
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 1.");
+    log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i1 to i2 (maximum size)");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     v_payload_len := 50;
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from i2 to i1");
-    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 2.");
+    log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i2 to i1");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 2.");
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive a frame at instance 1.");
     v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 1, RX);
-    await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for receive to finish.");
     log(ID_LOG_HDR, "Fetch data from i1 and check");
     fetch_result(ETHERNET_VVCT, 1, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
@@ -203,12 +203,12 @@ begin
       for i in 0 to v_payload_len-1 loop
         v_payload_data(i) := random(8);
       end loop;
-      log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from i2 to i1 (use scoreboard)");
-      ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 2.");
+      log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i2 to i1 (use scoreboard)");
+      ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 2.");
       v_expected_frame := make_ethernet_frame(x"00_00_00_00_00_01", x"00_00_00_00_00_02", v_payload_data(0 to v_payload_len-1));
       ETHERNET_VVC_SB.add_expected(1, v_expected_frame);
       ethernet_receive(ETHERNET_VVCT, 1, RX, TO_SB, "Receive a frame at instance 1 and put it in the Scoreboard.");
-      await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for send to finish.");
+      await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for transmit to finish.");
       await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for receive to finish.");
     end loop;
 
@@ -218,43 +218,43 @@ begin
     await_value(clk, '1', 0 ns, 6 ns, ERROR, "Sync to clock.");
     insert_delay(ETHERNET_VVCT, 1, TX, 1 us, "Insert delay in instance 1.");
     v_time_stamp := now;
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to 46), "Send a frame from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to 46), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to 46), "Expect a frame at instance 2.");
     await_value(i1_sbi_if.wena, '1', 0 ns, 1.1 us, ERROR, "Await ethernet transfer.");
     check_value_in_range(now-v_time_stamp, 1 us, 1.01 us, ERROR, "Verify inserted delay.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     v_payload_len := C_MIN_PAYLOAD_LENGTH;
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send a frame with the wrong MAC destination address");
+    log(ID_LOG_HDR, "Transmit a frame with the wrong MAC destination address");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Send a frame from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, x"00_00_00_00_00_F2", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
-    log(ID_LOG_HDR, "Send a frame with the wrong MAC source address");
+    log(ID_LOG_HDR, "Transmit a frame with the wrong MAC source address");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Send a frame from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, x"00_00_00_00_00_02", x"00_00_00_00_00_F1", v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
-    log(ID_LOG_HDR, "Send a frame with the wrong payload length");
+    log(ID_LOG_HDR, "Transmit a frame with the wrong payload length");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len), "Expect a frame at instance 2.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
-    log(ID_LOG_HDR, "Send a frame with the wrong payload");
+    log(ID_LOG_HDR, "Transmit a frame with the wrong payload");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to 0), "Send a frame from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to 0), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(1 to 1), "Expect a frame at instance 2.");
-    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     -----------------------------------------------------------------------------

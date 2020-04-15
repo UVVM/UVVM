@@ -142,36 +142,36 @@ begin
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (need padding)");
-    ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from the CPU.");
+    log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (need padding)");
+    ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
-    await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
     v_payload_len := 46;
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (minimum size)");
-    ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from the CPU.");
+    log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (minimum size)");
+    ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
-    await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
     v_payload_len := C_MAX_PAYLOAD_LENGTH;
     for i in 0 to v_payload_len-1 loop
       v_payload_data(i) := random(8);
     end loop;
-    log(ID_LOG_HDR, "Send " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (maximum size)");
-    ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Send a frame from the CPU.");
+    log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from CPU to Ethernet MAC (maximum size)");
+    ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
-    await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for send to finish.");
+    await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
     ---------------------------------------------------------------------------

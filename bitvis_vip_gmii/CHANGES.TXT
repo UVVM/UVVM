@@ -1,7 +1,7 @@
 Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
-v0.x.x
+v0.2.1
 ----------
 Released: 2020-xx-xx
 - Added reference to verbosity control in VVC QR.

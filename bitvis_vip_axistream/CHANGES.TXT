@@ -1,7 +1,7 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
-v4.x.x
+v4.6.1
 ----------
 Released: 2020-xx-xx
 - Added reference to verbosity control in VVC QR.

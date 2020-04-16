@@ -2,11 +2,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.X.X
+v2.9.0
 ----------
 Released: 2020-XX-XX
 - Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
-- Added advanced or basic choice to vvc_generator.py
+- Added advanced and basic choice to vvc_generator.py
 
 
 v2.8.0

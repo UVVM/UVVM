@@ -1,7 +1,7 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
-v1.x.x
+v1.6.1
 ----------
 Released: 2020-xx-xx
 - Added reference to verbosity control in VVC QR.

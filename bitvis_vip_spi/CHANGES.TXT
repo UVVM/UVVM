@@ -1,7 +1,7 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
-v3.x.x
+v3.7.1
 ----------
 Released: 2020-xx-xx
 - Added reference to verbosity control in VVC QR.

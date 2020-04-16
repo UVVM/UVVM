@@ -1,7 +1,7 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.5.1
 ----------
 Released: 2020-xx-xx
 - Added reference to verbosity control in VVC QR.

@@ -20,7 +20,8 @@ Released: 2020-XX-XX
 - Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
 - Added dependency list in compile_src.do scripts.
 - Added reference to verbosity control in VVC and SB QRs.
-- Added advanced or basic choice to vvc_generator.py
+- Added advanced and basic choice to vvc_generator.py
+- Added specification coverage VIP - Bitvis VIP Spec Cov
 
 
 

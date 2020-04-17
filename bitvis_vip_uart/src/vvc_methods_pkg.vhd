@@ -95,6 +95,7 @@ package vvc_methods_pkg is
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
     error_injection                       : t_vvc_error_injection;
     bit_rate_checker                      : t_bit_rate_checker;
+    parent_msg_id_panel                   : t_msg_id_panel;    -- TODO: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -110,7 +111,8 @@ package vvc_methods_pkg is
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     error_injection                       => C_VVC_ERROR_INJECTION_INACTIVE,
-    bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT
+    bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT,
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
     );
 
   type t_vvc_status is

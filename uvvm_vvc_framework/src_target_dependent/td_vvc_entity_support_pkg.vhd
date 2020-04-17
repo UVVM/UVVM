@@ -512,7 +512,7 @@ package body td_vvc_entity_support_pkg is
     --else
     --  return vvc_config.msg_id_panel;
     --end if;
-    return vvc_config.msg_id_panel;
+    return vvc_config.msg_id_panel; -- TODO: temporary fix for HVVC, replace for commented code above in v3.0
   end function;
 
   procedure await_cmd_from_sequencer(

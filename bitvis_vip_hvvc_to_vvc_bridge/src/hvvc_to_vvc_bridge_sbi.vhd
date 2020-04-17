@@ -95,25 +95,31 @@ begin
       case hvvc_to_bridge.operation is
 
         when TRANSMIT =>
+          -- TODO: temporary fix for HVVC, remove line below in v3.0
+          shared_sbi_vvc_config(GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
+
           -- Convert from t_slv_array to std_logic_vector (word endianness is LOWER_WORD_RIGHT)
           v_data_slv(hvvc_to_bridge.num_data_words*c_data_words_width-1 downto 0) := convert_slv_array_to_slv(hvvc_to_bridge.data_words(0 to hvvc_to_bridge.num_data_words-1));
 
           -- Loop through transfers
           for i in 0 to v_num_transfers-1 loop
             sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, v_data_slv(v_dut_data_width*(i+1)-1 downto v_dut_data_width*i),
-              "Send data over SBI", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+              "HVVC: Send data over SBI", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
-            await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             v_dut_address := v_dut_address + v_dut_address_increment;
           end loop;
 
         when RECEIVE =>
+          -- TODO: temporary fix for HVVC, remove line below in v3.0
+          shared_sbi_vvc_config(GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
+
           -- Loop through transfers
           for i in 0 to v_num_transfers-1 loop
-            sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "Read data over SBI", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "HVVC: Read data over SBI", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
-            await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
-            fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "HVVC: Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             v_data_slv(v_dut_data_width*(i+1)-1 downto v_dut_data_width*i) := v_sbi_received_data(v_dut_data_width-1 downto 0);
             v_dut_address := v_dut_address + v_dut_address_increment;
           end loop;

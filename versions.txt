@@ -17,3 +17,4 @@ This project uses the following versions:
   bitvis_vip_scoreboard, version v2.1.0
   bitvis_vip_spi, version v3.7.0
   bitvis_vip_uart, version v2.6.0
+  bitvis_vip_spec_cov, versopm v0.1.0

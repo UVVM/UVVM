@@ -24,9 +24,6 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.avalon_st_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -213,11 +210,6 @@ begin
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
 
-    -- Setup AVALON_ST scoreboard
-    AVALON_ST_VVC_SB.set_scope("AVALON_ST_VVC_SB");
-    AVALON_ST_VVC_SB.enable(GC_INSTANCE_IDX, "AVALON_ST VVC SB Enabled");
-    AVALON_ST_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    AVALON_ST_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -313,7 +305,6 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               alert(tb_warning, "Scoreboard type for Avalon-Stream RECEIVE data not implemented");
-              --AVALON_ST_VVC_SB.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
             else
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,

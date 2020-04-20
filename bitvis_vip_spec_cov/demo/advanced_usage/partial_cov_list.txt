@@ -1,0 +1,4 @@
+../sim/partial_cov_advanced_demo_T0.csv
+../sim/partial_cov_advanced_demo_T1.csv
+../sim/partial_cov_advanced_demo_T2.csv
+../sim/partial_cov_advanced_demo_T3.csv

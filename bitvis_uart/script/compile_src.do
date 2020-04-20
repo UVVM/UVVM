@@ -11,6 +11,19 @@
 #--------------------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------
+# List dependencies
+#-----------------------------------------------------------------------
+echo "********************* DEPENDENCIES ***************************"
+echo "1. UVVM Utility library"
+echo "2. UVVM VVC Framework library"
+echo "3. xConstrRandFuncCov"
+echo "4. Bitvis VIP SBI"
+echo "5. Bitvis VIP UART"
+echo "6. Bitvis VIP Clock Generator"
+echo "**************************************************************"
+
+
+#-----------------------------------------------------------------------
 # This file may be called with 0 to 2 arguments:
 #
 #   0 args: regular UVVM directory structure expected

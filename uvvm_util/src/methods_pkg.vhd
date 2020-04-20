@@ -4177,6 +4177,10 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
+    if value'ascending /= exp'ascending then
+        alert(WARNING, "check_value(): value and exp t_slv_array have opposite directions.", scope);
+    end if;
+
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
       protected_check_counters.decrement(CHECK_VALUE);
@@ -4203,6 +4207,10 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
+    if value'ascending /= exp'ascending then
+      alert(WARNING, "check_value(): value and exp t_signed_array have opposite directions.", scope);
+    end if;
+
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
       protected_check_counters.decrement(CHECK_VALUE);
@@ -4228,6 +4236,10 @@ package body methods_pkg is
     ) return boolean is
   begin
     protected_check_counters.increment(CHECK_VALUE);
+
+    if value'ascending /= exp'ascending then
+      alert(WARNING, "check_value(): value and exp t_unsigned_array have opposite directions.", scope);
+    end if;
 
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
@@ -8363,10 +8375,10 @@ package body methods_pkg is
 
 
   -- ============================================================================
-  -- Watchdog-related
+  -- General Watchdog-related
   -- ============================================================================
   -------------------------------------------------------------------------------
-  -- Watchdog timer:
+  -- General Watchdog timer:
   -- Include this as a concurrent procedure from your testbench.
   -- Use extend_watchdog(), reinitialize_watchdog() or terminate_watchdog() to
   -- modify the watchdog timer from the test sequencer.
@@ -8384,7 +8396,7 @@ package body methods_pkg is
     -- without it, they wouldn't print the first log message.
     wait for 0 ns;
 
-    log(ID_WATCHDOG, "Starting watchdog: " & to_string(timeout) & ". " & msg);
+    log(ID_WATCHDOG, "Starting general watchdog: " & to_string(timeout) & ". " & msg);
     v_prev_timeout := 0 ns;
     v_timeout      := timeout;
 
@@ -8393,25 +8405,25 @@ package body methods_pkg is
       -- Watchdog was extended
       if watchdog_ctrl.extend then
         if watchdog_ctrl.extension = 0 ns then
-          log(ID_WATCHDOG, "Extending watchdog by default value: " & to_string(timeout) & ". " & msg);
+          log(ID_WATCHDOG, "Extending general watchdog by default value: " & to_string(timeout) & ". " & msg);
           v_timeout := (v_prev_timeout + v_timeout - now) + timeout;
         else
-          log(ID_WATCHDOG, "Extending watchdog by " & to_string(watchdog_ctrl.extension) & ". " & msg);
+          log(ID_WATCHDOG, "Extending general watchdog by " & to_string(watchdog_ctrl.extension) & ". " & msg);
           v_timeout := (v_prev_timeout + v_timeout - now) + watchdog_ctrl.extension;
         end if;
         v_prev_timeout := now;
       -- Watchdog was reinitialized
       elsif watchdog_ctrl.restart then
-        log(ID_WATCHDOG, "Reinitializing watchdog: " & to_string(watchdog_ctrl.new_timeout) & ". " & msg);
+        log(ID_WATCHDOG, "Reinitializing general watchdog: " & to_string(watchdog_ctrl.new_timeout) & ". " & msg);
         v_timeout      := watchdog_ctrl.new_timeout;
         v_prev_timeout := now;
       else
         -- Watchdog was terminated
         if watchdog_ctrl.terminate then
-          log(ID_WATCHDOG, "Terminating watchdog. " & msg);
+          log(ID_WATCHDOG, "Terminating general watchdog. " & msg);
         -- Watchdog has timed out
         else
-          alert(alert_level, "Watchdog timer ended! " & msg);
+          alert(alert_level, "General watchdog timer ended! " & msg);
         end if;
         exit;
       end if;

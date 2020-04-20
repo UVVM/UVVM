@@ -24,9 +24,6 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.axistream_bfm_pkg.all;
 use work.vvc_methods_pkg.all;           -- shared_axistream_vvc_config
 use work.vvc_cmd_pkg.all;
@@ -217,12 +214,6 @@ begin
       -- Set initial value of v_msg_id_panel to msg_id_panel in config
       v_msg_id_panel := vvc_config.msg_id_panel;
 
-      -- Setup AXIStream scoreboard
-      AXISTREAM_VVC_SB.set_scope("AXISTREAM_VVC_SB");
-      AXISTREAM_VVC_SB.enable(GC_INSTANCE_IDX, "AXISTREAM VVC SB Enabled");
-      AXISTREAM_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-      AXISTREAM_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
-
       loop
          
          -- Notify activity watchdog
@@ -319,7 +310,6 @@ begin
                   if v_cmd.data_routing = TO_SB then
                     -- call SB check_received
                     alert(tb_warning, "Scoreboard type for AXIStream RECEIVE data not implemented");
-                    --AXISTREAM_VVC_SB.check_received(GC_INSTANCE_IDX, v_result.data_array); -- SB type not implemented
                   else                            
                      -- Store the result
                      work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,

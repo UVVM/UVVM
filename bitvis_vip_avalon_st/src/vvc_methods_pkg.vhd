@@ -24,10 +24,6 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
---use bitvis_vip_scoreboard.slv_sb_pkg.all;
-
 use work.local_adaptations_pkg.all;
 use work.avalon_st_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -100,20 +96,6 @@ package vvc_methods_pkg is
   shared variable shared_avalon_st_vvc_config : t_vvc_config_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_AVALON_ST_VVC_CONFIG_DEFAULT);
   shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);
   
-  --==============================================================================
-  -- Scoreboard 
-  --==============================================================================
-  function avalon_st_element_to_string(
-    constant value : in t_vvc_result
-  ) return string;
-
-  package avalon_st_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_element         => t_vvc_result,
-               element_match     => "=",
-               to_string_element => avalon_st_element_to_string);
-            
-  shared variable AVALON_ST_VVC_SB : avalon_st_sb_pkg.t_generic_sb;
-
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -381,19 +363,6 @@ package body vvc_methods_pkg is
     avalon_st_expect(VVCT, vvc_instance_idx, channel_exp, data_exp, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
 
-
-  --==============================================================================
-  -- Scoreboard methods
-  --==============================================================================
-  function avalon_st_element_to_string(
-    constant value : in t_vvc_result
-  ) return string is
-    constant c_return : string := "channel_value : " & to_string(value.channel_value, HEX, KEEP_LEADING_0, INCL_RADIX) & 
-                                  ", data_array_width : " & to_string(value.data_array_length) & 
-                                  ", data_array_word_size : " & to_string(value.data_array_word_size) & ".";
-  begin
-    return c_return;
-  end function;
 
 
   --==============================================================================

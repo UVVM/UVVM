@@ -1,6 +1,12 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.3.4
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in VVC QR.
+
+
 v1.3.3
 ----------
 Released: 2020-03-30

@@ -1,0 +1,7 @@
+Bitvis VIP Specification vs Verification - Overview on Versions and Changes
+==============================================================
+
+v0.1.0
+----------
+Released: 2020-04-20
+- Initial version of Specification Coverage VIP

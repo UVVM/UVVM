@@ -123,9 +123,9 @@ package transaction_pkg is
   type t_avalon_mm_transaction_trigger_array is array (natural range <>) of std_logic;
   signal global_avalon_mm_vvc_transaction_trigger : t_avalon_mm_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                     (others => '0');
-
-  -- Shared transaction info variable
+  -- Type is defined as array to coincide with channel based VVCs
   type t_avalon_mm_transaction_group_array is array (natural range <>) of t_transaction_group;
+  -- Shared transaction info variable
   shared variable shared_avalon_mm_vvc_transaction_info : t_avalon_mm_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
                                                           (others => C_TRANSACTION_GROUP_DEFAULT);
 

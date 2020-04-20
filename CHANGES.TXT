@@ -9,6 +9,22 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+
+v2 2020.04.20
+--------------------
+Released: 2020-04-20
+- Updated Util QR check_value() with MATCH_STD_INCL_Z option.
+- Renamed Simple Watchdog to General Watchdog.
+- Removed logging message from Activity Watchdog for when number of 
+  expected VVCs match actual number.
+- Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
+- Added dependency list in compile_src.do scripts.
+- Added reference to verbosity control in VVC and SB QRs.
+- Added advanced and basic choice to vvc_generator.py
+- Added specification coverage VIP - Bitvis VIP Spec Cov
+
+
+
 v2 2020.03.30b
 --------------------
 Released: 2020-03-30b

@@ -192,11 +192,11 @@ package vvc_methods_pkg is
   --==============================================================================
   -- Activity Watchdog
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                             : in boolean;
-                                                  constant vvc_idx_for_activity_watchdog    : in integer;
-                                                  constant last_cmd_idx_executed            : in natural;
-                                                  constant scope                            : in string := "AVALON_ST_VVC");
+  procedure vvc_activity_set_vvc_state( signal global_trigger_vvc_activity  : inout std_logic;
+                                        constant busy                       : in    boolean;
+                                        constant vvc_idx_for_vvc_activity   : in    integer;
+                                        constant last_cmd_idx_executed      : in    natural;
+                                        constant scope                      : in string := "AVALON_ST_VVC");
 
 end package vvc_methods_pkg;
 
@@ -408,16 +408,16 @@ package body vvc_methods_pkg is
   --==============================================================================
   -- Activity Watchdog
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                             : in boolean;
-                                                  constant vvc_idx_for_activity_watchdog    : in integer;
-                                                  constant last_cmd_idx_executed            : in natural;
-                                                  constant scope                            : in string := "AVALON_ST_VVC") is
+  procedure vvc_activity_set_vvc_state( signal global_trigger_vvc_activity : inout std_logic;
+                                        constant busy                      : in    boolean;
+                                        constant vvc_idx_for_vvc_activity  : in    integer;
+                                        constant last_cmd_idx_executed     : in    natural;
+                                        constant scope                     : in string := "AVALON_ST_VVC") is
   begin
-    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                      busy                  => busy,
-                                                      last_cmd_idx_executed => last_cmd_idx_executed);
-    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
+    shared_vvc_activity.priv_report_vvc_activity( vvc_idx               => vvc_idx_for_vvc_activity,
+                                                  busy                  => busy,
+                                                  last_cmd_idx_executed => last_cmd_idx_executed);
+    gen_pulse(global_trigger_vvc_activity, 0 ns, "pulsing global trigger for vvc activity", scope, ID_NEVER);
   end procedure;
 
 end package body vvc_methods_pkg;

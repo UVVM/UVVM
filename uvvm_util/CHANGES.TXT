@@ -6,7 +6,7 @@ UVVM Utility Library - Overview on Versions and Changes
 
 v2.13.1
 ----------
-Released: 2020-XX-XX
+Released: 2020-04-20
 - Updated Util QR check_value() with MATCH_STD_INCL_Z option.
 
 

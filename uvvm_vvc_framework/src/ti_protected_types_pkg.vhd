@@ -26,7 +26,7 @@ context uvvm_util.uvvm_util_context;
 package ti_protected_types_pkg is
 
 
-  type t_activity_watchdog is protected
+  type t_vvc_activity is protected
 
     impure function priv_are_all_vvc_inactive return boolean;
 
@@ -58,7 +58,7 @@ end package ti_protected_types_pkg;
 package body ti_protected_types_pkg is
 
 
-  type t_activity_watchdog is protected body
+  type t_vvc_activity is protected body
 
     type t_vvc_item is record
       vvc_id     : t_vvc_id;
@@ -155,7 +155,7 @@ package body ti_protected_types_pkg is
     end procedure priv_list_registered_vvc;
 
 
-  end protected body t_activity_watchdog;
+  end protected body t_vvc_activity;
 
 
 

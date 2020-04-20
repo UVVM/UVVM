@@ -632,7 +632,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
 
     if features["activity_watchdog"]:
         file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_vvc_activity, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("      -- 1. Set defaults, fetch command and log\n")
@@ -643,7 +643,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
 
     if features["activity_watchdog"]:
         file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_vvc_activity, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the\n")
@@ -886,7 +886,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
 
     if features["activity_watchdog"]:
         file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_vvc_activity, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("      -- Fetch commands\n")
@@ -901,7 +901,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
 
     if features["activity_watchdog"]:
         file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_vvc_activity, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     print_linefeed(file_handle)
@@ -1372,7 +1372,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
         file_handle.write("  --==============================================================================\n")
         file_handle.write("  -- Activity Watchdog\n")
         file_handle.write("  --==============================================================================\n")
-        file_handle.write("  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;\n")
+        file_handle.write("  procedure activity_watchdog_register_vvc_state( signal   global_trigger_vvc_activity : inout std_logic;\n")
         file_handle.write("                                                  constant busy                             : in boolean;\n")
         file_handle.write("                                                  constant vvc_idx_for_activity_watchdog    : in integer;\n")
         file_handle.write("                                                  constant last_cmd_idx_executed            : in natural;\n")
@@ -1514,7 +1514,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("  --==============================================================================\n")
         file_handle.write("  -- Activity Watchdog\n")
         file_handle.write("  --==============================================================================\n")
-        file_handle.write("  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;\n")
+        file_handle.write("  procedure activity_watchdog_register_vvc_state( signal   global_trigger_vvc_activity : inout std_logic;\n")
         file_handle.write("                                                  constant busy                             : in boolean;\n")
         file_handle.write("                                                  constant vvc_idx_for_activity_watchdog    : in integer;\n")
         file_handle.write("                                                  constant last_cmd_idx_executed            : in natural;\n")
@@ -1523,7 +1523,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,\n")
         file_handle.write("                                                      busy                  => busy,\n")
         file_handle.write("                                                      last_cmd_idx_executed => last_cmd_idx_executed);\n")
-        file_handle.write("    gen_pulse(global_trigger_activity_watchdog, 0 ns, \"pulsing global trigger for activity watchdog\", scope, ID_NEVER);\n")
+        file_handle.write("    gen_pulse(global_trigger_vvc_activity, 0 ns, \"pulsing global trigger for activity watchdog\", scope, ID_NEVER);\n")
         file_handle.write("  end procedure;\n")
         print_linefeed(file_handle)
 

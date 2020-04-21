@@ -225,6 +225,9 @@ package types_pkg is
 
   type t_test_status is (NA, PASS, FAIL);
   
+  type t_activity is (ACTIVE, INACTIVE);
+
+  
   -------------------------------------
   -- SB
   -------------------------------------

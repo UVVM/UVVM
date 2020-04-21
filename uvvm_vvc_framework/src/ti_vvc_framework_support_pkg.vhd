@@ -86,7 +86,7 @@ package ti_vvc_framework_support_pkg is
   ------------------------------------------------------------------------
   -- Common signals for triggering VVC activity in central VVC register
   ------------------------------------------------------------------------
-  signal global_trigger_vvc_activity  : std_logic := '0';
+  signal global_trigger_vvc_activity_register  : std_logic := '0';
 
   ------------------------------------------------------------------------
   -- Common signal for signalling between VVCs, used during await_any_completion()
@@ -300,7 +300,13 @@ package ti_vvc_framework_support_pkg is
     constant msg          : string := "Activity_Watchdog"
   );
 
-  shared variable shared_vvc_activity : t_vvc_activity;
+
+  -- ============================================================================
+  -- VVC Activity Register
+  -- ============================================================================
+
+  shared variable shared_vvc_activity_register : t_vvc_activity;
+
 
   -- ============================================================================
   -- Hierarchical VVC (HVVC)
@@ -689,17 +695,17 @@ package body ti_vvc_framework_support_pkg is
     wait for 0 ns;
 
     -- Check if all expected VVCs are registered
-    if num_exp_vvc /= shared_vvc_activity.priv_get_num_registered_vvc then
-      shared_vvc_activity.priv_list_registered_vvc(msg);
+    if num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvc then
+      shared_vvc_activity_register.priv_list_registered_vvc(msg);
       alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" &
-                        to_string(shared_vvc_activity.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &
+                        to_string(shared_vvc_activity_register.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &
                         "Note that leaf VVCs (e.g. channels) are counted individually. " & msg);
     end if;
 
     loop
-      wait on global_trigger_vvc_activity for timeout;
+      wait on global_trigger_vvc_activity_register for timeout;
 
-      if not(global_trigger_vvc_activity'event) and shared_vvc_activity.priv_are_all_vvc_inactive then
+      if not(global_trigger_vvc_activity_register'event) and shared_vvc_activity_register.priv_are_all_vvc_inactive then
           alert(alert_level, "Activity watchdog timer ended after " & to_string(timeout, C_LOG_TIME_BASE) & "! " & msg);
       end if;
 

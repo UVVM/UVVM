@@ -38,13 +38,17 @@ package ti_protected_types_pkg is
 
     procedure priv_report_vvc_activity(
       constant vvc_idx                : natural;
-      constant busy                   : boolean;
+      constant activity               : t_activity;
       constant last_cmd_idx_executed  : integer
     );
 
     impure function priv_get_num_registered_vvc return natural;
 
     procedure priv_list_registered_vvc(msg : string);    
+
+    impure function priv_get_vvc_name_from_scope(scope_string : string) return string;
+    impure function priv_get_vvc_instance_from_scope(scope_string : string) return string;
+    impure function priv_get_vvc_channel_from_scope(scope_string : string) return string;    
 
   end protected;
 
@@ -84,7 +88,7 @@ package body ti_protected_types_pkg is
       check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVC in activity watchdog register", C_TB_SCOPE_DEFAULT, ID_NEVER);
 
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_state.busy = true then
+        if priv_registered_vvc(idx).vvc_state.activity = ACTIVE then
           return false;
         end if;
       end loop;
@@ -108,7 +112,7 @@ package body ti_protected_types_pkg is
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)   := name;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                 := instance;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                  := channel;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.busy                  := false;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity              := INACTIVE;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_cmd_idx_executed := -1;
       -- Return index
       return priv_last_registered_vvc_idx;
@@ -117,12 +121,12 @@ package body ti_protected_types_pkg is
 
     procedure priv_report_vvc_activity(
       constant vvc_idx                : natural;
-      constant busy                   : boolean;
+      constant activity               : t_activity;
       constant last_cmd_idx_executed  : integer
     ) is
     begin
       -- Update VVC status
-      priv_registered_vvc(vvc_idx).vvc_state.busy                  := busy;
+      priv_registered_vvc(vvc_idx).vvc_state.activity              := activity;
       priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed := last_cmd_idx_executed;
     end procedure priv_report_vvc_activity;
 
@@ -154,6 +158,77 @@ package body ti_protected_types_pkg is
       end loop;
     end procedure priv_list_registered_vvc;
 
+
+            
+    -- Read VVC name from scope (name, instance, channel)
+    impure function priv_get_vvc_name_from_scope(scope_string : string) return string is
+      variable return_string: string(1 to C_LOG_SCOPE_WIDTH) := (others => NUL);
+    begin
+        -- search in scope string
+        for idx in 1 to scope_string'length loop
+
+          -- name is complete when comma number 1 is found
+          if scope_string(idx) = ',' then
+            return return_string;
+          else
+            return_string(idx) := scope_string(idx);
+          end if;
+        end loop;
+
+        -- return entire scope string as VVC name if no comma was found.
+        return return_string;
+    end function priv_get_vvc_name_from_scope;
+
+    -- Read VVC instance from scope (name, instance, channel)
+    impure function priv_get_vvc_instance_from_scope(scope_string : string) return string is
+      variable return_string    : string(1 to C_LOG_SCOPE_WIDTH) := (others => NUL);
+      variable v_comma_counter  : integer := 0;
+    begin
+        -- search in scope string
+        for idx in 1 to scope_string'length loop
+
+          -- comma found in string
+          if scope_string(idx) = ',' then
+
+            -- instance number is complete when comma number 2 is found
+            if v_comma_counter >= 2 then
+              return return_string;
+            else
+              v_comma_counter := v_comma_counter + 1;
+            end if;
+
+          else
+              -- instance number is located between comma number 1 and 2
+              if v_comma_counter >= 1 then
+                return_string(idx) := scope_string(idx);
+              end if;
+          end if;
+
+        end loop;
+
+        -- return everything after comma number 1 as instance if no comma 2 is found.
+        return return_string;
+    end function priv_get_vvc_instance_from_scope;
+
+    -- Read VVC channel from scope (name, instance, channel)
+    impure function priv_get_vvc_channel_from_scope(scope_string : string) return string is
+      variable return_string    : string(1 to C_LOG_SCOPE_WIDTH) := (others => NUL);
+      variable v_comma_counter  : integer := 0;
+    begin
+        -- search in scope string
+        for idx in 1 to scope_string'length loop
+          -- channel is located after comma number 2
+          if v_comma_counter >= 2 then
+            return_string(idx) := scope_string(idx);
+          end if;
+        end loop;
+
+        if return_string(1) = NUL then
+          return "NA";
+        else
+          return return_string;
+        end if;
+    end function priv_get_vvc_channel_from_scope;
 
   end protected body t_vvc_activity;
 

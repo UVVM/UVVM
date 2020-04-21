@@ -54,6 +54,10 @@ begin
       -- Await cmd from the HVVC
       wait until hvvc_to_bridge.trigger = true;
 
+      if hvvc_to_bridge.dut_if_field_pos = FIRST then
+        log(ID_NEW_HVVC_CMD_SEQ, "VVC is busy while executing an HVVC command", "GMII_VVC," & to_string(GC_INSTANCE_IDX), shared_gmii_vvc_config(GC_INSTANCE_IDX).msg_id_panel);
+      end if;
+
       -- Get the next DUT data width from the config
       get_data_width_config(GC_DUT_IF_FIELD_CONFIG, hvvc_to_bridge, v_dut_data_width);
 
@@ -75,7 +79,7 @@ begin
 
           -- Convert from t_slv_array to t_byte_array
           v_data_bytes(0 to v_num_data_bytes-1) := convert_slv_array_to_byte_array(hvvc_to_bridge.data_words(0 to hvvc_to_bridge.num_data_words-1), v_byte_endianness);
-          gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), "HVVC: Send data over GMII", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+          gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), "HVVC: Write data via GMII.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, TX, GC_SCOPE);
           await_completion(GMII_VVCT, GC_INSTANCE_IDX, TX, v_cmd_idx, (GC_MAX_NUM_WORDS+v_num_transfers)*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
 
@@ -83,7 +87,7 @@ begin
           -- TODO: temporary fix for HVVC, remove line below in v3.0
           shared_gmii_vvc_config(RX, GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
 
-          gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, v_num_data_bytes, "HVVC: Read data over GMII", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+          gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, v_num_data_bytes, "HVVC: Read data via GMII.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, GC_INSTANCE_IDX, RX, GC_SCOPE);
           await_completion(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, (GC_MAX_NUM_WORDS+v_num_transfers)*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           fetch_result(GMII_VVCT, GC_INSTANCE_IDX, RX, v_cmd_idx, v_gmii_received_data, "HVVC: Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);

@@ -3,6 +3,10 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.13.2
+----------
+Released: 2020-XX-XX
+- Added a new msg_id in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ.
 
 v2.13.1
 ----------

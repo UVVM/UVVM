@@ -234,7 +234,7 @@ package vvc_methods_pkg is
     constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
   procedure vvc_activity_set_vvc_state( signal global_trigger_vvc_activity  : inout std_logic;
                                         constant busy                       : in    boolean;
@@ -452,7 +452,7 @@ package body vvc_methods_pkg is
 
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
   procedure vvc_activity_set_vvc_state( signal global_trigger_vvc_activity : inout std_logic;
                                         constant busy                      : in    boolean;

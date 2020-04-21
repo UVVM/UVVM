@@ -4177,6 +4177,10 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
+    if value'ascending /= exp'ascending then
+        alert(WARNING, "check_value(): value and exp t_slv_array have opposite directions.", scope);
+    end if;
+
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
       protected_check_counters.decrement(CHECK_VALUE);
@@ -4203,6 +4207,10 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
+    if value'ascending /= exp'ascending then
+      alert(WARNING, "check_value(): value and exp t_signed_array have opposite directions.", scope);
+    end if;
+
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
       protected_check_counters.decrement(CHECK_VALUE);
@@ -4228,6 +4236,10 @@ package body methods_pkg is
     ) return boolean is
   begin
     protected_check_counters.increment(CHECK_VALUE);
+
+    if value'ascending /= exp'ascending then
+      alert(WARNING, "check_value(): value and exp t_unsigned_array have opposite directions.", scope);
+    end if;
 
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times

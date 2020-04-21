@@ -295,7 +295,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data := std_logic_vector(random(v_cmd.data'length));
+                v_cmd.data(GC_DATA_WIDTH-1 downto 0) := std_logic_vector(random(GC_DATA_WIDTH));
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA

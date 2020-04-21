@@ -88,10 +88,10 @@ UVVM:                ID_FILE_PARSER               : ENABLED
 UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 100000000 ps. Watchdog D
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8300000 ps. Watchdog C
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8200000 ps. Watchdog B
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8100000 ps. Watchdog A
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Valid hex, no radix
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '17'. 'to_string x"17", HEX'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for string '00010111'. 'to_string x"17", BIN'

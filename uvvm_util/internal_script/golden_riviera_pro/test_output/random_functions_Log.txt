@@ -88,10 +88,10 @@ UVVM:                ID_FILE_PARSER               : ENABLED
 UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8100000 ps. Watchdog A
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8200000 ps. Watchdog B
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 8300000 ps. Watchdog C
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting watchdog: 100000000 ps. Watchdog D
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random function slv8 = 11100000
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random function slv8 = 00011110
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random function slv8 = 00011111

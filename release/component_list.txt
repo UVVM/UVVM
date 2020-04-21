@@ -16,3 +16,4 @@ bitvis_vip_sbi
 bitvis_vip_scoreboard
 bitvis_vip_spi
 bitvis_vip_uart
+bitvis_vip_spec_cov

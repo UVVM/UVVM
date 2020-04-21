@@ -43,7 +43,7 @@ package adaptations_pkg is
   constant C_LOG_TIME_WIDTH     : natural := 16; -- 3 chars used for unit eg. " ns"
   constant C_LOG_TIME_BASE      : time    := ns; -- Unit in which time is shown in log (ns | ps)
   constant C_LOG_TIME_DECIMALS  : natural := 1; -- Decimals to show for given C_LOG_TIME_BASE
-  constant C_LOG_SCOPE_WIDTH    : natural := 30;
+  constant C_LOG_SCOPE_WIDTH    : natural := 30; -- Maximum scope length, has to match C_HIERARCHY_NODE_NAME_LENGTH in types_pkg
   constant C_LOG_LINE_WIDTH     : natural := 175;
   constant C_LOG_INFO_WIDTH     : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
@@ -209,7 +209,7 @@ package adaptations_pkg is
   constant C_ENABLE_HIERARCHICAL_ALERTS : boolean := false;
   constant C_BASE_HIERARCHY_LEVEL : string(1 to 5) := "Total";
 
-  constant C_EMPTY_NODE : t_hierarchy_node := ("                    ",
+  constant C_EMPTY_NODE : t_hierarchy_node := ("                              ",
                                                 (others => (others => 0)),
                                                 (others => 0),
                                                 (others => true));

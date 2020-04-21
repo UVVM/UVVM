@@ -190,7 +190,7 @@ package types_pkg is
   type t_transaction_result is (ACK, NAK, ERROR);  -- add more when needed
 
   type t_hierarchy_alert_level_print is array (NOTE to t_alert_level'right) of boolean;
-  constant C_HIERARCHY_NODE_NAME_LENGTH : natural := 20;
+  constant C_HIERARCHY_NODE_NAME_LENGTH : natural := 30; -- Maximum scope length, has to match C_LOG_SCOPE_WIDTH in adaptations_pkg
   type t_hierarchy_node is
       record
         name : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);

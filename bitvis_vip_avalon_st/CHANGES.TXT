@@ -1,9 +1,9 @@
 Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
-v1.x.x
+v1.1.1
 ----------
-Released: 2020-xx-xx
+Released: 2020-04-20
 - Added reference to verbosity control in VVC QR.
 
 

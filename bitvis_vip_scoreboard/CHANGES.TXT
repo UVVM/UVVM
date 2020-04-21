@@ -1,9 +1,9 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.1.1
 ----------
-Released: 2020-xx-xx
+Released: 2020-04-20
 - Added reference to verbosity control in QR.
 
 v2.1.0

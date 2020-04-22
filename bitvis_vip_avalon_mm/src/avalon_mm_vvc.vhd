@@ -501,6 +501,7 @@ begin
     variable v_read_data              : t_vvc_result; -- See vvc_cmd_pkg
     variable v_normalised_addr        : unsigned(GC_ADDR_WIDTH-1 downto 0)          := (others => '0');
     variable v_normalised_data        : std_logic_vector(GC_DATA_WIDTH-1 downto 0)  := (others => '0');
+    -- check if command_queue and command_response_queue is empty
     variable v_cmd_queues_are_empty   : boolean;
 
   begin
@@ -509,12 +510,13 @@ begin
     command_response_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
     command_response_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
     command_response_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
-    -- Wait for command response queue to initialize completely
-    wait for 0 ns;  
-    wait for 0 ns;  
+
+    -- Wait until VVC is registered in vvc activity register in the interpreter
+    wait until entry_num_in_vvc_activity_register >= 0;
 
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
+
 
     loop
       -- update vvc activity

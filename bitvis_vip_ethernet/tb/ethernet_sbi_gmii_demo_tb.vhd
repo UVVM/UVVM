@@ -118,15 +118,6 @@ begin
     -- Verbosity control
     disable_log_msg(ID_UVVM_CMD_ACK);
 
-    -- TODO: temporary fix to disable sub-VVC unwanted logging
-    -- while executing HVVC commands, remove in v3.0
-    disable_log_msg(GMII_VVCT, C_VVC_GMII, TX, ID_CMD_INTERPRETER);
-    disable_log_msg(GMII_VVCT, C_VVC_GMII, RX, ID_CMD_INTERPRETER);
-    disable_log_msg(GMII_VVCT, C_VVC_GMII, TX, ID_CMD_EXECUTOR);
-    disable_log_msg(GMII_VVCT, C_VVC_GMII, RX, ID_CMD_EXECUTOR);
-    disable_log_msg(SBI_VVCT, C_VVC_SBI, ID_CMD_INTERPRETER);
-    disable_log_msg(SBI_VVCT, C_VVC_SBI, ID_CMD_EXECUTOR);
-
     -- Set Ethernet VVC config for this testbench
     shared_ethernet_vvc_config(TX, C_VVC_ETH_SBI).bfm_config.mac_destination  := C_ETH_GMII_MAC_ADDR;
     shared_ethernet_vvc_config(TX, C_VVC_ETH_SBI).bfm_config.mac_source       := C_ETH_SBI_MAC_ADDR;

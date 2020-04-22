@@ -43,6 +43,9 @@ begin
     variable v_data_slv                 : std_logic_vector(GC_MAX_NUM_WORDS*c_data_words_width-1 downto 0);
     variable v_disabled_msg_id_int_wait : boolean;
     variable v_disabled_msg_id_exe_wait : boolean;
+    -- TODO: temporary fix for HVVC, remove 2 lines below in v3.0
+    variable v_disabled_msg_id_int      : boolean;
+    variable v_disabled_msg_id_exe      : boolean;
 
     -- Converts a t_slv_array to a std_logic_vector (word endianness is LOWER_WORD_RIGHT)
     function convert_slv_array_to_slv(
@@ -98,6 +101,9 @@ begin
         -- Disable the interpreter and executor waiting logs during the HVVC command
         v_disabled_msg_id_int_wait := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_INTERPRETER_WAIT);
         v_disabled_msg_id_exe_wait := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_EXECUTOR_WAIT);
+        -- TODO: temporary fix for HVVC, remove 2 lines below in v3.0
+        v_disabled_msg_id_int := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_INTERPRETER);
+        v_disabled_msg_id_exe := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_EXECUTOR);
       end if;
 
       -- Get the next DUT address from the config to write the data
@@ -166,6 +172,11 @@ begin
       -- Enable the interpreter waiting log after receiving its last command
       if v_disabled_msg_id_int_wait and hvvc_to_bridge.dut_if_field_pos = LAST then
         shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER_WAIT) := ENABLED;
+      end if;
+      -- TODO: temporary fix for HVVC, remove 4 lines below in v3.0
+      if hvvc_to_bridge.dut_if_field_pos = LAST then
+        shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER) := ENABLED when v_disabled_msg_id_int;
+        shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_EXECUTOR) := ENABLED when v_disabled_msg_id_exe;
       end if;
 
       gen_pulse(bridge_to_hvvc.trigger, 0 ns, "Pulsing bridge_to_hvvc trigger", GC_SCOPE, ID_NEVER);

@@ -81,7 +81,7 @@ architecture behave of uart_rx_vvc is
   alias vvc_transaction_info_trigger : std_logic           is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
   alias vvc_transaction_info         : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
   -- VVC Activity 
-  signal vvc_idx_for_vvc_activity : integer;
+  signal entry_num_in_vvc_activity_register : integer;
 
 begin
 
@@ -110,9 +110,9 @@ begin
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    vvc_idx_for_vvc_activity <= shared_vvc_activity.priv_register_vvc(name      => "UART_RX",
-                                                                      instance  => GC_INSTANCE_IDX,
-                                                                      channel   => GC_CHANNEL);
+    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => "UART_RX",
+                                                                                         instance  => GC_INSTANCE_IDX,
+                                                                                         channel   => GC_CHANNEL);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -223,14 +223,14 @@ begin
     loop
 
       -- update vvc activity
-      vvc_activity_set_vvc_state(global_trigger_vvc_activity, false, vvc_idx_for_vvc_activity, last_cmd_idx_executed, C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
       -- update vvc activity
-      vvc_activity_set_vvc_state(global_trigger_vvc_activity, true, vvc_idx_for_vvc_activity, last_cmd_idx_executed, C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;

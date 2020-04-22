@@ -689,6 +689,7 @@ package body vvc_methods_pkg is
         if v_preamble_and_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
+        v_pos_preamble_and_sfd := MIDDLE; -- Avoid repeating the first field log for each byte
       end loop;
       v_packet(0 to 7) := convert_slv_to_byte_array(v_preamble_and_sfd, LOWER_BYTE_LEFT);
       log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & 

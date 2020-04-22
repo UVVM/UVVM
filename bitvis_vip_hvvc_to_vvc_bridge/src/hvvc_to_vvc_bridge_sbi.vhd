@@ -32,15 +32,17 @@ architecture SBI of hvvc_to_vvc_bridge is
 begin
 
   p_executor : process
-    constant c_data_words_width       : natural := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
-    variable v_cmd_idx                : integer;
-    variable v_sbi_received_data      : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
-    variable v_dut_address            : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
-    variable v_dut_address_increment  : integer;
-    variable v_dut_data_width         : positive;
-    variable v_num_transfers          : integer;
-    variable v_num_data_bytes         : positive;
-    variable v_data_slv               : std_logic_vector(GC_MAX_NUM_WORDS*c_data_words_width-1 downto 0);
+    constant c_data_words_width         : natural := hvvc_to_bridge.data_words(hvvc_to_bridge.data_words'low)'length;
+    variable v_cmd_idx                  : integer;
+    variable v_sbi_received_data        : bitvis_vip_sbi.vvc_cmd_pkg.t_vvc_result;
+    variable v_dut_address              : unsigned(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)(GC_DUT_IF_FIELD_CONFIG(GC_DUT_IF_FIELD_CONFIG'low)'high).dut_address'range);
+    variable v_dut_address_increment    : integer;
+    variable v_dut_data_width           : positive;
+    variable v_num_transfers            : integer;
+    variable v_num_data_bytes           : positive;
+    variable v_data_slv                 : std_logic_vector(GC_MAX_NUM_WORDS*c_data_words_width-1 downto 0);
+    variable v_disabled_msg_id_int_wait : boolean;
+    variable v_disabled_msg_id_exe_wait : boolean;
 
     -- Converts a t_slv_array to a std_logic_vector (word endianness is LOWER_WORD_RIGHT)
     function convert_slv_array_to_slv(
@@ -70,6 +72,20 @@ begin
       return v_slv_array;
     end function;
 
+    -- Disables a previously enabled msg_id in the VVC's shared config
+    impure function disable_sbi_vvc_msg_id(
+      constant instance_idx : integer;
+      constant msg_id       : t_msg_id
+    ) return boolean is
+      variable v_disable_id : boolean := false;
+    begin
+      if shared_sbi_vvc_config(instance_idx).msg_id_panel(msg_id) = ENABLED then
+        shared_sbi_vvc_config(instance_idx).msg_id_panel(msg_id) := DISABLED;
+        v_disable_id := true;
+      end if;
+      return v_disable_id;
+    end function;
+
   begin
 
     loop
@@ -79,6 +95,9 @@ begin
 
       if hvvc_to_bridge.dut_if_field_pos = FIRST then
         log(ID_NEW_HVVC_CMD_SEQ, "VVC is busy while executing an HVVC command", "SBI_VVC," & to_string(GC_INSTANCE_IDX), shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel);
+        -- Disable the interpreter and executor waiting logs during the HVVC command
+        v_disabled_msg_id_int_wait := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_INTERPRETER_WAIT);
+        v_disabled_msg_id_exe_wait := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_EXECUTOR_WAIT);
       end if;
 
       -- Get the next DUT address from the config to write the data
@@ -109,6 +128,10 @@ begin
           for i in 0 to v_num_transfers-1 loop
             sbi_write(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, v_data_slv(v_dut_data_width*(i+1)-1 downto v_dut_data_width*i),
               "HVVC: Write data via SBI.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            -- Enable the executor waiting log after receiving its last command
+            if v_disabled_msg_id_exe_wait and hvvc_to_bridge.dut_if_field_pos = LAST and i = v_num_transfers-1 then
+              shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_EXECUTOR_WAIT) := ENABLED;
+            end if;
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
             await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             v_dut_address := v_dut_address + v_dut_address_increment;
@@ -121,6 +144,10 @@ begin
           -- Loop through transfers
           for i in 0 to v_num_transfers-1 loop
             sbi_read(SBI_VVCT, GC_INSTANCE_IDX, v_dut_address, "HVVC: Read data via SBI.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+            -- Enable the executor waiting log after receiving its last command
+            if v_disabled_msg_id_exe_wait and hvvc_to_bridge.dut_if_field_pos = LAST and i = v_num_transfers-1 then
+              shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_EXECUTOR_WAIT) := ENABLED;
+            end if;
             v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, GC_INSTANCE_IDX, NA, GC_SCOPE);
             await_completion(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, GC_MAX_NUM_WORDS*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for read to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
             fetch_result(SBI_VVCT, GC_INSTANCE_IDX, v_cmd_idx, v_sbi_received_data, "HVVC: Fetching received data.", TB_ERROR, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
@@ -135,6 +162,11 @@ begin
           alert(TB_ERROR, "Unsupported operation");
 
       end case;
+
+      -- Enable the interpreter waiting log after receiving its last command
+      if v_disabled_msg_id_int_wait and hvvc_to_bridge.dut_if_field_pos = LAST then
+        shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER_WAIT) := ENABLED;
+      end if;
 
       gen_pulse(bridge_to_hvvc.trigger, 0 ns, "Pulsing bridge_to_hvvc trigger", GC_SCOPE, ID_NEVER);
     end loop;

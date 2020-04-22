@@ -502,7 +502,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, features):
     file_handle.write("      --    releases global semaphore\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, "+
-                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);\n")
+                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);\n")
     file_handle.write("      v_cmd_has_been_acked := false; -- Clear flag\n")
     file_handle.write("      -- Update shared_vvc_last_received_cmd_idx with received command index\n")
     if vvc_channel.name == "NA":
@@ -638,7 +638,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("      -- 1. Set defaults, fetch command and log\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config"+
-                      ", vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);\n")
+                      ", vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);\n")
     print_linefeed(file_handle)
 
     if features["activity_watchdog"]:
@@ -892,7 +892,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("      -- Fetch commands\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, "+queue_name+"_queue, vvc_config"+
-                      ", vvc_status, "+queue_name+"_queue_is_increasing, "+queue_name+"_is_busy, C_VVC_LABELS, v_msg_id_panel);\n")
+                      ", vvc_status, "+queue_name+"_queue_is_increasing, "+queue_name+"_is_busy, C_VVC_LABELS);\n")
     print_linefeed(file_handle)
     file_handle.write("      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the\n")
     file_handle.write("      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.\n")

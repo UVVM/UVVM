@@ -114,7 +114,7 @@ package td_vvc_entity_support_pkg is
     signal global_vvc_busy     : inout std_logic;
     signal vvc_ack             : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
     );
 
   -- DEPRECATED
@@ -255,17 +255,7 @@ package td_vvc_entity_support_pkg is
     signal   queue_is_increasing : in    boolean;
     signal   executor_is_busy    : inout boolean;
     constant vvc_labels          : in    t_vvc_labels;
-    constant msg_id_panel        : in    t_msg_id_panel
-    );
-
-  procedure fetch_command_and_prepare_executor(
-    variable command              : inout t_vvc_cmd_record;
-    variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config           : in t_vvc_config;
-    variable vvc_status           : inout t_vvc_status;
-    signal queue_is_increasing    : in boolean;
-    signal executor_is_busy       : inout boolean;
-    constant vvc_labels           : in t_vvc_labels
+    constant msg_id_panel        : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
     );
 
   -------------------------------------------
@@ -523,14 +513,14 @@ package body td_vvc_entity_support_pkg is
     signal   global_vvc_busy   : inout std_logic;
     signal   vvc_ack           : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
     ) is
     variable v_was_broadcast : boolean         := false;
     variable v_msg_id_panel  : t_msg_id_panel;
   begin
     vvc_ack <= 'Z';  -- Do not contribute to the acknowledge unless selected
     -- Wait for a new command
-    log(ID_CMD_INTERPRETER_WAIT, "Interpreter: Waiting for command", to_string(vvc_labels.scope), msg_id_panel);
+    log(ID_CMD_INTERPRETER_WAIT, "Interpreter: Waiting for command", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
 
     loop
       VVC_BROADCAST <= 'Z';
@@ -880,7 +870,7 @@ package body td_vvc_entity_support_pkg is
     signal   queue_is_increasing  : in    boolean;
     signal   executor_is_busy     : inout boolean;
     constant vvc_labels           : in    t_vvc_labels;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant msg_id_panel         : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
   ) is
     variable v_msg_id_panel : t_msg_id_panel;
   begin
@@ -889,7 +879,7 @@ package body td_vvc_entity_support_pkg is
 
     wait for 0 ns;  -- to allow delta updates in other processes.
     if command_queue.is_empty(VOID) then
-      log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), msg_id_panel);
+      log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
       wait until queue_is_increasing;
     end if;
 
@@ -903,21 +893,6 @@ package body td_vvc_entity_support_pkg is
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     vvc_status.current_cmd_idx := command.cmd_idx;
   end procedure;
-
-  procedure fetch_command_and_prepare_executor(
-    variable command              : inout t_vvc_cmd_record;
-    variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config           : in t_vvc_config;
-    variable vvc_status           : inout t_vvc_status;
-    signal   queue_is_increasing  : in boolean;
-    signal executor_is_busy       : inout boolean;
-    constant vvc_labels           : in t_vvc_labels
-    ) is
-  begin
-    fetch_command_and_prepare_executor( command, command_queue, vvc_config, vvc_status, queue_is_increasing,
-                                        executor_is_busy, vvc_labels, vvc_config.msg_id_panel);
-  end procedure;
-
 
   -- The result_queue is used so that whatever type defined in the VVC can be stored,
   -- and later fetched with fetch_result()

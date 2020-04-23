@@ -33,6 +33,9 @@ library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 use bitvis_vip_uart.uart_bfm_pkg.all;
 
+library bitvis_vip_avalon_mm;
+context bitvis_vip_avalon_mm.vvc_context;
+
 
 -- Test bench entity
 entity internal_vvc_tb is
@@ -825,6 +828,12 @@ begin
     wait for 6*C_FRAME_PERIOD;
     await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 9", scope => C_SCOPE_H1);
 
+    log(ID_LOG_HDR, "Use await_completion in a VVC with multiple executors from two different sequencers", C_SCOPE_H1);
+    shared_avalon_mm_vvc_config(1).bfm_config.use_readdatavalid := true;
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Send a read request");
+    await_completion(AVALON_MM_VVCT, 1, 100 ns, scope => C_SCOPE_H1);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 10", scope => C_SCOPE_H1);
+
     -- Ending the simulation in sequencer 1
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_H1);
     await_barrier(barrier_h, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_H1);
@@ -913,6 +922,13 @@ begin
     log(ID_LOG_HDR, "Use await_any_completion for a group of VVCs from two different sequencers", C_SCOPE_H2);
     await_any_completion(SBI_VVCT, 3, LAST, 100 ns, scope => C_SCOPE_H2);
     await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 9", scope => C_SCOPE_H2);
+
+    wait for 20 ns; -- wait long enough so the VVC is handling the read response (2nd executor)
+    log(ID_LOG_HDR, "Use await_completion in a VVC with multiple executors from two different sequencers", C_SCOPE_H2);
+    --TODO: remove increment_expected_alerts() after fixing await_completion
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H2);
+    await_completion(AVALON_MM_VVCT, 1, 100 ns, scope => C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 10", scope => C_SCOPE_H2);
 
     -- Ending the simulation in sequencer 2
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_H2);

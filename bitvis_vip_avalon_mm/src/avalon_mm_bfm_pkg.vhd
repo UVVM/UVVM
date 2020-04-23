@@ -533,6 +533,7 @@ package body avalon_mm_bfm_pkg is
 
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
+    variable v_clock_period           : time := -1 ns;
 
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
@@ -564,6 +565,9 @@ package body avalon_mm_bfm_pkg is
     check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                               config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
+    -- Get the clock period from the clk signal in case it is not configured
+    v_clock_period := abs(v_time_of_rising_edge - v_time_of_falling_edge) * 2;
+
     -- Set the clock period for avalon_mm_read_response()
     shared_avalon_clock_period.time_of_falling_edge := v_time_of_falling_edge;
     shared_avalon_clock_period.time_of_rising_edge  := v_time_of_rising_edge;
@@ -592,12 +596,11 @@ package body avalon_mm_bfm_pkg is
       end loop;
     end if;
 
-    
+    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period/4;
+
     if ext_proc_call = "" then -- proc_name = "avalon_mm_read_request"
       log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
-
-    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after config.clock_period/4;
   end procedure avalon_mm_read_request;
 
 

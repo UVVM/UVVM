@@ -61,6 +61,10 @@ if { [info exists 1] } {
   unset 1
 }
 
+if {![file exists $vip_sbi_part_path/sim]} {
+  file mkdir $vip_sbi_part_path/sim
+}
+
 echo "\n========================================="
 echo "Compiling SBI BFM"
 echo "=========================================\n"

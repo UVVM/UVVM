@@ -25,6 +25,8 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_sbi;
 library bitvis_vip_uart;
 library bitvis_uart;
+library bitvis_vip_avalon_mm;
+use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
 
 -- Test harness entity
@@ -96,6 +98,9 @@ architecture struct of internal_vvc_th is
   signal ready          : std_logic;
   
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
+
+  -- Avalon-MM signals
+  signal avalon_mm_if   : t_avalon_mm_if(address(31 downto 0), byte_enable(3 downto 0), writedata(31 downto 0), readdata(31 downto 0));
 
 begin
 
@@ -243,6 +248,8 @@ begin
     sbi_vvc_master_if.rdata     => uart_4_rdata
   );
 
+  -- Static '1' ready signal for the SBI VVC
+  ready <= '1';
  
   -----------------------------------------------------------------------------
   -- UART VVC
@@ -277,9 +284,26 @@ begin
     uart_vvc_rx         => uart_4_tx
   );
  
- 
-  -- Static '1' ready signal for the SBI VVC
-  ready <= '1';
- 
+  -----------------------------------------------------------------------------
+  -- Avalon-MM VVC
+  -----------------------------------------------------------------------------
+  i_avalon_mm_vvc_1 : entity bitvis_vip_avalon_mm.avalon_mm_vvc
+    generic map(
+      GC_ADDR_WIDTH   => 32,
+      GC_DATA_WIDTH   => 32,
+      GC_INSTANCE_IDX => 1
+    )
+    port map(
+      clk                     => clk,
+      avalon_mm_vvc_master_if => avalon_mm_if
+    );
+
+  -- Static data from the "DUT"
+  avalon_mm_if.readdata      <= (others => '1');
+  avalon_mm_if.response      <= (others => '0');
+  avalon_mm_if.waitrequest   <= '0';
+  avalon_mm_if.irq           <= '0';
+  -- Simulate a delay in the read response
+  avalon_mm_if.readdatavalid <= transport avalon_mm_if.read after C_CLK_PERIOD*5;
 
 end struct;

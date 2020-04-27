@@ -146,7 +146,7 @@ begin
     shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
 
     -- Register VVC in vvc activity register
-    vvc_idx_for_vvc_activity <= shared_vvc_activity.priv_register_vvc(name      => "ETHERNET",
+    vvc_idx_for_vvc_activity <= shared_vvc_activity.priv_register_vvc(name      => C_VVC_NAME,
                                                                       channel   => GC_CHANNEL,
                                                                       instance  => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config

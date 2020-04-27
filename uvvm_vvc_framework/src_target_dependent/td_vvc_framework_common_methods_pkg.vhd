@@ -535,13 +535,14 @@ package body td_vvc_framework_common_methods_pkg is
     -- register index is -1 if VVC is not registered in the vvc activity register
     if v_vvc_idx_in_activity_register /= -1 then
 
-      -- wait for VVC to complete cmd idx
+      -- wait for VVC to complete cmd index
       loop 
         v_timestamp := now;
         wait on global_trigger_vvc_activity_register for timeout;
 
         -- vvc activity trigger pulsed
         if global_trigger_vvc_activity_register'event then
+          -- VVC cmd index finished?
           if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) >= wanted_idx) then
             exit;
           end if;

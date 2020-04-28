@@ -52,8 +52,9 @@ package ti_protected_types_pkg is
       constant vvc_channel      : in t_channel := NA
     ) return integer;
 
-    impure function priv_get_vvc_activity(vvc_idx : natural) return t_activity;
-    impure function priv_get_vvc_last_cmd_idx_executed(vvc_idx : natural) return integer;
+    impure function priv_get_vvc_activity(constant vvc_idx : natural) return t_activity;
+    impure function priv_get_vvc_last_cmd_idx_executed(constant vvc_idx : natural) return integer;
+
   end protected;
 
 
@@ -163,7 +164,7 @@ package body ti_protected_types_pkg is
     end procedure priv_list_registered_vvc;
 
     impure function priv_get_vvc_activity(
-      vvc_idx : natural
+      constant vvc_idx : natural
     ) return t_activity is
     begin
       check_value(priv_last_registered_vvc_idx >= vvc_idx, TB_ERROR, "Invalid index for VVC activity register: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
@@ -173,7 +174,7 @@ package body ti_protected_types_pkg is
 
 
     impure function priv_get_vvc_last_cmd_idx_executed(
-      vvc_idx : natural
+      constant vvc_idx : natural
     ) return integer is
     begin
       check_value(priv_last_registered_vvc_idx >= vvc_idx, TB_ERROR, "Invalid index for VVC activity register: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
@@ -202,7 +203,6 @@ package body ti_protected_types_pkg is
       -- not found
       return -1;
     end function priv_get_vvc_idx_in_activity_register;
-
 
   end protected body t_vvc_activity;
 

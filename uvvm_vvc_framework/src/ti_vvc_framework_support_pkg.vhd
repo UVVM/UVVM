@@ -86,7 +86,7 @@ package ti_vvc_framework_support_pkg is
   ------------------------------------------------------------------------
   -- Common signals for triggering VVC activity in central VVC register
   ------------------------------------------------------------------------
-  signal global_trigger_vvc_activity_register  : std_logic := '0';
+  signal global_trigger_vvc_activity_register  : std_logic := 'L';
 
   ------------------------------------------------------------------------
   -- Common signal for signalling between VVCs, used during await_any_completion()

@@ -22,9 +22,9 @@ use IEEE.numeric_std.all;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_sbi;
-library bitvis_vip_uart;
 library bitvis_uart;
+library bitvis_vip_uart;
+library bitvis_vip_sbi;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
@@ -32,32 +32,29 @@ use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 -- Test harness entity
 entity internal_vvc_th is
   port(
-    clk  : in  std_logic;
-    arst : in  std_logic;
-    
+    clk          : in  std_logic;
+    arst         : in  std_logic;
     -- CPU interface to UART 0
-    uart_0_cs   : in  std_logic;
-    uart_0_addr : in  unsigned(2 downto 0);
-    uart_0_wr   : in  std_logic;
-    uart_0_rd   : in  std_logic;
+    uart_0_cs    : in  std_logic;
+    uart_0_addr  : in  unsigned(2 downto 0);
+    uart_0_wr    : in  std_logic;
+    uart_0_rd    : in  std_logic;
     uart_0_wdata : in  std_logic_vector(7 downto 0);
     uart_0_rdata : out std_logic_vector(7 downto 0) := (others => '0');
     -- UART 0 RX/TX
-    uart_0_rx_a : in  std_logic;
-    uart_0_tx   : out std_logic;
-    
+    uart_0_rx_a  : in  std_logic;
+    uart_0_tx    : out std_logic;
     -- UART 1 RX/TX
-    uart_1_rx_a : in  std_logic;
-    uart_1_tx   : out std_logic;
-    
+    uart_1_rx_a  : in  std_logic;
+    uart_1_tx    : out std_logic;
     -- CPU interface to UART 2
-    uart_2_cs   : in  std_logic;
-    uart_2_addr : in  unsigned(2 downto 0);
-    uart_2_wr   : in  std_logic;
-    uart_2_rd   : in  std_logic;
+    uart_2_cs    : in  std_logic;
+    uart_2_addr  : in  unsigned(2 downto 0);
+    uart_2_wr    : in  std_logic;
+    uart_2_rd    : in  std_logic;
     uart_2_wdata : in  std_logic_vector(7 downto 0);
     uart_2_rdata : out std_logic_vector(7 downto 0) := (others => '0')
-    );
+  );
 end entity;
 
 -- Test harness architecture
@@ -94,6 +91,16 @@ architecture struct of internal_vvc_th is
   signal   uart_4_rdata : std_logic_vector(7 downto 0);
   signal   uart_4_rx_a  : std_logic;
   signal   uart_4_tx    : std_logic;
+
+  -- UART 5 signals
+  signal   uart_5_cs    : std_logic;
+  signal   uart_5_addr  : unsigned(2 downto 0);
+  signal   uart_5_wr    : std_logic;
+  signal   uart_5_rd    : std_logic;
+  signal   uart_5_wdata : std_logic_vector(7 downto 0);
+  signal   uart_5_rdata : std_logic_vector(7 downto 0);
+  signal   uart_5_rx_a  : std_logic;
+  signal   uart_5_tx    : std_logic;
 
   signal ready          : std_logic;
   
@@ -192,7 +199,22 @@ begin
       rx_a            => uart_4_rx_a,
       tx              => uart_4_tx
   );
-
+  i_uart_5: entity bitvis_uart.uart
+    port map (
+      -- DSP interface and general control signals
+      clk             => clk,
+      arst            => arst,
+      -- CPU interface
+      cs              => uart_5_cs,
+      addr            => uart_5_addr,
+      wr              => uart_5_wr,
+      rd              => uart_5_rd,
+      wdata           => uart_5_wdata,
+      rdata           => uart_5_rdata,
+      -- UART signals
+      rx_a            => uart_5_rx_a,
+      tx              => uart_5_tx
+  );
 
   -----------------------------------------------------------------------------
   -- SBI VVC
@@ -248,6 +270,25 @@ begin
     sbi_vvc_master_if.rdata     => uart_4_rdata
   );
 
+  -- IMPORTANT: This VVC is only meant to be used for testing await_completion &
+  -- await_any_completion old mechanism compatibility with the new mechanism.
+  i_sbi_vvc_4: entity bitvis_vip_sbi.sbi_vvc_old
+  generic map(
+    GC_ADDR_WIDTH     => 3,
+    GC_DATA_WIDTH     => 8,
+    GC_INSTANCE_IDX   => 4
+  )
+  port map(
+    clk                         => clk,
+    sbi_vvc_master_if.cs        => uart_5_cs,
+    sbi_vvc_master_if.rena      => uart_5_rd,
+    sbi_vvc_master_if.wena      => uart_5_wr,
+    sbi_vvc_master_if.addr      => uart_5_addr,
+    sbi_vvc_master_if.wdata     => uart_5_wdata,
+    sbi_vvc_master_if.ready     => ready,
+    sbi_vvc_master_if.rdata     => uart_5_rdata
+  );
+
   -- Static '1' ready signal for the SBI VVC
   ready <= '1';
  
@@ -283,7 +324,19 @@ begin
     uart_vvc_tx         => uart_4_rx_a,
     uart_vvc_rx         => uart_4_tx
   );
- 
+
+  -- IMPORTANT: This VVC is only meant to be used for testing await_completion &
+  -- await_any_completion old mechanism compatibility with the new mechanism.
+  i_uart_vvc_4: entity bitvis_vip_uart.uart_vvc_old
+  generic map(
+    GC_DATA_WIDTH     => 8,
+    GC_INSTANCE_IDX   => 4
+  )
+  port map(
+    uart_vvc_tx         => uart_5_rx_a,
+    uart_vvc_rx         => uart_5_tx
+  );
+
   -----------------------------------------------------------------------------
   -- Avalon-MM VVC
   -----------------------------------------------------------------------------

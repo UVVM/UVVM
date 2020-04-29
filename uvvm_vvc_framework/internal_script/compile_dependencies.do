@@ -21,3 +21,4 @@ do $root_path/script/compile_src.do $root_path/bitvis_uart $root_path/bitvis_uar
 do $root_path/script/compile_src.do $root_path/bitvis_vip_uart $root_path/bitvis_vip_uart/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_vip_sbi/sim
 do $root_path/script/compile_src.do $root_path/bitvis_vip_avalon_mm $root_path/bitvis_vip_avalon_mm/sim
+do $root_path/uvvm_vvc_framework/internal_tb/reference_vvcs/script/compile_src.do $root_path/uvvm_vvc_framework/internal_tb/reference_vvcs

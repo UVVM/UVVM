@@ -457,14 +457,13 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
     variable v_vvc_idx_in_activity_register : integer         := -1;
     variable v_timestamp                    : time;
-
   begin
     -- get register index for this VVC in the vvc activity register
     v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_target.vvc_name, vvc_instance_idx, vvc_channel);
-    
+
     -- register index is -1 if VVC is not registered in the vvc activity register
     if (v_vvc_idx_in_activity_register /= -1) then
-      
+
       -- check if VVC is active
       if (shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register) = ACTIVE) then
       
@@ -483,7 +482,6 @@ package body td_vvc_framework_common_methods_pkg is
             exit;
           end if;
         end loop;
-
       end if;
 
     else 
@@ -530,24 +528,22 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
     variable v_vvc_idx_in_activity_register : integer         := -1;
     variable v_timestamp                    : time;
-
   begin
     -- get register index for this VVC in the vvc activity register
     v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_target.vvc_name, vvc_instance_idx, vvc_channel);
 
     -- register index is -1 if VVC is not registered in the vvc activity register
     if (v_vvc_idx_in_activity_register /= -1) then
-
+  
       -- check if VVC is active and check that VVC has not already processed the wanted command index
-      if (shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register) = ACTIVE) or
-         (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) < wanted_idx) then
+      if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) < wanted_idx) then
 
         -- wait for VVC to complete cmd index
         v_timestamp := now;
         loop 
           wait on global_trigger_vvc_activity_register for timeout;
 
-          if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) >= wanted_idx) then
+          if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) >= wanted_idx) then 
             exit;
           end if;
 

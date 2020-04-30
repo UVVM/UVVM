@@ -80,8 +80,8 @@ architecture behave of wishbone_vvc is
   alias vvc_config : t_vvc_config is shared_wishbone_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status : t_vvc_status is shared_wishbone_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_wishbone_transaction_info(GC_INSTANCE_IDX);
-  -- Activity Watchdog
-  signal vvc_idx_for_activity_watchdog : integer;
+  -- VVC Activity 
+  signal entry_num_in_vvc_activity_register : integer;
 
 begin
 
@@ -110,9 +110,9 @@ begin
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
-    -- Register VVC in activity watchdog register
-    vvc_idx_for_activity_watchdog <= shared_activity_watchdog.priv_register_vvc(name      => "Wishbone",
-                                                                                instance  => GC_INSTANCE_IDX);
+    -- Register VVC in vvc activity register
+    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,
+                                                                                         instance  => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -221,15 +221,15 @@ begin
 
     loop
 
-      -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
+      -- update vvc activity
+      update_vvc_activity_register(global_trigger_vvc_activity_register, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
-      -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
+      -- update vvc activity
+      update_vvc_activity_register(global_trigger_vvc_activity_register, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.

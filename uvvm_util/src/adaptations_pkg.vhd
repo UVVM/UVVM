@@ -146,6 +146,7 @@ package adaptations_pkg is
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
+    ID_VVC_ACTIVITY,
     -- Monitors
     ID_MONITOR,               -- General monitor information
     ID_MONITOR_ERROR,         -- General monitor errors
@@ -349,11 +350,11 @@ package adaptations_pkg is
   );
 
   type t_vvc_state is record
-    busy                  : boolean;
+    activity              : t_activity;
     last_cmd_idx_executed : integer;
   end record;
   constant  C_VVC_STATE_DEFAULT : t_vvc_state := (
-    busy                  => false,
+    activity              => INACTIVE,
     last_cmd_idx_executed => -1
   );
 

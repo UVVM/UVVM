@@ -46,7 +46,8 @@ def main(argv):
             "Testing_different_accesses_between_two_sequencer",
             "Testing_different_single_sequencer_access",
             "Testing_shared_uvvm_status_await_any_completion_info",
-            "Testing_await_completion_from_different_sequencers"
+            "Testing_await_completion_from_different_sequencers",
+            "Testing_await_any_completion_from_different_sequencers"
             ]
 
   # Setup testbench and run

@@ -117,7 +117,7 @@ begin
       -- initialise shared_vvc_last_received_cmd_idx for channel and instance
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
       -- Register VVC in vvc activity register
-      entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => "AXIStream",
+      entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,
                                                                                            instance  => GC_INSTANCE_IDX);
       -- Set initial value of v_msg_id_panel to msg_id_panel in config
       v_msg_id_panel := vvc_config.msg_id_panel;
@@ -217,14 +217,14 @@ begin
       loop
          
          -- update vvc activity
-         update_vvc_activity_register(global_trigger_vvc_activity_register, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+         update_vvc_activity_register(global_trigger_vvc_activity_register, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
          
          -- 1. Set defaults, fetch command and log
          -------------------------------------------------------------------------
          work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
 
          -- update vvc activity
-         update_vvc_activity_register(global_trigger_vvc_activity_register, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+         update_vvc_activity_register(global_trigger_vvc_activity_register, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
          -- Reset the transaction info for waveview
          --transaction_info := C_TRANSACTION_INFO_DEFAULT;

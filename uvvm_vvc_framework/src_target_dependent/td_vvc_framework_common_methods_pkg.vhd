@@ -453,20 +453,51 @@ package body td_vvc_framework_common_methods_pkg is
   ) is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
-        & ", " & to_string(timeout, ns) & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+                                   & ", " & to_string(timeout, ns) & ")";
+    variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
+    variable v_vvc_idx_in_activity_register : integer         := -1;
+    variable v_timestamp                    : time;
   begin
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
-    shared_vvc_cmd.gen_integer_array(0) := -1;  -- All commands must be completed (i.e. not just a selected command index)
-    shared_vvc_cmd.timeout              := timeout;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
-    send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
+    -- get register index for this VVC in the vvc activity register
+    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_target.vvc_name, vvc_instance_idx, vvc_channel);
+
+    -- register index is -1 if VVC is not registered in the vvc activity register
+    if (v_vvc_idx_in_activity_register /= -1) then
+
+      -- check if VVC is active
+      if (shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register) = ACTIVE) then
+      
+        -- wait for VVC to set activity status to INACTIVE
+        v_timestamp := now;
+        loop
+          wait on global_trigger_vvc_activity_register for timeout;
+
+          -- vvc activity trigger pulsed
+          if (shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register) = INACTIVE) then
+            exit;
+          end if;
+
+          -- timeout waiting for VVC to finish
+          if (now - v_timestamp) >= timeout then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+    else 
+      log("VVC " & vvc_target.vvc_name & " is not registered, calling old await_completion() method.");
+      -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+      -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+      -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+      set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
+      shared_vvc_cmd.gen_integer_array(0) := -1;  -- All commands must be completed (i.e. not just a selected command index)
+      shared_vvc_cmd.timeout              := timeout;
+      --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
+      --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      --  v_msg_id_panel := parent_msg_id_panel;
+      --end if;
+      send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
+    end if;
   end procedure;
 
   procedure await_completion(
@@ -493,20 +524,51 @@ package body td_vvc_framework_common_methods_pkg is
   ) is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
-        & ", " & to_string(wanted_idx) & ", " & to_string(timeout, ns) & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+                                    & ", " & to_string(wanted_idx) & ", " & to_string(timeout, ns) & ")";
+    variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
+    variable v_vvc_idx_in_activity_register : integer         := -1;
+    variable v_timestamp                    : time;
   begin
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
-    shared_vvc_cmd.gen_integer_array(0) := wanted_idx;
-    shared_vvc_cmd.timeout              := timeout;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
-    send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
+    -- get register index for this VVC in the vvc activity register
+    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_target.vvc_name, vvc_instance_idx, vvc_channel);
+
+    -- register index is -1 if VVC is not registered in the vvc activity register
+    if (v_vvc_idx_in_activity_register /= -1) then
+  
+      -- check if VVC is active and check that VVC has not already processed the wanted command index
+      if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) < wanted_idx) then
+
+        -- wait for VVC to complete cmd index
+        v_timestamp := now;
+        loop 
+          wait on global_trigger_vvc_activity_register for timeout;
+
+          if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) >= wanted_idx) then 
+            exit;
+          end if;
+
+            -- timeout waiting for VVC to finish
+          if (now - v_timestamp) >= timeout then
+            exit;
+          end if;
+
+        end loop;
+      end if;
+
+    else 
+      log("VVC " & vvc_target.vvc_name & " is not registered, calling old await_completion() method.");
+      -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+      -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+      -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+      set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
+      shared_vvc_cmd.gen_integer_array(0) := wanted_idx;
+      shared_vvc_cmd.timeout              := timeout;
+      --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
+      --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      --  v_msg_id_panel := parent_msg_id_panel;
+      --end if;
+      send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
+    end if;
   end procedure;
 
   procedure await_completion(
@@ -535,9 +597,11 @@ package body td_vvc_framework_common_methods_pkg is
   ) is
     constant proc_name : string := "await_any_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
-        & ", " & to_string(timeout, ns) & ")";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+                                    & ", " & to_string(timeout, ns) & ")";
+    variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
+    variable v_vvc_idx_in_activity_register : integer         := -1;
   begin
+
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC

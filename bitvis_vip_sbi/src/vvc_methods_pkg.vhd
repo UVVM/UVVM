@@ -515,6 +515,9 @@ package body vvc_methods_pkg is
     shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
                                                           activity              => v_activity,
                                                           last_cmd_idx_executed => last_cmd_idx_executed);
+    if global_trigger_vvc_activity_register /= 'L' then
+      wait until global_trigger_vvc_activity_register = 'L';
+    end if;                                                  
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
 

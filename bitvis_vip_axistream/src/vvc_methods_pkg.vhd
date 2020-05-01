@@ -917,7 +917,7 @@ package body vvc_methods_pkg is
                                           constant entry_num_in_vvc_activity_register : in    integer;
                                           constant last_cmd_idx_executed              : in    natural;
                                           constant command_queue_is_empty             : in    boolean;
-                                        constant scope                                : in string := "AXIStream_VVC") is
+                                          constant scope                                : in string := "AXIStream_VVC") is
     variable v_activity   : t_activity := activity;
   begin
     if v_activity = INACTIVE and not(command_queue_is_empty) then
@@ -926,6 +926,9 @@ package body vvc_methods_pkg is
     shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
                                                           activity              => v_activity,
                                                           last_cmd_idx_executed => last_cmd_idx_executed);
+    if global_trigger_vvc_activity_register /= 'L' then
+      wait until global_trigger_vvc_activity_register = 'L';
+    end if;                                                          
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
 

@@ -618,7 +618,7 @@ package body td_vvc_framework_common_methods_pkg is
     else
       shared_vvc_cmd.gen_boolean := false; -- NOT_LAST
     end if;
-    send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel); -- sets vvc_target.trigger, then waits until global_vvc_ack = '1' for timeout
+    send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
   end procedure;
 
   procedure await_any_completion(

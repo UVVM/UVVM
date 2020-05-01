@@ -743,7 +743,6 @@ package body td_vvc_entity_support_pkg is
 
         if this_vvc_completed(VOID) then                   -- This VVC is done
           log(await_completion_finished_msg_id, "This VVC initiated completion of " & to_string(command.proc_call), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
-
           -- update shared_uvvm_status with the VVC name and cmd index that initiated the completion
           shared_uvvm_status.info_on_finishing_await_any_completion.vvc_name(1 to vvc_labels.vvc_name'length) := vvc_labels.vvc_name;
           shared_uvvm_status.info_on_finishing_await_any_completion.vvc_cmd_idx := last_cmd_idx_executed;
@@ -756,30 +755,27 @@ package body td_vvc_entity_support_pkg is
           exit;
         end if;
 
-
         if not ((executor_is_busy'event) or (global_awaiting_completion(awaiting_completion_idx) /= '1')) then  -- Indicates timeout
           -- When NOT_LAST (command.gen_boolean = false): Timeout must be reported here instead of in send_command_to_vvc()
           -- becuase the command is always acknowledged immediately by the VVC to allow the sequencer to continue
           if not command.gen_boolean then
             tb_error("Timeout during " & to_string(command.proc_call) & "=> " & format_msg(command), to_string(vvc_labels.scope));
           end if;
-
           exit;
         end if;
-
       end loop;
     end if;
 
-      global_awaiting_completion(awaiting_completion_idx) <= '0'; -- Signal that we're done waiting
+    global_awaiting_completion(awaiting_completion_idx) <= '0'; -- Signal that we're done waiting
 
-      -- Handshake : Wait until every involved VVC notice the value is 'X' or '0', and all agree to being done ('0')
-      if global_awaiting_completion(awaiting_completion_idx) /= '0' then
-        wait until (global_awaiting_completion(awaiting_completion_idx) = '0');
-      end if;
+    -- Handshake : Wait until every involved VVC notice the value is 'X' or '0', and all agree to being done ('0')
+    if global_awaiting_completion(awaiting_completion_idx) /= '0' then
+      wait until (global_awaiting_completion(awaiting_completion_idx) = '0');
+    end if;
 
-      global_awaiting_completion(awaiting_completion_idx) <= 'Z'; -- Idle
+    global_awaiting_completion(awaiting_completion_idx) <= 'Z'; -- Idle
 
-      log(await_completion_finished_msg_id, to_string(command.proc_call) & "=> Finished. " & format_msg(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get & ack the new command
+    log(await_completion_finished_msg_id, to_string(command.proc_call) & "=> Finished. " & format_msg(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get & ack the new command
 
   end procedure;
 

@@ -37,14 +37,30 @@ end entity;
 -- Test case architecture
 architecture func of clock_generator_tb is
 
-  constant C_SCOPE        : string := "CLOCK_GENERATOR_VVC_TB";
+  constant C_SCOPE              : string  := "CLOCK_GENERATOR_VVC_TB";
+  constant C_CLK_1_PERIOD       : time    := 10 ns;
+  constant C_CLK_2_PERIOD       : time    := 20 ns;
+  constant C_CLK_3_PERIOD       : time    := 40 ns;
+  constant C_CLK_1_HIGH_PERIOD  : time    := 5 ns;
+  constant C_CLK_2_HIGH_PERIOD  : time    := 12 ns;
+  constant C_CLK_3_HIGH_PERIOD  : time    := 12 ns;
+
+
 
 begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness;
+  i_test_harness : entity work.test_harness
+    generic map(
+      GC_CLOCK_1_PERIOD       => C_CLK_1_PERIOD,
+      GC_CLOCK_1_HIGH_PERIOD  => C_CLK_1_HIGH_PERIOD,      
+      GC_CLOCK_2_PERIOD       => C_CLK_2_PERIOD,
+      GC_CLOCK_2_HIGH_PERIOD  => C_CLK_2_HIGH_PERIOD,
+      GC_CLOCK_3_PERIOD       => C_CLK_3_PERIOD,
+      GC_CLOCK_3_HIGH_PERIOD  => C_CLK_3_HIGH_PERIOD
+    );
 
   i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 
@@ -144,101 +160,101 @@ begin
     check_value(clk_1, '0', error, "Check that clock 1 line is low");
     check_value(clk_2, '0', error, "Check that clock 2 line is low");
     check_value(clk_3, '0', error, "Check that clock 3 line is low");
-    check_clock_not_running(clk_1, 10 ns);
-    check_clock_not_running(clk_2, 20 ns);
-    check_clock_not_running(clk_3, 40 ns);
+    check_clock_not_running(clk_1, C_CLK_1_PERIOD);
+    check_clock_not_running(clk_2, C_CLK_2_PERIOD);
+    check_clock_not_running(clk_3, C_CLK_3_PERIOD);
 
     log(ID_LOG_HDR, "Activate clock 1", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 1, "Start clock 1");
-    await_completion(CLOCK_GENERATOR_VVCT, 1, 1 us, "Await execution");
-    check_clock_period_and_high_time(clk_1, 10 ns, 5 ns, 5);
+    wait for C_CLK_1_PERIOD;
+    check_clock_period_and_high_time(clk_1, C_CLK_1_PERIOD, C_CLK_1_HIGH_PERIOD, 5);
 
     log(ID_LOG_HDR, "Deactivate clock 1", C_SCOPE);
     stop_clock(CLOCK_GENERATOR_VVCT, 1, "Stop clock 1");
-    await_completion(CLOCK_GENERATOR_VVCT, 1, 1 us, "Await execution");
-    check_clock_not_running(clk_1, 10 ns);
+    wait for C_CLK_1_PERIOD;
+    check_clock_not_running(clk_1, C_CLK_1_PERIOD);
 
     log(ID_LOG_HDR, "Change clock period and clock high time of clock 1", C_SCOPE);
     set_clock_period(CLOCK_GENERATOR_VVCT, 1, 50 ns, "Change clock period to 50 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 1, 1 us, "Await execution");
+    wait for 50 ns;
     set_clock_high_time(CLOCK_GENERATOR_VVCT, 1, 35 ns, "Change clock high time to 35 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 1, 1 us, "Await execution");
+    wait for 50 ns;
 
     log(ID_LOG_HDR, "Activate clock 1", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 1, "Start clock 1");
-    await_completion(CLOCK_GENERATOR_VVCT, 1, 1 us, "Await execution");
+    wait for 50 ns;
     check_clock_period_and_high_time(clk_1, 50 ns, 35 ns, 5);
 
     log(ID_LOG_HDR, "Activate clock 2", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 2, "Start clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
-    check_clock_period_and_high_time(clk_2, 20 ns, 12 ns, 5);
+    wait for C_CLK_2_PERIOD;
+    check_clock_period_and_high_time(clk_2, C_CLK_2_PERIOD, C_CLK_2_HIGH_PERIOD, 5);
 
     log(ID_LOG_HDR, "Deactivate clock 2", C_SCOPE);
     stop_clock(CLOCK_GENERATOR_VVCT, 2, "Stop clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
-    check_clock_not_running(clk_2, 20 ns);
+    wait for C_CLK_2_PERIOD;
+    check_clock_not_running(clk_2, C_CLK_2_PERIOD);
 
     log(ID_LOG_HDR, "Change clock period and clock high time of clock 2", C_SCOPE);
     set_clock_period(CLOCK_GENERATOR_VVCT, 2, 100 ns, "Set clock period to 100 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
     set_clock_high_time(CLOCK_GENERATOR_VVCT, 2, 50 ns, "Set clock high time to 50 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
 
     log(ID_LOG_HDR, "Activate clock 2", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 2, "Start clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
     check_clock_period_and_high_time(clk_2, 100 ns, 50 ns, 5);
 
     log(ID_LOG_HDR, "Deactivate clock 2", C_SCOPE);
     stop_clock(CLOCK_GENERATOR_VVCT, 2, "Stop clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
     check_clock_not_running(clk_2, 100 ns);
 
     log(ID_LOG_HDR, "Change clock high time of clock 2", C_SCOPE);
     set_clock_high_time(CLOCK_GENERATOR_VVCT, 2, 1 ns, "Set clock high time to 1 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
 
     log(ID_LOG_HDR, "Activate clock 2", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 2, "Start clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
     check_clock_period_and_high_time(clk_2, 100 ns, 1 ns, 5);
 
     log(ID_LOG_HDR, "Change clock high time of clock 2", C_SCOPE);
     set_clock_high_time(CLOCK_GENERATOR_VVCT, 2, 99 ns, "Set clock high time to 99 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 100 ns;
     check_clock_period_and_high_time(clk_2, 100 ns, 99 ns, 5);
 
     log(ID_LOG_HDR, "Change clock period of clock 2", C_SCOPE);
     set_clock_period(CLOCK_GENERATOR_VVCT, 2, 40 ns, "Set clock period to 40 ns");
     set_clock_high_time(CLOCK_GENERATOR_VVCT, 2, 39.6 ns, "Set clock high time to 39.6 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 40 ns;
     check_clock_period_and_high_time(clk_2, 40 ns, 39.6 ns, 5);
 
     log(ID_LOG_HDR, "Deactivate clock 2", C_SCOPE);
     stop_clock(CLOCK_GENERATOR_VVCT, 2, "Stop clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    wait for 40 ns;
     check_clock_not_running(clk_2, 100 ns);
 
     log(ID_LOG_HDR, "Change clock period of clock 2", C_SCOPE);
-    set_clock_period(CLOCK_GENERATOR_VVCT, 2, 70 ns, "Set clock period to 40 ns");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
+    set_clock_period(CLOCK_GENERATOR_VVCT, 2, 40 ns, "Set clock period to 40 ns");
+    wait for 40 ns;
 
     log(ID_LOG_HDR, "Activate clock 2", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 2, "Start clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
-    check_clock_period_and_high_time(clk_2, 70 ns, 39.6 ns, 5);
+    wait for 40 ns;
+    check_clock_period_and_high_time(clk_2, 40 ns, 39.6 ns, 5);
 
     log(ID_LOG_HDR, "Set clock 2 high time to same as clock period, expect tb_error", C_SCOPE);
-    start_clock(CLOCK_GENERATOR_VVCT, 2, "Start clock 2");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
     increment_expected_alerts(tb_error, 1);
-    check_clock_period_and_high_time(clk_2, 70 ns, 39.6 ns, 5);
+    set_clock_high_time(CLOCK_GENERATOR_VVCT, 2, 40 ns, "Set clock high time to 40 ns");
+    wait for 40 ns;
+    stop_clock(CLOCK_GENERATOR_VVCT, 2, "Stop clock 2");
 
     log(ID_LOG_HDR, "Activate clock 3", C_SCOPE);
     start_clock(CLOCK_GENERATOR_VVCT, 3, "Start clock 3");
-    await_completion(CLOCK_GENERATOR_VVCT, 2, 1 us, "Await execution");
-    check_clock_period_and_high_time(clk_3, 40 ns, 12 ns, 5);
+    wait for C_CLK_3_PERIOD;
+    check_clock_period_and_high_time(clk_3, C_CLK_3_PERIOD, C_CLK_3_HIGH_PERIOD, 5);
 
 
     -----------------------------------------------------------------------------

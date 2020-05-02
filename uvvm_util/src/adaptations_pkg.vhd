@@ -141,6 +141,7 @@ package adaptations_pkg is
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
     ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
+    ID_AWAIT_COMPLETION,      -- Logs messages related to VVCs waiting for completion
     -- Distributed data
     ID_UVVM_DATA_QUEUE,       -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system

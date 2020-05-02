@@ -286,13 +286,23 @@ package ti_vvc_framework_support_pkg is
     constant instance_idx : natural
   ) return string;
 
-
+  -------------------------------------------
+  -- await_completion
+  -------------------------------------------
+  -- Awaits completion of any of the VVCs in the list or until timeout.
+  procedure await_completion(
+    constant vvc_select  : in    t_select;
+    variable vvc_list    : inout t_vvc_list;
+    constant timeout     : in    time;
+    constant list_action : in    t_list_action := CLEAN_LIST;
+    constant msg         : in    string := "";
+    constant scope       : in    string := C_VVC_CMD_SCOPE_DEFAULT
+  );
 
 
   -- ============================================================================
   -- Activity Watchdog
   -- ============================================================================
-
   procedure activity_watchdog(
     constant num_exp_vvc  : natural;
     constant timeout      : time;
@@ -300,13 +310,10 @@ package ti_vvc_framework_support_pkg is
     constant msg          : string := "Activity_Watchdog"
   );
 
-
   -- ============================================================================
   -- VVC Activity Register
   -- ============================================================================
-
   shared variable shared_vvc_activity_register : t_vvc_activity;
-
 
   -- ============================================================================
   -- Hierarchical VVC (HVVC)
@@ -670,13 +677,107 @@ package body ti_vvc_framework_support_pkg is
     end if;
   end function;
 
+  procedure await_completion(
+    constant vvc_select  : in    t_select;
+    variable vvc_list    : inout t_vvc_list;
+    constant timeout     : in    time;
+    constant list_action : in    t_list_action := CLEAN_LIST;
+    constant msg         : in    string := "";
+    constant scope       : in    string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+    constant proc_name : string := "await_completion";
+    constant proc_call : string := proc_name & "(" & to_string(vvc_select) & "," & vvc_list.priv_get_vvc_list & "," & to_string(timeout, ns) & ")";
+    constant c_num_vvcs_in_list : natural := vvc_list.priv_get_num_vvc_in_list;
+    variable v_vvc_idx_in_activity_register : t_integer_array(0 to c_num_vvcs_in_list-1) := (others => -1);
+    variable v_local_cmd_idx    : integer;
+    variable v_timestamp        : time;
+    variable v_done             : boolean := false;
+    variable v_timeout          : boolean := false;
+    variable v_error            : boolean := false;
+    variable v_vvc_complete_idx : natural;
+  begin
+    -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
+    -- Store it in a local variable since new commands might be executed from another sequencer.
+    await_semaphore_in_delta_cycles(protected_semaphore);
+    shared_cmd_idx  := shared_cmd_idx + 1;
+    v_local_cmd_idx := shared_cmd_idx;
+    release_semaphore(protected_semaphore);
+
+    if global_show_msg_for_uvvm_cmd then
+      log(ID_UVVM_SEND_CMD, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+    else
+      log(ID_UVVM_SEND_CMD, proc_call & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+    end if;
+
+    -- Loop through the VVC list and get the corresponding index from the vvc activity register
+    for i in 0 to c_num_vvcs_in_list-1 loop
+      v_vvc_idx_in_activity_register(i) := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_list.priv_get_name(i),
+                                           vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
+      -- Check if the VVC is registered in the vvc activity register
+      if v_vvc_idx_in_activity_register(i) = -1 then
+        alert(TB_ERROR, proc_call & add_msg_delimiter(msg) & "(" & vvc_list.priv_get_vvc_info(i) & ") does not support this procedure." &
+          format_command_idx(v_local_cmd_idx), scope);
+        v_error:= true;
+        v_done := true;
+      end if;
+    end loop;
+
+    if not(v_error) then
+      log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+    end if;
+
+    v_timestamp := now;
+    while not(v_done) loop
+      for i in 0 to c_num_vvcs_in_list-1 loop
+        -- Wait for any of the VVCs in the group to complete (INACTIVE status or cmd_idx completed)
+        if vvc_select = ANY then
+          if vvc_list.priv_get_cmd_idx(i) = -1 then
+            if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
+              v_vvc_complete_idx := i;
+              v_done := true;
+            end if;
+          else
+            if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= vvc_list.priv_get_cmd_idx(i) then
+              v_vvc_complete_idx := i;
+              v_done := true;
+            end if;
+          end if;
+        end if;
+      end loop;
+
+      if not(v_done) then
+        wait on global_trigger_vvc_activity_register for timeout;
+      end if;
+
+      -- Check if there was a timeout
+      if now >= v_timestamp + timeout then
+        alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
+        v_timeout := true;
+        v_done    := true;
+      end if;
+    end loop;
+
+    -- Log result and clean list if indicated
+    if not(v_error or v_timeout) then
+      if list_action = CLEAN_LIST then
+        if vvc_select = ANY then
+          log(ID_AWAIT_COMPLETION, proc_call & "=> " & vvc_list.priv_get_vvc_info(v_vvc_complete_idx) &
+            " finished. All VVCs removed from the list. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+        end if;
+        vvc_list.priv_clean_list;
+      else
+        if vvc_select = ANY then
+          log(ID_AWAIT_COMPLETION, proc_call & "=> " & vvc_list.priv_get_vvc_info(v_vvc_complete_idx) &
+            " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+        end if;
+      end if;
+    end if;
+  end procedure;
 
 
 -- ============================================================================
 -- Activity Watchdog
 -- ============================================================================
-
-
   -------------------------------------------------------------------------------
   -- Activity watchdog:
   -- Include this as a concurrent procedure from your testbench.

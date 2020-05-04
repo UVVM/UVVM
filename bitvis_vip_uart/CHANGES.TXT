@@ -1,6 +1,11 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+vx.x.x
+----------
+Released: 2020-xx-xx
+- Added shared_uart_vvc_transaction_info information to quick reference.
+
 v2.6.1
 ----------
 Released: 2020-04-20

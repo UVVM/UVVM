@@ -9,6 +9,11 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2020.xx.xx
+--------------------
+Released: 2020-xx-xx
+- Added shared_<if>_vvc_transaction_info information to VVC quick references.
+
 
 v2 2020.04.20
 --------------------
@@ -22,7 +27,6 @@ Released: 2020-04-20
 - Added reference to verbosity control in VVC and SB QRs.
 - Added advanced and basic choice to vvc_generator.py
 - Added specification coverage VIP - Bitvis VIP Spec Cov
-
 
 
 v2 2020.03.30b

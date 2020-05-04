@@ -289,7 +289,7 @@ package body ti_protected_types_pkg is
       variable v_duplicate : boolean := false;
     begin
       if priv_last_added_vvc_idx >= C_MAX_TB_VVC_NUM then
-        alert(tb_error, "Number of VVCs in the list exceed C_MAX_TB_VVC_NUM.\n" & "Increase C_MAX_TB_VVC_NUM in adaptations package.");
+        alert(TB_ERROR, "Number of VVCs in the list exceed C_MAX_TB_VVC_NUM.\n" & "Increase C_MAX_TB_VVC_NUM in adaptations package.");
       end if;
 
       -- Check if VVC was previously added
@@ -304,7 +304,7 @@ package body ti_protected_types_pkg is
       end loop;
 
       if v_duplicate then
-        alert(tb_warning, name & "," & to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
+        alert(TB_WARNING, name & "," & to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
       else
         -- Set VVC index
         priv_last_added_vvc_idx := priv_last_added_vvc_idx + 1;
@@ -358,7 +358,7 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return string is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, ERROR, "priv_get_name() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_name() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).name;
     end function;
 
@@ -366,7 +366,7 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return natural is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, ERROR, "priv_get_instance() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_instance() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).instance;
     end function;
 
@@ -374,7 +374,7 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return t_channel is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, ERROR, "priv_get_channel() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_channel() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).channel;
     end function;
 
@@ -382,7 +382,7 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return integer is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, ERROR, "priv_get_cmd_idx() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_cmd_idx() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).cmd_idx;
     end function;
 
@@ -390,7 +390,7 @@ package body ti_protected_types_pkg is
       constant vvc_idx : natural
     ) return string is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, ERROR, "priv_get_vvc_info() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_vvc_info() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
       if priv_vvc_list(vvc_idx).channel = NA then
         if priv_vvc_list(vvc_idx).cmd_idx = -1 then
           return priv_vvc_list(vvc_idx).name & "," & to_string(priv_vvc_list(vvc_idx).instance);
@@ -409,18 +409,22 @@ package body ti_protected_types_pkg is
 
     impure function priv_get_vvc_list return string is
       variable v_line     : line;
-      variable v_line_len : integer;
+      variable v_line_len : integer := 1;
       variable v_string   : string(1 to 500);
     begin
-      for idx in 0 to priv_last_added_vvc_idx loop
-        write(v_line, "(" & priv_get_vvc_info(idx) & ")");
-        if idx < priv_last_added_vvc_idx then
-          write(v_line, ',');
-        end if;
-      end loop;
-      v_line_len := v_line'length;
-      v_string(1 to v_line_len) := v_line.all;
-      deallocate(v_line);
+      if priv_last_added_vvc_idx = -1 then
+        alert(TB_ERROR, "priv_get_vvc_list() => vvc_list is empty!");
+      else
+        for idx in 0 to priv_last_added_vvc_idx loop
+          write(v_line, "(" & priv_get_vvc_info(idx) & ")");
+          if idx < priv_last_added_vvc_idx then
+            write(v_line, ',');
+          end if;
+        end loop;
+        v_line_len := v_line'length;
+        v_string(1 to v_line_len) := v_line.all;
+        deallocate(v_line);
+      end if;
       return v_string(1 to v_line_len);
     end function priv_get_vvc_list;
 

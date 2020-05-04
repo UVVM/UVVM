@@ -5,12 +5,12 @@ vx.x.x
 ----------
 Released: 2020-xx-xx
 - Added shared_gpio_vvc_transaction_info information to quick reference.
+- Added script/compile_bfm.do script.
 
 v1.6.1
 ----------
 Released: 2020-04-20
 - Added reference to verbosity control in VVC QR.
-
 
 v1.6.0
 ----------

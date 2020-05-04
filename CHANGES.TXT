@@ -13,6 +13,7 @@ v2 2020.xx.xx
 --------------------
 Released: 2020-xx-xx
 - Added shared_<if>_vvc_transaction_info information to VVC quick references.
+- Added script/compile_bfm.do script to VVCs with a BFM.
 
 
 v2 2020.04.20

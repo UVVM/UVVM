@@ -2,12 +2,13 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
-v2.6.2
+v2.x.x
 ----------
 Released: 2020-XX-XX
 - Fixed avalon_mm_read_request waiting on a negative delay when bfm_sync=SYNC_ON_CLOCK_ONLY
   and clock_period was not configured.
 - Added shared_avalon_mm_vvc_transaction_info information to quick reference.
+- Added script/compile_bfm.do script.
 
 v2.6.1
 ----------

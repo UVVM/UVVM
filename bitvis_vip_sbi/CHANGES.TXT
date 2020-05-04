@@ -5,6 +5,7 @@ vx.x.x
 ----------
 Released: 2020-xx-xx
 - Added shared_sbi_vvc_transaction_info information to quick reference.
+- Added script/compile_bfm.do script.
 
 v2.6.1
 ----------

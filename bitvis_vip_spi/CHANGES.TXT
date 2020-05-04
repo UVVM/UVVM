@@ -5,6 +5,7 @@ vx.x.x
 ----------
 Released: 2020-xx-xx
 - Added shared_spi_vvc_transaction_info information to quick reference.
+- Added script/compile_bfm.do script.
 
 v3.7.1
 ----------

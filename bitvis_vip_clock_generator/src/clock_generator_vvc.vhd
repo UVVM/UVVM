@@ -49,7 +49,7 @@ entity clock_generator_vvc is
     clk : out std_logic
   );
 begin
-  assert (GC_CLOCK_NAME'length <= 20) report "Clock name is too long (max 30 characters)" severity ERROR;
+  assert (GC_CLOCK_NAME'length <= C_MAX_VVC_NAME_LENGTH) report "Clock name is too long (max " & to_string(C_MAX_VVC_NAME_LENGTH) & " characters)" severity ERROR;
 end entity clock_generator_vvc;
 
 --========================================================================================================================

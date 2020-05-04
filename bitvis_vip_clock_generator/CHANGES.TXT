@@ -6,6 +6,7 @@ vx.x.x
 Released: 2020-xx-xx
 - Removed await_completion and await_any_completion() from VVC commands.
 - Changed VVC activity methods parameters and default scope.
+- Corrected assertion report msg for GC_CLOCK_NAME check.
 
 
 v1.3.4

@@ -3,12 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.xx.x
+----------
+Released: 2020-xx-xx
+- Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
 
 v2.13.1
 ----------
 Released: 2020-04-20
 - Updated Util QR check_value() with MATCH_STD_INCL_Z option.
-
 
 v2.13.0
 ----------

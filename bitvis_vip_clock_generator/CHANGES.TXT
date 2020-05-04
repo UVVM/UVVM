@@ -4,7 +4,8 @@ Bitvis VIP Clock Generator - Overview on Versions and Changes
 vx.x.x
 ----------
 Released: 2020-xx-xx
-- Removed await_completion and await_any_completion() from VVC commands
+- Removed await_completion and await_any_completion() from VVC commands.
+- Changed VVC activity methods parameters and default scope.
 
 
 v1.3.4

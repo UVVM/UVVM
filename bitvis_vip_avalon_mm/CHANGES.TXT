@@ -9,6 +9,7 @@ Released: 2020-XX-XX
   and clock_period was not configured.
 - Added shared_avalon_mm_vvc_transaction_info information to quick reference.
 - Added script/compile_bfm.do script.
+- Changed VVC activity methods parameters and default scope.
 
 v2.6.1
 ----------

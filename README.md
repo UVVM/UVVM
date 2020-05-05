@@ -55,14 +55,17 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 
 ## Available VVCs and BFMs
 These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.
-*	AXI4-Lite
-*	AXI-Stream
 *	Avalon MM
+*   Avalon ST - master and slave
+*	AXI4-Lite
+*	AXI-Stream - master and slave
 *	SBI (Simple Bus Interface - A single cycle simple parallel bus interface)
 *	UART
-*	SPI
-*	I2C
+*	SPI - master and slave
+*	I2C - master and slave
 *   GPIO
+*   GMII
+*   RGMII
 *	More are coming
 
 **IMPORTANT**

@@ -153,9 +153,8 @@ package body ti_protected_types_pkg is
       constant channel  : in t_channel := NA
     ) return integer is
     begin
-      if C_MAX_TB_VVC_NUM <= priv_last_registered_vvc_idx then
-        alert(tb_error, "Number of registered VVCs exceed C_MAX_TB_VVC_NUM.\n"&
-                         "Increase C_MAX_TB_VVC_NUM in adaptations package.");
+      if priv_last_registered_vvc_idx >= C_MAX_TB_VVC_NUM then
+        alert(tb_error, "Number of registered VVCs exceed C_MAX_TB_VVC_NUM.\n"& "Increase C_MAX_TB_VVC_NUM in adaptations package.");
       end if;
 
       -- Set registered VVC index
@@ -176,6 +175,8 @@ package body ti_protected_types_pkg is
       constant last_cmd_idx_executed  : in integer
     ) is
     begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_report_vvc_activity() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       -- Update VVC status
       priv_registered_vvc(vvc_idx).vvc_state.activity              := activity;
       priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed := last_cmd_idx_executed;
@@ -190,13 +191,11 @@ package body ti_protected_types_pkg is
 
       for idx in 0 to priv_last_registered_vvc_idx loop
         v_vvc := priv_registered_vvc(idx).vvc_id;
-
         if v_vvc.channel = NA then
           log(ID_VVC_ACTIVITY, to_string(idx+1) & ": " & v_vvc.name & " instance=" & to_string(v_vvc.instance));  
         else
           log(ID_VVC_ACTIVITY, to_string(idx+1) & ": " & v_vvc.name & " instance=" & to_string(v_vvc.instance) & ", channel=" & to_string(v_vvc.channel));            
         end if;
-        
       end loop;
     end procedure;
 
@@ -207,26 +206,22 @@ package body ti_protected_types_pkg is
     ) return integer is
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        
         if priv_registered_vvc(idx).vvc_id.name    = name and
           priv_registered_vvc(idx).vvc_id.instance = instance and
           priv_registered_vvc(idx).vvc_id.channel  = channel then
-          -- vvc was found
-          return idx;
+          return idx; -- vvc was found
         end if;
-
       end loop;
 
-      -- not found
-      return -1;
+      return -1; -- not found
     end function;
 
     impure function priv_get_vvc_activity(
       constant vvc_idx : in natural
     ) return t_activity is
     begin
-      check_value(priv_last_registered_vvc_idx >= vvc_idx, TB_ERROR, "Invalid index for VVC activity register: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      check_value(vvc_idx > -1, TB_ERROR, "Invalid index for VVC activity register: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_get_vvc_activity() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_registered_vvc(vvc_idx).vvc_state.activity;
     end function;
 
@@ -234,18 +229,14 @@ package body ti_protected_types_pkg is
       constant vvc_idx : in natural
     ) return integer is
     begin
-      check_value(priv_last_registered_vvc_idx >= vvc_idx, TB_ERROR, "Invalid index for VVC activity register: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      check_value(vvc_idx > -1, TB_ERROR, "Invalid index for VVC activity register: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_get_vvc_last_cmd_idx_executed() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed;
     end function;
 
     impure function priv_get_num_registered_vvc return natural is
     begin
-      if priv_last_registered_vvc_idx = -1 then
-        return 0;
-      else
-        return priv_last_registered_vvc_idx + 1;
-      end if;
+      return priv_last_registered_vvc_idx + 1;
     end function;
 
     impure function priv_are_all_vvc_inactive return boolean is
@@ -367,7 +358,8 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return string is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_name() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
+        "priv_get_name() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).name;
     end function;
 
@@ -375,7 +367,8 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return natural is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_instance() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
+        "priv_get_instance() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).instance;
     end function;
 
@@ -383,7 +376,8 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return t_channel is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_channel() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
+        "priv_get_channel() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).channel;
     end function;
 
@@ -391,7 +385,8 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return integer is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_cmd_idx() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
+        "priv_get_cmd_idx() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_vvc_list(vvc_idx).cmd_idx;
     end function;
 
@@ -399,7 +394,8 @@ package body ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return string is
     begin
-      check_value_in_range(vvc_idx, 0, C_MAX_TB_VVC_NUM, TB_ERROR, "priv_get_vvc_info() => vvc_idx invalid range", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
+        "priv_get_vvc_info() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       if priv_vvc_list(vvc_idx).channel = NA then
         if priv_vvc_list(vvc_idx).cmd_idx = -1 then
           return priv_vvc_list(vvc_idx).name & "," & to_string(priv_vvc_list(vvc_idx).instance);

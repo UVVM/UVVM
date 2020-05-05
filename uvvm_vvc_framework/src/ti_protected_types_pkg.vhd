@@ -73,24 +73,28 @@ package ti_protected_types_pkg is
 
     procedure add(
       constant name     : in string;
-      constant instance : in natural;
+      constant instance : in integer;
       constant channel  : in t_channel;
       constant cmd_idx  : in integer
     );
 
     procedure add(
       constant name     : in string;
-      constant instance : in natural;
+      constant instance : in integer;
       constant channel  : in t_channel := NA
     );
 
     procedure add(
       constant name     : in string;
-      constant instance : in natural;
+      constant instance : in integer;
       constant cmd_idx  : in integer
     );
 
     procedure priv_clean_list;
+
+    function instance_to_string(
+      constant instance : in integer
+    ) return string;
 
     impure function priv_get_name(
       constant vvc_idx  : in natural
@@ -98,7 +102,7 @@ package ti_protected_types_pkg is
 
     impure function priv_get_instance(
       constant vvc_idx  : in natural
-    ) return natural;
+    ) return integer;
 
     impure function priv_get_channel(
       constant vvc_idx  : in natural
@@ -261,7 +265,7 @@ package body ti_protected_types_pkg is
 
     type t_vvc_item is record
       name      : string(1 to C_MAX_VVC_NAME_LENGTH);
-      instance  : natural;
+      instance  : integer;
       channel   : t_channel;
       cmd_idx   : integer;
     end record;
@@ -282,7 +286,7 @@ package body ti_protected_types_pkg is
 
     procedure add(
       constant name     : in string;
-      constant instance : in natural;
+      constant instance : in integer;
       constant channel  : in t_channel;
       constant cmd_idx  : in integer
     ) is
@@ -304,7 +308,7 @@ package body ti_protected_types_pkg is
       end loop;
 
       if v_duplicate then
-        alert(TB_WARNING, name & "," & to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
+        alert(TB_WARNING, name & "," & instance_to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
       else
         -- Set VVC index
         priv_last_added_vvc_idx := priv_last_added_vvc_idx + 1;
@@ -316,15 +320,15 @@ package body ti_protected_types_pkg is
 
         if channel = NA then
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & to_string(instance) & " to the list.");  
+            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & " to the list.");  
           else
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
+            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
           end if;
         else
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & to_string(instance) & "," & to_string(channel) & " to the list.");            
+            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
           else
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
+            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
           end if;
         end if;
       end if;
@@ -332,7 +336,7 @@ package body ti_protected_types_pkg is
 
     procedure add(
       constant name     : in string;
-      constant instance : in natural;
+      constant instance : in integer;
       constant channel  : in t_channel := NA
     ) is
     begin
@@ -341,7 +345,7 @@ package body ti_protected_types_pkg is
 
     procedure add(
       constant name     : in string;
-      constant instance : in natural;
+      constant instance : in integer;
       constant cmd_idx  : in integer
     ) is
     begin
@@ -354,6 +358,17 @@ package body ti_protected_types_pkg is
       priv_last_added_vvc_idx := -1;
     end procedure;
 
+    function instance_to_string(
+      constant instance : in integer
+    ) return string is
+    begin
+      if instance = ALL_INSTANCES then
+        return "ALL_INSTANCES";
+      else
+        return to_string(instance);
+      end if;
+    end function;
+
     impure function priv_get_name(
       constant vvc_idx  : in natural
     ) return string is
@@ -365,7 +380,7 @@ package body ti_protected_types_pkg is
 
     impure function priv_get_instance(
       constant vvc_idx  : in natural
-    ) return natural is
+    ) return integer is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
         "priv_get_instance() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
@@ -398,15 +413,15 @@ package body ti_protected_types_pkg is
         "priv_get_vvc_info() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       if priv_vvc_list(vvc_idx).channel = NA then
         if priv_vvc_list(vvc_idx).cmd_idx = -1 then
-          return priv_vvc_list(vvc_idx).name & "," & to_string(priv_vvc_list(vvc_idx).instance);
+          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance);
         else
-          return priv_vvc_list(vvc_idx).name & "," & to_string(priv_vvc_list(vvc_idx).instance) & ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]";
+          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance) & ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]";
         end if;
       else
         if priv_vvc_list(vvc_idx).cmd_idx = -1 then
-          return priv_vvc_list(vvc_idx).name & "," & to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel); 
+          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel); 
         else
-          return priv_vvc_list(vvc_idx).name & "," & to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel) &
+          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel) &
             ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]"; 
         end if;
       end if;

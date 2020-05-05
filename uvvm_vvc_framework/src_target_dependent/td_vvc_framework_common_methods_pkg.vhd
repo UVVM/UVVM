@@ -461,7 +461,7 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_timeout                      : boolean := false;
   begin
     -- Get the register index for this VVC in the vvc activity register
-    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_target.vvc_name,
+    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
                                       vvc_instance_idx, vvc_channel);
 
     -- If the VVC is registered use the new method
@@ -556,7 +556,7 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_timeout                      : boolean := false;
   begin
     -- Get the register index for this VVC in the vvc activity register
-    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_target.vvc_name,
+    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
                                       vvc_instance_idx, vvc_channel);
 
     -- If the VVC is registered use the new method

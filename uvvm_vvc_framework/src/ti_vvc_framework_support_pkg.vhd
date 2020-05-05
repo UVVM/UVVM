@@ -717,7 +717,7 @@ package body ti_vvc_framework_support_pkg is
 
     -- Loop through the VVC list and get the corresponding index from the vvc activity register
     for i in 0 to c_num_vvcs_in_list-1 loop
-      v_vvc_idx_in_activity_register(i) := shared_vvc_activity_register.priv_get_vvc_idx_in_activity_register(vvc_list.priv_get_name(i),
+      v_vvc_idx_in_activity_register(i) := shared_vvc_activity_register.priv_get_vvc_idx(vvc_list.priv_get_name(i),
                                            vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
       -- Check if the VVC is registered in the vvc activity register
       if v_vvc_idx_in_activity_register(i) = -1 then

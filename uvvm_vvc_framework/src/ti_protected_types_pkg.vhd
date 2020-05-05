@@ -46,7 +46,7 @@ package ti_protected_types_pkg is
       constant msg : in string
     );
 
-    impure function priv_get_vvc_idx_in_activity_register(
+    impure function priv_get_vvc_idx(
       constant name     : in string;
       constant instance : in integer;
       constant channel  : in t_channel := NA
@@ -200,7 +200,7 @@ package body ti_protected_types_pkg is
       end loop;
     end procedure;
 
-    impure function priv_get_vvc_idx_in_activity_register(
+    impure function priv_get_vvc_idx(
       constant name     : in string;
       constant instance : in integer;
       constant channel  : in t_channel := NA

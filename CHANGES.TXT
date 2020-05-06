@@ -16,7 +16,7 @@ Released: 2020-xx-xx
 - Added shared_<if>_vvc_transaction_info information to VVC quick references.
 - Added script/compile_bfm.do script to VVCs with a BFM.
 - Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
-- Added new msg_id in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ.
+- Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY.
 - Changed VVC activity methods parameters and default scope.
 - Fixed avalon_mm_read_request waiting on a negative delay when bfm_sync=SYNC_ON_CLOCK_ONLY
   and clock_period was not configured.

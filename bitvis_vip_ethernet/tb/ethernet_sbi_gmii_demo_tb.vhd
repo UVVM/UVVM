@@ -37,11 +37,11 @@ use work.ethernet_mac_pkg.all;
 
 
 -- Test case entity
-entity ethernet_sbi_gmii_tb is
-end entity ethernet_sbi_gmii_tb;
+entity ethernet_sbi_gmii_demo_tb is
+end entity ethernet_sbi_gmii_demo_tb;
 
 -- Test case architecture
-architecture func of ethernet_sbi_gmii_tb is
+architecture func of ethernet_sbi_gmii_demo_tb is
   --------------------------------------------------------------------------------
   -- Types and constants declarations
   --------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and VVCs
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.ethernet_sbi_gmii_th
+  i_test_harness : entity bitvis_vip_ethernet.ethernet_sbi_gmii_demo_th
     generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     );
@@ -117,14 +117,6 @@ begin
 
     -- Verbosity control
     disable_log_msg(ID_UVVM_CMD_ACK);
-    disable_log_msg(SBI_VVCT, C_VVC_SBI, ALL_MESSAGES);
-    enable_log_msg(SBI_VVCT, C_VVC_SBI, ID_BFM);
-    -- Disable SBI and GMII log messages to avoid unwanted logging while executing
-    -- Ethernet commands until msg_id_panel fix is implemented in next major release.
-    disable_log_msg(SBI_VVCT, C_VVC_SBI, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, C_VVC_GMII, RX, ALL_MESSAGES);
-    disable_log_msg(ID_UVVM_SEND_CMD);
-    disable_log_msg(ID_UVVM_CMD_RESULT);
 
     -- Set Ethernet VVC config for this testbench
     shared_ethernet_vvc_config(TX, C_VVC_ETH_SBI).bfm_config.mac_destination  := C_ETH_GMII_MAC_ADDR;
@@ -146,7 +138,7 @@ begin
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
-    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
+    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
@@ -158,7 +150,7 @@ begin
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
-    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
+    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
@@ -170,14 +162,13 @@ begin
     ethernet_transmit(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from the CPU.");
     v_expected_frame := make_ethernet_frame(C_ETH_GMII_MAC_ADDR, C_ETH_SBI_MAC_ADDR, v_payload_data(0 to v_payload_len-1));
     ETHERNET_VVC_SB.add_expected(C_VVC_ETH_GMII, v_expected_frame);
-    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, "Receive a frame in the PHY and put it in the Scoreboard.", TO_SB);
+    ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
 
     ---------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "TEST DIRECT ACCESS TO INTERFACE VVCs");
     ---------------------------------------------------------------------------
-    enable_log_msg(SBI_VVCT, C_VVC_SBI, ID_BFM); -- Temporary until next major release fix
     log(ID_LOG_HDR, "Write and read data on SBI level");
     for i in 0 to 9 loop
       v_payload_data(0) := random(8);

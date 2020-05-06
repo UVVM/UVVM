@@ -313,6 +313,7 @@ package ti_vvc_framework_support_pkg is
   -- ============================================================================
   type t_vvc_operation is (TRANSMIT, RECEIVE); -- Type of operation to be executed by the VVC
   type t_direction is (TRANSMIT, RECEIVE);     -- Direction of the interface (used by the IF field config)
+  type t_field_position is (FIRST, MIDDLE, LAST, FIRST_AND_LAST); -- Position of a field within a packet
 
   type t_hvvc_to_bridge is record
     trigger          : boolean;          -- Trigger signal
@@ -320,6 +321,7 @@ package ti_vvc_framework_support_pkg is
     num_data_words   : positive;         -- Number of data words transferred
     data_words       : t_slv_array;      -- Data sent to the VVC
     dut_if_field_idx : natural;          -- Index of the interface field
+    dut_if_field_pos : t_field_position; -- Position of the interface field within the packet
     msg_id_panel     : t_msg_id_panel;   -- Message ID panel of the HVVC
   end record;
 

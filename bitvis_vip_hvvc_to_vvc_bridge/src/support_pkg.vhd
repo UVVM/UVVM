@@ -34,6 +34,7 @@ package support_pkg is
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant data_words       : in  t_slv_array;
     constant dut_if_field_idx : in  integer;
+    constant dut_if_field_pos : in  t_field_position;
     constant scope            : in  string;
     constant msg_id_panel     : in  t_msg_id_panel
   );
@@ -43,6 +44,7 @@ package support_pkg is
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant num_data_words   : in  positive;
     constant dut_if_field_idx : in  integer;
+    constant dut_if_field_pos : in  t_field_position;
     constant scope            : in  string;
     constant msg_id_panel     : in  t_msg_id_panel
   );
@@ -71,6 +73,7 @@ package body support_pkg is
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant data_words       : in  t_slv_array;
     constant dut_if_field_idx : in  integer;
+    constant dut_if_field_pos : in  t_field_position;
     constant scope            : in  string;
     constant msg_id_panel     : in  t_msg_id_panel
   ) is
@@ -79,6 +82,7 @@ package body support_pkg is
     hvvc_to_bridge.data_words(0 to data_words'length-1) <= data_words;
     hvvc_to_bridge.num_data_words                       <= data_words'length;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
+    hvvc_to_bridge.dut_if_field_pos                     <= dut_if_field_pos;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
     gen_pulse(hvvc_to_bridge.trigger, 0 ns, "Pulsing hvvc_to_bridge trigger", scope, ID_NEVER);
     wait until bridge_to_hvvc.trigger = true;
@@ -91,6 +95,7 @@ package body support_pkg is
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant num_data_words   : in  positive;
     constant dut_if_field_idx : in  integer;
+    constant dut_if_field_pos : in  t_field_position;
     constant scope            : in  string;
     constant msg_id_panel     : in  t_msg_id_panel
   ) is
@@ -98,6 +103,7 @@ package body support_pkg is
     hvvc_to_bridge.operation                            <= RECEIVE;
     hvvc_to_bridge.num_data_words                       <= num_data_words;
     hvvc_to_bridge.dut_if_field_idx                     <= dut_if_field_idx;
+    hvvc_to_bridge.dut_if_field_pos                     <= dut_if_field_pos;
     hvvc_to_bridge.msg_id_panel                         <= msg_id_panel;
     gen_pulse(hvvc_to_bridge.trigger, 0 ns, "Pulsing hvvc_to_bridge trigger", scope, ID_NEVER);
     wait until bridge_to_hvvc.trigger = true;

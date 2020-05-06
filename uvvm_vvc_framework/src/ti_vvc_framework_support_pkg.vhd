@@ -695,7 +695,7 @@ package body ti_vvc_framework_support_pkg is
     wait for 0 ns;
 
     -- Check if all expected VVCs are registered
-    if num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvc then
+    if (num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvc) and (num_exp_vvc > 0) then
       shared_vvc_activity_register.priv_list_registered_vvc(msg);
       alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" &
                         to_string(shared_vvc_activity_register.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &

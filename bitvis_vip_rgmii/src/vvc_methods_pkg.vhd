@@ -64,7 +64,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity : t_alert_level;
     bfm_config                            : t_rgmii_bfm_config; -- Configuration for the BFM. See BFM quick reference.
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.
-    parent_msg_id_panel                   : t_msg_id_panel;    -- TODO: temporary fix for HVVC, remove in v3.0
+    parent_msg_id_panel                   : t_msg_id_panel;    --UVVM: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;

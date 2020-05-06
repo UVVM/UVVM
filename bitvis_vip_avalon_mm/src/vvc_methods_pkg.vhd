@@ -67,7 +67,7 @@ package vvc_methods_pkg is
     use_read_pipeline                     : boolean;           -- When true, allows sending multiple read_requests before receiving a read_response
     num_pipeline_stages                   : natural;           -- Max read_requests in pipeline
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
-    parent_msg_id_panel                   : t_msg_id_panel;    -- TODO: temporary fix for HVVC, remove in v3.0
+    parent_msg_id_panel                   : t_msg_id_panel;    --UVVM: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;

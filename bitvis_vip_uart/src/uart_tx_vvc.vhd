@@ -83,7 +83,7 @@ architecture behave of uart_tx_vvc is
   -- Activity Watchdog
   signal vvc_idx_for_activity_watchdog : integer;
 
-  -- TODO: temporary fix for HVVC, remove function below in v3.0
+  --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
     constant command    : in t_vvc_cmd_record;
     constant vvc_config : in t_vvc_config
@@ -118,7 +118,7 @@ begin
     variable v_cmd_has_been_acked   : boolean;  -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd        : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel         : t_msg_id_panel;
-    variable v_temp_msg_id_panel    : t_msg_id_panel; -- TODO: temporary fix for HVVC, remove in v3.0
+    variable v_temp_msg_id_panel    : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
 
     -- 0. Initialize the process prior to first command
@@ -158,7 +158,7 @@ begin
       -------------------------------------------------------------------------
       elsif v_local_vvc_cmd.command_type = IMMEDIATE then
 
-        -- TODO: temporary fix for HVVC, remove two lines below in v3.0
+        --UVVM: temporary fix for HVVC, remove two lines below in v3.0
         if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
           v_temp_msg_id_panel     := vvc_config.msg_id_panel;
           vvc_config.msg_id_panel := v_msg_id_panel;
@@ -197,7 +197,7 @@ begin
 
         end case;
 
-        -- TODO: temporary fix for HVVC, remove line below in v3.0
+        --UVVM: temporary fix for HVVC, remove line below in v3.0
         if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
           vvc_config.msg_id_panel := v_temp_msg_id_panel;
         end if;

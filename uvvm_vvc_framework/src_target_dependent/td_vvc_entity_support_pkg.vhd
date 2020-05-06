@@ -114,7 +114,7 @@ package td_vvc_entity_support_pkg is
     signal global_vvc_busy     : inout std_logic;
     signal vvc_ack             : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     );
 
   -- DEPRECATED
@@ -255,7 +255,7 @@ package td_vvc_entity_support_pkg is
     signal   queue_is_increasing : in    boolean;
     signal   executor_is_busy    : inout boolean;
     constant vvc_labels          : in    t_vvc_labels;
-    constant msg_id_panel        : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
+    constant msg_id_panel        : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     );
 
   -------------------------------------------
@@ -502,7 +502,7 @@ package body td_vvc_entity_support_pkg is
     --else
     --  return vvc_config.msg_id_panel;
     --end if;
-    return vvc_config.msg_id_panel; -- TODO: temporary fix for HVVC, replace for commented code above in v3.0
+    return vvc_config.msg_id_panel; --UVVM: temporary fix for HVVC, replace for commented code above in v3.0
   end function;
 
   procedure await_cmd_from_sequencer(
@@ -513,7 +513,7 @@ package body td_vvc_entity_support_pkg is
     signal   global_vvc_busy   : inout std_logic;
     signal   vvc_ack           : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     ) is
     variable v_was_broadcast : boolean         := false;
     variable v_msg_id_panel  : t_msg_id_panel;
@@ -870,7 +870,7 @@ package body td_vvc_entity_support_pkg is
     signal   queue_is_increasing  : in    boolean;
     signal   executor_is_busy     : inout boolean;
     constant vvc_labels           : in    t_vvc_labels;
-    constant msg_id_panel         : in    t_msg_id_panel := shared_msg_id_panel -- TODO: unused, remove in v3.0
+    constant msg_id_panel         : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
   ) is
     variable v_msg_id_panel : t_msg_id_panel;
   begin

@@ -74,7 +74,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold          : natural;        -- Severity of alert to be initiated if exceeding result_queue_count_threshold
     bfm_config                            : t_axilite_bfm_config; -- Configuration for AXI4-Lite BFM. See quick reference for AXI4-Lite BFM
     msg_id_panel                          : t_msg_id_panel;       -- VVC dedicated message ID panel
-    parent_msg_id_panel                   : t_msg_id_panel;       -- TODO: temporary fix for HVVC, remove in v3.0
+    parent_msg_id_panel                   : t_msg_id_panel;       --UVVM: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;

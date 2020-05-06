@@ -45,7 +45,7 @@ begin
     variable v_dut_if_field_pos_is_last  : boolean;
     variable v_disabled_msg_id_int_wait  : boolean;
     variable v_disabled_msg_id_exe_wait  : boolean;
-    -- TODO: temporary fix for HVVC, remove 2 lines below in v3.0
+    --UVVM: temporary fix for HVVC, remove 2 lines below in v3.0
     variable v_disabled_msg_id_int       : boolean;
     variable v_disabled_msg_id_exe       : boolean;
 
@@ -92,7 +92,7 @@ begin
         -- Disable the interpreter and executor waiting logs during the HVVC command
         v_disabled_msg_id_int_wait := disable_gmii_vvc_msg_id(v_channel, GC_INSTANCE_IDX, ID_CMD_INTERPRETER_WAIT);
         v_disabled_msg_id_exe_wait := disable_gmii_vvc_msg_id(v_channel, GC_INSTANCE_IDX, ID_CMD_EXECUTOR_WAIT);
-        -- TODO: temporary fix for HVVC, remove 2 lines below in v3.0
+        --UVVM: temporary fix for HVVC, remove 2 lines below in v3.0
         v_disabled_msg_id_int := disable_gmii_vvc_msg_id(v_channel, GC_INSTANCE_IDX, ID_CMD_INTERPRETER);
         v_disabled_msg_id_exe := disable_gmii_vvc_msg_id(v_channel, GC_INSTANCE_IDX, ID_CMD_EXECUTOR);
       end if;
@@ -113,7 +113,7 @@ begin
       case hvvc_to_bridge.operation is
 
         when TRANSMIT =>
-          -- TODO: temporary fix for HVVC, remove line below in v3.0
+          --UVVM: temporary fix for HVVC, remove line below in v3.0
           shared_gmii_vvc_config(TX, GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
 
           -- Convert from t_slv_array to t_byte_array
@@ -128,7 +128,7 @@ begin
           await_completion(GMII_VVCT, GC_INSTANCE_IDX, TX, v_cmd_idx, (GC_MAX_NUM_WORDS+v_num_transfers)*GC_PHY_MAX_ACCESS_TIME, "HVVC: Wait for write to finish.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
 
         when RECEIVE =>
-          -- TODO: temporary fix for HVVC, remove line below in v3.0
+          --UVVM: temporary fix for HVVC, remove line below in v3.0
           shared_gmii_vvc_config(RX, GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
 
           gmii_read(GMII_VVCT, GC_INSTANCE_IDX, RX, v_num_data_bytes, "HVVC: Read data via GMII.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
@@ -152,7 +152,7 @@ begin
       if v_disabled_msg_id_int_wait and v_dut_if_field_pos_is_last then
         shared_gmii_vvc_config(v_channel, GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER_WAIT) := ENABLED;
       end if;
-      -- TODO: temporary fix for HVVC, remove 4 lines below in v3.0
+      --UVVM: temporary fix for HVVC, remove 4 lines below in v3.0
       if v_dut_if_field_pos_is_last then
         shared_gmii_vvc_config(v_channel, GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER) := ENABLED when v_disabled_msg_id_int;
         shared_gmii_vvc_config(v_channel, GC_INSTANCE_IDX).msg_id_panel(ID_CMD_EXECUTOR) := ENABLED when v_disabled_msg_id_exe;

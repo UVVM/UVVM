@@ -44,7 +44,7 @@ begin
     variable v_dut_if_field_pos_is_last  : boolean;
     variable v_disabled_msg_id_int_wait  : boolean;
     variable v_disabled_msg_id_exe_wait  : boolean;
-    -- TODO: temporary fix for HVVC, remove 2 lines below in v3.0
+    --UVVM: temporary fix for HVVC, remove 2 lines below in v3.0
     variable v_disabled_msg_id_int       : boolean;
     variable v_disabled_msg_id_exe       : boolean;
 
@@ -106,7 +106,7 @@ begin
         -- Disable the interpreter and executor waiting logs during the HVVC command
         v_disabled_msg_id_int_wait := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_INTERPRETER_WAIT);
         v_disabled_msg_id_exe_wait := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_EXECUTOR_WAIT);
-        -- TODO: temporary fix for HVVC, remove 2 lines below in v3.0
+        --UVVM: temporary fix for HVVC, remove 2 lines below in v3.0
         v_disabled_msg_id_int := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_INTERPRETER);
         v_disabled_msg_id_exe := disable_sbi_vvc_msg_id(GC_INSTANCE_IDX, ID_CMD_EXECUTOR);
       end if;
@@ -127,7 +127,7 @@ begin
       case hvvc_to_bridge.operation is
 
         when TRANSMIT =>
-          -- TODO: temporary fix for HVVC, remove line below in v3.0
+          --UVVM: temporary fix for HVVC, remove line below in v3.0
           shared_sbi_vvc_config(GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
 
           -- Convert from t_slv_array to std_logic_vector (word endianness is LOWER_WORD_RIGHT)
@@ -147,7 +147,7 @@ begin
           end loop;
 
         when RECEIVE =>
-          -- TODO: temporary fix for HVVC, remove line below in v3.0
+          --UVVM: temporary fix for HVVC, remove line below in v3.0
           shared_sbi_vvc_config(GC_INSTANCE_IDX).parent_msg_id_panel := hvvc_to_bridge.msg_id_panel;
 
           -- Loop through transfers
@@ -176,7 +176,7 @@ begin
       if v_disabled_msg_id_int_wait and v_dut_if_field_pos_is_last then
         shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER_WAIT) := ENABLED;
       end if;
-      -- TODO: temporary fix for HVVC, remove 4 lines below in v3.0
+      --UVVM: temporary fix for HVVC, remove 4 lines below in v3.0
       if v_dut_if_field_pos_is_last then
         shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_INTERPRETER) := ENABLED when v_disabled_msg_id_int;
         shared_sbi_vvc_config(GC_INSTANCE_IDX).msg_id_panel(ID_CMD_EXECUTOR) := ENABLED when v_disabled_msg_id_exe;

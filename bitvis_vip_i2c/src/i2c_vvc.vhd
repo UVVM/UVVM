@@ -82,6 +82,21 @@ architecture behave of i2c_vvc is
   -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
 
+  --UVVM: temporary fix for HVVC, remove function below in v3.0
+  function get_msg_id_panel(
+    constant command    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config
+  ) return t_msg_id_panel is
+  begin
+    -- If the parent_msg_id_panel is set then use it,
+    -- otherwise use the VVCs msg_id_panel from its config.
+    if command.msg(1 to 5) = "HVVC:" then
+      return vvc_config.parent_msg_id_panel;
+    else
+      return vvc_config.msg_id_panel;
+    end if;
+  end function;
+
 begin
 
 
@@ -103,6 +118,7 @@ begin
     variable v_cmd_has_been_acked : boolean;  -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
+    variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
 
     -- 0. Initialize the process prior to first command
@@ -121,7 +137,7 @@ begin
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
       v_cmd_has_been_acked                                  := false;  -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
@@ -139,6 +155,13 @@ begin
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
       elsif v_local_vvc_cmd.command_type = IMMEDIATE then
+
+        --UVVM: temporary fix for HVVC, remove two lines below in v3.0
+        if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
+          v_temp_msg_id_panel     := vvc_config.msg_id_panel;
+          vvc_config.msg_id_panel := v_msg_id_panel;
+        end if;
+
         case v_local_vvc_cmd.operation is
 
           when AWAIT_COMPLETION =>
@@ -171,6 +194,11 @@ begin
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
 
         end case;
+
+        --UVVM: temporary fix for HVVC, remove line below in v3.0
+        if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
+          vvc_config.msg_id_panel := v_temp_msg_id_panel;
+        end if;
 
       else
         tb_error("command_type is not IMMEDIATE or QUEUED", C_SCOPE);
@@ -223,7 +251,7 @@ begin
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);

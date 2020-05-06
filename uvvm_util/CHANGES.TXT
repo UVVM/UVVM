@@ -6,6 +6,7 @@ UVVM Utility Library - Overview on Versions and Changes
 v2.xx.x
 ----------
 Released: 2020-xx-xx
+- Added a new msg_id in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ.
 - Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
 
 v2.13.1

@@ -67,6 +67,7 @@ package vvc_methods_pkg is
     use_read_pipeline                     : boolean;           -- When true, allows sending multiple read_requests before receiving a read_response
     num_pipeline_stages                   : natural;           -- Max read_requests in pipeline
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
+    parent_msg_id_panel                   : t_msg_id_panel;    --UVVM: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -82,7 +83,8 @@ package vvc_methods_pkg is
     bfm_config                            => C_AVALON_MM_BFM_CONFIG_DEFAULT,
     use_read_pipeline                     => TRUE,
     num_pipeline_stages                   => 5,
-    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
     );
     
   type t_vvc_status is

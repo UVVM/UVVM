@@ -449,6 +449,13 @@ package body vvc_methods_pkg is
     variable v_use_payload_length   : boolean;
     variable v_use_payload          : boolean;
     variable v_use_fcs              : boolean;
+    variable v_pos_preamble_and_sfd : t_field_position := MIDDLE;
+    variable v_pos_mac_dest         : t_field_position := MIDDLE;
+    variable v_pos_mac_source       : t_field_position := MIDDLE;
+    variable v_pos_payload_length   : t_field_position := MIDDLE;
+    variable v_pos_payload          : t_field_position := MIDDLE;
+    variable v_pos_fcs              : t_field_position := MIDDLE;
+
   begin
     -- Preamble (LSb first)
     v_packet(0 to 6)        := convert_slv_to_byte_array(C_PREAMBLE, LOWER_BYTE_LEFT);
@@ -507,6 +514,35 @@ package body vvc_methods_pkg is
     v_use_fcs              := true when C_FIELD_IDX_FCS > dut_if_field_config'high else
                               dut_if_field_config(C_FIELD_IDX_FCS).use_field;
 
+    -- Check which are the first and last used fields in the packet. If there is
+    -- only one field then it will be FIRST_AND_LAST.
+    if v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := FIRST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := FIRST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := FIRST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := FIRST;
+    elsif v_use_payload then
+      v_pos_payload          := FIRST;
+    elsif v_use_fcs then
+      v_pos_fcs              := FIRST;
+    end if;
+    if v_use_fcs then
+      v_pos_fcs              := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload then
+      v_pos_payload          := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
+    elsif v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
+    end if;
+
     log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) & 
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
@@ -514,36 +550,36 @@ package body vvc_methods_pkg is
     if v_use_preamble_and_sfd then
       log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7),
-        C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7), C_FIELD_IDX_PREAMBLE_AND_SFD,
+        v_pos_preamble_and_sfd, scope, msg_id_panel);
     end if;
     if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
       log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
     end if;
     if v_use_mac_dest then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13),
-        C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13), C_FIELD_IDX_MAC_DESTINATION,
+        v_pos_mac_dest, scope, msg_id_panel);
     end if;
     if v_use_mac_source then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(14 to 19),
-        C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(14 to 19), C_FIELD_IDX_MAC_SOURCE,
+        v_pos_mac_source, scope, msg_id_panel);
     end if;
     if v_use_payload_length then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(20 to 21),
-        C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(20 to 21), C_FIELD_IDX_PAYLOAD_LENGTH,
+        v_pos_payload_length, scope, msg_id_panel);
     end if;
     if v_use_payload then
       log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22+v_payload_length-1),
-        C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22+v_payload_length-1), C_FIELD_IDX_PAYLOAD,
+        v_pos_payload, scope, msg_id_panel);
     end if;
     if v_use_fcs then
       log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+4-1),
-        C_FIELD_IDX_FCS, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+4-1), C_FIELD_IDX_FCS,
+        v_pos_fcs, scope, msg_id_panel);
     end if;
 
     log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
@@ -580,6 +616,12 @@ package body vvc_methods_pkg is
     variable v_use_payload_length   : boolean;
     variable v_use_payload          : boolean;
     variable v_use_fcs              : boolean;
+    variable v_pos_preamble_and_sfd : t_field_position := MIDDLE;
+    variable v_pos_mac_dest         : t_field_position := MIDDLE;
+    variable v_pos_mac_source       : t_field_position := MIDDLE;
+    variable v_pos_payload_length   : t_field_position := MIDDLE;
+    variable v_pos_payload          : t_field_position := MIDDLE;
+    variable v_pos_fcs              : t_field_position := MIDDLE;
   begin
     -- Choose which procedure call to use (local or external)
     if ext_proc_call = "" then
@@ -607,6 +649,35 @@ package body vvc_methods_pkg is
     v_use_fcs              := true when C_FIELD_IDX_FCS > dut_if_field_config'high else
                               dut_if_field_config(C_FIELD_IDX_FCS).use_field;
 
+    -- Check which are the first and last used fields in the packet. If there is
+    -- only one field then it will be FIRST_AND_LAST.
+    if v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := FIRST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := FIRST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := FIRST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := FIRST;
+    elsif v_use_payload then
+      v_pos_payload          := FIRST;
+    elsif v_use_fcs then
+      v_pos_fcs              := FIRST;
+    end if;
+    if v_use_fcs then
+      v_pos_fcs              := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload then
+      v_pos_payload          := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
+    elsif v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
+    end if;
+
     log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) & 
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
@@ -614,11 +685,12 @@ package body vvc_methods_pkg is
     if v_use_preamble_and_sfd then
       loop
         -- Fetch one byte at the time until SFD is found
-        blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
+        blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, v_pos_preamble_and_sfd, scope, msg_id_panel);
         v_preamble_and_sfd := v_preamble_and_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
         if v_preamble_and_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
+        v_pos_preamble_and_sfd := MIDDLE; -- Avoid repeating the first field log for each byte
       end loop;
       v_packet(0 to 7) := convert_slv_to_byte_array(v_preamble_and_sfd, LOWER_BYTE_LEFT);
       log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & 
@@ -627,7 +699,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC destination from bridge (if configured)
     if v_use_mac_dest then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, v_pos_mac_dest, scope, msg_id_panel);
       v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_destination := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
@@ -636,7 +708,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC source from bridge (if configured)
     if v_use_mac_source then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, v_pos_mac_source, scope, msg_id_panel);
       v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_source := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
@@ -645,7 +717,7 @@ package body vvc_methods_pkg is
 
     -- Read payload length from bridge (if configured)
     if v_use_payload_length then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, v_pos_payload_length, scope, msg_id_panel);
       v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
       received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
       v_payload_length              := received_frame.payload_length;
@@ -666,7 +738,7 @@ package body vvc_methods_pkg is
       if v_payload_length < C_MIN_PAYLOAD_LENGTH then
         v_payload_length := C_MIN_PAYLOAD_LENGTH;
       end if;
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, v_pos_payload, scope, msg_id_panel);
       v_packet(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_words(0 to v_payload_length-1);
       received_frame.payload(0 to received_frame.payload_length-1) := v_packet(22 to 22+received_frame.payload_length-1); -- Discard padding bytes
       -- Add info to the vvc_transaction_info
@@ -677,7 +749,7 @@ package body vvc_methods_pkg is
 
     -- Read FCS from bridge (if configured)
     if v_use_fcs then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, v_pos_fcs, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
       -- For the FCS the MSb is received first, so we need to reverse the bits in each byte
       received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);

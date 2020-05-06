@@ -39,7 +39,6 @@ begin
     variable v_dut_address_increment     : integer;
     variable v_dut_data_width            : positive;
     variable v_num_transfers             : integer;
-    variable v_num_data_bytes            : positive;
     variable v_data_slv                  : std_logic_vector(GC_MAX_NUM_WORDS*c_data_words_width-1 downto 0);
     variable v_dut_if_field_pos_is_first : boolean;
     variable v_dut_if_field_pos_is_last  : boolean;
@@ -123,8 +122,6 @@ begin
       if ((hvvc_to_bridge.num_data_words*c_data_words_width) rem v_dut_data_width) /= 0 then
         v_num_transfers := v_num_transfers+1;
       end if;
-      -- Calculate number of bytes for this operation
-      v_num_data_bytes := hvvc_to_bridge.num_data_words*c_data_words_width/8;
 
       -- Execute command
       case hvvc_to_bridge.operation is

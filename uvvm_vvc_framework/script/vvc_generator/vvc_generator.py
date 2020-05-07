@@ -672,7 +672,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("                                                                         "
                       "timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,\n")
     file_handle.write("                                                                         "
-                      "scope                              => C_SCOPE),\n")
+                      "scope                              => C_SCOPE,\n")
     file_handle.write("                                                                         "
                       "msg_id_panel                       => v_msg_id_panel);\n")
     print_linefeed(file_handle)

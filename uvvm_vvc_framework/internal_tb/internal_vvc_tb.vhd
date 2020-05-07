@@ -504,7 +504,7 @@ begin
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 4", scope => C_SCOPE_E1);
 
-    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Broadcast", C_SCOPE_E1);
+    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Broadcast (old await_completion)", C_SCOPE_E1);
     for i in 0 to 10 loop
       wait for 0 ns;
     end loop;
@@ -514,7 +514,7 @@ begin
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 5", scope => C_SCOPE_E1);
 
-    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Multicast", C_SCOPE_E1);
+    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Multicast (old await_completion)", C_SCOPE_E1);
     for i in 0 to 10 loop
       wait for 0 ns;
     end loop;
@@ -606,14 +606,14 @@ begin
     enable_log_msg(SBI_VVCT, 2,ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 4", scope => C_SCOPE_E2);
-    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Broadcast", C_SCOPE_E2);
-    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
-    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_E2);
+    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Broadcast (old await_completion)", C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 5", scope => C_SCOPE_E2);
-    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Multicast", C_SCOPE_E2);
-    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
-    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_E2);
+    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Multicast (old await_completion)", C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 6", scope => C_SCOPE_E2);
     log(ID_LOG_HDR, "SEQUENCER 2: Sending two Multicast simultaniously to different VVCs", C_SCOPE_E2);

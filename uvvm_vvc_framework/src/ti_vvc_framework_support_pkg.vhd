@@ -699,6 +699,7 @@ package body ti_vvc_framework_support_pkg is
     variable v_done                         : boolean := false;
     variable v_timeout                      : boolean := false;
     variable v_error                        : boolean := false;
+    variable v_first_wait                   : boolean := true;
     variable v_vvc_list_idx                 : natural := 0;
     variable v_vvc_register_complete_idx    : natural;
   begin
@@ -738,6 +739,7 @@ package body ti_vvc_framework_support_pkg is
                                                                                             vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
         v_num_vvc_instances := 0 when v_vvc_idx_in_activity_register(v_tot_vvc_instances) = c_index_not_found else 1;
       end if;
+
       -- Update the total number of VVCs in the group
       v_tot_vvc_instances := v_tot_vvc_instances + v_num_vvc_instances;
 
@@ -756,10 +758,6 @@ package body ti_vvc_framework_support_pkg is
     for i in 0 to v_tot_vvc_instances-1 loop
       log(ID_BITVIS_DEBUG, "v_vvc_idx_in_activity_register(" & to_string(i) & "):" & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)));
     end loop;
-
-    if not(v_done) then
-      log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-    end if;
 
     v_timestamp := now;
     while not(v_done) loop
@@ -786,14 +784,20 @@ package body ti_vvc_framework_support_pkg is
       end loop;
 
       if not(v_done) then
-        wait on global_trigger_vvc_activity_register for timeout;
-      end if;
+        if v_first_wait then
+          log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+          v_first_wait := false;
+        end if;
 
-      -- Check if there was a timeout
-      if now >= v_timestamp + timeout then
-        alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
-        v_timeout := true;
-        v_done    := true;
+        -- Wait for vvc activity trigger pulse
+        wait on global_trigger_vvc_activity_register for timeout;
+
+        -- Check if there was a timeout
+        if now >= v_timestamp + timeout then
+          alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
+          v_timeout := true;
+          v_done    := true;
+        end if;
       end if;
     end loop;
 

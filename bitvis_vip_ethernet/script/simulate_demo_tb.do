@@ -13,5 +13,5 @@
 #-----------------------------------------------------------------------
 # Run simulation
 #-----------------------------------------------------------------------
-vsim bitvis_vip_ethernet.ethernet_sbi_sb_demo_tb
+vsim bitvis_vip_ethernet.ethernet_sbi_gmii_demo_tb
 run -all

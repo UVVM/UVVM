@@ -13,3 +13,6 @@ vhdl_ls.toml
 /uvvm_util/internal_script/compile_all_and_sim_gen_pulse.do
 /uvvm_util/internal_script/compile_all_and_sim_alert_level_specific.do
 /uvvm_util/sim
+
+# GHDL compilations
+*.cf

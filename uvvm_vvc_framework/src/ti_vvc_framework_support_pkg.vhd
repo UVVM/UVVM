@@ -320,6 +320,7 @@ package ti_vvc_framework_support_pkg is
   -- ============================================================================
   type t_vvc_operation is (TRANSMIT, RECEIVE); -- Type of operation to be executed by the VVC
   type t_direction is (TRANSMIT, RECEIVE);     -- Direction of the interface (used by the IF field config)
+  type t_field_position is (FIRST, MIDDLE, LAST, FIRST_AND_LAST); -- Position of a field within a packet
 
   type t_hvvc_to_bridge is record
     trigger          : boolean;          -- Trigger signal
@@ -327,6 +328,7 @@ package ti_vvc_framework_support_pkg is
     num_data_words   : positive;         -- Number of data words transferred
     data_words       : t_slv_array;      -- Data sent to the VVC
     dut_if_field_idx : natural;          -- Index of the interface field
+    dut_if_field_pos : t_field_position; -- Position of the interface field within the packet
     msg_id_panel     : t_msg_id_panel;   -- Message ID panel of the HVVC
   end record;
 
@@ -834,7 +836,7 @@ package body ti_vvc_framework_support_pkg is
     wait for 0 ns;
 
     -- Check if all expected VVCs are registered
-    if num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvc then
+    if (num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvc) and (num_exp_vvc > 0) then
       shared_vvc_activity_register.priv_list_registered_vvc(msg);
       alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" &
                         to_string(shared_vvc_activity_register.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &

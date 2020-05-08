@@ -54,7 +54,7 @@ package td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -67,7 +67,7 @@ package td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -84,7 +84,7 @@ package td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -98,7 +98,7 @@ package td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -117,7 +117,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -- Overload without vvc_channel
@@ -129,7 +129,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -- Overload with wanted_idx
@@ -145,7 +145,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -- Overload without vvc_channel
@@ -158,7 +158,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -174,7 +174,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -188,7 +188,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
 
@@ -205,7 +205,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -219,7 +219,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
 
@@ -234,7 +234,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_channel               : in    t_channel;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -246,7 +246,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -269,7 +269,7 @@ package td_vvc_framework_common_methods_pkg is
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant caller_name               : in    string         := "base_procedure";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
   -- -- Same as above but without fetch_is_accepted.
   -- -- Will trigger alert with alert_level if not OK.
@@ -282,7 +282,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
   -- -- - This version does not use vvc_channel.
   -- -- - Fetches result from a VVC
@@ -297,7 +297,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
   -- -- Same as above but without fetch_is_accepted.
   -- -- Will trigger alert with alert_level if not OK.
@@ -309,7 +309,7 @@ package td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -324,7 +324,7 @@ package td_vvc_framework_common_methods_pkg is
     constant delay                     : in    natural;  -- in clock cycles
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -337,7 +337,7 @@ package td_vvc_framework_common_methods_pkg is
     constant delay                     : in    natural;  -- in clock cycles
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -352,7 +352,7 @@ package td_vvc_framework_common_methods_pkg is
     constant delay                     : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
   -------------------------------------------
@@ -365,7 +365,7 @@ package td_vvc_framework_common_methods_pkg is
     constant delay                     : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
 
@@ -380,7 +380,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_channel               : in    t_channel      := NA;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
   -- Overload without VVC channel
   procedure terminate_current_command(
@@ -388,7 +388,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
 
@@ -404,7 +404,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_channel               : in    t_channel      := NA;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
   -- Overload without VVC channel
   procedure terminate_all_commands(
@@ -412,7 +412,7 @@ package td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   );
 
 
@@ -449,7 +449,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -516,10 +516,10 @@ package body td_vvc_framework_common_methods_pkg is
       set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
       shared_vvc_cmd.gen_integer_array(0) := -1;  -- All commands must be completed (i.e. not just a selected command index)
       shared_vvc_cmd.timeout              := timeout;
-      --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-      --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-      --  v_msg_id_panel := parent_msg_id_panel;
-      --end if;
+      --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+      if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+        v_msg_id_panel := parent_msg_id_panel;
+      end if;
       send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
     end if;
   end procedure;
@@ -530,7 +530,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     await_completion(vvc_target, vvc_instance_idx, NA, timeout, msg, scope, parent_msg_id_panel);
@@ -544,7 +544,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -611,10 +611,10 @@ package body td_vvc_framework_common_methods_pkg is
       set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, AWAIT_COMPLETION);
       shared_vvc_cmd.gen_integer_array(0) := wanted_idx;
       shared_vvc_cmd.timeout              := timeout;
-      --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-      --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-      --  v_msg_id_panel := parent_msg_id_panel;
-      --end if;
+      --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+      if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+        v_msg_id_panel := parent_msg_id_panel;
+      end if;
       send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
     end if;
   end procedure;
@@ -626,7 +626,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant timeout                   : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     await_completion(vvc_target, vvc_instance_idx, NA, wanted_idx, timeout, msg, scope, parent_msg_id_panel);
@@ -641,7 +641,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0; -- Useful when being called by multiple sequencers
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "await_any_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -657,10 +657,10 @@ package body td_vvc_framework_common_methods_pkg is
     shared_vvc_cmd.gen_integer_array(0) := -1;                       -- All commands must be completed (i.e. not just a selected command index)
     shared_vvc_cmd.gen_integer_array(1) := awaiting_completion_idx;
     shared_vvc_cmd.timeout              := timeout;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     if lastness = LAST then
       shared_vvc_cmd.gen_boolean := true; -- LAST
     else
@@ -677,7 +677,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     await_any_completion(vvc_target, vvc_instance_idx, NA, lastness, timeout, msg, awaiting_completion_idx, scope, parent_msg_id_panel);
@@ -694,7 +694,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0;  -- Useful when being called by multiple sequencers
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "await_any_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -708,10 +708,10 @@ package body td_vvc_framework_common_methods_pkg is
     shared_vvc_cmd.gen_integer_array(0) := wanted_idx;
     shared_vvc_cmd.gen_integer_array(1) := awaiting_completion_idx;
     shared_vvc_cmd.timeout              := timeout;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     if lastness = LAST then
       -- LAST
       shared_vvc_cmd.gen_boolean := true;
@@ -732,7 +732,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant awaiting_completion_idx   : in    natural        := 0; -- Useful when being called by multiple sequencers
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     await_any_completion(vvc_target, vvc_instance_idx, NA, wanted_idx, lastness, timeout, msg, awaiting_completion_idx, scope, parent_msg_id_panel);
@@ -746,7 +746,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "disable_log_msg";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -759,10 +759,10 @@ package body td_vvc_framework_common_methods_pkg is
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, DISABLE_LOG_MSG);
     shared_vvc_cmd.msg_id               := msg_id;
     shared_vvc_cmd.quietness            := quietness;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
@@ -773,7 +773,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     disable_log_msg(vvc_target, vvc_instance_idx, NA, msg_id, msg, quietness, scope, parent_msg_id_panel);
@@ -787,7 +787,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "enable_log_msg";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -800,10 +800,10 @@ package body td_vvc_framework_common_methods_pkg is
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, ENABLE_LOG_MSG);
     shared_vvc_cmd.msg_id               := msg_id;
     shared_vvc_cmd.quietness            := quietness;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
@@ -814,7 +814,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant quietness                 : in    t_quietness    := NON_QUIET;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     enable_log_msg(vvc_target, vvc_instance_idx, NA, msg_id, msg, quietness, scope, parent_msg_id_panel);
@@ -826,7 +826,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_channel               : in    t_channel;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "flush_command_queue";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel) & ")";
@@ -836,10 +836,10 @@ package body td_vvc_framework_common_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, FLUSH_COMMAND_QUEUE);
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
@@ -848,7 +848,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     flush_command_queue(vvc_target, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
@@ -867,7 +867,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant caller_name               : in    string         := "base_procedure";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "fetch_result";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -880,10 +880,10 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, FETCH_RESULT);
     shared_vvc_cmd.gen_integer_array(0) := wanted_idx;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
     -- Post process
     result  := shared_vvc_response.result;
@@ -903,7 +903,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     variable v_fetch_is_accepted : boolean;
     variable v_msg_id_panel      : t_msg_id_panel := shared_msg_id_panel;
@@ -912,9 +912,9 @@ package body td_vvc_framework_common_methods_pkg is
         & ", " & to_string(wanted_idx) & ")";
   begin
     fetch_result(vvc_target, vvc_instance_idx, vvc_channel, wanted_idx, result, v_fetch_is_accepted, msg, alert_level, proc_name & "_with_check_of_ok", scope, parent_msg_id_panel);
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     if v_fetch_is_accepted then
       log(ID_UVVM_CMD_RESULT, proc_call & ": Legal=>" & to_string(v_fetch_is_accepted) & ", Result=>" & format_command_idx(shared_cmd_idx), scope, v_msg_id_panel);    -- Get and ack the new command
     else
@@ -932,7 +932,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     fetch_result(vvc_target, vvc_instance_idx, NA, wanted_idx, result, fetch_is_accepted, msg, alert_level, "base_procedure", scope, parent_msg_id_panel);
@@ -946,7 +946,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant msg                       : in    string         := "";
     constant alert_level               : in    t_alert_level  := TB_ERROR;
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     fetch_result(vvc_target, vvc_instance_idx, NA, wanted_idx, result, msg, alert_level, scope, parent_msg_id_panel);
@@ -960,7 +960,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant delay                     : in    natural;  -- in clock cycles
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "insert_delay";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -972,10 +972,10 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, QUEUED, INSERT_DELAY);
     shared_vvc_cmd.gen_integer_array(0) := delay;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
@@ -985,7 +985,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant delay                     : in    natural;  -- in clock cycles
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     insert_delay(vvc_target, vvc_instance_idx, NA, delay, msg, scope, parent_msg_id_panel);
@@ -999,7 +999,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant delay                     : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "insert_delay";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -1011,10 +1011,10 @@ package body td_vvc_framework_common_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, QUEUED, INSERT_DELAY);
     shared_vvc_cmd.delay                := delay;
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
@@ -1024,7 +1024,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant delay                     : in    time;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     insert_delay(vvc_target, vvc_instance_idx, NA, delay, msg, scope, parent_msg_id_panel);
@@ -1037,7 +1037,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_channel               : in    t_channel      := NA;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant proc_name : string := "terminate_current_command";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
@@ -1048,10 +1048,10 @@ package body td_vvc_framework_common_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(vvc_target, vvc_instance_idx, vvc_channel, proc_call, msg, IMMEDIATE, TERMINATE_CURRENT_COMMAND);
-    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel;
-    --if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-    --  v_msg_id_panel := parent_msg_id_panel;
-    --end if;
+    --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
+    end if;
     send_command_to_vvc(vvc_target, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
@@ -1061,7 +1061,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant vvc_channel        :  t_channel  := NA;
     constant proc_name          : string      := "terminate_current_command";
@@ -1078,7 +1078,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_channel               : in    t_channel      := NA;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
   begin
     flush_command_queue(vvc_target, vvc_instance_idx, vvc_channel, msg, scope, parent_msg_id_panel);
@@ -1091,7 +1091,7 @@ package body td_vvc_framework_common_methods_pkg is
     constant vvc_instance_idx          : in    integer;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel       : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL
+    constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
   ) is
     constant vvc_channel : t_channel := NA;
   begin

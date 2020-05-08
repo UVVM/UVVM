@@ -1,11 +1,17 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+vx.x.x
+----------
+Released: 2020-xx-xx
+- Added shared_axistream_vvc_transaction_info information to quick reference.
+- Added script/compile_bfm.do script.
+- Changed VVC activity methods parameters and default scope.
+
 v4.6.1
 ----------
 Released: 2020-04-20
 - Added reference to verbosity control in VVC QR.
-
 
 v4.6.0
 ----------

@@ -64,6 +64,7 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity : t_alert_level;
     bfm_config                            : t_rgmii_bfm_config; -- Configuration for the BFM. See BFM quick reference.
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.
+    parent_msg_id_panel                   : t_msg_id_panel;    --UVVM: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -77,7 +78,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     bfm_config                            => C_RGMII_BFM_CONFIG_DEFAULT,
-    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT
+    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
   );
 
   type t_vvc_status is
@@ -172,7 +174,7 @@ package vvc_methods_pkg is
                                           constant entry_num_in_vvc_activity_register : in    integer;
                                           constant last_cmd_idx_executed              : in    natural;
                                           constant command_queue_is_empty             : in    boolean;
-                                          constant scope                                : in string := "RGMII_VVC");
+                                          constant scope                              : in    string := C_VVC_NAME);
 
 end package vvc_methods_pkg;
 
@@ -322,7 +324,7 @@ package body vvc_methods_pkg is
                                           constant entry_num_in_vvc_activity_register : in    integer;
                                           constant last_cmd_idx_executed              : in    natural;
                                           constant command_queue_is_empty             : in    boolean;
-                                          constant scope                                : in string := "RGMII_VVC") is
+                                          constant scope                              : in    string := C_VVC_NAME) is
     variable v_activity   : t_activity := activity;
   begin
     if v_activity = INACTIVE and not(command_queue_is_empty) then

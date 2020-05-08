@@ -1,11 +1,17 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+vx.x.x
+----------
+Released: 2020-xx-xx
+- Added shared_axilite_vvc_transaction_info information to quick reference.
+- Added script/compile_bfm.do script.
+- Changed VVC activity methods parameters and default scope.
+
 v2.6.1
 ----------
 Released: 2020-04-20
 - Added reference to verbosity control in VVC QR.
-
 
 v2.6.0
 ----------

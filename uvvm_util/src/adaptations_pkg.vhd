@@ -140,6 +140,7 @@ package adaptations_pkg is
     ID_IMMEDIATE_CMD_WAIT,    -- Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
+    ID_NEW_HVVC_CMD_SEQ,      -- Message from a lower level VVC which receives a new command sequence from an HVVC
     ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
     ID_AWAIT_COMPLETION,      -- Logs messages related to VVCs waiting for completion
     -- Distributed data
@@ -189,6 +190,7 @@ package adaptations_pkg is
     ID_CMD_EXECUTOR_WAIT    => "  ..",
     ID_UVVM_SEND_CMD        => "->"   & NUL & NUL,
     ID_UVVM_CMD_ACK         => "    ",
+    ID_NEW_HVVC_CMD_SEQ     => "  "   & NUL & NUL,
     others                  => ""     & NUL & NUL & NUL & NUL
   );
 

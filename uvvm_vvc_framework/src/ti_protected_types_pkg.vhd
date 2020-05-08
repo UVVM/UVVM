@@ -30,38 +30,66 @@ package ti_protected_types_pkg is
   ------------------------------------------------------------
   type t_vvc_activity is protected
 
+    -- Add a new VVC to the activity register and return its index
     impure function priv_register_vvc(
       constant name     : in string;
       constant instance : in natural;
       constant channel  : in t_channel := NA
     ) return integer;
 
+    -- Update a VVC's state
     procedure priv_report_vvc_activity(
       constant vvc_idx                : in natural;
       constant activity               : in t_activity;
       constant last_cmd_idx_executed  : in integer
     );
 
+    -- Print the list of registered VVCs
     procedure priv_list_registered_vvc(
       constant msg : in string
     );
 
+    -- Get a VVC's index in the activity register
     impure function priv_get_vvc_idx(
       constant name     : in string;
       constant instance : in integer;
       constant channel  : in t_channel := NA
     ) return integer;
 
+    -- Get a VVC's index in the activity register after ignoring 'offset' number of occurrences
+    impure function priv_get_vvc_idx(
+      constant offset   : in natural;
+      constant name     : in string;
+      constant instance : in integer;
+      constant channel  : in t_channel := NA
+    ) return integer;
+
+    -- Get a VVC's activity
     impure function priv_get_vvc_activity(
       constant vvc_idx : in natural
     ) return t_activity;
 
+    -- Get a VVC's last_cmd_idx_executed
     impure function priv_get_vvc_last_cmd_idx_executed(
       constant vvc_idx : in natural
     ) return integer;
 
+    -- Get a VVC's name, instance and channel
+    impure function priv_get_vvc_info(
+      constant vvc_idx  : in natural
+    ) return string;
+
+    -- Get the number of registered instances and channels of a VVC
+    impure function priv_get_num_registered_vvc_instances(
+      constant name     : in string;
+      constant instance : in integer;
+      constant channel  : in t_channel := NA
+    ) return natural;
+
+    -- Get the total number of registered VVCs
     impure function priv_get_num_registered_vvc return natural;
 
+    -- Check if all registered VVCs are INACTIVE
     impure function priv_are_all_vvc_inactive return boolean;
 
   end protected;
@@ -220,6 +248,29 @@ package body ti_protected_types_pkg is
       return -1; -- not found
     end function;
 
+    impure function priv_get_vvc_idx(
+      constant offset   : in natural;
+      constant name     : in string;
+      constant instance : in integer;
+      constant channel  : in t_channel := NA
+    ) return integer is
+      variable v_occurrence : natural := 0;
+    begin
+      for idx in 0 to priv_last_registered_vvc_idx loop
+        if priv_registered_vvc(idx).vvc_id.name     = name and
+          (priv_registered_vvc(idx).vvc_id.instance = instance or instance = ALL_INSTANCES) and
+          (priv_registered_vvc(idx).vvc_id.channel  = channel or channel = ALL_CHANNELS) then
+          if v_occurrence = offset then
+            return idx; -- vvc was found
+          else
+            v_occurrence := v_occurrence + 1;
+          end if;
+        end if;
+      end loop;
+
+      return -1; -- not found
+    end function;
+
     impure function priv_get_vvc_activity(
       constant vvc_idx : in natural
     ) return t_activity is
@@ -236,6 +287,38 @@ package body ti_protected_types_pkg is
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
         "priv_get_vvc_last_cmd_idx_executed() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed;
+    end function;
+
+    impure function priv_get_vvc_info(
+      constant vvc_idx  : in natural
+    ) return string is
+    begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
+        "priv_get_vvc_info() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      if priv_registered_vvc(vvc_idx).vvc_id.channel = NA then
+        return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance);
+      else
+        return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance) & "," &
+               to_string(priv_registered_vvc(vvc_idx).vvc_id.channel); 
+      end if;
+    end function;
+
+    impure function priv_get_num_registered_vvc_instances(
+      constant name     : in string;
+      constant instance : in integer;
+      constant channel  : in t_channel := NA
+    ) return natural is
+      variable v_num_instances : natural := 0;
+    begin
+      for idx in 0 to priv_last_registered_vvc_idx loop
+        if priv_registered_vvc(idx).vvc_id.name     = name and
+          (priv_registered_vvc(idx).vvc_id.instance = instance or instance = ALL_INSTANCES) and
+          (priv_registered_vvc(idx).vvc_id.channel  = channel or channel = ALL_CHANNELS) then
+          v_num_instances := v_num_instances + 1;
+        end if;
+      end loop;
+
+      return v_num_instances;
     end function;
 
     impure function priv_get_num_registered_vvc return natural is

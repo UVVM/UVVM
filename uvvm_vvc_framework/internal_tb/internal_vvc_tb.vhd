@@ -1020,11 +1020,12 @@ begin
     increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
     await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
-    log(ID_LOG_HDR, "Use await_completion with an unsupported VVC", C_SCOPE_I1);
+    log(ID_LOG_HDR, "Use await_completion with some unsupported VVCs", C_SCOPE_I1);
     increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
     v_vvc_list.add("UART_VVC",3,TX);
     v_vvc_list.add("UART_VVC",3,RX);
-    v_vvc_list.add("SBI_VVC",4);
+    v_vvc_list.add("UART_VVC",4,TX);
+    v_vvc_list.add("UART_VVC",4,RX);
     await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
     log(ID_LOG_HDR, "Use await_completion and check that it timeouts", C_SCOPE_I1);
@@ -1032,6 +1033,42 @@ begin
     increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
     v_vvc_list.add("SBI_VVC",3);
     await_completion(ANY, v_vvc_list, 10 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion with ALL_INSTANCES and/or ALL_CHANNELS of a VVC", C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",ALL_INSTANCES);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",ALL_INSTANCES,RX);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",ALL_INSTANCES,ALL_CHANNELS);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    v_vvc_list.add("UART_VVC",2,RX);
+    v_vvc_list.add("UART_VVC",1,ALL_CHANNELS);
+    v_vvc_list.add("SBI_VVC",ALL_INSTANCES);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    v_vvc_list.add("UART_VVC",4,RX);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",4,RX);
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion for a command idx with ALL_INSTANCES of a VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    v_vvc_list.add("SBI_VVC",ALL_INSTANCES,v_cmd_idx);
+    await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
     wait for 6*C_FRAME_PERIOD;
 
     -- Ending the simulation in sequencer 1

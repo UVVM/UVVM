@@ -454,18 +454,36 @@ package body td_vvc_framework_common_methods_pkg is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
                                    & ", " & to_string(timeout, ns) & ")";
+    constant c_index_not_found  : integer := -1;
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
-    variable v_vvc_idx_in_activity_register : integer         := -1;
+    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM:= 0;
+    variable v_vvcs_completed               : natural;
     variable v_local_cmd_idx                : integer;
     variable v_timestamp                    : time;
+    variable v_done                         : boolean := false;
     variable v_timeout                      : boolean := false;
+    variable v_first_wait                   : boolean := true;
   begin
-    -- Get the register index for this VVC in the vvc activity register
-    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
-                                      vvc_instance_idx, vvc_channel);
+    -- Get the corresponding index from the vvc activity register
+    if vvc_instance_idx = ALL_INSTANCES or vvc_channel = ALL_CHANNELS then
+      -- Check how many instances or channels of this VVC are registered in the vvc activity register
+      v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_instances(vvc_target.vvc_name,
+                                                          vvc_instance_idx, vvc_channel);
+      -- Get the index for every instance or channel of this VVC
+      for j in 0 to v_num_vvc_instances-1 loop
+        v_vvc_idx_in_activity_register(j) := shared_vvc_activity_register.priv_get_vvc_idx(j, vvc_target.vvc_name,
+                                                                          vvc_instance_idx, vvc_channel);
+      end loop;
+    else
+      -- Get the index for a specific VVC
+      v_vvc_idx_in_activity_register(0) := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
+                                                                        vvc_instance_idx, vvc_channel);
+      v_num_vvc_instances := 0 when v_vvc_idx_in_activity_register(0) = c_index_not_found else 1;
+    end if;
 
-    -- If the VVC is registered use the new method
-    if v_vvc_idx_in_activity_register /= -1 then
+    -- If the VVC is registered use the new mechanism
+    if v_vvc_idx_in_activity_register(0) /= c_index_not_found then
       -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
       -- Store it in a local variable since new commands might be executed from another sequencer.
       await_semaphore_in_delta_cycles(protected_semaphore);
@@ -479,35 +497,43 @@ package body td_vvc_framework_common_methods_pkg is
         log(ID_UVVM_SEND_CMD, proc_call & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
       end if;
 
-      -- Check if VVC is active
-      if (shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register) = ACTIVE) then
-        log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      
-        v_timestamp := now;
-        loop
+      v_timestamp := now;
+      while not(v_done) loop
+        v_vvcs_completed := 0;
+        for i in 0 to v_num_vvc_instances-1 loop
+          -- Wait for all of the VVC's instances and channels to complete (INACTIVE status)
+          if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
+            v_vvcs_completed := v_vvcs_completed + 1;
+            if v_vvcs_completed = v_num_vvc_instances then
+              v_done := true;
+            end if;
+          end if;
+        end loop;
+
+        if not(v_done) then
+          if v_first_wait then
+            log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+            v_first_wait := false;
+          end if;
+
           -- Wait for vvc activity trigger pulse
           wait on global_trigger_vvc_activity_register for timeout;
-
-          -- Check if VVC activity status is INACTIVE
-          if (shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register) = INACTIVE) then
-            exit;
-          end if;
 
           -- Check if there was a timeout
           if now >= v_timestamp + timeout then
             alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
             v_timeout := true;
-            exit;
+            v_done    := true;
           end if;
-        end loop;
-      end if;
+        end if;
+      end loop;
 
       -- Log result
       if not(v_timeout) then
         log(ID_AWAIT_COMPLETION, proc_call & "=> Finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
       end if;
 
-    -- If the VVC is not registered use the old method
+    -- If the VVC is not registered use the old mechanism
     else 
       log("VVC " & vvc_target.vvc_name & " is not registered, calling old await_completion() method.");
       -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -549,18 +575,36 @@ package body td_vvc_framework_common_methods_pkg is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
                                     & ", " & to_string(wanted_idx) & ", " & to_string(timeout, ns) & ")";
+    constant c_index_not_found  : integer := -1;
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
-    variable v_vvc_idx_in_activity_register : integer         := -1;
+    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM:= 0;
+    variable v_vvcs_completed               : natural;
     variable v_local_cmd_idx                : integer;
     variable v_timestamp                    : time;
+    variable v_done                         : boolean := false;
     variable v_timeout                      : boolean := false;
+    variable v_first_wait                   : boolean := true;
   begin
-    -- Get the register index for this VVC in the vvc activity register
-    v_vvc_idx_in_activity_register := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
-                                      vvc_instance_idx, vvc_channel);
+    -- Get the corresponding index from the vvc activity register
+    if vvc_instance_idx = ALL_INSTANCES or vvc_channel = ALL_CHANNELS then
+      -- Check how many instances or channels of this VVC are registered in the vvc activity register
+      v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_instances(vvc_target.vvc_name,
+                                                          vvc_instance_idx, vvc_channel);
+      -- Get the index for every instance or channel of this VVC
+      for j in 0 to v_num_vvc_instances-1 loop
+        v_vvc_idx_in_activity_register(j) := shared_vvc_activity_register.priv_get_vvc_idx(j, vvc_target.vvc_name,
+                                                                          vvc_instance_idx, vvc_channel);
+      end loop;
+    else
+      -- Get the index for a specific VVC
+      v_vvc_idx_in_activity_register(0) := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
+                                                                        vvc_instance_idx, vvc_channel);
+      v_num_vvc_instances := 0 when v_vvc_idx_in_activity_register(0) = c_index_not_found else 1;
+    end if;
 
-    -- If the VVC is registered use the new method
-    if v_vvc_idx_in_activity_register /= -1 then
+    -- If the VVC is registered use the new mechanism
+    if v_vvc_idx_in_activity_register(0) /= c_index_not_found then
       -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
       -- Store it in a local variable since new commands might be executed from another sequencer.
       await_semaphore_in_delta_cycles(protected_semaphore);
@@ -574,35 +618,43 @@ package body td_vvc_framework_common_methods_pkg is
         log(ID_UVVM_SEND_CMD, proc_call & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
       end if;
 
-      -- Check if VVC has not already processed the wanted command index
-      if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) < wanted_idx) then
-        log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      
-        v_timestamp := now;
-        loop
+      v_timestamp := now;
+      while not(v_done) loop
+        v_vvcs_completed := 0;
+        for i in 0 to v_num_vvc_instances-1 loop
+          -- Wait for all of the VVC's instances and channels to complete (cmd_idx completed)
+          if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= wanted_idx then
+            v_vvcs_completed := v_vvcs_completed + 1;
+            if v_vvcs_completed = v_num_vvc_instances then
+              v_done := true;
+            end if;
+          end if;
+        end loop;
+
+        if not(v_done) then
+          if v_first_wait then
+            log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+            v_first_wait := false;
+          end if;
+
           -- Wait for vvc activity trigger pulse
           wait on global_trigger_vvc_activity_register for timeout;
-
-          -- Check if VVC has completed cmd index
-          if (shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register) >= wanted_idx) then 
-            exit;
-          end if;
 
           -- Check if there was a timeout
           if now >= v_timestamp + timeout then
             alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
             v_timeout := true;
-            exit;
+            v_done    := true;
           end if;
-        end loop;
-      end if;
+        end if;
+      end loop;
 
       -- Log result
       if not(v_timeout) then
         log(ID_AWAIT_COMPLETION, proc_call & "=> Finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
       end if;
 
-    -- If the VVC is not registered use the old method
+    -- If the VVC is not registered use the old mechanism
     else 
       log("VVC " & vvc_target.vvc_name & " is not registered, calling old await_completion() method.");
       -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record

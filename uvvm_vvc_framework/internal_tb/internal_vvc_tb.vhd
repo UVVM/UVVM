@@ -236,7 +236,7 @@ begin
       await_barrier(barrier_g, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
     elsif GC_TEST = "Testing_await_completion_from_different_sequencers" then
       unblock_flag(C_FLAG_H, "Unblocking Flag_H -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
-      await_barrier(barrier_h, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
+      await_barrier(barrier_h, 200 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
     elsif GC_TEST = "Testing_await_any_completion_from_different_sequencers" then
       unblock_flag(C_FLAG_I, "Unblocking Flag_I -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_i, 200 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
@@ -838,6 +838,31 @@ begin
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Send a read request");
     await_completion(AVALON_MM_VVCT, 1, 100 ns, scope => C_SCOPE_H1);
     await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 10", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion and check that it timeouts", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H1);
+    await_completion(SBI_VVCT, 3, 10 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion with ALL_INSTANCES and/or ALL_CHANNELS of a VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    await_completion(SBI_VVCT, ALL_INSTANCES, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+
+    await_completion(UART_VVCT, ALL_INSTANCES, RX, 100 ns, scope => C_SCOPE_H1);
+
+    await_completion(UART_VVCT, 3, ALL_CHANNELS, 100 ns, scope => C_SCOPE_H1);
+
+    await_completion(UART_VVCT, ALL_INSTANCES, ALL_CHANNELS, 100 ns, scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for a command idx with ALL_INSTANCES of a VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H1);
+    await_completion(SBI_VVCT, ALL_INSTANCES, v_cmd_idx, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
 
     -- Ending the simulation in sequencer 1
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_H1);

@@ -2,12 +2,17 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.9.1
+----------
+Released: 2020-XX-XX
+- Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
+  is no command being executed.
+
 v2.9.0
 ----------
 Released: 2020-04-20
 - Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
 - Added advanced and basic choice to vvc_generator.py
-
 
 v2.8.0
 ----------

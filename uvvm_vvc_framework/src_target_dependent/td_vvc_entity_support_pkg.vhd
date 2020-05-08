@@ -872,6 +872,7 @@ package body td_vvc_entity_support_pkg is
   begin
     executor_is_busy            <= false;
     vvc_status.previous_cmd_idx := command.cmd_idx;
+    vvc_status.current_cmd_idx  := 0;
 
     wait for 0 ns;  -- to allow delta updates in other processes.
     if command_queue.is_empty(VOID) then

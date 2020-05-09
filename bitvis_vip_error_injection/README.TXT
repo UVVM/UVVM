@@ -7,3 +7,4 @@
   - doc                      : Quick Reference for VIP
   - script                   : Compile scripts
   - src                      : Error injection source code
+  - tb                       : A demo testbench

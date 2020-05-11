@@ -20,6 +20,8 @@ Released: 2020-xx-xx
 - Changed VVC activity methods parameters and default scope.
 - Fixed avalon_mm_read_request waiting on a negative delay when bfm_sync=SYNC_ON_CLOCK_ONLY
   and clock_period was not configured.
+- Updated VIP quick references.
+- Added README.TXT to VIPs.
 
 
 v2 2020.04.20

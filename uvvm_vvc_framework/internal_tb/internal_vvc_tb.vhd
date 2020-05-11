@@ -1096,6 +1096,13 @@ begin
     await_completion(ANY, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
     wait for 6*C_FRAME_PERIOD;
 
+    log(ID_LOG_HDR, "Use await_completion for several VVCs", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ALL_VVC, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
     -- Ending the simulation in sequencer 1
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_I1);
     await_barrier(barrier_i, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_I1);

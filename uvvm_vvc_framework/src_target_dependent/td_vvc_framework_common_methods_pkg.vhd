@@ -689,7 +689,7 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
     variable v_vvc_idx_in_activity_register : integer         := -1;
   begin
-
+    log(ID_OLD_AWAIT_COMPLETION, "Procedure is not supporting the VVC activity register, using old await_any_completion() method.", scope, shared_msg_id_panel);
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
@@ -741,6 +741,7 @@ package body td_vvc_framework_common_methods_pkg is
         & ", " & to_string(wanted_idx) & ", " & to_string(timeout, ns) & ")";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
+    log(ID_OLD_AWAIT_COMPLETION, "Procedure is not supporting the VVC activity register, using old await_any_completion() method.", scope, shared_msg_id_panel);
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC

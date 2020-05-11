@@ -709,11 +709,7 @@ package body ti_vvc_framework_support_pkg is
     v_local_cmd_idx := shared_cmd_idx;
     release_semaphore(protected_semaphore);
 
-    if global_show_msg_for_uvvm_cmd then
-      log(ID_UVVM_SEND_CMD, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-    else
-      log(ID_UVVM_SEND_CMD, proc_call & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-    end if;
+    log(ID_AWAIT_COMPLETION, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
 
     -- Check that list is not empty
     if c_vvc_list_length = 0 then

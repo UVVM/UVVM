@@ -458,11 +458,11 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
     variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM:= 0;
-    variable v_vvcs_completed               : natural;
+    variable v_vvc_logged                   : std_logic_vector(0 to C_MAX_TB_VVC_NUM-1) := (others => '0');
+    variable v_vvcs_completed               : natural := 0;
     variable v_local_cmd_idx                : integer;
     variable v_timestamp                    : time;
     variable v_done                         : boolean := false;
-    variable v_timeout                      : boolean := false;
     variable v_first_wait                   : boolean := true;
   begin
     -- Get the corresponding index from the vvc activity register
@@ -499,11 +499,15 @@ package body td_vvc_framework_common_methods_pkg is
 
       v_timestamp := now;
       while not(v_done) loop
-        v_vvcs_completed := 0;
         for i in 0 to v_num_vvc_instances-1 loop
           -- Wait for all of the VVC's instances and channels to complete (INACTIVE status)
           if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
-            v_vvcs_completed := v_vvcs_completed + 1;
+            if not(v_vvc_logged(i)) then
+              log(ID_AWAIT_COMPLETION, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
+                " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+              v_vvc_logged(i) := '1';
+              v_vvcs_completed := v_vvcs_completed + 1;
+            end if;
             if v_vvcs_completed = v_num_vvc_instances then
               v_done := true;
             end if;
@@ -522,16 +526,10 @@ package body td_vvc_framework_common_methods_pkg is
           -- Check if there was a timeout
           if now >= v_timestamp + timeout then
             alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
-            v_timeout := true;
-            v_done    := true;
+            v_done := true;
           end if;
         end if;
       end loop;
-
-      -- Log result
-      if not(v_timeout) then
-        log(ID_AWAIT_COMPLETION, proc_call & "=> Finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      end if;
 
     -- If the VVC is not registered use the old mechanism
     else 
@@ -579,11 +577,11 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
     variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM:= 0;
-    variable v_vvcs_completed               : natural;
+    variable v_vvc_logged                   : std_logic_vector(0 to C_MAX_TB_VVC_NUM-1) := (others => '0');
+    variable v_vvcs_completed               : natural := 0;
     variable v_local_cmd_idx                : integer;
     variable v_timestamp                    : time;
     variable v_done                         : boolean := false;
-    variable v_timeout                      : boolean := false;
     variable v_first_wait                   : boolean := true;
   begin
     -- Get the corresponding index from the vvc activity register
@@ -620,11 +618,15 @@ package body td_vvc_framework_common_methods_pkg is
 
       v_timestamp := now;
       while not(v_done) loop
-        v_vvcs_completed := 0;
         for i in 0 to v_num_vvc_instances-1 loop
           -- Wait for all of the VVC's instances and channels to complete (cmd_idx completed)
           if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= wanted_idx then
-            v_vvcs_completed := v_vvcs_completed + 1;
+            if not(v_vvc_logged(i)) then
+              log(ID_AWAIT_COMPLETION, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
+                " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+              v_vvc_logged(i) := '1';
+              v_vvcs_completed := v_vvcs_completed + 1;
+            end if;
             if v_vvcs_completed = v_num_vvc_instances then
               v_done := true;
             end if;
@@ -643,16 +645,10 @@ package body td_vvc_framework_common_methods_pkg is
           -- Check if there was a timeout
           if now >= v_timestamp + timeout then
             alert(TB_ERROR, proc_call & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
-            v_timeout := true;
-            v_done    := true;
+            v_done := true;
           end if;
         end if;
       end loop;
-
-      -- Log result
-      if not(v_timeout) then
-        log(ID_AWAIT_COMPLETION, proc_call & "=> Finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      end if;
 
     -- If the VVC is not registered use the old mechanism
     else 

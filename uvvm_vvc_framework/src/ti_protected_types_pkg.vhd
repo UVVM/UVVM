@@ -403,15 +403,15 @@ package body ti_protected_types_pkg is
 
         if channel = NA then
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & " to the list.");  
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & " to the list.");  
           else
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
           end if;
         else
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
           else
-            log(ID_AWAIT_COMPLETION, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
           end if;
         end if;
       end if;

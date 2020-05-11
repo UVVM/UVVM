@@ -759,7 +759,7 @@ package body ti_vvc_framework_support_pkg is
         if vvc_list.priv_get_cmd_idx(v_vvc_list_idx) = -1 then
           if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
             if not(v_vvc_logged(i)) then
-              log(ID_AWAIT_COMPLETION, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
+              log(ID_AWAIT_COMPLETION_END, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
                 " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
               v_vvc_logged(i) := '1';
               v_vvcs_completed := v_vvcs_completed + 1;
@@ -772,7 +772,7 @@ package body ti_vvc_framework_support_pkg is
         else
           if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= vvc_list.priv_get_cmd_idx(v_vvc_list_idx) then
             if not(v_vvc_logged(i)) then
-              log(ID_AWAIT_COMPLETION, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
+              log(ID_AWAIT_COMPLETION_END, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
                 " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
               v_vvc_logged(i) := '1';
               v_vvcs_completed := v_vvcs_completed + 1;
@@ -790,7 +790,7 @@ package body ti_vvc_framework_support_pkg is
 
       if not(v_done) then
         if v_first_wait then
-          log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+          log(ID_AWAIT_COMPLETION_WAIT, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
           v_first_wait := false;
         end if;
 
@@ -807,10 +807,10 @@ package body ti_vvc_framework_support_pkg is
 
     if list_action = CLEAN_LIST then
       vvc_list.priv_clean_list;
-      log(ID_AWAIT_COMPLETION, proc_call & "=> All VVCs removed from the list. " & add_msg_delimiter(msg) &
+      log(ID_AWAIT_COMPLETION_LIST, proc_call & "=> All VVCs removed from the list. " & add_msg_delimiter(msg) &
         format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
     elsif list_action = KEEP_LIST then
-      log(ID_AWAIT_COMPLETION, proc_call & "=> Keeping all VVCs in the list. " & add_msg_delimiter(msg) &
+      log(ID_AWAIT_COMPLETION_LIST, proc_call & "=> Keeping all VVCs in the list. " & add_msg_delimiter(msg) &
         format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
     end if;
   end procedure;

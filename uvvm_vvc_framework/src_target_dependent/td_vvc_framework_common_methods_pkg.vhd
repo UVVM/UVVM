@@ -499,7 +499,7 @@ package body td_vvc_framework_common_methods_pkg is
           -- Wait for all of the VVC's instances and channels to complete (INACTIVE status)
           if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
             if not(v_vvc_logged(i)) then
-              log(ID_AWAIT_COMPLETION, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
+              log(ID_AWAIT_COMPLETION_END, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
                 " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
               v_vvc_logged(i) := '1';
               v_vvcs_completed := v_vvcs_completed + 1;
@@ -512,7 +512,7 @@ package body td_vvc_framework_common_methods_pkg is
 
         if not(v_done) then
           if v_first_wait then
-            log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+            log(ID_AWAIT_COMPLETION_WAIT, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
             v_first_wait := false;
           end if;
 
@@ -614,7 +614,7 @@ package body td_vvc_framework_common_methods_pkg is
           -- Wait for all of the VVC's instances and channels to complete (cmd_idx completed)
           if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= wanted_idx then
             if not(v_vvc_logged(i)) then
-              log(ID_AWAIT_COMPLETION, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
+              log(ID_AWAIT_COMPLETION_END, proc_call & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
                 " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
               v_vvc_logged(i) := '1';
               v_vvcs_completed := v_vvcs_completed + 1;
@@ -627,7 +627,7 @@ package body td_vvc_framework_common_methods_pkg is
 
         if not(v_done) then
           if v_first_wait then
-            log(ID_AWAIT_COMPLETION, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+            log(ID_AWAIT_COMPLETION_WAIT, proc_call & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
             v_first_wait := false;
           end if;
 

@@ -491,11 +491,7 @@ package body td_vvc_framework_common_methods_pkg is
       v_local_cmd_idx := shared_cmd_idx;
       release_semaphore(protected_semaphore);
 
-      if global_show_msg_for_uvvm_cmd then
-        log(ID_UVVM_SEND_CMD, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      else
-        log(ID_UVVM_SEND_CMD, proc_call & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      end if;
+      log(ID_AWAIT_COMPLETION, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
 
       v_timestamp := now;
       while not(v_done) loop
@@ -533,7 +529,7 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is not registered use the old mechanism
     else 
-      log("VVC " & vvc_target.vvc_name & " is not registered, calling old await_completion() method.");
+      log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, shared_msg_id_panel);
       -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
       -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
       -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
@@ -610,11 +606,7 @@ package body td_vvc_framework_common_methods_pkg is
       v_local_cmd_idx := shared_cmd_idx;
       release_semaphore(protected_semaphore);
 
-      if global_show_msg_for_uvvm_cmd then
-        log(ID_UVVM_SEND_CMD, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      else
-        log(ID_UVVM_SEND_CMD, proc_call & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
-      end if;
+      log(ID_AWAIT_COMPLETION, proc_call & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
 
       v_timestamp := now;
       while not(v_done) loop
@@ -652,7 +644,7 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is not registered use the old mechanism
     else 
-      log("VVC " & vvc_target.vvc_name & " is not registered, calling old await_completion() method.");
+      log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, shared_msg_id_panel);
       -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
       -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
       -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC

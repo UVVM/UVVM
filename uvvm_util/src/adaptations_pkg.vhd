@@ -142,7 +142,8 @@ package adaptations_pkg is
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
     ID_NEW_HVVC_CMD_SEQ,      -- Message from a lower level VVC which receives a new command sequence from an HVVC
     ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
-    ID_AWAIT_COMPLETION,      -- Logs messages related to VVCs waiting for completion
+    ID_OLD_AWAIT_COMPLETION,  -- Temporary log messages related to old await_completion mechanism. Will be removed in v3.0
+    ID_AWAIT_COMPLETION,      -- Log messages related to VVCs waiting for completion
     -- Distributed data
     ID_UVVM_DATA_QUEUE,       -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system

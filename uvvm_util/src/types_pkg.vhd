@@ -58,7 +58,7 @@ package types_pkg is
   type t_ascii_allow  is (ALLOW_ALL, ALLOW_PRINTABLE_ONLY);
   type t_blocking_mode is (BLOCKING, NON_BLOCKING);
   type t_from_point_in_time is (FROM_NOW, FROM_LAST_EVENT);
-  type t_select       is (ANY, ALL_VVC);
+  type t_select       is (ANY_OF, ALL_OF);
   type t_list_action  is (KEEP_LIST, CLEAN_LIST);
 
   type t_format_zeros  is (AS_IS, KEEP_LEADING_0, SKIP_LEADING_0);  -- AS_IS is deprecated and will be removed. Use KEEP_LEADING_0.

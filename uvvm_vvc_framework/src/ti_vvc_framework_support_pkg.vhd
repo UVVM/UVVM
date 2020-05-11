@@ -768,7 +768,7 @@ package body ti_vvc_framework_support_pkg is
               v_vvc_logged(i) := '1';
               v_vvcs_completed := v_vvcs_completed + 1;
             end if;
-            if vvc_select = ANY or (vvc_select = ALL_VVC and v_vvcs_completed = v_tot_vvc_instances) then
+            if vvc_select = ANY_OF or (vvc_select = ALL_OF and v_vvcs_completed = v_tot_vvc_instances) then
               v_done := true;
             end if;
           end if;
@@ -781,7 +781,7 @@ package body ti_vvc_framework_support_pkg is
               v_vvc_logged(i) := '1';
               v_vvcs_completed := v_vvcs_completed + 1;
             end if;
-            if vvc_select = ANY or (vvc_select = ALL_VVC and v_vvcs_completed = v_tot_vvc_instances) then
+            if vvc_select = ANY_OF or (vvc_select = ALL_OF and v_vvcs_completed = v_tot_vvc_instances) then
               v_done := true;
             end if;
           end if;

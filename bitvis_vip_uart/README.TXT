@@ -2,10 +2,12 @@
 -- Directory structure                                   -- 
 -----------------------------------------------------------
 
+This VIP comes with a UART Monitor.
+
 - bitvis_vip_uart   : A VIP that uses UVVM
   - doc             : Quick Reference for BFM and VVC
   - script          : Compile scripts
-  - src             : UART VIP BFM and VVC source code
+  - src             : UART VIP BFM, VVC and Monitor source code
   - tb              : A demo testbench
 
 IMPORTANT

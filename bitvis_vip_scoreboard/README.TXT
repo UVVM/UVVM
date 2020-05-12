@@ -2,8 +2,8 @@
 -- Directory structure                                   -- 
 -----------------------------------------------------------
 
-- bitvis_vip_scoreboard : A scoreboard VIP that uses UVVM
-  - demo                : Testbench demo with scoreboard
-  - doc                 : Quick Reference for VIP
-  - script              : Compile scripts
-  - src                 : Scoreboard source code
+- bitvis_vip_scoreboard     : A VIP that uses UVVM
+  - doc               	    : Quick Reference for VIP Scoreboard
+  - script            	    : Compile scripts
+  - src               	    : Scoreboard VIP source code
+  - tb                      : A demo testbench

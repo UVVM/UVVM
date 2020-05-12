@@ -15,6 +15,7 @@ Released: 2020-05-12
 - Added compile_bfm.do scripts.
 - Added UVVM Guide in uvvm_util/doc/uvvm_guide.predefined.
 - Added README.TXT to VIP folders.
+- Added GHDL compile script for running demo TBs.
 
 
 v2 2020.04.20

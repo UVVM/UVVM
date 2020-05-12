@@ -64,6 +64,21 @@ package ti_protected_types_pkg is
       constant channel  : in t_channel := NA
     ) return integer;
 
+    -- Get a VVC's name
+    impure function priv_get_vvc_name(
+      constant vvc_idx : in natural
+    ) return string;
+
+    -- Get a VVC's instance
+    impure function priv_get_vvc_instance(
+      constant vvc_idx : in natural
+    ) return integer;
+
+    -- Get a VVC's channel
+    impure function priv_get_vvc_channel(
+      constant vvc_idx : in natural
+    ) return t_channel;
+
     -- Get a VVC's activity
     impure function priv_get_vvc_activity(
       constant vvc_idx : in natural
@@ -120,7 +135,7 @@ package ti_protected_types_pkg is
 
     procedure priv_clean_list;
 
-    function instance_to_string(
+    function priv_instance_to_string(
       constant instance : in integer
     ) return string;
 
@@ -271,6 +286,33 @@ package body ti_protected_types_pkg is
       return -1; -- not found
     end function;
 
+    impure function priv_get_vvc_name(
+      constant vvc_idx : in natural
+    ) return string is
+    begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_get_vvc_name() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      return priv_registered_vvc(vvc_idx).vvc_id.name;
+    end function;
+
+    impure function priv_get_vvc_instance(
+      constant vvc_idx : in natural
+    ) return integer is
+    begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_get_vvc_instance() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      return priv_registered_vvc(vvc_idx).vvc_id.instance;
+    end function;
+
+    impure function priv_get_vvc_channel(
+      constant vvc_idx : in natural
+    ) return t_channel is
+    begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_get_vvc_channel() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      return priv_registered_vvc(vvc_idx).vvc_id.channel;
+    end function;
+
     impure function priv_get_vvc_activity(
       constant vvc_idx : in natural
     ) return t_activity is
@@ -391,7 +433,7 @@ package body ti_protected_types_pkg is
       end loop;
 
       if v_duplicate then
-        alert(TB_WARNING, name & "," & instance_to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
+        alert(TB_WARNING, name & "," & priv_instance_to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
       else
         -- Set VVC index
         priv_last_added_vvc_idx := priv_last_added_vvc_idx + 1;
@@ -403,15 +445,15 @@ package body ti_protected_types_pkg is
 
         if channel = NA then
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & " to the list.");  
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & " to the list.");  
           else
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
           end if;
         else
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
           else
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
           end if;
         end if;
       end if;
@@ -441,7 +483,7 @@ package body ti_protected_types_pkg is
       priv_last_added_vvc_idx := -1;
     end procedure;
 
-    function instance_to_string(
+    function priv_instance_to_string(
       constant instance : in integer
     ) return string is
     begin
@@ -496,15 +538,15 @@ package body ti_protected_types_pkg is
         "priv_get_vvc_info() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       if priv_vvc_list(vvc_idx).channel = NA then
         if priv_vvc_list(vvc_idx).cmd_idx = -1 then
-          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance);
+          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance);
         else
-          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance) & ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]";
+          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]";
         end if;
       else
         if priv_vvc_list(vvc_idx).cmd_idx = -1 then
-          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel); 
+          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel); 
         else
-          return priv_vvc_list(vvc_idx).name & "," & instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel) &
+          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel) &
             ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]"; 
         end if;
       end if;

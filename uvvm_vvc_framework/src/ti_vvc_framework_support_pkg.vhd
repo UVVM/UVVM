@@ -508,6 +508,7 @@ package body ti_vvc_framework_support_pkg is
     constant proc_name : string := "await_completion";
     constant proc_call : string := proc_name & "(VVC_BROADCAST)";
   begin
+    log(ID_OLD_AWAIT_COMPLETION, "Procedure is not supporting the VVC activity register.", scope);
     transmit_broadcast(VVC_BROADCAST, AWAIT_COMPLETION, proc_call, NO_ID, msg, NON_QUIET, 0 ns, -1, timeout, scope);
   end procedure;
 

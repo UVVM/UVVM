@@ -56,12 +56,13 @@ package ti_protected_types_pkg is
       constant channel  : in t_channel := NA
     ) return integer;
 
-    -- Get a VVC's index in the activity register after ignoring 'offset' number of occurrences
+    -- Get a VVC's index in the activity register after skipping a number of matches,
+    -- e.g. when using ALL_INSTANCES or ALL_CHANNELS
     impure function priv_get_vvc_idx(
-      constant offset   : in natural;
-      constant name     : in string;
-      constant instance : in integer;
-      constant channel  : in t_channel := NA
+      constant skip_num_of_matches : in natural;
+      constant name                : in string;
+      constant instance            : in integer;
+      constant channel             : in t_channel := NA
     ) return integer;
 
     -- Get a VVC's name
@@ -265,21 +266,21 @@ package body ti_protected_types_pkg is
     end function;
 
     impure function priv_get_vvc_idx(
-      constant offset   : in natural;
-      constant name     : in string;
-      constant instance : in integer;
-      constant channel  : in t_channel := NA
+      constant skip_num_of_matches : in natural;
+      constant name                : in string;
+      constant instance            : in integer;
+      constant channel             : in t_channel := NA
     ) return integer is
-      variable v_occurrence : natural := 0;
+      variable v_match_num : natural := 0;
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
         if priv_registered_vvc(idx).vvc_id.name     = to_upper(name) and
           (priv_registered_vvc(idx).vvc_id.instance = instance or instance = ALL_INSTANCES) and
           (priv_registered_vvc(idx).vvc_id.channel  = channel or channel = ALL_CHANNELS) then
-          if v_occurrence = offset then
-            return idx; -- vvc was found
+          if v_match_num < skip_num_of_matches then
+            v_match_num := v_match_num + 1;
           else
-            v_occurrence := v_occurrence + 1;
+            return idx; -- vvc was found
           end if;
         end if;
       end loop;

@@ -207,7 +207,7 @@ package body ti_protected_types_pkg is
       -- Set registered VVC index
       priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
       -- Update register
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)   := name;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)   := to_upper(name);
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                 := instance;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                  := channel;
       priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity              := INACTIVE;
@@ -253,7 +253,7 @@ package body ti_protected_types_pkg is
     ) return integer is
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_id.name    = name and
+        if priv_registered_vvc(idx).vvc_id.name    = to_upper(name) and
           priv_registered_vvc(idx).vvc_id.instance = instance and
           priv_registered_vvc(idx).vvc_id.channel  = channel then
           return idx; -- vvc was found
@@ -272,7 +272,7 @@ package body ti_protected_types_pkg is
       variable v_occurrence : natural := 0;
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_id.name     = name and
+        if priv_registered_vvc(idx).vvc_id.name     = to_upper(name) and
           (priv_registered_vvc(idx).vvc_id.instance = instance or instance = ALL_INSTANCES) and
           (priv_registered_vvc(idx).vvc_id.channel  = channel or channel = ALL_CHANNELS) then
           if v_occurrence = offset then
@@ -353,7 +353,7 @@ package body ti_protected_types_pkg is
       variable v_num_instances : natural := 0;
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_id.name     = name and
+        if priv_registered_vvc(idx).vvc_id.name     = to_upper(name) and
           (priv_registered_vvc(idx).vvc_id.instance = instance or instance = ALL_INSTANCES) and
           (priv_registered_vvc(idx).vvc_id.channel  = channel or channel = ALL_CHANNELS) then
           v_num_instances := v_num_instances + 1;
@@ -423,7 +423,7 @@ package body ti_protected_types_pkg is
 
       -- Check if VVC was previously added
       for idx in 0 to priv_last_added_vvc_idx loop
-        if priv_vvc_list(idx).name(1 to name'length) = name and
+        if priv_vvc_list(idx).name(1 to name'length) = to_upper(name) and
           priv_vvc_list(idx).instance = instance and
           priv_vvc_list(idx).channel  = channel and
           priv_vvc_list(idx).cmd_idx  = cmd_idx then
@@ -433,27 +433,27 @@ package body ti_protected_types_pkg is
       end loop;
 
       if v_duplicate then
-        alert(TB_WARNING, name & "," & priv_instance_to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
+        alert(TB_WARNING, to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & "," & to_string(cmd_idx) &  " was previously added to the list.");
       else
         -- Set VVC index
         priv_last_added_vvc_idx := priv_last_added_vvc_idx + 1;
         -- Update register
-        priv_vvc_list(priv_last_added_vvc_idx).name(1 to name'length) := name;
+        priv_vvc_list(priv_last_added_vvc_idx).name(1 to name'length) := to_upper(name);
         priv_vvc_list(priv_last_added_vvc_idx).instance               := instance;
         priv_vvc_list(priv_last_added_vvc_idx).channel                := channel;
         priv_vvc_list(priv_last_added_vvc_idx).cmd_idx                := cmd_idx;
 
         if channel = NA then
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & " to the list.");  
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.");  
           else
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & ",[" & to_string(cmd_idx) & "] to the list.");  
           end if;
         else
           if cmd_idx = -1 then
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.");            
           else
-            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & name & "," & priv_instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
+            log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & ",[" & to_string(cmd_idx) & "] to the list.");            
           end if;
         end if;
       end if;

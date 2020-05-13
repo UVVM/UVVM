@@ -717,7 +717,7 @@ package body ti_vvc_framework_support_pkg is
     variable v_vvc_list_idx                 : natural := 0;
     variable v_proc_call                    : line;
   begin
-    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvc = c_vvc_list_length then
+    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvcs = c_vvc_list_length then
       v_proc_call := new string'(proc_call_short);
     else
       v_proc_call := new string'(proc_call);
@@ -733,7 +733,7 @@ package body ti_vvc_framework_support_pkg is
     log(ID_AWAIT_COMPLETION, v_proc_call.all & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
 
     -- Give a warning for incorrect use of ALL_VVCS
-    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvc /= c_vvc_list_length then
+    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvcs /= c_vvc_list_length then
       alert(TB_WARNING, v_proc_call.all & add_msg_delimiter(msg) & "=> When using ALL_VVCS with a VVC list, only the VVCs from the list will be checked."
         & format_command_idx(v_local_cmd_idx), scope);
     end if;
@@ -747,7 +747,7 @@ package body ti_vvc_framework_support_pkg is
     for i in 0 to c_vvc_list_length-1 loop
       if vvc_list.priv_get_instance(i) = ALL_INSTANCES or vvc_list.priv_get_channel(i) = ALL_CHANNELS then
         -- Check how many instances or channels of this VVC are registered in the vvc activity register
-        v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_instances(vvc_list.priv_get_name(i),
+        v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_matches(vvc_list.priv_get_name(i),
                                                             vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
         -- Get the index for every instance or channel of this VVC
         for j in 0 to v_num_vvc_instances-1 loop
@@ -850,7 +850,7 @@ package body ti_vvc_framework_support_pkg is
   begin
     if vvc_select = ALL_VVCS then
       -- Get all the VVCs from the vvc activity register and put them in the vvc_list
-      for i in 0 to shared_vvc_activity_register.priv_get_num_registered_vvc-1 loop
+      for i in 0 to shared_vvc_activity_register.priv_get_num_registered_vvcs-1 loop
         v_vvc_list.add(shared_vvc_activity_register.priv_get_vvc_name(i),
                        shared_vvc_activity_register.priv_get_vvc_instance(i),
                        shared_vvc_activity_register.priv_get_vvc_channel(i));
@@ -883,10 +883,10 @@ package body ti_vvc_framework_support_pkg is
     wait for 0 ns;
 
     -- Check if all expected VVCs are registered
-    if (num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvc) and (num_exp_vvc > 0) then
+    if (num_exp_vvc /= shared_vvc_activity_register.priv_get_num_registered_vvcs) and (num_exp_vvc > 0) then
       shared_vvc_activity_register.priv_list_registered_vvc(msg);
       alert(TB_WARNING, "Number of VVCs in activity watchdog is not expected, actual=" &
-                        to_string(shared_vvc_activity_register.priv_get_num_registered_vvc) & ", exp=" & to_string(num_exp_vvc) & ".\n" &
+                        to_string(shared_vvc_activity_register.priv_get_num_registered_vvcs) & ", exp=" & to_string(num_exp_vvc) & ".\n" &
                         "Note that leaf VVCs (e.g. channels) are counted individually. " & msg);
     end if;
 

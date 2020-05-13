@@ -94,15 +94,16 @@ package ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return string;
 
-    -- Get the number of registered instances and channels of a VVC
-    impure function priv_get_num_registered_vvc_instances(
+    -- Get the total number of registered VVCs matching the name, instance
+    -- and channel, e.g. (UART_VVC, 1, ALL_CHANNELS) returns 2 (RX & TX)
+    impure function priv_get_num_registered_vvc_matches(
       constant name     : in string;
       constant instance : in integer;
       constant channel  : in t_channel := NA
     ) return natural;
 
     -- Get the total number of registered VVCs
-    impure function priv_get_num_registered_vvc return natural;
+    impure function priv_get_num_registered_vvcs return natural;
 
     -- Check if all registered VVCs are INACTIVE
     impure function priv_are_all_vvc_inactive return boolean;
@@ -345,7 +346,7 @@ package body ti_protected_types_pkg is
       end if;
     end function;
 
-    impure function priv_get_num_registered_vvc_instances(
+    impure function priv_get_num_registered_vvc_matches(
       constant name     : in string;
       constant instance : in integer;
       constant channel  : in t_channel := NA
@@ -363,7 +364,7 @@ package body ti_protected_types_pkg is
       return v_num_instances;
     end function;
 
-    impure function priv_get_num_registered_vvc return natural is
+    impure function priv_get_num_registered_vvcs return natural is
     begin
       return priv_last_registered_vvc_idx + 1;
     end function;

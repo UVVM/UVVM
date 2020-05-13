@@ -494,7 +494,7 @@ package body td_vvc_framework_common_methods_pkg is
     -- Get the corresponding index from the vvc activity register
     if vvc_instance_idx = ALL_INSTANCES or vvc_channel = ALL_CHANNELS then
       -- Check how many instances or channels of this VVC are registered in the vvc activity register
-      v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_instances(vvc_target.vvc_name,
+      v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_matches(vvc_target.vvc_name,
                                                           vvc_instance_idx, vvc_channel);
       -- Get the index for every instance or channel of this VVC
       for j in 0 to v_num_vvc_instances-1 loop

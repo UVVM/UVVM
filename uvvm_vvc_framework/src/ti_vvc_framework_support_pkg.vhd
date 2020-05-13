@@ -297,7 +297,7 @@ package ti_vvc_framework_support_pkg is
     constant vvc_select  : in    t_vvc_select;
     variable vvc_list    : inout t_vvc_list;
     constant timeout     : in    time;
-    constant list_action : in    t_list_action := CLEAN_LIST;
+    constant list_action : in    t_list_action := CLEAR_LIST;
     constant msg         : in    string := "";
     constant scope       : in    string := C_VVC_CMD_SCOPE_DEFAULT
   );
@@ -306,7 +306,7 @@ package ti_vvc_framework_support_pkg is
   procedure await_completion(
     constant vvc_select  : in    t_vvc_select;
     constant timeout     : in    time;
-    constant list_action : in    t_list_action := CLEAN_LIST;
+    constant list_action : in    t_list_action := CLEAR_LIST;
     constant msg         : in    string := "";
     constant scope       : in    string := C_VVC_CMD_SCOPE_DEFAULT
   );
@@ -696,7 +696,7 @@ package body ti_vvc_framework_support_pkg is
     constant vvc_select  : in    t_vvc_select;
     variable vvc_list    : inout t_vvc_list;
     constant timeout     : in    time;
-    constant list_action : in    t_list_action := CLEAN_LIST;
+    constant list_action : in    t_list_action := CLEAR_LIST;
     constant msg         : in    string := "";
     constant scope       : in    string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
@@ -827,8 +827,8 @@ package body ti_vvc_framework_support_pkg is
       end if;
     end loop;
 
-    if list_action = CLEAN_LIST then
-      vvc_list.priv_clean_list;
+    if list_action = CLEAR_LIST then
+      vvc_list.priv_clear_list;
       log(ID_AWAIT_COMPLETION_LIST, v_proc_call.all & "=> All VVCs removed from the list. " & add_msg_delimiter(msg) &
         format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
     elsif list_action = KEEP_LIST then
@@ -840,7 +840,7 @@ package body ti_vvc_framework_support_pkg is
   procedure await_completion(
     constant vvc_select  : in    t_vvc_select;
     constant timeout     : in    time;
-    constant list_action : in    t_list_action := CLEAN_LIST;
+    constant list_action : in    t_list_action := CLEAR_LIST;
     constant msg         : in    string := "";
     constant scope       : in    string := C_VVC_CMD_SCOPE_DEFAULT
   ) is

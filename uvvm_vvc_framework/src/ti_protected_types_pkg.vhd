@@ -134,7 +134,7 @@ package ti_protected_types_pkg is
       constant cmd_idx  : in integer
     );
 
-    procedure priv_clean_list;
+    procedure priv_clear_list;
 
     function priv_instance_to_string(
       constant instance : in integer
@@ -478,7 +478,7 @@ package body ti_protected_types_pkg is
       add(name, instance, NA, cmd_idx);
     end procedure;
 
-    procedure priv_clean_list is
+    procedure priv_clear_list is
     begin
       priv_vvc_list := (others => C_VVC_ITEM_DEFAULT);
       priv_last_added_vvc_idx := -1;

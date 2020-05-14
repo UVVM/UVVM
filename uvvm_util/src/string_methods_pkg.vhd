@@ -1379,28 +1379,20 @@ package body string_methods_pkg is
     val       : t_attention;
     width     : natural;
     justified : side    := right
-      ) return string is
-    begin
-      return to_upper(justify(t_attention'image(val), justified, width));
-    end;
+  ) return string is
+  begin
+    return to_upper(justify(t_attention'image(val), justified, width));
+  end;
 
-    function to_string(
-      val       : t_check_type;
-      width     : natural;
-      justified : side    := right
-    ) return string is
-      constant inner_string : string  := t_check_type'image(val);
-    begin
-      return to_upper(justify(inner_string, justified, width));
-    end function;
-
-
-  -- function to_string(
-    -- dummy : t_void
-  -- ) return string is
-  -- begin
-    -- return "VOID";
-  -- end function;
+  function to_string(
+    val       : t_check_type;
+    width     : natural;
+    justified : side    := right
+  ) return string is
+    constant inner_string : string  := t_check_type'image(val);
+  begin
+    return to_upper(justify(inner_string, justified, width));
+  end function;
 
   procedure to_string(
     val   : t_alert_attention_counters;

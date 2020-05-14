@@ -20,6 +20,8 @@ Released: 2020-xx-xx
 - Fixed avalon_mm_read_request waiting on a negative delay when bfm_sync=SYNC_ON_CLOCK_ONLY
   and clock_period was not configured.
 - Updated VIP quick references.
+- Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
+  is no command being executed.
 
 
 v2 2020.05.12

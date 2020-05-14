@@ -239,6 +239,7 @@ package vvc_methods_pkg is
   -- VVC Activity
   --==============================================================================
   procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
                                           constant activity                           : in    t_activity;
                                           constant entry_num_in_vvc_activity_register : in    integer;
                                           constant last_cmd_idx_executed              : in    natural;
@@ -458,6 +459,7 @@ package body vvc_methods_pkg is
   -- VVC Activity
   --==============================================================================
   procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
                                           constant activity                           : in    t_activity;
                                           constant entry_num_in_vvc_activity_register : in    integer;
                                           constant last_cmd_idx_executed              : in    natural;
@@ -465,6 +467,12 @@ package body vvc_methods_pkg is
                                           constant scope                              : in    string := C_VVC_NAME) is
     variable v_activity   : t_activity := activity;
   begin
+    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
+    if activity = INACTIVE then
+      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
+      vvc_status.current_cmd_idx  := 0;  
+    end if;
+
     if v_activity = INACTIVE and not(command_queue_is_empty) then
       v_activity := ACTIVE;
     end if;

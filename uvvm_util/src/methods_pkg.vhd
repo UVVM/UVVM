@@ -1543,6 +1543,12 @@ package methods_pkg is
     constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
     ) return t_byte_array;
 
+  function convert_slv_array_to_byte_array(
+      constant slv_array        : t_slv_array;
+      constant ascending        : boolean           := false;
+      constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+    ) return t_byte_array;
+
   function reverse_vector(
     constant value : std_logic_vector
     ) return std_logic_vector;
@@ -5949,9 +5955,9 @@ package body methods_pkg is
     assert byte_array'ascending report "byte_array must be ascending" severity error;
 
     for byte_idx in 0 to c_num_bytes-1 loop
-      if byte_endianness = LOWER_BYTE_LEFT then
+      if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
         v_slv(8*(c_num_bytes-byte_idx)-1 downto 8*(c_num_bytes-1-byte_idx)) := normalized_byte_array(byte_idx);
-      else                              -- LOWER_BYTE_RIGHT
+      else                              -- LOWER_BYTE_RIGHT or FIRST_BYTE_RIGHT
         v_slv(8*(byte_idx+1)-1 downto 8*byte_idx) := normalized_byte_array(byte_idx);
       end if;
     end loop;
@@ -5979,9 +5985,9 @@ package body methods_pkg is
         if v_slv_idx = -1 then
           v_byte_array(byte_idx)(bit_idx) := 'Z';  -- Pads 'Z'
         else
-          if byte_endianness = LOWER_BYTE_LEFT then
+          if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
             v_byte_array(byte_idx)(bit_idx) := normalized_slv(v_slv_idx);
-          else                          -- LOWER_BYTE_RIGHT
+          else                          -- LOWER_BYTE_RIGHT or FIRST_BYTE_RIGHT
             v_slv_idx_min                   := MINIMUM(8*byte_idx+bit_idx, normalized_slv'high);  -- avoid indexing outside the slv
             v_byte_array(byte_idx)(bit_idx) := normalized_slv(v_slv_idx_min);
           end if;
@@ -6004,13 +6010,13 @@ package body methods_pkg is
     variable v_byte_idx         : integer := 0;
   begin
     for slv_idx in 0 to c_num_words-1 loop
-      if byte_endianness = LOWER_BYTE_LEFT then
+      if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
         for byte_in_word in bytes_in_word downto 1 loop
           v_ascending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8)  := byte_array(v_byte_idx);
           v_descending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
           v_byte_idx                                                                := v_byte_idx + 1;
         end loop;
-      else                              -- LOWER_BYTE_RIGHT
+      else                              -- LOWER_BYTE_RIGHT or FIRST_BYTE_RIGHT
         for byte_in_word in 1 to bytes_in_word loop
           v_ascending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8)  := byte_array(v_byte_idx);
           v_descending_array(slv_idx)((8*byte_in_word)-1 downto (byte_in_word-1)*8) := byte_array(v_byte_idx);
@@ -6043,7 +6049,7 @@ package body methods_pkg is
     v_offset := slv_array'low;
 
     for slv_idx in 0 to slv_array'length-1 loop
-      if byte_endianness = LOWER_BYTE_LEFT then
+      if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
         for byte in c_num_bytes_in_word downto 1 loop
           if c_vector_is_ascending then
             v_ascending_array(v_byte_idx)  := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
@@ -6054,7 +6060,7 @@ package body methods_pkg is
           end if;
           v_byte_idx := v_byte_idx + 1;
         end loop;
-      else                              -- LOWER_BYTE_RIGHT
+      else                              -- LOWER_BYTE_RIGHT or FIRST_BYTE_RIGHT
         for byte in 1 to c_num_bytes_in_word loop
           if c_vector_is_ascending then
             v_ascending_array(v_byte_idx)  := slv_array(slv_idx+v_offset)((byte-1)*8 to (8*byte)-1);
@@ -6074,6 +6080,61 @@ package body methods_pkg is
       return v_descending_array;
     end if;
   end function;
+
+  function convert_slv_array_to_byte_array(
+    constant slv_array        : t_slv_array;
+    constant ascending        : boolean           := false;
+    constant byte_endianness  : t_byte_endianness := FIRST_BYTE_LEFT
+  ) return t_byte_array is
+    variable v_bytes_in_word      : integer := (slv_array(0)'length/8);
+    variable v_byte_array_length  : integer := (slv_array'length * v_bytes_in_word);
+    variable v_ascending_array    : t_byte_array(0 to v_byte_array_length-1);
+    variable v_descending_array   : t_byte_array(v_byte_array_length-1 downto 0);
+    variable v_ascending_vector   : boolean := false;
+    variable v_byte_number        : integer := 0;
+  begin
+    -- The ascending parameter should match the array direction. We could also just remove the ascending
+    -- parameter and use the t'ascending attribute.
+    bitvis_assert((slv_array'ascending and ascending) or (not(slv_array'ascending) and not(ascending)), ERROR,
+      "convert_slv_array_to_byte_array()", "slv_array direction doesn't match ascending parameter");
+
+    v_ascending_vector := slv_array(0)'ascending;
+
+    if (byte_endianness = LOWER_BYTE_LEFT) or (byte_endianness = FIRST_BYTE_LEFT) then
+      for slv_idx in 0 to slv_array'length-1 loop
+        for byte in v_bytes_in_word downto 1 loop
+          if v_ascending_vector then
+            v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+          else -- SLV vector is descending
+            v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+          end if;
+          v_byte_number := v_byte_number + 1;
+        end loop;
+      end loop;
+    else -- LOWER_BYTE_RIGHT or FIRST_BYTE_RIGHT
+      for slv_idx in 0 to slv_array'length-1 loop
+        for byte in 1 to v_bytes_in_word loop
+          if v_ascending_vector then
+            v_ascending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+            v_descending_array(v_byte_number) := slv_array(slv_idx)((byte-1)*8 to (8*byte)-1);
+          else -- SLV vector is descending
+            v_ascending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+            v_descending_array(v_byte_number) := slv_array(slv_idx)((8*byte)-1 downto (byte-1)*8);
+          end if;
+          v_byte_number := v_byte_number + 1;
+        end loop;
+      end loop;
+    end if;
+
+    if ascending then
+      return v_ascending_array;
+    else -- descending
+      return v_descending_array;
+    end if;
+  end function;
+
 
   function reverse_vector(
     constant value : std_logic_vector

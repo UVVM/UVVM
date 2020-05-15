@@ -22,6 +22,7 @@ Released: 2020-xx-xx
 - Updated VIP quick references.
 - Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
   is no command being executed.
+- Added missing t_byte_endianness enums.
 
 
 v2 2020.05.12

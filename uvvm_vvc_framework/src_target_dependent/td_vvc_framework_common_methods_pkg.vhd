@@ -497,10 +497,16 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_first_wait                   : boolean := true;
     variable v_proc_call                    : line;
   begin
+    -- Only log wanted_idx when it's given as a parameter
     if wanted_idx = -1 then
       v_proc_call := new string'(proc_call_short);
     else
       v_proc_call := new string'(proc_call);
+    end if;
+
+    -- Use the correct msg_id_panel when called from an HVVC
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
     end if;
 
     -- Get the corresponding index from the vvc activity register
@@ -529,7 +535,7 @@ package body td_vvc_framework_common_methods_pkg is
       v_local_cmd_idx := shared_cmd_idx;
       release_semaphore(protected_semaphore);
 
-      log(ID_AWAIT_COMPLETION, v_proc_call.all & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+      log(ID_AWAIT_COMPLETION, v_proc_call.all & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
 
       v_timestamp := now;
       while not(v_done) loop
@@ -539,7 +545,7 @@ package body td_vvc_framework_common_methods_pkg is
             if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
               if not(v_vvc_logged(i)) then
                 log(ID_AWAIT_COMPLETION_END, v_proc_call.all & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
-                  " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+                  " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
                 v_vvc_logged(i) := '1';
                 v_vvcs_completed := v_vvcs_completed + 1;
               end if;
@@ -552,7 +558,7 @@ package body td_vvc_framework_common_methods_pkg is
             if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= wanted_idx then
               if not(v_vvc_logged(i)) then
                 log(ID_AWAIT_COMPLETION_END, v_proc_call.all & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) &
-                  " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+                  " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
                 v_vvc_logged(i) := '1';
                 v_vvcs_completed := v_vvcs_completed + 1;
               end if;
@@ -565,7 +571,7 @@ package body td_vvc_framework_common_methods_pkg is
 
         if not(v_done) then
           if v_first_wait then
-            log(ID_AWAIT_COMPLETION_WAIT, v_proc_call.all & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
+            log(ID_AWAIT_COMPLETION_WAIT, v_proc_call.all & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
             v_first_wait := false;
           end if;
 
@@ -582,7 +588,7 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is not registered use the old mechanism
     else 
-      log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, shared_msg_id_panel);
+      log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, v_msg_id_panel);
       -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
       -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
       -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
@@ -590,9 +596,6 @@ package body td_vvc_framework_common_methods_pkg is
       shared_vvc_cmd.gen_integer_array(0) := wanted_idx;
       shared_vvc_cmd.timeout              := timeout;
       --shared_vvc_cmd.parent_msg_id_panel  := parent_msg_id_panel; --UVVM: temporary fix for HVVC, uncomment in v3.0
-      if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-        v_msg_id_panel := parent_msg_id_panel;
-      end if;
       send_command_to_vvc(vvc_target, timeout, scope, v_msg_id_panel);
     end if;
   end procedure;
@@ -659,6 +662,7 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     variable v_proc_call    : line;
   begin
+    -- Only log wanted_idx when it's given as a parameter
     if wanted_idx = -1 then
       v_proc_call := new string'(proc_call_short);
     else

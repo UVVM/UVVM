@@ -7,6 +7,7 @@ v2.9.1
 Released: 2020-XX-XX
 - Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
   is no command being executed.
+- Added new await_completion command for several VVCs which doesn't block them while waiting.
 
 v2.9.0
 ----------

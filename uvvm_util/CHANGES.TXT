@@ -6,7 +6,8 @@ UVVM Utility Library - Overview on Versions and Changes
 v2.xx.x
 ----------
 Released: 2020-xx-xx
-- Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY.
+- Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY, ID_AWAIT_COMPLETION,
+  ID_AWAIT_COMPLETION_LIST, ID_AWAIT_COMPLETION_WAIT, ID_AWAIT_COMPLETION_END.
 - Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
 - Added missing t_byte_endianness enums.
 

@@ -216,11 +216,11 @@ package body rgmii_bfm_pkg is
     variable v_wait_cycles     : natural := 0;
 
   begin
-    -- If called from sequencer/VVC, show 'rgmii_read()...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'rgmii_read...'
       write(v_proc_call, local_proc_call);
-    -- If called from another BFM procedure like rgmii_expect, log 'rgmii_expect() while executing rgmii_read()...'
     else
+      -- Called from another BFM procedure, log 'ext_proc_call while executing rgmii_read...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -277,7 +277,11 @@ package body rgmii_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or rx_ctl. " &
         add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      if ext_proc_call = "" then
+        log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      else
+        -- Log will be handled by calling procedure (e.g. rgmii_expect)
+      end if;
     end if;
   end procedure;
 

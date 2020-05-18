@@ -9,6 +9,7 @@ Released: 2020-xx-xx
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section and BFM config record description.
 - Added README.TXT
+- Removed extra log in receive procedure when called from another BFM procedure.
 
 v1.1.1
 ----------

@@ -213,7 +213,7 @@ package axilite_bfm_pkg is
     constant scope          : in  string                := C_SCOPE;
     constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
     constant config         : in  t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call  : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like axilite_check
+    constant ext_proc_call  : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
 
@@ -501,7 +501,7 @@ package body axilite_bfm_pkg is
     constant scope          : in  string               := C_SCOPE;
     constant msg_id_panel   : in  t_msg_id_panel       := shared_msg_id_panel;
     constant config         : in  t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call  : in  string               := ""  -- External proc_call; overwrite if called from other BFM procedure like axilite_check
+    constant ext_proc_call  : in  string               := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     constant local_proc_name : string := "axilite_read"; -- Local proc_name; used if called from sequncer or VVC
     constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
@@ -524,11 +524,11 @@ package body axilite_bfm_pkg is
       check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, local_proc_call);
     end if;
 
-    -- If called from sequencer/VVC, show 'axilite_read...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'axilite_read...'
       write(v_proc_call, local_proc_call);
     else
-      -- If called from other BFM procedure like axilite_expect, log 'axilite_check(..) while executing axilite_read..'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing axilite_read...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -595,10 +595,10 @@ package body axilite_bfm_pkg is
 
     data_value := v_data_value;
 
-    if ext_proc_call = "" then -- proc_name = "axilite_read" then
+    if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-
+      -- Log will be handled by calling procedure (e.g. axilite_check)
     end if;
   end procedure axilite_read;
 
@@ -781,7 +781,7 @@ end package body axilite_bfm_pkg;
 ---    constant scope          : in  string               := C_SCOPE;
 ---    constant msg_id_panel   : in  t_msg_id_panel       := shared_msg_id_panel;
 ---    constant config         : in  t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
----    constant ext_proc_call  : in  string               := ""  -- External proc_call; overwrite if called from other BFM procedure like axilite_check
+---    constant ext_proc_call  : in  string               := ""  -- External proc_call; overwrite if called from other BFM procedure
 ---    ) is
 ---    constant local_proc_name : string := "axilite_read"; -- Local proc_name; used if called from sequncer or VVC
 ---    constant local_proc_call : string := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
@@ -879,6 +879,6 @@ end package body axilite_bfm_pkg;
 ---    if ext_proc_call = "" then -- proc_name = "axilite_read" then
 ---      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
 ---    else
----
+---      -- Log will be handled by calling procedure (e.g. axilite_check)
 ---    end if;
 ---  end procedure axilite_read;

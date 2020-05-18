@@ -624,10 +624,11 @@ package body vvc_methods_pkg is
     variable v_pos_payload          : t_field_position := MIDDLE;
     variable v_pos_fcs              : t_field_position := MIDDLE;
   begin
-    -- Choose which procedure call to use (local or external)
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'ethernet_receive...'
       write(v_proc_call, local_proc_call);
     else
+      -- Called from another procedure, log 'ext_proc_call while executing ethernet_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -763,8 +764,12 @@ package body vvc_methods_pkg is
       check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
     end if;
 
-    log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    if ext_proc_call = "" then
+      log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
+        format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    else
+      -- Log will be handled by calling procedure (e.g. ethernet_expect)
+    end if;
   end procedure priv_ethernet_receive_from_bridge;
 
   procedure priv_ethernet_expect_from_bridge(

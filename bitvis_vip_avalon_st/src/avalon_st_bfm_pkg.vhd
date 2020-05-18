@@ -136,7 +136,7 @@ package avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   procedure avalon_st_receive (
@@ -147,7 +147,7 @@ package avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ---------------------------------------------------------------------------------------------
@@ -421,7 +421,7 @@ package body avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is  
     constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
@@ -446,11 +446,11 @@ package body avalon_st_bfm_pkg is
     variable v_time_of_falling_edge : time    := -1 ns;  -- time stamp for clk period checking
   begin
 
-    -- If called from sequencer/VVC, show 'avalon_st_receive()...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'avalon_st_receive()...'
       write(v_proc_call, local_proc_call);
-    -- If called from other BFM procedure like avalon_st_expect, log 'avalon_st_expect() while executing avalon_st_receive()...'
     else
+      -- Called from another BFM procedure, log 'ext_proc_call while executing avalon_st_receive()...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -611,7 +611,11 @@ package body avalon_st_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " &
         add_msg_delimiter(msg), scope);
     else
-      log(ID_PACKET_COMPLETE, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      if ext_proc_call = "" then
+        log(ID_PACKET_COMPLETE, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      else
+        -- Log will be handled by calling procedure (e.g. avalon_st_expect)
+      end if;
     end if;
   end procedure;
 
@@ -627,7 +631,7 @@ package body avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     variable v_channel : std_logic_vector(avalon_st_if.channel'range);
   begin

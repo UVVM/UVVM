@@ -206,7 +206,7 @@ package i2c_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -224,7 +224,7 @@ package i2c_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -242,7 +242,7 @@ package i2c_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -259,7 +259,7 @@ package i2c_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -274,7 +274,7 @@ package i2c_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -289,7 +289,7 @@ package i2c_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -1207,7 +1207,7 @@ package body i2c_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like .._check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
 
     -- Local proc_name; used if called from sequncer or VVC
@@ -1256,11 +1256,11 @@ package body i2c_bfm_pkg is
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
-    -- If called from sequencer/VVC, show 'i2c_master_read...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'i2c_master_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- If called from other BFM procedure, log 'ext_proc_call while executing i2c_master_read..'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing i2c_master_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -1379,10 +1379,10 @@ package body i2c_bfm_pkg is
       alert(error, v_proc_call.all & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    if ext_proc_call = "" then          -- proc_name = "i2c_master_receive"
+    if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-    -- Log will be handled by calling procedure (e.g. i2c_master_check)
+      -- Log will be handled by calling procedure (e.g. i2c_master_check)
     end if;
 
   end procedure;
@@ -1396,7 +1396,7 @@ package body i2c_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- overwrite if called from other procedure like .._check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
   begin
     i2c_master_receive(addr_value, data, msg,
@@ -1413,7 +1413,7 @@ package body i2c_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_i2c_bfm_config               := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- overwrite if called from other procedure like .._check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     variable v_byte_array : t_byte_array(0 to 0);
   begin
@@ -1436,7 +1436,7 @@ package body i2c_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like *_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     -- Local proc_name; used if called from sequncer or VVC
     constant local_proc_name : string := "i2c_slave_receive";
@@ -1466,11 +1466,12 @@ package body i2c_bfm_pkg is
   begin
     -- check whether config.i2c_bit_time was set probably
     check_value(config.i2c_bit_time /= -1 ns, TB_ERROR, "I2C Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
-    -- If called from sequencer/VVC, show 'i2c_master_read...' in log
+
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'i2c_slave_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- If called from other BFM procedure, log 'ext_proc_call while executing i2c_slave_read..'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing i2c_slave_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -1575,10 +1576,10 @@ package body i2c_bfm_pkg is
       alert(error, v_proc_call.all & " sda and scl not inactive (high) when wishing to start " & add_msg_delimiter(msg), scope);
     end if;
 
-    if ext_proc_call = "" then          -- proc_name = "i2c_slave_receive"
+    if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-    -- Log will be handled by calling procedure (e.g. i2c_slave_check)
+      -- Log will be handled by calling procedure (e.g. i2c_slave_check)
     end if;
 
   end procedure;
@@ -1590,7 +1591,7 @@ package body i2c_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like *_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
   begin
     i2c_slave_receive(data, msg,
@@ -1605,7 +1606,7 @@ package body i2c_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- overwrite if called from other procedure like i2c_slave_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     variable v_byte_array : t_byte_array(0 to 0);
   begin

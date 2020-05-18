@@ -23,6 +23,7 @@ Released: 2020-xx-xx
 - Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
   is no command being executed.
 - Added missing t_byte_endianness enums.
+- Removed extra log in some BFM procedures when called from another BFM procedure.
 
 
 v2 2020.05.12

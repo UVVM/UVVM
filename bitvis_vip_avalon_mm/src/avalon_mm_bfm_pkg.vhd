@@ -164,7 +164,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read"  -- Overwrite if called from another procedure
     );
 
   procedure avalon_mm_check (
@@ -197,7 +197,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like avalon_mm_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   procedure avalon_mm_read_response (
@@ -209,7 +209,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- Overwrite if called from another procedure
   );
 
   procedure avalon_mm_check_response (
@@ -452,7 +452,7 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read"  -- Overwrite if called from another procedure
     ) is
   begin
     avalon_mm_read_request(addr_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_name);
@@ -521,7 +521,7 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like avalon_mm_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     -- local_proc_* used if called from sequencer or VVC
     constant local_proc_name          : string := "avalon_mm_read_request";
@@ -543,10 +543,10 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      -- called from sequencer/VVC, show 'avalon_mm_read_request...' in log
+      -- Called directly from sequencer/VVC, log 'avalon_mm_read_request...'
       write(v_proc_call, local_proc_call);
     else
-      -- called from other BFM procedure like axistream_expect, log 'avalon_mm_check() while executing avalon_mm_read_request...'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing avalon_mm_read_request...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -598,8 +598,10 @@ package body avalon_mm_bfm_pkg is
 
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period/4;
 
-    if ext_proc_call = "" then -- proc_name = "avalon_mm_read_request"
+    if ext_proc_call = "" then
       log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;
   end procedure avalon_mm_read_request;
 
@@ -613,7 +615,7 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- Overwrite if called from another procedure
     ) is
     constant proc_call : string := "avalon_mm_read_response(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
 

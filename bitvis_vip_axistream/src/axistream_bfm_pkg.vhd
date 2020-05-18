@@ -344,7 +344,7 @@ package axistream_bfm_pkg is
     constant scope        : in    string                 := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call: in    string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
   procedure axistream_receive (
     variable data_array   : inout t_slv_array;
@@ -359,7 +359,7 @@ package axistream_bfm_pkg is
     constant scope        : in    string                 := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call: in    string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
 
@@ -386,7 +386,7 @@ package axistream_bfm_pkg is
     constant scope               : in    string                   := C_SCOPE;
     constant msg_id_panel        : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config              : in    t_axistream_bfm_config   := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call       : in    string                   := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call       : in    string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
   -- Overloaded version without records
   procedure axistream_receive (
@@ -410,7 +410,7 @@ package axistream_bfm_pkg is
     constant scope               : in    string                   := C_SCOPE;
     constant msg_id_panel        : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config              : in    t_axistream_bfm_config   := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call       : in    string                   := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call       : in    string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
 
@@ -1276,7 +1276,7 @@ package body axistream_bfm_pkg is
     constant scope        : in    string                 := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call: in    string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     constant c_num_bytes_per_word     : natural := axistream_if.tdata'length/8;
     constant c_num_user_bits_per_word : natural := axistream_if.tuser'length;
@@ -1302,11 +1302,11 @@ package body axistream_bfm_pkg is
     variable v_time_of_falling_edge  : time    := -1 ns;  -- time stamp for clk period checking
     variable v_sample_data_now       : boolean := false;
   begin
-    -- If called from sequencer/VVC, show 'axistream_receive()...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'axistream_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- If called from other BFM procedure like axistream_expect, log 'axistream_expect() while executing axistream_receive()...'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing axistream_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -1566,7 +1566,11 @@ package body axistream_bfm_pkg is
     if v_timeout then
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " & add_msg_delimiter(msg), scope);
     else
-      log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(v_byte_cnt) & "B)" & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      if ext_proc_call = "" then
+        log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(v_byte_cnt) & "B)" & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      else
+        -- Log will be handled by calling procedure (e.g. axistream_expect)
+      end if;
     end if;
 
     -- Done, set axistream back to default
@@ -1593,7 +1597,7 @@ package body axistream_bfm_pkg is
     constant scope        : in    string                 := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in    t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call: in    string                 := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call: in    string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
     ) is    -- helper variables
     variable v_bytes_in_word        : integer := (data_array(data_array'low)'length/8);
     variable v_num_bytes            : integer := (data_array'length) * v_bytes_in_word;
@@ -1633,7 +1637,7 @@ package body axistream_bfm_pkg is
     constant scope               : in    string                   := C_SCOPE;
     constant msg_id_panel        : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config              : in    t_axistream_bfm_config   := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call       : in    string                   := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call       : in    string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
   begin
     -- Simply call the record version
@@ -1682,7 +1686,7 @@ package body axistream_bfm_pkg is
     constant scope               : in    string                   := C_SCOPE;
     constant msg_id_panel        : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config              : in    t_axistream_bfm_config   := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call       : in    string                   := "" -- External proc_call; overwrite if called from other BFM procedure like axistream_expect
+    constant ext_proc_call       : in    string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
   begin
     -- Simply call the record version

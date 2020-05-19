@@ -60,7 +60,7 @@ echo "eval vcom  $compdirectives  ../tb/ethernet_mac_pkg.vhd"
 eval vcom  $compdirectives  ../tb/ethernet_mac_pkg.vhd
 echo "eval vcom  $compdirectives  ../tb/ethernet_mac.vhd"
 eval vcom  $compdirectives  ../tb/ethernet_mac.vhd
-echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_th.vhd"
-eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_th.vhd
-echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_tb.vhd"
-eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_tb.vhd
+echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_demo_th.vhd"
+eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_demo_th.vhd
+echo "eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_demo_tb.vhd"
+eval vcom  $compdirectives  ../tb/ethernet_sbi_gmii_demo_tb.vhd

@@ -41,7 +41,7 @@ use std.textio.all;
 package vvc_methods_pkg is
 
   --==========================================================================================
-  -- Types and constants for the ETHERNET VVC 
+  -- Types and constants for the ETHERNET VVC
   --==========================================================================================
   constant C_VVC_NAME     : string := "ETHERNET_VVC";
 
@@ -119,7 +119,7 @@ package vvc_methods_pkg is
 
 
   --==========================================================================================
-  -- Methods dedicated to this VVC 
+  -- Methods dedicated to this VVC
   -- - These procedures are called from the testbench in order for the VVC to execute
   --   BFM calls towards the given interface. The VVC interpreter will queue these calls
   --   and then the VVC executor will fetch the commands from the queue and handle the
@@ -215,7 +215,7 @@ package vvc_methods_pkg is
     constant interpacket_gap_time : in    time;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
+    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
@@ -228,7 +228,7 @@ package vvc_methods_pkg is
     constant fcs_error_severity   : in    t_alert_level;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
+    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
@@ -240,7 +240,7 @@ package vvc_methods_pkg is
     constant fcs_error_severity   : in    t_alert_level;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
+    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
@@ -262,13 +262,15 @@ package vvc_methods_pkg is
     constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                             : in boolean;
-                                                  constant vvc_idx_for_activity_watchdog    : in integer;
-                                                  constant last_cmd_idx_executed            : in natural;
-                                                  constant scope                            : in string := "ETHERNET_VVC");
+  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
+                                          constant activity                           : in    t_activity;
+                                          constant entry_num_in_vvc_activity_register : in    integer;
+                                          constant last_cmd_idx_executed              : in    natural;
+                                          constant command_queue_is_empty             : in    boolean;
+                                          constant scope                              : in    string := C_VVC_NAME);
 
 end package vvc_methods_pkg;
 
@@ -427,7 +429,7 @@ package body vvc_methods_pkg is
     constant interpacket_gap_time  : in    time;
     constant vvc_cmd               : in    t_vvc_cmd_record;
     constant dut_if_field_config   : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge        : out   t_hvvc_to_bridge;
+    signal   hvvc_to_bridge        : inout   t_hvvc_to_bridge;
     signal   bridge_to_hvvc        : in    t_bridge_to_hvvc;
     variable vvc_transaction_info  : inout t_transaction_group;
     constant scope                 : in    string;
@@ -448,6 +450,13 @@ package body vvc_methods_pkg is
     variable v_use_payload_length   : boolean;
     variable v_use_payload          : boolean;
     variable v_use_fcs              : boolean;
+    variable v_pos_preamble_and_sfd : t_field_position := MIDDLE;
+    variable v_pos_mac_dest         : t_field_position := MIDDLE;
+    variable v_pos_mac_source       : t_field_position := MIDDLE;
+    variable v_pos_payload_length   : t_field_position := MIDDLE;
+    variable v_pos_payload          : t_field_position := MIDDLE;
+    variable v_pos_fcs              : t_field_position := MIDDLE;
+
   begin
     -- Preamble (LSb first)
     v_packet(0 to 6)        := convert_slv_to_byte_array(C_PREAMBLE, LOWER_BYTE_LEFT);
@@ -506,43 +515,72 @@ package body vvc_methods_pkg is
     v_use_fcs              := true when C_FIELD_IDX_FCS > dut_if_field_config'high else
                               dut_if_field_config(C_FIELD_IDX_FCS).use_field;
 
-    log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) & 
+    -- Check which are the first and last used fields in the packet. If there is
+    -- only one field then it will be FIRST_AND_LAST.
+    if v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := FIRST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := FIRST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := FIRST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := FIRST;
+    elsif v_use_payload then
+      v_pos_payload          := FIRST;
+    elsif v_use_fcs then
+      v_pos_fcs              := FIRST;
+    end if;
+    if v_use_fcs then
+      v_pos_fcs              := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload then
+      v_pos_payload          := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
+    elsif v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
+    end if;
+
+    log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Send only configured fields to the bridge
     if v_use_preamble_and_sfd then
       log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7),
-        C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7), C_FIELD_IDX_PREAMBLE_AND_SFD,
+        v_pos_preamble_and_sfd, scope, msg_id_panel);
     end if;
     if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
       log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
     end if;
     if v_use_mac_dest then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13),
-        C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13), C_FIELD_IDX_MAC_DESTINATION,
+        v_pos_mac_dest, scope, msg_id_panel);
     end if;
     if v_use_mac_source then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(14 to 19),
-        C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(14 to 19), C_FIELD_IDX_MAC_SOURCE,
+        v_pos_mac_source, scope, msg_id_panel);
     end if;
     if v_use_payload_length then
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(20 to 21),
-        C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(20 to 21), C_FIELD_IDX_PAYLOAD_LENGTH,
+        v_pos_payload_length, scope, msg_id_panel);
     end if;
     if v_use_payload then
       log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22+v_payload_length-1),
-        C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22+v_payload_length-1), C_FIELD_IDX_PAYLOAD,
+        v_pos_payload, scope, msg_id_panel);
     end if;
     if v_use_fcs then
       log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+4-1),
-        C_FIELD_IDX_FCS, scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+4-1), C_FIELD_IDX_FCS,
+        v_pos_fcs, scope, msg_id_panel);
     end if;
 
     log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
@@ -560,7 +598,7 @@ package body vvc_methods_pkg is
     constant fcs_error_severity   : in    t_alert_level;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
+    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
@@ -579,11 +617,18 @@ package body vvc_methods_pkg is
     variable v_use_payload_length   : boolean;
     variable v_use_payload          : boolean;
     variable v_use_fcs              : boolean;
+    variable v_pos_preamble_and_sfd : t_field_position := MIDDLE;
+    variable v_pos_mac_dest         : t_field_position := MIDDLE;
+    variable v_pos_mac_source       : t_field_position := MIDDLE;
+    variable v_pos_payload_length   : t_field_position := MIDDLE;
+    variable v_pos_payload          : t_field_position := MIDDLE;
+    variable v_pos_fcs              : t_field_position := MIDDLE;
   begin
-    -- Choose which procedure call to use (local or external)
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'ethernet_receive...'
       write(v_proc_call, local_proc_call);
     else
+      -- Called from another procedure, log 'ext_proc_call while executing ethernet_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -606,27 +651,57 @@ package body vvc_methods_pkg is
     v_use_fcs              := true when C_FIELD_IDX_FCS > dut_if_field_config'high else
                               dut_if_field_config(C_FIELD_IDX_FCS).use_field;
 
-    log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) & 
+    -- Check which are the first and last used fields in the packet. If there is
+    -- only one field then it will be FIRST_AND_LAST.
+    if v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := FIRST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := FIRST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := FIRST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := FIRST;
+    elsif v_use_payload then
+      v_pos_payload          := FIRST;
+    elsif v_use_fcs then
+      v_pos_fcs              := FIRST;
+    end if;
+    if v_use_fcs then
+      v_pos_fcs              := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload then
+      v_pos_payload          := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
+    elsif v_use_payload_length then
+      v_pos_payload_length   := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_source then
+      v_pos_mac_source       := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
+    elsif v_use_mac_dest then
+      v_pos_mac_dest         := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
+    elsif v_use_preamble_and_sfd then
+      v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
+    end if;
+
+    log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) &
       format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Await preamble and SFD (if configured)
     if v_use_preamble_and_sfd then
       loop
         -- Fetch one byte at the time until SFD is found
-        blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, scope, msg_id_panel);
+        blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, v_pos_preamble_and_sfd, scope, msg_id_panel);
         v_preamble_and_sfd := v_preamble_and_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
         if v_preamble_and_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
+        v_pos_preamble_and_sfd := MIDDLE; -- Avoid repeating the first field log for each byte
       end loop;
       v_packet(0 to 7) := convert_slv_to_byte_array(v_preamble_and_sfd, LOWER_BYTE_LEFT);
-      log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & 
+      log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
 
     -- Read MAC destination from bridge (if configured)
     if v_use_mac_dest then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, v_pos_mac_dest, scope, msg_id_panel);
       v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_destination := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
@@ -635,7 +710,7 @@ package body vvc_methods_pkg is
 
     -- Read MAC source from bridge (if configured)
     if v_use_mac_source then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, v_pos_mac_source, scope, msg_id_panel);
       v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
       received_frame.mac_source := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
@@ -644,7 +719,7 @@ package body vvc_methods_pkg is
 
     -- Read payload length from bridge (if configured)
     if v_use_payload_length then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, v_pos_payload_length, scope, msg_id_panel);
       v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
       received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
       v_payload_length              := received_frame.payload_length;
@@ -652,7 +727,7 @@ package body vvc_methods_pkg is
       vvc_transaction_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
     end if;
     if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
-      log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & 
+      log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
     end if;
     -- Check payload length is within limits
@@ -665,39 +740,43 @@ package body vvc_methods_pkg is
       if v_payload_length < C_MIN_PAYLOAD_LENGTH then
         v_payload_length := C_MIN_PAYLOAD_LENGTH;
       end if;
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, v_pos_payload, scope, msg_id_panel);
       v_packet(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_words(0 to v_payload_length-1);
       received_frame.payload(0 to received_frame.payload_length-1) := v_packet(22 to 22+received_frame.payload_length-1); -- Discard padding bytes
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.payload := received_frame.payload;
-      log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) & 
+      log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, PAYLOAD), scope, msg_id_panel);
     end if;
 
     -- Read FCS from bridge (if configured)
     if v_use_fcs then
-      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, scope, msg_id_panel);
+      blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, v_pos_fcs, scope, msg_id_panel);
       v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
       -- For the FCS the MSb is received first, so we need to reverse the bits in each byte
       received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.fcs := received_frame.fcs;
-      log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & 
+      log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) &
         format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
       -- Check the CRC of the received frame
       fcs_error := not check_crc_32(v_packet(8 to 22+v_payload_length+4-1));
       check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
     end if;
 
-    log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    if ext_proc_call = "" then
+      log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
+        format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    else
+      -- Log will be handled by calling procedure (e.g. ethernet_expect)
+    end if;
   end procedure priv_ethernet_receive_from_bridge;
 
   procedure priv_ethernet_expect_from_bridge(
     constant fcs_error_severity   : in    t_alert_level;
     constant vvc_cmd              : in    t_vvc_cmd_record;
     constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : out   t_hvvc_to_bridge;
+    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
     signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
     constant scope                : in    string;
@@ -802,18 +881,33 @@ package body vvc_methods_pkg is
   end procedure reset_vvc_transaction_info;
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                             : in boolean;
-                                                  constant vvc_idx_for_activity_watchdog    : in integer;
-                                                  constant last_cmd_idx_executed            : in natural;
-                                                  constant scope                            : in string := "ETHERNET_VVC") is
+  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
+                                          constant activity                           : in    t_activity;
+                                          constant entry_num_in_vvc_activity_register : in    integer;
+                                          constant last_cmd_idx_executed              : in    natural;
+                                          constant command_queue_is_empty             : in    boolean;
+                                          constant scope                              : in    string := C_VVC_NAME) is
+    variable v_activity   : t_activity := activity;
   begin
-    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                      busy                  => busy,
-                                                      last_cmd_idx_executed => last_cmd_idx_executed);
-    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
+    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
+    if activity = INACTIVE then
+      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
+      vvc_status.current_cmd_idx  := 0;
+    end if;
+
+    if v_activity = INACTIVE and not(command_queue_is_empty) then
+      v_activity := ACTIVE;
+    end if;
+    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
+                                                          activity              => v_activity,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed);
+    if global_trigger_vvc_activity_register /= 'L' then
+      wait until global_trigger_vvc_activity_register = 'L';
+    end if;
+    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
 
 end package body vvc_methods_pkg;

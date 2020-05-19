@@ -195,13 +195,6 @@ begin
 
     -- Verbosity control
     disable_log_msg(ID_UVVM_CMD_ACK);
-    disable_log_msg(ID_UVVM_DATA_QUEUE);
-    -- Disable GMII log messages to avoid unwanted logging while executing Ethernet
-    -- commands until msg_id_panel fix is implemented in next major release.
-    disable_log_msg(GMII_VVCT, 1, TX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 1, RX, ALL_MESSAGES);
-    disable_log_msg(ID_UVVM_SEND_CMD);
-    disable_log_msg(ID_UVVM_CMD_RESULT);
 
     -- Set Ethernet VVC config for this testbench
     shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination := C_MASTER_MAC_ADDR;

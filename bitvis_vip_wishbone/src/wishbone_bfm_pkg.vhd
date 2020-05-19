@@ -105,7 +105,7 @@ package wishbone_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_wishbone_bfm_config     := C_WISHBONE_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   procedure wishbone_check (
@@ -239,7 +239,7 @@ package body wishbone_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_wishbone_bfm_config     := C_WISHBONE_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     -- local_proc_name/call used if called from sequencer or VVC
     constant local_proc_name : string := "wishbone_read";
@@ -263,14 +263,13 @@ package body wishbone_bfm_pkg is
     check_value(config.setup_time > 0 ns, TB_FAILURE, "Sanity check: Check that setup_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_name);
     check_value(config.hold_time > 0 ns, TB_FAILURE, "Sanity check: Check that hold_time is more than 0 ns.", scope, ID_NEVER, msg_id_panel, local_proc_name);
 
-    -- If called directly from sequencer/VVC, show 'wichbone_read...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'wishbone_read...'
       write(v_proc_call, local_proc_call);
     else
-      -- If called from other BFM procedure like sbi_check, log 'sbi_check(..) while executing sbi_read..'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing wishbone_read...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
-
 
     -- check if enough room for setup_time in low period
     if (clk = '1') and (config.setup_time > (config.clock_period/2 - clk'last_event))then
@@ -327,8 +326,10 @@ package body wishbone_bfm_pkg is
 
     wishbone_if <= init_wishbone_if_signals(wishbone_if.adr_o'length, wishbone_if.dat_i'length);
 
-    if ext_proc_call = "" then -- proc_name = "wishbone_read"
+    if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      -- Log will be handled by calling procedure (e.g. wishbone_check)
     end if;
   end procedure wishbone_read;
 

@@ -38,16 +38,16 @@ use work.ethernet_mac_pkg.all;
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity ethernet_sbi_gmii_th is
+entity ethernet_sbi_gmii_demo_th is
   generic(
     GC_CLK_PERIOD : time
   );
-end entity ethernet_sbi_gmii_th;
+end entity ethernet_sbi_gmii_demo_th;
 
 --=================================================================================================
 -- Test harness architecture
 --=================================================================================================
-architecture struct of ethernet_sbi_gmii_th is
+architecture struct of ethernet_sbi_gmii_demo_th is
   -- VVC instance indexes
   constant C_VVC_ETH_SBI  : natural := 1;
   constant C_VVC_SBI      : natural := 1;

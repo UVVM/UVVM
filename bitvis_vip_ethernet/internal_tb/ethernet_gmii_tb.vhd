@@ -117,23 +117,6 @@ begin
 
     -- Verbosity control
     disable_log_msg(ID_UVVM_CMD_ACK);
-    disable_log_msg(ID_UVVM_DATA_QUEUE);
-    disable_log_msg(GMII_VVCT, 1, TX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 1, RX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 2, TX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 2, RX, ALL_MESSAGES);
-    enable_log_msg(GMII_VVCT, 1, TX, ID_BFM);
-    enable_log_msg(GMII_VVCT, 1, RX, ID_BFM);
-    enable_log_msg(GMII_VVCT, 2, TX, ID_BFM);
-    enable_log_msg(GMII_VVCT, 2, RX, ID_BFM);
-    -- Disable SBI log messages to avoid unwanted logging while executing Ethernet
-    -- commands until msg_id_panel fix is implemented in next major release.
-    disable_log_msg(GMII_VVCT, 1, TX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 1, RX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 2, TX, ALL_MESSAGES);
-    disable_log_msg(GMII_VVCT, 2, RX, ALL_MESSAGES);
-    disable_log_msg(ID_UVVM_SEND_CMD);
-    disable_log_msg(ID_UVVM_CMD_RESULT);
 
     -- Set Ethernet VVC config for this testbench
     shared_ethernet_vvc_config(TX, 1).bfm_config.mac_destination := x"00_00_00_00_00_02";

@@ -140,12 +140,20 @@ package adaptations_pkg is
     ID_IMMEDIATE_CMD_WAIT,    -- Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
+    ID_NEW_HVVC_CMD_SEQ,      -- Message from a lower level VVC which receives a new command sequence from an HVVC
     ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
+    -- Await completion
+    ID_OLD_AWAIT_COMPLETION,  -- Temporary log messages related to old await_completion mechanism. Will be removed in v3.0
+    ID_AWAIT_COMPLETION,      -- Used for logging the procedure call waiting for completion
+    ID_AWAIT_COMPLETION_LIST, -- Used for logging modifications to the list of VVCs waiting for completion
+    ID_AWAIT_COMPLETION_WAIT, -- Used for logging when the procedure starts waiting for completion
+    ID_AWAIT_COMPLETION_END,  -- Used for logging when the procedure has finished waiting for completion
     -- Distributed data
     ID_UVVM_DATA_QUEUE,       -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system
     ID_CONSTRUCTOR,           -- Constructor message from VVCs (or other components/process when needed)
     ID_CONSTRUCTOR_SUB,       -- Constructor message for lower level constructor messages (like Queue-information and other limitations)
+    ID_VVC_ACTIVITY,
     -- Monitors
     ID_MONITOR,               -- General monitor information
     ID_MONITOR_ERROR,         -- General monitor errors
@@ -180,14 +188,17 @@ package adaptations_pkg is
 
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
   constant C_MSG_ID_INDENT : t_msg_id_indent := (
-    ID_IMMEDIATE_CMD_WAIT   => "  ..",
-    ID_CMD_INTERPRETER      => "  "   & NUL & NUL,
-    ID_CMD_INTERPRETER_WAIT => "  ..",
-    ID_CMD_EXECUTOR         => "  "   & NUL & NUL,
-    ID_CMD_EXECUTOR_WAIT    => "  ..",
-    ID_UVVM_SEND_CMD        => "->"   & NUL & NUL,
-    ID_UVVM_CMD_ACK         => "    ",
-    others                  => ""     & NUL & NUL & NUL & NUL
+    ID_IMMEDIATE_CMD_WAIT    => "  ..",
+    ID_CMD_INTERPRETER       => "  "   & NUL & NUL,
+    ID_CMD_INTERPRETER_WAIT  => "  ..",
+    ID_CMD_EXECUTOR          => "  "   & NUL & NUL,
+    ID_CMD_EXECUTOR_WAIT     => "  ..",
+    ID_UVVM_SEND_CMD         => "->"   & NUL & NUL,
+    ID_UVVM_CMD_ACK          => "    ",
+    ID_NEW_HVVC_CMD_SEQ      => "  "   & NUL & NUL,
+    ID_AWAIT_COMPLETION_WAIT => ".."   & NUL & NUL,
+    ID_AWAIT_COMPLETION_END  => "  "   & NUL & NUL,
+    others                   => ""     & NUL & NUL & NUL & NUL
   );
 
   constant C_MSG_DELIMITER : character := ''';
@@ -349,11 +360,11 @@ package adaptations_pkg is
   );
 
   type t_vvc_state is record
-    busy                  : boolean;
+    activity              : t_activity;
     last_cmd_idx_executed : integer;
   end record;
   constant  C_VVC_STATE_DEFAULT : t_vvc_state := (
-    busy                  => false,
+    activity              => INACTIVE,
     last_cmd_idx_executed => -1
   );
 

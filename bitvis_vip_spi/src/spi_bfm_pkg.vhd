@@ -105,7 +105,7 @@ package spi_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_spi_bfm_config               := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -123,7 +123,7 @@ package spi_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_spi_bfm_config               := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   -- Multi-word
@@ -137,7 +137,7 @@ package spi_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_spi_bfm_config               := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
 
@@ -276,7 +276,7 @@ package spi_bfm_pkg is
     constant scope                  : in    string                   := C_SCOPE;
     constant msg_id_panel           : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in    t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in    string                   := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call          : in    string                   := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -294,7 +294,7 @@ package spi_bfm_pkg is
     constant scope                  : in    string                   := C_SCOPE;
     constant msg_id_panel           : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in    t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in    string                   := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call          : in    string                   := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   -- Multi-word
@@ -307,7 +307,7 @@ package spi_bfm_pkg is
     constant scope                  : in    string                   := C_SCOPE;
     constant msg_id_panel           : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in    t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in    string                   := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call          : in    string                   := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
   ------------------------------------------
@@ -478,7 +478,7 @@ package body spi_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_spi_bfm_config               := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     constant local_proc_name                   : string                                      := "spi_master_transmit_and_receive";
     constant local_proc_call                   : string                                      := local_proc_name;
@@ -497,10 +497,10 @@ package body spi_bfm_pkg is
     check_value(config.spi_bit_time /= -1 ns, TB_ERROR, "SPI Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
     if ext_proc_call = "" then
-      -- Called directly from sequencer/VVC. Include 'spi_master_transmit_and_receive' when logging
+      -- Called directly from sequencer/VVC, log 'spi_master_transmit_and_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- Called from other BFM procedure like spi_*_check. Include 'spi_*_check(..) while executing spi_master_transmit_and_receive' when logging
+      -- Called from another BFM procedure, log 'ext_proc_call while executing spi_master_transmit_and_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -590,8 +590,10 @@ package body spi_bfm_pkg is
       alert(error, local_proc_name & " ss_n not low when expected.");
     end if;
 
-    if ext_proc_call = "" then  -- proc_name = "spi_master_transmit_and_receive"
+    if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> Transmitted: " & to_string(v_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". Received: " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      -- Log will be handled by calling procedure (e.g. spi_master_transmit_and_check)
     end if;
   end procedure;
 
@@ -605,7 +607,7 @@ package body spi_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_spi_bfm_config               := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
   begin
     spi_master_transmit_and_receive(tx_data, rx_data, msg,
@@ -624,7 +626,7 @@ package body spi_bfm_pkg is
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
     constant config                       : in    t_spi_bfm_config               := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call                : in    string                         := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call                : in    string                         := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     variable v_action_when_transfer_is_done : t_action_when_transfer_is_done;  -- between words and after transfer
   begin
@@ -914,7 +916,7 @@ package body spi_bfm_pkg is
     constant scope                  : in    string                   := C_SCOPE;
     constant msg_id_panel           : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in    t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in    string                   := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call          : in    string                   := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     -- Local_proc_name/call used if called from sequencer or VVC
     constant local_proc_name : string                                      := "spi_slave_transmit_and_receive";
@@ -932,10 +934,10 @@ package body spi_bfm_pkg is
     check_value(config.spi_bit_time /= -1 ns, TB_ERROR, "SPI Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
 
     if ext_proc_call = "" then
-      -- Called directly from sequencer/VVC. Include 'spi_slave_receive...' when logging
+      -- Called directly from sequencer/VVC, log 'spi_slave_transmit_and_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- Called from other BFM procedure like spi_*_check. Include 'spi_*_check(..) while executing spi_*_receive.. when logging'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing spi_slave_transmit_and_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -1015,7 +1017,7 @@ package body spi_bfm_pkg is
       log(config.id_for_bfm, local_proc_call & "=> " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " rx completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
       log(config.id_for_bfm, local_proc_call & "=> " & to_string(bfm_tx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " tx completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-    -- Log will be handled by calling procedure (e.g. spi_*_check)
+      -- Log will be handled by calling procedure (e.g. spi_master_transmit_and_check)
     end if;
  end procedure;
 
@@ -1028,7 +1030,7 @@ package body spi_bfm_pkg is
     constant scope                  : in    string                   := C_SCOPE;
     constant msg_id_panel           : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in    t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in    string                   := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call          : in    string                   := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, msg,
@@ -1046,7 +1048,7 @@ package body spi_bfm_pkg is
     constant scope                  : in    string                   := C_SCOPE;
     constant msg_id_panel           : in    t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in    t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in    string                   := ""  -- External proc_call; overwrite if called from other BFM procedure like spi_*_check
+    constant ext_proc_call          : in    string                   := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
   begin
     -- Check length of tx_data and rx_data

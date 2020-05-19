@@ -43,9 +43,11 @@ def main(argv):
             "Testing_2_Sequencer_Parallel_using_same_types_of_VVCs_but_different_instances",
             "Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_but_not_at_the_same_time",
             "Testing_get_last_received_cmd_idx",
-            "Testing_differt_accesses_between_two_sequencer",
-            "Testing_differt_single_sequencer_access",
-            "Testing_shared_uvvm_status_await_any_completion_info"
+            "Testing_different_accesses_between_two_sequencer",
+            "Testing_different_single_sequencer_access",
+            "Testing_shared_uvvm_status_await_any_completion_info",
+            "Testing_await_completion_from_different_sequencers",
+            "Testing_await_any_completion_from_different_sequencers"
             ]
 
   # Setup testbench and run

@@ -159,7 +159,7 @@ package sbi_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
 
     );
 
@@ -178,7 +178,7 @@ package sbi_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     );
 
 
@@ -434,7 +434,7 @@ package body sbi_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     -- local_proc_* used if called from sequencer or VVC
     constant local_proc_name : string := "sbi_read";
@@ -458,10 +458,10 @@ package body sbi_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      -- called directly from sequencer/VVC, show 'sbi_read...' in log
+      -- Called directly from sequencer/VVC, log 'sbi_read...'
       write(v_proc_call, local_proc_call);
     else
-      -- called from other BFM procedure like sbi_check, log 'sbi_check(..) while executing sbi_read..'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing sbi_read...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -510,10 +510,10 @@ package body sbi_bfm_pkg is
  
     cs   <= '0';
     rena <= '0';
-    if ext_proc_call = "" then          -- proc_name = "sbi_read"
+    if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
-    -- Log will be handled by calling procedure (e.g. sbi_check)
+      -- Log will be handled by calling procedure (e.g. sbi_check)
     end if;
 
     DEALLOCATE(v_proc_call);
@@ -528,7 +528,7 @@ package body sbi_bfm_pkg is
     constant scope         : in    string           := C_SCOPE;
     constant msg_id_panel  : in    t_msg_id_panel   := shared_msg_id_panel;
     constant config        : in    t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call : in    string           := ""  -- External proc_call; overwrite if called from other BFM procedure like sbi_check
+    constant ext_proc_call : in    string           := ""  -- External proc_call. Overwrite if called from another BFM procedure
     ) is
   begin
     sbi_read(addr_value, data_value, msg, clk, sbi_if.cs, sbi_if.addr,

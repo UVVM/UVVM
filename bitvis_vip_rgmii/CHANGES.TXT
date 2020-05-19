@@ -1,6 +1,16 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v0.3.0
+----------
+Released: 2020-05-19
+- Added shared_rgmii_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+- Removed extra log in read procedure when called from another BFM procedure.
+
 v0.2.1
 ----------
 Released: 2020-04-20

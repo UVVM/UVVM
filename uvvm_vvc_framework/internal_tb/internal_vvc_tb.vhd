@@ -19,12 +19,12 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+use uvvm_vvc_framework.ti_protected_types_pkg.all;
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
@@ -34,12 +34,15 @@ library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 use bitvis_vip_uart.uart_bfm_pkg.all;
 
+library bitvis_vip_avalon_mm;
+context bitvis_vip_avalon_mm.vvc_context;
+
 
 -- Test bench entity
 entity internal_vvc_tb is
   generic (
     GC_TEST : string := "UVVM"
-    );
+  );
 end entity;
 
 -- Test bench architecture
@@ -66,6 +69,8 @@ architecture func of internal_vvc_tb is
   constant C_FLAG_E             : string := "flag_e";
   constant C_FLAG_F             : string := "flag_f";
   constant C_FLAG_G             : string := "flag_g";
+  constant C_FLAG_H             : string := "flag_h";
+  constant C_FLAG_I             : string := "flag_i";
 
   constant C_UART_BFM_CONFIG_0 : t_uart_bfm_config := (
     bit_time                                  => 160 ns,
@@ -126,8 +131,10 @@ architecture func of internal_vvc_tb is
   signal   barrier_e_helper    : std_logic := 'X';
   signal   barrier_f    : std_logic := 'X';
   signal   barrier_g    : std_logic := 'X';
-
-
+  signal   barrier_h        : std_logic := 'X';
+  signal   barrier_h_helper : std_logic := 'X';
+  signal   barrier_i        : std_logic := 'X';
+  signal   barrier_i_helper : std_logic := 'X';
 
   -- Procedure to make every single test start on a "round" time
   procedure separate_tests_in_time(   -- Wait for next round time number - e.g. if now=2100ns, and round_time=1000ns, then next round time is 3000ns
@@ -137,7 +144,7 @@ architecture func of internal_vvc_tb is
     wait for (round_time - v_overshoot);
   end;
 
-  begin
+begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
@@ -178,7 +185,6 @@ architecture func of internal_vvc_tb is
   ------------------------------------------------
   p_main: process
     constant C_SCOPE_MAIN : string := C_TB_SCOPE_DEFAULT & " Main";
-
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -201,8 +207,6 @@ architecture func of internal_vvc_tb is
     log(ID_LOG_HDR, "Starting simulation using several sequencers", C_SCOPE_MAIN);
     enable_log_msg(ALL_MESSAGES, scope => C_SCOPE_MAIN);
 
-
-
     log("Wait 10 clock period for reset to be turned off", C_SCOPE_MAIN);
     wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
 
@@ -221,19 +225,24 @@ architecture func of internal_vvc_tb is
     elsif GC_TEST = "Testing_get_last_received_cmd_idx" then
       unblock_flag(C_FLAG_D, "Unblocking Flag_D -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_differt_accesses_between_two_sequencer" then
+    elsif GC_TEST = "Testing_different_accesses_between_two_sequencer" then
       unblock_flag(C_FLAG_E, "Unblocking Flag_E -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_differt_single_sequencer_access" then
+    elsif GC_TEST = "Testing_different_single_sequencer_access" then
       unblock_flag(C_FLAG_F, "Unblocking Flag_F -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_f, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
     elsif GC_TEST = "Testing_shared_uvvm_status_await_any_completion_info" then
       unblock_flag(C_FLAG_G, "Unblocking Flag_G -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_g, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_await_completion_from_different_sequencers" then
+      unblock_flag(C_FLAG_H, "Unblocking Flag_H -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_h, 200 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TEST = "Testing_await_any_completion_from_different_sequencers" then
+      unblock_flag(C_FLAG_I, "Unblocking Flag_I -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_i, 200 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
     else
       alert(tb_error, "Unsupported test");
     end if;
-
 
     -----------------------------------------------------------------------------
     -- Ending the simulation
@@ -248,7 +257,9 @@ architecture func of internal_vvc_tb is
   end process p_main;
 
 
-
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_2_Sequencer_Parallel_using_different_types_of_VVCs
+  --------------------------------------------------------------------------------------------------
   p_main_a1: process
     constant C_SCOPE_A1 : string := C_TB_SCOPE_DEFAULT & " A1";
 
@@ -265,22 +276,19 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_A, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_A1);
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_A1);
-    sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"55", "TX_DATA", scope=>C_SCOPE_A1);
+    sbi_write(SBI_VVCT,1,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_A1);
     uart_expect(x"55", 1, 2 * C_FRAME_PERIOD, ERROR, "out of UART 0 TX");
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_A1);
     await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_A1);
     wait;  -- to stop completely
-
   end process p_main_a1;
+
 
   p_main_a2: process
     constant C_SCOPE_A2 : string := C_TB_SCOPE_DEFAULT & " A2";
 
-    -- SBI_write overload
     procedure sbi_write(
       constant addr_value   : in unsigned;
       constant data_value   : in std_logic_vector;
@@ -289,12 +297,10 @@ architecture func of internal_vvc_tb is
       sbi_write(addr_value, data_value, msg,
             clk, uart_2_cs, uart_2_addr, uart_2_rd, uart_2_wr, uart_2_ready, uart_2_wdata, C_SCOPE_A2);
     end;
-
   begin
     await_unblock_flag(C_FLAG_A, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_A2);
 
     log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE_A2);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,1).bfm_config.bit_time := 160 ns;
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_A2);
@@ -302,24 +308,22 @@ architecture func of internal_vvc_tb is
     uart_expect(UART_VVCT, 1, RX, x"55", "out of UART 2 TX", scope => C_SCOPE_A2);
     await_completion(UART_VVCT, 1, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_A2);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_A2);
     await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_A2);
     wait;  -- to stop completely
-
   end process p_main_a2;
 
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_2_Sequencer_Parallel_using_same_types_of_VVCs_but_different_instances
+  --------------------------------------------------------------------------------------------------
   p_main_b1: process
     constant C_SCOPE_B1 : string := C_TB_SCOPE_DEFAULT & " B1";
   begin
     await_unblock_flag(C_FLAG_B, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_B1);
     wait for 1 ns;
 
-
     log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_B1);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD; --- RX 3?
     enable_log_msg(UART_VVCT, 2, RX, ALL_MESSAGES, scope => C_SCOPE_B1);
 
@@ -328,14 +332,12 @@ architecture func of internal_vvc_tb is
     uart_expect(UART_VVCT, 2, RX, x"55", "out of UART 3 TX", scope => C_SCOPE_B1);
     await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_B1);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_B1);
     await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_B1);
     wait;  -- to stop completely
-
   end process p_main_b1;
+
 
   p_main_b2: process
     constant C_SCOPE_B2 : string := C_TB_SCOPE_DEFAULT & " B2";
@@ -344,7 +346,6 @@ architecture func of internal_vvc_tb is
     wait for 1 ns;
 
     log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_B2);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
     enable_log_msg(SBI_VVCT, 3, ALL_MESSAGES, scope => C_SCOPE_B2);
 
@@ -354,38 +355,34 @@ architecture func of internal_vvc_tb is
     uart_expect(UART_VVCT, 3, RX, x"AA", "out of UART 4 TX", scope => C_SCOPE_B2);
     await_completion(UART_VVCT, 3, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_B2);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_B2);
     await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_B2);
     wait;  -- to stop completely
-
   end process p_main_b2;
 
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_but_not_at_the_same_time
+  --------------------------------------------------------------------------------------------------
   p_main_c1: process
     constant C_SCOPE_C1 : string := C_TB_SCOPE_DEFAULT & " C1";
   begin
     await_unblock_flag(C_FLAG_C, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_C1);
 
     log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_C1);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
-
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_C1);
     sbi_write(SBI_VVCT, 2,  C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_C1);
     uart_expect(UART_VVCT, 2, RX, x"55", "out of UART 2 TX", scope => C_SCOPE_C1);
     await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_C1);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_C1);
     await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_C1);
     wait;  -- to stop completely
-
   end process p_main_c1;
+
 
   p_main_c2: process
     constant C_SCOPE_C2 : string := C_TB_SCOPE_DEFAULT & " C2";
@@ -393,9 +390,7 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_C, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_C2);
 
     log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_C2);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
-
 
     wait for 2 * C_FRAME_PERIOD;
 
@@ -405,16 +400,15 @@ architecture func of internal_vvc_tb is
     uart_expect(UART_VVCT, 2, RX, x"AA", "out of UART 2 TX", scope => C_SCOPE_C2);
     await_completion(UART_VVCT, 2, RX, 2 * C_FRAME_PERIOD, scope => C_SCOPE_C2);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_C2);
     await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_C2);
     wait;  -- to stop completely
-
   end process p_main_c2;
 
-
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_get_last_received_cmd_idx
+  --------------------------------------------------------------------------------------------------
   p_main_d1: process
     constant C_SCOPE_D1 : string := C_TB_SCOPE_DEFAULT & " D1";
     variable v_cmd_idx  : natural;
@@ -423,9 +417,7 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_D, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_D1);
 
     log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_D1);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
-
 
     log(ID_LOG_HDR, "Check simple transmit", C_SCOPE_D1);
     sbi_write(SBI_VVCT, 2, C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_D1);
@@ -435,15 +427,12 @@ architecture func of internal_vvc_tb is
     fetch_result(UART_VVCT, 2, RX, v_cmd_idx, v_result_from_fetch, "Fetch result from uart_receive using the simple fetch_result overload", scope => C_SCOPE_D1);
     check_value(v_result_from_fetch, x"55", error, "Verifying data", C_SCOPE_D1);
 
-
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_D1);
     await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_D1);
     wait;  -- to stop completely
-
   end process p_main_d1;
+
 
   p_main_d2: process
     constant C_SCOPE_D2 : string := C_TB_SCOPE_DEFAULT & " D2";
@@ -453,11 +442,9 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_D, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_D2);
 
     log(ID_LOG_HDR, "Configure UART VVC 3", C_SCOPE_D2);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,2).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,3).bfm_config.bit_time := C_BIT_PERIOD;
-
 
     log(ID_LOG_HDR, "Check simple transmit and readback with 2 sequencer parallel", C_SCOPE_D2);
     sbi_write(SBI_VVCT, 3,  C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_D2);
@@ -477,17 +464,15 @@ architecture func of internal_vvc_tb is
     increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_D2);
     v_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, NA, C_SCOPE_D2);
 
-
-
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_D2);
     await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_D2);
     wait;  -- to stop completely
-
   end process p_main_d2;
 
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_different_accesses_between_two_sequencer
+  --------------------------------------------------------------------------------------------------
   p_main_e1: process
     constant C_SCOPE_E1  : string := C_TB_SCOPE_DEFAULT & " E1";
     variable v_timestamp : time;
@@ -519,7 +504,7 @@ architecture func of internal_vvc_tb is
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 4", scope => C_SCOPE_E1);
 
-    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Broadcast", C_SCOPE_E1);
+    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Broadcast (old await_completion)", C_SCOPE_E1);
     for i in 0 to 10 loop
       wait for 0 ns;
     end loop;
@@ -529,7 +514,7 @@ architecture func of internal_vvc_tb is
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 5", scope => C_SCOPE_E1);
 
-    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Multicast", C_SCOPE_E1);
+    log(ID_LOG_HDR, "SEQUENCER 1: Send data and wait for finish while the other sequencer tries a Multicast (old await_completion)", C_SCOPE_E1);
     for i in 0 to 10 loop
       wait for 0 ns;
     end loop;
@@ -560,25 +545,20 @@ architecture func of internal_vvc_tb is
     disable_log_msg(VVC_BROADCAST,ALL_MESSAGES,scope => C_SCOPE_E1);
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 1: synchronising both sequencer point 10", scope => C_SCOPE_E1);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_E1);
     await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_E1);
     wait;  -- to stop completely
-
   end process p_main_e1;
+
 
   p_main_e2: process
     constant C_SCOPE_E2  : string := C_TB_SCOPE_DEFAULT & " E2";
     variable v_timestamp : time;
 
-      procedure check_log
-      (
+      procedure check_log (
         msg_id_panel : t_msg_id_panel;
-        enabled : t_enabled
-      )
-      is
+        enabled : t_enabled) is
       begin
         -- for vvc_idx in 0 to C_MAX_VVC_INSTANCE_NUM-1 loop
           -- for channel in t_channel'left to t_channel'right loop
@@ -626,14 +606,14 @@ architecture func of internal_vvc_tb is
     enable_log_msg(SBI_VVCT, 2,ALL_MESSAGES, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 4", scope => C_SCOPE_E2);
-    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Broadcast", C_SCOPE_E2);
-    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
-    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_E2);
+    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Broadcast (old await_completion)", C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 5", scope => C_SCOPE_E2);
-    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Multicast", C_SCOPE_E2);
-    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
-    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_E2);
+    log(ID_LOG_HDR, "SEQUENCER 2: Send data and wait for finish while the other sequencer tries a Multicast (old await_completion)", C_SCOPE_E2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_E2);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_E2);
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 6", scope => C_SCOPE_E2);
     log(ID_LOG_HDR, "SEQUENCER 2: Sending two Multicast simultaniously to different VVCs", C_SCOPE_E2);
@@ -682,19 +662,15 @@ architecture func of internal_vvc_tb is
 
     await_barrier(barrier_e_helper, 100 us, "SEQUENCER 2: synchronising both sequencer point 10", scope => C_SCOPE_E2);
 
-
-
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_E2);
     await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_E2);
     wait;  -- to stop completely
-
   end process p_main_e2;
 
-
-
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_different_single_sequencer_access
+  --------------------------------------------------------------------------------------------------
   p_main_f: process
     constant C_SCOPE_F   : string := C_TB_SCOPE_DEFAULT & " F";
     variable v_timestamp : time;
@@ -702,7 +678,6 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_F, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_F);
 
     log(ID_LOG_HDR, "Configure UART VVC 2", C_SCOPE_F);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,2).bfm_config.bit_time := C_BIT_PERIOD;
     shared_uart_vvc_config(TX,2).bfm_config.bit_time := C_BIT_PERIOD;
 
@@ -712,20 +687,17 @@ architecture func of internal_vvc_tb is
     await_completion(UART_VVCT, 2, ALL_CHANNELS, 2 * C_FRAME_PERIOD, scope => C_SCOPE_F);
     check_value(now > (0.5 * C_FRAME_PERIOD), TB_ERROR, "await_completion should take at least a frame_period", C_SCOPE_F);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_F);
     await_barrier(barrier_f, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_F);
     wait;  -- to stop completely
-
   end process p_main_f;
 
 
-
-  --
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_shared_uvvm_status_await_any_completion_info
   -- Test await_any_completion() shared_uvvm_status for command index and VVC name
-  --
+  --------------------------------------------------------------------------------------------------
   p_main_g: process
     constant C_SCOPE_G      : string := C_TB_SCOPE_DEFAULT & " G";
     variable v_uart_cmd_idx : natural := 0;
@@ -737,7 +709,6 @@ architecture func of internal_vvc_tb is
     await_unblock_flag(C_FLAG_G, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_G);
 
     log(ID_LOG_HDR, "Check shared_uvvm_status defaults.", C_SCOPE_G);
-    ------------------------------------------------------------
     v_vvc_cmd_idx := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_cmd_idx;
     v_vvc_name    := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_name(1 to v_vvc_name'length);
     v_vvc_time_of_completion := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_time_of_completion;
@@ -748,11 +719,10 @@ architecture func of internal_vvc_tb is
     wait for 200 ns;
 
     log(ID_LOG_HDR, "Activate UART VVC 3 and SBI VVC 3 and await VVC completion.", C_SCOPE_G);
-    ------------------------------------------------------------
     shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
 
-    check_value(shared_sbi_vvc_status(3).previous_cmd_idx = shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx = shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(3).previous_cmd_idx = shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same (initial value)", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx = shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same (initial value)", C_SCOPE_G);
 
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_G);
     uart_receive(UART_VVCT, 3, RX, "reading out of UART 3 TX", scope => C_SCOPE_G);
@@ -763,8 +733,8 @@ architecture func of internal_vvc_tb is
     v_sbi_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
     v_uart_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, RX);
 
-    check_value(shared_sbi_vvc_status(3).previous_cmd_idx /= shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx /= shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(3).previous_cmd_idx /= shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different (during execution)", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx /= shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different (during execution)", C_SCOPE_G);
 
     await_any_completion(SBI_VVCT, 3, v_sbi_cmd_idx, NOT_LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
     await_any_completion(UART_VVCT, 3, RX, v_uart_cmd_idx, LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
@@ -779,22 +749,447 @@ architecture func of internal_vvc_tb is
     check_value(v_vvc_time_of_completion > 0 ns, ERROR, "check vvc_time_of_completion value has increased.", C_SCOPE_G);
 
     await_completion(UART_VVCT, 3, RX, v_uart_cmd_idx, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
-    check_value(shared_sbi_vvc_status(3).previous_cmd_idx = shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx = shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(3).current_cmd_idx = 0, ERROR, "check that current_cmd_idx is 0 (when idle)", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 3).current_cmd_idx = 0, ERROR, "check that current_cmd_idx is 0 (when idle)", C_SCOPE_G);
 
-    -----------------------------------------------------------------------------
     -- Ending the simulation in sequencer 1
-    -----------------------------------------------------------------------------
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_G);
     await_barrier(barrier_g, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_G);
     wait;  -- to stop completely
-
   end process p_main_g;
 
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_await_completion_from_different_sequencers
+  --------------------------------------------------------------------------------------------------
+  p_main_h1: process
+    constant C_SCOPE_H1 : string := C_TB_SCOPE_DEFAULT & " H1";
+    variable v_cmd_idx  : natural;
+  begin
+    await_unblock_flag(C_FLAG_H, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_H1);
+
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR_LARGE, "Test old await_completion mechanism", C_SCOPE_H1);
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Check await_completion for non-existing VVC instance", C_SCOPE_H1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H1);
+    await_completion(SBI_VVCT, 20, RX, 2*C_FRAME_PERIOD, scope => C_SCOPE_H1);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 1", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 4, RANDOM, "TX_DATA", C_SCOPE_H1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 4);
+    await_completion(SBI_VVCT, 4, v_cmd_idx, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 2", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 3", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 4", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion with broadcast to all VVCs while another sequencer access one of the VVCs", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 4, RANDOM, "TX_DATA", C_SCOPE_H1);
+    await_completion(VVC_BROADCAST, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 5", scope => C_SCOPE_H1);
+
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR_LARGE, "Test new await_completion mechanism", C_SCOPE_H1);
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Check await_completion from non-existing VVC instance", C_SCOPE_H1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H1);
+    await_completion(UART_VVCT, 20, RX, 2*C_FRAME_PERIOD, scope => C_SCOPE_H1);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 6", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 4, RANDOM, "TX_DATA", C_SCOPE_H1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    await_completion(SBI_VVCT, 3, v_cmd_idx, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 7", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_H1);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 8", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 9", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion in a VVC with multiple executors from two different sequencers", C_SCOPE_H1);
+    shared_avalon_mm_vvc_config(1).bfm_config.use_readdatavalid := true;
+    avalon_mm_read(AVALON_MM_VVCT, 1, "0", "Send a read request");
+    await_completion(AVALON_MM_VVCT, 1, 100 ns, scope => C_SCOPE_H1);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 10", scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion and check that it timeouts", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H1);
+    await_completion(SBI_VVCT, 3, 10 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion with ALL_INSTANCES and/or ALL_CHANNELS of a VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    await_completion(SBI_VVCT, ALL_INSTANCES, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+
+    await_completion(UART_VVCT, ALL_INSTANCES, RX, 100 ns, scope => C_SCOPE_H1);
+
+    await_completion(UART_VVCT, 3, ALL_CHANNELS, 100 ns, scope => C_SCOPE_H1);
+
+    await_completion(UART_VVCT, ALL_INSTANCES, ALL_CHANNELS, 100 ns, scope => C_SCOPE_H1);
+
+    log(ID_LOG_HDR, "Use await_completion for a command idx with ALL_INSTANCES of a VVC", C_SCOPE_H1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_H1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H1);
+    await_completion(SBI_VVCT, ALL_INSTANCES, v_cmd_idx, 100 ns, scope => C_SCOPE_H1);
+    wait for 6*C_FRAME_PERIOD;
+
+    -- Ending the simulation in sequencer 1
+    log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_H1);
+    await_barrier(barrier_h, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_H1);
+    wait;  -- to stop completely
+  end process p_main_h1;
+
+
+  p_main_h2: process
+    constant C_SCOPE_H2 : string := C_TB_SCOPE_DEFAULT & " H2";
+  begin
+    await_unblock_flag(C_FLAG_H, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_H2);
+
+    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+
+    -------------------------------------------------------------------------------
+    --"Test old await_completion mechanism"
+    -------------------------------------------------------------------------------
+    -- Wait for SEQUENCER 1: "Check await_completion for non-existing VVC instance"
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 1", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_H2);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"11", "TX_DATA", C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 2", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_H2);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"22", "TX_DATA", C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 3", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_H2);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_H2);
+    await_completion(SBI_VVCT, 4, 100 ns, scope => C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 4", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion with broadcast to all VVCs while another sequencer access one of the VVCs", C_SCOPE_H2);
+    increment_expected_alerts(TB_ERROR, 2, scope => C_SCOPE_H2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 5", scope => C_SCOPE_H2);
+
+    -------------------------------------------------------------------------------
+    --"Test new await_completion mechanism"
+    -------------------------------------------------------------------------------
+    -- Wait for SEQUENCER 1: "Check await_completion from non-existing VVC instance"
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 6", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_H2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"44", "TX_DATA", C_SCOPE_H2);
+    uart_expect(UART_VVCT, 3, RX, x"44", "Expect data in UART within the last 5 bytes", 5, scope => C_SCOPE_H2);
+    await_completion(UART_VVCT, 3, RX, 6*C_FRAME_PERIOD, scope => C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 7", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_H2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"55", "TX_DATA", C_SCOPE_H2);
+    uart_expect(UART_VVCT, 3, RX, x"55", "Expect data in UART within the last 5 bytes", 5, scope => C_SCOPE_H2);
+    await_completion(UART_VVCT, 3, RX, 6*C_FRAME_PERIOD, scope => C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 8", scope => C_SCOPE_H2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_H2);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 9", scope => C_SCOPE_H2);
+
+    wait for 20 ns; -- wait long enough so the VVC is handling the read response (2nd executor)
+    log(ID_LOG_HDR, "Use await_completion in a VVC with multiple executors from two different sequencers", C_SCOPE_H2);
+    await_completion(AVALON_MM_VVCT, 1, 100 ns, scope => C_SCOPE_H2);
+    await_barrier(barrier_h_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 10", scope => C_SCOPE_H2);
+
+    -- Ending the simulation in sequencer 2
+    log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_H2);
+    await_barrier(barrier_h, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_H2);
+    wait;  -- to stop completely
+  end process p_main_h2;
+
+  --------------------------------------------------------------------------------------------------
+  -- TEST: Testing_await_any_completion_from_different_sequencers
+  --------------------------------------------------------------------------------------------------
+  p_main_i1: process
+    constant C_SCOPE_I1 : string := C_TB_SCOPE_DEFAULT & " I1";
+    variable v_cmd_idx  : natural;
+    variable v_vvc_list : t_vvc_list;
+  begin
+    await_unblock_flag(C_FLAG_I, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_I1);
+
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR_LARGE, "Test old await_any_completion mechanism", C_SCOPE_I1);
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Use await_any_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 4, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 4);
+    await_any_completion(SBI_VVCT, 4, v_cmd_idx, LAST, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 1", scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_any_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    await_any_completion(SBI_VVCT, 4, LAST, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 2", scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_any_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    await_any_completion(SBI_VVCT, 4, LAST, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 3", scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_any_completion for a group of VVCs from two different sequencers", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    await_any_completion(UART_VVCT, 4, TX, NOT_LAST, 100 ns, scope => C_SCOPE_I1);
+    await_any_completion(UART_VVCT, 4, RX, NOT_LAST, 100 ns, scope => C_SCOPE_I1);
+    await_any_completion(SBI_VVCT, 4, LAST, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 4", scope => C_SCOPE_I1);
+
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR_LARGE, "Test new await_any_completion mechanism", C_SCOPE_I1);
+    -------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Use await_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",3,v_cmd_idx);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 5", scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 6", scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 7", scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion for one VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion for one of several VVCs and keep the list", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,TX);
+    v_vvc_list.add("UART_VVC",3,RX);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, KEEP_LIST, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion for one of several VVCs and clear the list", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    increment_expected_alerts(TB_WARNING, 3, scope => C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,TX);
+    v_vvc_list.add("UART_VVC",3,RX);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, CLEAR_LIST, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion with an empty list", C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion with some unsupported VVCs", C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,TX);
+    v_vvc_list.add("UART_VVC",3,RX);
+    v_vvc_list.add("UART_VVC",4,TX);
+    v_vvc_list.add("UART_VVC",4,RX);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion and check that it timeouts", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 10 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion with ALL_INSTANCES and/or ALL_CHANNELS of a VVC", C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",ALL_INSTANCES);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",ALL_INSTANCES,RX);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",ALL_INSTANCES,ALL_CHANNELS);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    v_vvc_list.add("UART_VVC",2,RX);
+    v_vvc_list.add("UART_VVC",1,ALL_CHANNELS);
+    v_vvc_list.add("SBI_VVC",ALL_INSTANCES);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    v_vvc_list.add("UART_VVC",4,RX);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",4,RX);
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion for a command idx with ALL_INSTANCES of a VVC", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
+    v_vvc_list.add("SBI_VVC",ALL_INSTANCES,v_cmd_idx);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion for several VVCs", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    v_vvc_list.add("UART_VVC",3,ALL_CHANNELS);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ALL_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion for any or all VVCs of a list without a list", C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 2, scope => C_SCOPE_I1);
+    await_completion(ANY_OF, 100 ns, scope => C_SCOPE_I1);
+    await_completion(ALL_OF, 100 ns, scope => C_SCOPE_I1);
+
+    log(ID_LOG_HDR, "Use await_completion with broadcast to all VVCs", C_SCOPE_I1);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
+    await_completion(ALL_VVCS, 100 ns, scope => C_SCOPE_I1);
+    wait for 6*C_FRAME_PERIOD;
+
+    log(ID_LOG_HDR, "Use await_completion with broadcast to all VVCs using a list", C_SCOPE_I1);
+    increment_expected_alerts(TB_WARNING, 1, scope => C_SCOPE_I1);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ALL_VVCS, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
+
+    -- Ending the simulation in sequencer 1
+    log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_I1);
+    await_barrier(barrier_i, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_I1);
+    wait;  -- to stop completely
+  end process p_main_i1;
+
+
+  p_main_i2: process
+    constant C_SCOPE_I2 : string := C_TB_SCOPE_DEFAULT & " I2";
+    variable v_vvc_list : t_vvc_list;
+  begin
+    await_unblock_flag(C_FLAG_I, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_I2);
+
+    shared_uart_vvc_config(RX,3).bfm_config.bit_time := C_BIT_PERIOD;
+
+    -------------------------------------------------------------------------------
+    --"Test old await_any_completion mechanism"
+    -------------------------------------------------------------------------------
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_any_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_I2);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"11", "TX_DATA", C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 1", scope => C_SCOPE_I2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_any_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_I2);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I2);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"22", "TX_DATA", C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 2", scope => C_SCOPE_I2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_any_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_I2);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I2);
+    await_any_completion(SBI_VVCT, 4, LAST, 100 ns, scope => C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 3", scope => C_SCOPE_I2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_any_completion for a group of VVCs from two different sequencers", C_SCOPE_I2);
+    await_any_completion(SBI_VVCT, 4, LAST, 100 ns, scope => C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 4", scope => C_SCOPE_I2);
+
+    -------------------------------------------------------------------------------
+    --"Test new await_any_completion mechanism"
+    -------------------------------------------------------------------------------
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for a command idx in a VVC while another sequencer access the same VVC", C_SCOPE_I2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_I2);
+    uart_expect(UART_VVCT, 3, RX, x"33", "Expect data in UART within the last 5 bytes", 5, scope => C_SCOPE_I2);
+    await_completion(UART_VVCT, 3, RX, 6*C_FRAME_PERIOD, scope => C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 5", scope => C_SCOPE_I2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC while another sequencer access the same VVC", C_SCOPE_I2);
+    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"44", "TX_DATA", C_SCOPE_I2);
+    uart_expect(UART_VVCT, 3, RX, x"44", "Expect data in UART within the last 5 bytes", 5, scope => C_SCOPE_I2);
+    await_completion(UART_VVCT, 3, RX, 6*C_FRAME_PERIOD, scope => C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 6", scope => C_SCOPE_I2);
+
+    wait for 1 ns;
+    log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_I2);
+    v_vvc_list.add("SBI_VVC",3);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I2);
+    await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 7", scope => C_SCOPE_I2);
+
+    -- Ending the simulation in sequencer 2
+    log(ID_LOG_HDR, "SEQUENCER 2 COMPLETED", C_SCOPE_I2);
+    await_barrier(barrier_i, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_I2);
+    wait;  -- to stop completely
+  end process p_main_i2;
 
 
   -- Toggle the reset after 5 clock periods
   p_arst: arst <= '1', '0' after 5 *C_CLK_PERIOD;
-
 
 end func;

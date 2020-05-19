@@ -3,12 +3,18 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.14.0
+----------
+Released: 2020-05-19
+- Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY, ID_AWAIT_COMPLETION,
+  ID_AWAIT_COMPLETION_LIST, ID_AWAIT_COMPLETION_WAIT, ID_AWAIT_COMPLETION_END.
+- Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
+- Added missing t_byte_endianness enums.
 
 v2.13.1
 ----------
 Released: 2020-04-20
 - Updated Util QR check_value() with MATCH_STD_INCL_Z option.
-
 
 v2.13.0
 ----------

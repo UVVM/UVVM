@@ -75,10 +75,17 @@ UVVM:                ID_IMMEDIATE_CMD             : ENABLED
 UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
 UVVM:                ID_CMD_EXECUTOR              : ENABLED
 UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
+UVVM:                ID_NEW_HVVC_CMD_SEQ          : ENABLED
 UVVM:                ID_INSERTED_DELAY            : ENABLED
+UVVM:                ID_OLD_AWAIT_COMPLETION      : ENABLED
+UVVM:                ID_AWAIT_COMPLETION          : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
 UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
 UVVM:                ID_CONSTRUCTOR               : ENABLED
 UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
+UVVM:                ID_VVC_ACTIVITY              : ENABLED
 UVVM:                ID_MONITOR                   : ENABLED
 UVVM:                ID_MONITOR_ERROR             : ENABLED
 UVVM:                ID_DATA                      : ENABLED

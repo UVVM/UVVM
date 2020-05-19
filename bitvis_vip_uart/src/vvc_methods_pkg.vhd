@@ -95,6 +95,7 @@ package vvc_methods_pkg is
     msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel
     error_injection                       : t_vvc_error_injection;
     bit_rate_checker                      : t_bit_rate_checker;
+    parent_msg_id_panel                   : t_msg_id_panel;    --UVVM: temporary fix for HVVC, remove in v3.0
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -110,7 +111,8 @@ package vvc_methods_pkg is
     bfm_config                            => C_UART_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     error_injection                       => C_VVC_ERROR_INJECTION_INACTIVE,
-    bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT
+    bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT,
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
     );
 
   type t_vvc_status is
@@ -234,13 +236,15 @@ package vvc_methods_pkg is
     constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                           : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
-                                                  constant last_cmd_idx_executed          : in    natural;
-                                                  constant scope                          : in    string := "UART_VVC");
+  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
+                                          constant activity                           : in    t_activity;
+                                          constant entry_num_in_vvc_activity_register : in    integer;
+                                          constant last_cmd_idx_executed              : in    natural;
+                                          constant command_queue_is_empty             : in    boolean;
+                                          constant scope                              : in    string := C_VVC_NAME);
 
   --==============================================================================
   -- Error Injection methods
@@ -452,18 +456,33 @@ package body vvc_methods_pkg is
 
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                           : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
-                                                  constant last_cmd_idx_executed          : in    natural;
-                                                  constant scope                          : in    string := "UART_VVC") is
+  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
+                                          constant activity                           : in    t_activity;
+                                          constant entry_num_in_vvc_activity_register : in    integer;
+                                          constant last_cmd_idx_executed              : in    natural;
+                                          constant command_queue_is_empty             : in    boolean;
+                                          constant scope                              : in    string := C_VVC_NAME) is
+    variable v_activity   : t_activity := activity;
   begin
-    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                      busy                  => busy,
-                                                      last_cmd_idx_executed => last_cmd_idx_executed);
-    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
+    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
+    if activity = INACTIVE then
+      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
+      vvc_status.current_cmd_idx  := 0;  
+    end if;
+
+    if v_activity = INACTIVE and not(command_queue_is_empty) then
+      v_activity := ACTIVE;
+    end if;
+    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
+                                                          activity              => v_activity,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed);
+    if global_trigger_vvc_activity_register /= 'L' then
+      wait until global_trigger_vvc_activity_register = 'L';
+    end if;                                                              
+    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
 
 

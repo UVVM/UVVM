@@ -230,11 +230,11 @@ package body gmii_bfm_pkg is
     variable v_wait_cycles          : natural := 0;
 
   begin
-    -- If called from sequencer/VVC, show 'gmii_read()...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'gmii_read...'
       write(v_proc_call, local_proc_call);
-    -- If called from another BFM procedure like gmii_expect, log 'gmii_expect() while executing gmii_read()...'
     else
+      -- Called from another BFM procedure, log 'ext_proc_call while executing gmii_read...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -299,7 +299,11 @@ package body gmii_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " &
         add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      if ext_proc_call = "" then
+        log(config.id_for_bfm, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      else
+        -- Log will be handled by calling procedure (e.g. gmii_expect)
+      end if;
     end if;
   end procedure;
 

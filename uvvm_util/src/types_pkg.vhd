@@ -58,6 +58,8 @@ package types_pkg is
   type t_ascii_allow  is (ALLOW_ALL, ALLOW_PRINTABLE_ONLY);
   type t_blocking_mode is (BLOCKING, NON_BLOCKING);
   type t_from_point_in_time is (FROM_NOW, FROM_LAST_EVENT);
+  type t_vvc_select   is (ANY_OF, ALL_OF, ALL_VVCS);
+  type t_list_action  is (KEEP_LIST, CLEAR_LIST);
 
   type t_format_zeros  is (AS_IS, KEEP_LEADING_0, SKIP_LEADING_0);  -- AS_IS is deprecated and will be removed. Use KEEP_LEADING_0.
   type t_format_string is (AS_IS, TRUNCATE, SKIP_LEADING_SPACE);    -- Deprecated, will be removed.
@@ -86,7 +88,7 @@ package types_pkg is
   type t_when_to_start_transfer is (START_TRANSFER_IMMEDIATE, START_TRANSFER_ON_NEXT_SS);
   type t_action_between_words is (RELEASE_LINE_BETWEEN_WORDS, HOLD_LINE_BETWEEN_WORDS);
 
-  type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT);
+  type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT, FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT);
   alias t_word_endianness is t_byte_endianness;
 
   type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
@@ -224,6 +226,9 @@ package types_pkg is
   );
 
   type t_test_status is (NA, PASS, FAIL);
+  
+  type t_activity is (ACTIVE, INACTIVE);
+
   
   -------------------------------------
   -- SB

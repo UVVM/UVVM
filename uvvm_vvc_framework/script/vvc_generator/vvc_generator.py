@@ -424,8 +424,8 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features):
         file_handle.write("  alias vvc_transaction_info                : t_transaction_group is shared_" + vvc_name.lower() + "_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);\n")
 
     if features["activity_watchdog"]:
-        file_handle.write("  -- Activity Watchdog\n")    
-        file_handle.write("  signal vvc_idx_for_activity_watchdog : integer;\n")
+        file_handle.write("  -- VVC Activity \n")    
+        file_handle.write("  signal entry_num_in_vvc_activity_register : integer;\n")
         print_linefeed(file_handle)
 
     file_handle.write("begin\n")
@@ -486,11 +486,11 @@ def add_vvc_interpreter(file_handle, vvc_channel, features):
       file_handle.write("    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;\n")
     print_linefeed(file_handle)
     if features["activity_watchdog"]:
-        file_handle.write("    -- Register VVC in activity watchdog register\n")
-        file_handle.write("    vvc_idx_for_activity_watchdog <= shared_activity_watchdog.priv_register_vvc(name      => \"" + vvc_name.upper() + "\",\n")
-    if vvc_channel.name != "NA":
-      file_handle.write("                                                                                channel   => GC_CHANNEL,\n")
-    file_handle.write("                                                                                instance  => GC_INSTANCE_IDX);\n")
+        file_handle.write("    -- Register VVC in vvc activity register\n")
+        file_handle.write("    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,\n")
+        if vvc_channel.name != "NA":
+            file_handle.write("                                                                                         channel   => GC_CHANNEL,\n")
+        file_handle.write("                                                                                         instance  => GC_INSTANCE_IDX);\n")
     file_handle.write("    -- Set initial value of v_msg_id_panel to msg_id_panel in config\n")
     file_handle.write("    v_msg_id_panel := vvc_config.msg_id_panel;\n")
     print_linefeed(file_handle) 
@@ -502,7 +502,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, features):
     file_handle.write("      --    releases global semaphore\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, "+
-                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);\n")
+                      "VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);\n")
     file_handle.write("      v_cmd_has_been_acked := false; -- Clear flag\n")
     file_handle.write("      -- Update shared_vvc_last_received_cmd_idx with received command index\n")
     if vvc_channel.name == "NA":
@@ -631,19 +631,19 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     print_linefeed(file_handle)
 
     if features["activity_watchdog"]:
-        file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      -- update vvc activity\n")
+        file_handle.write("      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("      -- 1. Set defaults, fetch command and log\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config"+
-                      ", vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);\n")
+                      ", vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);\n")
     print_linefeed(file_handle)
 
     if features["activity_watchdog"]:
-        file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      -- update vvc activity\n")
+        file_handle.write("      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the\n")
@@ -672,7 +672,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("                                                                         "
                       "timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,\n")
     file_handle.write("                                                                         "
-                      "scope                              => C_SCOPE),\n")
+                      "scope                              => C_SCOPE,\n")
     file_handle.write("                                                                         "
                       "msg_id_panel                       => v_msg_id_panel);\n")
     print_linefeed(file_handle)
@@ -885,14 +885,14 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     print_linefeed(file_handle)
 
     if features["activity_watchdog"]:
-        file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      -- update vvc activity\n")
+        file_handle.write("       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("      -- Fetch commands\n")
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, "+queue_name+"_queue, vvc_config"+
-                      ", vvc_status, "+queue_name+"_queue_is_increasing, "+queue_name+"_is_busy, C_VVC_LABELS, v_msg_id_panel);\n")
+                      ", vvc_status, "+queue_name+"_queue_is_increasing, "+queue_name+"_is_busy, C_VVC_LABELS);\n")
     print_linefeed(file_handle)
     file_handle.write("      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the\n")
     file_handle.write("      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.\n")
@@ -900,8 +900,8 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     print_linefeed(file_handle)
 
     if features["activity_watchdog"]:
-        file_handle.write("      -- Notify activity watchdog\n")
-        file_handle.write("      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);\n")
+        file_handle.write("      -- update vvc activity\n")
+        file_handle.write("      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
         print_linefeed(file_handle)
 
     print_linefeed(file_handle)
@@ -1370,13 +1370,15 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
 
     if features["activity_watchdog"]:
         file_handle.write("  --==============================================================================\n")
-        file_handle.write("  -- Activity Watchdog\n")
+        file_handle.write("  -- VVC Activity\n")
         file_handle.write("  --==============================================================================\n")
-        file_handle.write("  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;\n")
-        file_handle.write("                                                  constant busy                             : in boolean;\n")
-        file_handle.write("                                                  constant vvc_idx_for_activity_watchdog    : in integer;\n")
-        file_handle.write("                                                  constant last_cmd_idx_executed            : in natural;\n")
-        file_handle.write("                                                  constant scope                            : in string := \"" + vvc_name.upper() + "_VVC\");\n")    
+        file_handle.write("  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;\n")
+        file_handle.write("                                          variable vvc_status                         : inout t_vvc_status;\n")
+        file_handle.write("                                          constant activity                           : in    t_activity;\n")
+        file_handle.write("                                          constant entry_num_in_vvc_activity_register : in    integer;\n")
+        file_handle.write("                                          constant last_cmd_idx_executed              : in    natural;\n")
+        file_handle.write("                                          constant command_queue_is_empty             : in    boolean;\n")
+        file_handle.write("                                          constant scope                              : in string := C_VVC_NAME);\n")    
         print_linefeed(file_handle)
 
     file_handle.write("end package vvc_methods_pkg;\n")
@@ -1512,18 +1514,33 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
 
     if features["activity_watchdog"]:
         file_handle.write("  --==============================================================================\n")
-        file_handle.write("  -- Activity Watchdog\n")
+        file_handle.write("  -- VVC Activity\n")
         file_handle.write("  --==============================================================================\n")
-        file_handle.write("  procedure activity_watchdog_register_vvc_state( signal   global_trigger_activity_watchdog : inout std_logic;\n")
-        file_handle.write("                                                  constant busy                             : in boolean;\n")
-        file_handle.write("                                                  constant vvc_idx_for_activity_watchdog    : in integer;\n")
-        file_handle.write("                                                  constant last_cmd_idx_executed            : in natural;\n")
-        file_handle.write("                                                  constant scope                            : in string := \"" + vvc_name.upper() + "_VVC\") is\n")
+        file_handle.write("  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;\n")
+        file_handle.write("                                          variable vvc_status                         : inout t_vvc_status;\n")
+        file_handle.write("                                          constant activity                           : in    t_activity;\n")
+        file_handle.write("                                          constant entry_num_in_vvc_activity_register : in    integer;\n")
+        file_handle.write("                                          constant last_cmd_idx_executed              : in    natural;\n")
+        file_handle.write("                                          constant command_queue_is_empty             : in    boolean;\n")
+        file_handle.write("                                          constant scope                              : in string := C_VVC_NAME) is\n")
+        file_handle.write("    variable v_activity   : t_activity := activity;\n")
         file_handle.write("  begin\n")
-        file_handle.write("    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,\n")
-        file_handle.write("                                                      busy                  => busy,\n")
-        file_handle.write("                                                      last_cmd_idx_executed => last_cmd_idx_executed);\n")
-        file_handle.write("    gen_pulse(global_trigger_activity_watchdog, 0 ns, \"pulsing global trigger for activity watchdog\", scope, ID_NEVER);\n")
+        file_handle.write("    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)\n")
+        file_handle.write("    if activity = INACTIVE then\n")
+        file_handle.write("      vvc_status.previous_cmd_idx := last_cmd_idx_executed;\n")
+        file_handle.write("      vvc_status.current_cmd_idx  := 0;  \n")
+        file_handle.write("    end if;\n")
+        print_linefeed(file_handle)
+        file_handle.write("    if v_activity = INACTIVE and not(command_queue_is_empty) then\n")
+        file_handle.write("      v_activity := ACTIVE;\n")
+        file_handle.write("    end if;\n")
+        file_handle.write("    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,\n")
+        file_handle.write("                                                          activity              => v_activity,\n")
+        file_handle.write("                                                          last_cmd_idx_executed => last_cmd_idx_executed);\n")
+        file_handle.write("    if global_trigger_vvc_activity_register /= 'L' then\n")
+        file_handle.write("      wait until global_trigger_vvc_activity_register = 'L';\n")
+        file_handle.write("    end if;\n")
+        file_handle.write("    gen_pulse(global_trigger_vvc_activity, 0 ns, \"pulsing global trigger for vvc activity\", scope, ID_NEVER);\n")
         file_handle.write("  end procedure;\n")
         print_linefeed(file_handle)
 

@@ -27,6 +27,14 @@ context bitvis_vip_clock_generator.vvc_context;
 
 --=================================================================================================
 entity test_harness is
+  generic(
+    GC_CLOCK_1_PERIOD       : time := 10 ns;
+    GC_CLOCK_1_HIGH_PERIOD  : time := 5 ns;
+    GC_CLOCK_2_PERIOD       : time := 20 ns;
+    GC_CLOCK_2_HIGH_PERIOD  : time := 12 ns;
+    GC_CLOCK_3_PERIOD       : time := 40 ns;
+    GC_CLOCK_3_HIGH_PERIOD  : time := 12 ns
+  );
 end entity test_harness;
 
 
@@ -48,8 +56,8 @@ begin
     generic map(
       GC_INSTANCE_IDX    => 1,
       GC_CLOCK_NAME      => "Clock 1",
-      GC_CLOCK_PERIOD    => 10 ns,
-      GC_CLOCK_HIGH_TIME => 5 ns
+      GC_CLOCK_PERIOD    => GC_CLOCK_1_PERIOD,
+      GC_CLOCK_HIGH_TIME => GC_CLOCK_1_HIGH_PERIOD
       )
     port map(
       clk => clk_1
@@ -59,8 +67,8 @@ begin
     generic map(
       GC_INSTANCE_IDX    => 2,
       GC_CLOCK_NAME      => "Clock 2",
-      GC_CLOCK_PERIOD    => 20 ns,
-      GC_CLOCK_HIGH_TIME => 12 ns
+      GC_CLOCK_PERIOD    => GC_CLOCK_2_PERIOD,
+      GC_CLOCK_HIGH_TIME => GC_CLOCK_2_HIGH_PERIOD
       )
     port map(
       clk => clk_2
@@ -70,8 +78,8 @@ begin
     generic map(
       GC_INSTANCE_IDX    => 3,
       GC_CLOCK_NAME      => "Clock 3",
-      GC_CLOCK_PERIOD    => 40 ns,
-      GC_CLOCK_HIGH_TIME => 12 ns
+      GC_CLOCK_PERIOD    => GC_CLOCK_3_PERIOD,
+      GC_CLOCK_HIGH_TIME => GC_CLOCK_3_HIGH_PERIOD
       )
     port map(
       clk => clk_3

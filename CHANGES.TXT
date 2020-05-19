@@ -9,9 +9,9 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2 2020.xx.xx
+v2 2020.05.19
 --------------------
-Released: 2020-xx-xx
+Released: 2020-05-19
 - Added HVVC_to_VVC_Bridge VIP and Ethernet VIP.
 - Added shared_<if>_vvc_transaction_info information to VVC quick references.
 - Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
@@ -25,6 +25,8 @@ Released: 2020-xx-xx
 - Added missing t_byte_endianness enums.
 - Removed extra log in some BFM procedures when called from another BFM procedure.
 - Added new await_completion command for several VVCs which doesn't block them while waiting.
+- Updated VVC activity_watchdog_register_vvc_state() method call with new t_activity parameter and 
+  other minor improvements.
 
 
 v2 2020.05.12

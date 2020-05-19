@@ -1,14 +1,14 @@
 Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
- vx.x.x
+ v0.3.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-05-19
 - Added shared_gmii_vvc_transaction_info information to quick reference.
-- Added script/compile_bfm.do script.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section and BFM config record description.
-- Added README.TXT
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
 - Removed extra log in read procedure when called from another BFM procedure.
 
 v0.2.1

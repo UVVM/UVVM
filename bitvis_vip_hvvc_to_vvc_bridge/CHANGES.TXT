@@ -1,7 +1,7 @@
 Bitvis VIP Hierarchical-VVC to VVC Bridge - Overview on Versions and Changes
 ==============================================================
 
-v1.0.0
+v0.1.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-05-19
 - Initial version of HVVC to VVC Bridge VIP.

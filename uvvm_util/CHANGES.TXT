@@ -3,9 +3,9 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.xx.x
+v2.14.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-05-19
 - Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY, ID_AWAIT_COMPLETION,
   ID_AWAIT_COMPLETION_LIST, ID_AWAIT_COMPLETION_WAIT, ID_AWAIT_COMPLETION_END.
 - Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.

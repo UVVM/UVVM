@@ -2,12 +2,13 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.9.1
+v2.10.0
 ----------
-Released: 2020-XX-XX
+Released: 2020-05-19
 - Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
   is no command being executed.
 - Added new await_completion command for several VVCs which doesn't block them while waiting.
+- Setting Activity Watchdog num_exp_vvc = 0 will omit checking the number of VVCs registered.
 
 v2.9.0
 ----------

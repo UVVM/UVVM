@@ -1,14 +1,14 @@
 Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
-vx.x.x
+v1.2.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-05-19
 - Added shared_avalon_mm_vvc_transaction_info information to quick reference.
-- Added script/compile_bfm.do script.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section and BFM config record description.
-- Added README.TXT
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
 - Removed extra log in receive procedure when called from another BFM procedure.
 
 v1.1.1

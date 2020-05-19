@@ -30,7 +30,7 @@ package support_pkg is
   -- Methods
   --==========================================================================================
   procedure blocking_send_to_bridge(
-    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   hvvc_to_bridge   : inout t_hvvc_to_bridge;
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant data_words       : in  t_slv_array;
     constant dut_if_field_idx : in  integer;
@@ -40,7 +40,7 @@ package support_pkg is
   );
 
   procedure blocking_request_from_bridge(
-    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   hvvc_to_bridge   : inout t_hvvc_to_bridge;
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant num_data_words   : in  positive;
     constant dut_if_field_idx : in  integer;
@@ -69,7 +69,7 @@ package body support_pkg is
 
   -- Send a data array to the bridge and wait for it to finish
   procedure blocking_send_to_bridge(
-    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   hvvc_to_bridge   : inout t_hvvc_to_bridge;
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant data_words       : in  t_slv_array;
     constant dut_if_field_idx : in  integer;
@@ -91,7 +91,7 @@ package body support_pkg is
 
   -- Request a number of data words from the bridge and wait for it to finish
   procedure blocking_request_from_bridge(
-    signal   hvvc_to_bridge   : out t_hvvc_to_bridge;
+    signal   hvvc_to_bridge   : inout t_hvvc_to_bridge;
     signal   bridge_to_hvvc   : in  t_bridge_to_hvvc;
     constant num_data_words   : in  positive;
     constant dut_if_field_idx : in  integer;

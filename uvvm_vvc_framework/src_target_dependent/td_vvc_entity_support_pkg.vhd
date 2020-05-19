@@ -114,7 +114,7 @@ package td_vvc_entity_support_pkg is
     signal global_vvc_busy     : inout std_logic;
     signal vvc_ack             : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     );
 
   -- DEPRECATED
@@ -255,17 +255,7 @@ package td_vvc_entity_support_pkg is
     signal   queue_is_increasing : in    boolean;
     signal   executor_is_busy    : inout boolean;
     constant vvc_labels          : in    t_vvc_labels;
-    constant msg_id_panel        : in    t_msg_id_panel
-    );
-
-  procedure fetch_command_and_prepare_executor(
-    variable command              : inout t_vvc_cmd_record;
-    variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config           : in t_vvc_config;
-    variable vvc_status           : inout t_vvc_status;
-    signal queue_is_increasing    : in boolean;
-    signal executor_is_busy       : inout boolean;
-    constant vvc_labels           : in t_vvc_labels
+    constant msg_id_panel        : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     );
 
   -------------------------------------------
@@ -512,7 +502,7 @@ package body td_vvc_entity_support_pkg is
     --else
     --  return vvc_config.msg_id_panel;
     --end if;
-    return vvc_config.msg_id_panel;
+    return vvc_config.msg_id_panel; --UVVM: temporary fix for HVVC, replace for commented code above in v3.0
   end function;
 
   procedure await_cmd_from_sequencer(
@@ -523,14 +513,14 @@ package body td_vvc_entity_support_pkg is
     signal   global_vvc_busy   : inout std_logic;
     signal   vvc_ack           : out   std_logic;
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
-    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel
+    constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     ) is
     variable v_was_broadcast : boolean         := false;
     variable v_msg_id_panel  : t_msg_id_panel;
   begin
     vvc_ack <= 'Z';  -- Do not contribute to the acknowledge unless selected
     -- Wait for a new command
-    log(ID_CMD_INTERPRETER_WAIT, "Interpreter: Waiting for command", to_string(vvc_labels.scope), msg_id_panel);
+    log(ID_CMD_INTERPRETER_WAIT, "Interpreter: Waiting for command", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
 
     loop
       VVC_BROADCAST <= 'Z';
@@ -743,7 +733,6 @@ package body td_vvc_entity_support_pkg is
 
         if this_vvc_completed(VOID) then                   -- This VVC is done
           log(await_completion_finished_msg_id, "This VVC initiated completion of " & to_string(command.proc_call), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
-
           -- update shared_uvvm_status with the VVC name and cmd index that initiated the completion
           shared_uvvm_status.info_on_finishing_await_any_completion.vvc_name(1 to vvc_labels.vvc_name'length) := vvc_labels.vvc_name;
           shared_uvvm_status.info_on_finishing_await_any_completion.vvc_cmd_idx := last_cmd_idx_executed;
@@ -756,30 +745,27 @@ package body td_vvc_entity_support_pkg is
           exit;
         end if;
 
-
         if not ((executor_is_busy'event) or (global_awaiting_completion(awaiting_completion_idx) /= '1')) then  -- Indicates timeout
           -- When NOT_LAST (command.gen_boolean = false): Timeout must be reported here instead of in send_command_to_vvc()
           -- becuase the command is always acknowledged immediately by the VVC to allow the sequencer to continue
           if not command.gen_boolean then
             tb_error("Timeout during " & to_string(command.proc_call) & "=> " & format_msg(command), to_string(vvc_labels.scope));
           end if;
-
           exit;
         end if;
-
       end loop;
     end if;
 
-      global_awaiting_completion(awaiting_completion_idx) <= '0'; -- Signal that we're done waiting
+    global_awaiting_completion(awaiting_completion_idx) <= '0'; -- Signal that we're done waiting
 
-      -- Handshake : Wait until every involved VVC notice the value is 'X' or '0', and all agree to being done ('0')
-      if global_awaiting_completion(awaiting_completion_idx) /= '0' then
-        wait until (global_awaiting_completion(awaiting_completion_idx) = '0');
-      end if;
+    -- Handshake : Wait until every involved VVC notice the value is 'X' or '0', and all agree to being done ('0')
+    if global_awaiting_completion(awaiting_completion_idx) /= '0' then
+      wait until (global_awaiting_completion(awaiting_completion_idx) = '0');
+    end if;
 
-      global_awaiting_completion(awaiting_completion_idx) <= 'Z'; -- Idle
+    global_awaiting_completion(awaiting_completion_idx) <= 'Z'; -- Idle
 
-      log(await_completion_finished_msg_id, to_string(command.proc_call) & "=> Finished. " & format_msg(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get & ack the new command
+    log(await_completion_finished_msg_id, to_string(command.proc_call) & "=> Finished. " & format_msg(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get & ack the new command
 
   end procedure;
 
@@ -880,16 +866,17 @@ package body td_vvc_entity_support_pkg is
     signal   queue_is_increasing  : in    boolean;
     signal   executor_is_busy     : inout boolean;
     constant vvc_labels           : in    t_vvc_labels;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant msg_id_panel         : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
   ) is
     variable v_msg_id_panel : t_msg_id_panel;
   begin
     executor_is_busy            <= false;
     vvc_status.previous_cmd_idx := command.cmd_idx;
+    vvc_status.current_cmd_idx  := 0;
 
     wait for 0 ns;  -- to allow delta updates in other processes.
     if command_queue.is_empty(VOID) then
-      log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), msg_id_panel);
+      log(ID_CMD_EXECUTOR_WAIT, "Executor: Waiting for command", to_string(vvc_labels.scope), vvc_config.msg_id_panel);
       wait until queue_is_increasing;
     end if;
 
@@ -903,21 +890,6 @@ package body td_vvc_entity_support_pkg is
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
     vvc_status.current_cmd_idx := command.cmd_idx;
   end procedure;
-
-  procedure fetch_command_and_prepare_executor(
-    variable command              : inout t_vvc_cmd_record;
-    variable command_queue        : inout work.td_cmd_queue_pkg.t_generic_queue;
-    constant vvc_config           : in t_vvc_config;
-    variable vvc_status           : inout t_vvc_status;
-    signal   queue_is_increasing  : in boolean;
-    signal executor_is_busy       : inout boolean;
-    constant vvc_labels           : in t_vvc_labels
-    ) is
-  begin
-    fetch_command_and_prepare_executor( command, command_queue, vvc_config, vvc_status, queue_is_increasing,
-                                        executor_is_busy, vvc_labels, vvc_config.msg_id_panel);
-  end procedure;
-
 
   -- The result_queue is used so that whatever type defined in the VVC can be stored,
   -- and later fetched with fetch_result()

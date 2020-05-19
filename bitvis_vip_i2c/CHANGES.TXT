@@ -1,6 +1,15 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.6.0
+----------
+Released: 2020-05-19
+- Added shared_i2c_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+
 v2.5.1
 ----------
 Released: 2020-04-20

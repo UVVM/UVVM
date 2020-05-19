@@ -166,14 +166,15 @@ package vvc_methods_pkg is
 
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                           : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
-                                                  constant last_cmd_idx_executed          : in    natural;
-                                                  constant scope                          : in    string := "CLOCK_GEN_VVC");
-                                                  
+  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
+                                          constant activity                           : in    t_activity;
+                                          constant entry_num_in_vvc_activity_register : in    integer;
+                                          constant last_cmd_idx_executed              : in    natural;
+                                          constant command_queue_is_empty             : in    boolean;
+                                          constant scope                              : in    string := C_VVC_NAME);
                                                   
 end package vvc_methods_pkg;
 
@@ -247,18 +248,33 @@ package body vvc_methods_pkg is
 
 
   --==============================================================================
-  -- Activity Watchdog
+  -- VVC Activity
   --==============================================================================
-  procedure activity_watchdog_register_vvc_state( signal global_trigger_activity_watchdog : inout std_logic;
-                                                  constant busy                           : in    boolean;
-                                                  constant vvc_idx_for_activity_watchdog  : in    integer;
-                                                  constant last_cmd_idx_executed          : in    natural;
-                                                  constant scope                          : in    string := "CLOCK_GEN_VVC") is
+  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
+                                          variable vvc_status                         : inout t_vvc_status;
+                                          constant activity                           : in    t_activity;
+                                          constant entry_num_in_vvc_activity_register : in    integer;
+                                          constant last_cmd_idx_executed              : in    natural;
+                                          constant command_queue_is_empty             : in    boolean;
+                                          constant scope                              : in    string := C_VVC_NAME) is
+    variable v_activity   : t_activity := activity;
   begin
-    shared_activity_watchdog.priv_report_vvc_activity(vvc_idx               => vvc_idx_for_activity_watchdog,
-                                                      busy                  => busy,
-                                                      last_cmd_idx_executed => last_cmd_idx_executed);
-    gen_pulse(global_trigger_activity_watchdog, 0 ns, "pulsing global trigger for activity watchdog", scope, ID_NEVER);
+    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
+    if activity = INACTIVE then
+      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
+      vvc_status.current_cmd_idx  := 0;  
+    end if;
+
+    if v_activity = INACTIVE and not(command_queue_is_empty) then
+      v_activity := ACTIVE;
+    end if;
+    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
+                                                          activity              => v_activity,
+                                                          last_cmd_idx_executed => last_cmd_idx_executed);
+    if global_trigger_vvc_activity_register /= 'L' then
+      wait until global_trigger_vvc_activity_register = 'L';
+    end if;                                                              
+    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
 
 

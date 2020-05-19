@@ -117,7 +117,7 @@ package uart_bfm_pkg is
     constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string            := C_SCOPE;
     constant msg_id_panel       : in  t_msg_id_panel    := shared_msg_id_panel;
-    constant ext_proc_call      : in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
+    constant ext_proc_call      : in  string            := "" -- External proc_call. Overwrite if called from another BFM procedure
     );
 
 
@@ -263,7 +263,7 @@ package body uart_bfm_pkg is
     constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string            := C_SCOPE;
     constant msg_id_panel       : in  t_msg_id_panel    := shared_msg_id_panel;
-    constant ext_proc_call      : in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
+    constant ext_proc_call      : in  string            := "" -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     constant start_time       : time := now;
 
@@ -300,10 +300,10 @@ package body uart_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      -- called from sequencer/VVC, show 'uart_receive()...' in log
+      -- Called directly from sequencer/VVC, log 'uart_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- called from other BFM procedure like uart_expect, log 'uart_expect() while executing uart_receive()...'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing uart_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name & ". ");
     end if;
 
@@ -397,7 +397,7 @@ package body uart_bfm_pkg is
       if ext_proc_call = "" then
         log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-        -- Will be andled by calling procedure (e.g. uart_expect)
+        -- Log will be handled by calling procedure (e.g. uart_expect)
       end if;
     end if;
   end procedure;

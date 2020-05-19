@@ -1,6 +1,15 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.7.0
+----------
+Released: 2020-05-19
+- Added shared_sbi_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section and BFM config record description.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+
 v2.6.1
 ----------
 Released: 2020-04-20

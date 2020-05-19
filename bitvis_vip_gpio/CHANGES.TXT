@@ -1,11 +1,19 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.7.0
+----------
+Released: 2020-05-19
+- Added shared_gpio_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+
 v1.6.1
 ----------
 Released: 2020-04-20
 - Added reference to verbosity control in VVC QR.
-
 
 v1.6.0
 ----------

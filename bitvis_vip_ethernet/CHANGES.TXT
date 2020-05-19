@@ -1,0 +1,7 @@
+Bitvis VIP Ethernet - Overview on Versions and Changes
+==============================================================
+
+v0.1.0
+----------
+Released: 2020-05-19
+- Initial version of Ethernet VIP.

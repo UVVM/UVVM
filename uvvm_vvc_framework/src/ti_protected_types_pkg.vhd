@@ -112,9 +112,9 @@ package ti_protected_types_pkg is
   end protected;
 
   ------------------------------------------------------------
-  -- Protected type to gather VVCs in a list
+  -- Protected type to gather VVC's info in a list
   ------------------------------------------------------------
-  type t_vvc_list is protected
+  type t_vvc_info_list is protected
 
     procedure add(
       constant name     : in string;
@@ -161,7 +161,7 @@ package ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return string;
 
-    impure function priv_get_vvc_list return string;
+    impure function priv_get_vvc_info_list return string;
 
     impure function priv_get_num_vvc_in_list return natural;
 
@@ -386,9 +386,9 @@ package body ti_protected_types_pkg is
 
 
   ------------------------------------------------------------
-  -- Protected type to gather VVCs in a list
+  -- Protected type to gather VVC's info in a list
   ------------------------------------------------------------
-  type t_vvc_list is protected body
+  type t_vvc_info_list is protected body
 
     type t_vvc_item is record
       name      : string(1 to C_MAX_VVC_NAME_LENGTH);
@@ -406,7 +406,7 @@ package body ti_protected_types_pkg is
 
 
     -- Array holding the VVCs info
-    variable priv_vvc_list : t_vvc_item_array(0 to C_MAX_TB_VVC_NUM) := (others => C_VVC_ITEM_DEFAULT);
+    variable priv_vvc_info_list : t_vvc_item_array(0 to C_MAX_TB_VVC_NUM) := (others => C_VVC_ITEM_DEFAULT);
     -- Counter for the number of VVCs in the list
     variable priv_last_added_vvc_idx : integer := -1;
 
@@ -425,10 +425,10 @@ package body ti_protected_types_pkg is
 
       -- Check if VVC was previously added
       for idx in 0 to priv_last_added_vvc_idx loop
-        if priv_vvc_list(idx).name(1 to name'length) = to_upper(name) and
-          priv_vvc_list(idx).instance = instance and
-          priv_vvc_list(idx).channel  = channel and
-          priv_vvc_list(idx).cmd_idx  = cmd_idx then
+        if priv_vvc_info_list(idx).name(1 to name'length) = to_upper(name) and
+          priv_vvc_info_list(idx).instance = instance and
+          priv_vvc_info_list(idx).channel  = channel and
+          priv_vvc_info_list(idx).cmd_idx  = cmd_idx then
           v_duplicate := true;
           exit;
         end if;
@@ -440,10 +440,10 @@ package body ti_protected_types_pkg is
         -- Set VVC index
         priv_last_added_vvc_idx := priv_last_added_vvc_idx + 1;
         -- Update register
-        priv_vvc_list(priv_last_added_vvc_idx).name(1 to name'length) := to_upper(name);
-        priv_vvc_list(priv_last_added_vvc_idx).instance               := instance;
-        priv_vvc_list(priv_last_added_vvc_idx).channel                := channel;
-        priv_vvc_list(priv_last_added_vvc_idx).cmd_idx                := cmd_idx;
+        priv_vvc_info_list(priv_last_added_vvc_idx).name(1 to name'length) := to_upper(name);
+        priv_vvc_info_list(priv_last_added_vvc_idx).instance               := instance;
+        priv_vvc_info_list(priv_last_added_vvc_idx).channel                := channel;
+        priv_vvc_info_list(priv_last_added_vvc_idx).cmd_idx                := cmd_idx;
 
         if channel = NA then
           if cmd_idx = -1 then
@@ -481,7 +481,7 @@ package body ti_protected_types_pkg is
 
     procedure priv_clear_list is
     begin
-      priv_vvc_list := (others => C_VVC_ITEM_DEFAULT);
+      priv_vvc_info_list := (others => C_VVC_ITEM_DEFAULT);
       priv_last_added_vvc_idx := -1;
     end procedure;
 
@@ -502,7 +502,7 @@ package body ti_protected_types_pkg is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
         "priv_get_name() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      return priv_vvc_list(vvc_idx).name;
+      return priv_vvc_info_list(vvc_idx).name;
     end function;
 
     impure function priv_get_instance(
@@ -511,7 +511,7 @@ package body ti_protected_types_pkg is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
         "priv_get_instance() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      return priv_vvc_list(vvc_idx).instance;
+      return priv_vvc_info_list(vvc_idx).instance;
     end function;
 
     impure function priv_get_channel(
@@ -520,7 +520,7 @@ package body ti_protected_types_pkg is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
         "priv_get_channel() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      return priv_vvc_list(vvc_idx).channel;
+      return priv_vvc_info_list(vvc_idx).channel;
     end function;
 
     impure function priv_get_cmd_idx(
@@ -529,7 +529,7 @@ package body ti_protected_types_pkg is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
         "priv_get_cmd_idx() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      return priv_vvc_list(vvc_idx).cmd_idx;
+      return priv_vvc_info_list(vvc_idx).cmd_idx;
     end function;
 
     impure function priv_get_vvc_info(
@@ -538,29 +538,29 @@ package body ti_protected_types_pkg is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_added_vvc_idx, TB_ERROR,
         "priv_get_vvc_info() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      if priv_vvc_list(vvc_idx).channel = NA then
-        if priv_vvc_list(vvc_idx).cmd_idx = -1 then
-          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance);
+      if priv_vvc_info_list(vvc_idx).channel = NA then
+        if priv_vvc_info_list(vvc_idx).cmd_idx = -1 then
+          return priv_vvc_info_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_info_list(vvc_idx).instance);
         else
-          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]";
+          return priv_vvc_info_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_info_list(vvc_idx).instance) & ",[" & to_string(priv_vvc_info_list(vvc_idx).cmd_idx) & "]";
         end if;
       else
-        if priv_vvc_list(vvc_idx).cmd_idx = -1 then
-          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel); 
+        if priv_vvc_info_list(vvc_idx).cmd_idx = -1 then
+          return priv_vvc_info_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_info_list(vvc_idx).instance) & "," & to_string(priv_vvc_info_list(vvc_idx).channel); 
         else
-          return priv_vvc_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_list(vvc_idx).instance) & "," & to_string(priv_vvc_list(vvc_idx).channel) &
-            ",[" & to_string(priv_vvc_list(vvc_idx).cmd_idx) & "]"; 
+          return priv_vvc_info_list(vvc_idx).name & "," & priv_instance_to_string(priv_vvc_info_list(vvc_idx).instance) & "," & to_string(priv_vvc_info_list(vvc_idx).channel) &
+            ",[" & to_string(priv_vvc_info_list(vvc_idx).cmd_idx) & "]"; 
         end if;
       end if;
     end function;
 
-    impure function priv_get_vvc_list return string is
+    impure function priv_get_vvc_info_list return string is
       variable v_line     : line;
       variable v_line_len : integer := 1;
       variable v_string   : string(1 to 500);
     begin
       if priv_last_added_vvc_idx = -1 then
-        alert(TB_ERROR, "priv_get_vvc_list() => vvc_list is empty!");
+        alert(TB_ERROR, "priv_get_vvc_info_list() => vvc_info_list is empty!");
       else
         for idx in 0 to priv_last_added_vvc_idx loop
           write(v_line, "(" & priv_get_vvc_info(idx) & ")");
@@ -580,6 +580,6 @@ package body ti_protected_types_pkg is
       return priv_last_added_vvc_idx + 1;
     end function;
 
-  end protected body t_vvc_list;
+  end protected body t_vvc_info_list;
 
 end package body ti_protected_types_pkg;

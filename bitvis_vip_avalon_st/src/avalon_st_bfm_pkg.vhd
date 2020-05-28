@@ -51,20 +51,21 @@ package avalon_st_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_avalon_st_bfm_config is
   record
-    max_wait_cycles             : natural;       -- Used for setting the maximum cycles to wait before an alert is issued when
-                                                 -- waiting for ready or valid signals from the DUT.
-    max_wait_cycles_severity    : t_alert_level; -- Severity if max_wait_cycles expires.
-    clock_period                : time;          -- Period of the clock signal.
-    clock_period_margin         : time;          -- Input clock period margin to specified clock_period
-    clock_margin_severity       : t_alert_level; -- The above margin will have this severity
-    setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
-    hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                    : t_bfm_sync;    -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    symbol_width                : natural;       -- Number of data bits per symbol.
-    first_symbol_in_msb         : boolean;       -- Symbol ordering. When true, first-order symbol is in most significant bits.
-    max_channel                 : natural;       -- Maximum number of channels that the interface supports.
-    use_packet_transfer         : boolean;       -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
-    id_for_bfm                  : t_msg_id;      -- The message ID used as a general message ID in the BFM
+    max_wait_cycles             : natural;            -- Used for setting the maximum cycles to wait before an alert is issued when
+                                                      -- waiting for ready or valid signals from the DUT.
+    max_wait_cycles_severity    : t_alert_level;      -- Severity if max_wait_cycles expires.
+    clock_period                : time;               -- Period of the clock signal.
+    clock_period_margin         : time;               -- Input clock period margin to specified clock_period
+    clock_margin_severity       : t_alert_level;      -- The above margin will have this severity
+    setup_time                  : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                   : time;               -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                    : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness            : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    symbol_width                : natural;            -- Number of data bits per symbol.
+    first_symbol_in_msb         : boolean;            -- Symbol ordering. When true, first-order symbol is in most significant bits.
+    max_channel                 : natural;            -- Maximum number of channels that the interface supports.
+    use_packet_transfer         : boolean;            -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
+    id_for_bfm                  : t_msg_id;           -- The message ID used as a general message ID in the BFM
   end record;
 
   -- Define the default value for the BFM config
@@ -77,6 +78,7 @@ package avalon_st_bfm_pkg is
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
+    match_strictness            => MATCH_EXACT,
     symbol_width                => 8,
     first_symbol_in_msb         => true,
     max_channel                 => 0,
@@ -666,6 +668,7 @@ package body avalon_st_bfm_pkg is
     variable v_channel_error      : boolean := false;
     variable v_data_error_cnt     : natural := 0;
     variable v_first_wrong_symbol : natural;
+    variable v_alert_radix        : t_radix;
   begin
 
     check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -682,8 +685,8 @@ package body avalon_st_bfm_pkg is
     -- Report the first wrong symbol (iterate from the last to the first)
     for symbol in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(symbol)'range loop
-        -- Expected set to don't care or received value matches expected
-        if (v_normalized_data(symbol)(i) = '-') or (v_rx_data_array(symbol)(i) = v_normalized_data(symbol)(i)) then
+        -- Allow don't care in expected value and use match strictness from config for comparison
+        if v_normalized_data(symbol)(i) = '-' or check_value(v_rx_data_array(symbol)(i), v_normalized_data(symbol)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
         else
           -- Received symbol doesn't match
@@ -695,9 +698,11 @@ package body avalon_st_bfm_pkg is
 
     -- Done. Report result
     if v_data_error_cnt /= 0 then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_symbol), v_normalized_data(v_first_wrong_symbol), MATCH_STD, NO_ALERT, msg) else HEX;
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in symbol# " &
-        to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(v_normalized_data(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), v_alert_radix, AS_IS, INCL_RADIX) &
+        ". Expected " & to_string(v_normalized_data(v_first_wrong_symbol), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_channel_error then
       alert(alert_level, proc_call & "=> Failed. Wrong channel. Was " & to_string(v_rx_channel, HEX, AS_IS, INCL_RADIX) &
         ". Expected " & to_string(v_normalized_chan, HEX, AS_IS, INCL_RADIX) & ". " & msg, scope);

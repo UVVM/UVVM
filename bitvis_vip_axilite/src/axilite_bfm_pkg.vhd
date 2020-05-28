@@ -56,6 +56,7 @@ package axilite_bfm_pkg is
     setup_time                  : time;                       -- Setup time for generated signals, set to clock_period/4
     hold_time                   : time;                       -- Hold time for generated signals, set to clock_period/4
     bfm_sync                    : t_bfm_sync;                 -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness            : t_match_strictness;         -- Matching strictness for std_logic values in check procedures.
     expected_response           : t_axilite_response_status;  -- Sets the expected response for both read and write transactions.
     expected_response_severity  : t_alert_level;              -- A response mismatch will have this severity.
     protection_setting          : t_axilite_protection;       -- Sets the AXI access permissions (e.g. write to data/instruction, privileged and secure access).
@@ -78,6 +79,7 @@ package axilite_bfm_pkg is
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
+    match_strictness            => MATCH_EXACT,
     expected_response           => OKAY,
     expected_response_severity  => TB_FAILURE,
     protection_setting          => UNPRIVILIGED_UNSECURE_DATA,
@@ -613,10 +615,11 @@ package body axilite_bfm_pkg is
     constant msg_id_panel   : in  t_msg_id_panel   := shared_msg_id_panel;
     constant config         : in  t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT
     ) is
-    constant proc_name    : string                                         := "axilite_check";
-    constant proc_call    : string                                         := "axilite_check(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_data_value : std_logic_vector(axilite_if.write_data_channel.wdata'length-1 downto 0) := (others => '0');
-    variable v_check_ok   : boolean;
+    constant proc_name     : string                                         := "axilite_check";
+    constant proc_call     : string                                         := "axilite_check(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_data_value  : std_logic_vector(axilite_if.write_data_channel.wdata'length-1 downto 0) := (others => '0');
+    variable v_check_ok    : boolean := true;
+    variable v_alert_radix : t_radix;
 
     -- Normalize to the DUT addr/data widths
     variable v_normalized_data : std_logic_vector(axilite_if.write_data_channel.wdata'length-1 downto 0) :=
@@ -624,9 +627,9 @@ package body axilite_bfm_pkg is
   begin
     axilite_read(addr_value, v_data_value, msg, clk, axilite_if, scope, msg_id_panel, config, proc_call);
 
-    v_check_ok := true;
-    for i in 0 to v_normalized_data'length-1 loop
-      if v_normalized_data(i) = '-' or v_normalized_data(i) = v_data_value(i) then
+    for i in v_normalized_data'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -635,7 +638,9 @@ package body axilite_bfm_pkg is
     end loop;
 
     if not v_check_ok then
-      alert(alert_level, proc_call & "=> Failed. slv Was " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;

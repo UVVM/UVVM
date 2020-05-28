@@ -81,6 +81,7 @@ architecture func of internal_vvc_tb is
     timeout                                   => 0 ns,
     timeout_severity                          => error,
     num_bytes_to_log_before_expected_data     => 10,
+    match_strictness                          => MATCH_EXACT,
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,

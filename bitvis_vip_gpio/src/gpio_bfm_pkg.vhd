@@ -37,10 +37,10 @@ package gpio_bfm_pkg is
   type t_gpio_bfm_config is
   record
     clock_period     : time;
-    match_strictness : t_match_strictness;
-    id_for_bfm       : t_msg_id;  -- The message ID used as a general message ID in the GPIO BFM
-    id_for_bfm_wait  : t_msg_id;  -- The message ID used for logging waits in the GPIO BFM.
-    id_for_bfm_poll  : t_msg_id;  -- The message ID used for logging polling in the GPIO BFM
+    match_strictness : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm       : t_msg_id;           -- The message ID used as a general message ID in the GPIO BFM
+    id_for_bfm_wait  : t_msg_id;           -- The message ID used for logging waits in the GPIO BFM.
+    id_for_bfm_poll  : t_msg_id;           -- The message ID used for logging polling in the GPIO BFM
   end record;
 
   -- Define the default value for the BFM config
@@ -170,13 +170,26 @@ package body gpio_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     ) is
-    constant name         : string := "gpio_check(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
-    constant c_data_exp   : std_logic_vector(data_port'range) := data_exp;
-    variable v_check_ok   : boolean;
+    constant name          : string := "gpio_check(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant c_data_exp    : std_logic_vector(data_port'range) := data_exp;
+    variable v_check_ok    : boolean := true;
+    variable v_alert_radix : t_radix;
   begin
-    v_check_ok := check_value(data_port, c_data_exp, config.match_strictness, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, name);
+    for i in c_data_exp'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if c_data_exp(i) = '-' or check_value(data_port(i), c_data_exp(i), config.match_strictness, NO_ALERT, msg) then
+        v_check_ok := true;
+      else
+        v_check_ok := false;
+        exit;
+      end if;
+    end loop;
 
-    if v_check_ok then
+    if not v_check_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(data_port, c_data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, name & "=> Failed. Was " & to_string(data_port, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(c_data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    else
       log(ID_BFM, name & "=> OK, read data = " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;

@@ -49,21 +49,22 @@ package sbi_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_sbi_bfm_config is
   record
-    max_wait_cycles             : integer;        -- The maximum number of clock cycles to wait for the DUT ready signal before reporting a timeout alert.
-    max_wait_cycles_severity    : t_alert_level;  -- The above timeout will have this severity
-    use_fixed_wait_cycles_read  : boolean;        -- When true, wait 'fixed_wait_cycles_read' after asserting rena, before sampling rdata
-    fixed_wait_cycles_read      : natural;        -- Number of clock cycles to wait after asserting rd signal, before sampling rdata from DUT.
-    clock_period                : time;           -- Period of the clock signal
-    clock_period_margin         : time;           -- Input clock period margin to specified clock_period.
-                                                  -- When not possible to measure complete period the clock period margin is applied in full on the half period.
-    clock_margin_severity       : t_alert_level;  -- The above margin will have this severity
-    setup_time                  : time;           -- Generated signals setup time, set to clock_period/4
-    hold_time                   : time;           -- Generated signals hold time, set to clock_period/4
-    bfm_sync                    : t_bfm_sync;     -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    id_for_bfm                  : t_msg_id;       -- The message ID used as a general message ID in the SBI BFM
-    id_for_bfm_wait             : t_msg_id;       -- The message ID used for logging waits in the SBI BFM
-    id_for_bfm_poll             : t_msg_id;       -- The message ID used for logging polling in the SBI BFM
-    use_ready_signal            : boolean;        -- Whether or not to use the interface �ready� signal
+    max_wait_cycles             : integer;            -- The maximum number of clock cycles to wait for the DUT ready signal before reporting a timeout alert.
+    max_wait_cycles_severity    : t_alert_level;      -- The above timeout will have this severity
+    use_fixed_wait_cycles_read  : boolean;            -- When true, wait 'fixed_wait_cycles_read' after asserting rena, before sampling rdata
+    fixed_wait_cycles_read      : natural;            -- Number of clock cycles to wait after asserting rd signal, before sampling rdata from DUT.
+    clock_period                : time;               -- Period of the clock signal
+    clock_period_margin         : time;               -- Input clock period margin to specified clock_period.
+                                                      -- When not possible to measure complete period the clock period margin is applied in full on the half period.
+    clock_margin_severity       : t_alert_level;      -- The above margin will have this severity
+    setup_time                  : time;               -- Generated signals setup time, set to clock_period/4
+    hold_time                   : time;               -- Generated signals hold time, set to clock_period/4
+    bfm_sync                    : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness            : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm                  : t_msg_id;           -- The message ID used as a general message ID in the SBI BFM
+    id_for_bfm_wait             : t_msg_id;           -- The message ID used for logging waits in the SBI BFM
+    id_for_bfm_poll             : t_msg_id;           -- The message ID used for logging polling in the SBI BFM
+    use_ready_signal            : boolean;            -- Whether or not to use the interface �ready� signal
   end record;
 
   constant C_SBI_BFM_CONFIG_DEFAULT : t_sbi_bfm_config := (
@@ -77,6 +78,7 @@ package sbi_bfm_pkg is
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
+    match_strictness            => MATCH_EXACT,
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL,
@@ -563,18 +565,30 @@ package body sbi_bfm_pkg is
     -- Normalize to the DUT addr/data widths
     variable v_normalised_addr : unsigned(addr'length-1 downto 0) :=
       normalize_and_check(addr_value, addr, ALLOW_WIDER_NARROWER, "addr_value", "sbi_core_in.addr", msg);
+    variable v_normalized_data : std_logic_vector(rdata'length-1 downto 0) :=
+      normalize_and_check(data_exp, rdata, ALLOW_WIDER_NARROWER, "data_exp", "sbi_core_in.rdata", msg);
     -- Helper variables
     variable v_data_value        : std_logic_vector(rdata'length - 1 downto 0);
-    variable v_check_ok          : boolean;
-    variable v_clk_cycles_waited : natural := 0;
+    variable v_check_ok          : boolean := true;
+    variable v_alert_radix       : t_radix;
   begin
     sbi_read(addr_value, v_data_value, msg, clk, cs, addr, rena, wena, ready, rdata, scope, msg_id_panel, config, proc_call);
 
-    -- Compare values, but ignore any leading zero's if widths are different.
-    -- Use ID_NEVER so that check_value method does not log when check is OK,
-    -- log it here instead.
-    v_check_ok := check_value(v_data_value, data_exp, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
-    if v_check_ok then
+    for i in v_normalized_data'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg) then
+        v_check_ok := true;
+      else
+        v_check_ok := false;
+        exit;
+      end if;
+    end loop;
+
+    if not v_check_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    else
       log(config.id_for_bfm, proc_call & "=> OK, read data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;

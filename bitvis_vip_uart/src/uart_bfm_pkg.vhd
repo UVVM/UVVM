@@ -62,6 +62,7 @@ package uart_bfm_pkg is
     timeout                                   : time;                 -- The maximum time to pass before the expected data must be received. Exceeding this limit results in an alert with severity ‘alert_level’.
     timeout_severity                          : t_alert_level;        -- The above timeout will have this severity
     num_bytes_to_log_before_expected_data     : natural;              -- Maximum number of bytes to save ahead of the expected data in the receive buffer. The bytes in the receive buffer will be logged.
+    match_strictness                          : t_match_strictness;   -- Matching strictness for std_logic values in check procedures.
     id_for_bfm                                : t_msg_id;             -- The message ID used as a general message ID in the UART BFM
     id_for_bfm_wait                           : t_msg_id;             -- The message ID used for logging waits in the UART BFM
     id_for_bfm_poll                           : t_msg_id;             -- The message ID used for logging polling in the UART BFM
@@ -78,6 +79,7 @@ package uart_bfm_pkg is
     timeout                                   => 0 ns,                -- will default never time out
     timeout_severity                          => error,
     num_bytes_to_log_before_expected_data     => 10,
+    match_strictness                          => MATCH_EXACT,
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
@@ -431,6 +433,7 @@ package body uart_bfm_pkg is
     variable v_received_data_fifo_write_idx : natural := 0;
     variable v_received_output_line         : line;
     variable v_internal_timeout             : time;
+    variable v_alert_radix                  : t_radix;
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
@@ -474,8 +477,8 @@ package body uart_bfm_pkg is
       -- Receive and check data
       uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
       for i in 0 to v_config.num_data_bits-1 loop
-        if (data_exp(i) = '-' or
-          v_data_value(i) = data_exp(i)) then
+        -- Allow don't care in expected value and use match strictness from config for comparison
+        if data_exp(i) = '-' or check_value(v_data_value(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
           v_check_ok := true;
         else
           v_check_ok := false;
@@ -528,10 +531,12 @@ package body uart_bfm_pkg is
     elsif not v_timeout_ok then
       alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout,ns) & ". " & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
       if max_receptions = 1 then
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
       else
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
       end if;
     else
       alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);

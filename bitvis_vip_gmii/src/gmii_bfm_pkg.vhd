@@ -49,16 +49,17 @@ package gmii_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_gmii_bfm_config is
   record
-    max_wait_cycles          : integer;       -- Used for setting the maximum cycles to wait before an alert is issued when
-                                              -- waiting for signals from the DUT.
-    max_wait_cycles_severity : t_alert_level; -- Severity if max_wait_cycles expires.
-    clock_period             : time;          -- Period of the clock signal.
-    clock_period_margin      : time;          -- Input clock period margin to specified clock_period
-    clock_margin_severity    : t_alert_level; -- The above margin will have this severity
-    setup_time               : time;          -- Setup time for generated signals, set to clock_period/4
-    hold_time                : time;          -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                 : t_bfm_sync;    -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    id_for_bfm               : t_msg_id;      -- The message ID used as a general message ID in the BFM
+    max_wait_cycles          : integer;            -- Used for setting the maximum cycles to wait before an alert is issued when
+                                                   -- waiting for signals from the DUT.
+    max_wait_cycles_severity : t_alert_level;      -- Severity if max_wait_cycles expires.
+    clock_period             : time;               -- Period of the clock signal.
+    clock_period_margin      : time;               -- Input clock period margin to specified clock_period
+    clock_margin_severity    : t_alert_level;      -- The above margin will have this severity
+    setup_time               : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                : time;               -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                 : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm               : t_msg_id;           -- The message ID used as a general message ID in the BFM
   end record;
 
   -- Define the default value for the BFM config
@@ -71,6 +72,7 @@ package gmii_bfm_pkg is
     setup_time               => -1 ns,
     hold_time                => -1 ns,
     bfm_sync                 => SYNC_ON_CLOCK_ONLY,
+    match_strictness         => MATCH_EXACT,
     id_for_bfm               => ID_BFM
   );
 
@@ -327,7 +329,7 @@ package body gmii_bfm_pkg is
     variable v_length_error     : boolean := false;
     variable v_data_error_cnt   : natural := 0;
     variable v_first_wrong_byte : natural;
-
+    variable v_alert_radix      : t_radix;
   begin
 
     check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -344,8 +346,8 @@ package body gmii_bfm_pkg is
     -- Report the first wrong byte (iterate from the last to the first)
     for byte in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(byte)'range loop
-        -- Expected set to don't care or received value matches expected
-        if (v_normalized_data(byte)(i) = '-') or (v_rx_data_array(byte)(i) = v_normalized_data(byte)(i)) then
+        -- Allow don't care in expected value and use match strictness from config for comparison
+        if v_normalized_data(byte)(i) = '-' or check_value(v_rx_data_array(byte)(i), v_normalized_data(byte)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
         else
           -- Received byte doesn't match
@@ -360,9 +362,11 @@ package body gmii_bfm_pkg is
       alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) &
         ". Expected " & to_string(v_normalized_data'length) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_data_error_cnt /= 0 then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, NO_ALERT, msg) else HEX;
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " &
-        to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) &
+        ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " &
         add_msg_delimiter(msg), scope, msg_id_panel);

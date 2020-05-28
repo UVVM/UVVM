@@ -70,6 +70,7 @@ architecture func of uart_simple_bfm_tb is
     parity                                    => PARITY_ODD,
     timeout                                   => 0 ns,
     timeout_severity                          => error,
+    match_strictness                          => MATCH_EXACT,
     num_bytes_to_log_before_expected_data     => 10,
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,

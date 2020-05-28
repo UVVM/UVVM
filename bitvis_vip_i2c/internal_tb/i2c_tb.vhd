@@ -87,6 +87,7 @@ architecture behav of i2c_vvc_tb is
     slave_mode_address_severity     => failure,
     slave_rw_bit_severity           => failure,
     reserved_address_severity       => warning,
+    match_strictness                => MATCH_EXACT,
     id_for_bfm                      => ID_BFM,
     id_for_bfm_wait                 => ID_BFM_WAIT,
     id_for_bfm_poll                 => ID_BFM_POLL
@@ -108,6 +109,7 @@ architecture behav of i2c_vvc_tb is
     slave_mode_address_severity     => failure,
     slave_rw_bit_severity           => failure,
     reserved_address_severity       => warning,
+    match_strictness                => MATCH_EXACT,
     id_for_bfm                      => ID_BFM,
     id_for_bfm_wait                 => ID_BFM_WAIT,
     id_for_bfm_poll                 => ID_BFM_POLL
@@ -122,6 +124,7 @@ architecture behav of i2c_vvc_tb is
     clock_margin_severity    => TB_ERROR,
     setup_time               => C_CLK_PERIOD/4,
     hold_time                => C_CLK_PERIOD/4,
+    match_strictness         => MATCH_EXACT,
     id_for_bfm               => ID_BFM,
     id_for_bfm_wait          => ID_BFM_WAIT,
     id_for_bfm_poll          => ID_BFM_POLL
@@ -138,6 +141,7 @@ architecture behav of i2c_vvc_tb is
     setup_time                 => C_CLK_PERIOD/4,
     hold_time                  => C_CLK_PERIOD/4,
     bfm_sync                   => SYNC_ON_CLOCK_ONLY,
+    match_strictness           => MATCH_EXACT,
     id_for_bfm                 => ID_BFM,
     id_for_bfm_wait            => ID_BFM_WAIT,
     id_for_bfm_poll            => ID_BFM_POLL,

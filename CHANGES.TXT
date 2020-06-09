@@ -15,6 +15,8 @@ Released: 2020-XX-XX
 - Renamed t_vvc_list to t_vvc_info_list and await_completion() parameter vvc_list to vvc_info_list.
 - Added match_strictness to all BFM configs and use it in check/expect procedures. Also print HEX
   or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QRs.
+- Updated Ethernet VVC QuickRef.
+- Updated HVVC-to-VVC Bridge Implementation Guide.
 
 
 v2 2020.05.19

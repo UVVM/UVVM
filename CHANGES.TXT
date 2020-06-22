@@ -19,6 +19,8 @@ Released: 2020-XX-XX
 - Updated HVVC-to-VVC Bridge Implementation Guide.
 - Updated UVVM Essential Mechanisms with the Hierarchical VVCs section.
 - Fixed genric values for Scoreboard queue was not used.
+- Removed GC_DATA_WIDTH generic constant from UART VVC entity as this could be in conflict with 
+  UART BFM config num_data_bits.
 
 
 v2 2020.05.19

@@ -40,7 +40,6 @@ use work.td_result_queue_pkg.all;
 --=================================================================================================
 entity uart_tx_vvc is
   generic (
-    GC_DATA_WIDTH                            : natural           := 8;
     GC_INSTANCE_IDX                          : natural           := 1;
     GC_CHANNEL                               : t_channel         := TX;
     GC_UART_CONFIG                           : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
@@ -64,6 +63,7 @@ architecture behave of uart_tx_vvc is
 
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
+  constant C_DATA_WIDTH : natural      := 8;
 
   signal executor_is_busy      : boolean := false;
   signal queue_is_increasing   : boolean := false;
@@ -228,7 +228,8 @@ begin
     variable v_command_is_bfm_access                  : boolean := false;
     variable v_prev_command_was_bfm_access            : boolean := false;
     variable v_msg_id_panel                           : t_msg_id_panel;
-    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_normalised_data                        : std_logic_vector(C_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_num_data_bits                          : natural                                   := vvc_config.bfm_config.num_data_bits;
 
   begin
 
@@ -292,7 +293,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data(GC_DATA_WIDTH-1 downto 0) := std_logic_vector(random(GC_DATA_WIDTH));
+                v_cmd.data(v_num_data_bits-1 downto 0) := std_logic_vector(random(v_num_data_bits));
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA
@@ -305,9 +306,9 @@ begin
             -- Normalise address and data
             v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
-            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            transaction_info.data(C_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.
-            uart_transmit(data_value    => v_normalised_data,
+            uart_transmit(data_value    => v_normalised_data(v_num_data_bits-1 downto 0),
                           msg           => format_msg(v_cmd),
                           tx            => uart_vvc_tx,
                           config        => vvc_config.bfm_config,

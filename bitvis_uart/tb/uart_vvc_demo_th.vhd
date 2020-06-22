@@ -109,7 +109,6 @@ begin
   -----------------------------------------------------------------------------
   i1_uart_vvc: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 1
   )
   port map(

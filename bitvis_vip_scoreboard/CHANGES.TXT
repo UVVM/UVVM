@@ -1,6 +1,12 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+
+v2.1.2
+----------
+Released: 2020-06-22
+- Fixed genric values for SB queue was not used.
+
 v2.1.1
 ----------
 Released: 2020-04-20

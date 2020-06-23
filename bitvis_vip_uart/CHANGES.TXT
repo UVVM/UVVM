@@ -7,6 +7,7 @@ Released: 2020-XX-XX
 - Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
   or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
 - VVC error injection probability default is set to use BFM config settings.
+- VVC generic GC_DATA_WIDTH is used for setting BFM config num_data_bits.
 
 v2.7.0
 ----------

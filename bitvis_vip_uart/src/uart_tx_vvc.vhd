@@ -40,6 +40,7 @@ use work.td_result_queue_pkg.all;
 --=================================================================================================
 entity uart_tx_vvc is
   generic (
+    GC_DATA_WIDTH                            : natural           := 8;
     GC_INSTANCE_IDX                          : natural           := 1;
     GC_CHANNEL                               : t_channel         := TX;
     GC_UART_CONFIG                           : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
@@ -131,6 +132,9 @@ begin
                                                                                          channel   => GC_CHANNEL);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
+
+    -- Update BFM config num_data_bits with GC_DATA_WIDTH
+    vvc_config.bfm_config.num_data_bits := GC_DATA_WIDTH;
 
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
@@ -230,7 +234,6 @@ begin
     variable v_msg_id_panel                             : t_msg_id_panel;
     variable v_normalised_data                          : std_logic_vector(C_DATA_WIDTH-1 downto 0) := (others => '0');
     variable v_num_data_bits                            : natural                                   := vvc_config.bfm_config.num_data_bits;
-    variable v_bfm_config_error_settings                : t_bfm_error_injection                     := vvc_config.bfm_config.error_injection;
     variable v_bfm_config                               : t_bfm_config;
     variable v_has_raised_warning_if_vvc_bfm_conflict   : boolean := false;
 

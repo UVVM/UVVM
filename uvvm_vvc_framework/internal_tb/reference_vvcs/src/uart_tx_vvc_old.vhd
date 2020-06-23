@@ -193,15 +193,18 @@ begin
 -- - Fetch and execute the commands
 --===============================================================================================
   cmd_executor : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean := false;
-    variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_msg_id_panel                           : t_msg_id_panel;
-    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_cmd                                      : t_vvc_cmd_record;
+    variable v_read_data                                : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access    : time := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access       : time := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access         : time := 0 ns;
+    variable v_command_is_bfm_access                    : boolean := false;
+    variable v_prev_command_was_bfm_access              : boolean := false;
+    variable v_msg_id_panel                             : t_msg_id_panel;
+    variable v_normalised_data                          : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_num_data_bits                            : natural                                   := vvc_config.bfm_config.num_data_bits;
+    variable v_bfm_config                               : t_bfm_config;
+    variable v_has_raised_warning_if_vvc_bfm_conflict   : boolean := false;
 
   begin
 
@@ -258,9 +261,17 @@ begin
         when TRANSMIT =>
           -- Loop the number of words to transmit
           for idx in 1 to v_cmd.num_words loop
-            -- Set error injection
-            vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_error_prob);
-            vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_error_prob);
+            -- Get BFM config as starting point
+            v_bfm_config := vvc_config.bfm_config;           
+            -- Determine setting for BFM error injection
+            determine_error_injection(vvc_config.error_injection.parity_bit_error_prob, 
+                                      v_bfm_config.error_injection.parity_bit_error, 
+                                      v_has_raised_warning_if_vvc_bfm_conflict,
+                                      C_SCOPE);
+            determine_error_injection(vvc_config.error_injection.stop_bit_error_prob, 
+                                      v_bfm_config.error_injection.stop_bit_error,
+                                      v_has_raised_warning_if_vvc_bfm_conflict,
+                                      C_SCOPE);
 
             -- Randomise data if applicable
             case v_cmd.randomisation is
@@ -280,17 +291,12 @@ begin
 
             transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.
-            uart_transmit(data_value    => v_normalised_data,
+            uart_transmit(data_value    => v_normalised_data(v_num_data_bits-1 downto 0),
                           msg           => format_msg(v_cmd),
                           tx            => uart_vvc_tx,
-                          config        => vvc_config.bfm_config,
+                          config        => v_bfm_config,
                           scope         => C_SCOPE,
                           msg_id_panel  => v_msg_id_panel);
-
-            -- Disable error injection
-            vvc_config.bfm_config.error_injection.parity_bit_error  := false;
-            vvc_config.bfm_config.error_injection.stop_bit_error    := false;
-
 
             -- Set transaction info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);

@@ -234,8 +234,8 @@ begin
     variable v_msg_id_panel                             : t_msg_id_panel;
     variable v_normalised_data                          : std_logic_vector(C_DATA_WIDTH-1 downto 0) := (others => '0');
     variable v_num_data_bits                            : natural                                   := vvc_config.bfm_config.num_data_bits;
-    variable v_bfm_config                               : t_bfm_config;
     variable v_has_raised_warning_if_vvc_bfm_conflict   : boolean := false;
+    variable v_vvc_config                               : t_vvc_config;
 
   begin
 
@@ -292,15 +292,16 @@ begin
         when TRANSMIT =>
           -- Loop the number of words to transmit
           for idx in 1 to v_cmd.num_words loop
-            -- Get BFM config as starting point
-            v_bfm_config := vvc_config.bfm_config;           
+
+            -- Get VVC config as starting point
+            v_vvc_config := vvc_config;         
             -- Determine setting for BFM error injection
             determine_error_injection(vvc_config.error_injection.parity_bit_error_prob, 
-                                      v_bfm_config.error_injection.parity_bit_error, 
+                                      v_vvc_config.bfm_config.error_injection.parity_bit_error, 
                                       v_has_raised_warning_if_vvc_bfm_conflict,
                                       C_SCOPE);
             determine_error_injection(vvc_config.error_injection.stop_bit_error_prob, 
-                                      v_bfm_config.error_injection.stop_bit_error,
+                                      v_vvc_config.bfm_config.error_injection.stop_bit_error,
                                       v_has_raised_warning_if_vvc_bfm_conflict,
                                       C_SCOPE);
 
@@ -316,7 +317,7 @@ begin
             end case;
 
             -- Set transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config);
 
             -- Normalise address and data
             v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -326,7 +327,7 @@ begin
             uart_transmit(data_value    => v_normalised_data(v_num_data_bits-1 downto 0),
                           msg           => format_msg(v_cmd),
                           tx            => uart_vvc_tx,
-                          config        => v_bfm_config,
+                          config        => v_vvc_config.bfm_config,
                           scope         => C_SCOPE,
                           msg_id_panel  => v_msg_id_panel);
 

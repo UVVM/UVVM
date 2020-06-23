@@ -510,7 +510,6 @@ package body vvc_methods_pkg is
       end if;
 
       bfm_configured_error_injection_setting := (random(0.0, 1.0) <= probability);
-      log("====>> Error set to :" & to_string(bfm_configured_error_injection_setting));
     end if;
   end procedure determine_error_injection;
 

@@ -1,9 +1,9 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
-v3.X.X
+v3.8.1
 ----------
-Released: 2020-XX-XX
+Released: 2020-06-23
 - Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
   or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
 

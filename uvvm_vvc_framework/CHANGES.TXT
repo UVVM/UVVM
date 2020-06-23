@@ -2,6 +2,12 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.11.0
+----------
+Released: 2020-06-23
+- Renamed t_vvc_list to t_vvc_info_list and await_completion() parameter vvc_list to vvc_info_list.
+- Updated UVVM Essential Mechanisms with the Hierarchical VVCs section.
+
 v2.10.0
 ----------
 Released: 2020-05-19

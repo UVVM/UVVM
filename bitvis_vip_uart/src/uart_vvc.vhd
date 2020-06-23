@@ -27,7 +27,7 @@ use work.transaction_pkg.all;
 --=================================================================================================
 entity uart_vvc is
   generic (
-    GC_DATA_WIDTH                           : natural range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 8;
+    GC_DATA_WIDTH                           : natural                                      := 8;
     GC_INSTANCE_IDX                         : natural                                      := 1;
     GC_UART_CONFIG                          : t_uart_bfm_config                            := C_UART_BFM_CONFIG_DEFAULT;
     GC_CMD_QUEUE_COUNT_MAX                  : natural                                      := 1000; 

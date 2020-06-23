@@ -132,6 +132,9 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
+    -- Update BFM config num_data_bits with GC_DATA_WIDTH
+    vvc_config.bfm_config.num_data_bits := GC_DATA_WIDTH;
+
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
 
@@ -228,8 +231,9 @@ begin
     variable v_timestamp_end_of_last_bfm_access      : time                                       := 0 ns;
     variable v_command_is_bfm_access                 : boolean                                    := false;
     variable v_prev_command_was_bfm_access           : boolean                                    := false;
-    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0)  := (others => '0');
     variable v_msg_id_panel                          : t_msg_id_panel;
+    variable v_num_data_bits                         : natural                                    := vvc_config.bfm_config.num_data_bits;
 
     
   begin
@@ -299,7 +303,7 @@ begin
            
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
-          uart_receive( data_value            => v_read_data(GC_DATA_WIDTH-1 downto 0),
+          uart_receive( data_value            => v_read_data(v_num_data_bits-1 downto 0),
                         msg                   => format_msg(v_cmd),
                         rx                    => uart_vvc_rx,
                         terminate_loop        => terminate_current_cmd.is_active,
@@ -309,8 +313,14 @@ begin
                 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
+
+            if v_num_data_bits = 7 then
+              v_read_data(7) := '-';
+            end if;
+
             -- call SB check_received
             UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,
@@ -326,7 +336,7 @@ begin
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           -- Call the corresponding procedure in the BFM package.
-          uart_expect(data_exp              => v_normalised_data,
+          uart_expect(data_exp              => v_normalised_data(v_num_data_bits-1 downto 0),
                       msg                   => format_msg(v_cmd),
                       rx                    => uart_vvc_rx,
                       terminate_loop        => terminate_current_cmd.is_active,

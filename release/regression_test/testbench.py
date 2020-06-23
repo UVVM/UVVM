@@ -4,6 +4,7 @@ import subprocess
 import glob
 import shutil
 import logging
+import time
 
 # Disable terminal output
 FNULL = open(os.devnull, 'w')
@@ -496,7 +497,7 @@ class Testbench:
         for config_idx, config in enumerate(self.get_configs()):
           self.cleanup(test_name)
           self.increment_num_tests()
-
+          start_time = time.time()
           # Progress counter: (testcase / tot_testcases, config / total_configs)
           if config:
             run_str = ("(%d/%d, %d/%d)" %(test_idx+1, total_num_tests, config_idx+1, total_num_configs))
@@ -511,24 +512,33 @@ class Testbench:
           self.simulator_call(script_call, self.gui_mode)
 
           self.save_run(self.tb, test_name, config)
+
+          end_time = time.time()
+          testcase_time = end_time - start_time
+          testcase_time = str("%.2f" %(testcase_time))
+
           if self.check_result(test_name) == True:
             if self.is_expected_failing_testcase(test_name):
               test_string += "FAILED"
+              test_string += " [" + testcase_time + " sec]"
               logging.warning(test_string)
               self.increment_num_failing_tests()
             else:
               test_string += "PASS"
+              test_string += " [" + testcase_time + " sec]"
               logging.info(test_string)
               self.cleanup(test_name)
 
           elif self.is_expected_failing_testcase(test_name):
             print("Expecting failing test: %s" %(test_name))
             test_string += "PASS"
+            test_string += " [" + testcase_time + " sec]"
             logging.info(test_string)
             self.cleanup(test_name)
 
           else:
             test_string += "FAILED"
+            test_string += " [" + testcase_time + " sec]"
             logging.warning(test_string)
             self.increment_num_failing_tests()
 

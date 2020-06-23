@@ -157,7 +157,6 @@ begin
   -----------------------------------------------------------------------------
   i1_uart_vvc: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 1
   )
   port map(
@@ -271,7 +270,6 @@ begin
             -- Check if transaction is intended valid / free of error
             if  (uart_tx_transaction_info.bt.error_info.parity_bit_error = false) and
                 (uart_tx_transaction_info.bt.error_info.stop_bit_error = false) then
-
                 -- Add to SBI scoreboard
                 SBI_VVC_SB.add_expected(pad_sb_slv(uart_tx_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0)));
                 -- Wait for UART Transmit to finish before SBI VVC start

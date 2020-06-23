@@ -64,6 +64,7 @@ architecture behave of uart_tx_vvc is
 
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
+  constant C_DATA_WIDTH : natural      := 8;
 
   signal executor_is_busy      : boolean := false;
   signal queue_is_increasing   : boolean := false;
@@ -131,6 +132,9 @@ begin
                                                                                          channel   => GC_CHANNEL);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
+
+    -- Update BFM config num_data_bits with GC_DATA_WIDTH
+    vvc_config.bfm_config.num_data_bits := GC_DATA_WIDTH;
 
     -- Then for every single command from the sequencer
     loop  -- basically as long as new commands are received
@@ -220,15 +224,18 @@ begin
 -- - Fetch and execute the commands
 --===============================================================================================
   cmd_executor : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean := false;
-    variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_msg_id_panel                           : t_msg_id_panel;
-    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_cmd                                      : t_vvc_cmd_record;
+    variable v_read_data                                : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access    : time := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access       : time := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access         : time := 0 ns;
+    variable v_command_is_bfm_access                    : boolean := false;
+    variable v_prev_command_was_bfm_access              : boolean := false;
+    variable v_msg_id_panel                             : t_msg_id_panel;
+    variable v_normalised_data                          : std_logic_vector(C_DATA_WIDTH-1 downto 0) := (others => '0');
+    variable v_num_data_bits                            : natural                                   := vvc_config.bfm_config.num_data_bits;
+    variable v_has_raised_warning_if_vvc_bfm_conflict   : boolean := false;
+    variable v_vvc_config                               : t_vvc_config;
 
   begin
 
@@ -285,14 +292,24 @@ begin
         when TRANSMIT =>
           -- Loop the number of words to transmit
           for idx in 1 to v_cmd.num_words loop
-            -- Set error injection
-            vvc_config.bfm_config.error_injection.parity_bit_error  := decide_if_error_is_injected(vvc_config.error_injection.parity_bit_error_prob);
-            vvc_config.bfm_config.error_injection.stop_bit_error    := decide_if_error_is_injected(vvc_config.error_injection.stop_bit_error_prob);
+
+            -- Get VVC config as starting point
+            v_vvc_config := vvc_config;         
+            -- Determine setting for BFM error injection
+            determine_error_injection(vvc_config.error_injection.parity_bit_error_prob, 
+                                      v_vvc_config.bfm_config.error_injection.parity_bit_error, 
+                                      v_has_raised_warning_if_vvc_bfm_conflict,
+                                      C_SCOPE);
+            determine_error_injection(vvc_config.error_injection.stop_bit_error_prob, 
+                                      v_vvc_config.bfm_config.error_injection.stop_bit_error,
+                                      v_has_raised_warning_if_vvc_bfm_conflict,
+                                      C_SCOPE);
+
 
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data(GC_DATA_WIDTH-1 downto 0) := std_logic_vector(random(GC_DATA_WIDTH));
+                v_cmd.data(v_num_data_bits-1 downto 0) := std_logic_vector(random(v_num_data_bits));
               when RANDOM_FAVOUR_EDGES =>
                 null; -- Not implemented yet
               when others => -- NA
@@ -300,24 +317,19 @@ begin
             end case;
 
             -- Set transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config);
 
             -- Normalise address and data
             v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
 
-            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            transaction_info.data(C_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.
-            uart_transmit(data_value    => v_normalised_data,
+            uart_transmit(data_value    => v_normalised_data(v_num_data_bits-1 downto 0),
                           msg           => format_msg(v_cmd),
                           tx            => uart_vvc_tx,
-                          config        => vvc_config.bfm_config,
+                          config        => v_vvc_config.bfm_config,
                           scope         => C_SCOPE,
                           msg_id_panel  => v_msg_id_panel);
-
-            -- Disable error injection
-            vvc_config.bfm_config.error_injection.parity_bit_error  := false;
-            vvc_config.bfm_config.error_injection.stop_bit_error    := false;
-
 
             -- Set transaction info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);

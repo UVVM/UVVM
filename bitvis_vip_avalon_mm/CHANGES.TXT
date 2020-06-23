@@ -2,6 +2,12 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
+v2.7.1
+----------
+Released: 2020-06-23
+- Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
+  or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
+
 v2.7.0
 ----------
 Released: 2020-05-19
@@ -12,7 +18,6 @@ Released: 2020-05-19
 - Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
   other minor improvements.
 - Updated quick reference Activity Watchdog section and BFM config record description.
-
 
 v2.6.1
 ----------

@@ -66,6 +66,7 @@ architecture struct of test_harness is
     setup_time               => C_CLK_PERIOD/4,
     hold_time                => C_CLK_PERIOD/4,
     bfm_sync                 => SYNC_ON_CLOCK_ONLY,
+    match_strictness         => MATCH_EXACT,
     id_for_bfm               => ID_BFM,
     id_for_bfm_wait          => ID_BFM_WAIT,
     id_for_bfm_poll          => ID_BFM_POLL,
@@ -121,7 +122,6 @@ begin
 
   i1_uart_vvc: entity bitvis_vip_uart.uart_vvc
     generic map(
-      GC_DATA_WIDTH     => 8,
       GC_INSTANCE_IDX   => 1
     )
     port map(

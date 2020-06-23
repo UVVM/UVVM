@@ -539,8 +539,8 @@ package body generic_sb_pkg is
   generic map (
         t_generic_element        => t_sb_entry,
         scope                    => "SB_queue",
-        GC_QUEUE_COUNT_MAX       => 1000,
-        GC_QUEUE_COUNT_THRESHOLD => 750);
+        GC_QUEUE_COUNT_MAX       => GC_QUEUE_COUNT_MAX,
+        GC_QUEUE_COUNT_THRESHOLD => GC_QUEUE_COUNT_THRESHOLD);
 
   use sb_queue_pkg.all;
 

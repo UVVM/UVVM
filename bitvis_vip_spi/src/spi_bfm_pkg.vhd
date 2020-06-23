@@ -42,18 +42,19 @@ package spi_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_spi_bfm_config is
   record
-    CPOL             : std_logic;  -- sclk polarity, i.e. the base value of the clock.
-                                   -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
-    CPHA             : std_logic;  -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.
-                                   -- If '0', sampling occurs on the first sclk edge and data is transmitted on the sclk active to idle state.
-                                   -- If '1', data is sampled on the second sclk edge and transmitted on sclk idle to active state.
-    spi_bit_time     : time;       -- Used in master for dictating sclk period
-    ss_n_to_sclk     : time;       -- Time from SS active until SCLK active
-    sclk_to_ss_n     : time;       -- Last SCLK until SS off
-    inter_word_delay : time;       -- Minimum time between words, from ss_n inactive to ss_n active
-    id_for_bfm       : t_msg_id;   -- The message ID used as a general message ID in the SPI BFM
-    id_for_bfm_wait  : t_msg_id;   -- The message ID used for logging waits in the SPI BFM
-    id_for_bfm_poll  : t_msg_id;   -- The message ID used for logging polling in the SPI BFM
+    CPOL             : std_logic;          -- sclk polarity, i.e. the base value of the clock.
+                                           -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
+    CPHA             : std_logic;          -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.
+                                           -- If '0', sampling occurs on the first sclk edge and data is transmitted on the sclk active to idle state.
+                                           -- If '1', data is sampled on the second sclk edge and transmitted on sclk idle to active state.
+    spi_bit_time     : time;               -- Used in master for dictating sclk period
+    ss_n_to_sclk     : time;               -- Time from SS active until SCLK active
+    sclk_to_ss_n     : time;               -- Last SCLK until SS off
+    inter_word_delay : time;               -- Minimum time between words, from ss_n inactive to ss_n active
+    match_strictness : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm       : t_msg_id;           -- The message ID used as a general message ID in the SPI BFM
+    id_for_bfm_wait  : t_msg_id;           -- The message ID used for logging waits in the SPI BFM
+    id_for_bfm_poll  : t_msg_id;           -- The message ID used for logging polling in the SPI BFM
   end record;
 
   constant C_SPI_BFM_CONFIG_DEFAULT : t_spi_bfm_config := (
@@ -63,6 +64,7 @@ package spi_bfm_pkg is
     ss_n_to_sclk     => 20 ns,
     sclk_to_ss_n     => 20 ns,
     inter_word_delay => 0 ns,
+    match_strictness => MATCH_EXACT,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
     id_for_bfm_poll  => ID_BFM_POLL
@@ -673,15 +675,26 @@ package body spi_bfm_pkg is
     constant local_proc_call : string := local_proc_name;
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length-1 downto 0);
-    variable v_check_ok      : boolean;
+    variable v_check_ok      : boolean := true;
+    variable v_alert_radix   : t_radix;
   begin
     spi_master_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, action_when_transfer_is_done, scope, msg_id_panel, config, local_proc_call);
 
-    -- Compare values, but ignore any leading zero's if widths are different.
-    -- Use ID_NEVER so that check_value method does not log when check is OK,
-    -- log it here instead.
-    v_check_ok := check_value(v_rx_data, data_exp, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, local_proc_call);
-    if v_check_ok then
+    for i in data_exp'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
+        v_check_ok := true;
+      else
+        v_check_ok := false;
+        exit;
+      end if;
+    end loop;
+
+    if not v_check_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    else
       log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
@@ -852,15 +865,26 @@ package body spi_bfm_pkg is
     -- Helper variables
     variable v_tx_data       : std_logic_vector(data_exp'length - 1 downto 0) := (others => '0');
     variable v_rx_data       : std_logic_vector(data_exp'length-1 downto 0);
-    variable v_check_ok      : boolean;
+    variable v_check_ok      : boolean := true;
+    variable v_alert_radix   : t_radix;
   begin
     spi_master_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, action_when_transfer_is_done, scope, msg_id_panel, config, local_proc_call);
 
-    -- Compare values, but ignore any leading zero's if widths are different.
-    -- Use ID_NEVER so that check_value method does not log when check is OK,
-    -- log it here instead.
-    v_check_ok := check_value(v_rx_data, data_exp, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, local_proc_call);
-    if v_check_ok then
+    for i in data_exp'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
+        v_check_ok := true;
+      else
+        v_check_ok := false;
+        exit;
+      end if;
+    end loop;
+
+    if not v_check_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    else
       log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
@@ -1078,15 +1102,26 @@ package body spi_bfm_pkg is
     constant local_proc_call : string := local_proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length-1 downto 0);
-    variable v_check_ok      : boolean;
+    variable v_check_ok      : boolean := true;
+    variable v_alert_radix   : t_radix;
   begin
     spi_slave_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
 
-    -- Compare values, but ignore any leading zero's if widths are different.
-    -- Use ID_NEVER so that check_value method does not log when check is OK,
-    -- log it here instead.
-    v_check_ok := check_value(v_rx_data, data_exp, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, local_proc_call);
-    if v_check_ok then
+    for i in data_exp'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
+        v_check_ok := true;
+      else
+        v_check_ok := false;
+        exit;
+      end if;
+    end loop;
+
+    if not v_check_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    else
       log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end;
@@ -1211,15 +1246,26 @@ package body spi_bfm_pkg is
     -- Helper variables
     variable v_rx_data       : std_logic_vector(data_exp'length-1 downto 0) := (others => 'X');
     variable v_tx_data       : std_logic_vector(data_exp'length-1 downto 0) := (others => '0');
-    variable v_check_ok      : boolean;
+    variable v_check_ok      : boolean := true;
+    variable v_alert_radix   : t_radix;
   begin
     spi_slave_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
 
-    -- Compare values, but ignore any leading zero's if widths are different.
-    -- Use ID_NEVER so that check_value method does not log when check is OK,
-    -- log it here instead.
-    v_check_ok := check_value(v_rx_data, data_exp, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, local_proc_call);
-    if v_check_ok then
+    for i in data_exp'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
+        v_check_ok := true;
+      else
+        v_check_ok := false;
+        exit;
+      end if;
+    end loop;
+
+    if not v_check_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, local_proc_call & "=> Failed. Was " & to_string(v_rx_data, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+    else
       log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;

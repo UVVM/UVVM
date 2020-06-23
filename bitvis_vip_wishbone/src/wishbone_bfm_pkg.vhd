@@ -51,11 +51,12 @@ package wishbone_bfm_pkg is
   record
     max_wait_cycles             : integer;
     max_wait_cycles_severity    : t_alert_level;
-    clock_period                : time;          -- Needed in the VVC
-    clock_period_margin         : time;          -- Input clock period margin to specified clock_period
-    clock_margin_severity       : t_alert_level; -- The above margin will have this severity
-    setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
-    hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
+    clock_period                : time;               -- Needed in the VVC
+    clock_period_margin         : time;               -- Input clock period margin to specified clock_period
+    clock_margin_severity       : t_alert_level;      -- The above margin will have this severity
+    setup_time                  : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                   : time;               -- Hold time for generated signals, set to clock_period/4
+    match_strictness            : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm                  : t_msg_id;
     id_for_bfm_wait             : t_msg_id;
     id_for_bfm_poll             : t_msg_id;
@@ -70,6 +71,7 @@ package wishbone_bfm_pkg is
     clock_margin_severity       => TB_ERROR,
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
+    match_strictness            => MATCH_EXACT,
     id_for_bfm                  => ID_BFM,
     id_for_bfm_wait             => ID_BFM_WAIT,
     id_for_bfm_poll             => ID_BFM_POLL
@@ -352,14 +354,15 @@ package body wishbone_bfm_pkg is
       normalize_and_check(data_exp, wishbone_if.dat_i, ALLOW_NARROWER, "data", "wishbone_if.dat_i", msg);
 
     -- Helper variables
-    variable v_data_value : std_logic_vector(wishbone_if.dat_i'length-1 downto 0) := (others => '0');
-    variable v_check_ok   : boolean;
+    variable v_data_value  : std_logic_vector(wishbone_if.dat_i'length-1 downto 0) := (others => '0');
+    variable v_check_ok    : boolean := true;
+    variable v_alert_radix : t_radix;
   begin
     wishbone_read(addr_value, v_data_value, msg, clk, wishbone_if, scope, msg_id_panel, config, proc_call);
 
-    v_check_ok := true;
-    for i in 0 to (v_normalized_data'length)-1 loop
-      if v_normalized_data(i) = '-' or v_normalized_data(i) = v_data_value(i) then
+    for i in v_normalized_data'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -368,7 +371,9 @@ package body wishbone_bfm_pkg is
     end loop;
 
     if not v_check_ok then
-      alert(alert_level, proc_call & "=> Failed. slv Was " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;

@@ -297,7 +297,6 @@ begin
   -----------------------------------------------------------------------------  
   i_uart_vvc_1: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 1
   )
   port map(
@@ -307,7 +306,6 @@ begin
 
   i_uart_vvc_2: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 2
   )
   port map(
@@ -317,7 +315,6 @@ begin
 
   i_uart_vvc_3: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 3
   )
   port map(
@@ -329,7 +326,6 @@ begin
   -- await_any_completion old mechanism compatibility with the new mechanism.
   i_uart_vvc_4: entity bitvis_vip_uart.uart_vvc_old
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 4
   )
   port map(

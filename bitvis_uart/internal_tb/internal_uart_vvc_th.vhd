@@ -249,7 +249,6 @@ begin
   -----------------------------------------------------------------------------  
   i_uart_vvc_2: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 2
   )
   port map(
@@ -259,7 +258,6 @@ begin
 
   i_uart_vvc_3: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 3
   )
   port map(
@@ -269,7 +267,6 @@ begin
 
   i_uart_vvc_4: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 4
   )
   port map(

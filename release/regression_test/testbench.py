@@ -9,7 +9,12 @@ import time
 # Disable terminal output
 FNULL = open(os.devnull, 'w')
 
-
+output_list = ['-V']
+aldec_list = ['-ALDEC', '-RIVIERA', '-RIVIERAPRO']
+modelsim_list = ['-MODELSIM']
+simulator_list = (aldec_list + modelsim_list)
+gui_list = ['-G', '-GUI']
+help_list = ['-?', '?', '-H', '-HELP']
 
 class Testbench:
     """
@@ -37,6 +42,7 @@ class Testbench:
       self.do_cleanup = True
       self.simulator = "MODELSIM"
       self.env_var = os.environ.copy()
+      self.time_elapsed = 0.0
 
 
     def print_help(self):
@@ -236,31 +242,33 @@ class Testbench:
       Args:
         args (list): list of strings with arguments.
       """
+
+      # Convert to upper case
       args = [arg.upper() for arg in args]
 
+      # Arguments detected
+      self.verbose  = False
+      self.modelsim = False
+      self.aldec    = False
+      self.gui_mode = False
+      self.help     = False
+
+      # Check all arguments
       for arg in args:
-        arg = arg.split()
+        if not self.verbose:  self.verbose  = arg in output_list
+        if not self.aldec:    self.aldec    = arg in aldec_list
+        if not self.modelsim: self.modelsim = arg in modelsim_list
+        if not self.gui_mode: self.gui      = arg in gui_list
+        if not self.help:     self.help     = arg in help_list
 
-        if '-V' in arg:
-          self.verbose = True
-        
-        if ('ALDEC' in arg) or ('RIVIERA' in arg) or ('RIVIERAPRO' in arg):
-          self.simulator = 'RIVIERAPRO'
-        elif ('-ALDEC' in arg) or ('-RIVIERA' in arg) or ('-RIVIERAPRO' in arg):
-          self.simulator = 'RIVIERAPRO'
-        
-        if ('MODELSIM') in arg:
-          self.simulator = 'MODELSIM'
-        elif ('-MODELSIM') in arg:
-          self.simulator = 'MODELSIM'
-        
-        if ('-G' in arg) or ('-GUI' in arg):
-          self.gui_mode = True
-        
-        if ('-?' in arg) or ('?' in arg) or ('-H' in arg) or ('-HELP' in arg):
-          self.print_help()     
-          sys.exit(0)   
+      # Setup run by arguments
+      if self.aldec == True:
+        self.simulator = 'RIVIERAPRO'
+      else:
+        self.simulator = 'MODELSIM'
 
+      if self.help == True:
+        self.print_help()
 
 
     def set_simulator_variable(self):
@@ -338,7 +346,6 @@ class Testbench:
       return self.compile_directives
 
 
-    # Compile DUT, testbench and dependencies
     def compile(self):
       """
       Compile dependencie files, src files and testbench files
@@ -371,10 +378,9 @@ class Testbench:
       return glob.glob(search_string)
 
 
-    # Clean-up
     def cleanup(self, test_name=None):
       """
-      Remove generated files from test in testbench
+      Remove generated files from test(s) in testbench
 
       Args:
         test_name (str): name of test run in testbench
@@ -390,8 +396,6 @@ class Testbench:
 
 
 
-
-    # Check simulation results
     def check_result(self, test_name):
       """
       Verify test result by examining the log file
@@ -461,21 +465,36 @@ class Testbench:
 
 
     def save_run(self, testbench, test_name, config):
+      """
+      Not implemented !!!
+      """
       if test_name.lower() != 'all':
         foldername = test_name
       else:
         foldername = testbench
       if config:
         foldername += "_" + config
-      #print("=====>>>  %s" %(foldername))
       pass
 
 
     def add_expected_failing_testcase(self, testcase):
+      """
+      Add a testcase which is expected to fail.
+      """
       self.exp_failing_testcase.append(testcase.lower())
 
     def is_expected_failing_testcase(self, testcase):
+      """
+      Check if testcase is expected to fail.
+      """
       return testcase.lower() in self.exp_failing_testcase
+
+
+    def add_test_run_timing(self, time_elapsed):
+      self.time_elapsed += time_elapsed
+
+    def get_test_run_timing(self):
+      return str("%.2f" %(self.time_elapsed))
 
 
     # Run simulations and check result
@@ -491,13 +510,25 @@ class Testbench:
       total_num_tests = len(self.tests)
       total_num_configs = len(self.configs)
 
+      # Start time of test run
+      test_run_start = time.time()
+
+      # Run all testcases
       for test_idx, test_name in enumerate(self.tests):
+
+        # Remove any files from previous run of this testcase
         self.cleanup(test_name)
 
+        # Run testcase with all configurations
         for config_idx, config in enumerate(self.get_configs()):
+          # Remove any files from previous run of this testcase
           self.cleanup(test_name)
+          # Counters
           self.increment_num_tests()
+
+          # Start time of testcase run
           start_time = time.time()
+
           # Progress counter: (testcase / tot_testcases, config / total_configs)
           if config:
             run_str = ("(%d/%d, %d/%d)" %(test_idx+1, total_num_tests, config_idx+1, total_num_configs))
@@ -513,38 +544,53 @@ class Testbench:
 
           self.save_run(self.tb, test_name, config)
 
-          end_time = time.time()
-          testcase_time = end_time - start_time
-          testcase_time = str("%.2f" %(testcase_time))
+          # End time for test
+          test_run_end = time.time()
+          self.add_test_run_timing(test_run_end - test_run_start)
 
+          #====================================
+          # Verify testcase run results
+          #====================================
+
+          # Passing testcase
           if self.check_result(test_name) == True:
+
+            # Passed but was expected to fail
             if self.is_expected_failing_testcase(test_name):
               test_string += "FAILED"
-              test_string += " [" + testcase_time + " sec]"
               logging.warning(test_string)
               self.increment_num_failing_tests()
+              # do not remove log files
+
+            # Was expected to pass
             else:
               test_string += "PASS"
-              test_string += " [" + testcase_time + " sec]"
               logging.info(test_string)
+              # remove log files
               self.cleanup(test_name)
 
+          # Failing testcase and expected to fail
           elif self.is_expected_failing_testcase(test_name):
             print("Expecting failing test: %s" %(test_name))
             test_string += "PASS"
-            test_string += " [" + testcase_time + " sec]"
             logging.info(test_string)
+            # remove log files
             self.cleanup(test_name)
 
+          # Failing testcase but not expected to fail
           else:
             test_string += "FAILED"
-            test_string += " [" + testcase_time + " sec]"
             logging.warning(test_string)
             self.increment_num_failing_tests()
+            # do not remove log files
 
+
+      # Empty list of testcases when done
       self.remove_tests()
 
 
+
+    # Print summary to terminal
     def print_statistics(self):
       """
       Print the simulation result statistics
@@ -552,4 +598,5 @@ class Testbench:
       total = self.get_num_tests_run()
       failed = self.get_num_failing_tests()
       passed = (total - failed)
-      print("Simulations done. Pass=%i, Fail=%i, Total=%i\n" %(passed, failed, total))
+      print("Simulations done [%s sec]. Pass=%i, Fail=%i, Total=%i \n" %(self.get_test_run_timing(), passed, failed, total))
+

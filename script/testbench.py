@@ -353,11 +353,11 @@ class Testbench:
       self.set_simulator_variable()
       print("Running with simulator : %s" %(self.simulator))
       print("Compiling dependencies...")
-      self.simulator_call("do ../internal_script/compile_dependencies.do")
+      self.simulator_call("do ../script/maintenance_script/compile_dependencies.do")
       print("Compiling src...")
       self.simulator_call("do ../script/compile_src.do")
       print("Compiling testbench...")
-      self.simulator_call("do ../internal_script/compile_tb.do")
+      self.simulator_call("do ../script/maintenance_script//compile_tb.do")
 
 
 
@@ -539,7 +539,7 @@ class Testbench:
           if config:
             test_string += config + " : "           
 
-          script_call = 'do ../internal_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
+          script_call = 'do ../script/maintenance_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call, self.gui_mode)
 
           self.save_run(self.tb, test_name, config)

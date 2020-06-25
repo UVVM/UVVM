@@ -29,9 +29,9 @@ def compare(modelsim=False, riviera=False):
   num_errors = 0
 
   if modelsim:
-    golden_path = sim_path + '/../internal_script/golden_modelsim/test_output'
+    golden_path = sim_path + '/../script/maintenance_script/golden_modelsim/test_output'
   elif riviera:
-    golden_path = sim_path + '/../internal_script/golden_riviera_pro/test_output'
+    golden_path = sim_path + '/../script/maintenance_script/golden_riviera_pro/test_output'
 
 
   sim_files = [f for f in glob.glob(sim_path + "**/*.txt", recursive=False)]
@@ -50,6 +50,8 @@ def compare(modelsim=False, riviera=False):
     simulator = "[RIVIERA_PRO]"
 
   print("%s Number of files with error(s): %d" %(simulator, num_errors))
+  # Return number of failing tests to caller
+  sys.exit(num_errors)
 
 
 def main(argv):
@@ -68,6 +70,7 @@ def main(argv):
 
     else:
       print("Please specify simulator as argument: modelsim or riviera")
+
 
 
 if __name__ == "__main__":

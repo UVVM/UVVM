@@ -21,7 +21,7 @@ if { [info exists ::env(SIMULATOR)] } {
 # Compile tb files
 #------------------------------------------------------
 set root_path "../.."
-set tb_path "$root_path/uvvm_util/internal_tb"
+set tb_path "$root_path/uvvm_util/tb/maintenance_tb"
 echo "\n\n\n=== Compiling TB\n"
 
 echo "eval vcom  $compdirectives  $tb_path/methods_tb.vhd"

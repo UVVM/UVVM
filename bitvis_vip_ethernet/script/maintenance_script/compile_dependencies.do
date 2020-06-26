@@ -50,7 +50,7 @@ do $root_path/script/compile_src.do $root_path/bitvis_vip_sbi $root_path/bitvis_
 do $root_path/script/compile_src.do $root_path/bitvis_vip_hvvc_to_vvc_bridge $root_path/bitvis_vip_hvvc_to_vvc_bridge/sim
 
 
-set tb_path "$root_path/bitvis_vip_ethernet/internal_tb"
+set tb_path "$root_path/bitvis_vip_ethernet/tb/maintenance_tb"
 #==========================================================================================================
 # Xilinx "XilinixCoreLib" library
 #==========================================================================================================

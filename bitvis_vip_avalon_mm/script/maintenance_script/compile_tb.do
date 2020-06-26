@@ -23,7 +23,7 @@ if { [info exists ::env(SIMULATOR)] } {
 # Compile tb files
 #------------------------------------------------------
 set root_path "../.."
-set tb_path "$root_path/bitvis_vip_avalon_mm/internal_tb"
+set tb_path "$root_path/bitvis_vip_avalon_mm/tb/maintenance_tb"
 echo "\n\n\n=== Compiling TB\n"
 
 

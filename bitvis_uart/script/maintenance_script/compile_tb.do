@@ -21,12 +21,12 @@ if { [info exists ::env(SIMULATOR)] } {
 # Compile tb files
 #------------------------------------------------------
 set root_path "../.."
-set tb_path "$root_path/bitvis_uart/internal_tb"
+set tb_path "$root_path/bitvis_uart/tb/maintenance_tb"
 
 echo "\n\n\n=== Compiling TB\n"
 
-echo "eval vcom  $compdirectives  $tb_path/../tb/uart_vvc_demo_th.vhd"
-eval vcom  $compdirectives  $tb_path/../tb/uart_vvc_demo_th.vhd
+echo "eval vcom  $compdirectives  $tb_path/../uart_vvc_demo_th.vhd"
+eval vcom  $compdirectives  $tb_path/../uart_vvc_demo_th.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/internal_uart_simple_bfm_tb.vhd"
 eval vcom  $compdirectives  $tb_path/internal_uart_simple_bfm_tb.vhd

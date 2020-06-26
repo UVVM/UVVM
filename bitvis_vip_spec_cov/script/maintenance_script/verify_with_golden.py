@@ -17,13 +17,13 @@ def get_file_list(path = "."):
 def main():
      # Get file lists
     filelist = get_file_list(".")
-    golden_file_list = get_file_list("../internal_script/golden/")
+    golden_file_list = get_file_list("../script/maintenance_script/golden/")
     
     failing_verify_file = []
     num_checked_files = 0
 
     for filename in filelist:
-        golden_file = "../internal_script/golden/" + filename
+        golden_file = "../script/maintenance_script/golden/" + filename
 
         if os.path.isfile(golden_file):
             num_checked_files += 1
@@ -42,6 +42,7 @@ def main():
                 if golden_lines[idx] != verify_lines[idx]:
                     failing_verify_file.append(filename)
                     error_found = True
+                    break
 
             # Remove OK files
             if not(error_found):

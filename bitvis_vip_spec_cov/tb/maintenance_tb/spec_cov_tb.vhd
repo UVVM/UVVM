@@ -85,7 +85,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with a requirement file.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("TC_2", "../internal_tb/internal_req_file.csv", "pc_2.csv");
+      initialize_req_cov("TC_2", "../tb/maintenance_tb/req_file.csv", "pc_2.csv");
       tick_off_req_cov("REQ_2");
       -- End testcase      
       finalize_req_cov(VOID);
@@ -99,7 +99,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("TC_3", "../internal_tb/internal_req_file.csv", "pc_3.csv");
+      initialize_req_cov("TC_3", "../tb/maintenance_tb/req_file.csv", "pc_3.csv");
       -- 1: testing default testcase
       tick_off_req_cov("REQ_3");
       -- 2: testing unknown testcase
@@ -119,7 +119,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("TC_4", "../internal_tb/internal_req_file.csv", "pc_4.csv");
+      initialize_req_cov("TC_4", "../tb/maintenance_tb/req_file.csv", "pc_4.csv");
       tick_off_req_cov("REQ_4", "TC_4_FAIL", FAIL);
       tick_off_req_cov("REQ_4", "TC_4");
       -- End testcase
@@ -135,7 +135,7 @@ begin
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
       -- Run testcase
-      initialize_req_cov("TC_5", "../internal_tb/internal_req_file.csv", "pc_5.csv");   
+      initialize_req_cov("TC_5", "../tb/maintenance_tb/req_file.csv", "pc_5.csv");   
       tick_off_req_cov("REQ_5");  
       -- End testcase
       finalize_req_cov(VOID);
@@ -150,7 +150,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with UVVM status error triggered after tick_off_req_cov() and prior to finalize_req_cov().", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("TC_6", "../internal_tb/internal_req_file.csv", "pc_6.csv");   
+      initialize_req_cov("TC_6", "../tb/maintenance_tb/req_file.csv", "pc_6.csv");   
       tick_off_req_cov("REQ_6", PASS);
       -- Provoking tb_error and incrementing alert stop limit
       provoke_uvvm_status_error(TB_ERROR);
@@ -168,7 +168,7 @@ begin
       log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing requirement file.", C_SCOPE);
       increment_expected_alerts(TB_ERROR, 1);
       -- Run testcase
-      initialize_req_cov("TC_7", "../internal_tb/non_existing_req_file.csv", "pc_7.csv");   
+      initialize_req_cov("TC_7", "../tb/maintenance_tb/non_existing_req_file.csv", "pc_7.csv");   
       -- End testcase
       finalize_req_cov(VOID);         
 
@@ -186,7 +186,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing passing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
       -- Run testcase
-      initialize_req_cov("TC_SUB_REQ", "../internal_tb/internal_sub_req_file.csv", "pc_8.csv");   
+      initialize_req_cov("TC_SUB_REQ", "../tb/maintenance_tb/sub_req_file.csv", "pc_8.csv");   
       tick_off_req_cov("UART_REQ_BR_A", NA);
       tick_off_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
       tick_off_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", C_SCOPE);
@@ -201,7 +201,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing failing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);  
       -- Run testcase
-      initialize_req_cov("TC_SUB_REQ", "../internal_tb/internal_sub_req_file.csv", "pc_9.csv");   
+      initialize_req_cov("TC_SUB_REQ", "../tb/maintenance_tb/sub_req_file.csv", "pc_9.csv");   
       tick_off_req_cov("UART_REQ_BR_A", NA);
       tick_off_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
       tick_off_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", C_SCOPE);
@@ -217,7 +217,7 @@ begin
       --
       log(ID_LOG_HDR, "Testing failing simulations with incomplete testcase.", C_SCOPE);  
       -- Run testcase
-      initialize_req_cov("TC_1", "../internal_tb/internal_req_file.csv", "pc_10.csv");   
+      initialize_req_cov("TC_1", "../tb/maintenance_tb/req_file.csv", "pc_10.csv");   
       tick_off_req_cov("REQ_1");  
       log(ID_SEQUENCER, "\nProvoking 2 TB_ERRORs to stop simulations.", C_SCOPE);
       -- Provoking tb_error 2 times to make testcase fail and simulation abort
@@ -232,7 +232,7 @@ begin
         --
         log(ID_LOG_HDR, "Testing logging multiple requirements with one testcase.", C_SCOPE);  
         -- Run testcase
-        initialize_req_cov("TC_1", "../internal_tb/internal_req_file.csv", "pc_11.csv");   
+        initialize_req_cov("TC_1", "../tb/maintenance_tb/req_file.csv", "pc_11.csv");   
         tick_off_req_cov("REQ_1");  
         tick_off_req_cov("REQ_2");
         tick_off_req_cov("REQ_3");

@@ -1,13 +1,13 @@
 
 Configuration:
 ----------------------------------------------
-requirement_list     : ../internal_tb/internal_sub_req_file.csv
+requirement_list     : ../tb/maintenance_tb/sub_req_file.csv
 partial_cov          : ../sim/pc_9.csv
-requirement_map_list : ../internal_tb/internal_sub_req_map_file.csv
-spec_cov             : ../sim/sc_9_2.csv
+requirement_map_list : ../tb/maintenance_tb/sub_req_map_file.csv
+spec_cov             : ../sim/sc_9_1.csv
 clean                : False
-strictness           : 2
-config               : ../internal_tb/internal_cfg_2_strict_2.txt
+strictness           : 1
+config               : ../tb/maintenance_tb/cfg_2_strict_1.txt
 
 
 SUMMARY:

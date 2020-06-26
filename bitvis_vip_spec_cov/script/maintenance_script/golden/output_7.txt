@@ -1,7 +1,7 @@
 
 Configuration:
 ----------------------------------------------
-requirement_list     : ../internal_tb/internal_req_file.csv
+requirement_list     : ../tb/maintenance_tb/req_file.csv
 partial_cov          : ../sim/pc_7.csv
 requirement_map_list : None
 spec_cov             : ../sim/sc_7.csv

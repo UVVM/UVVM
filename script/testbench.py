@@ -535,9 +535,11 @@ class Testbench:
           else:
             run_str = ("(%d/%d)" %(test_idx+1, total_num_tests))
 
-          test_string = run_str + " [" +  self.tb + "] test=" + test_name + " : "
+          test_string = run_str + " [" +  self.tb + "] test=" + test_name + ", "
           if config:
-            test_string += "config=" + config + " : result="           
+            test_string += "config=" + config + ", result="
+          else:
+            test_string += " result="           
 
           script_call = 'do ../script/maintenance_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call, self.gui_mode)

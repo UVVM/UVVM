@@ -10,11 +10,10 @@
 # Note : Any functionality not explicitly described in the documentation is subject to change at any time
 #--------------------------------------------------------------------------------------------------------------------------------
 
-from os.path import join, dirname
 from itertools import product
-import os, sys, subprocess
+import os, sys
 
-sys.path.append("../../release/regression_test")
+sys.path.append("../../script")
 from testbench import Testbench
 
 

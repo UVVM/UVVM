@@ -9,6 +9,13 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2020.xx.xx
+--------------------
+Released: 2020-xx-xx
+- Added maintenance TBs and simulation scripts to UVVM modules.
+- Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
+
+
 v2 2020.06.23
 --------------------
 Released: 2020-06-23

@@ -84,7 +84,7 @@ package spec_cov_pkg is
 
   -- Shared variables used internally in this context
   shared variable shared_csv_file               : csv_file_reader_type;
-  shared variable shared_requirement_array      : t_requirement_entry_array(0 to config.max_testcases_per_req);
+  shared variable shared_requirement_array      : t_requirement_entry_array(0 to config.max_requirements);
   shared variable shared_requirements_in_array  : natural := 0;
 
   constant C_FAIL_STRING                : string := "FAIL";

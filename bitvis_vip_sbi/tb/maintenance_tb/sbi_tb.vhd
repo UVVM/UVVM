@@ -389,13 +389,13 @@ begin
       enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
 
       -- Fill FIFO 1
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"01", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"56", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"a3", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"4d", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"00", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"42", "Write PUT on both FIFOs");
-      await_completion(SBI_VVCT,C_VVCT_ALL_INSTANCES, 1000 ns, "Await execution for both VVCs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"01", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"56", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"a3", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"4d", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"00", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"42", "Write PUT on both FIFOs");
+      await_completion(SBI_VVCT,ALL_INSTANCES, 1000 ns, "Await execution for both VVCs");
 
       -- Poll from FIFO 1
       sbi_poll_until(SBI_VVCT,1, C_ADDR_FIFO_GET,  x"42", "Test of POLL_UNTIL within 100 ns", 0, 100 ns, ERROR);
@@ -403,14 +403,14 @@ begin
       -- Poll from FIFO 2
       sbi_poll_until(SBI_VVCT,2, C_ADDR_FIFO_GET,  x"42", "Test of POLL_UNTIL within 10 occurrences", 10, 0 ns, ERROR);
 
-      await_completion(SBI_VVCT,C_VVCT_ALL_INSTANCES, 1000 ns, "Await execution");
+      await_completion(SBI_VVCT,ALL_INSTANCES, 1000 ns, "Await execution");
 
       log(ID_LOG_HDR, "Checking broadcast of flush_command_queue");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"4d", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"00", "Write PUT on both FIFOs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, C_ADDR_FIFO_PUT, x"42", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"4d", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"00", "Write PUT on both FIFOs");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, C_ADDR_FIFO_PUT, x"42", "Write PUT on both FIFOs");
       flush_command_queue(VVC_BROADCAST, "Flushing all commands");
-      await_completion(SBI_VVCT,C_VVCT_ALL_INSTANCES, 2*C_CLK_PERIOD, "Await flush completion");
+      await_completion(SBI_VVCT,ALL_INSTANCES, 2*C_CLK_PERIOD, "Await flush completion");
 
 
       log(ID_LOG_HDR, "Checking broadcast of insert_delay (time)");
@@ -421,12 +421,12 @@ begin
       shared_sbi_vvc_config(1).inter_bfm_delay.inter_bfm_delay_violation_severity := WARNING;
 
       v_timestamp := now;
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, x"00", x"AB", "First Write SBI1");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, x"00", x"AB", "First Write SBI1");
       insert_delay(VVC_BROADCAST, C_CLK_PERIOD, "Inserting delay in all VVCs");
       insert_delay(VVC_BROADCAST, C_CLK_PERIOD, "Inserting delay in all VVCs");
       insert_delay(VVC_BROADCAST, C_CLK_PERIOD, "Inserting delay in all VVCs");
       insert_delay(VVC_BROADCAST, C_CLK_PERIOD, "Inserting delay in all VVCs");
-      sbi_write(SBI_VVCT,C_VVCT_ALL_INSTANCES, x"00", x"FF", "Second Write SBI1");
+      sbi_write(SBI_VVCT,ALL_INSTANCES, x"00", x"FF", "Second Write SBI1");
       await_completion(SBI_VVCT, 1, 7 * C_CLK_PERIOD);
       check_value(((now - v_timestamp) = C_CLK_PERIOD*6), ERROR, "Checking that inter-bfm delay was upheld");
 

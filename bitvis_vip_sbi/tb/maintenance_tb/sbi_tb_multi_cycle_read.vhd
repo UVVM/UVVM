@@ -150,7 +150,7 @@ begin
 
       -- Fill FIFO 1
       sbi_write(SBI_VVCT,1, x"00", x"01", "Set Register 0");
-      await_completion(SBI_VVCT,C_VVCT_ALL_INSTANCES, 1000 ns, "Await execution for both VVCs");
+      await_completion(SBI_VVCT,ALL_INSTANCES, 1000 ns, "Await execution for both VVCs");
 
       wait until rising_edge(clk);
       v_timestamp := now;

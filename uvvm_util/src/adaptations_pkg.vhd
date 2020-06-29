@@ -293,12 +293,6 @@ package adaptations_pkg is
     -- User can add more channels if needed below.
   );
 
-  constant C_CMD_IDX_PREFIX : string := " [";
-  constant C_CMD_IDX_SUFFIX : string := "]";
-
-  constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
-  constant ALL_ENABLED_INSTANCES : integer := -3;
-
   constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
 
   --------------------------------------------------------------------------------------------------------------------------------
@@ -348,6 +342,14 @@ package adaptations_pkg is
   -- The code below is not intended for user modifications!
   -- *****************************************************************************************************************************
   --------------------------------------------------------------------------------------------------------------------------------
+
+  constant C_CMD_IDX_PREFIX       : string := " [";
+  constant C_CMD_IDX_SUFFIX       : string := "]";
+
+  constant ALL_INSTANCES          : integer := -2;
+  constant ALL_ENABLED_INSTANCES  : integer := -3;
+
+
   type t_vvc_id is record
     name      : string(1 to C_MAX_VVC_NAME_LENGTH);
     instance  : natural;

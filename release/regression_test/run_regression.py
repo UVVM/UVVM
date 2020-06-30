@@ -65,7 +65,7 @@ def simulate_module(module):
 
   try:
     print(' '.join(sys.argv[1:]))
-    subprocess.check_call([sys.executable, "../../" + str(module) + "/internal_script/run.py", ' '.join(sys.argv[1:])])
+    subprocess.check_call([sys.executable, "../../" + str(module) + "/script/maintenance_script/sim.py", ' '.join(sys.argv[1:])])
     return 0
   except subprocess.CalledProcessError as e:
     print("Number of failing tests: " + str(e.returncode))

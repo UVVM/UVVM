@@ -24,8 +24,8 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_generic_queue_pkg;
+--library uvvm_vvc_framework;
+--use uvvm_vvc_framework.ti_generic_queue_pkg;
 
 use work.generic_sb_support_pkg.all;
 
@@ -535,7 +535,7 @@ package body generic_sb_pkg is
   end record;
 
   -- Declaration of sb_queue_pkg used to store all entries
-  package sb_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
+  package sb_queue_pkg is new uvvm_util.generic_queue_pkg
   generic map (
         t_generic_element        => t_sb_entry,
         scope                    => "SB_queue",

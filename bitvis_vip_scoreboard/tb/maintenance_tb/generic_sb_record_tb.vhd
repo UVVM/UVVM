@@ -1549,7 +1549,7 @@ architecture func of generic_sb_record_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  0, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
 
-      sb_under_test.report_counters(ALL_ENABLED_INSTANCES);
+      sb_under_test.report_counters(ALL_INSTANCES);
       sb_under_test.report_counters(VOID);
 
       sb_under_test.reset(VOID);
@@ -1892,6 +1892,24 @@ architecture func of generic_sb_record_tb is
     end procedure test_multiple_instances;
 
 
+    procedure test_no_enabled_sb_instances is
+      constant scope          : string := "TB: no enabled instances";
+      variable v_config_array : t_sb_config_array(0 to 100) := (others => C_SB_CONFIG_DEFAULT);
+      variable v_input        : t_record;
+      variable v_output       : t_record;
+    begin
+
+      log(ID_LOG_HDR_LARGE, "Test no enabled instances", scope);
+
+      sb_under_test.disable_log_msg(ALL_INSTANCES, ID_DATA);
+      sb_under_test.disable(ALL_INSTANCES);
+      disable_log_msg(ID_POS_ACK);
+
+      sb_under_test.report_counters(ALL_INSTANCES);
+
+      sb_under_test.reset(ALL_INSTANCES);
+    end procedure test_no_enabled_sb_instances;
+
 
     -- check that all SB procedures give a warning when instance is not enabled
     procedure test_instance_is_enabled is
@@ -1948,7 +1966,7 @@ architecture func of generic_sb_record_tb is
       increment_expected_alerts_and_stop_limit(TB_WARNING, 1);
       sb_under_test.enable("Enable SB");
 
-      sb_under_test.reset(ALL_ENABLED_INSTANCES);
+      sb_under_test.reset(ALL_INSTANCES);
 
     end procedure test_instance_is_enabled;
 
@@ -1993,7 +2011,8 @@ architecture func of generic_sb_record_tb is
     test_exists;
     test_multiple_instances;
     test_instance_is_enabled;
-
+    test_no_enabled_sb_instances;
+    
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------

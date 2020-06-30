@@ -870,7 +870,7 @@ package body generic_sb_pkg is
                      tag              => pad_string(tag, NUL, C_SB_TAG_WIDTH),
                      entry_time       => now);
 
-      if instance = ALL_ENABLED_INSTANCES then
+      if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- add entry
@@ -1096,18 +1096,14 @@ package body generic_sb_pkg is
 
     begin
 
-      -- Check if instance is within range
-      if instance /= ALL_ENABLED_INSTANCES then
-        check_instance_in_range(instance);
-      end if;
-
-      if instance = ALL_ENABLED_INSTANCES then
+      if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             check_received_instance(i);
           end if;
         end loop;
       else
+        check_instance_in_range(instance);
         check_instance_enabled(instance);
         check_received_instance(instance);
       end if;
@@ -1164,16 +1160,6 @@ package body generic_sb_pkg is
           vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
           -- flush queue
           vr_sb_queue.flush(i);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        log(ID_DATA, proc_name & "() => flushing all enabled instances. " & add_msg_delimiter(msg), vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
-            -- update counters
-            vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
-            -- flush queue
-            vr_sb_queue.flush(i);
-          end if;
         end loop;
       else
         if ext_proc_call = "" then
@@ -1242,13 +1228,6 @@ package body generic_sb_pkg is
         log(ID_CTRL, proc_name & "() => reseting all instances. " & add_msg_delimiter(msg), vr_scope);
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
             reset_instance(i);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        log(ID_CTRL, proc_name & "() => reseting all enabled instances. " & add_msg_delimiter(msg), vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
-            reset_instance(i);
-          end if;
         end loop;
       else
         if ext_proc_call = "" then
@@ -1628,16 +1607,17 @@ package body generic_sb_pkg is
       constant instance      : in integer;
       constant ext_proc_call : in string := ""
     ) is
-      variable v_line            : line;
-      variable v_line_copy       : line;
-      variable v_status_failed   : boolean  := true;
-      variable v_mismatch        : boolean  := false;
-      constant C_HEADER          : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
-      constant prefix            : string   := C_LOG_PREFIX & "     ";
-      constant log_counter_width : positive := 8; -- shouldn't be smaller than 8 due to the counters names
-      variable v_log_extra_space : integer  := 0;
-      constant C_MAX_QUEUE_INSTANCE_NUM_STRING     : string  := to_string(C_MAX_QUEUE_INSTANCE_NUM);
-      constant C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN : natural := C_MAX_QUEUE_INSTANCE_NUM_STRING'length;
+      variable v_line                               : line;
+      variable v_line_copy                          : line;
+      variable v_status_failed                      : boolean   := true;
+      variable v_mismatch                           : boolean   := false;
+      variable v_no_enabled_instances               : boolean   := true;
+      constant C_HEADER                             : string    := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
+      constant prefix                               : string    := C_LOG_PREFIX & "     ";
+      constant log_counter_width                    : positive  := 8; -- shouldn't be smaller than 8 due to the counters names
+      variable v_log_extra_space                    : integer   := 0;
+      constant C_MAX_QUEUE_INSTANCE_NUM_STRING      : string    := to_string(C_MAX_QUEUE_INSTANCE_NUM);
+      constant C_MAX_QUEUE_INSTANCE_NUM_STRING_LEN  : natural   := C_MAX_QUEUE_INSTANCE_NUM_STRING'length;
 
 
         -- add simulation time stamp to scoreboard report header
@@ -1700,9 +1680,11 @@ package body generic_sb_pkg is
           justify("OVERDUE_CHECK"  , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
           left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
+      if instance = ALL_INSTANCES THEN
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
+          if (instance = ALL_INSTANCES and vr_instance_enabled(i)) then
+            v_no_enabled_instances := false;
+
             write(v_line,
             justify(
               "instance: " &
@@ -1719,6 +1701,12 @@ package body generic_sb_pkg is
               left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
+
+        -- report if no enabled instances was found
+        if v_no_enabled_instances then
+          write(v_line, "No enabled instances was found." & LF);
+        end if;
+        
       else
         check_instance_in_range(instance);
         check_instance_enabled(instance);
@@ -1783,7 +1771,7 @@ package body generic_sb_pkg is
       variable v_sb_entry : t_sb_entry;
     begin
       -- Check if instance is within range
-      if instance /= ALL_ENABLED_INSTANCES then
+      if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
       end if;
 
@@ -1792,7 +1780,7 @@ package body generic_sb_pkg is
                      tag              => pad_string(tag, NUL, C_SB_TAG_WIDTH),
                      entry_time       => now);
 
-      if instance = ALL_ENABLED_INSTANCES then
+      if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
           if vr_instance_enabled(i) then
             -- Check that instance is enabled
@@ -1816,7 +1804,7 @@ package body generic_sb_pkg is
 
       -- Logging
       if ext_proc_call = "" then
-        if instance = ALL_ENABLED_INSTANCES then
+        if instance = ALL_INSTANCES then
           if identifier_option = POSITION then
             if tag_usage = NO_TAG then
               log(ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "

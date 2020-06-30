@@ -14,6 +14,7 @@ v2 2020.xx.xx
 Released: 2020-xx-xx
 - Added maintenance TBs and simulation scripts to UVVM modules.
 - Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
+- Replaced ALL_ENABLED_INSTANCES option with ALL_INSTANCES in Scoreboard VIP.
 
 
 v2 2020.06.23

@@ -1327,7 +1327,7 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  0, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
 
-      sb_under_test.report_counters(ALL_ENABLED_INSTANCES);
+      sb_under_test.report_counters(ALL_INSTANCES);
       sb_under_test.report_counters(VOID);
 
       sb_under_test.reset(VOID);
@@ -1398,7 +1398,7 @@ architecture func of generic_sb_slv_tb is
       check_value(sb_under_test.get_initial_garbage_count(VOID),  0, ERROR, "verify initial garbage count", scope);
       check_value(sb_under_test.get_delete_count(VOID),           0, ERROR, "verify delete count",          scope);
 
-      sb_under_test.report_counters(ALL_ENABLED_INSTANCES);
+      sb_under_test.report_counters(ALL_INSTANCES);
       sb_under_test.report_counters(VOID);
 
       sb_under_test.reset(VOID);
@@ -1699,7 +1699,7 @@ architecture func of generic_sb_slv_tb is
       increment_expected_alerts_and_stop_limit(TB_WARNING, 1);
       sb_under_test.enable("Enable SB");
 
-      sb_under_test.reset(ALL_ENABLED_INSTANCES);
+      sb_under_test.reset(ALL_INSTANCES);
 
     end procedure test_instance_is_enabled;
 

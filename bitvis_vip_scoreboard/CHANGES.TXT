@@ -1,6 +1,10 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.x.x
+----------
+Released: 2020-xx-xx
+- Replaced ALL_ENABLED_INSTANCES option with ALL_INSTANCES.
 
 v2.1.2
 ----------

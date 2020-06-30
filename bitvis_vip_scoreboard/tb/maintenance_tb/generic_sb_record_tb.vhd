@@ -1894,9 +1894,9 @@ architecture func of generic_sb_record_tb is
 
     procedure test_no_enabled_sb_instances is
       constant scope          : string := "TB: no enabled instances";
-      variable v_config_array : t_sb_config_array(0 to 100) := (others => C_SB_CONFIG_DEFAULT);
+      variable v_config_array : t_sb_config_array(0 to 10) := (others => C_SB_CONFIG_DEFAULT);
       variable v_input        : t_record;
-      variable v_output       : t_record;
+      variable v_check_ok     : boolean;
     begin
 
       log(ID_LOG_HDR_LARGE, "Test no enabled instances", scope);
@@ -1905,6 +1905,33 @@ architecture func of generic_sb_record_tb is
       sb_under_test.disable(ALL_INSTANCES);
       disable_log_msg(ID_POS_ACK);
 
+      log(ID_SEQUENCER, "seting scoreboard configuration", scope);
+      sb_under_test.config(v_config_array);
+
+      log(ID_SEQUENCER, "calling is_empty() with no enabled scoreboards", scope);
+      v_check_ok := sb_under_test.is_empty(ALL_INSTANCES);
+      check_value(v_check_ok = true, ERROR, "verify ALL enabled instances is_empty() with no enabled SB", scope);
+
+      log(ID_SEQUENCER, "calling report_counters() with empty scoreboard", scope);
+      sb_under_test.report_counters(ALL_INSTANCES);
+
+
+      log(ID_SEQUENCER, "adding expected to scoreboard", scope);
+      for instance in 0 to 10 loop
+        sb_under_test.enable(instance);
+        for i in 0 to 100 loop
+          v_input.address := std_logic_vector(to_unsigned(i, 8));
+          v_input.data_1  := std_logic_vector(to_unsigned(i, 8));
+          v_input.data_2  := std_logic_vector(to_unsigned(i+1, 8));
+          sb_under_test.add_expected(instance, v_input, TAG, "tag added");
+        end loop;
+      end loop;
+
+      log(ID_SEQUENCER, "calling is_empty() with not empty scoreboard", scope);
+      v_check_ok := sb_under_test.is_empty(ALL_INSTANCES);
+      check_value(v_check_ok = false, ERROR, "verify ALL enabled instances is_empty() with no enabled SB", scope);
+
+      log(ID_SEQUENCER, "calling report_counters() with not empty scoreboard", scope);
       sb_under_test.report_counters(ALL_INSTANCES);
 
       sb_under_test.reset(ALL_INSTANCES);

@@ -175,7 +175,7 @@ architecture func of uart_vvc_new_tb is
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     wait for 10*C_BIT_PERIOD;  -- margin
 
-    UART_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+    UART_VVC_SB.report_counters(ALL_INSTANCES);
 
 
     log(ID_LOG_HDR, "Test of advanced uart_expect()", C_SCOPE);

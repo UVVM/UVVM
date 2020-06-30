@@ -198,7 +198,7 @@ begin
     rgmii_read(RGMII_VVCT, C_VVC_IDX, RX, TO_SB, "Sending received data to SB");
     await_completion(RGMII_VVCT, C_VVC_IDX, RX, 10 us);
 
-    RGMII_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+    RGMII_VVC_SB.report_counters(ALL_INSTANCES);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

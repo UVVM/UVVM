@@ -1054,7 +1054,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 1, 50 ms);
 
       wait for 1000 ns;
-      I2C_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+      I2C_VVC_SB.report_counters(ALL_INSTANCES);
 
     else
       alert(tb_error, "Unsupported test " & GC_TEST);

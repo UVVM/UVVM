@@ -1278,7 +1278,7 @@ begin  -- architecture behav
       spi_master_receive_only(SPI_VVCT, C_SPI_VVC_0, TO_SB, "SPI Master receive data and send to SB");
       await_master_rx_completion(50 ms);
 
-      SPI_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+      SPI_VVC_SB.report_counters(ALL_INSTANCES);
 
     else
       alert(tb_error, "Unsupported test");

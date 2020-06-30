@@ -200,7 +200,7 @@ begin
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, 10, TO_SB, "Sending received data to SB");
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
-    GMII_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+    GMII_VVC_SB.report_counters(ALL_INSTANCES);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

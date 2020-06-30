@@ -248,7 +248,7 @@ begin
     axilite_read(AXILITE_VVCT, 2, x"0060", TO_SB, "Read data and send to SB"); -- do another read - should see this data
     await_completion(AXILITE_VVCT, 2, 1000 ns);
 
-    AXILITE_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+    AXILITE_VVC_SB.report_counters(ALL_INSTANCES);
 
 
     log(ID_LOG_HDR, "Test of timeout of check", C_SCOPE);

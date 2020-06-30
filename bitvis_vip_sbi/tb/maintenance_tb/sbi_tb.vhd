@@ -187,7 +187,7 @@ begin
       sbi_read(SBI_VVCT,1, C_ADDR_FIFO_GET, TO_SB, "Read from FIFO 2 and store result in VVC's SB");
       await_completion(SBI_VVCT,1, 100 ns, "Wait for sbi_read to finish");
 
-      SBI_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+      SBI_VVC_SB.report_counters(ALL_INSTANCES);
 
     elsif GC_TEST = "test_of_poll_until" then
       log(ID_LOG_HDR, "Test of poll until", C_SCOPE);

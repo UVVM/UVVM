@@ -307,7 +307,7 @@ begin
     await_completion(GPIO_VVCT, 2, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
     wait for C_CLK_PERIOD*4;                                   -- Margin
 
-    GPIO_VVC_SB.report_counters(ALL_ENABLED_INSTANCES);
+    GPIO_VVC_SB.report_counters(ALL_INSTANCES);
 
 
     --------------------------------------------------------------------------------------

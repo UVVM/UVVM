@@ -24,9 +24,6 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
---library uvvm_vvc_framework;
---use uvvm_vvc_framework.ti_generic_queue_pkg;
-
 use work.generic_sb_support_pkg.all;
 
 package generic_sb_pkg is

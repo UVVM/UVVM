@@ -71,6 +71,18 @@ def main(argv):
   tb.run_simulation()
 
 
+  # Setup testbench and run
+  tb.set_tb_name("generic_queue_tb")
+  tb.run_simulation()
+
+  # Setup testbench and run
+  tb.set_tb_name("generic_queue_record_tb")
+  tb.run_simulation()
+
+  # Setup testbench and run
+  tb.set_tb_name("generic_queue_array_tb")
+  tb.run_simulation()
+
   # Print simulation results
   tb.print_statistics()
 

@@ -26,3 +26,12 @@ echo "\n\n\n=== Compiling TB\n"
 
 echo "eval vcom  $compdirectives  $tb_path/methods_tb.vhd"
 eval vcom  $compdirectives  $tb_path/methods_tb.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/generic_queue_tb.vhd"
+eval vcom  $compdirectives  $tb_path/generic_queue_tb.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/generic_queue_record_tb.vhd"
+eval vcom  $compdirectives  $tb_path/generic_queue_record_tb.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/generic_queue_array_tb.vhd"
+eval vcom  $compdirectives  $tb_path/generic_queue_array_tb.vhd

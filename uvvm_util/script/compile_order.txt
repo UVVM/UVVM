@@ -10,3 +10,4 @@
 ../src/methods_pkg.vhd
 ../src/bfm_common_pkg.vhd
 ../src/uvvm_util_context.vhd
+../src/generic_queue_pkg.vhd

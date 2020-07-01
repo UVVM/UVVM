@@ -21,11 +21,10 @@ use IEEE.math_real.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
+use work.data_queue_pkg.all;
+use work.data_fifo_pkg.all;
+use work.data_stack_pkg.all;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_data_queue_pkg.all;
-use uvvm_vvc_framework.ti_data_fifo_pkg.all;
-use uvvm_vvc_framework.ti_data_stack_pkg.all;
 
 -- Test case entity
 entity simplified_data_queue_tb is
@@ -36,6 +35,7 @@ end entity;
 
 -- Test case architecture
 architecture func of simplified_data_queue_tb is
+
   shared variable queue_under_test : t_data_queue;
 
   constant C_SCOPE        : string  := "test_bench";

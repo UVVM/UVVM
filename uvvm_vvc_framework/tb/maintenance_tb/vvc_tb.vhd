@@ -39,14 +39,14 @@ context bitvis_vip_avalon_mm.vvc_context;
 
 
 -- Test bench entity
-entity internal_vvc_tb is
+entity vvc_tb is
   generic (
     GC_TEST : string := "UVVM"
   );
 end entity;
 
 -- Test bench architecture
-architecture func of internal_vvc_tb is
+architecture func of vvc_tb is
 
   -- Clock and bit period settings
   constant C_CLK_PERIOD         : time := 10 ns;
@@ -150,7 +150,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.internal_vvc_th
+  i_test_harness : entity work.vvc_th
     port map (
       -- DSP interface and general control signals
       clk             => clk,

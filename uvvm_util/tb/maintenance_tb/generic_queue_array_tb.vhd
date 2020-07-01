@@ -17,7 +17,6 @@
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-
 package array_queue_pkg is new work.generic_queue_pkg
   generic map (
         t_generic_element => t_byte_array(9 downto 0),

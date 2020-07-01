@@ -70,7 +70,10 @@ def main(argv):
   tb.add_expected_failing_testcase("setting_output_file_name")
   tb.run_simulation()
 
-
+  # Setup testbench and run
+  tb.set_tb_name("simplified_data_queue_tb")
+  tb.run_simulation()
+  
   # Setup testbench and run
   tb.set_tb_name("generic_queue_tb")
   tb.run_simulation()

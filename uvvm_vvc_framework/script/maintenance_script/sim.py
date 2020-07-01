@@ -49,26 +49,14 @@ def main(argv):
             ]
 
   # Setup testbench and run
-  tb.set_tb_name("internal_vvc_tb")
+  tb.set_tb_name("vvc_tb")
   tb.add_tests(tests)
   tb.run_simulation()
 
   tb.remove_tests()
 
   # Setup testbench and run
-  tb.set_tb_name("simplified_data_queue_tb")
-  tb.run_simulation()
-
-  # Setup testbench and run
   tb.set_tb_name("generic_queue_tb")
-  tb.run_simulation()
-
-  # Setup testbench and run
-  tb.set_tb_name("generic_queue_record_tb")
-  tb.run_simulation()
-
-  # Setup testbench and run
-  tb.set_tb_name("generic_queue_array_tb")
   tb.run_simulation()
 
 

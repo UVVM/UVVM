@@ -30,7 +30,7 @@ use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
 
 -- Test harness entity
-entity internal_vvc_th is
+entity vvc_th is
   port(
     clk          : in  std_logic;
     arst         : in  std_logic;
@@ -58,7 +58,7 @@ entity internal_vvc_th is
 end entity;
 
 -- Test harness architecture
-architecture struct of internal_vvc_th is
+architecture struct of vvc_th is
   
   -- UART 1 signals
   signal   uart_1_cs    : std_logic;

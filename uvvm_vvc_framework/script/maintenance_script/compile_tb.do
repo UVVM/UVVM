@@ -24,20 +24,11 @@ set root_path "../.."
 set tb_path "$root_path/uvvm_vvc_framework/tb/maintenance_tb"
 echo "\n\n\n=== Compiling TB\n"
 
-echo "eval vcom  $compdirectives  $tb_path/internal_vvc_th.vhd"
-eval vcom  $compdirectives  $tb_path/internal_vvc_th.vhd
+echo "eval vcom  $compdirectives  $tb_path/vvc_th.vhd"
+eval vcom  $compdirectives  $tb_path/vvc_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/internal_vvc_tb.vhd"
-eval vcom  $compdirectives  $tb_path/internal_vvc_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/vvc_tb.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/internal_simplified_data_queue_tb.vhd"
-eval vcom  $compdirectives  $tb_path/internal_simplified_data_queue_tb.vhd
-
-echo "eval vcom  $compdirectives  $tb_path/internal_generic_queue_tb.vhd"
-eval vcom  $compdirectives  $tb_path/internal_generic_queue_tb.vhd
-
-echo "eval vcom  $compdirectives  $tb_path/internal_generic_queue_record_tb.vhd"
-eval vcom  $compdirectives  $tb_path/internal_generic_queue_record_tb.vhd
-
-echo "eval vcom  $compdirectives  $tb_path/internal_generic_queue_array_tb.vhd"
-eval vcom  $compdirectives  $tb_path/internal_generic_queue_array_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/generic_queue_tb.vhd"
+eval vcom  $compdirectives  $tb_path/generic_queue_tb.vhd

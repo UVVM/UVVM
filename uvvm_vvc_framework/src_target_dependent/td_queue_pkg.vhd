@@ -22,7 +22,6 @@
 library uvvm_util;
 use uvvm_util.generic_queue_pkg;
 
-
 use work.vvc_cmd_pkg.all;
 
 package td_cmd_queue_pkg is new uvvm_util.generic_queue_pkg

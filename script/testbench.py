@@ -539,7 +539,7 @@ class Testbench:
           if config:
             test_string += "config=" + config + ", result="
           else:
-            test_string += " result="           
+            test_string += "result="           
 
           script_call = 'do ../script/maintenance_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call, self.gui_mode)

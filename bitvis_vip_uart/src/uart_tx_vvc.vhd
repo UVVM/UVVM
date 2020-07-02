@@ -362,6 +362,12 @@ begin
         end if;
       end if;
 
+      -- Reset terminate flag if any occurred
+      if (terminate_current_cmd.is_active = '1') then
+        log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, v_msg_id_panel);
+        uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
+      end if;
+            
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;

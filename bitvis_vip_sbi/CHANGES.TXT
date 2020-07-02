@@ -1,6 +1,12 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.x.x
+----------
+Released: 2020-xx-xx
+- Fixed missing possibility for exiting a WRITE loop.
+
+
 v2.7.1
 ----------
 Released: 2020-06-23

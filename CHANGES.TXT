@@ -17,6 +17,8 @@ Released: 2020-xx-xx
 - Replaced ALL_ENABLED_INSTANCES option with ALL_INSTANCES in Scoreboard VIP.
 - Changed Scoreboard max instances constant name to C_MAX_SB_INSTANCE_IDX.
 - Changed Scoreboard to be instance of Utility Library generic_sb_pkg.
+- Fixed missing possibility to exit a TRANSMIT / WRITE loop in UART TX and SBI VVCs.
+- Added missing reset of terminate cmd request flag in UART TX VVC. 
 
 
 v2 2020.06.23

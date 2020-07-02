@@ -341,6 +341,12 @@ begin
 
             -- Set VVC Transaction Info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
+            -- exit loop if terminate_current_cmd is requested
+            if terminate_current_cmd.is_active = '1' then
+              exit;
+            end if;
+
           end loop;
 
 

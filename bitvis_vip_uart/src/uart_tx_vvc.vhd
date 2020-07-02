@@ -333,6 +333,12 @@ begin
 
             -- Set transaction info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
+            -- exit loop if terminate_current_cmd is requested
+            if terminate_current_cmd.is_active = '1' then
+              exit;
+            end if;
+            
           end loop;
 
 
@@ -367,7 +373,7 @@ begin
         log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, v_msg_id_panel);
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
-            
+
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;

@@ -24,6 +24,7 @@ Released: 2020-xx-xx
   packages in Utility Library.
 - Updated UART, RGMII, SPI and I2C BFM QRs with required BFM configuration information.
 - Added fix with gen_pulse() method for slv with don't care.
+- Added explicit paths for framework methods in SBI VVC executor and interpreter.
 
 
 v2 2020.06.23

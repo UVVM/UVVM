@@ -5,6 +5,7 @@ v2.x.x
 ----------
 Released: 2020-xx-xx
 - Fixed missing possibility for exiting a WRITE loop.
+- Added explicit paths for framework methods in executor and interpreter.
 
 
 v2.7.1

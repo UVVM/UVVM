@@ -19,7 +19,10 @@ Released: 2020-xx-xx
 - Changed Scoreboard to be instance of Utility Library generic_sb_pkg.
 - Fixed missing possibility to exit a TRANSMIT / WRITE loop in UART TX and SBI VVCs.
 - Added missing reset of terminate cmd request flag in UART TX VVC. 
-
+- Added deprecated warning to ti_data_fifo_pkg, ti_data_queue_pkg, ti_data_stack_pkg and
+  ti_generic_queue_pkg. These will no longer be maintained and users should use the 
+  packages in Utility Library.
+  
 
 v2 2020.06.23
 --------------------

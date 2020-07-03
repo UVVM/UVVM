@@ -1,6 +1,11 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v0.x.x
+----------
+Released: 2020-xx-xx
+- Added section with required local defined BFM configuration in BFM QR.
+
 v0.3.1
 ----------
 Released: 2020-06-23

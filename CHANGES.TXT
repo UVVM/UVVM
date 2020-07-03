@@ -23,6 +23,7 @@ Released: 2020-xx-xx
   ti_generic_queue_pkg. These will no longer be maintained and users should use the 
   packages in Utility Library.
 - Updated UART, RGMII, SPI and I2C BFM QRs with required BFM configuration information.
+- Added fix with gen_pulse() method for slv with don't care.
 
 
 v2 2020.06.23

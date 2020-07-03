@@ -7,6 +7,7 @@ v2.xx.x
 ----------
 Released: 2020-xx-xx
 - Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
+- Added fix with gen_pulse() method for slv with don't care.
 
 v2.14.0
 ----------

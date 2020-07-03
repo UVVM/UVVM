@@ -17,6 +17,10 @@ ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uv
 ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/license_pkg.vhd
 ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/methods_pkg.vhd
 ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/bfm_common_pkg.vhd
+ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/generic_queue_pkg.vhd
+ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/data_queue_pkg.vhd
+ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/data_fifo_pkg.vhd
+ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/data_stack_pkg.vhd
 ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/uvvm_util_context.vhd
 
 # Compiling Bitvis VIP SBI BFM

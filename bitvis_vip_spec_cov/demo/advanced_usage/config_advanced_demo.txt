@@ -1,0 +1,5 @@
+-r ../demo/advanced_usage/req_list_advanced_demo.csv
+-p ../demo/advanced_usage/partial_cov_list.txt
+-m ../demo/advanced_usage/req_map_advanced_demo.csv
+-s ../sim/spec_cov_advanced_demo.csv
+--strictness 1

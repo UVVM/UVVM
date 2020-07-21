@@ -3,16 +3,72 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.14.0
+----------
+Released: 2020-05-19
+- Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY, ID_AWAIT_COMPLETION,
+  ID_AWAIT_COMPLETION_LIST, ID_AWAIT_COMPLETION_WAIT, ID_AWAIT_COMPLETION_END.
+- Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
+- Added missing t_byte_endianness enums.
+
+v2.13.1
+----------
+Released: 2020-04-20
+- Updated Util QR check_value() with MATCH_STD_INCL_Z option.
+
+v2.13.0
+----------
+Released: 2020-03-30
+- Added NA element to type t_enabled.
+- Added C_UNUSED_MSG_ID_PANEL and removed t_vvc record in adaptations_pkg.
+- Removed type t_use_provided_msg_id_panel.
+- Added CHECK counters and report_check_counters() method.
+
+v2.12.0
+----------
+Released: 2020-03-06
+- Added 3 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE, ID_PACKET_CHECKSUM and ID_PACKET_GAP.
+- Moved t_channel from types_pkg to adaptations_pkg.
+- Changed t_byte_endianness elements names and added an alias t_word_endianness.
+- Removed unnecessary ascending parameter in convert_slv_array_to_byte_array function.
+- Added functions convert_byte_array_to_slv and convert_slv_to_byte_array to methods_pkg.
+
+
+v2.11.1
+----------
+Released: 2020-02-16
+- Added a constant C_UVVM_TIMEOUT in adaptations_pkg as a general timeout for
+  UVVM wait statements.
+- Updated Quickref BFM common package section.
+- Added default scope and changed alert message for check_file_open_status()
+  in UVVM Util.
+
+
+v2.11.0
+----------
+Released: 2020-01-24
+- Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
+- Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
+- Added wait_on_bfm_sync_start(), wait_on_bfm_exit() and check_clock_period_margin()
+  methods for synchronising clock signal driven BFMs and verifying specified 
+  clock period.
+- Added t_slv_array_ptr type.
+- Added a log2 function.
+- Added a to_string function for integer type with output as DEC, HEX or BIN.
+
+
 v2.10.1
 ----------
 Released: 2019-12-04
 - Removed t_coverage from adaptation_pkg
+
 
 v2.10.0
 ----------
 Released: 2019-11-21
 - Added timeout watchdog. See UVVM Util quick reference for more information.
 - Updated LICENSE.TXT
+
 
 v2.9.0
 ----------

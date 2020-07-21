@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -61,6 +62,7 @@ package uart_bfm_pkg is
     timeout                                   : time;                 -- The maximum time to pass before the expected data must be received. Exceeding this limit results in an alert with severity ‘alert_level’.
     timeout_severity                          : t_alert_level;        -- The above timeout will have this severity
     num_bytes_to_log_before_expected_data     : natural;              -- Maximum number of bytes to save ahead of the expected data in the receive buffer. The bytes in the receive buffer will be logged.
+    match_strictness                          : t_match_strictness;   -- Matching strictness for std_logic values in check procedures.
     id_for_bfm                                : t_msg_id;             -- The message ID used as a general message ID in the UART BFM
     id_for_bfm_wait                           : t_msg_id;             -- The message ID used for logging waits in the UART BFM
     id_for_bfm_poll                           : t_msg_id;             -- The message ID used for logging polling in the UART BFM
@@ -77,6 +79,7 @@ package uart_bfm_pkg is
     timeout                                   => 0 ns,                -- will default never time out
     timeout_severity                          => error,
     num_bytes_to_log_before_expected_data     => 10,
+    match_strictness                          => MATCH_EXACT,
     id_for_bfm                                => ID_BFM,
     id_for_bfm_wait                           => ID_BFM_WAIT,
     id_for_bfm_poll                           => ID_BFM_POLL,
@@ -116,7 +119,7 @@ package uart_bfm_pkg is
     constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string            := C_SCOPE;
     constant msg_id_panel       : in  t_msg_id_panel    := shared_msg_id_panel;
-    constant ext_proc_call      : in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
+    constant ext_proc_call      : in  string            := "" -- External proc_call. Overwrite if called from another BFM procedure
     );
 
 
@@ -223,7 +226,10 @@ package body uart_bfm_pkg is
         tx <= odd_parity(data_value);
       end if;
     end if;
-    wait for config.bit_time;
+
+    if (config.parity /= PARITY_NONE) then
+      wait for config.bit_time;
+    end if;
 
 
     -- Set stop bits
@@ -259,7 +265,7 @@ package body uart_bfm_pkg is
     constant config             : in  t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
     constant scope              : in  string            := C_SCOPE;
     constant msg_id_panel       : in  t_msg_id_panel    := shared_msg_id_panel;
-    constant ext_proc_call      : in  string            := "" -- External proc_call; used if called from other BFM procedure like uart_expect
+    constant ext_proc_call      : in  string            := "" -- External proc_call. Overwrite if called from another BFM procedure
     ) is
     constant start_time       : time := now;
 
@@ -296,10 +302,10 @@ package body uart_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      -- called from sequencer/VVC, show 'uart_receive()...' in log
+      -- Called directly from sequencer/VVC, log 'uart_receive...'
       write(v_proc_call, local_proc_call);
     else
-      -- called from other BFM procedure like uart_expect, log 'uart_expect() while executing uart_receive()...'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing uart_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name & ". ");
     end if;
 
@@ -393,7 +399,7 @@ package body uart_bfm_pkg is
       if ext_proc_call = "" then
         log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-        -- Will be andled by calling procedure (e.g. uart_expect)
+        -- Log will be handled by calling procedure (e.g. uart_expect)
       end if;
     end if;
   end procedure;
@@ -427,6 +433,7 @@ package body uart_bfm_pkg is
     variable v_received_data_fifo_write_idx : natural := 0;
     variable v_received_output_line         : line;
     variable v_internal_timeout             : time;
+    variable v_alert_radix                  : t_radix;
   begin
     -- check whether config.bit_time was set probably
     check_value(config.bit_time /= -1 ns, TB_ERROR, "UART Bit time was not set in config. " & add_msg_delimiter(msg), C_SCOPE, ID_NEVER, msg_id_panel);
@@ -470,8 +477,8 @@ package body uart_bfm_pkg is
       -- Receive and check data
       uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
       for i in 0 to v_config.num_data_bits-1 loop
-        if (data_exp(i) = '-' or
-          v_data_value(i) = data_exp(i)) then
+        -- Allow don't care in expected value and use match strictness from config for comparison
+        if data_exp(i) = '-' or check_value(v_data_value(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
           v_check_ok := true;
         else
           v_check_ok := false;
@@ -524,10 +531,12 @@ package body uart_bfm_pkg is
     elsif not v_timeout_ok then
       alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout,ns) & ". " & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
       if max_receptions = 1 then
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
       else
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
       end if;
     else
       alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);

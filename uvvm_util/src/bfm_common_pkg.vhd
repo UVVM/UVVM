@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -174,7 +175,32 @@ package bfm_common_pkg is
     constant margin          : in time
     );
 
-
+    procedure wait_on_bfm_sync_start(
+      signal clk                      : in std_logic;
+      constant bfm_sync               : in t_bfm_sync;
+      constant setup_time             : in time  := -1 ns;
+      constant config_clock_period    : in time  := -1 ns;
+      variable time_of_falling_edge   : out time;
+      variable time_of_rising_edge    : out time
+    );
+  
+    procedure wait_on_bfm_exit(
+      signal clk                      : in std_logic;
+      constant bfm_sync               : in t_bfm_sync;
+      constant hold_time              : in time := -1 ns;
+      constant time_of_falling_edge   : in time := -1 ns;
+      constant time_of_rising_edge    : in time := -1 ns
+      );
+  
+      procedure check_clock_period_margin(
+        signal   clock                          : in std_logic;
+        constant bfm_sync                       : in t_bfm_sync;
+        constant time_of_falling_edge           : in time;
+        constant time_of_rising_edge            : in time;
+        constant config_clock_period            : in time;
+        constant config_clock_period_margin     : in time;
+        constant config_clock_margin_severity   : in t_alert_level := TB_ERROR
+    );  
 
 end package bfm_common_pkg;
 --=================================================================================================
@@ -629,6 +655,7 @@ package body bfm_common_pkg is
     signal clk         : in std_logic;
     constant wait_time : in time
     ) is
+    constant proc_name : string  := "wait_until_given_time_after_rising_edge";
     variable v_remaining_wait_time : time;
   begin
     -- If the time since the previous rising_edge is less than wait_time,
@@ -639,7 +666,10 @@ package body bfm_common_pkg is
         ) then
       v_remaining_wait_time := wait_time - clk'last_event;  -- Wait until wait_time after rising_edge
     else
-      wait until rising_edge(clk);
+      wait until rising_edge(clk) for C_UVVM_TIMEOUT;
+      if clk /= '1' then
+        alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+      end if;
       v_remaining_wait_time := wait_time;  -- Wait until wait_time after rising_edge
     end if;
     wait for v_remaining_wait_time;
@@ -651,9 +681,10 @@ package body bfm_common_pkg is
     constant time_to_edge : in time;
     constant clk_period   : in time
     ) is
+    constant proc_name    : string  := "wait_until_given_time_before_rising_edge";
     variable v_remaining_wait_time : time;
   begin
-    check_value(clk_period > 2*time_to_edge, TB_ERROR, "time_to_edge must be less than half clk_period", C_SCOPE, ID_NEVER);
+    check_value(clk_period > 2*time_to_edge, TB_ERROR, "Checking time_to_edge is less than half clk_period", C_SCOPE, ID_NEVER);
 
     -- If the time to the next rising edge is greater than time_to_edge and clk is low,
     -- we don't have to wait until the next falling_edge,
@@ -662,9 +693,15 @@ package body bfm_common_pkg is
         clk'last_value = '1' and clk = '0') then
       v_remaining_wait_time := (clk_period/2 - time_to_edge) - clk'last_event;  -- Wait until time_to_edge before rising_edge
     else
-      wait until falling_edge(clk);
+      wait until falling_edge(clk) for C_UVVM_TIMEOUT;
+      if clk /= '0' then
+        alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+      end if;
       v_remaining_wait_time := (clk_period/2 - time_to_edge);  -- Wait until time_to_edge before rising_edge
     end if;
+
+    -- prevent that we exit on clock falling edge (if clock set to other than 50-50 duty cycle).
+    v_remaining_wait_time := maximum(v_remaining_wait_time, std.env.resolution_limit);
 
     wait for v_remaining_wait_time;
   end;
@@ -676,7 +713,6 @@ package body bfm_common_pkg is
   begin
     wait_num_rising_edge_plus_margin(clk, num_rising_edge, 0 ns);
   end procedure;
-
 
   procedure wait_num_rising_edge_plus_margin (
     signal clk               : in std_logic;
@@ -693,5 +729,124 @@ package body bfm_common_pkg is
     -- Wait for remaining margin, if any
     wait for margin;
   end procedure;
+
+  procedure wait_on_bfm_sync_start(
+    signal clk                      : in std_logic;
+    constant bfm_sync               : in t_bfm_sync;
+    constant setup_time             : in time  := -1 ns;
+    constant config_clock_period    : in time  := -1 ns;
+    variable time_of_falling_edge   : out time;
+    variable time_of_rising_edge    : out time
+  ) is
+    constant proc_name      : string  := "wait_on_bfm_sync_start";    
+  begin
+    time_of_rising_edge := -1 ns;
+
+    case bfm_sync is
+      when SYNC_ON_CLOCK_ONLY =>
+        -- sample rising_egde
+        if clk /= '1' then
+          wait until rising_edge(clk) for C_UVVM_TIMEOUT;
+          if clk /= '1' then
+            alert(TB_ERROR, proc_name & " => timeout while waiting for clk.");
+          end if;
+        end if;
+        time_of_rising_edge := now - clk'last_event;    
+        -- exit on clock falling edge
+        wait until falling_edge(clk);
+        time_of_falling_edge := now;
+
+      when SYNC_WITH_SETUP_AND_HOLD =>
+        check_value(setup_time > -1 ns, TB_ERROR, proc_name & " => check: setup_time is set.",   C_SCOPE, ID_NEVER);
+        check_value(config_clock_period > -1 ns, TB_ERROR, proc_name & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
+
+        wait_until_given_time_before_rising_edge(clk, setup_time, config_clock_period);
+        time_of_falling_edge := now - clk'last_event;
+
+      when others =>
+        alert(TB_WARNING, proc_name & " => invalid bfm_sync parameter.");
+    end case;
+  end procedure wait_on_bfm_sync_start;
+
+  -- Wait for a specific delay so the data is sampled and the BFM can finish.
+  -- Note: The times of falling and rising edges have to be consecutive
+  --       to calculate the correct period.
+  procedure wait_on_bfm_exit(
+    signal clk                      : in std_logic;
+    constant bfm_sync               : in t_bfm_sync;
+    constant hold_time              : in time := -1 ns;
+    constant time_of_falling_edge   : in time := -1 ns;
+    constant time_of_rising_edge    : in time := -1 ns
+    ) is
+    constant proc_name                : string  := "wait_on_bfm_exit";   
+    variable v_measured_clock_period  : time;
+  begin
+
+    case bfm_sync is
+      when SYNC_ON_CLOCK_ONLY =>
+        check_value(clk, '1', TB_WARNING, proc_name & " => check: BFM exit syncronisation called when clk is high.", C_SCOPE, ID_NEVER);
+        check_value(time_of_falling_edge > -1 ns, TB_ERROR, proc_name & " => check: time_of_falling_edge is set.", C_SCOPE, ID_NEVER);
+        check_value(time_of_rising_edge > -1 ns, TB_ERROR, proc_name & " => check: time_of_rising_edge is set.", C_SCOPE, ID_NEVER);
+
+        if time_of_falling_edge > time_of_rising_edge then
+          v_measured_clock_period := (time_of_falling_edge - time_of_rising_edge) * 2;
+        else
+          v_measured_clock_period := (time_of_rising_edge - time_of_falling_edge) * 2;
+        end if;
+        -- synchronisation
+        wait_until_given_time_after_rising_edge(clk, v_measured_clock_period/4);
+
+      when SYNC_WITH_SETUP_AND_HOLD =>
+        -- sanity checking
+        check_value(clk, '1', TB_WARNING, proc_name & " => check: BFM exit syncronisation called when clk is high.", C_SCOPE, ID_NEVER);
+        check_value(hold_time > -1 ns,  TB_ERROR, proc_name & " => check: hold_time is set.", C_SCOPE, ID_NEVER);
+        -- synchronisation
+        wait_until_given_time_after_rising_edge(clk, hold_time);
+
+      when others =>
+        alert(TB_WARNING, proc_name & " => invalid bfm_sync parameter.");
+    end case;
+  end procedure wait_on_bfm_exit;
+
+
+  -- Check that the clock signal is within configured specifications.
+  -- Note! bfm_sync must be set to SYNC_WITH_SETUP_AND_HOLD and
+  --       the procedure called after clock rising edge.
+  procedure check_clock_period_margin(
+    signal   clock                          : in std_logic;
+    constant bfm_sync                       : in t_bfm_sync;
+    constant time_of_falling_edge           : in time;
+    constant time_of_rising_edge            : in time;
+    constant config_clock_period            : in time;
+    constant config_clock_period_margin     : in time;
+    constant config_clock_margin_severity   : in t_alert_level := TB_ERROR
+  ) is
+    constant proc_name          : string := "check_clock_period_margin";    
+    variable v_min_time         : time;
+    variable v_max_time         : time;
+    variable v_measured_period  : time;
+    variable v_rising_edge_time : time;
+  begin
+
+    if bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
+      check_value(time_of_falling_edge /=  time_of_rising_edge, TB_ERROR, proc_name & " => check: time_of_falling_edge not equal to time_of_rising_edge.", C_SCOPE, ID_NEVER);
+      check_value(config_clock_period > -1 ns, TB_ERROR, proc_name & " => check: config_clock_period is set.", C_SCOPE, ID_NEVER);
+      check_value(clock = '1', TB_ERROR, proc_name & " => check: clock is high", C_SCOPE, ID_NEVER);
+                  
+      if time_of_rising_edge > -1 ns then
+        v_measured_period := abs(time_of_rising_edge - time_of_falling_edge) * 2; 
+      else
+        v_rising_edge_time := (now - clock'last_event);
+        v_measured_period := abs(v_rising_edge_time - time_of_falling_edge) * 2;
+      end if;
+
+      v_min_time := v_measured_period - config_clock_period_margin;
+      v_max_time := v_measured_period + config_clock_period_margin;
+
+      check_value_in_range(config_clock_period, v_min_time, v_max_time, config_clock_margin_severity, 
+                          proc_name & " => check: clk period within requirement.", C_SCOPE, ID_NEVER);
+    end if;
+  end procedure check_clock_period_margin;
+
 
 end package body bfm_common_pkg;

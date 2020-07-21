@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -156,14 +157,14 @@ begin
     for i in 1 to 5 loop
       for j in 1 to 4 loop
         v_data := random(8);
-        v_sbi_sb.add_expected(v_data);
+        v_sbi_sb.add_expected(pad_sb_slv(v_data));
         uart_transmit(v_data, "data to DUT", uart_tx, v_uart_config);
       end loop;
 
       for j in 1 to 4 loop
         sbi_poll_until(to_unsigned(C_ADDR_RX_DATA_VALID, 3), x"01", 0, 100 ns, "wait on data valid", clk, sbi_if, terminate_loop);
         sbi_read(to_unsigned(C_ADDR_RX_DATA, 3), v_data, "read data from DUT", clk, sbi_if);
-        v_sbi_sb.check_received(v_data);
+        v_sbi_sb.check_received(pad_sb_slv(v_data));
       end loop;
     end loop;
 
@@ -177,11 +178,11 @@ begin
     for i in 1 to 5 loop
       for j in 1 to 4 loop
         v_data := random(8);
-        v_uart_sb.add_expected(v_data);
+        v_uart_sb.add_expected(pad_sb_slv(v_data));
         sbi_poll_until(to_unsigned(C_ADDR_TX_READY, 3), x"01", 0, 100 ns, "wait on TX ready", clk, sbi_if, terminate_loop);
         sbi_write(to_unsigned(C_ADDR_TX_DATA, 3), v_data, "write data to DUT", clk, sbi_if);
         uart_receive(v_data, "data from DUT", uart_rx, terminate_loop, v_uart_config);
-        v_uart_sb.check_received(v_data);
+        v_uart_sb.check_received(pad_sb_slv(v_data));
       end loop;
     end loop;
 

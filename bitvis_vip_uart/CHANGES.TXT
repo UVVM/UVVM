@@ -1,6 +1,49 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.7.1
+----------
+Released: 2020-06-23
+- Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
+  or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
+- VVC error injection probability default is set to use BFM config settings.
+- VVC generic GC_DATA_WIDTH is used for setting BFM config num_data_bits.
+- Updated VVC Quick Reference.
+
+v2.7.0
+----------
+Released: 2020-05-19
+- Added shared_uart_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+
+v2.6.1
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in VVC QR.
+
+v2.6.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Added data_routing parameter to VVC receive procedure for sending data to scoreboard.
+
+v2.5.1
+----------
+Released: 2020-02-16
+- Updated figure in UART Demo TB quick reference.
+
+v2.5.0
+----------
+Released: 2020-01-24
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+  shared variable with transfer related information.
+  
 v2.4.0
 ----------
 Released: 2019-12-04

@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -53,7 +54,7 @@ entity uvvm_demo_th is
     -- Activity watchdog setting
     GC_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * GC_BIT_PERIOD
   );
-end entity;
+end entity uvvm_demo_th;
 
 -- Test harness architecture
 architecture struct of uvvm_demo_th is
@@ -156,7 +157,6 @@ begin
   -----------------------------------------------------------------------------
   i1_uart_vvc: entity bitvis_vip_uart.uart_vvc
   generic map(
-    GC_DATA_WIDTH     => 8,
     GC_INSTANCE_IDX   => 1
   )
   port map(
@@ -203,40 +203,44 @@ begin
   -----------------------------------------------------------------------------
   -- Model
   --
-  --   Subscribe to SBI and UART DDTs, and send to Scoreboard or
-  --   send VVC commands based on DTT content.
+  --   Subscribe to SBI and UART transaction infos, and send to Scoreboard or
+  --   send VVC commands based on transaction info content.
   --
   -----------------------------------------------------------------------------
 
   p_model: process
-    -- SBI DTT
-    alias sbi_dtt : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
-      global_sbi_vvc_transaction(C_SBI_VVC);
-    -- UART DTT
-    alias uart_rx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
-      global_uart_vvc_transaction(RX, C_UART_RX_VVC);
-    alias uart_tx_dtt : bitvis_vip_uart.transaction_pkg.t_transaction_group is
-      global_uart_vvc_transaction(TX, C_UART_TX_VVC);
+    -- SBI transaction info
+    alias sbi_vvc_transaction_info_trigger : std_logic is 
+                                global_sbi_vvc_transaction_trigger(C_SBI_VVC);
+    alias sbi_vvc_transaction_info : bitvis_vip_sbi.transaction_pkg.t_transaction_group is
+                                shared_sbi_vvc_transaction_info(C_SBI_VVC);
+    -- UART transaction info
+    alias uart_rx_transaction_info_trigger : std_logic is
+                                global_uart_vvc_transaction_trigger(RX, C_UART_RX_VVC);
+    alias uart_rx_transaction_info : bitvis_vip_uart.transaction_pkg.t_transaction_group is
+                                shared_uart_vvc_transaction_info(RX, C_UART_RX_VVC);
 
+    alias uart_tx_transaction_info_trigger : std_logic is
+                                global_uart_vvc_transaction_trigger(TX, C_UART_TX_VVC);
+    alias uart_tx_transaction_info : bitvis_vip_uart.transaction_pkg.t_transaction_group is
+                                shared_uart_vvc_transaction_info(TX, C_UART_TX_VVC);
+  
   begin
 
     while true loop
 
-      -- Wait for DTT trigger
-      wait on sbi_dtt, uart_rx_dtt, uart_tx_dtt;
-
+      -- Wait for transaction info trigger
+      wait until (sbi_vvc_transaction_info_trigger = '1') or (uart_rx_transaction_info_trigger = '1') or (uart_tx_transaction_info_trigger = '1');
 
       -------------------------------
-      -- SBI DTT
+      -- SBI transaction info
       -------------------------------
-      if sbi_dtt.bt'event then
+      if sbi_vvc_transaction_info_trigger'event then
 
-        case sbi_dtt.bt.operation is
+        case sbi_vvc_transaction_info.bt.operation is
           when WRITE =>
-            --if (sbi_dtt.bt.error_info.NN = false) then
-                -- add to UART scoreboard
-                shared_uart_sb.add_expected(sbi_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
-            --end if;
+              -- add to UART scoreboard
+              UART_VVC_SB.add_expected(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0));
 
           when READ =>
             null;
@@ -247,28 +251,27 @@ begin
 
 
       -------------------------------
-      -- UART RX DTT
+      -- UART RX transaction info
       -------------------------------
-      if uart_rx_dtt.bt'event then
+      if uart_rx_transaction_info_trigger'event then
         -- Send to SB is handled by RX VVC.
         null;
       end if;
 
 
       -------------------------------
-      -- UART TX DTT
+      -- UART TX transaction
       -------------------------------
-      if uart_tx_dtt.bt'event then
+      if uart_tx_transaction_info_trigger'event then
 
-        case uart_tx_dtt.bt.operation is
+        case uart_tx_transaction_info.bt.operation is
           when TRANSMIT =>
 
             -- Check if transaction is intended valid / free of error
-            if  (uart_tx_dtt.bt.error_info.parity_bit_error = false) and
-                (uart_tx_dtt.bt.error_info.stop_bit_error = false) then
-
+            if  (uart_tx_transaction_info.bt.error_info.parity_bit_error = false) and
+                (uart_tx_transaction_info.bt.error_info.stop_bit_error = false) then
                 -- Add to SBI scoreboard
-                shared_sbi_sb.add_expected(uart_tx_dtt.bt.data(C_DATA_WIDTH-1 downto 0));
+                SBI_VVC_SB.add_expected(pad_sb_slv(uart_tx_transaction_info.bt.data(C_DATA_WIDTH-1 downto 0)));
                 -- Wait for UART Transmit to finish before SBI VVC start
                 insert_delay(SBI_VVCT, 1, 12*GC_BIT_PERIOD, "Wait for UART TX to finish");
                 -- Request SBI Read

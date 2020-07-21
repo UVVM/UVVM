@@ -13,8 +13,10 @@ more to come...
 
 ## For starters
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
-Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction. 
 The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
+
+Note that a dedicated repository (UVVM_Light)](https://github.com/UVVM/UVVM_Light) has been provided to simplify getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
 
 Please also see [Getting Started](./GETTING_STARTED.md) with UVVM.
 
@@ -53,14 +55,17 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 
 ## Available VVCs and BFMs
 These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.
-*	AXI4-Lite
-*	AXI-Stream
 *	Avalon MM
+*   Avalon ST - master and slave
+*	AXI4-Lite
+*	AXI-Stream - master and slave
 *	SBI (Simple Bus Interface - A single cycle simple parallel bus interface)
 *	UART
-*	SPI
-*	I2C
+*	SPI - master and slave
+*	I2C - master and slave
 *   GPIO
+*   GMII
+*   RGMII
 *	More are coming
 
 **IMPORTANT**
@@ -89,15 +94,11 @@ These are just fast access links to some interesting info:
 
 ## License
 
-The MIT License (MIT)
+Copyright 2020 Bitvis  
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 
-Copyright (c) 2016 by Bitvis AS
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## UVVM Maintainers
 [Bitvis](http://bitvis.no) (Norway) has released UVVM as open source and we are committed to develop this system further.

@@ -9,6 +9,165 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2020.06.23
+--------------------
+Released: 2020-06-23
+- Renamed t_vvc_list to t_vvc_info_list and await_completion() parameter vvc_list to vvc_info_list.
+- Added match_strictness to all BFM configs and use it in check/expect procedures. Also print HEX
+  or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QRs.
+- Updated Ethernet VVC QuickRef.
+- Updated HVVC-to-VVC Bridge Implementation Guide.
+- Updated UVVM Essential Mechanisms with the Hierarchical VVCs section.
+- Fixed genric values for Scoreboard queue was not used.
+- UART VVC error injection probability default is set to use BFM config settings.
+- UART VVC generic GC_DATA_WIDTH is used for setting BFM config num_data_bits.
+
+
+v2 2020.05.19
+--------------------
+Released: 2020-05-19
+- Added HVVC_to_VVC_Bridge VIP and Ethernet VIP.
+- Added shared_<if>_vvc_transaction_info information to VVC quick references.
+- Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
+- Added new msg_ids in adaptations_pkg.
+- Changed VVC activity methods parameters and default scope.
+- Fixed avalon_mm_read_request waiting on a negative delay when bfm_sync=SYNC_ON_CLOCK_ONLY
+  and clock_period was not configured.
+- Updated VIP quick references.
+- Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
+  is no command being executed.
+- Added missing t_byte_endianness enums.
+- Removed extra log in some BFM procedures when called from another BFM procedure.
+- Added new await_completion command for several VVCs which doesn't block them while waiting.
+- Updated VVC activity_watchdog_register_vvc_state() method call with new t_activity parameter and 
+  other minor improvements.
+
+
+v2 2020.05.12
+--------------------
+Released: 2020-05-12
+- Added compile_bfm.do scripts
+- Added UVVM Guide in uvvm_util/doc/uvvm_guide.pdf
+- Added README.TXT to VIP folders
+- Added GHDL compile script for running demo TBs
+- Updated README with master and slave VIPs
+
+
+v2 2020.04.20
+--------------------
+Released: 2020-04-20
+- Updated Util QR check_value() with MATCH_STD_INCL_Z option.
+- Renamed Simple Watchdog to General Watchdog.
+- Removed logging message from Activity Watchdog for when number of 
+  expected VVCs match actual number.
+- Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
+- Added dependency list in compile_src.do scripts.
+- Added reference to verbosity control in VVC and SB QRs.
+- Added advanced and basic choice to vvc_generator.py
+- Added specification coverage VIP - Bitvis VIP Spec Cov
+
+
+v2 2020.03.30b
+--------------------
+Released: 2020-03-30b
+- Fixed random data in UART TX VVC and SBI VVC.
+
+
+v2 2020.03.30
+--------------------
+Released: 2020-03-30
+- Changed VVC SB name to <IF>_VVC_SB in all VVCs with scoreboarding.
+- Added VVC index to enable_log_msg() calls for all VVCs with scoreboarding.
+- Added data_routing parameter to VVC read/receive procedures for sending data to scoreboard.
+- Fixed SB report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.
+- Added a new predefined scoreboard slv8_sb_pkg.
+- Added checks in all SB procedures to give an error if the instance is not enabled.
+- Renamed Direct Transaction Transfer to transaction info.
+- Fixed logging in Avalon-ST VIP to show the correct total number of words/symbols.
+- Renamed signal VVC to VVCT in GPIO VVC procedures to match the documentation.
+- Added NA element to type t_enabled.
+- Added C_UNUSED_MSG_ID_PANEL and removed t_vvc record in adaptations_pkg.
+- Removed type t_use_provided_msg_id_panel.
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel.
+- Added parent_msg_id_panel optional parameter to all VVC procedures for future HVVC support.
+- Replaced default scope in VVC commands with C_VVC_CMD_SCOPE_DEFAULT so that it is
+  configurable from adaptations_pkg.
+- Moved alert_level parameter placement in Avalon-ST, GMII and RGMII VVC expect procedures.
+- Added CHECK counters and report_check_counters() method to UVVM Utility library.
+
+
+v2 2020.03.06
+--------------------
+Released: 2020-03-06
+- Added 3 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE, ID_PACKET_CHECKSUM and ID_PACKET_GAP.
+- Moved t_channel from types_pkg to adaptations_pkg.
+- Changed t_byte_endianness elements names and added an alias t_word_endianness.
+- Removed unnecessary ascending parameter in convert_slv_array_to_byte_array function.
+- Added functions convert_byte_array_to_slv and convert_slv_to_byte_array to methods_pkg.
+- Removed t_transaction_info from vvc_generator.py script.
+- Fixed bug in the generic queue where deleting the last element would make elements added
+  after the delete disappear.
+- Added a read procedure with the number of bytes to read as a parameter for GMII VIP.
+- Removed deprecated t_transaction_info in GMII VIP, RGMII VIP and Avalon Stream VIP.
+- Updated default max_wait_cycles in GMII VIP.
+
+
+v2 2020.03.02
+--------------------
+Released: 2020-03-02
+- Changed to Apache license.
+
+
+v2 2020.02.16
+--------------------
+Released: 2020-02-16
+- Added Bitvis VIP Avalon ST
+- Added Bitvis VIP RGMII beta
+- Added Bitvis VIP GMII beta
+- Fixed missing Scoreboard VIP in IRQC dependency list.
+- Added missing DTT commands in VIPs.
+- Improved Scoreboard logging.
+- Added default scope and changed alert message for check_file_open_status()
+  in UVVM Util.
+- Fixed bugs and added checks to BFM sync methods.
+- Added C_UVVM_TIMEOUT for internal wait statements.
+- Removed unused code from Clock Generator VVC executor.
+- Added missing generated generics from vvc_generator.py script.
+- Updated figure in UART Demo TB quick reference.
+
+
+v2020.01.24
+--------------------
+Released: 2020-01-24
+- The UVVM forum is released : https://forum.uvvm.org 
+- Fixed an issue with clock generator VIP would use one clock period
+  of the default clock period setting before using the configured setting.
+- Created new constant C_MAX_TB_VVC_NUM for activity watchdog VVC register.
+- Reduced C_MAX_VVC_INSTANCE_NUM from 20 to 8.
+- Added bfm_sync to the BFM configuration record for SBI VIP, Avalon MM VIP,
+  AXI-Lite VIP and AXI-Stream VIP.
+- Clock driven BFMs utilize new synchronising methods, with synchronising to
+  clock as default, and clock_period, setup_time and hold_time set to -1 ns 
+  by default.
+- Clock driven BFMs will detect the clock period and verify with BFM config 
+  specified clock_period and clock_period_margin.
+- Direct Transaction Transfer (DTT) is divided in a global trigger signal and 
+  shared variable with transfer related information.
+- Updated vvc_context files for all VIPs with BFM interface and config types.
+- Removed unused config elements id_for_bfm_wait & id_for_bfm_poll in Axistream BFM.
+- Only check for TLast in receive procedure when config check_packet_length is true in
+  Axistream BFM.
+- Added a t_slv_array_ptr type, a log2 function and a to_string function for integer
+  type with output as DEC, HEX or BIN.
+- Added a deallocate procedure to ti_data_fifo_pkg.
+- Fixed typos and added generation of vvc_context file in vvc_generator.py script.
+- Added missing insert_expected() methods in the generic_sb_pkg.
+- Fixed wrong timestamp when reporting scoreboard counters summary with a non-decimal time.
+- Fixed bug in the generic queue where fetching the last element would make elements added
+  after the fetch disappear.
+- Updated UVVM VVC Framework Essential Mechanisms with direct transaction transfer changes.
+
+
 v2019.12.04
 --------------------
 Released: 2019-12-04

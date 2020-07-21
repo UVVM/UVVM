@@ -1,0 +1,12 @@
+# library bitvis_vip_avalon_st
+../src/avalon_st_bfm_pkg.vhd
+../src/local_adaptations_pkg.vhd
+../src/transaction_pkg.vhd
+../src/vvc_cmd_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
+../src/vvc_methods_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
+../src/avalon_st_vvc.vhd
+../src/vvc_context.vhd

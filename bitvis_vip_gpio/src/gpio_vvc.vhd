@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -74,8 +75,26 @@ architecture behave of gpio_vvc is
   alias vvc_config       : t_vvc_config is shared_gpio_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_gpio_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info : t_transaction_info is shared_gpio_transaction_info(GC_INSTANCE_IDX);
-  -- Activity Watchdog
-  signal vvc_idx_for_activity_watchdog : integer;
+  -- Transaction info
+  alias vvc_transaction_info_trigger : std_logic           is global_gpio_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info         : t_transaction_group is shared_gpio_vvc_transaction_info(GC_INSTANCE_IDX);
+  -- VVC Activity 
+  signal entry_num_in_vvc_activity_register : integer;
+
+  --UVVM: temporary fix for HVVC, remove function below in v3.0
+  function get_msg_id_panel(
+    constant command    : in t_vvc_cmd_record;
+    constant vvc_config : in t_vvc_config
+  ) return t_msg_id_panel is
+  begin
+    -- If the parent_msg_id_panel is set then use it,
+    -- otherwise use the VVCs msg_id_panel from its config.
+    if command.msg(1 to 5) = "HVVC:" then
+      return vvc_config.parent_msg_id_panel;
+    else
+      return vvc_config.msg_id_panel;
+    end if;
+  end function;
 
 begin
 
@@ -98,6 +117,7 @@ begin
     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
+    variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
 
     -- 0. Initialize the process prior to first command
@@ -105,9 +125,9 @@ begin
 
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
-    -- Register VVC in activity watchdog register
-    vvc_idx_for_activity_watchdog <= shared_activity_watchdog.priv_register_vvc(name      => "GPIO",
-                                                                                instance  => GC_INSTANCE_IDX);
+    -- Register VVC in vvc activity register
+    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                        instance  => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
@@ -118,11 +138,12 @@ begin
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd, v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
       v_cmd_has_been_acked := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
@@ -133,6 +154,13 @@ begin
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
       elsif v_local_vvc_cmd.command_type = IMMEDIATE then
+
+        --UVVM: temporary fix for HVVC, remove two lines below in v3.0
+        if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
+          v_temp_msg_id_panel     := vvc_config.msg_id_panel;
+          vvc_config.msg_id_panel := v_msg_id_panel;
+        end if;
+
         case v_local_vvc_cmd.operation is
 
           when AWAIT_COMPLETION =>
@@ -166,6 +194,11 @@ begin
 
         end case;
         wait for 0 ns;
+
+        --UVVM: temporary fix for HVVC, remove line below in v3.0
+        if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
+          vvc_config.msg_id_panel := v_temp_msg_id_panel;
+        end if;
 
       else
         tb_error("command_type is not IMMEDIATE or QUEUED", C_SCOPE);
@@ -207,29 +240,30 @@ begin
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Setup GPIO scoreboard
-    shared_gpio_sb.set_scope("GPIO_VVC");
-    shared_gpio_sb.enable(GC_INSTANCE_IDX, "SB GPIO Enabled");
-    shared_gpio_sb.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-    shared_gpio_sb.enable_log_msg(ID_DATA);
+    GPIO_VVC_SB.set_scope("GPIO_VVC_SB");
+    GPIO_VVC_SB.enable(GC_INSTANCE_IDX, "GPIO VVC SB Enabled");
+    GPIO_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
+    GPIO_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
 
     loop
 
-      -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, false, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
+      -- update vvc activity
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS, v_msg_id_panel);
+      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
-      -- Notify activity watchdog
-      activity_watchdog_register_vvc_state(global_trigger_activity_watchdog, true, vvc_idx_for_activity_watchdog, last_cmd_idx_executed, C_SCOPE);
+      -- update vvc activity
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Reset the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
       transaction_info.operation := v_cmd.operation;
       transaction_info.msg       := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
 
-      -- Update v_msg_id_panel
+      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
+      -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
@@ -257,6 +291,9 @@ begin
       case v_cmd.operation is
 
         when SET =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
           -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "gpio_set() called with to wide data. " & v_cmd.msg);
           transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
@@ -268,6 +305,9 @@ begin
                    msg_id_panel => v_msg_id_panel);
 
         when GET =>
+          -- Set vvc_transaction_info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
           gpio_get(data_value   => v_read_data(GC_DATA_WIDTH-1 downto 0),
                    msg          => format_msg(v_cmd),
                    data_port    => gpio_vvc_if,
@@ -277,7 +317,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            shared_gpio_sb.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0)); 
+            GPIO_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -287,6 +327,9 @@ begin
 
 
         when CHECK =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
           -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_check() called with to wide data. " & v_cmd.msg);
           transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
@@ -299,6 +342,9 @@ begin
                      msg_id_panel => v_msg_id_panel);
 
         when EXPECT =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
           -- Normalise data
           v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_expect() called with to wide data. " & v_cmd.msg);
           transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
@@ -322,6 +368,8 @@ begin
           wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
         else
           -- Delay specified using integer
+          check_value(vvc_config.bfm_config.clock_period > -1 ns, TB_ERROR, "Check that clock_period is configured when using insert_delay().",
+                      C_SCOPE, ID_NEVER, v_msg_id_panel);
           wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.clock_period;
         end if;
 
@@ -348,6 +396,10 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
+
+      -- Set vvc transaction info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
     end loop;
 
   end process;

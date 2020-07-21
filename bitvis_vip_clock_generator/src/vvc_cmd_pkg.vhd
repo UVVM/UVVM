@@ -1,3 +1,14 @@
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
+--
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 --========================================================================================================================
 -- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
@@ -68,8 +79,7 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    use_provided_msg_id_panel : t_use_provided_msg_id_panel;
-    msg_id_panel              : t_msg_id_panel;
+    parent_msg_id_panel       : t_msg_id_panel;
     -- VVC dedicated fields
     clock_period              : time;
     clock_high_time           : time;
@@ -89,8 +99,7 @@ package vvc_cmd_pkg is
     alert_level               => FAILURE,
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
-    use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
-    msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT,
+    parent_msg_id_panel       => C_UNUSED_MSG_ID_PANEL,
     -- VVC dedicated fields
     clock_period              => 10 ns,
     clock_high_time           => 5 ns
@@ -137,7 +146,7 @@ package vvc_cmd_pkg is
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from vvc to sequencer
   --========================================================================================================================
-  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM) := (others => (others => -1));
+  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));
 
 end package vvc_cmd_pkg;
 

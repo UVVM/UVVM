@@ -1,6 +1,35 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+
+v2.1.2
+----------
+Released: 2020-06-23
+- Fixed genric values for SB queue was not used.
+
+v2.1.1
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in QR.
+
+v2.1.0
+----------
+Released: 2020-03-30
+- Fixed report_counters(ALL_ENABLED_INSTANCES) not printing instance 0.
+- Added a new predefined scoreboard slv8_sb_pkg.
+- Added checks in all SB procedures to give an error if the instance is not enabled.
+
+v2.0.3
+----------
+Released: 2020-02-16
+- Updated logs to show the instance number in the SCOPE column instead of the msg.
+
+v2.0.2
+----------
+Released: 2020-01-24
+- Added missing insert_expected() methods in the generic_sb_pkg.
+- Fixed wrong timestamp when reporting counters summary with a non-decimal time.
+
 v2.0.1
 ----------
 Released: 2019-11-21

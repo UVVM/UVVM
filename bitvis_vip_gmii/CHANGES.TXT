@@ -1,0 +1,45 @@
+Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
+==============================================================
+
+v0.3.1
+----------
+Released: 2020-06-23
+- Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
+  or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
+
+v0.3.0
+----------
+Released: 2020-05-19
+- Added shared_gmii_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section and BFM config record description.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+- Removed extra log in read procedure when called from another BFM procedure.
+
+v0.2.1
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in VVC QR.
+
+v0.2.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Moved alert_level parameter placement in gmii_expect() VVC procedure.
+- Added data_routing parameter to VVC read procedure for sending data to scoreboard.
+
+v0.1.1
+----------
+Released: 2020-03-06
+- Added a read procedure with the number of bytes to read as a parameter.
+- Removed deprecated t_transaction_info.
+- Updated default max_wait_cycles.
+
+v0.1.0
+----------
+Released: 2020-02-16
+- Beta version of GMII VIP.

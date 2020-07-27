@@ -372,10 +372,26 @@ package body spec_cov_pkg is
   impure function priv_requirement_exists(
     requirement : string
   ) return boolean is
+
+    impure function get_requirement_length(requirement : string) return natural is
+      variable v_length : natural := 0;
+    begin
+      for i in 1 to requirement'length loop
+        if requirement(i) = NUL then
+          exit;
+        else
+          v_length := v_length + 1;
+        end if;
+      end loop;
+      return v_length;
+    end function get_requirement_length;
+
   begin
     for i in 0 to shared_requirements_in_array-1 loop
-      if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
-        return true;
+      if get_requirement_length(shared_requirement_array(i).requirement.all) = requirement'length then
+        if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+          return true;
+        end if;
       end if;
     end loop;
     return false;

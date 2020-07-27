@@ -5,3 +5,4 @@ REQ_4, Log testcase as PASS and FAIL, TC_4, TC_4_FAIL
 REQ_5, UVVM status error before logging testcase, TC_5
 REQ_6, UVVM status error after logging testcase, TC_6
 REQ_7, Open an non-existing requirement file, TC_7
+REQ_88, Non-matching requirement name, TC_8

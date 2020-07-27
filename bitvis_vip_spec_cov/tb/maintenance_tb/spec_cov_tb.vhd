@@ -121,7 +121,7 @@ begin
       -- Run testcase
       initialize_req_cov("TC_4", "../tb/maintenance_tb/req_file.csv", "pc_4.csv");
       tick_off_req_cov("REQ_4", "TC_4_FAIL", FAIL);
-      tick_off_req_cov("REQ_4", "TC_4");
+      tick_off_req_cov("REQ_4", "TC_4");     
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -173,6 +173,24 @@ begin
       finalize_req_cov(VOID);         
 
 
+    elsif GC_TEST = "test_requirement_name_match" then
+      --
+      -- This test check if partial requirement names, and that don't exist, will trigger an alert.
+      --
+      log(ID_LOG_HDR, "Testing requirement name matching.", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 2);
+
+      -- Run testcase
+      initialize_req_cov("TC_8", "../tb/maintenance_tb/req_file.csv", "pc_12.csv");
+      log(ID_SEQUENCER, "Tick of with only part of requirement name, expecting raised alert.", C_SCOPE);
+      tick_off_req_cov("REQ_8", "TC_8");     
+      log(ID_SEQUENCER, "Tick of requirement name part of non-existing requirement name, expecting raised alert.", C_SCOPE);
+      tick_off_req_cov("REQ_888", "TC_8");     
+      log(ID_SEQUENCER, "Tick of with correct requirement name.", C_SCOPE);
+      tick_off_req_cov("REQ_88", "TC_8");     
+      -- End testcase
+      finalize_req_cov(VOID);
+
 
     ---==========================================================================
     --
@@ -193,7 +211,6 @@ begin
       tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
-
       
     elsif GC_TEST = "test_sub_requirement_fail" then
       --
@@ -208,8 +225,6 @@ begin
       tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
-
-
 
     elsif GC_TEST = "test_incomplete_testcase" then
       --
@@ -226,20 +241,20 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-      elsif GC_TEST = "test_testcase_with_multiple_reqs" then
-        --
-        -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
-        --
-        log(ID_LOG_HDR, "Testing logging multiple requirements with one testcase.", C_SCOPE);  
-        -- Run testcase
-        initialize_req_cov("TC_1", "../tb/maintenance_tb/req_file.csv", "pc_11.csv");   
-        tick_off_req_cov("REQ_1");  
-        tick_off_req_cov("REQ_2");
-        tick_off_req_cov("REQ_3");
-        tick_off_req_cov("REQ_4");
-        -- End testcase
-        finalize_req_cov(VOID);
-  
+    elsif GC_TEST = "test_testcase_with_multiple_reqs" then
+      --
+      -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
+      --
+      log(ID_LOG_HDR, "Testing logging multiple requirements with one testcase.", C_SCOPE);  
+      -- Run testcase
+      initialize_req_cov("TC_1", "../tb/maintenance_tb/req_file.csv", "pc_11.csv");   
+      tick_off_req_cov("REQ_1");  
+      tick_off_req_cov("REQ_2");
+      tick_off_req_cov("REQ_3");
+      tick_off_req_cov("REQ_4");
+      -- End testcase
+      finalize_req_cov(VOID);
+
     else
       --
       -- The Generic Test is unknown.

@@ -770,6 +770,8 @@ package body vvc_methods_pkg is
     else
       -- Log will be handled by calling procedure (e.g. ethernet_expect)
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure priv_ethernet_receive_from_bridge;
 
   procedure priv_ethernet_expect_from_bridge(

@@ -307,6 +307,8 @@ package body gmii_bfm_pkg is
         -- Log will be handled by calling procedure (e.g. gmii_expect)
       end if;
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   ---------------------------------------------------------------------------------------------

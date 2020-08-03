@@ -26,6 +26,7 @@ Released: 2020-xx-xx
 - Added fix with gen_pulse() method for slv with don't care.
 - Added explicit paths for framework methods in SBI VVC executor and interpreter.
 - Fixed missing code generated from vvc_generator.
+- Added missing deallocating of memory in BFMs.
 
 
 v2 2020.06.23

@@ -597,6 +597,8 @@ package body spi_bfm_pkg is
     else
       -- Log will be handled by calling procedure (e.g. spi_master_transmit_and_check)
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   -- Single-word
@@ -1043,6 +1045,8 @@ package body spi_bfm_pkg is
     else
       -- Log will be handled by calling procedure (e.g. spi_master_transmit_and_check)
     end if;
+
+    DEALLOCATE(v_proc_call);
  end procedure;
 
   procedure spi_slave_transmit_and_receive (

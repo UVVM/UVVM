@@ -243,9 +243,6 @@ class Testbench:
         args (list): list of strings with arguments.
       """
 
-      # Convert argument string to list
-      args = str(args[1]).split(" ")
-
       # Convert to upper case
       args = [arg.upper() for arg in args]
 
@@ -258,7 +255,6 @@ class Testbench:
 
       # Check all arguments
       for arg in args:
-        print("checking: %s" %(arg))
         if not self.verbose:  self.verbose  = arg in output_list
         if not self.aldec:    self.aldec    = arg in aldec_list
         if not self.modelsim: self.modelsim = arg in modelsim_list

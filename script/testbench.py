@@ -274,7 +274,6 @@ class Testbench:
       if self.help == True:
         self.print_help()
 
-      #sys.exit(0)
 
     def set_simulator_variable(self):
       """

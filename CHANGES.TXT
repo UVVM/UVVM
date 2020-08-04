@@ -27,6 +27,7 @@ Released: 2020-xx-xx
 - Added explicit paths for framework methods in SBI VVC executor and interpreter.
 - Fixed missing code generated from vvc_generator.
 - Added missing deallocating of memory in BFMs.
+- Removed dependencies reference from IRQC DUT compile_src.do script file.
 
 
 v2 2020.06.23

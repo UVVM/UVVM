@@ -9,7 +9,7 @@ if { [info exists ::env(SIMULATOR)] } {
   } elseif [string equal $simulator "RIVIERAPRO"] {
     set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 
-    do ../../bitvis_vip_avalon_mm/internal_script/make_altera_rv.do
+    do ../../bitvis_vip_avalon_mm/script/maintenance_script/make_altera_rv.do
   } else {
     puts "No simulator! Trying with modelsim"
     quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"

@@ -10,6 +10,7 @@ Released: 2020-xx-xx
   ti_generic_queue_pkg. These will no longer be maintained and users should use the 
   packages in Utility Library.
 - Fixed wrongly commented code generated from vvc_generator.
+- Generated code from vvc_generator.py will now compile without user editing.
 
 
 v2.11.0

@@ -28,6 +28,7 @@ Released: 2020-xx-xx
 - Fixed missing code generated from vvc_generator.
 - Added missing deallocating of memory in BFMs.
 - Removed dependencies reference from IRQC DUT compile_src.do script file.
+- Added more info to set_log_destination method in Util QR.
 
 
 v2 2020.06.23

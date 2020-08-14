@@ -1,38 +1,40 @@
 #===========================|==================|==================|==========|=======================|========================================================|===============|=============================|=============
 # REQ FILE                  | REQ              | TC               | PC FILE  | MAP FILE	             | DESCRIPTION	                                          | SUB REQ	      | CONFIG	                    | SPEC COV
 #===========================|==================|==================|==========|=======================|========================================================|===============|=============================|=============
-# internal_req_file.csv	    | REQ_1	           | TC_1             | pc_1.csv |                       | Testing initialize_req_cov() with no requirement file. |               |                             | sc_1.csv
+# req_file.csv	            | REQ_1	           | TC_1             | pc_1.csv |                       | Testing initialize_req_cov() with no requirement file. |               |                             | sc_1.csv
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_2	           | TC_2             | pc_2.csv |                       | Testing initialize_req_cov() with a requirement file.  |               |                             | sc_2.csv
+# req_file.csv	            | REQ_2	           | TC_2             | pc_2.csv |                       | Testing initialize_req_cov() with a requirement file.  |               |                             | sc_2.csv
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_3 [REQ_10]   | TC_3 TC_50 TC_1  | pc_3.csv |                       | Testing log_req_cov() with default testcase, unknown   |               |                             | sc_3.csv
+# req_file.csv	            | REQ_3 [REQ_10]   | TC_3 TC_50 TC_1  | pc_3.csv |                       | Testing log_req_cov() with default testcase, unknown   |               |                             | sc_3.csv
 #                           |                  |                  |          |                       |  testcase and unknown requirement label.			      |               |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_4	           | TC_4 TC_4_FAIL   | pc_4.csv |                       | Testing log_req_cov() with no test_status (i.e. PASS)  |               |                             | sc_4.csv
+# req_file.csv	            | REQ_4	           | TC_4 TC_4_FAIL   | pc_4.csv |                       | Testing log_req_cov() with no test_status (i.e. PASS)  |               |                             | sc_4.csv
 #                           |                  |                  |          |                       |  and test_status=FAIL.                                 |               |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_5 TC_5       |                  | pc_5.csv |                       | Testing log_req_cov() with UVVM status error triggered |               |                             | sc_5.csv
+# req_file.csv	            | REQ_5            | TC_5             | pc_5.csv |                       | Testing log_req_cov() with UVVM status error triggered |               |                             | sc_5.csv
 #                           |                  |                  |          |                       | prior to initialize_req_cov().			              |               |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_6 TC_6       |                  | pc_6.csv |                       | Testing log_req_cov() with UVVM status error triggered |               |                             | sc_6.csv
+# req_file.csv	            | REQ_6            | TC_6             | pc_6.csv |                       | Testing log_req_cov() with UVVM status error triggered |               |                             | sc_6.csv
 #                           |                  |                  |          |                       | after log_req_cov() and prior to finalize_req_cov().	  |	              |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    |                  | TC_7             | pc_7.csv |                       | Testing initialize_req_cov() with non-existing         |               |                             | sc_7.csv
+# req_file.csv	            |                  | TC_7             | pc_7.csv |                       | Testing initialize_req_cov() with non-existing         |               |                             | sc_7.csv
 #                           |                  |                  |          |                       | requirement file.	                                  |               |                             |		
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_sub_req_file.csv	| UART_REQ_GENERAL | TC_SUB_REQ       | pc_8.csv | internal_map_file.csv | Testing passing sub-requirement with test_status=NA,   | UART_REQ_BR_A | internal_cfg_1_strict_0.txt | sc_8_0.csv
-#                           |                  |                  |          |                       | msg and SCOPE.                                         | UART_REQ_BR_B | internal_cfg_1_strict_1.txt | sc_8_1.csv
-#                           |                  |                  |          |                       |                                                        | UART_REQ_ODD  | internal_cfg_1_strict_2.txt | sc_8_2.csv
+# sub_req_file.csv      	| UART_REQ_GENERAL | TC_SUB_REQ       | pc_8.csv | sub_req_map_file.csv  | Testing passing sub-requirement with test_status=NA,   | UART_REQ_BR_A | cfg_1_strict_0.txt          | sc_8_0.csv
+#                           |                  |                  |          |                       | msg and SCOPE.                                         | UART_REQ_BR_B | cfg_1_strict_1.txt          | sc_8_1.csv
+#                           |                  |                  |          |                       |                                                        | UART_REQ_ODD  | cfg_1_strict_2.txt          | sc_8_2.csv
 #                           |                  |                  |          |                       |                                                        | UART_REQ_EVEN |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_sub_req_file.csv	| UART_REQ_GENERAL | TC_SUB_REQ       | pc_9.csv | internal_map_file.csv | Testing failing sub-requirement with test_status=NA,   | UART_REQ_BR_A | internal_cfg_2_strict_0.txt | sc_9_0.csv
-#                           |                  |                  |          |                       | msg and SCOPE.                                         | UART_REQ_BR_B | internal_cfg_2_strict_1.txt | sc_9_1.csv
-#                           |                  |                  |          |                       |                                                        | UART_REQ_ODD  | internal_cfg_2_strict_2.txt | sc_9_2.csv
+# sub_req_file.csv	        | UART_REQ_GENERAL | TC_SUB_REQ       | pc_9.csv | sub_req_map_file.csv  | Testing failing sub-requirement with test_status=NA,   | UART_REQ_BR_A | cfg_2_strict_0.txt          | sc_9_0.csv
+#                           |                  |                  |          |                       | msg and SCOPE.                                         | UART_REQ_BR_B | cfg_2_strict_1.txt          | sc_9_1.csv
+#                           |                  |                  |          |                       |                                                        | UART_REQ_ODD  | cfg_2_strict_2.txt          | sc_9_2.csv
 #                           |                  |                  |          |                       |                                                        | UART_REQ_EVEN |                             |
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_1	           | TC_1             | pc_10.csv|                       | Testing failing simulations with incomplete testcase.  |               |                             | sc_10.csv
+# req_file.csv	            | REQ_1	           | TC_1             | pc_10.csv|                       | Testing failing simulations with incomplete testcase.  |               |                             | sc_10.csv
 #---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# internal_req_file.csv	    | REQ_1/2/3/4      | TC_1             | pc_11.csv|                       | Testing multiple REQs with one testcase.               |               |                             | sc_11.csv
+# req_file.csv	            | REQ_1/2/3/4      | TC_1             | pc_11.csv|                       | Testing multiple REQs with one testcase.               |               |                             | sc_11.csv
+#---------------------------|------------------|------------------|----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
+# req_file.csv	            | REQ_88           | TC_8             | pc_12.csv|                       | Testing non-matching requirement name.                 |               |                             | sc_12.csv
 #===========================|==================|==================|==========|=======================|========================================================|===============|=============================|=============
 
 import subprocess
@@ -54,7 +56,8 @@ test_list = [
             ["python", "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_2_strict_1.txt"],
             ["python", "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_2_strict_2.txt"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_10.csv", "-s", "../sim/sc_10.csv"],
-            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_11.csv", "-s", "../sim/sc_11.csv"]
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_11.csv", "-s", "../sim/sc_11.csv"],
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_12.csv", "-s", "../sim/sc_12.csv"]
             ]
 
 
@@ -72,17 +75,17 @@ def remove_specification_coverage_files():
 
 def run_tests():
     print("Running tests...")
+    output = None
     for idx, test in enumerate(test_list):
         print("Test %d : %s" %(idx, test))
 
         try:
             output = subprocess.check_output(test, stderr=subprocess.PIPE)
+            # Save output for golden check        
+            with open("output_" + str(idx + 1) + ".txt", 'w') as file:
+                file.write(str(output, 'utf-8'))
         except subprocess.CalledProcessError as e:
             print("ERROR: %s" %(e))
-
-        # Save output for golden check        
-        with open("output_" + str(idx + 1) + ".txt", 'w') as file:
-            file.write(str(output, 'utf-8'))
 
 
 remove_specification_coverage_files()

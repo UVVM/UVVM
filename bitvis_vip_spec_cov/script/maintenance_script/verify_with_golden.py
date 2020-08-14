@@ -62,7 +62,7 @@ def main():
     # Check that all files have been verified
     num_missing_files = abs(len(filelist) - len(golden_file_list))
     if num_missing_files > 0:
-        print("WARNING! Number of files do not match - %d != %d" %(len(filelist), len(golden_file_list)))
+        print("WARNING! Number of files do not match : %d != %d" %(len(filelist), len(golden_file_list)))
 
     # List files with errors
     if failing_verify_file:

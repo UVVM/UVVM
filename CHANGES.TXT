@@ -31,6 +31,7 @@ Released: 2020-xx-xx
 - Added more info to set_log_destination method in Util QR.
 - Removed Spec Cov VIP compile dependency on VVC Framework when using compile_src.do script.
 - Generated code from vvc_generator.py will now compile without user editing.
+- Spec Cov VIP will list requirements that are not found in the requirement file.
 
 
 v2 2020.06.23

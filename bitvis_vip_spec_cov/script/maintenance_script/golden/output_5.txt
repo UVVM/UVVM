@@ -15,6 +15,7 @@ SUMMARY:
 Number of compliant requirements     : 0
 Number of non compliant requirements : 1
 Number of non verified requirements  : 7
+Number of not listed requirements    : 0
 Number of passing testcases : 0
 Number of failing testcases : 1
 Number of not run testcases : 8

@@ -27,6 +27,8 @@ def main():
 
         if os.path.isfile(golden_file):
             num_checked_files += 1
+            golden_file_lines = len(open(golden_file).readlines(  ))
+            check_file_lines  = len(open(filename).readlines(  ))
             
             # Read golden file
             with open(golden_file, 'r') as file:
@@ -43,6 +45,10 @@ def main():
                     failing_verify_file.append(filename)
                     error_found = True
                     break
+            # Check for line number mismatch
+            if golden_file_lines != check_file_lines:
+                failing_verify_file.append(filename)
+                error_found = True
 
             # Remove OK files
             if not(error_found):

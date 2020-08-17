@@ -51,71 +51,71 @@ class Requirement():
     """
 
     def __init__(self, req_name = None):
-        self.req_name                   = req_name
-        self.expected_testcase_list     = []
-        self.actual_testcase_list       = []
-        self.sub_requirement_list       = []
-        self.super_requirement_list     = []
-        self.requirement_description    = None
-        self.req_compliance                 = not_tested_compliant_string
-        self.testcases_are_or_listed    = False
-        self.defined_in_req_file        = False
-        self.req_file_idx               = 0
+        self.__req_name                   = req_name
+        self.__expected_testcase_list     = []
+        self.__actual_testcase_list       = []
+        self.__sub_requirement_list       = []
+        self.__super_requirement_list     = []
+        self.__requirement_description    = None
+        self.__req_compliance             = not_tested_compliant_string
+        self.__testcases_are_or_listed    = False
+        self.__req_is_defined_in_req_file = False
+        self.__req_file_idx               = 0
 
     @property
     def name(self) -> str :
-        return self.req_name
+        return self.__req_name
     @name.setter
     def name(self, req_name) -> None :
-        self.req_name = req_name
+        self.__req_name = req_name
 
     @property
     def description(self) -> str :
-        return self.requirement_description
+        return self.__requirement_description
     @description.setter
     def description(self, requirement_description) -> None :
-        self.requirement_description = requirement_description
+        self.__requirement_description = requirement_description
 
 
     def add_expected_testcase(self, testcase) -> None :
         # Add if not already in list
-        if not(testcase in self.expected_testcase_list):
-           self.expected_testcase_list.append(testcase)
+        if not(testcase in self.__expected_testcase_list):
+           self.__expected_testcase_list.append(testcase)
         # Update testcase result if testcase already exists
         else:
-            for actual_testcase in self.actual_testcase_list():
+            for actual_testcase in self.__actual_testcase_list():
                 if actual_testcase.name.upper() == testcase.name.upper():
                     actual_testcase.result = testcase.result
 
         # Update for any super-requirement
-        for super_requirement in self.super_requirement_list:
+        for super_requirement in self.__super_requirement_list:
             super_requirement.add_expected_testcase(testcase)
 
 
     def get_expected_testcase_list(self) -> list :
-        return self.expected_testcase_list
+        return self.__expected_testcase_list
 
 
     def add_actual_testcase(self, testcase) -> None :
         # Add if not already in list
-        if not(testcase in self.actual_testcase_list):
-            self.actual_testcase_list.append(testcase)
+        if not(testcase in self.__actual_testcase_list):
+            self.__actual_testcase_list.append(testcase)
         # Update testcase result if testcase already exists
         else:
-            for actual_testcase in self.actual_testcase_list:
+            for actual_testcase in self.__actual_testcase_list:
                 if actual_testcase.name.upper() == testcase.name.upper():
                     actual_testcase.result = testcase.result
         # Update for any super-requirement
-        for super_requirement in self.super_requirement_list:
+        for super_requirement in self.__super_requirement_list:
             super_requirement.add_actual_testcase(testcase)
 
 
     def get_actual_testcase_list(self) -> list :
-        return self.actual_testcase_list
+        return self.__actual_testcase_list
 
 
     def get_from_actual_testcase_list(self, testcase_name):
-        for actual_testcase in self.actual_testcase_list:
+        for actual_testcase in self.__actual_testcase_list:
             if actual_testcase.name.upper() == testcase_name.upper():
                 return actual_testcase
         return None
@@ -133,7 +133,7 @@ class Requirement():
         failing_testcase_list = []
         not_run_testcase_list = []
 
-        testcase_list = self.actual_testcase_list + self.expected_testcase_list
+        testcase_list = self.__actual_testcase_list + self.__expected_testcase_list
         for testcase in testcase_list:
             if (testcase.result == testcase_pass_string) and not(testcase in passing_testcase_list):
                 passing_testcase_list.append(testcase)
@@ -147,75 +147,75 @@ class Requirement():
 
         
     def add_super_requirement(self, super_requirement) -> None :
-        if not(super_requirement in self.super_requirement_list):
-            self.super_requirement_list.append(super_requirement)
+        if not(super_requirement in self.__super_requirement_list):
+            self.__super_requirement_list.append(super_requirement)
 
 
     def get_supert_requirement_list(self) -> list :
-        return self.super_requirement_list
+        return self.__super_requirement_list
 
 
     def add_sub_requirement(self, sub_requirement) -> None :
-        if not(sub_requirement in self.sub_requirement_list):
-            self.sub_requirement_list.append(sub_requirement)
+        if not(sub_requirement in self.__sub_requirement_list):
+            self.__sub_requirement_list.append(sub_requirement)
 
 
     def get_sub_requirement_list(self) -> list :
-        return self.sub_requirement_list
+        return self.__sub_requirement_list
 
     @property
     def compliance(self) -> str :
         # Update if dependent on any sub-requirements
-        for sub_requirement in self.sub_requirement_list:
+        for sub_requirement in self.__sub_requirement_list:
             # Do not overwrite NON_COMPLIANT
-            if not(self.req_compliance == non_compliant_string):
-                self.req_compliance = sub_requirement.compliance
-        return self.req_compliance
+            if not(self.__req_compliance == non_compliant_string):
+                self.__req_compliance = sub_requirement.compliance
+        return self.__req_compliance
 
     @compliance.setter
     def compliance(self, req_compliance) -> None :
         # COMPLIANT should not be allowed to overwrite a NON_COMPLIANT
-        if not(self.req_compliance == non_compliant_string):
-            self.req_compliance = req_compliance
+        if not(self.__req_compliance == non_compliant_string):
+            self.__req_compliance = req_compliance
         # Update any super-requirements
-        for requirement in self.super_requirement_list:
+        for requirement in self.__super_requirement_list:
             requirement.compliance = req_compliance
 
 
     @property
     def is_or_listed(self) -> bool :
-        return self.testcases_are_or_listed
+        return self.__testcases_are_or_listed
 
     @is_or_listed.setter
     def is_or_listed(self, set) -> None :
-        self.testcases_are_or_listed = set
+        self.__testcases_are_or_listed = set
 
 
     def is_super_requirement(self) -> bool :
-        if self.sub_requirement_list:
+        if self.__sub_requirement_list:
             return True
         return False
     
     def is_sub_requirement(self) -> bool :
-        if self.super_requirement_list:
+        if self.__super_requirement_list:
             return True
         return False
 
     @property
     def found_in_requirement_file(self) -> bool :
-        return self.defined_in_req_file
+        return self.__req_is_defined_in_req_file
 
     @found_in_requirement_file.setter
     def found_in_requirement_file(self, found) -> None :
-        self.defined_in_req_file = found
+        self.__req_is_defined_in_req_file = found
 
     @property
     def requirement_file_idx(self) -> int :
-        return self.req_file_idx
+        return self.__req_file_idx
 
     @requirement_file_idx.setter
     def requirement_file_idx(self, idx) -> None : 
-        self.req_file_idx = idx
+        self.__req_file_idx = idx
 
 
 class Testcase():
@@ -228,52 +228,52 @@ class Testcase():
     """
 
     def __init__(self, tc_name = None):
-        self.tc_name                    = tc_name
-        self.expected_requirement_list  = []
-        self.actual_requirement_list    = []
-        self.tc_result                  = testcase_not_run_string
+        self.__tc_name                    = tc_name
+        self.__expected_requirement_list  = []
+        self.__actual_requirement_list    = []
+        self.__tc_result                  = testcase_not_run_string
 
 
     @property
     def name(self) -> str :
-        return self.tc_name
+        return self.__tc_name
 
     @name.setter
     def name(self, tc_name) -> None :
-        self.tc_name = tc_name
+        self.__tc_name = tc_name
 
     @property
     def result(self) -> None :
-        return self.tc_result
+        return self.__tc_result
         
     @result.setter
     def result(self, result) -> str :
         # PASS should not be allowed to overwrite a FAIL.
-        if not(self.tc_result == testcase_fail_string):
-            self.tc_result = result.upper()
+        if not(self.__tc_result == testcase_fail_string):
+            self.__tc_result = result.upper()
 
     def add_expected_requirement(self, requirement) -> None :
-        self.expected_requirement_list.append(requirement)
+        self.__expected_requirement_list.append(requirement)
 
 
     def get_expected_requirement_list(self) -> list :
-        return self.expected_requirement_list
+        return self.__expected_requirement_list
 
 
     def add_actual_requirement(self, requirement) -> None :
-        self.actual_requirement_list.append(requirement)
+        self.__actual_requirement_list.append(requirement)
 
 
     def get_actual_requirement_list(self) -> list :
-        return self.actual_requirement_list
+        return self.__actual_requirement_list
 
 
     def get_all_requirement_list(self) -> list :
         all_requirement_list = []
-        for requirement in self.actual_requirement_list:
+        for requirement in self.__actual_requirement_list:
             all_requirement_list.append(requirement)
 
-        for requirement in self.expected_requirement_list:
+        for requirement in self.__expected_requirement_list:
             if not requirement in all_requirement_list:
                 all_requirement_list.append(requirement)
         return all_requirement_list
@@ -285,13 +285,14 @@ class Container():
     """
 
     def __init__(self):
-        self.testcase_list = []
-        self.requirement_list = []
-        self.sorted_requirement_list = []
+        self.__testcase_list = []
+        self.__requirement_list = []
+        self.__sorted_requirement_list = []
 
 
     def get_requirement(self, name):
-        for requirement in self.requirement_list:
+        """ Return requirement obj from list, create new and add if not found. """
+        for requirement in self.__requirement_list:
             # Found, return object
             if requirement.name.upper() == name.upper():
                 return requirement
@@ -301,27 +302,20 @@ class Container():
         return requirement
 
 
-    def requirement_exist(self, name) -> bool :
-        for requirement in self.requirement_list:
-            # Found, return object
-            if requirement.name.upper() == name.upper():
-                return True
-        return False   
-
-
     def add_requirement(self, new_requirement) -> None :
-        for requirement in self.requirement_list:
+        for requirement in self.__requirement_list:
+            # Skip already listed
             if requirement.name.upper() == new_requirement.name.upper():
                 return
-        self.requirement_list.append(new_requirement)
+        self.__requirement_list.append(new_requirement)
 
 
     def get_requirement_list(self) -> list :
-        return self.requirement_list
+        return self.__requirement_list
 
 
     def get_testcase(self, name):
-        for testcase in self.testcase_list:
+        for testcase in self.__testcase_list:
             # Found, return object
             if testcase.name.upper() == name.upper():
                 return testcase
@@ -332,26 +326,28 @@ class Container():
 
 
     def add_testcase(self, new_testcase) -> None :
-        for testcase in self.testcase_list:
+        for testcase in self.__testcase_list:
             if testcase.name.upper() == new_testcase.name.upper():
                 return
-        self.testcase_list.append(new_testcase)
+        self.__testcase_list.append(new_testcase)
 
 
     def get_testcase_list(self) -> list :
-        return self.testcase_list
+        return self.__testcase_list
 
 
     def add_requirement_to_organized_list(self, requirement) -> None :
-        if not(requirement in self.sorted_requirement_list):
-            self.sorted_requirement_list.append(requirement)
+        """ Create a list of requirements as listed in requirement file. """
+        if not(requirement in self.__sorted_requirement_list):
+            self.__sorted_requirement_list.append(requirement)
 
 
     def organize_requirements(self) -> None :
-        for req in self.requirement_list:
-            if not(req in self.sorted_requirement_list):
-                self.sorted_requirement_list.append(req)
-        self.requirement_list = self.sorted_requirement_list.copy()
+        """ Organize requirements with the ones found in requirement file first. """
+        for req in self.__requirement_list:
+            if not(req in self.__sorted_requirement_list):
+                self.__sorted_requirement_list.append(req)
+        self.__requirement_list = self.__sorted_requirement_list.copy()
 
 
 #==========================================================================
@@ -403,6 +399,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
     requirement_compliant_list = []
     requirement_non_compliant_list = []
     requirement_not_run_list = []
+    requirement_not_listed_list = []
 
     for testcase in container.get_testcase_list():
         if testcase.result == testcase_not_run_string:
@@ -425,6 +422,9 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
         else:
             print("WARNING! Unknown result for requirement : %s." %(requirement.name))
             requirement_non_compliant_list.append(requirement)
+        if not requirement.found_in_requirement_file:
+            requirement_not_listed_list.append(requirement)
+
 
     # Add results to reporting dictionary
     reporting_dict["num_compliant_requirements"] = str(len(requirement_compliant_list))
@@ -447,6 +447,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
     print("Number of compliant requirements     : %d" %(len(requirement_compliant_list)))
     print("Number of non compliant requirements : %d" %(len(requirement_non_compliant_list)))
     print("Number of non verified requirements  : %d" %(len(requirement_not_run_list)))
+    print("Number of not listed requirements    : %s" %(len(requirement_not_listed_list)))
     print("Number of passing testcases : %d" %(len(testcase_pass_list)))
     print("Number of failing testcases : %d" %(len(testcase_fail_list)))
     print("Number of not run testcases : %d" %(len(testcase_not_run_list)))
@@ -465,6 +466,11 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
     if requirement_not_run_list:
         print("Not verified requirement(s) :")
         for item in requirement_not_run_list:
+            print("%s%s " %(item.name, delimiter), end='')
+        print("\n")
+    if requirement_not_listed_list:
+        print("Not listed requirement(s) :")
+        for item in requirement_not_listed_list:
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
 
@@ -512,6 +518,10 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
                     csv_writer.writerow([requirement.name, " " + sub_requirement_string, ""])
+            if requirement_not_listed_list:
+                csv_writer.writerow(["Not listed requirement(s)", "", ""])
+                for requirement in requirement_not_listed_list:
+                    csv_writer.writerow([requirement.name, "", ""])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
@@ -548,6 +558,10 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
                     csv_writer.writerow([requirement.name, " " + sub_requirement_string, ""])
+            if requirement_not_listed_list:
+                csv_writer.writerow(["Not listed requirement(s)", "", ""])
+                for requirement in requirement_not_listed_list:
+                    csv_writer.writerow([requirement.name, "", ""])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -695,6 +709,7 @@ def build_mapping_requirement_list(run_configuration, container, delimiter):
                         super_requirement_name = cell_item.strip()
                         
                         super_requirement = container.get_requirement(super_requirement_name)
+                        super_requirement.found_in_requirement_file = True
 
                     # Rest of the cells are sub-requirements
                     else:

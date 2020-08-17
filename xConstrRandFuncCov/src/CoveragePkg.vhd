@@ -20,9 +20,6 @@
 --        11898 SW 128th Ave.  Tigard, Or  97223
 --        http://www.SynthWorks.com
 --
---  Latest standard version available at:
---        http://www.SynthWorks.com/downloads
---
 --  Revision History:      For more details, see CoveragePkg_release_notes.pdf
 --    Date      Version    Description
 --    06/2010:  0.1        Initial revision
@@ -51,7 +48,16 @@
 --    04/2018   2018.04    Updated PercentCov calculation so AtLeast of <= 0 is correct
 --                         String' Fix for GHDL
 --                         Removed Deprecated procedure Increment - see TbUtilPkg as it moved there
---                         
+--    01/2020   2020.01    Updated Licenses to Apache
+--    05/2020   2020.05    Updated LastIndex to also be set during ICover.   
+--                         Updated deallocate to set all variables to their initial value
+--                         Added GetInc{Index, BinVal, Point}
+--                         Added GetNext{Index, BinVal, Point}[(Mode => {RANDOM|INCREMENT|MIN})]
+--                         Added NextPointModeType = (RANDOM, INCREMENT, MIN)
+--                         Added SetNextPointMode[(Mode => {RANDOM|INCREMENT|MIN})
+--                         Added to_std_logic(integer), to_boolean(integer) + vector forms
+--                         RandCov{Point|BinVal} is deprecated, renamed to GetRand{Point|BinVal}
+--
 --
 --  Development Notes:
 --      The coverage procedures are named ICover to avoid conflicts with
@@ -62,33 +68,23 @@
 --      composites with unconstrained elements
 --
 --
---  Copyright (c) 2010 - 2018 by SynthWorks Design Inc.  All rights reserved.
---
---  Verbatim copies of this source file may be used and
---  distributed without restriction.
---
---  This source file is free software; you can redistribute it
---  and/or modify it under the terms of the ARTISTIC License
---  as published by The Perl Foundation; either version 2.0 of
---  the License, or (at your option) any later version.
---
---  This source is distributed in the hope that it will be
---  useful, but WITHOUT ANY WARRANTY; without even the implied
---  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
---  PURPOSE. See the Artistic License for details.
---
---  You should have received a copy of the license with this source.
---  If not download it from,
---     http://www.perlfoundation.org/artistic_license_2_0
---
---  Credits:
---    CovBinBaseType is inspired by a structure proposed in the
---    paper "Functional Coverage - without SystemVerilog!"
---    by Alan Fitch and Doug Smith.  Presented at DVCon 2010
---    However the approach in their paper uses entities and
---    architectures where this approach relies on functions
---    and procedures, so the usage models differ greatly however.
---
+--  This file is part of OSVVM.
+--  
+--  Copyright (c) 2010 - 2020 by SynthWorks Design Inc.  
+--  
+--  Licensed under the Apache License, Version 2.0 (the "License");
+--  you may not use this file except in compliance with the License.
+--  You may obtain a copy of the License at
+--  
+--      https://www.apache.org/licenses/LICENSE-2.0
+--  
+--  Unless required by applicable law or agreed to in writing, software
+--  distributed under the License is distributed on an "AS IS" BASIS,
+--  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+--  See the License for the specific language governing permissions and
+--  limitations under the License.
+--  
+
 
 library ieee ;
 use ieee.std_logic_1164.all ;
@@ -161,6 +157,8 @@ package CoveragePkg is
   constant ZERO_BIN    : CovBinType := (0 => ( BinVal => (1=>(0,0)), Action => COV_COUNT,   Count => 0, AtLeast => 1, Weight => 1 )) ;
   constant ONE_BIN     : CovBinType := (0 => ( BinVal => (1=>(1,1)), Action => COV_COUNT,   Count => 0, AtLeast => 1, Weight => 1 )) ;
   constant NULL_BIN    : CovBinType(work.RandomPkg.NULL_RANGE_TYPE) := (others => ( BinVal => ALL_RANGE,  Action => integer'high, Count => 0, AtLeast => integer'high, Weight => integer'high )) ;
+
+  type NextPointModeType is (RANDOM, INCREMENT, MIN) ; 
 
   type CountModeType   is (COUNT_FIRST, COUNT_ALL) ;
   type IllegalModeType is (ILLEGAL_ON, ILLEGAL_FAILURE, ILLEGAL_OFF) ;
@@ -284,6 +282,7 @@ package CoveragePkg is
 
     -- procedure FileOpenWriteCovDb (FileName : string; OpenKind : File_Open_Kind ) ;
     -- procedure FileCloseWriteCovDb ;
+    procedure SetNextPointMode (A : NextPointModeType) ;
     procedure SetIllegalMode (A : IllegalModeType) ;
     procedure SetWeightMode (A : WeightModeType;  Scale : real := 1.0) ;
     procedure SetName (Name : String) ;
@@ -395,11 +394,8 @@ package CoveragePkg is
     procedure SetCovZero ;
 
     impure function IsInitialized return boolean ;
-    impure function GetNumBins return integer ;
-    impure function GetMinIndex return integer ;
     impure function GetMinCov return real ;       -- PercentCov
     impure function GetMinCount return integer ;  -- Count
-    impure function GetMaxIndex return integer ;
     impure function GetMaxCov return real ;       -- PercentCov
     impure function GetMaxCount return integer ;  -- Count
     impure function CountCovHoles ( PercentCov : real ) return integer ;
@@ -411,30 +407,57 @@ package CoveragePkg is
     impure function GetItemCount return integer ;
     impure function GetTotalCovGoal ( PercentCov : real ) return integer ;
     impure function GetTotalCovGoal return integer ;
+    
+    -- Return Index
+    impure function GetNumBins return integer ;
     impure function GetLastIndex return integer ;
+    impure function GetRandIndex return integer ;
+    impure function GetRandIndex ( CovTargetPercent : real ) return integer ;
+    impure function GetIncIndex return integer ;
+    impure function GetMinIndex return integer ;
+    impure function GetMaxIndex return integer ;
+    impure function GetNextIndex  return integer ;
+    impure function GetNextIndex(Mode : NextPointModeType)  return integer ;
 
     -- Return BinVal
     impure function GetBinVal ( BinIndex : integer ) return RangeArrayType ;
     impure function GetLastBinVal return RangeArrayType ;
-    impure function RandCovBinVal ( PercentCov : real ) return RangeArrayType ;
-    impure function RandCovBinVal return RangeArrayType ;
+    impure function GetRandBinVal return RangeArrayType ;
+    impure function GetRandBinVal ( PercentCov : real ) return RangeArrayType ;
+    impure function GetIncBinVal  return RangeArrayType ;   
     impure function GetMinBinVal  return RangeArrayType ;
     impure function GetMaxBinVal  return RangeArrayType ;
+    impure function GetNextBinVal  return RangeArrayType ;
+    impure function GetNextBinVal(Mode : NextPointModeType)  return RangeArrayType ;
     impure function GetHoleBinVal ( ReqHoleNum : integer ; PercentCov : real  ) return RangeArrayType ;
     impure function GetHoleBinVal ( PercentCov : real ) return RangeArrayType ;
     impure function GetHoleBinVal ( ReqHoleNum : integer := 1 ) return RangeArrayType ;
+    -- RandCovBinVal is deprecated, renamed to GetRandBinVal
+    impure function RandCovBinVal return RangeArrayType ; 
+    impure function RandCovBinVal ( PercentCov : real ) return RangeArrayType ; -- deprecated,  see GetRandBinVal
 
     -- Return Points
-    impure function RandCovPoint return integer ;
-    impure function RandCovPoint ( PercentCov : real ) return integer ;
-    impure function RandCovPoint return integer_vector ;
-    impure function RandCovPoint ( PercentCov : real ) return integer_vector ;
     impure function GetPoint ( BinIndex : integer ) return integer ;
     impure function GetPoint ( BinIndex : integer ) return integer_vector ;
+    impure function GetRandPoint return integer ;
+    impure function GetRandPoint ( PercentCov : real ) return integer ;
+    impure function GetRandPoint return integer_vector ;
+    impure function GetRandPoint ( PercentCov : real ) return integer_vector ;
+    impure function GetIncPoint return integer ;   
+    impure function GetIncPoint return integer_vector ;   
     impure function GetMinPoint return integer ;
     impure function GetMinPoint return integer_vector ;
     impure function GetMaxPoint return integer ;
     impure function GetMaxPoint return integer_vector ;
+    impure function GetNextPoint  return integer ;
+    impure function GetNextPoint  return integer_vector ;
+    impure function GetNextPoint(Mode : NextPointModeType)  return integer ;
+    impure function GetNextPoint(Mode : NextPointModeType)  return integer_vector ;
+    -- RandCovPoint is deprecated, renamed to GetRandPoint
+    impure function RandCovPoint return integer ;
+    impure function RandCovPoint ( PercentCov : real ) return integer ;
+    impure function RandCovPoint return integer_vector ;
+    impure function RandCovPoint ( PercentCov : real ) return integer_vector ;
 
     -- GetBin returns an internal value of the coverage data structure
     -- The return value may change as the package evolves
@@ -754,10 +777,15 @@ package CoveragePkg is
   ------------------------------------------------------------
   -- Utilities.  Remove if added to std.standard
   function to_integer ( B : boolean ) return integer ;
+  function to_boolean ( I : integer ) return boolean ;
   function to_integer ( SL : std_logic ) return integer ;
+  function to_std_logic ( I : integer ) return std_logic ;
   function to_integer_vector ( BV : boolean_vector ) return integer_vector ;
+  function to_boolean_vector ( IV : integer_vector ) return boolean_vector ;
   function to_integer_vector ( SLV : std_logic_vector ) return integer_vector ;
-  
+  function to_std_logic_vector ( IV : integer_vector ) return std_logic_vector ;
+  alias to_slv is to_std_logic_vector[integer_vector return std_logic_vector] ;
+
   
   ------------------------------------------------------------
   ------------------------------------------------------------
@@ -1253,7 +1281,7 @@ package body CoveragePkg is
       AtLeast       : integer ;
       Weight        : integer ;
       PercentCov    : real ;
-      OrderCount    : integer ;
+--!      OrderCount    : integer ;
       Name          : line ;
     end record CovBinBaseTempType ;
     type CovBinTempType is array (natural range <>) of CovBinBaseTempType ;
@@ -1262,15 +1290,17 @@ package body CoveragePkg is
     variable CovBinPtr  : CovBinPtrType ;
     variable NumBins    : integer := 0 ;
     variable BinValLength  : integer := 1 ;
-    variable OrderCount : integer := 0 ;  -- for statistics
+--!    variable OrderCount : integer := 0 ;  -- for statistics
     variable ItemCount : integer := 0 ;  -- Count of randomizations
-    variable LastIndex : integer := 1 ;  -- Index of last randomization
+    variable LastIndex : integer := 1 ;  -- Index of last Stimulus Gen or Coverage Collection
+    variable LastStimGenIndex : integer := 1 ;  -- Index of last stimulus gen
 
     -- Internal Modes and Names
-    variable IllegalMode   : IllegalModeType := ILLEGAL_ON ;
-    variable IllegalModeLevel : AlertType    := ERROR ; 
-    variable WeightMode    : WeightModeType  := AT_LEAST ;
-    variable WeightScale   : real            := 1.0 ;
+    variable NextPointModeVar : NextPointModeType := RANDOM ; 
+    variable IllegalMode      : IllegalModeType   := ILLEGAL_ON ;
+    variable IllegalModeLevel : AlertType         := ERROR ; 
+    variable WeightMode       : WeightModeType    := AT_LEAST ;
+    variable WeightScale      : real              := 1.0 ;
 
     variable ThresholdingEnable : boolean := FALSE ; -- thresholding disabled by default
     variable CovThreshold  : real := 45.0 ;
@@ -1438,6 +1468,13 @@ package body CoveragePkg is
         RvSeedInit := TRUE ;
       end if ;
     end procedure SetMessage ;
+
+    ------------------------------------------------------------
+    procedure SetNextPointMode (A : NextPointModeType) is
+    ------------------------------------------------------------
+    begin
+      NextPointModeVar := A ;
+    end procedure SetNextPointMode ;
 
     ------------------------------------------------------------
     procedure SetIllegalMode (A : IllegalModeType) is
@@ -1758,7 +1795,7 @@ package body CoveragePkg is
       CovBinPtr.all(NumBins).Weight      := Weight ;
       CovBinPtr.all(NumBins).Name        := new String'(Name) ;
       CovBinPtr.all(NumBins).PercentCov  := PercentCov ;
-      CovBinPtr.all(NumBins).OrderCount  := 0 ;  --- Metrics for evaluating randomization order Temp
+--!      CovBinPtr.all(NumBins).OrderCount  := 0 ;  --- Metrics for evaluating randomization order Temp
     end procedure InsertNewBin ;
 
 
@@ -2056,10 +2093,16 @@ package body CoveragePkg is
       DeallocateName ;
       DeallocateMessage ;
       -- Restore internal variables to their default values
+      VendorCovHandleVar := 0 ;
       NumBins := 0 ;
-      OrderCount := 0 ;
       BinValLength := 1 ;
-      IllegalMode   := ILLEGAL_ON ;
+--!      OrderCount := 0 ;
+      ItemCount := 0 ;
+      LastIndex := 1 ;
+      LastStimGenIndex := 1 ;
+      NextPointModeVar := RANDOM ;
+      IllegalMode      := ILLEGAL_ON ;
+      IllegalModeLevel := ERROR ; 
       WeightMode    := AT_LEAST ;
       WeightScale   := 1.0 ;
       ThresholdingEnable := FALSE ;
@@ -2067,6 +2110,7 @@ package body CoveragePkg is
       CovTarget     := 100.0 ;
       MergingEnable := FALSE ;
       CountMode     := COUNT_FIRST ;
+      RvSeedInit    := FALSE ;
       AlertLogIDVar := OSVVM_ALERTLOG_ID ;
       -- RvSeedInit    := FALSE ;
       WritePassFailVar   := COV_OPT_INIT_PARM_DETECT ;
@@ -2091,9 +2135,9 @@ package body CoveragePkg is
       CovBinPtr(Index).PercentCov := CalcPercentCov(
         Count => CovBinPtr.all(Index).Count,  
         AtLeast =>  CovBinPtr.all(Index).AtLeast ) ;
-      -- OrderCount handling - Statistics
-      OrderCount := OrderCount + 1 ;
-      CovBinPtr(Index).OrderCount := OrderCount + CovBinPtr(Index).OrderCount ;
+--!      -- OrderCount handling - Statistics
+--!      OrderCount := OrderCount + 1 ;
+--!      CovBinPtr(Index).OrderCount := OrderCount + CovBinPtr(Index).OrderCount ;
       if CovBinPtr(Index).action = COV_ILLEGAL then
         if IllegalMode /= ILLEGAL_OFF then
           if CovPoint = NULL_INTV then
@@ -2116,7 +2160,7 @@ package body CoveragePkg is
     procedure ICoverLast is
     ------------------------------------------------------------
     begin
-     ICoverIndex(LastIndex, NULL_INTV) ;
+     ICoverIndex(LastStimGenIndex, NULL_INTV) ;
     end procedure ICoverLast ;
 
 
@@ -2136,13 +2180,16 @@ package body CoveragePkg is
         Alert(AlertLogIDVar, GetNamePlus(prefix => "in ", suffix => ", ") & "CoveragePkg." &  
         " ICover: CovPoint length = " & to_string(CovPoint'length) &
         "  does not match Coverage Bin dimensions = " & to_string(BinValLength), FAILURE) ; 
-      elsif CountMode = COUNT_FIRST and inside(CovPoint, CovBinPtr(LastIndex).BinVal.all) then
-        ICoverIndex(LastIndex, CovPoint) ;
+      -- Search LastStimGenIndex first.  Important it is not LastIndex seen by ICover below.
+      -- If find an object in a sentinal bin - only looks in sentinal bin after that point
+      elsif CountMode = COUNT_FIRST and inside(CovPoint, CovBinPtr(LastStimGenIndex).BinVal.all) then
+        ICoverIndex(LastStimGenIndex, CovPoint) ;
       else
         CovLoop : for i in 1 to NumBins loop
           -- skip this CovBin if CovPoint is not in it
           next CovLoop when not inside(CovPoint, CovBinPtr(i).BinVal.all) ;
           -- Mark Covered
+          LastIndex := i ; -- Mark found index
           ICoverIndex(i, CovPoint) ;
           exit CovLoop when CountMode = COUNT_FIRST ;   -- only find first one
         end loop CovLoop ;
@@ -2159,9 +2206,9 @@ package body CoveragePkg is
         CovBinPtr(i).PercentCov := CalcPercentCov(
           Count => CovBinPtr.all(i).Count,  
           AtLeast =>  CovBinPtr.all(i).AtLeast ) ;
-        CovBinPtr(i).OrderCount := 0 ;
+--!        CovBinPtr(i).OrderCount := 0 ;
       end loop ;
-      OrderCount := 0 ;
+--!      OrderCount := 0 ;
     end procedure ClearCov ;
 
     ------------------------------------------------------------
@@ -2178,30 +2225,6 @@ package body CoveragePkg is
     begin
       return NumBins > 0 ;
     end function IsInitialized ;
-
-
-    ------------------------------------------------------------
-    impure function GetNumBins return integer is
-    ------------------------------------------------------------
-    begin
-      return NumBins ;
-    end function GetNumBins ;
-
-
-    ------------------------------------------------------------
-    impure function GetMinIndex return integer is
-    ------------------------------------------------------------
-      variable MinCov : real := real'right ;  -- big number
-      variable MinIndex : integer := NumBins ;
-    begin
-      CovLoop : for i in 1 to NumBins loop
-        if CovBinPtr(i).action = COV_COUNT and CovBinPtr(i).PercentCov < MinCov then
-          MinCov := CovBinPtr(i).PercentCov ;
-          MinIndex := i ;
-        end if ;
-      end loop CovLoop ;
-      return MinIndex ;
-    end function GetMinIndex ;
 
 
     ------------------------------------------------------------
@@ -2230,22 +2253,6 @@ package body CoveragePkg is
       end loop CovLoop ;
       return MinCount ;
     end function GetMinCount ;
-
-
-    ------------------------------------------------------------
-    impure function GetMaxIndex return integer is
-    ------------------------------------------------------------
-      variable MaxCov : real := 0.0 ;
-      variable MaxIndex : integer := NumBins ;
-    begin
-      CovLoop : for i in 1 to NumBins loop
-        if CovBinPtr(i).action = COV_COUNT and CovBinPtr(i).PercentCov > MaxCov then
-          MaxCov := CovBinPtr(i).PercentCov ;
-          MaxIndex := i ;
-        end if ;
-      end loop CovLoop ;
-      return MaxIndex ;
-    end function GetMaxIndex ;
 
 
     ------------------------------------------------------------
@@ -2377,6 +2384,15 @@ package body CoveragePkg is
     end function GetTotalCovGoal ;
 
 
+    -- Return Index Values
+    ------------------------------------------------------------
+    impure function GetNumBins return integer is
+    ------------------------------------------------------------
+    begin
+      return NumBins ;
+    end function GetNumBins ;
+
+
     ------------------------------------------------------------
     impure function GetLastIndex return integer is
     ------------------------------------------------------------
@@ -2384,6 +2400,258 @@ package body CoveragePkg is
       return LastIndex ;
     end function GetLastIndex ;
 
+
+    ------------------------------------------------------------
+    impure function CalcWeight ( BinIndex : integer ; MaxCovPercent : real  ) return integer is
+    --  pt local
+    ------------------------------------------------------------
+    begin
+      case WeightMode is
+        when AT_LEAST =>    -- AtLeast
+          return CovBinPtr(BinIndex).AtLeast ;
+
+        when WEIGHT =>       -- Weight
+          return CovBinPtr(BinIndex).Weight ;
+
+        when REMAIN =>       -- (Adjust * AtLeast) - Count
+--?? simpler integer( Ceil (MaxCovPercent - CovBinPtr(BinIndex).PercentCov)) * CovBinPtr(BinIndex).AtLeast
+          return integer( Ceil( MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0)) -
+                          CovBinPtr(BinIndex).Count ;
+
+        when REMAIN_EXP =>       -- Weight * (REMAIN **WeightScale)
+          -- Experimental may be removed
+-- CAUTION:  for large numbers and/or WeightScale > 2.0, result can be > 2**31 (max integer value)
+          -- both Weight and WeightScale default to 1
+            return CovBinPtr(BinIndex).Weight *
+                    integer( Ceil (
+                      ( (MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0) -
+                            real(CovBinPtr(BinIndex).Count) ) ** WeightScale ) );
+
+        when REMAIN_SCALED =>   -- (WeightScale * Adjust * AtLeast) - Count
+          -- Experimental may be removed
+          -- Biases remainder toward AT_LEAST value.
+          -- WeightScale must be > 1.0
+          return integer( Ceil( WeightScale * MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0)) -
+                          CovBinPtr(BinIndex).Count ;
+
+        when REMAIN_WEIGHT =>     -- Weight * ((WeightScale * Adjust * AtLeast) - Count)
+          -- Experimental may be removed
+          -- WeightScale must be > 1.0
+          return   CovBinPtr(BinIndex).Weight * (
+                   integer( Ceil( WeightScale * MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0)) -
+                            CovBinPtr(BinIndex).Count) ;
+
+      end case ;
+    end function CalcWeight ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandIndex ( CovTargetPercent : real ) return integer is
+    ------------------------------------------------------------
+      variable WeightVec : integer_vector(0 to NumBins-1) ;  -- Prep for change to DistInt
+      variable MaxCovPercent : real ;
+      variable MinCovPercent : real ;
+    begin
+      ItemCount := ItemCount + 1 ;
+      MinCovPercent := GetMinCov ;
+      if ThresholdingEnable then
+        MaxCovPercent := MinCovPercent + CovThreshold ;
+        if MinCovPercent < CovTargetPercent then
+          -- Clip at CovTargetPercent until reach CovTargetPercent
+          MaxCovPercent := minimum(MaxCovPercent, CovTargetPercent);
+        end if ;
+      else
+        if MinCovPercent < CovTargetPercent then
+          MaxCovPercent := CovTargetPercent ;
+        else
+          -- Done, Enable all bins
+          MaxCovPercent := GetMaxCov + 1.0 ;
+          -- MaxCovPercent := real'right ;  -- weight scale issues
+        end if ;
+      end if ;
+      CovLoop : for i in 1 to NumBins loop
+        if CovBinPtr(i).action = COV_COUNT and CovBinPtr(i).PercentCov < MaxCovPercent then
+          -- Calculate Weight based on WeightMode
+          --   Scale to current percentage goal:  MaxCov which can be < or > 100.0
+          WeightVec(i-1) := CalcWeight(i, MaxCovPercent) ;
+        else
+          WeightVec(i-1) := 0 ;
+        end if ;
+      end loop CovLoop ;
+      -- DistInt returns integer range 0 to Numbins-1
+      -- Caution:  DistInt can fail when sum(WeightVec) > 2**31
+      --           See notes in CalcWeight for REMAIN_EXP
+      LastStimGenIndex := 1 + RV.DistInt( WeightVec )  ; -- return range 1 to NumBins
+      LastIndex := LastStimGenIndex ;
+      return LastStimGenIndex ;
+    end function GetRandIndex ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandIndex return integer is
+    ------------------------------------------------------------
+    begin
+      return GetRandIndex(CovTarget) ;
+    end function GetRandIndex ;
+    
+
+    ------------------------------------------------------------
+    impure function GetIncIndex return integer is
+    ------------------------------------------------------------
+      variable CurIndex : integer ; 
+    begin
+      CurIndex := LastStimGenIndex ;
+      LastStimGenIndex := (LastStimGenIndex mod NumBins) + 1 ;
+      LastIndex := LastStimGenIndex ;
+      return CurIndex ;
+    end function GetIncIndex ;
+
+
+    ------------------------------------------------------------
+    impure function GetMinIndex return integer is
+    ------------------------------------------------------------
+      variable MinCov : real := real'right ;  -- big number
+    begin
+      CovLoop : for i in 1 to NumBins loop
+        if CovBinPtr(i).action = COV_COUNT and CovBinPtr(i).PercentCov < MinCov then
+          MinCov := CovBinPtr(i).PercentCov ;
+          LastStimGenIndex := i ;
+        end if ;
+      end loop CovLoop ;
+      LastIndex := LastStimGenIndex ;
+      return LastStimGenIndex ;
+    end function GetMinIndex ;
+
+
+    ------------------------------------------------------------
+    impure function GetMaxIndex return integer is
+    ------------------------------------------------------------
+      variable MaxCov : real := -1.0 ;
+    begin
+      CovLoop : for i in 1 to NumBins loop
+        if CovBinPtr(i).action = COV_COUNT and CovBinPtr(i).PercentCov > MaxCov then
+          MaxCov := CovBinPtr(i).PercentCov ;
+          LastStimGenIndex := i ;
+        end if ;
+      end loop CovLoop ;
+      LastIndex := LastStimGenIndex ;
+      return LastStimGenIndex ;
+    end function GetMaxIndex ;
+
+
+    ------------------------------------------------------------
+    impure function GetNextIndex (Mode : NextPointModeType) return integer is
+    ------------------------------------------------------------
+    begin
+      case Mode is 
+        when RANDOM =>     return GetRandIndex ; 
+        when INCREMENT =>  return GetIncIndex ;
+        when MIN =>        return GetMinIndex ; 
+      end case ;
+    end function GetNextIndex;  
+
+
+    ------------------------------------------------------------
+    impure function GetNextIndex return integer is
+    ------------------------------------------------------------
+    begin
+      return GetNextIndex(NextPointModeVar) ;
+    end function GetNextIndex ;
+
+
+    -- Return BinVals
+    ------------------------------------------------------------
+    impure function GetBinVal ( BinIndex : integer ) return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return CovBinPtr( BinIndex ).BinVal.all ;
+    end function GetBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetLastBinVal return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return CovBinPtr( LastIndex ).BinVal.all ;
+    end function GetLastBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandBinVal ( PercentCov : real ) return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return CovBinPtr( GetRandIndex(PercentCov) ).BinVal.all ;  -- GetBinVal
+    end function GetRandBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandBinVal  return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      -- use global coverage target
+      return CovBinPtr( GetRandIndex( CovTarget ) ).BinVal.all ;  -- GetBinVal
+    end function GetRandBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetIncBinVal return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return GetBinVal( GetIncIndex ) ;
+    end function GetIncBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetMinBinVal  return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      -- use global coverage target
+      return GetBinVal( GetMinIndex ) ;
+    end function GetMinBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetMaxBinVal  return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      -- use global coverage target
+      return GetBinVal( GetMaxIndex ) ;
+    end function GetMaxBinVal ;
+
+
+    ------------------------------------------------------------
+    impure function GetNextBinVal (Mode : NextPointModeType) return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return GetBinVal(GetNextIndex(Mode)) ;
+    end function GetNextBinVal;  
+
+
+    ------------------------------------------------------------
+    impure function GetNextBinVal return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return GetBinVal(GetNextIndex(NextPointModeVar)) ;
+    end function GetNextBinVal ;
+    
+    
+    ------------------------------------------------------------
+    -- deprecated, see GetRandBinVal
+    impure function RandCovBinVal ( PercentCov : real ) return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      return CovBinPtr( GetRandIndex(PercentCov) ).BinVal.all ;  -- GetBinVal
+    end function RandCovBinVal ;
+
+
+    ------------------------------------------------------------
+    -- deprecated, see GetRandBinVal
+    impure function RandCovBinVal  return RangeArrayType is
+    ------------------------------------------------------------
+    begin
+      -- use global coverage target
+      return CovBinPtr( GetRandIndex( CovTarget ) ).BinVal.all ;  -- GetBinVal
+    end function RandCovBinVal ;
 
     ------------------------------------------------------------
     impure function GetHoleBinVal ( ReqHoleNum : integer ; PercentCov : real  ) return RangeArrayType is
@@ -2423,144 +2691,17 @@ package body CoveragePkg is
     end function GetHoleBinVal ;
 
 
+    -- Return Points
     ------------------------------------------------------------
-    impure function CalcWeight ( BinIndex : integer ; MaxCovPercent : real  ) return integer is
+    impure function ToRandPoint( BinVal : RangeArrayType ) return integer is
     --  pt local
     ------------------------------------------------------------
     begin
-      case WeightMode is
-        when AT_LEAST =>    -- AtLeast
-          return CovBinPtr(BinIndex).AtLeast ;
-
-        when WEIGHT =>       -- Weight
-          return CovBinPtr(BinIndex).Weight ;
-
-        when REMAIN =>       -- (Adjust * AtLeast) - Count
-          return integer( Ceil( MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0)) -
-                          CovBinPtr(BinIndex).Count ;
-
-        when REMAIN_EXP =>       -- Weight * (REMAIN **WeightScale)
-          -- Experimental may be removed
--- CAUTION:  for large numbers and/or WeightScale > 2.0, result can be > 2**31 (max integer value)
-          -- both Weight and WeightScale default to 1
-            return CovBinPtr(BinIndex).Weight *
-                    integer( Ceil (
-                      ( (MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0) -
-                            real(CovBinPtr(BinIndex).Count) ) ** WeightScale ) );
-
-        when REMAIN_SCALED =>   -- (WeightScale * Adjust * AtLeast) - Count
-          -- Experimental may be removed
-          -- Biases remainder toward AT_LEAST value.
-          -- WeightScale must be > 1.0
-          return integer( Ceil( WeightScale * MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0)) -
-                          CovBinPtr(BinIndex).Count ;
-
-        when REMAIN_WEIGHT =>     -- Weight * ((WeightScale * Adjust * AtLeast) - Count)
-          -- Experimental may be removed
-          -- WeightScale must be > 1.0
-          return   CovBinPtr(BinIndex).Weight * (
-                   integer( Ceil( WeightScale * MaxCovPercent * real(CovBinPtr(BinIndex).AtLeast)/100.0)) -
-                            CovBinPtr(BinIndex).Count) ;
-
-      end case ;
-    end function CalcWeight ;
+      return RV.RandInt(BinVal(BinVal'left).min, BinVal(BinVal'left).max) ;
+    end function ToRandPoint ;
 
 
     ------------------------------------------------------------
-    impure function RandHoleIndex ( CovTargetPercent : real ) return integer is
-    --  pt local
-    ------------------------------------------------------------
-      variable WeightVec : integer_vector(0 to NumBins-1) ;  -- Prep for change to DistInt
-      variable MaxCovPercent : real ;
-      variable MinCovPercent : real ;
-    begin
-      ItemCount := ItemCount + 1 ;
-      MinCovPercent := GetMinCov ;
-      if ThresholdingEnable then
-        MaxCovPercent := MinCovPercent + CovThreshold ;
-        if MinCovPercent < CovTargetPercent then
-          -- Clip at CovTargetPercent until reach CovTargetPercent
-          MaxCovPercent := minimum(MaxCovPercent, CovTargetPercent);
-        end if ;
-      else
-        if MinCovPercent < CovTargetPercent then
-          MaxCovPercent := CovTargetPercent ;
-        else
-          -- Done, Enable all bins
-          MaxCovPercent := GetMaxCov + 1.0 ;
-          -- MaxCovPercent := real'right ;  -- weight scale issues
-        end if ;
-      end if ;
-      CovLoop : for i in 1 to NumBins loop
-        if CovBinPtr(i).action = COV_COUNT and CovBinPtr(i).PercentCov < MaxCovPercent then
-          -- Calculate Weight based on WeightMode
-          --   Scale to current percentage goal:  MaxCov which can be < or > 100.0
-          WeightVec(i-1) := CalcWeight(i, MaxCovPercent) ;
-        else
-          WeightVec(i-1) := 0 ;
-        end if ;
-      end loop CovLoop ;
-      -- DistInt returns integer range 0 to Numbins-1
-      -- Caution:  DistInt can fail when sum(WeightVec) > 2**31
-      --           See notes in CalcWeight for REMAIN_EXP
-      LastIndex := 1 + RV.DistInt( WeightVec )  ; -- return range 1 to NumBins
-      return LastIndex ;
-    end function RandHoleIndex ;
-
-
-    ------------------------------------------------------------
-    impure function GetBinVal ( BinIndex : integer ) return RangeArrayType is
-    ------------------------------------------------------------
-    begin
-      return CovBinPtr( BinIndex ).BinVal.all ;
-    end function GetBinVal ;
-
-
-    ------------------------------------------------------------
-    impure function GetLastBinVal return RangeArrayType is
-    ------------------------------------------------------------
-    begin
-      return CovBinPtr( LastIndex ).BinVal.all ;
-    end function GetLastBinVal ;
-
-
-    ------------------------------------------------------------
-    impure function RandCovBinVal ( PercentCov : real ) return RangeArrayType is
-    ------------------------------------------------------------
-    begin
-      return CovBinPtr( RandHoleIndex(PercentCov) ).BinVal.all ;  -- GetBinVal
-    end function RandCovBinVal ;
-
-
-    ------------------------------------------------------------
-    impure function RandCovBinVal  return RangeArrayType is
-    ------------------------------------------------------------
-    begin
-      -- use global coverage target
-      return CovBinPtr( RandHoleIndex( CovTarget ) ).BinVal.all ;  -- GetBinVal
-    end function RandCovBinVal ;
-
-
-    ------------------------------------------------------------
-    impure function GetMinBinVal  return RangeArrayType is
-    ------------------------------------------------------------
-    begin
-      -- use global coverage target
-      return GetBinVal( GetMinIndex ) ;
-    end function GetMinBinVal ;
-
-
-    ------------------------------------------------------------
-    impure function GetMaxBinVal  return RangeArrayType is
-    ------------------------------------------------------------
-    begin
-      -- use global coverage target
-      return GetBinVal( GetMaxIndex ) ;
-    end function GetMaxBinVal ;
-
-
-    ------------------------------------------------------------
---    impure function RandCovPoint( BinVal : RangeArrayType ) return integer_vector is
     impure function ToRandPoint( BinVal : RangeArrayType ) return integer_vector is
     --  pt local
     ------------------------------------------------------------
@@ -2573,47 +2714,6 @@ package body CoveragePkg is
       normCovPoint := CovPoint ;
       return normCovPoint ;
     end function ToRandPoint ;
-
-
-    ------------------------------------------------------------
-    impure function ToRandPoint( BinVal : RangeArrayType ) return integer is
-    --  pt local
-    ------------------------------------------------------------
-    begin
-      return RV.RandInt(BinVal(BinVal'left).min, BinVal(BinVal'left).max) ;
-    end function ToRandPoint ;
-
-
-    ------------------------------------------------------------
-    impure function RandCovPoint return integer is
-    ------------------------------------------------------------
-    begin
-      return ToRandPoint(RandCovBinVal(CovTarget)) ;
-    end function RandCovPoint ;
-
-
-    ------------------------------------------------------------
-    impure function RandCovPoint ( PercentCov : real ) return integer is
-    ------------------------------------------------------------
-    begin
-      return ToRandPoint(RandCovBinVal(PercentCov)) ;
-    end function RandCovPoint ;
-
-
-    ------------------------------------------------------------
-    impure function RandCovPoint return integer_vector is
-    ------------------------------------------------------------
-    begin
-      return ToRandPoint(RandCovBinVal(CovTarget)) ;
-    end function RandCovPoint ;
-
-
-    ------------------------------------------------------------
-    impure function RandCovPoint ( PercentCov : real ) return integer_vector is
-    ------------------------------------------------------------
-    begin
-      return ToRandPoint(RandCovBinVal(PercentCov)) ;
-    end function RandCovPoint ;
 
 
     ------------------------------------------------------------
@@ -2630,6 +2730,54 @@ package body CoveragePkg is
     begin
       return ToRandPoint(GetBinVal(BinIndex)) ;
     end function GetPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandPoint return integer is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(CovTarget)) ;
+    end function GetRandPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandPoint ( PercentCov : real ) return integer is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(PercentCov)) ;
+    end function GetRandPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandPoint return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(CovTarget)) ;
+    end function GetRandPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetRandPoint ( PercentCov : real ) return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(PercentCov)) ;
+    end function GetRandPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetIncPoint return integer is
+    ------------------------------------------------------------
+    begin
+      return GetPoint(GetIncIndex) ;
+    end function GetIncPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetIncPoint return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return GetPoint(GetIncIndex) ;
+    end function GetIncPoint ;
 
 
     ------------------------------------------------------------
@@ -2662,6 +2810,74 @@ package body CoveragePkg is
     begin
       return ToRandPoint(GetBinVal( GetMaxIndex )) ;
     end function GetMaxPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetNextPoint (Mode : NextPointModeType) return integer is
+    ------------------------------------------------------------
+    begin
+      return GetPoint(GetNextIndex(Mode)) ;
+    end function GetNextPoint;  
+
+
+    ------------------------------------------------------------
+    impure function GetNextPoint (Mode : NextPointModeType) return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return GetPoint(GetNextIndex(Mode)) ;
+    end function GetNextPoint;  
+
+
+    ------------------------------------------------------------
+    impure function GetNextPoint return integer is
+    ------------------------------------------------------------
+    begin
+      return GetPoint(GetNextIndex(NextPointModeVar)) ;
+    end function GetNextPoint ;
+
+
+    ------------------------------------------------------------
+    impure function GetNextPoint return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return GetPoint(GetNextIndex(NextPointModeVar)) ;
+    end function GetNextPoint ;
+
+    
+    ------------------------------------------------------------
+    -- deprecated, see GetRandPoint
+    impure function RandCovPoint return integer is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(CovTarget)) ;
+    end function RandCovPoint ;
+
+
+    ------------------------------------------------------------
+    -- deprecated, see GetRandPoint
+    impure function RandCovPoint ( PercentCov : real ) return integer is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(PercentCov)) ;
+    end function RandCovPoint ;
+
+
+    ------------------------------------------------------------
+    -- deprecated, see GetRandPoint
+    impure function RandCovPoint return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(CovTarget)) ;
+    end function RandCovPoint ;
+
+
+    ------------------------------------------------------------
+    -- deprecated, see GetRandPoint
+    impure function RandCovPoint ( PercentCov : real ) return integer_vector is
+    ------------------------------------------------------------
+    begin
+      return ToRandPoint(GetRandBinVal(PercentCov)) ;
+    end function RandCovPoint ;
 
 
     -- ------------------------------------------------------------
@@ -3093,10 +3309,10 @@ package body CoveragePkg is
         -- write(f, "   Count = " & integer'image(CovBinPtr(i).count)) ;
         write(buf, "   AtLeast = " & integer'image(CovBinPtr(i).AtLeast)) ;
         write(buf, "   Weight = " & integer'image(CovBinPtr(i).Weight)) ;
-        write(buf, "   OrderCount = " & integer'image(CovBinPtr(i).OrderCount)) ;
-        if CovBinPtr(i).count > 0 then
-          write(buf, "   Normalized OrderCount = " & integer'image(CovBinPtr(i).OrderCount/CovBinPtr(i).count)) ;
-        end if ;
+--!        write(buf, "   OrderCount = " & integer'image(CovBinPtr(i).OrderCount)) ;
+--!       if CovBinPtr(i).count > 0 then
+--!         write(buf, "   Normalized OrderCount = " & integer'image(CovBinPtr(i).OrderCount/CovBinPtr(i).count)) ;
+--!       end if ;
         writeline(f, buf) ;
       end loop ;
       swrite(buf, "") ;
@@ -3970,7 +4186,7 @@ package body CoveragePkg is
     ------------------------------------------------------------
     -- Deprecated.  New versions use PercentCov
     -- If keep this, need to be able to scale AtLeast Value
-    impure function RandHoleIndex ( AtLeast : integer ) return integer is
+    impure function GetRandIndex ( AtLeast : integer ) return integer is
     --  pt local
     ------------------------------------------------------------
       variable WeightVec : integer_vector(0 to NumBins-1) ;  -- Prep for change to DistInt
@@ -4008,16 +4224,17 @@ package body CoveragePkg is
         end if ;
       end loop CovLoop ;
       -- DistInt returns integer range 0 to Numbins-1
-      LastIndex := 1 + RV.DistInt( WeightVec )  ; -- return range 1 to NumBins
-      return LastIndex ;
-    end function RandHoleIndex ;
+      LastStimGenIndex := 1 + RV.DistInt( WeightVec )  ; -- return range 1 to NumBins
+      LastIndex := LastStimGenIndex ;
+      return LastStimGenIndex ;
+    end function GetRandIndex ;
 
     ------------------------------------------------------------
     -- Deprecated.  New versions use PercentCov
     impure function RandCovBinVal (AtLeast : integer ) return RangeArrayType is
     ------------------------------------------------------------
     begin
-      return CovBinPtr( RandHoleIndex(AtLeast) ).BinVal.all ;  -- GetBinVal
+      return CovBinPtr( GetRandIndex(AtLeast) ).BinVal.all ;  -- GetBinVal
     end function RandCovBinVal ;
 
 -- Maintained for backward compatibility.  Repeated until aliases work for methods
@@ -5002,6 +5219,43 @@ package body CoveragePkg is
 
 
   ------------------------------------------------------------
+  function CheckInteger_1_0 ( I : integer ) return boolean is
+  -------------------------------------------------------------
+  begin
+    case I is
+      when 0 | 1 =>   return TRUE ;
+      when others =>  return FALSE ;
+    end case ;
+  end function CheckInteger_1_0 ;
+
+
+  ------------------------------------------------------------
+  function local_to_boolean ( I : integer ) return boolean is
+  ------------------------------------------------------------
+  begin
+    case I is
+      when 1 =>  return TRUE ;
+      when 0 =>  return FALSE ;
+      when others =>  
+        return FALSE ;
+    end case ;
+  end function local_to_boolean ;
+
+  ------------------------------------------------------------
+  function to_boolean ( I : integer ) return boolean is
+  ------------------------------------------------------------
+  begin
+    if not CheckInteger_1_0(I) then
+      Alert(OSVVM_ALERTLOG_ID, 
+      "CoveragePkg.to_boolean: invalid integer value: " & to_string(I) &
+      " returning FALSE", WARNING) ;
+    end if ; 
+    
+    return local_to_boolean(I) ;
+  end function to_boolean ;
+
+
+  ------------------------------------------------------------
   function to_integer ( SL : std_logic ) return integer is
   -------------------------------------------------------------
   begin
@@ -5011,6 +5265,31 @@ package body CoveragePkg is
       when others    =>  return -1 ;
     end case ;
   end function to_integer ;
+
+  ------------------------------------------------------------
+  function local_to_std_logic ( I : integer ) return std_logic is
+  -------------------------------------------------------------
+  begin
+    case I is
+      when 1 =>       return '1' ;
+      when 0 =>       return '0' ;
+      when others =>  return 'X' ;
+    end case ;
+  end function local_to_std_logic ;
+
+
+  ------------------------------------------------------------
+  function to_std_logic ( I : integer ) return std_logic is
+  -------------------------------------------------------------
+  begin
+    if not CheckInteger_1_0(I) then
+      Alert(OSVVM_ALERTLOG_ID, 
+      "CoveragePkg.to_std_logic: invalid integer value: " & to_string(I) &
+      " returning X", WARNING) ;
+    end if ; 
+    
+    return local_to_std_logic(I) ;
+  end function to_std_logic ;
 
 
   ------------------------------------------------------------
@@ -5026,6 +5305,29 @@ package body CoveragePkg is
 
 
   ------------------------------------------------------------
+  function to_boolean_vector ( IV : integer_vector ) return boolean_vector is
+  ------------------------------------------------------------
+    variable result : boolean_vector(IV'range) ;
+    variable HasError : boolean := FALSE ; 
+  begin
+    for i in IV'range loop
+      result(i) := local_to_boolean(IV(i)) ;
+      if not CheckInteger_1_0(IV(i)) then
+        HasError := TRUE ; 
+      end if ;
+    end loop ;
+ 
+    if HasError then
+      Alert(OSVVM_ALERTLOG_ID, 
+      "CoveragePkg.to_boolean_vector: invalid integer value" &
+      " returning FALSE", WARNING) ;
+    end if ; 
+
+    return result ;
+  end function to_boolean_vector ;
+
+
+  ------------------------------------------------------------
   function to_integer_vector ( SLV : std_logic_vector ) return integer_vector is
   -------------------------------------------------------------
     variable result : integer_vector(SLV'range) ;
@@ -5035,7 +5337,29 @@ package body CoveragePkg is
     end loop ;
     return result ;
   end function to_integer_vector ;
-  
+
+
+  ------------------------------------------------------------
+  function to_std_logic_vector ( IV : integer_vector ) return std_logic_vector is
+  -------------------------------------------------------------
+    variable result : std_logic_vector(IV'range) ;
+    variable HasError : boolean := FALSE ; 
+  begin
+    for i in IV'range loop
+      result(i) := local_to_std_logic(IV(i)) ;
+      if not CheckInteger_1_0(IV(i)) then
+        HasError := TRUE ; 
+      end if ;
+    end loop ;
+ 
+    if HasError then
+      Alert(OSVVM_ALERTLOG_ID, 
+      "CoveragePkg.to_std_logic_vector: invalid integer value" &
+      " returning FALSE", WARNING) ;
+    end if ; 
+
+    return result ;
+  end function to_std_logic_vector ;  
   
   ------------------------------------------------------------
   ------------------------------------------------------------

@@ -279,11 +279,6 @@ class Testcase():
         return all_requirement_list
 
 
-
-
-
-
-
 class Container():
     """
     This class is for holding objects, e.g. Requirement and Testcase objects.
@@ -510,13 +505,13 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", ""])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, " " + sub_requirement_string, " " + requirement.compliance])
+                    csv_writer.writerow([requirement.name, " " + sub_requirement_string, ""])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
@@ -546,13 +541,13 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", ""])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, " " + sub_requirement_string, " " + requirement.compliance])
+                    csv_writer.writerow([requirement.name, " " + sub_requirement_string, ""])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
         abort(error_code = 1, msg = error_msg)

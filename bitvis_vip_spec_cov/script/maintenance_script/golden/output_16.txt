@@ -21,7 +21,7 @@ Number of not run testcases : 8
 
 
 Compliant requirement(s) :
-REQ_8, REQ_888, REQ_88, 
+REQ_88, REQ_8, REQ_888, 
 
 Not verified requirement(s) :
 REQ_1, REQ_2, REQ_3, REQ_4, REQ_5, REQ_6, REQ_7, 

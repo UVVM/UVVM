@@ -1,6 +1,6 @@
 Requirement,Testcase,Compliance
-REQ_2, TC_2, COMPLIANT
 REQ_1, TC_1, NOT_TESTED
+REQ_2, TC_2, COMPLIANT
 REQ_3, TC_3, NOT_TESTED
 REQ_4, TC_4, NOT_TESTED
 REQ_4, TC_4_FAIL, NOT_TESTED
@@ -11,4 +11,4 @@ REQ_88, TC_8, NOT_TESTED
 
 
 
-Requirement,Sub-Requirement(s),Compliance
+Requirement,Sub-Requirement(s),

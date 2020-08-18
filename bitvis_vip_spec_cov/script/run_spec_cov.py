@@ -506,22 +506,22 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for requirement in container.get_requirement_list():
                 for testcase in requirement.get_sorted_testcase_list():
-                    csv_writer.writerow([requirement.name, " " + testcase.name, " " + requirement.compliance])
+                    csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
             # Create a table with the super-requirement mapping to sub-requirements
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", ""])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, " " + sub_requirement_string, ""])
+                    csv_writer.writerow([requirement.name, sub_requirement_string])
             if requirement_not_listed_list:
-                csv_writer.writerow(["Not listed requirement(s)", "", ""])
+                csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in requirement_not_listed_list:
-                    csv_writer.writerow([requirement.name, "", ""])
+                    csv_writer.writerow([requirement.name])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
@@ -545,23 +545,23 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                             if not testcase.name in testcase_string:
                                 testcase_string += testcase.name + " "
 
-                csv_writer.writerow([requirement.name, " " + testcase_string, " " + requirement.compliance])
+                csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
 
             # Create a table with the super-requirement mapping to sub-requirements
             csv_writer.writerow([])
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)", ""])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
                 for sub_requirement in requirement.get_sub_requirement_list():
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, " " + sub_requirement_string, ""])
+                    csv_writer.writerow([requirement.name, sub_requirement_string])
             if requirement_not_listed_list:
-                csv_writer.writerow(["Not listed requirement(s)", "", ""])
+                csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in requirement_not_listed_list:
-                    csv_writer.writerow([requirement.name, "", ""])
+                    csv_writer.writerow([requirement.name])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -578,7 +578,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                 requirement_string = ""
                 for requirement in testcase.get_all_requirement_list():
                     requirement_string += requirement.name + " "
-                csv_writer.writerow([testcase.name, " " + requirement_string, " " + testcase.result])
+                csv_writer.writerow([testcase.name, requirement_string, testcase.result])
                 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_tc_vs_req_filename))

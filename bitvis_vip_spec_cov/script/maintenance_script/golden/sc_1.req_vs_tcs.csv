@@ -1,8 +1,8 @@
 Requirement,Testcase(s),Compliance
-REQ_1, TC_1 , COMPLIANT
+REQ_1,TC_1 ,COMPLIANT
 
 
 
-Requirement,Sub-Requirement(s),
-Not listed requirement(s),,
-REQ_1,,
+Requirement,Sub-Requirement(s)
+Not listed requirement(s)
+REQ_1

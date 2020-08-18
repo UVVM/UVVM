@@ -605,6 +605,8 @@ package body avalon_mm_bfm_pkg is
     else
       -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure avalon_mm_read_request;
 
 

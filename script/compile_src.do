@@ -93,7 +93,7 @@ quietly vmap $lib_name $target_path/$lib_name
 # which would cause the references to be in a different file.
 # First check if the libraries are in the specified target path, if not, then look
 # in the default UVVM structure.
-if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart"} {
+if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitvis_uart" && $lib_name != "bitvis_vip_spec_cov"} {
   echo "Mapping uvvm_util and uvvm_vvc_framework"
   if {[file exists $target_path/uvvm_util]} {
     quietly vmap uvvm_util $target_path/uvvm_util

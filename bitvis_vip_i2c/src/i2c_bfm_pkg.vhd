@@ -1387,6 +1387,7 @@ package body i2c_bfm_pkg is
       -- Log will be handled by calling procedure (e.g. i2c_master_check)
     end if;
 
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   procedure i2c_master_receive(
@@ -1584,6 +1585,7 @@ package body i2c_bfm_pkg is
       -- Log will be handled by calling procedure (e.g. i2c_slave_check)
     end if;
 
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   procedure i2c_slave_receive(

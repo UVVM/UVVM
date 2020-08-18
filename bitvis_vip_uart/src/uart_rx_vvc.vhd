@@ -353,12 +353,10 @@ begin
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
-            wait until terminate_current_cmd.is_active = '1'
-              for v_cmd.delay;
+            wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
-            wait until terminate_current_cmd.is_active = '1'
-              for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.bit_time;
+            wait until terminate_current_cmd.is_active = '1' for (v_cmd.gen_integer_array(0) * vvc_config.bfm_config.bit_time);
           end if;
 
         when others =>

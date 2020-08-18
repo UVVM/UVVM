@@ -1,0 +1,32 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : None
+partial_cov          : ../sim/pc_1.csv
+requirement_map_list : None
+spec_cov             : ../sim/sc_1.csv
+clean                : False
+strictness           : 0
+config               : None
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 1
+Number of non compliant requirements : 0
+Number of non verified requirements  : 0
+Number of not listed requirements    : 1
+Number of passing testcases : 1
+Number of failing testcases : 0
+Number of not run testcases : 0
+
+
+Compliant requirement(s) :
+REQ_1, 
+
+Not listed requirement(s) :
+REQ_1, 
+
+Passing testcase(s) :
+TC_1, 
+

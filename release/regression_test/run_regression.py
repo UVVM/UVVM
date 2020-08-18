@@ -3,6 +3,7 @@ import subprocess
 import os
 import glob
 import shutil
+import time
 
 
 
@@ -64,21 +65,20 @@ def simulate_module(module):
     return 0
 
   try:
-    print(' '.join(sys.argv[1:]))
-    subprocess.check_call([sys.executable, "../../" + str(module) + "/internal_script/run.py", ' '.join(sys.argv[1:])])
+    subprocess.check_call([sys.executable, "../../" + str(module) + "/script/maintenance_script/sim.py", ' '.join(sys.argv[1:])])
     return 0
   except subprocess.CalledProcessError as e:
     print("Number of failing tests: " + str(e.returncode))
     return int(e.returncode)
 
 
-def present_results(num_failing_tests):
-  print("---------------------------------------------")
+def present_results(num_failing_tests, time_elapsed):
   if num_failing_tests > 0:
-    print("Regression test FAILED with a total of " + str(num_failing_tests) + " failing tests.")
+    result_string = "FAILED"
   else:
-    print("Regression test SUCCEEDED with a total of 0 failing tests.")
-
+    result_string = "SUCCEEDED"
+  print(60*'-' + "\nRegression test %s with a total of %d failing tests [%s sec]." %(result_string, num_failing_tests, time_elapsed))
+  
 
 
 def main():
@@ -88,6 +88,9 @@ def main():
   modules = get_module_list()
   num_failing_tests = 0
 
+  # Start time of test run
+  test_run_start = time.time()
+
   for idx, module in enumerate(modules):
     print("\n%s" %(50*'-'))
     print("Running module %d: %s." %(idx + 1, module))
@@ -96,7 +99,10 @@ def main():
     cd_to_module(module)
     num_failing_tests += simulate_module(module)
 
-  present_results(num_failing_tests)
+  test_run_end = time.time()
+  time_elapsed = str("%.2f" %(test_run_end - test_run_start))
+
+  present_results(num_failing_tests, time_elapsed)
 
 
 

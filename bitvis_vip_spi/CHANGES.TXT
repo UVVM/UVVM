@@ -1,6 +1,11 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.8.2
+----------
+Released: 2020-08-18
+- Added section with required local defined BFM configuration in BFM QR.
+
 v3.8.1
 ----------
 Released: 2020-06-23

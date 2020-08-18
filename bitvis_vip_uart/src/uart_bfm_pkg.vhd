@@ -402,6 +402,8 @@ package body uart_bfm_pkg is
         -- Log will be handled by calling procedure (e.g. uart_expect)
       end if;
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   ----------------------------------------------------------------------------------------
@@ -541,6 +543,8 @@ package body uart_bfm_pkg is
     else
       alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
     end if;
+
+    DEALLOCATE(v_received_output_line);
   end procedure;
 
 end package body uart_bfm_pkg;

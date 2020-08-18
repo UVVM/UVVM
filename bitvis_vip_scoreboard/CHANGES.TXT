@@ -1,6 +1,12 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.1.3
+----------
+Released: 2020-08-18
+- Replaced ALL_ENABLED_INSTANCES option with ALL_INSTANCES.
+- Changed Scoreboard max instances constant name to C_MAX_SB_INSTANCE_IDX.
+- Changed Scoreboard to be instance of Utility Library generic_sb_pkg.
 
 v2.1.2
 ----------

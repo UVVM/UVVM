@@ -14,6 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
+-- WARNING! This package will be deprecated and no longer receive updates or bug fixes!
+-- The data_queue_pkg in uvvm_util/src/data_queue_pkg.vhd has replaced ti_data_queue_pkg
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;

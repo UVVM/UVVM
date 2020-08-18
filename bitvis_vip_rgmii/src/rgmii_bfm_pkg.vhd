@@ -285,6 +285,8 @@ package body rgmii_bfm_pkg is
         -- Log will be handled by calling procedure (e.g. rgmii_expect)
       end if;
     end if;
+    
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   ---------------------------------------------------------------------------------------------

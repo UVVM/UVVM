@@ -1,6 +1,13 @@
 Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
+
+v0.2.0
+----------
+Released: 2020-08-18
+- Requirements not found in the requirements file are listed in CSV and to terminal.
+
+
 v0.1.0
 ----------
 Released: 2020-04-20

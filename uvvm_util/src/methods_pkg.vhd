@@ -7738,7 +7738,7 @@ package body methods_pkg is
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
 
     for i in 0 to (v_target'length-1) loop
-      if pulse_value(i) /= '-' then
+      if v_pulse(i) /= '-' then
         v_target(i) := v_pulse(i);      -- Generate pulse
       end if;
     end loop;

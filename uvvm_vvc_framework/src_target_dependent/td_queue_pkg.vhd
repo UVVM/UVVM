@@ -19,24 +19,24 @@
 --  - Target dependent command queue package
 --===============================================================================================
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_generic_queue_pkg;
+library uvvm_util;
+use uvvm_util.generic_queue_pkg;
 
 use work.vvc_cmd_pkg.all;
 
-package td_cmd_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
+package td_cmd_queue_pkg is new uvvm_util.generic_queue_pkg
   generic map (t_generic_element => t_vvc_cmd_record);
     
 --===============================================================================================
 -- td_result_queue_pkg
 --  - Target dependent result queue package
 --===============================================================================================
-  
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_generic_queue_pkg;
+
+library uvvm_util;
+use uvvm_util.generic_queue_pkg;
 
 use work.vvc_cmd_pkg.all;
 
-package td_result_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
+package td_result_queue_pkg is new uvvm_util.generic_queue_pkg
   generic map (t_generic_element => t_vvc_result_queue_element);
   

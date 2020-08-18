@@ -1,6 +1,11 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.11
+----------
+Released: 2020-08-18
+- Removed dependencies reference from compile_src.do script.
+
 v1.0.10
 ----------
 Released: 2020-02-16

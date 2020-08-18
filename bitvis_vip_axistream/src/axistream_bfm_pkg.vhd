@@ -1583,6 +1583,8 @@ package body axistream_bfm_pkg is
       id_width   => axistream_if.tid'length,
       dest_width => axistream_if.tdest'length,
       config     => config );
+
+    DEALLOCATE(v_proc_call);
   end procedure axistream_receive_bytes;
 
   -- Overloaded t_slv_array procedure

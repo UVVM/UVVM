@@ -293,21 +293,18 @@ package adaptations_pkg is
     -- User can add more channels if needed below.
   );
 
-  constant C_CMD_IDX_PREFIX : string := " [";
-  constant C_CMD_IDX_SUFFIX : string := "]";
-
-  constant C_VVCT_ALL_INSTANCES, ALL_INSTANCES : integer := -2;
-  constant ALL_ENABLED_INSTANCES : integer := -3;
-
   constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
+
+    
+  constant C_MAX_QUEUE_INSTANCE_NUM : positive  := 100; -- Maximum number of generic queue instances
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Scoreboard adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_MAX_QUEUE_INSTANCE_NUM : positive := 100; -- Maximum number of instances
-  constant C_SB_TAG_WIDTH           : positive := 128; -- Number of characters in SB tag
-  constant C_SB_SOURCE_WIDTH        : positive := 128; -- Number of characters in SB source element
-  constant C_SB_SLV_WIDTH           : positive := 128; -- Width of the SLV in the predefined SLV SB
+  alias C_MAX_SB_INSTANCE_IDX       is C_MAX_QUEUE_INSTANCE_NUM; -- Maximum number of SB instances
+  constant C_SB_TAG_WIDTH           : positive  := 128; -- Number of characters in SB tag
+  constant C_SB_SOURCE_WIDTH        : positive  := 128; -- Number of characters in SB source element
+  constant C_SB_SLV_WIDTH           : positive  := 128; -- Width of the SLV in the predefined SLV SB
 
   -- Default message Id panel intended for use in SB
   constant C_SB_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
@@ -348,6 +345,14 @@ package adaptations_pkg is
   -- The code below is not intended for user modifications!
   -- *****************************************************************************************************************************
   --------------------------------------------------------------------------------------------------------------------------------
+
+  constant C_CMD_IDX_PREFIX       : string := " [";
+  constant C_CMD_IDX_SUFFIX       : string := "]";
+
+  constant ALL_INSTANCES          : integer := -2;
+  constant ALL_ENABLED_INSTANCES  : integer := -3;
+
+
   type t_vvc_id is record
     name      : string(1 to C_MAX_VVC_NAME_LENGTH);
     instance  : natural;

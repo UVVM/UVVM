@@ -367,7 +367,7 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
     file_handle.write(division_line+"\n")
 
 
-def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features):
+def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, num_of_queues):
 
     number_of_executors = vvc_channel.number_of_executors()
 
@@ -386,6 +386,9 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features):
     file_handle.write("  signal executor_is_busy       : boolean := false;\n")
     file_handle.write("  signal queue_is_increasing    : boolean := false;\n")
     file_handle.write("  signal last_cmd_idx_executed  : natural := 0;\n")
+
+    if num_of_queues > 1:
+        file_handle.write("  signal last_read_response_idx_executed  : natural := 0;\n")
 
     if number_of_executors > 1:
         for i in range(1, number_of_executors):
@@ -463,7 +466,7 @@ def add_vvc_constructor(file_handle, vvc_name):
     print_linefeed(file_handle)
 
 
-def add_vvc_interpreter(file_handle, vvc_channel, features):
+def add_vvc_interpreter(file_handle, vvc_channel, features, num_of_queues):
 
     number_of_executors = vvc_channel.number_of_executors()
 
@@ -543,8 +546,12 @@ def add_vvc_interpreter(file_handle, vvc_channel, features):
     file_handle.write("              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);\n")
     file_handle.write("              v_cmd_has_been_acked := true;\n")
     file_handle.write("            end if;\n")
-    file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, "+
-                      "executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);\n")
+    if num_of_queues == 1:
+        file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, "+
+                          "executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);\n")
+    else:
+        file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, "+
+                          "executor_is_busy, C_VVC_LABELS, last_read_response_idx_executed, global_awaiting_completion);\n")
     print_linefeed(file_handle)
     file_handle.write("          when DISABLE_LOG_MSG =>\n")
     file_handle.write("            uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel"
@@ -1072,7 +1079,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
         file_handle.write("  -- For example, given a VVC with parallel data bus and address bus, constraints\n")
         file_handle.write("  -- should be added for maximum data length and address length\n")
         file_handle.write("  -- Example:\n")
-        file_handle.write("  --constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
+        file_handle.write("  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
         file_handle.write("  --constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;\n")
         file_handle.write("  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;\n")
         print_linefeed(file_handle)
@@ -1540,7 +1547,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("    if global_trigger_vvc_activity_register /= 'L' then\n")
         file_handle.write("      wait until global_trigger_vvc_activity_register = 'L';\n")
         file_handle.write("    end if;\n")
-        file_handle.write("    gen_pulse(global_trigger_vvc_activity, 0 ns, \"pulsing global trigger for vvc activity\", scope, ID_NEVER);\n")
+        file_handle.write("    gen_pulse(global_trigger_vvc_activity_register, 0 ns, \"pulsing global trigger for vvc activity\", scope, ID_NEVER);\n")
         file_handle.write("  end procedure;\n")
         print_linefeed(file_handle)
 
@@ -1584,25 +1591,25 @@ def add_bfm_pkg_header(file_handle, vvc_name):
     file_handle.write("  -- Configuration record to be assigned in the test harness.\n")
     file_handle.write("  type t_"+vvc_name.lower()+"_bfm_config is\n")
     file_handle.write("  record\n")
+    file_handle.write("    id_for_bfm               : t_msg_id;\n")
+    file_handle.write("    id_for_bfm_wait          : t_msg_id;\n")
+    file_handle.write("    id_for_bfm_poll          : t_msg_id;\n")
     file_handle.write("    --<USER_INPUT> Insert all BFM config parameters here\n")
     file_handle.write("    -- Example:\n")
     file_handle.write("    -- max_wait_cycles          : integer;\n")
     file_handle.write("    -- max_wait_cycles_severity : t_alert_level;\n")
-    file_handle.write("    -- id_for_bfm               : t_msg_id;\n")
-    file_handle.write("    -- id_for_bfm_wait          : t_msg_id;\n")
-    file_handle.write("    -- id_for_bfm_poll          : t_msg_id;\n")
     file_handle.write("    -- clock_period             : time;\n")
     file_handle.write("  end record;\n")
     print_linefeed(file_handle)
     file_handle.write("  -- Define the default value for the BFM config\n")
     file_handle.write("  constant C_"+vvc_name.upper()+"_BFM_CONFIG_DEFAULT : t_"+vvc_name.lower()+"_bfm_config := (\n")
+    file_handle.write("    id_for_bfm               => ID_BFM,\n")
+    file_handle.write("    id_for_bfm_wait          => ID_BFM_WAIT,\n")
+    file_handle.write("    id_for_bfm_poll          => ID_BFM_POLL\n")
     file_handle.write("    --<USER_INPUT> Insert defaults for all BFM config parameters here\n")
     file_handle.write("    -- Example:\n")
     file_handle.write("    -- max_wait_cycles          => 10,\n")
     file_handle.write("    -- max_wait_cycles_severity => failure,\n")
-    file_handle.write("    -- id_for_bfm               => ID_BFM,\n")
-    file_handle.write("    -- id_for_bfm_wait          => ID_BFM_WAIT,\n")
-    file_handle.write("    -- id_for_bfm_poll          => ID_BFM_POLL,\n")
     file_handle.write("    -- clock_period             => -1 ns\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
@@ -1701,7 +1708,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("  -- For example, given a VVC with parallel data bus and address bus, constraints\n")
     file_handle.write("  -- should be added for maximum data length and address length\n")
     file_handle.write("  -- Example:\n")
-    file_handle.write("  --constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
+    file_handle.write("  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
     file_handle.write("  --constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;\n")
     file_handle.write("  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;\n")
     print_linefeed(file_handle)
@@ -1831,9 +1838,9 @@ def generate_vvc_file(vvc_name, vvc_channels, features):
         add_vvc_header(f)
         add_leaf_includes(f,vvc_name, features)
         add_vvc_entity(f,vvc_name,channel.name)
-        add_architecture_declaration(f, vvc_name, channel, features)
+        add_architecture_declaration(f, vvc_name, channel, features, num_of_queues)
         add_vvc_constructor(f, vvc_name)
-        add_vvc_interpreter(f, channel, features)
+        add_vvc_interpreter(f, channel, features, num_of_queues)
         add_vvc_executor(f, channel, features)
         if (num_of_queues > 1):
             for i in range(1, num_of_queues):

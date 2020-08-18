@@ -2,6 +2,17 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+
+v2.11.1
+----------
+Released: 2020-08-18
+- Added deprecated warning to ti_data_fifo_pkg, ti_data_queue_pkg, ti_data_stack_pkg and
+  ti_generic_queue_pkg. These will no longer be maintained and users should use the 
+  packages in Utility Library.
+- Fixed wrongly commented code generated from vvc_generator.
+- Generated code from vvc_generator.py will now compile without user editing.
+
+
 v2.11.0
 ----------
 Released: 2020-06-23

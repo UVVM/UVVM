@@ -619,6 +619,8 @@ package body avalon_st_bfm_pkg is
         -- Log will be handled by calling procedure (e.g. avalon_st_expect)
       end if;
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   ---------------------------------------------------------------------------------------------

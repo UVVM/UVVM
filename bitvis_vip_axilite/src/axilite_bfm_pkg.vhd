@@ -602,6 +602,8 @@ package body axilite_bfm_pkg is
     else
       -- Log will be handled by calling procedure (e.g. axilite_check)
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure axilite_read;
 
   procedure axilite_check (

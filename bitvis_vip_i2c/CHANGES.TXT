@@ -1,9 +1,9 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.6.2
 ----------
-Released: 2020-xx-xx
+Released: 2020-08-18
 - Added section with required local defined BFM configuration in BFM QR.
 
 

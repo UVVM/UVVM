@@ -2,9 +2,9 @@ Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
 
-v2.x.x
+v2.7.2
 ----------
-Released: 2020-xx-xx
+Released: 2020-08-18
 - Fixed missing reset of cmd termination flag in UART TX VVC.
 - Fixed missing possibility for exiting a TRANSMIT loop.
 - Added section with required local defined BFM configuration in BFM QR.

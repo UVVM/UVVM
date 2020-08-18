@@ -3,9 +3,9 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.xx.x
+v2.14.1
 ----------
-Released: 2020-xx-xx
+Released: 2020-08-18
 - Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
 - Added fix with gen_pulse() method for slv with don't care.
 - Added more info to set_log_destination method in Util QR.

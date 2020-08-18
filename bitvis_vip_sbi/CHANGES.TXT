@@ -1,9 +1,9 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
-v2.x.x
+v2.7.2
 ----------
-Released: 2020-xx-xx
+Released: 2020-08-18
 - Fixed missing possibility for exiting a WRITE loop.
 - Added explicit paths for framework methods in executor and interpreter.
 

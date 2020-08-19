@@ -30,7 +30,7 @@ class Testbench:
       Initializes the testbench object.
 
       """
-      self.library  = None
+      self.lib_name  = None
       self.tb       = None
       self.verbose  = False
       self.gui_mode = False
@@ -57,24 +57,30 @@ class Testbench:
       sys.exit(0)
 
 
-    def set_library(self, library):
+    def set_library(self, lib_name) -> None :
       """
       Sets the library name where the testbench is compiled to.
 
       Args:
-        library (str): name of library
+        lib_name (str): name of library
       """
-      self.library = library.lower()
+      self.lib_name = lib_name.lower()
 
-    def get_library(self):
+    def get_library(self) -> str :
       """
       Returns the library name where the testbench is compiled to.
 
       Returns:
         string: name of library
       """
-      return self.library
+      return self.lib_name
 
+    @property
+    def library(self) -> str :
+      return self.lib_name
+    @library.setter
+    def library(self, lib_name) -> None :
+      self.lib_name = lib_name.lower()
 
     def set_simulator(self, simulator):
       """
@@ -104,6 +110,13 @@ class Testbench:
         string: testbench entity name
       """
       return self.tb
+
+    @property
+    def tb_name(self) -> str :
+      return self.tb
+    @tb_name.setter
+    def tb_name(self, name) -> None :
+      self.tb = name.lower()
 
 
     def set_cleanup(self, perform_cleanup):
@@ -247,19 +260,11 @@ class Testbench:
       args = [arg.upper() for arg in args]
 
       # Arguments detected
-      self.verbose  = False
-      self.modelsim = False
-      self.aldec    = False
-      self.gui_mode = False
-      self.help     = False
-
-      # Check all arguments
-      for arg in args:
-        if not self.verbose:  self.verbose  = arg in output_list
-        if not self.aldec:    self.aldec    = arg in aldec_list
-        if not self.modelsim: self.modelsim = arg in modelsim_list
-        if not self.gui_mode: self.gui      = arg in gui_list
-        if not self.help:     self.help     = arg in help_list
+      self.verbose  = any(arg in output_list for arg in args)
+      self.modelsim = any(arg in modelsim_list for arg in args)
+      self.aldec    = any(arg in aldec_list for arg in args)
+      self.gui_mode = any(arg in gui_list for arg in args)
+      self.help     = any(arg in help_list for arg in args)
 
       # Setup run by arguments
       if self.aldec == True:
@@ -541,7 +546,7 @@ class Testbench:
           else:
             test_string += "result="           
 
-          script_call = 'do ../script/maintenance_script/run_simulation.do ' + self.library + ' ' + self.tb + ' ' + test_name + ' ' + config
+          script_call = 'do ../script/maintenance_script/run_simulation.do ' + self.lib_name + ' ' + self.tb + ' ' + test_name + ' ' + config
           self.simulator_call(script_call, self.gui_mode)
 
           self.save_run(self.tb, test_name, config)

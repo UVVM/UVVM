@@ -121,17 +121,17 @@ architecture func of uart_vvc_tb is
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"00", "RX_DATA default");
       await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
       -- Log the requirement FPGA_SPEC_1.a after test has completed
-      tick_off_req_cov("FPGA_SPEC_1.a", "T_UART_DEFAULTS");
+      tick_off_req_cov("FPGA_SPEC_1.a");
 
       sbi_check(SBI_VVCT, 1, C_ADDR_TX_READY, x"01", "TX_READY default");
       await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
       -- Log the requirement FPGA_SPEC_1.b after test has completed
-      tick_off_req_cov("FPGA_SPEC_1.b", "T_UART_DEFAULTS");
+      tick_off_req_cov("FPGA_SPEC_1.b");
 
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
       await_completion(SBI_VVCT,1,  10 * C_CLK_PERIOD);
       -- Log the requirement FPGA_SPEC_1.c after test has completed
-      tick_off_req_cov("FPGA_SPEC_1.c", "T_UART_DEFAULTS");
+      tick_off_req_cov("FPGA_SPEC_1.c");
 
       -- End the requirement coverage process
       finalize_req_cov(VOID);
@@ -147,7 +147,7 @@ architecture func of uart_vvc_tb is
       uart_expect(UART_VVCT,1,RX,  x"55", "Expecting data on UART RX");
       await_completion(UART_VVCT,1,RX,  13 * C_BIT_PERIOD);
       -- Log the requirement FPGA_SPEC_2 after test has completed
-      tick_off_req_cov("FPGA_SPEC_2", "T_UART_TX");
+      tick_off_req_cov("FPGA_SPEC_2");
       wait for 200 ns;  -- margin
 
       -- End the requirement coverage process
@@ -166,7 +166,7 @@ architecture func of uart_vvc_tb is
       sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"AA", "RX_DATA");
       await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
       -- Log the requirement FPGA_SPEC_3 after test has completed
-      tick_off_req_cov("FPGA_SPEC_3", "T_UART_RX");
+      tick_off_req_cov("FPGA_SPEC_3");
 
       -- End the requirement coverage process
       finalize_req_cov(VOID);
@@ -186,7 +186,7 @@ architecture func of uart_vvc_tb is
       sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, x"87", "RX_DATA");
       await_completion(SBI_VVCT,1,  13 * C_BIT_PERIOD);
       -- Log the requirement FPGA_SPEC_4 after test has completed
-      tick_off_req_cov("FPGA_SPEC_4", "T_UART_SIMULTANEOUS");
+      tick_off_req_cov("FPGA_SPEC_4");
 
       -- End the requirement coverage process
       finalize_req_cov(VOID);

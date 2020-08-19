@@ -46,7 +46,7 @@ def main():
                     error_found = True
                     break
             # Check for line number mismatch
-            if golden_file_lines != check_file_lines:
+            if not(error_found) and (golden_file_lines != check_file_lines):
                 failing_verify_file.append(filename)
                 error_found = True
 

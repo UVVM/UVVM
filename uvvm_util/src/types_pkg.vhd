@@ -229,6 +229,8 @@ package types_pkg is
   
   type t_activity is (ACTIVE, INACTIVE);
 
+  type t_extent_tickoff is (LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF);
+
   
   -------------------------------------
   -- SB

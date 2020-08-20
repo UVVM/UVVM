@@ -73,7 +73,6 @@ package spec_cov_pkg is
     num_tcs       : natural;
     tc_list       : t_line_vector;
     num_tickoffs  : natural;
-    test_status   : t_test_status;
   end record;
   type t_requirement_entry_array is array (natural range <>) of t_requirement_entry;
 
@@ -122,15 +121,6 @@ package spec_cov_pkg is
 
   procedure priv_set_default_testcase_name(
     constant testcase : string
-  );
-  
-  impure function priv_get_requirement_test_status(
-    requirement : string
-  ) return t_test_status;
-
-  procedure priv_set_requirement_test_status(
-    requirement : string;
-    test_status : t_test_status
   );
 
   impure function priv_get_default_testcase_name 
@@ -204,6 +194,7 @@ package body spec_cov_pkg is
   ) is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status;
+    variable v_prev_test_status         : t_test_status := priv_testcase_passed;
   begin
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
       alert(TB_ERROR, "Requirements have not been parsed. Please use initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
@@ -224,8 +215,9 @@ package body spec_cov_pkg is
       v_requirement_status := PASS;
     end if;
 
+    -- Check if requirement tick-off should be written
     if (tickoff_extent = LIST_EVERY_TICKOFF) or (priv_get_num_requirement_tick_offs(requirement) = 0) or 
-      (priv_get_requirement_test_status(requirement) = PASS and test_status = FAIL) then
+      (v_prev_test_status = PASS and test_status = FAIL) then
       -- Log result to transcript
       log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & 
                         priv_get_description(requirement) & "'. " & msg, scope);
@@ -234,8 +226,6 @@ package body spec_cov_pkg is
       writeline(RESULT_FILE, v_requirement_to_file_line);
       -- Increment number of tick off for this requirement
       priv_inc_num_requirement_tick_offs(requirement);
-      -- Update internal reqister for requirement
-      priv_set_requirement_test_status(requirement, test_status);
     end if;
   end procedure tick_off_req_cov;
 
@@ -349,9 +339,6 @@ package body spec_cov_pkg is
       -- Set number of tickoffs for this requirement to 0
       shared_requirement_array(shared_requirements_in_array).num_tickoffs := 0;
 
-      -- Set requirement test result as not set
-      shared_requirement_array(shared_requirements_in_array).test_status := NA;
-
       priv_log_entry(shared_requirements_in_array);
       shared_requirements_in_array := shared_requirements_in_array + 1;
     end loop;
@@ -416,42 +403,6 @@ package body spec_cov_pkg is
     end loop;
     return 0;
   end function priv_get_num_requirement_tick_offs;
-
-
-  --
-  -- Get test status registered for requirement
-  --
-  impure function priv_get_requirement_test_status(
-    requirement : string
-  ) return t_test_status is
-  begin
-    for i in 0 to shared_requirements_in_array-1 loop
-      if priv_get_requirement_name_length(shared_requirement_array(i).requirement.all) = requirement'length then
-        if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
-          return shared_requirement_array(i).test_status;
-        end if;
-      end if;
-    end loop;
-    return NA;
-  end function priv_get_requirement_test_status;
-
-
-  --
-  -- Set test status for requirement
-  --
-  procedure priv_set_requirement_test_status(
-    requirement : string;
-    test_status : t_test_status
-  ) is
-  begin
-    for i in 0 to shared_requirements_in_array-1 loop
-      if priv_get_requirement_name_length(shared_requirement_array(i).requirement.all) = requirement'length then
-        if to_upper(shared_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
-          return shared_requirement_array(i).test_status := test_status
-        end if;
-      end if;
-    end loop;
-  end procedure priv_set_requirement_test_status;
 
 
   --

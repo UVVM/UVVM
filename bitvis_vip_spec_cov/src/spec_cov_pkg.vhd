@@ -194,7 +194,7 @@ package body spec_cov_pkg is
   ) is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status;
-    variable v_prev_test_status         : t_test_status := priv_testcase_passed;
+    variable v_prev_test_status         : t_test_status;
   begin
     if shared_requirements_in_array = 0 and priv_requirement_file_exists = true then
       alert(TB_ERROR, "Requirements have not been parsed. Please use initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
@@ -204,6 +204,13 @@ package body spec_cov_pkg is
     -- Check if requirement exists
     if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
       alert(config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
+    end if;
+
+    -- Save testcase status
+    if priv_testcase_passed then
+      v_prev_test_status := PASS;
+    else
+      v_prev_test_status := FAIL;
     end if;
 
     ---- Check if there were any errors globally or testcase was explicit set to FAIL

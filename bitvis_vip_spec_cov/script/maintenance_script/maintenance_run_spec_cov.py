@@ -58,7 +58,8 @@ test_list = [
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_10.csv", "-s", "../sim/sc_10.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_11.csv", "-s", "../sim/sc_11.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_12.csv", "-s", "../sim/sc_12.csv"],
-            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_13.csv", "-s", "../sim/sc_13.csv"]
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_13.csv", "-s", "../sim/sc_13.csv"],
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_14.csv", "-s", "../sim/sc_14.csv"]
             ]
 
 

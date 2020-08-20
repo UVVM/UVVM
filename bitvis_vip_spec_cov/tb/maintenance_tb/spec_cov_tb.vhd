@@ -104,7 +104,7 @@ begin
       -- 2: testing unknown requirement
       -- Increment expected alerts so test will pass with missing requirement
       increment_expected_alerts(TB_WARNING, 1);
-      tick_off_req_cov("REQ_10", NA, "logging unknown requirement."); --, C_SCOPE);
+      tick_off_req_cov("REQ_99", NA, "logging unknown requirement."); --, C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
       
@@ -194,20 +194,39 @@ begin
 
     elsif GC_TEST = "test_list_single_tick_off" then
       --
-      -- This test check if partial requirement names, and that don't exist, will trigger an alert.
+      -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter
       --
       log(ID_LOG_HDR, "Testing single tick off.", C_SCOPE);
-      increment_expected_alerts(TB_WARNING, 2);
 
       -- Run testcase
       initialize_req_cov("TC_9", "../tb/maintenance_tb/req_file.csv", "pc_13.csv");
 
       for tick_off_idx in 1 to 5 loop
         tick_off_req_cov("REQ_9", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
-      end loop; -- 
+      end loop;
       
       -- End testcase
       finalize_req_cov(VOID);
+
+    elsif GC_TEST = "test_list_single_tick_off_pass_then_fail" then
+      --
+      -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter as PASS,
+      -- followed by LIST_SINGLE_TICK_OFF parameter as FAIL.
+      --
+      log(ID_LOG_HDR, "Testing single tick off.", C_SCOPE);
+
+      -- Run testcase
+      initialize_req_cov("TC_10", "../tb/maintenance_tb/req_file.csv", "pc_14.csv");
+
+      for tick_off_idx in 1 to 5 loop
+        tick_off_req_cov("REQ_10", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
+      end loop; 
+
+      tick_off_req_cov("REQ_10", FAIL, "tick_off_req_cov() TC failed.", LIST_SINGLE_TICKOFF, C_SCOPE);
+      
+      -- End testcase
+      finalize_req_cov(VOID);
+
 
     ---==========================================================================
     --

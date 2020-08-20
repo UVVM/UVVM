@@ -48,7 +48,8 @@ def main(argv):
            "test_incomplete_testcase",
            "test_testcase_with_multiple_reqs",
            "test_requirement_name_match", 
-           "test_list_single_tick_off"
+           "test_list_single_tick_off",
+           "test_list_single_tick_off_pass_then_fail"
           ]
 
   # Setup testbench and run

@@ -92,11 +92,14 @@ def main(argv):
   # Read number of failing tests for return value
   num_failing_tests = tb.get_num_failing_tests()
 
+  # Run golden verification and update any errors
+  num_failing_tests += tb.run_verify_with_golden()
+
+  # Return number of failing tests to caller
+  sys.exit(num_failing_tests)
 
 
 
 if __name__ == "__main__":
   main(sys.argv)
 
-  # Return number of failing tests to caller
-  sys.exit(num_failing_tests)

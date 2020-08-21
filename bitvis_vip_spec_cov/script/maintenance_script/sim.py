@@ -38,7 +38,7 @@ def main(argv):
 
   tests = ["test_init_with_no_requirement_file",
            "test_init_with_requirement_file",
-           "test_log_default_testcase_and_not_listed",
+           "test_log_listed_and_not_listed_requirements",
            "test_log_testcase_pass_and_fail",
            "test_uvvm_status_error_before_log",
            "test_uvvm_status_error_after_log",
@@ -47,7 +47,9 @@ def main(argv):
            "test_sub_requirement_fail",
            "test_incomplete_testcase",
            "test_testcase_with_multiple_reqs",
-           "test_requirement_name_match"
+           "test_requirement_name_match", 
+           "test_list_single_tick_off",
+           "test_list_single_tick_off_pass_then_fail"
           ]
 
   # Setup testbench and run

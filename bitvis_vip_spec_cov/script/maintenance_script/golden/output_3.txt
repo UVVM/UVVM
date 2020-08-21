@@ -14,25 +14,25 @@ SUMMARY:
 ----------------------------------------------
 Number of compliant requirements     : 2
 Number of non compliant requirements : 0
-Number of non verified requirements  : 7
+Number of non verified requirements  : 9
 Number of not listed requirements    : 1
-Number of passing testcases : 3
+Number of passing testcases : 1
 Number of failing testcases : 0
-Number of not run testcases : 7
+Number of not run testcases : 10
 
 
 Compliant requirement(s) :
-REQ_3, REQ_10, 
+REQ_3, REQ_99, 
 
 Not verified requirement(s) :
-REQ_1, REQ_2, REQ_4, REQ_5, REQ_6, REQ_7, REQ_88, 
+REQ_1, REQ_2, REQ_4, REQ_5, REQ_6, REQ_7, REQ_88, REQ_9, REQ_10, 
 
 Not listed requirement(s) :
-REQ_10, 
+REQ_99, 
 
 Passing testcase(s) :
-TC_3, TC_50, TC_1, 
+TC_3, 
 
 Not run testcase(s) :
-TC_2, TC_4, TC_4_FAIL, TC_5, TC_6, TC_7, TC_8, 
+TC_1, TC_2, TC_4, TC_4_FAIL, TC_5, TC_6, TC_7, TC_8, TC_9, TC_10, 
 

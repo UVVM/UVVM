@@ -6,3 +6,5 @@ REQ_5, UVVM status error before logging testcase, TC_5
 REQ_6, UVVM status error after logging testcase, TC_6
 REQ_7, Open an non-existing requirement file, TC_7
 REQ_88, Non-matching requirement name, TC_8
+REQ_9, LIST_SINGLE_TICKOFF with 5 tick_of_req_cov() calls, TC_9
+REQ_10, LIST_SINGLE_TICKOFF with PASS and FAIL, TC_10

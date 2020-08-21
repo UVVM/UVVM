@@ -92,22 +92,19 @@ begin
 
 
 
-    elsif GC_TEST = "test_log_default_testcase_and_not_listed" then
+    elsif GC_TEST = "test_log_listed_and_not_listed_requirements" then
       --
-      -- This test will test tick_off_req_cov() with default and unknown testcase, and with 
-      -- unknown requirement label.
+      -- This test will test tick_off_req_cov() with listed and not listed requirements.
       --
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_3", "../tb/maintenance_tb/req_file.csv", "pc_3.csv");
       -- 1: testing default testcase
       tick_off_req_cov("REQ_3");
-      -- 2: testing unknown testcase
-      tick_off_req_cov("REQ_3", "TC_50", NA, "logging unknown testcase.", C_SCOPE);
-      -- 3: testing unknown requirement
+      -- 2: testing unknown requirement
       -- Increment expected alerts so test will pass with missing requirement
-      increment_expected_alerts(TB_WARNING, 1);      
-      tick_off_req_cov("REQ_10", "TC_1", NA, "logging unknown requirement.", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 1);
+      tick_off_req_cov("REQ_99", NA, "logging unknown requirement."); --, C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
       
@@ -120,8 +117,8 @@ begin
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
       -- Run testcase
       initialize_req_cov("TC_4", "../tb/maintenance_tb/req_file.csv", "pc_4.csv");
-      tick_off_req_cov("REQ_4", "TC_4_FAIL", FAIL);
-      tick_off_req_cov("REQ_4", "TC_4");     
+      tick_off_req_cov("REQ_4", FAIL);
+      tick_off_req_cov("REQ_4", PASS);     
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -182,12 +179,51 @@ begin
 
       -- Run testcase
       initialize_req_cov("TC_8", "../tb/maintenance_tb/req_file.csv", "pc_12.csv");
+
       log(ID_SEQUENCER, "Tick of with only part of requirement name, expecting raised alert.", C_SCOPE);
-      tick_off_req_cov("REQ_8", "TC_8");     
+      tick_off_req_cov("REQ_8");
+
       log(ID_SEQUENCER, "Tick of requirement name part of non-existing requirement name, expecting raised alert.", C_SCOPE);
-      tick_off_req_cov("REQ_888", "TC_8");     
+      tick_off_req_cov("REQ_888");     
+      
       log(ID_SEQUENCER, "Tick of with correct requirement name.", C_SCOPE);
-      tick_off_req_cov("REQ_88", "TC_8");     
+      tick_off_req_cov("REQ_88");     
+      
+      -- End testcase
+      finalize_req_cov(VOID);
+
+    elsif GC_TEST = "test_list_single_tick_off" then
+      --
+      -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter
+      --
+      log(ID_LOG_HDR, "Testing single tick off.", C_SCOPE);
+
+      -- Run testcase
+      initialize_req_cov("TC_9", "../tb/maintenance_tb/req_file.csv", "pc_13.csv");
+
+      for tick_off_idx in 1 to 5 loop
+        tick_off_req_cov("REQ_9", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
+      end loop;
+      
+      -- End testcase
+      finalize_req_cov(VOID);
+
+    elsif GC_TEST = "test_list_single_tick_off_pass_then_fail" then
+      --
+      -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter as PASS,
+      -- followed by LIST_SINGLE_TICK_OFF parameter as FAIL.
+      --
+      log(ID_LOG_HDR, "Testing single tick off.", C_SCOPE);
+
+      -- Run testcase
+      initialize_req_cov("TC_10", "../tb/maintenance_tb/req_file.csv", "pc_14.csv");
+
+      for tick_off_idx in 1 to 5 loop
+        tick_off_req_cov("REQ_10", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
+      end loop; 
+
+      tick_off_req_cov("REQ_10", FAIL, "tick_off_req_cov() TC failed.", LIST_SINGLE_TICKOFF, C_SCOPE);
+      
       -- End testcase
       finalize_req_cov(VOID);
 
@@ -207,8 +243,8 @@ begin
       initialize_req_cov("TC_SUB_REQ", "../tb/maintenance_tb/sub_req_file.csv", "pc_8.csv");   
       tick_off_req_cov("UART_REQ_BR_A", NA);
       tick_off_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-      tick_off_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", C_SCOPE);
-      tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
+      tick_off_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", LIST_EVERY_TICKOFF, C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
       
@@ -221,8 +257,8 @@ begin
       initialize_req_cov("TC_SUB_REQ", "../tb/maintenance_tb/sub_req_file.csv", "pc_9.csv");   
       tick_off_req_cov("UART_REQ_BR_A", NA);
       tick_off_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-      tick_off_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", C_SCOPE);
-      tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", C_SCOPE);
+      tick_off_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", LIST_EVERY_TICKOFF, C_SCOPE);
       -- End testcase
       finalize_req_cov(VOID);
 

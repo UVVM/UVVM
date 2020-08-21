@@ -2,9 +2,9 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
 
-v0.x.x
+v0.3.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-08-18
 - Added parameter tickoff_extent (LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF) to 
 - tick_off_req_cov() parameter.
 - Removed testcase as parameter in tick_off_req_cov() call.

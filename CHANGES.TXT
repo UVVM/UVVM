@@ -9,13 +9,14 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2 2020.xx.xx
+v2 2020.08.21
 --------------------
-Released: 2020-xx-xx
+Released: 2020-08-21
 - Corrected change log in UVVM.
 - Added parameter tickoff_extent (LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF) to 
 - tick_off_req_cov() parameter.
 - Removed testcase as parameter in tick_off_req_cov() call.
+- Added missing queue, FIFO and stack in Util package.
 
 
 

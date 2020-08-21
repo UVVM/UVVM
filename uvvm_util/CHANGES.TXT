@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.14.2
+----------
+Released: 2020-08-21
+- Added missing queue, FIFO and stack in Util package.
+
 v2.14.1
 ----------
 Released: 2020-08-18

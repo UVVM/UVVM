@@ -9,10 +9,21 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2020.08.21
+--------------------
+Released: 2020-08-21
+- Corrected change log in UVVM.
+- Added parameter tickoff_extent (LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF) to 
+- tick_off_req_cov() parameter.
+- Removed testcase as parameter in tick_off_req_cov() call.
+- Added missing queue, FIFO and stack in Util package.
+
+
+
 v2 2020.08.18
 --------------------
 Released: 2020-08-18
-- Added maintenance TBs and simulation scripts to UVVM modules.
+- Added maintenance TBs and simulation scripts to UVVM modules in UVVM_SUPPLEMENTARY repo.
 - Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
 - Replaced ALL_ENABLED_INSTANCES option with ALL_INSTANCES in Scoreboard VIP.
 - Changed Scoreboard max instances constant name to C_MAX_SB_INSTANCE_IDX.

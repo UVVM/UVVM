@@ -495,6 +495,31 @@ class Testbench:
       return testcase.lower() in self.exp_failing_testcase
 
 
+    def run_verify_with_golden(self, script_file="verify_with_golden.py") -> int :
+      """
+      Check sim results with golden. 
+      Warning. Only a subset of modules have a golden.
+      """
+      print("Verifying with golden...")
+      simulator = "-modelsim"
+      if self.env_var["SIMULATOR"] == "RIVIERAPRO":
+        simulator = "-aldec"
+
+      num_errors = 0
+      script = "../script/maintenance_script/" + script_file
+      
+      try:
+        if self.verbose == False:
+          subprocess.check_call([sys.executable, script, simulator, ' '.join(sys.argv[1:])], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
+        else:
+          subprocess.check_call([sys.executable, script, simulator, ' '.join(sys.argv[1:])], env=self.env_var, stderr=subprocess.PIPE)
+      except subprocess.CalledProcessError as e:
+        num_errors = int(e.returncode)
+        
+      print("Golden checked out with %d error(s)." %(num_errors))
+      return num_errors
+
+
     def add_test_run_timing(self, time_elapsed):
       self.time_elapsed += time_elapsed
 

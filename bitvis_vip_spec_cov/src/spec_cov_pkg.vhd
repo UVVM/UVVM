@@ -50,7 +50,7 @@ package spec_cov_pkg is
     constant requirement    : string;
     constant test_status    : t_test_status    := NA;
     constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_EVERY_TICKOFF;
+    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
     constant scope          : string           := C_SCOPE
   );
 
@@ -189,7 +189,7 @@ package body spec_cov_pkg is
     constant requirement    : string;
     constant test_status    : t_test_status    := NA;
     constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_EVERY_TICKOFF;
+    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
     constant scope          : string           := C_SCOPE
   ) is
     variable v_requirement_to_file_line : line;

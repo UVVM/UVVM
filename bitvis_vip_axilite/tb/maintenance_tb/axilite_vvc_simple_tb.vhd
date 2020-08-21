@@ -107,6 +107,7 @@ begin
     variable v_irq_mask_inv       : std_logic_vector(7 downto 0);
     variable i                    : integer;
     variable v_timestamp          : time;
+    variable v_command_duration   : time;
 
     variable v_cmd_idx            : natural;
     variable v_is_ok              : boolean;
@@ -294,24 +295,26 @@ begin
     wait until rising_edge(clk);
     shared_axilite_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
     shared_axilite_vvc_config(1).inter_bfm_delay.delay_in_time := C_CLK_PERIOD * 50;
-    v_timestamp := now;
     axilite_write(AXILITE_VVCT,1, x"0000", x"1111", "First inter-bfm delay axilite write");
+    await_completion(AXILITE_VVCT, 1, (56 * C_CLK_PERIOD));
+    v_timestamp := now;
     axilite_write(AXILITE_VVCT,1, x"0000", x"a1a1", "Second inter-bfm delay axilite write");
     await_completion(AXILITE_VVCT, 1, (56 * C_CLK_PERIOD));
-    check_value(((now - v_timestamp) = C_CLK_PERIOD*55+C_CLK_PERIOD/4), ERROR, "Checking that inter-bfm delay was upheld");
+    check_value(now - v_timestamp, C_CLK_PERIOD*50, ERROR, "Checking that inter-bfm delay was upheld");
 
     log("\rChecking that insert_delay does not affect inter-BFM delay", C_SCOPE);
     wait for C_CLK_PERIOD * 51;
     wait until rising_edge(clk);
-    v_timestamp := now;
     axilite_write(AXILITE_VVCT,1, x"0000", x"ffff", "Third inter-bfm delay axilite write");
+    await_completion(AXILITE_VVCT, 1, (56 * C_CLK_PERIOD));
+    v_timestamp := now;
     insert_delay(AXILITE_VVCT,1, C_CLK_PERIOD);
     insert_delay(AXILITE_VVCT,1, C_CLK_PERIOD);
     insert_delay(AXILITE_VVCT,1, C_CLK_PERIOD);
     insert_delay(AXILITE_VVCT,1, C_CLK_PERIOD);
     axilite_write(AXILITE_VVCT,1, x"0000", x"abcd", "Fourth inter-bfm delay axilite write");
-    await_completion(AXILITE_VVCT, 1, 56 * C_CLK_PERIOD + (4*C_CLK_PERIOD));
-    check_value(((now - v_timestamp) = C_CLK_PERIOD*55+C_CLK_PERIOD/4 + (4*C_CLK_PERIOD)), ERROR, "Checking that inter-bfm delay was upheld");
+    await_completion(AXILITE_VVCT, 1, (56 * C_CLK_PERIOD));
+    check_value(now - v_timestamp, C_CLK_PERIOD*54, ERROR, "Checking that inter-bfm delay was upheld");
 
 
     log("\rChecking TIME_FINISH2START", C_SCOPE);
@@ -321,9 +324,14 @@ begin
     shared_axilite_vvc_config(1).inter_bfm_delay.delay_in_time := C_CLK_PERIOD * 100;
     v_timestamp := now;
     axilite_write(AXILITE_VVCT,1, x"0000", x"0001", "First inter-bfm delay axilite write");
+    await_completion(AXILITE_VVCT, 1, 111 * C_CLK_PERIOD);
+    -- Measuring the command duration
+    v_command_duration := now - v_timestamp;
+    v_timestamp := now;
     axilite_write(AXILITE_VVCT,1, x"0000", x"1000", "Second inter-bfm delay axilite write");
     await_completion(AXILITE_VVCT, 1, 111 * C_CLK_PERIOD);
-    check_value(((now - v_timestamp) = C_CLK_PERIOD*110+C_CLK_PERIOD/4), ERROR, "Checking that inter-bfm delay was upheld");
+    -- Subtracting 2 ns because the command will end 2 ns after the rising edge
+    check_value(now - v_timestamp, C_CLK_PERIOD*100+v_command_duration - 2 ns, ERROR, "Checking that inter-bfm delay was upheld");
 
     log("\rChecking TIME_START2START and provoking inter-bfm delay violation", C_SCOPE);
     wait for C_CLK_PERIOD * 10;

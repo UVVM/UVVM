@@ -390,7 +390,7 @@ package body axilite_bfm_pkg is
     constant proc_call : string := "axilite_write(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) &
                                    ", " & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
 
-    constant max_pipe_stages : integer := maximum(config.num_w_pipe_stages, config.num_aw_pipe_stages);
+    constant max_pipe_stages : integer := maximum(maximum(config.num_w_pipe_stages, config.num_aw_pipe_stages), config.num_b_pipe_stages);
     variable v_await_awready : boolean := true;
     variable v_await_wready  : boolean := true;
     variable v_await_bvalid  : boolean := true;    
@@ -403,7 +403,6 @@ package body axilite_bfm_pkg is
     -- Helper variables
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
-
   begin
     check_value(v_normalized_data'length = 32 or v_normalized_data'length = 64, TB_ERROR, "AXI-lite data width must be either 32 or 64!", scope, ID_NEVER, msg_id_panel);
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
@@ -458,8 +457,6 @@ package body axilite_bfm_pkg is
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
-    axilite_if.write_response_channel.bready <= '1';
-
     for cycle in 0 to config.max_wait_cycles loop
 
       wait until rising_edge(clk);
@@ -467,7 +464,13 @@ package body axilite_bfm_pkg is
         v_time_of_rising_edge := now;
       end if;
 
-      if axilite_if.write_response_channel.bvalid = '1' then
+      -- Brady - Add support for num_b_pipe_stages
+      if cycle = config.num_b_pipe_stages then
+          axilite_if.write_response_channel.bready <= '1';
+      end if;
+
+      if axilite_if.write_response_channel.bvalid = '1' and cycle > config.num_b_pipe_stages then
+
         check_value(axilite_if.write_response_channel.bresp, to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
         -- Wait according to config.bfm_sync setup
@@ -539,12 +542,15 @@ package body axilite_bfm_pkg is
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
-    axilite_if.read_address_channel.araddr  <= v_normalized_addr;
-    axilite_if.read_address_channel.arvalid <= '1';
-
     for cycle in 0 to config.max_wait_cycles loop
 
-      if axilite_if.read_address_channel.arready = '1' and cycle > 0 then
+      -- Brady - Add support for num_ar_pipe_stages
+      if cycle = config.num_ar_pipe_stages then
+        axilite_if.read_address_channel.araddr  <= v_normalized_addr;
+        axilite_if.read_address_channel.arvalid <= '1';
+      end if;
+
+      if axilite_if.read_address_channel.arready = '1' and cycle > config.num_ar_pipe_stages then
         axilite_if.read_address_channel.arvalid <= '0';
         axilite_if.read_address_channel.araddr(axilite_if.read_address_channel.araddr'length-1 downto 0)  <= (others => '0');
         axilite_if.read_address_channel.arprot <= to_slv(config.protection_setting);
@@ -568,11 +574,14 @@ package body axilite_bfm_pkg is
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
-    axilite_if.read_data_channel.rready <= '1';
-
     for cycle in 0 to config.max_wait_cycles loop
-      
-      if axilite_if.read_data_channel.rvalid = '1' and cycle > 0 then
+
+      -- Brady - Add support for num_r_pipe_stages
+      if cycle = config.num_r_pipe_stages then
+        axilite_if.read_data_channel.rready <= '1';
+      end if;
+
+      if axilite_if.read_data_channel.rvalid = '1' and cycle > config.num_r_pipe_stages then
         v_await_rvalid := false;
 
         check_value(axilite_if.read_data_channel.rresp, to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);

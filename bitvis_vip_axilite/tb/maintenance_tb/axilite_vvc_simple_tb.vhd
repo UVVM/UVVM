@@ -330,8 +330,10 @@ begin
     v_timestamp := now;
     axilite_write(AXILITE_VVCT,1, x"0000", x"1000", "Second inter-bfm delay axilite write");
     await_completion(AXILITE_VVCT, 1, 111 * C_CLK_PERIOD);
-    -- Subtracting 2 ns because the command will end 2 ns after the rising edge
-    check_value(now - v_timestamp, C_CLK_PERIOD*100+v_command_duration - 2 ns, ERROR, "Checking that inter-bfm delay was upheld");
+    -- Depending on the time resolution, the measured time will vary slightly depending on the time resolution. 
+    -- This is because the BFM waits clk_period/4 after a rising clock to end the transaction. For ns resolution 
+    -- this is 2 ns and for ps resolution it is 2.5 ns
+    check_value_in_range(now - v_timestamp, C_CLK_PERIOD*100+v_command_duration - 2.5 ns, C_CLK_PERIOD*100+v_command_duration - 2 ns, ERROR, "Checking that inter-bfm delay was upheld");
 
     log("\rChecking TIME_START2START and provoking inter-bfm delay violation", C_SCOPE);
     wait for C_CLK_PERIOD * 10;

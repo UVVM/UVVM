@@ -9,6 +9,14 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+
+
+v2 2020.xx.xx
+--------------------
+Released: 2020-xx-xx
+- Added constant C_UVVM_VERSION with UVVM release version number.
+
+
 v2 2020.08.21
 --------------------
 Released: 2020-08-21

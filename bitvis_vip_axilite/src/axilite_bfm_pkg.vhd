@@ -239,6 +239,17 @@ package axilite_bfm_pkg is
     constant config             : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
     );
 
+
+  function protection_to_slv(
+    protection : t_axilite_protection
+  ) return std_logic_vector;
+
+  function response_to_slv(
+    axilite_response_status : t_axilite_response_status;
+    constant scope          : in  string           := C_SCOPE;
+    constant msg_id_panel   : in  t_msg_id_panel   := shared_msg_id_panel
+  ) return std_logic_vector;
+
 end package axilite_bfm_pkg;
 
 
@@ -251,34 +262,34 @@ package body axilite_bfm_pkg is
   -- Support procedures
   ----------------------------------------------------
 
-  function to_slv(
+  function protection_to_slv(
     protection : t_axilite_protection
     ) return std_logic_vector is
     variable v_prot_slv : std_logic_vector(2 downto 0);
   begin
     case protection is
-      when UNPRIVILIGED_UNSECURE_DATA =>
-        v_prot_slv := "010";
-      when UNPRIVILIGED_UNSECURE_INSTRUCTION =>
-        v_prot_slv := "011";
       when UNPRIVILIGED_SECURE_DATA =>
         v_prot_slv := "000";
-      when UNPRIVILIGED_SECURE_INSTRUCTION =>
-        v_prot_slv := "001";
-      when PRIVILIGED_UNSECURE_DATA =>
-        v_prot_slv := "110";
-      when PRIVILIGED_UNSECURE_INSTRUCTION =>
-        v_prot_slv := "111";
       when PRIVILIGED_SECURE_DATA =>
+        v_prot_slv := "001";
+      when UNPRIVILIGED_UNSECURE_DATA =>
+        v_prot_slv := "010";
+      when PRIVILIGED_UNSECURE_DATA =>
+        v_prot_slv := "011";
+      when UNPRIVILIGED_SECURE_INSTRUCTION =>
         v_prot_slv := "100";
       when PRIVILIGED_SECURE_INSTRUCTION =>
         v_prot_slv := "101";
+      when UNPRIVILIGED_UNSECURE_INSTRUCTION =>
+        v_prot_slv := "110";
+      when PRIVILIGED_UNSECURE_INSTRUCTION =>
+        v_prot_slv := "111";
     end case;
 
     return v_prot_slv;
   end function;
 
-  function to_slv(
+  function response_to_slv(
     axilite_response_status : t_axilite_response_status;
     constant scope          : in  string           := C_SCOPE;
     constant msg_id_panel   : in  t_msg_id_panel   := shared_msg_id_panel
@@ -299,6 +310,7 @@ package body axilite_bfm_pkg is
     end case;
     return v_axilite_response_status_slv;
   end function;
+
 
   function to_axilite_response_status(
     resp : std_logic_vector(1 downto 0);
@@ -336,7 +348,7 @@ package body axilite_bfm_pkg is
     -- Write Address Channel
     init_if.write_address_channel.awaddr  := (init_if.write_address_channel.awaddr'range => '0');
     init_if.write_address_channel.awvalid := '0';
-    init_if.write_address_channel.awprot  := to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
+    init_if.write_address_channel.awprot  := protection_to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
     init_if.write_address_channel.awready := 'Z';
     -- Write Data Channel
     init_if.write_data_channel.wdata   := (init_if.write_data_channel.wdata'range => '0');
@@ -350,7 +362,7 @@ package body axilite_bfm_pkg is
     -- Read Address Channel
     init_if.read_address_channel.araddr  := (init_if.read_address_channel.araddr'range => '0');
     init_if.read_address_channel.arvalid := '0';
-    init_if.read_address_channel.arprot  := to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
+    init_if.read_address_channel.arprot  := protection_to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
     init_if.read_address_channel.arready := 'Z';
     -- Read Data Channel
     init_if.read_data_channel.rready := '0';
@@ -425,7 +437,7 @@ package body axilite_bfm_pkg is
       if cycle = config.num_aw_pipe_stages then
         axilite_if.write_address_channel.awaddr  <= v_normalized_addr;
         axilite_if.write_address_channel.awvalid <= '1';
-        axilite_if.write_address_channel.awprot  <= to_slv(config.protection_setting);
+        axilite_if.write_address_channel.awprot  <= protection_to_slv(config.protection_setting);
       end if;
 
       wait until rising_edge(clk);
@@ -471,7 +483,7 @@ package body axilite_bfm_pkg is
 
       if axilite_if.write_response_channel.bvalid = '1' and cycle > config.num_b_pipe_stages then
 
-        check_value(axilite_if.write_response_channel.bresp, to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+        check_value(axilite_if.write_response_channel.bresp, response_to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -553,7 +565,7 @@ package body axilite_bfm_pkg is
       if axilite_if.read_address_channel.arready = '1' and cycle > config.num_ar_pipe_stages then
         axilite_if.read_address_channel.arvalid <= '0';
         axilite_if.read_address_channel.araddr(axilite_if.read_address_channel.araddr'length-1 downto 0)  <= (others => '0');
-        axilite_if.read_address_channel.arprot <= to_slv(config.protection_setting);
+        axilite_if.read_address_channel.arprot <= protection_to_slv(config.protection_setting);
         v_await_arready := false;
       end if;
 
@@ -584,7 +596,7 @@ package body axilite_bfm_pkg is
       if axilite_if.read_data_channel.rvalid = '1' and cycle > config.num_r_pipe_stages then
         v_await_rvalid := false;
 
-        check_value(axilite_if.read_data_channel.rresp, to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(axilite_if.read_data_channel.rresp, response_to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
 
         v_data_value := axilite_if.read_data_channel.rdata;
 

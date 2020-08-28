@@ -35,7 +35,7 @@ end entity axilite_slave_model;
 
 architecture behav of axilite_slave_model is
 
-  type   t_read_state is (addr_wait, rd_wait_valid, rd_wait_rdy);
+  type   t_read_state is (addr_wait, rd_wait_rdy);
   type   t_write_state is (addr_wait, wr_wait_valid, wr_wait_awvalid, wr_wait_response);
 
   type   memory is array (INTEGER range <>) of std_logic_vector(7 downto 0);
@@ -154,10 +154,7 @@ begin
             wr_port_out.bvalid  <= '0';
             wr_state <= addr_wait;
           end if;
-      
-        when others =>
-          wr_state <= addr_wait;
-          
+
       end case;
 
     end if;
@@ -178,13 +175,11 @@ begin
     elsif rising_edge(aclk) then
       case rd_state is
         when addr_wait => 
-
+          rd_port_out.arready <= '1';
           -- read going on ?
           -- immediate read
-          if ((rd_port_in.arvalid = '1' ) and
-              (rd_port_in.rready = '1')) then
+          if rd_port_in.arvalid = '1' then
             rd_port_out.rvalid <= '1';
-            rd_port_out.arready <= '1';
             -- check that address is in valid region (within memory model)
             mem_addr := unsigned(rd_port_in.araddr);
             -- shift by offset
@@ -196,32 +191,16 @@ begin
             for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
               rd_port_out.rdata((i+1)*8-1 downto i*8) <= mem_model(to_integer(mem_addr)+i);
             end loop;
-          
-          elsif rd_port_in.arvalid = '1' then -- read
-            -- check that address is in valid region (within memory model)
-            mem_addr := unsigned(rd_port_in.araddr);
-            -- shift by offset
-            mem_addr := mem_addr - C_MEMORY_START;
-            if (to_integer(mem_addr) > C_MEMORY_SIZE) then
-              report "Axilite slave model got read address outside of allowed region - stopping"
-                severity failure;
+            if rd_port_in.rready = '0' then
+              rd_state <= rd_wait_rdy;
             end if;
-            rd_address <= mem_addr;
-            rd_port_out.arready <= '0';
-            rd_port_out.rvalid <= '0';
-            rd_state <= rd_wait_rdy;
-            
-          
-          elsif rd_port_in.rready = '1' then -- read
-            rd_port_out.arready <= '0';
-            rd_port_out.rvalid <= '0';
-            rd_state <= rd_wait_valid;
-          
           else
+            rd_port_out.rvalid  <= '0';
             rd_state <= addr_wait;
           end if;
 
         when rd_wait_rdy =>
+          rd_port_out.arready <= '0';
           if (rd_port_in.rready = '1') then
             rd_port_out.rvalid <= '1';
             rd_port_out.arready <= '1';
@@ -230,28 +209,7 @@ begin
             end loop;
             rd_state <= addr_wait;
           end if;
-          
-        when rd_wait_valid =>
-          if (rd_port_in.arvalid = '1') then
-            rd_port_out.rvalid <= '1';
-            rd_port_out.arready <= '1';
-            -- check that address is in valid region (within memory model)
-            mem_addr := unsigned(rd_port_in.araddr);
-            -- shift by offset
-            mem_addr := mem_addr - C_MEMORY_START;
-            if (to_integer(mem_addr) > C_MEMORY_SIZE) then
-              report "Axilite slave model got read address outside of allowed region - stopping"
-                severity failure;
-            end if;
-            for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
-              rd_port_out.rdata((i+1)*8-1 downto i*8) <= mem_model(to_integer(mem_addr)+i);
-            end loop;
-            rd_state <= addr_wait;
-          end if;
-         
-        when others =>
-          rd_state <= addr_wait;
-          
+
       end case;
 
     end if;

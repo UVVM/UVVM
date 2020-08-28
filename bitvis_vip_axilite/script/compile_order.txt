@@ -1,5 +1,6 @@
 # library bitvis_vip_axilite
 ../src/axilite_bfm_pkg.vhd
+../src/axilite_channel_handler_pkg.vhd
 ../src/transaction_pkg.vhd
 ../src/vvc_cmd_pkg.vhd
 ../../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd

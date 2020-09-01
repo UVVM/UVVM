@@ -2,6 +2,12 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
 
+v0.x.x
+----------
+Released: 2020-xx-xx
+- Removed shared_spec_cov_config alias from spec_cov_pkg.
+
+
 v0.3.0
 ----------
 Released: 2020-08-21

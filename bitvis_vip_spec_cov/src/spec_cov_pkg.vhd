@@ -29,7 +29,6 @@ use work.local_adaptations_pkg.all;
 
 package spec_cov_pkg is  
 
-  alias config is shared_spec_cov_config;
 
   file RESULT_FILE : text;
 
@@ -65,7 +64,7 @@ package spec_cov_pkg is
   -- Functions and procedures declared below this line are intended as private internal functions
   --=================================================================================================  
 
-  type t_line_vector is array(0 to config.max_testcases_per_req-1) of line;
+  type t_line_vector is array(0 to shared_spec_cov_config.max_testcases_per_req-1) of line;
   type t_requirement_entry is record
     valid         : boolean;
     requirement   : line;
@@ -78,7 +77,7 @@ package spec_cov_pkg is
 
   -- Shared variables used internally in this context
   shared variable shared_csv_file               : csv_file_reader_type;
-  shared variable shared_requirement_array      : t_requirement_entry_array(0 to config.max_requirements);
+  shared variable shared_requirement_array      : t_requirement_entry_array(0 to shared_spec_cov_config.max_requirements);
   shared variable shared_requirements_in_array  : natural := 0;
 
   constant C_FAIL_STRING                : string := "FAIL";
@@ -203,7 +202,7 @@ package body spec_cov_pkg is
 
     -- Check if requirement exists
     if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
-      alert(config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
+      alert(shared_spec_cov_config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
     -- Save testcase status
@@ -294,7 +293,7 @@ package body spec_cov_pkg is
     log(ID_SPEC_COV, "Adding test and configuration information to coverage file. ", C_SCOPE);
     write(v_settings_to_file_line, "NOTE: This coverage file is only valid when the last line is 'SUMMARY, " & priv_get_default_testcase_name & ", PASS'" & LF);
     write(v_settings_to_file_line, "TESTCASE_NAME: " & priv_get_default_testcase_name & LF);
-    write(v_settings_to_file_line, "DELIMITER: " & config.csv_delimiter & LF);
+    write(v_settings_to_file_line, "DELIMITER: " & shared_spec_cov_config.csv_delimiter & LF);
     writeline(RESULT_FILE, v_settings_to_file_line);
   end procedure priv_initialize_result_file;
 

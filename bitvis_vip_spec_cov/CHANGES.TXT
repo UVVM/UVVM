@@ -6,6 +6,8 @@ v0.x.x
 ----------
 Released: 2020-xx-xx
 - Removed shared_spec_cov_config alias from spec_cov_pkg.
+- run_spec_cov.py script will now also create single_req_vs_single_tc.csv 
+  and single_tc_vs_single_req.csv 
 
 
 v0.3.0

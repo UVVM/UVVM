@@ -49,7 +49,8 @@ def main(argv):
            "test_testcase_with_multiple_reqs",
            "test_requirement_name_match", 
            "test_list_single_tick_off",
-           "test_list_single_tick_off_pass_then_fail"
+           "test_list_single_tick_off_pass_then_fail",
+           "test_list_tick_off_disable"
           ]
 
   # Setup testbench and run
@@ -69,6 +70,7 @@ def main(argv):
 
   # Run golden verification and update any errors
   num_failing_tests += tb.run_verify_with_golden("maintenance_run_spec_cov.py")
+  print("========>>>> got : %d" %(num_tests_run))
 
   # Return number of failing tests to caller
   sys.exit(num_failing_tests)

@@ -26,24 +26,9 @@ use std.textio.all;
 use work.csv_file_reader_pkg.all;
 use work.local_adaptations_pkg.all;
 
---    -- sequender
---    disable_tick_off_req_cov("FPGA-4-0110-CH"); -- array disable_tick_off(string)
---    enable_tick_off_req_cov("FPGA-4-0110-CH");
---
---    shared variable priv_disabled_tick_off
---
---    -- monitor/checker 1
---    cond_tick_off_req_cov("FPGA-4-0110-CH");
---
---    -- monitor/checker 2
---    tick_off_req_cov("FPGA-4-0110-CH");
-
-
 package spec_cov_pkg is  
 
-
   file RESULT_FILE : text;
-
 
   procedure initialize_req_cov(
     constant testcase         : string;
@@ -144,7 +129,7 @@ package spec_cov_pkg is
     requirement : string) 
   return natural;
 
-  impure function priv_requirement_found_in_cond_array(
+  impure function priv_req_listed_in_disabled_tick_off_array(
     constant requirement : string
   ) return boolean;
 
@@ -181,7 +166,7 @@ package body spec_cov_pkg is
   shared variable priv_requirement_file_exists  : boolean;
   
   type t_disabled_tick_off_array is array(0 to shared_spec_cov_config.max_requirements) of string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
-  shared variable priv_disabled_tick_off : t_disabled_tick_off_array := (others => (others => NUL));
+  shared variable priv_disabled_tick_off_array : t_disabled_tick_off_array := (others => (others => NUL));
 
   
 
@@ -273,6 +258,10 @@ package body spec_cov_pkg is
   end procedure tick_off_req_cov;
 
 
+  --
+  -- Conditional tick_off_req_cov() for selected requirement.
+  --   If the requirement has been enabled for conditional tick_off_req_cov()
+  --   with enable_tick_off_req_cov() it will not be ticked off.
   procedure cond_tick_off_req_cov(
     constant requirement    : string;
     constant test_status    : t_test_status    := NA;
@@ -282,13 +271,17 @@ package body spec_cov_pkg is
   ) is
   begin
     -- Check: is requirement listed in the conditional tick off array?
-    if priv_requirement_found_in_cond_array(requirement) = false then
+    if priv_req_listed_in_disabled_tick_off_array(requirement) = false then
       -- requirement was not listed, call tick off method.
       tick_off_req_cov(requirement, test_status, msg, tickoff_extent, scope);
     end if;
   end procedure cond_tick_off_req_cov;
 
 
+  --
+  -- Disable conditional tick_off_req_cov() setting for
+  --   selected requirement.
+  --
   procedure disable_tick_off_req_cov(
     constant requirement    : string
   ) is 
@@ -296,22 +289,26 @@ package body spec_cov_pkg is
   begin
     -- Check: is requirement already tracked?
     --        method will also check if the requirement exist in the requirement file.
-    if priv_requirement_found_in_cond_array(requirement) = true then
+    if priv_req_listed_in_disabled_tick_off_array(requirement) = true then
       alert(TB_WARNING, "Requirement " & requirement & " is already listed in the conditional tick off array.", C_SCOPE);
       return;
     end if;
       
     -- add requirement to conditional tick off array.
-    for idx in 0 to priv_disabled_tick_off'length-1 loop
+    for idx in 0 to priv_disabled_tick_off_array'length-1 loop
       -- find a free entry, add requirement and exit loop
-      if priv_disabled_tick_off(idx)(1) = NUL then
-        priv_disabled_tick_off(idx)(1 to c_requirement_length) := to_upper(requirement);
+      if priv_disabled_tick_off_array(idx)(1) = NUL then
+        priv_disabled_tick_off_array(idx)(1 to c_requirement_length) := to_upper(requirement);
         exit;
       end if;
     end loop;
   end procedure disable_tick_off_req_cov;
 
 
+  --
+  -- Enable conditional tick_off_req_cov() setting for
+  --   selected requirement.
+  --
   procedure enable_tick_off_req_cov(
     constant requirement    : string
   ) is
@@ -319,16 +316,15 @@ package body spec_cov_pkg is
   begin
     -- Check: is requirement not tracked?
     --        method will also check if the requirement exist in the requirement file.
-    if priv_requirement_found_in_cond_array(requirement) = false then
+    if priv_req_listed_in_disabled_tick_off_array(requirement) = false then
       alert(TB_WARNING, "Requirement " & requirement & " is not listed in the conditional tick off array.", C_SCOPE);
 
     else -- requirement is tracked
-      
       -- find the requirement and wipe it out from conditional tick off array
-      for idx in 0 to priv_disabled_tick_off'length-1 loop
+      for idx in 0 to priv_disabled_tick_off_array'length-1 loop
         -- found requirement, wipe the entry and exit
-        if priv_disabled_tick_off(idx)(1 to c_requirement_length) = to_upper(requirement) then
-          priv_disabled_tick_off(idx) := (others => NUL);
+        if priv_disabled_tick_off_array(idx)(1 to c_requirement_length) = to_upper(requirement) then
+          priv_disabled_tick_off_array(idx) := (others => NUL);
           exit;
         end if;
       end loop;
@@ -641,9 +637,9 @@ package body spec_cov_pkg is
   end function priv_get_requirement_name_length;
 
   --
-  -- Check if requirement is listed in the priv_disabled_tick_off() array.
+  -- Check if requirement is listed in the priv_disabled_tick_off_array() array.
   --
-  impure function priv_requirement_found_in_cond_array(
+  impure function priv_req_listed_in_disabled_tick_off_array(
     constant requirement : string
   ) return boolean is
     constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
@@ -653,15 +649,15 @@ package body spec_cov_pkg is
       alert(shared_spec_cov_config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
-    -- Check if requirement is listed in priv_disabled_tick_off() array
-    for idx in 0 to priv_disabled_tick_off'length-1 loop
+    -- Check if requirement is listed in priv_disabled_tick_off_array() array
+    for idx in 0 to priv_disabled_tick_off_array'length-1 loop
       -- found
-      if priv_disabled_tick_off(idx)(1 to c_requirement_length) = to_upper(requirement(1 to c_requirement_length)) then
+      if priv_disabled_tick_off_array(idx)(1 to c_requirement_length) = to_upper(requirement(1 to c_requirement_length)) then
         return true;
       end if;
     end loop;
     -- not found
     return false;
-  end function priv_requirement_found_in_cond_array;
+  end function priv_req_listed_in_disabled_tick_off_array;
 
 end package body spec_cov_pkg;

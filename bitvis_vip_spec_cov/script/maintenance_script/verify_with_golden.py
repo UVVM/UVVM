@@ -78,7 +78,11 @@ def main():
 
 
     # Return the number of errors to caller
-    sys.exit(len(failing_verify_file) + num_missing_files)
+    num_errors = len(failing_verify_file) + num_missing_files
+    if num_errors != 0:
+        print("Golden failed with %d error(s)." %(num_errors))
+    sys.exit(num_errors)
+
 
 if __name__ == "__main__":
     main()

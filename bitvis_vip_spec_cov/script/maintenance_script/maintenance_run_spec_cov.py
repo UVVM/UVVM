@@ -93,7 +93,12 @@ def run_tests():
 
 def verify_test_results():
     print("Verify test results...")
-    subprocess.call(["py", "../script/maintenance_script/verify_with_golden.py"], stderr=subprocess.PIPE)
+    num_errors = 0
+    try:
+        subprocess.check_call(["py", "../script/maintenance_script/verify_with_golden.py"], stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        num_errors = int(e.returncode)
+    sys.exit(num_errors)
 
 
 remove_specification_coverage_files()

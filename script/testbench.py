@@ -515,8 +515,8 @@ class Testbench:
           subprocess.check_call([sys.executable, script, simulator, ' '.join(sys.argv[1:])], env=self.env_var, stderr=subprocess.PIPE)
       except subprocess.CalledProcessError as e:
         num_errors = int(e.returncode)
-        
-      print("Golden checked out with %d error(s)." %(num_errors))
+
+      print("Golden compare completed with %d error(s)." %(num_errors))
       return num_errors
 
 

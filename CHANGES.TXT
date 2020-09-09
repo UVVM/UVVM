@@ -20,6 +20,7 @@ Released: 2020-xx-xx
   and single_tc_vs_single_req.csv 
 - added conditional requirement tick off functionality to specification
   coverage VIP.
+- Corrected normalize_and_check() description in Util QR.
   
 
 v2 2020.08.21

@@ -21,7 +21,8 @@ Released: 2020-xx-xx
 - added conditional requirement tick off functionality to specification
   coverage VIP.
 - Corrected normalize_and_check() description in Util QR.
-  
+- Corrected default KEEP_LEADING_0 for check_value() in Util QR.
+
 
 v2 2020.08.21
 --------------------

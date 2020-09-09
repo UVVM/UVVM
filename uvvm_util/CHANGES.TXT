@@ -9,6 +9,7 @@ v2.xx.x
 Released: 2020-xx-xx
 - Added constant C_UVVM_VERSION with UVVM release version number.
 - Corrected normalize_and_check() description in QR.
+- Corrected default KEEP_LEADING_0 for check_value() in QR.
 
 
 v2.14.2

@@ -58,11 +58,11 @@ package spec_cov_pkg is
     constant scope          : string           := C_SCOPE
   );
 
-  procedure disable_tick_off_req_cov(
+  procedure disable_cond_tick_off_req_cov(
     constant requirement    : string
   );
 
-  procedure enable_tick_off_req_cov(
+  procedure enable_cond_tick_off_req_cov(
     constant requirement    : string
   );
 
@@ -261,7 +261,7 @@ package body spec_cov_pkg is
   --
   -- Conditional tick_off_req_cov() for selected requirement.
   --   If the requirement has been enabled for conditional tick_off_req_cov()
-  --   with enable_tick_off_req_cov() it will not be ticked off.
+  --   with enable_cond_tick_off_req_cov() it will not be ticked off.
   procedure cond_tick_off_req_cov(
     constant requirement    : string;
     constant test_status    : t_test_status    := NA;
@@ -282,7 +282,7 @@ package body spec_cov_pkg is
   -- Disable conditional tick_off_req_cov() setting for
   --   selected requirement.
   --
-  procedure disable_tick_off_req_cov(
+  procedure disable_cond_tick_off_req_cov(
     constant requirement    : string
   ) is 
     constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
@@ -302,14 +302,14 @@ package body spec_cov_pkg is
         exit;
       end if;
     end loop;
-  end procedure disable_tick_off_req_cov;
+  end procedure disable_cond_tick_off_req_cov;
 
 
   --
   -- Enable conditional tick_off_req_cov() setting for
   --   selected requirement.
   --
-  procedure enable_tick_off_req_cov(
+  procedure enable_cond_tick_off_req_cov(
     constant requirement    : string
   ) is
     constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
@@ -329,7 +329,7 @@ package body spec_cov_pkg is
         end if;
       end loop;
     end if;
-  end procedure enable_tick_off_req_cov;
+  end procedure enable_cond_tick_off_req_cov;
 
 
 

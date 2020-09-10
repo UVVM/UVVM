@@ -22,6 +22,7 @@ Released: 2020-xx-xx
   coverage VIP.
 - Corrected normalize_and_check() description in Util QR.
 - Corrected default KEEP_LEADING_0 for check_value() in Util QR.
+- Removed SLV range check for t_slv_array version of normalize_and_check().
 
 
 v2 2020.08.21

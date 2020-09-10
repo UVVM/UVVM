@@ -1,3 +1,112 @@
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program randomise is outdated and has been replaced by another sub-program.
+UVVM:                                                                           Use randomize().
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF GLOBAL CTRL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF MSG ID PANEL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                ID                             Status
+UVVM:                ------------------------       ------
+UVVM:                ID_UTIL_BURIED               : DISABLED
+UVVM:                ID_BITVIS_DEBUG              : DISABLED
+UVVM:                ID_UTIL_SETUP                : ENABLED
+UVVM:                ID_LOG_MSG_CTRL              : ENABLED
+UVVM:                ID_ALERT_CTRL                : ENABLED
+UVVM:                ID_FINISH_OR_STOP            : ENABLED
+UVVM:                ID_CLOCK_GEN                 : ENABLED
+UVVM:                ID_GEN_PULSE                 : ENABLED
+UVVM:                ID_BLOCKING                  : ENABLED
+UVVM:                ID_WATCHDOG                  : ENABLED
+UVVM:                ID_POS_ACK                   : ENABLED
+UVVM:                ID_LOG_HDR                   : ENABLED
+UVVM:                ID_LOG_HDR_LARGE             : ENABLED
+UVVM:                ID_LOG_HDR_XL                : ENABLED
+UVVM:                ID_SEQUENCER                 : ENABLED
+UVVM:                ID_SEQUENCER_SUB             : ENABLED
+UVVM:                ID_BFM                       : ENABLED
+UVVM:                ID_BFM_WAIT                  : ENABLED
+UVVM:                ID_BFM_POLL                  : ENABLED
+UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED
+UVVM:                ID_TERMINATE_CMD             : ENABLED
+UVVM:                ID_SEGMENT_INITIATE          : ENABLED
+UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
+UVVM:                ID_SEGMENT_HDR               : ENABLED
+UVVM:                ID_SEGMENT_DATA              : ENABLED
+UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_PREAMBLE           : ENABLED
+UVVM:                ID_PACKET_COMPLETE           : ENABLED
+UVVM:                ID_PACKET_HDR                : ENABLED
+UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_PACKET_CHECKSUM           : ENABLED
+UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_FRAME_INITIATE            : ENABLED
+UVVM:                ID_FRAME_COMPLETE            : ENABLED
+UVVM:                ID_FRAME_HDR                 : ENABLED
+UVVM:                ID_FRAME_DATA                : ENABLED
+UVVM:                ID_COVERAGE_MAKEBIN          : DISABLED
+UVVM:                ID_COVERAGE_ADDBIN           : DISABLED
+UVVM:                ID_COVERAGE_ICOVER           : DISABLED
+UVVM:                ID_COVERAGE_CONFIG           : ENABLED
+UVVM:                ID_COVERAGE_SUMMARY          : ENABLED
+UVVM:                ID_COVERAGE_HOLES            : ENABLED
+UVVM:                ID_UVVM_SEND_CMD             : ENABLED
+UVVM:                ID_UVVM_CMD_ACK              : ENABLED
+UVVM:                ID_UVVM_CMD_RESULT           : ENABLED
+UVVM:                ID_CMD_INTERPRETER           : ENABLED
+UVVM:                ID_CMD_INTERPRETER_WAIT      : ENABLED
+UVVM:                ID_IMMEDIATE_CMD             : ENABLED
+UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
+UVVM:                ID_CMD_EXECUTOR              : ENABLED
+UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
+UVVM:                ID_NEW_HVVC_CMD_SEQ          : ENABLED
+UVVM:                ID_INSERTED_DELAY            : ENABLED
+UVVM:                ID_OLD_AWAIT_COMPLETION      : ENABLED
+UVVM:                ID_AWAIT_COMPLETION          : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
+UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
+UVVM:                ID_CONSTRUCTOR               : ENABLED
+UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
+UVVM:                ID_VVC_ACTIVITY              : ENABLED
+UVVM:                ID_MONITOR                   : ENABLED
+UVVM:                ID_MONITOR_ERROR             : ENABLED
+UVVM:                ID_DATA                      : ENABLED
+UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
+UVVM:                ID_FILE_PARSER               : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  C_SCOPE                        Verifying check_value() overloads without alert_level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'A must be higher than B, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return true when
+UVVM:                                                                           OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0F"'. 'My msg1, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #1  ***
@@ -7,6 +116,8 @@ UVVM:                    My msg2, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"25"' (exp: x"2X" (b"10010-")'). 'My msg3a, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"25"'. 'My msg3b, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #2  ***
@@ -16,6 +127,11 @@ UVVM:                    My msg3c, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"12"'. 'My msg (none), OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"12"'. 'My msg HEX, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv b"10010"'. 'My msg BIN, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #3  ***
@@ -61,6 +177,20 @@ UVVM:                    My msg HEX, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv b"10010"' (exp: b"0010010"'). 'My msg BIN, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv b"0010010"' (exp: b"010010"'). 'My msg BIN, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv b"0000010010"' (exp: b"000010010"'). 'My msg BIN, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"'. 'My msg HEX, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"' (exp: x"01X"'). 'My msg HEX, OK'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        Sub-program check_value is outdated and has been replaced by another sub-program.
+UVVM:                                                                           format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv b"0000010010"' (exp: b"000010010"'). 'My msg BIN, AS_IS, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"'. 'My msg HEX, AS_IS, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"' (exp: x"01X"'). 'My msg HEX, AS_IS, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"' (exp: x"0XX"'). 'My msg dontcare-in-extended-width HEX,
+UVVM:                                                                           AS_IS, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"' (exp: x"0XX"'). 'My msg dontcare-in-extended-width HEX,
+UVVM:                                                                           AS_IS, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #8  ***
@@ -70,6 +200,8 @@ UVVM:                    My msg dontcare-in-extended-width HEX, AS_IS, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_Z'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"'. 'My msg HEX_BIN_IF_INVALID, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #9  ***
@@ -88,6 +220,12 @@ UVVM:                    My msg HEX_BIN_IF_INVALID, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"'. 'Test wide vector, HEX, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv d"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF (too wide to be converted to
+UVVM:                                                                           integer)"'. 'Test wide vector, DEC, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Boolean check true vs true, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return true'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #11  ***
@@ -97,6 +235,7 @@ UVVM:                    Boolean check true vs false, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return false'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #12  ***
@@ -106,6 +245,11 @@ UVVM:                    Boolean check false vs true, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return false'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean false. 'Boolean check false vs false, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return true'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Boolean check true vs true, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #13  ***
@@ -124,6 +268,9 @@ UVVM:                    Boolean check false vs true, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean false. 'Boolean check false vs false, OK'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for unsigned b"01100"'. 'My msg U, BIN, AS_IS, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #15  ***
@@ -142,6 +289,9 @@ UVVM:                    My msg U, BIN, AS_IS, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed b"10101100"'. 'My msg S, BIN, AS_IS, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #17  ***
@@ -151,6 +301,9 @@ UVVM:                    My msg S, BIN, AS_IS, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int 5. 'My msg I, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #18  ***
@@ -169,6 +322,9 @@ UVVM:                    My msg I, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for real 5.222010e+03. 'My msg I, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #20  ***
@@ -178,6 +334,11 @@ UVVM:                    My msg I, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic '1' (exp: '1'). 'My msg SL, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return true when
+UVVM:                                                                           OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #21  ***
@@ -187,6 +348,12 @@ UVVM:                    My msg SL, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic '0' (exp: '-'). 'My msg SL, OK, use default
+UVVM:                                                                           match_strictness'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic '1' (exp: '-'). 'My msg SL, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'L' (exp: '0'). 'My msg SL, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #22  ***
@@ -205,6 +372,7 @@ UVVM:                    My msg SL, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'Z' (exp: 'Z'). 'Check MATCH_STD_INCL_Z'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #24  ***
@@ -214,6 +382,8 @@ UVVM:                    My msg I, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #25  ***
@@ -223,6 +393,9 @@ UVVM:                    My msg I, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15000 ps. 'My msg I, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15000 ps. 'My msg I, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15000 ps. 'My msg I, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #26  ***
@@ -232,6 +405,13 @@ UVVM:                    My msg I, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 12. 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 8. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Check
+UVVM:                                                                           shared_uvvm_status.found_unexpected_simulation_warnings_or_worse correctly updated'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Check
+UVVM:                                                                           shared_uvvm_status.found_unexpected_simulation_errors_or_worse correctly updated'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 3. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #27  ***
@@ -259,6 +439,29 @@ UVVM:                    Check padding of different check_value SLV lengths (act
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"A"'. 'check_value with t_slv_array of different array
+UVVM:                                                                           indexes'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"B"'. 'check_value with t_slv_array of different array
+UVVM:                                                                           indexes'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"C"'. 'check_value with t_signed_array of different
+UVVM:                                                                           array indexes'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"D"'. 'check_value with t_signed_array of different
+UVVM:                                                                           array indexes'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"E"'. 'check_value with t_unsigned_array of
+UVVM:                                                                           different array indexes'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"F"'. 'check_value with t_unsigned_array of
+UVVM:                                                                           different array indexes'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 3. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"A"'. 'check_value with t_slv_array of different array
+UVVM:                                                                           indexes'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #30  ***
@@ -268,6 +471,10 @@ UVVM:                    check_value with t_slv_array of different array indexes
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"C"'. 'check_value with t_signed_array of different
+UVVM:                                                                           array indexes'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #31  ***
@@ -277,6 +484,10 @@ UVVM:                    check_value with t_signed_array of different array inde
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"E"'. 'check_value with t_unsigned_array of
+UVVM:                                                                           different array indexes'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #32  ***
@@ -286,16 +497,31 @@ UVVM:                    check_value with t_unsigned_array of different array in
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: 
-UVVM: ***  WARNING #1  ***
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ***  WARNING #2  ***
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM:                    check_value() => Failed. Boolean was false. 'array directions do not match'
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  C_SCOPE                        Verifying check_value_in_range() overloads without alert_level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for integer 3. 'Check_value_in_range, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for integer 3. 'Check_value_in_range, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return true when
+UVVM:                                                                           OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #33  ***
@@ -305,6 +531,11 @@ UVVM:                    Check_value_in_range, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for unsigned 10000000000000000000000000000000. 'Check 2147483648
+UVVM:                                                                           between 1 and 2147483649, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #34  ***
@@ -325,6 +556,11 @@ UVVM:                    Check 2147483648 between 1 and 2147483647, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for signed 10000000000000000000000000000001. 'Check -2147483647
+UVVM:                                                                           between -2147483648 and 1, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #36  ***
@@ -335,6 +571,11 @@ UVVM:                    Check -2147483647 between -2147483646 and 1, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for time 3000 ps. 'Check time in range, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for time 3000 ps. 'Check time in range, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return true when
+UVVM:                                                                           OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #37  ***
@@ -344,6 +585,20 @@ UVVM:                    Check time in range, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
+UVVM:                                                                           Fail'
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  TB seq                         Verifying check_stable overloads without alert level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at true. 'Stable boolean OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable slv OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable unsigned OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable signed OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.14 stable at 14. 'Stable integer OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.1.337140e+03 stable at 1.337140e+03. 'Stable real OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at 1. 'Stable std_logic OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #38  ***
@@ -407,6 +662,13 @@ UVVM:                    Stable std_logic Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                        31.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
+UVVM: ID_POS_ACK                        51.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
+UVVM: ID_UTIL_SETUP                     51.0 ns  TB seq.                        incremented expected ERRORs by 7. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                        51.0 ns  TB seq.                        Verifying await_change overloads without alert_level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #45  ***
@@ -415,6 +677,12 @@ UVVM:                    await_change(boolean, 3 ns, 5 ns) => Failed. Condition 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                        56.0 ns  TB seq                         await_change(boolean, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window 1, OK'
+UVVM: ID_POS_ACK                        60.0 ns  TB seq                         await_change(boolean, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window 2, OK'
+UVVM: ID_POS_ACK                        65.0 ns  TB seq                         await_change(boolean, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window 3, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #46  ***
@@ -423,6 +691,7 @@ UVVM:                    await_change(boolean, 3 ns, 5 ns) => Failed. Timed out 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                     70.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #47  ***
@@ -431,6 +700,12 @@ UVVM:                    await_change(std_logic, 3 ns, 5 ns) => Failed. Conditio
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                        75.0 ns  TB seq                         await_change(std_logic, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                        79.0 ns  TB seq                         await_change(std_logic, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                        84.0 ns  TB seq                         await_change(std_logic, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #48  ***
@@ -439,6 +714,7 @@ UVVM:                    await_change(std_logic, 3 ns, 5 ns) => Failed. Timed ou
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                     89.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #49  ***
@@ -447,6 +723,12 @@ UVVM:                    await_change(slv, 3 ns, 5 ns) => Failed. Condition occu
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                        94.0 ns  TB seq                         await_change(slv, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time window
+UVVM:                                                                           1, OK'
+UVVM: ID_POS_ACK                        98.0 ns  TB seq                         await_change(slv, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time window
+UVVM:                                                                           2, OK'
+UVVM: ID_POS_ACK                       103.0 ns  TB seq                         await_change(slv, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time window
+UVVM:                                                                           3, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #50  ***
@@ -455,6 +737,7 @@ UVVM:                    await_change(slv, 3 ns, 5 ns) => Failed. Timed out afte
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    108.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #51  ***
@@ -463,6 +746,12 @@ UVVM:                    await_change(unsigned, 3 ns, 5 ns) => Failed. Condition
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       113.0 ns  TB seq                         await_change(unsigned, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       117.0 ns  TB seq                         await_change(unsigned, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       122.0 ns  TB seq                         await_change(unsigned, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #52  ***
@@ -471,6 +760,7 @@ UVVM:                    await_change(unsigned, 3 ns, 5 ns) => Failed. Timed out
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    127.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #53  ***
@@ -479,6 +769,12 @@ UVVM:                    await_change(signed, 3 ns, 5 ns) => Failed. Condition o
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       132.0 ns  TB seq                         await_change(signed, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       136.0 ns  TB seq                         await_change(signed, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       141.0 ns  TB seq                         await_change(signed, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #54  ***
@@ -487,6 +783,7 @@ UVVM:                    await_change(signed, 3 ns, 5 ns) => Failed. Timed out a
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    146.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #55  ***
@@ -495,6 +792,12 @@ UVVM:                    await_change(integer, 3 ns, 5 ns) => Failed. Condition 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       151.0 ns  TB seq                         await_change(integer, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       155.0 ns  TB seq                         await_change(integer, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       160.0 ns  TB seq                         await_change(integer, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #56  ***
@@ -503,6 +806,7 @@ UVVM:                    await_change(integer, 3 ns, 5 ns) => Failed. Timed out 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    165.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #57  ***
@@ -511,6 +815,12 @@ UVVM:                    await_change(real, 3 ns, 5 ns) => Failed. Condition occ
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       170.0 ns  TB seq                         await_change(real, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       174.0 ns  TB seq                         await_change(real, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: ID_POS_ACK                       179.0 ns  TB seq                         await_change(real, 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #58  ***
@@ -519,6 +829,11 @@ UVVM:                    await_change(real, 3 ns, 5 ns) => Failed. Timed out aft
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    184.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       184.0 ns  TB seq.                        Verifying await_value overloads without alert_level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #59  ***
@@ -527,6 +842,12 @@ UVVM:                    await_value(slv x"1", 3 ns, 5 ns) => Failed. Condition 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       199.0 ns  TB seq                         await_value(slv x"2", 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window 1, OK'
+UVVM: ID_POS_ACK                       203.0 ns  TB seq                         await_value(slv x"3", 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window 2, leading zero, OK'
+UVVM: ID_POS_ACK                       208.0 ns  TB seq                         await_value(slv x"4", 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window 3, leading zero, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #60  ***
@@ -535,6 +856,8 @@ UVVM:                    await_value(slv x"5", 3 ns, 5 ns) => Failed. Timed out 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       217.0 ns  TB seq                         await_value(slv x"8", 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #61  ***
@@ -543,6 +866,16 @@ UVVM:                    await_value(slv x"113", 3 ns, 5 ns) => Failed. Widths d
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       217.0 ns  TB seq                         await_value(slv x"9", 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Changed immediately,
+UVVM:                                                                           OK'
+UVVM: ID_POS_ACK                       227.0 ns  TB seq                         await_value(slv b"1111", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in BIN'
+UVVM: ID_POS_ACK                       227.0 ns  TB seq                         await_value(slv x"F", 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, No
+UVVM:                                                                           signal'event. OK. Log in HEX'
+UVVM: ID_POS_ACK                       227.0 ns  TB seq                         await_value(slv d"15", 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, No
+UVVM:                                                                           signal'event. OK. Log in DECimal'
+UVVM: ID_POS_ACK                       228.0 ns  TB seq                         await_value(slv x"80", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, No
+UVVM:                                                                           signal'event. OK. '
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #62  ***
@@ -551,6 +884,11 @@ UVVM:                    await_value(slv x"80", 1 ns, 2 ns) => Failed. Condition
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       232.0 ns  TB seq                         await_value(slv x"3", 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window 2, exact match, OK'
+UVVM: ID_POS_ACK                       246.0 ns  TB seq                         await_value(slv x"X1" (b"10--0001"), 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change
+UVVM:                                                                           within time window 2, STD match, OK'
+UVVM: ID_UTIL_SETUP                    246.0 ns  TB seq.                        incremented expected ERRORs by 4. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #63  ***
@@ -559,6 +897,8 @@ UVVM:                    await_value(unsigned x"1", 3 ns, 5 ns) => Failed. Condi
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       251.0 ns  TB seq                         await_value(unsigned x"2", 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within
+UVVM:                                                                           time window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #64  ***
@@ -567,6 +907,13 @@ UVVM:                    await_value(unsigned x"5", 3 ns, 5 ns) => Failed. Timed
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       266.0 ns  TB seq                         await_value(unsigned b"1111", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in BIN'
+UVVM: ID_POS_ACK                       266.0 ns  TB seq                         await_value(unsigned x"F", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in HEX'
+UVVM: ID_POS_ACK                       266.0 ns  TB seq                         await_value(unsigned d"15", 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in DECimal'
+UVVM: ID_UTIL_SETUP                    266.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #65  ***
@@ -575,6 +922,8 @@ UVVM:                    await_value(signed x"1", 3 ns, 5 ns) => Failed. Conditi
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       271.0 ns  TB seq                         await_value(signed x"2", 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #66  ***
@@ -583,6 +932,9 @@ UVVM:                    await_value(signed x"5", 3 ns, 5 ns) => Failed. Timed o
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       286.0 ns  TB seq                         await_value(signed d"15", 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in DECimal'
+UVVM: ID_UTIL_SETUP                    286.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #67  ***
@@ -591,6 +943,8 @@ UVVM:                    await_value(boolean true, 3 ns, 5 ns) => Failed. Condit
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       299.0 ns  TB seq                         await_value(boolean false, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within
+UVVM:                                                                           time window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #68  ***
@@ -599,6 +953,10 @@ UVVM:                    await_value(boolean true, 3 ns, 5 ns) => Failed. Timed 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       314.0 ns  TB seq                         await_value(boolean false, 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. '
+UVVM: ID_POS_ACK                       314.0 ns  TB seq                         await_value(boolean true, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already,
+UVVM:                                                                           No signal'event. OK. '
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #69  ***
@@ -607,6 +965,7 @@ UVVM:                    await_value(boolean true, 1 ns, 2 ns) => Failed. Condit
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    314.0 ns  TB seq.                        incremented expected ERRORs by 3. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #70  ***
@@ -615,6 +974,8 @@ UVVM:                    await_value(std_logic 1, 3 ns, 5 ns) => Failed. Conditi
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       327.0 ns  TB seq                         await_value(std_logic 0, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #71  ***
@@ -623,6 +984,8 @@ UVVM:                    await_value(std_logic 1, 3 ns, 5 ns) => Failed. Timed o
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       342.0 ns  TB seq                         await_value(std_logic 0, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. '
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #72  ***
@@ -631,6 +994,10 @@ UVVM:                    await_value(std_logic 1, 1 ns, 2 ns) => Failed. Conditi
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       365.0 ns  TB seq                         await_value(std_logic 0, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window to weak, expecting forced, OK'
+UVVM: ID_POS_ACK                       378.0 ns  TB seq                         await_value(std_logic H, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window to forced, expecting weak, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #73  ***
@@ -647,6 +1014,7 @@ UVVM:                    await_value(std_logic 1, 3 ns, 5 ns) => Failed. Timed o
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    418.0 ns  TB seq.                        incremented expected ERRORs by 5. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #75  ***
@@ -655,6 +1023,8 @@ UVVM:                    await_value(integer 1, 3 ns, 5 ns) => Failed. Condition
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       423.0 ns  TB seq                         await_value(integer 2, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #76  ***
@@ -663,6 +1033,8 @@ UVVM:                    await_value(integer 3, 3 ns, 5 ns) => Failed. Timed out
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       438.0 ns  TB seq                         await_value(integer 15, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, no
+UVVM:                                                                           signal'event, OK. '
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #77  ***
@@ -671,6 +1043,7 @@ UVVM:                    await_value(integer 17, 1 ns, 2 ns) => Failed. Conditio
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    448.0 ns  TB seq.                        incremented expected ERRORs by 3. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #78  ***
@@ -679,6 +1052,8 @@ UVVM:                    await_value(real 1.000000e+00, 3 ns, 5 ns) => Failed. C
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       453.0 ns  TB seq                         await_value(real 2.000000e+00, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within
+UVVM:                                                                           time window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #79  ***
@@ -687,6 +1062,8 @@ UVVM:                    await_value(real 3.000000e+00, 3 ns, 5 ns) => Failed. T
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_POS_ACK                       468.0 ns  TB seq                         await_value(real 1.500000e+01, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp
+UVVM:                                                                           already, no signal'event, OK. '
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #80  ***
@@ -695,6 +1072,15 @@ UVVM:                    await_value(real 1.700000e+01, 1 ns, 2 ns) => Failed. C
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    478.0 ns  TB seq.                        incremented expected ERRORs by 3. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       478.0 ns  TB seq.                        Verifying await_stable overloads without alert_level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                       528.0 ns  TB seq                         await_stable(boolean, 50 ns, 51 ns) => OK. Condition occurred after 50 ns. 'bol: No 'event,
+UVVM:                                                                           Stable FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                       608.0 ns  TB seq                         await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'bol: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #81  ***
@@ -704,6 +1090,7 @@ UVVM:                    = 0 ns. 'bol: Not stable FROM_NOW, FROM_NOW, Fail after
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    638.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #82  ***
@@ -713,6 +1100,15 @@ UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    638.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       638.0 ns  TB seq                         await_stable(boolean, 0 ns, 0 ns) => OK. Condition occurred immediately. 'bol: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                       688.0 ns  TB seq                         await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'bol: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                       738.0 ns  TB seq                         await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred immediately. 'bol: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                       758.0 ns  TB seq                         await_stable(boolean, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'bol: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #83  ***
@@ -722,6 +1118,7 @@ UVVM:                    = 0 ns. 'bol: Not stable FROM_LAST_EVENT, FROM_NOW, Fai
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    778.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #84  ***
@@ -731,6 +1128,13 @@ UVVM:                    FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                    878.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      1028.0 ns  TB seq                         await_stable(boolean, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'bol: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      1078.0 ns  TB seq                         await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'bol: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      1128.0 ns  TB seq                         await_stable(boolean, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'bol: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #85  ***
@@ -740,6 +1144,11 @@ UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1138.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      1188.0 ns  TB seq                         await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'sl: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      1268.0 ns  TB seq                         await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'sl: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #86  ***
@@ -749,6 +1158,7 @@ UVVM:                    event = 0 ns. 'sl: Not stable FROM_NOW, FROM_NOW, Fail 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1298.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #87  ***
@@ -758,6 +1168,15 @@ UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1298.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      1298.0 ns  TB seq                         await_stable(std_logic, 0 ns, 0 ns) => OK. Condition occurred immediately. 'sl: stable for 0
+UVVM:                                                                           ns, FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      1348.0 ns  TB seq                         await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      1398.0 ns  TB seq                         await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred immediately. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      1418.0 ns  TB seq                         await_stable(std_logic, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #88  ***
@@ -767,6 +1186,7 @@ UVVM:                    event = 0 ns. 'sl: Not stable FROM_LAST_EVENT, FROM_NOW
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1438.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #89  ***
@@ -776,6 +1196,13 @@ UVVM:                    FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1538.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      1688.0 ns  TB seq                         await_stable(std_logic, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'sl: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      1738.0 ns  TB seq                         await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      1788.0 ns  TB seq                         await_stable(std_logic, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #90  ***
@@ -785,6 +1212,11 @@ UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1798.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      1848.0 ns  TB seq                         await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'slv8:
+UVVM:                                                                           Stable FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      1928.0 ns  TB seq                         await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'slv8:
+UVVM:                                                                           Stable FROM_NOW, FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #91  ***
@@ -794,6 +1226,7 @@ UVVM:                    last event = 0 ns. 'slv8: Not stable FROM_NOW, FROM_NOW
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1958.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #92  ***
@@ -803,6 +1236,16 @@ UVVM:                    before stable_req, FROM_NOW, FROM_NOW, Fail immediately
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   1958.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      1958.0 ns  TB seq                         await_stable(std_logic_vector, 0 ns, 0 ns) => OK. Condition occurred immediately. 'slv8: stable
+UVVM:                                                                           for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      2008.0 ns  TB seq                         await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      2058.0 ns  TB seq                         await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred immediately. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta
+UVVM:                                                                           cycle)'
+UVVM: ID_POS_ACK                      2078.0 ns  TB seq                         await_stable(std_logic_vector, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #93  ***
@@ -812,6 +1255,7 @@ UVVM:                    last event = 0 ns. 'slv8: Not stable FROM_LAST_EVENT, F
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2098.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #94  ***
@@ -821,6 +1265,13 @@ UVVM:                    FROM_NOW, FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2198.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      2348.0 ns  TB seq                         await_stable(std_logic_vector, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'slv8:
+UVVM:                                                                           FROM_NOW, FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      2398.0 ns  TB seq                         await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      2448.0 ns  TB seq                         await_stable(std_logic_vector, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #95  ***
@@ -830,6 +1281,11 @@ UVVM:                    Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2458.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      2508.0 ns  TB seq                         await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'u8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      2588.0 ns  TB seq                         await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'u8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #96  ***
@@ -839,6 +1295,7 @@ UVVM:                    event = 0 ns. 'u8: Not stable FROM_NOW, FROM_NOW, Fail 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2618.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #97  ***
@@ -848,6 +1305,15 @@ UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2618.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      2618.0 ns  TB seq                         await_stable(unsigned, 0 ns, 0 ns) => OK. Condition occurred immediately. 'u8: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      2668.0 ns  TB seq                         await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'u8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      2718.0 ns  TB seq                         await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred immediately. 'u8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      2738.0 ns  TB seq                         await_stable(unsigned, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'u8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #98  ***
@@ -857,6 +1323,7 @@ UVVM:                    event = 0 ns. 'u8: Not stable FROM_LAST_EVENT, FROM_NOW
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2758.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #99  ***
@@ -866,6 +1333,13 @@ UVVM:                    FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   2858.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      3008.0 ns  TB seq                         await_stable(unsigned, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'u8: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      3058.0 ns  TB seq                         await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'u8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      3108.0 ns  TB seq                         await_stable(unsigned, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'u8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #100  ***
@@ -875,6 +1349,11 @@ UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3118.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      3168.0 ns  TB seq                         await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 's8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      3248.0 ns  TB seq                         await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 's8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #101  ***
@@ -884,6 +1363,7 @@ UVVM:                    = 0 ns. 's8: Not stable FROM_NOW, FROM_NOW, Fail after 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3278.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #102  ***
@@ -893,6 +1373,15 @@ UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3278.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      3278.0 ns  TB seq                         await_stable(signed, 0 ns, 0 ns) => OK. Condition occurred immediately. 's8: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      3328.0 ns  TB seq                         await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 's8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      3378.0 ns  TB seq                         await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred immediately. 's8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      3398.0 ns  TB seq                         await_stable(signed, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 's8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #103  ***
@@ -902,6 +1391,7 @@ UVVM:                    = 0 ns. 's8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3418.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #104  ***
@@ -911,6 +1401,13 @@ UVVM:                    FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3518.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      3668.0 ns  TB seq                         await_stable(signed, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 's8: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      3718.0 ns  TB seq                         await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 's8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      3768.0 ns  TB seq                         await_stable(signed, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 's8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #105  ***
@@ -920,6 +1417,11 @@ UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3778.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      3828.0 ns  TB seq                         await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'i: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      3908.0 ns  TB seq                         await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'i: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #106  ***
@@ -929,6 +1431,7 @@ UVVM:                    = 0 ns. 'i: Not stable FROM_NOW, FROM_NOW, Fail after 3
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3938.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #107  ***
@@ -938,6 +1441,15 @@ UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   3938.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      3938.0 ns  TB seq                         await_stable(integer, 0 ns, 0 ns) => OK. Condition occurred immediately. 'i: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      3988.0 ns  TB seq                         await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'i: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      4038.0 ns  TB seq                         await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred immediately. 'i: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      4058.0 ns  TB seq                         await_stable(integer, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'i: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #108  ***
@@ -947,6 +1459,7 @@ UVVM:                    = 0 ns. 'i: Not stable FROM_LAST_EVENT, FROM_NOW, Fail 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4078.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #109  ***
@@ -956,6 +1469,13 @@ UVVM:                    FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4178.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      4328.0 ns  TB seq                         await_stable(integer, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'i: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      4378.0 ns  TB seq                         await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'i: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      4428.0 ns  TB seq                         await_stable(integer, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'i: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #110  ***
@@ -965,6 +1485,11 @@ UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4438.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      4488.0 ns  TB seq                         await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'r: Stable FROM_NOW,
+UVVM:                                                                           FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      4568.0 ns  TB seq                         await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'r: Stable FROM_NOW,
+UVVM:                                                                           FROM_NOW, OK after 80 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #111  ***
@@ -974,6 +1499,7 @@ UVVM:                    0 ns. 'r: Not stable FROM_NOW, FROM_NOW, Fail after 30 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4598.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #112  ***
@@ -983,6 +1509,15 @@ UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4598.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      4598.0 ns  TB seq                         await_stable(real, 0 ns, 0 ns) => OK. Condition occurred immediately. 'r: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      4648.0 ns  TB seq                         await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'r: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      4698.0 ns  TB seq                         await_stable(real, 50 ns, 100 ns) => OK. Condition occurred immediately. 'r: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      4718.0 ns  TB seq                         await_stable(real, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'r: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #113  ***
@@ -992,6 +1527,7 @@ UVVM:                    0 ns. 'r: Not stable FROM_LAST_EVENT, FROM_NOW, Fail af
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4738.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #114  ***
@@ -1001,6 +1537,13 @@ UVVM:                    FROM_LAST_EVENT, Fail immediately'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   4838.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                      4988.0 ns  TB seq                         await_stable(real, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'r: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      5038.0 ns  TB seq                         await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'r: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      5088.0 ns  TB seq                         await_stable(real, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'r: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #115  ***
@@ -1010,3 +1553,43 @@ UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
+UVVM: ID_UTIL_SETUP                   5098.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :    115       115         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :    115       115         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      6098.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

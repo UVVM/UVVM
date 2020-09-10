@@ -230,27 +230,30 @@ UVVM:
 UVVM: ***  TB_WARNING #4  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. t_slv_array  Was x"B". Expected x"C".
-UVVM:                    check_value with t_slv_array of different array indexes
+UVVM:                    2check_value with t_slv_array of different array indexes
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #5  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. t_signed_array  Was x"D". Expected x"A".
-UVVM:                    check_value with t_signed_array of different array indexes
+UVVM:                    2check_value with t_signed_array of different array indexes
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #6  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. t_unsigned_array  Was x"F". Expected x"D".
-UVVM:                    check_value with t_unsigned_array of different array indexes
+UVVM:                    2check_value with t_unsigned_array of different array indexes
 UVVM: 
 UVVM: 
-UVVM: ***  WARNING #9  ***
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ***  WARNING #10  ***
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM:                    check_value() => Failed. Boolean was false. 'array directions do not match'
 UVVM: 

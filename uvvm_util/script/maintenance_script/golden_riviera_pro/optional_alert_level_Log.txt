@@ -95,10 +95,10 @@ UVVM:                ID_FILE_PARSER               : ENABLED
 UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
 UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         1.0 ns  C_SCOPE                        Verifying check_value() overloads without alert_level
@@ -324,12 +324,12 @@ UVVM:
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return false when
 UVVM:                                                                           Fail'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for real 5.222010e+03. 'My msg I, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for real 5222.01. 'My msg I, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #20  ***
 UVVM:             1 ns   TB seq
-UVVM:                    check_value() => Failed. real  Was 5.222010e+03. Expected 1.421020e+03
+UVVM:                    check_value() => Failed. real  Was 5222.01. Expected 1421.02
 UVVM:                    My msg I, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -497,19 +497,23 @@ UVVM:                    check_value with t_unsigned_array of different array in
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected WARNINGs by 2. 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: 
-UVVM: ***  WARNING #1  ***
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM: =========================================================================================================================================================================
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: 
-UVVM: ***  WARNING #2  ***
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM:                    check_value() => Failed. Boolean was false. 'array directions do not match'
 UVVM: 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         1.0 ns  C_SCOPE                        Verifying check_value_in_range() overloads without alert_level
@@ -593,7 +597,7 @@ UVVM: ID_POS_ACK                        11.0 ns  TB seq                         
 UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable unsigned OK'
 UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable signed OK'
 UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.14 stable at 14. 'Stable integer OK'
-UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.1.337140e+03 stable at 1.337140e+03. 'Stable real OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.1337.14 stable at 1337.14. 'Stable real OK'
 UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at 1. 'Stable std_logic OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -644,7 +648,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #43  ***
 UVVM:            11 ns   TB seq
-UVVM:                    check_stable() => Failed. Switched from 0.000000e+00 to 1.337140e+03 10 ns ago. Expected stable for 11000 ps
+UVVM:                    check_stable() => Failed. Switched from 0 to 1337.14 10 ns ago. Expected stable for 11000 ps
 UVVM:                    Stable real Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -1044,27 +1048,27 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #78  ***
 UVVM:           450 ns   TB seq
-UVVM:                    await_value(real 1.000000e+00, 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM:                    await_value(real 1, 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                       453.0 ns  TB seq                         await_value(real 2.000000e+00, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within
-UVVM:                                                                           time window, OK'
+UVVM: ID_POS_ACK                       453.0 ns  TB seq                         await_value(real 2, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #79  ***
 UVVM:           458 ns   TB seq
-UVVM:                    await_value(real 3.000000e+00, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM:                    await_value(real 3, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                       468.0 ns  TB seq                         await_value(real 1.500000e+01, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp
-UVVM:                                                                           already, no signal'event, OK. '
+UVVM: ID_POS_ACK                       468.0 ns  TB seq                         await_value(real 15, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, no
+UVVM:                                                                           signal'event, OK. '
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #80  ***
 UVVM:           478 ns   TB seq
-UVVM:                    await_value(real 1.700000e+01, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, Min_time>0ns, Fail. '
+UVVM:                    await_value(real 17, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, Min_time>0ns, Fail. '
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -1557,11 +1561,11 @@ UVVM:      =====================================================================
 UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
 UVVM:                NOTE         :      0         0         0         ok
 UVVM:                TB_NOTE      :      0         0         0         ok
-UVVM:                WARNING      :      2         2         0         ok
-UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :    115       115         0         ok
-UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================
@@ -1573,11 +1577,11 @@ UVVM:      =====================================================================
 UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
 UVVM:                NOTE         :      0         0         0         ok
 UVVM:                TB_NOTE      :      0         0         0         ok
-UVVM:                WARNING      :      2         2         0         ok
-UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :    115       115         0         ok
-UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================

@@ -237,9 +237,9 @@ begin
       -- Run testcase
       initialize_req_cov("TC_10", "../tb/maintenance_tb/req_file.csv", "pc_15.csv");
 
-      log(ID_SEQUENCER, "Call disable_tick_off_req_cov(REQ_10) and expect warning for second call.", C_SCOPE);
-      disable_tick_off_req_cov("REQ_10");
-      disable_tick_off_req_cov("REQ_10"); -- expect tb_warning for this call
+      log(ID_SEQUENCER, "Call disable_cond_tick_off_req_cov(REQ_10) and expect warning for second call.", C_SCOPE);
+      disable_cond_tick_off_req_cov("REQ_10");
+      disable_cond_tick_off_req_cov("REQ_10"); -- expect tb_warning for this call
 
       log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_10) expecting no tick off.", C_SCOPE);
       for tick_off_idx in 1 to 5 loop
@@ -255,8 +255,8 @@ begin
       -- expecting tick off
       cond_tick_off_req_cov("REQ_9", PASS, "cond_tick_off_req_cov(), with no conditional disabled REQ_9 tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
 
-      log(ID_SEQUENCER, "Call enable_tick_off_req_cov(REQ_10).", C_SCOPE);
-      enable_tick_off_req_cov("REQ_10");
+      log(ID_SEQUENCER, "Call enable_cond_tick_off_req_cov(REQ_10).", C_SCOPE);
+      enable_cond_tick_off_req_cov("REQ_10");
 
       log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_10) expecting tick off.", C_SCOPE);
       -- expecting tick off

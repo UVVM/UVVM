@@ -20,13 +20,11 @@ def main():
     golden_file_list = get_file_list("../script/maintenance_script/golden/")
     
     failing_verify_file = []
-    num_checked_files = 0
 
     for filename in filelist:
         golden_file = "../script/maintenance_script/golden/" + filename
 
         if os.path.isfile(golden_file):
-            num_checked_files += 1
             golden_file_lines = len(open(golden_file).readlines(  ))
             check_file_lines  = len(open(filename).readlines(  ))
             

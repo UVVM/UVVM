@@ -59,25 +59,33 @@ def get_module_list():
   return modules
 
 
-def simulate_module(module):
+def simulate_module(module, args):
   print("\nSimulating module: " + module)
   if module == None or len(module) == 0:
     return 0
 
   try:
-    subprocess.check_call([sys.executable, "../../" + str(module) + "/script/maintenance_script/sim.py", ' '.join(sys.argv[1:])])
+    subprocess.check_call([sys.executable, "../../" + str(module) + "/script/maintenance_script/sim.py", ' '.join(args)])
     return 0
   except subprocess.CalledProcessError as e:
     print("Number of failing tests: " + str(e.returncode))
     return int(e.returncode)
 
 
-def present_results(num_failing_tests, time_elapsed):
+def present_results(num_failing_tests, time_elapsed, regression_run_results, args):
   if num_failing_tests > 0:
     result_string = "FAILED"
   else:
     result_string = "SUCCEEDED"
   print(60*'-' + "\nRegression test %s with a total of %d failing tests [%s sec]." %(result_string, num_failing_tests, time_elapsed))
+  
+  # Present result from all modules if regression was run with full verbosity
+  verbose  = any(arg in ["-v", "-V"] for arg in args)
+  if verbose:
+    for module, errors in regression_run_results:
+      if errors == 0: result = "PASS" 
+      else: result = "FAIL"
+      print("[%s] %s : %d" %(result, module, errors))
   
 
 
@@ -88,8 +96,11 @@ def main():
   modules = get_module_list()
   num_failing_tests = 0
 
+  args = sys.argv[1:]
+
   # Start time of test run
   test_run_start = time.time()
+  regression_run_results = []
 
   for idx, module in enumerate(modules):
     print("\n%s" %(50*'-'))
@@ -97,12 +108,14 @@ def main():
     print("Num failing tests in regression run: %d" %(num_failing_tests))
 
     cd_to_module(module)
-    num_failing_tests += simulate_module(module)
+    errors = simulate_module(module, args)
+    num_failing_tests += errors
+    regression_run_results.append([module, errors])
 
   test_run_end = time.time()
   time_elapsed = str("%.2f" %(test_run_end - test_run_start))
 
-  present_results(num_failing_tests, time_elapsed)
+  present_results(num_failing_tests, time_elapsed, regression_run_results, args)
 
 
 

@@ -317,7 +317,7 @@ package body axilite_channel_handler_pkg is
       -- Checking if the write response channel access is done
       if write_resp_channel.bvalid = '1' and cycle >= config.num_b_pipe_stages then
         -- Checking BRESP value
-        check_value(write_resp_channel.bresp, response_to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+        check_value(write_resp_channel.bresp, xresp_to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
         write_resp_channel.bready <= '0';
@@ -381,7 +381,7 @@ package body axilite_channel_handler_pkg is
         -- Storing RDATA
         v_rdata_value := read_data_channel.rdata;
         -- Checking RRESP
-        check_value(read_data_channel.rresp, response_to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(read_data_channel.rresp, xresp_to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
         read_data_channel.rready  <= '0';

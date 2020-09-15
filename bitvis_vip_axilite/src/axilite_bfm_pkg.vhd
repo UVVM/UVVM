@@ -32,7 +32,7 @@ package axilite_bfm_pkg is
   --===============================================================================================
   constant C_SCOPE : string := "AXILITE BFM";
 
-  type t_axilite_response_status is (OKAY, SLVERR, DECERR, EXOKAY); -- EXOKAY not supported for AXI-Lite, will raise TB_FAILURE
+  type t_xresp is (OKAY, SLVERR, DECERR, EXOKAY); -- EXOKAY not supported for AXI-Lite, will raise TB_FAILURE
 
   type t_axilite_protection is(
     UNPRIVILIGED_UNSECURE_DATA,
@@ -57,7 +57,7 @@ package axilite_bfm_pkg is
     hold_time                   : time;                       -- Hold time for generated signals, set to clock_period/4
     bfm_sync                    : t_bfm_sync;                 -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
     match_strictness            : t_match_strictness;         -- Matching strictness for std_logic values in check procedures.
-    expected_response           : t_axilite_response_status;  -- Sets the expected response for both read and write transactions.
+    expected_response           : t_xresp;                    -- Sets the expected response for both read and write transactions.
     expected_response_severity  : t_alert_level;              -- A response mismatch will have this severity.
     protection_setting          : t_axilite_protection;       -- Sets the AXI access permissions (e.g. write to data/instruction, privileged and secure access).
     num_aw_pipe_stages          : natural;                    -- Write Address Channel pipeline steps.
@@ -163,7 +163,6 @@ package axilite_bfm_pkg is
     data_width : natural
     ) return t_axilite_if;
 
-
   ------------------------------------------
   -- axilite_write
   ------------------------------------------
@@ -172,14 +171,14 @@ package axilite_bfm_pkg is
   -- - The byte enable input is set to 1 for all bytes in this procedure
   -- - When the write is completed, a log message is issued with log ID id_for_bfm
   procedure axilite_write (
-    constant addr_value         : in  unsigned;
-    constant data_value         : in  std_logic_vector;
-    constant msg                : in  string;
-    signal   clk                : in std_logic;
+    constant addr_value         : in    unsigned;
+    constant data_value         : in    std_logic_vector;
+    constant msg                : in    string;
+    signal   clk                : in    std_logic;
     signal   axilite_if         : inout t_axilite_if;
-    constant scope              : in  string                := C_SCOPE;
-    constant msg_id_panel       : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant scope              : in    string                := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
     );
 
 
@@ -189,15 +188,15 @@ package axilite_bfm_pkg is
   -- This procedure writes data to the AXILITE interface specified in axilite_if
   -- - When the write is completed, a log message is issued with log ID id_for_bfm
   procedure axilite_write (
-    constant addr_value         : in  unsigned;
-    constant data_value         : in  std_logic_vector;
-    constant byte_enable        : in  std_logic_vector;
-    constant msg                : in  string;
-    signal   clk                : in std_logic;
+    constant addr_value         : in    unsigned;
+    constant data_value         : in    std_logic_vector;
+    constant byte_enable        : in    std_logic_vector;
+    constant msg                : in    string;
+    signal   clk                : in    std_logic;
     signal   axilite_if         : inout t_axilite_if;
-    constant scope              : in  string                := C_SCOPE;
-    constant msg_id_panel       : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant scope              : in    string                := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
     );
 
 
@@ -244,10 +243,10 @@ package axilite_bfm_pkg is
     protection : t_axilite_protection
   ) return std_logic_vector;
 
-  function response_to_slv(
-    axilite_response_status : t_axilite_response_status;
-    constant scope          : in  string           := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel   := shared_msg_id_panel
+  function xresp_to_slv(
+    constant axilite_response_status : in  t_xresp;
+    constant scope                   : in  string           := C_SCOPE;
+    constant msg_id_panel            : in  t_msg_id_panel   := shared_msg_id_panel
   ) return std_logic_vector;
 
 end package axilite_bfm_pkg;
@@ -289,10 +288,10 @@ package body axilite_bfm_pkg is
     return v_prot_slv;
   end function;
 
-  function response_to_slv(
-    axilite_response_status : t_axilite_response_status;
-    constant scope          : in  string           := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel   := shared_msg_id_panel
+  function xresp_to_slv(
+    constant axilite_response_status  : in  t_xresp;
+    constant scope                    : in  string           := C_SCOPE;
+    constant msg_id_panel             : in  t_msg_id_panel   := shared_msg_id_panel
     ) return std_logic_vector is
     variable v_axilite_response_status_slv : std_logic_vector(1 downto 0);
   begin
@@ -309,26 +308,6 @@ package body axilite_bfm_pkg is
         v_axilite_response_status_slv := "01";
     end case;
     return v_axilite_response_status_slv;
-  end function;
-
-
-  function to_axilite_response_status(
-    resp : std_logic_vector(1 downto 0);
-    constant scope          : in  string           := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel   := shared_msg_id_panel
-    ) return t_axilite_response_status is
-  begin
-    check_value(resp /= "01", TB_FAILURE, "EXOKAY response status is not supported in AXI-Lite", scope, ID_NEVER, msg_id_panel);
-    case resp is
-      when "00" =>
-        return OKAY;
-      when "10" =>
-        return SLVERR;
-      when "11" =>
-        return DECERR;
-      when others =>
-        return EXOKAY;
-    end case;
   end function;
 
   ----------------------------------------------------
@@ -483,7 +462,7 @@ package body axilite_bfm_pkg is
 
       if axilite_if.write_response_channel.bvalid = '1' and cycle > config.num_b_pipe_stages then
 
-        check_value(axilite_if.write_response_channel.bresp, response_to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+        check_value(axilite_if.write_response_channel.bresp, xresp_to_slv(config.expected_response), config.expected_response_severity, ": BRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
 
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -596,7 +575,7 @@ package body axilite_bfm_pkg is
       if axilite_if.read_data_channel.rvalid = '1' and cycle > config.num_r_pipe_stages then
         v_await_rvalid := false;
 
-        check_value(axilite_if.read_data_channel.rresp, response_to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(axilite_if.read_data_channel.rresp, xresp_to_slv(config.expected_response), config.expected_response_severity, ": RRESP detected", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, v_proc_call.all);
 
         v_data_value := axilite_if.read_data_channel.rdata;
 

@@ -102,7 +102,6 @@ architecture behave of axilite_vvc is
 
   alias vvc_config       : t_vvc_config is shared_axilite_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status       : t_vvc_status is shared_axilite_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_axilite_transaction_info(GC_INSTANCE_IDX);
     -- Transaction info
   alias vvc_transaction_info_trigger  : std_logic           is global_axilite_vvc_transaction_trigger(GC_INSTANCE_IDX);
   alias vvc_transaction_info          : t_transaction_group is shared_axilite_vvc_transaction_info(GC_INSTANCE_IDX);
@@ -312,11 +311,6 @@ begin
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
-      -- Set the transaction info for waveview
-      transaction_info := C_TRANSACTION_INFO_DEFAULT;
-      transaction_info.operation := v_cmd.operation;
-      transaction_info.msg := pad_string(to_string(v_cmd.msg), ' ', transaction_info.msg'length);
-
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
@@ -349,15 +343,11 @@ begin
         --===================================
         when WRITE =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "axilite_write() called with to wide address. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "axilite_write() called with to wide data. " & v_cmd.msg);
-
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          transaction_info.byte_enable := v_cmd.byte_enable;
 
           -- Adding the write command to the write address channel queue , write data channel queue and write response channel queue
           work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, write_address_channel_queue, vvc_status, write_address_channel_queue_is_increasing);
@@ -366,26 +356,23 @@ begin
 
         when READ =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "axilite_read() called with to wide address. " & v_cmd.msg);
 
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Adding the read command to the read address channel queue and the read address data queue
           work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, read_address_channel_queue, vvc_status, read_address_channel_queue_is_increasing);
           work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, read_data_channel_queue, vvc_status, read_data_channel_queue_is_increasing);
 
         when CHECK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
 
           -- Normalise address and data
           v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "axilite_check() called with to wide address. " & v_cmd.msg);
           v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "axilite_check() called with to wide data. " & v_cmd.msg);
 
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           -- Adding the check command to the read address channel queue and the read address data queue
           work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, read_address_channel_queue, vvc_status, read_address_channel_queue_is_increasing);
           work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, read_data_channel_queue, vvc_status, read_data_channel_queue_is_increasing);
@@ -425,11 +412,6 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-      -- Reset the transaction info for waveview
-      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
-
-      -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
     end loop;
   end process;
@@ -468,8 +450,8 @@ begin
       case v_cmd.operation is
         when READ | CHECK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-          -- Initiate address channel
+          set_ax_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+          -- Start transaction
           read_address_channel_write(araddr_value       => std_logic_vector(v_normalised_addr),
                                      msg                => format_msg(v_cmd),
                                      clk                => clk,
@@ -482,7 +464,7 @@ begin
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
       -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_ax_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================
@@ -526,9 +508,8 @@ begin
       case v_cmd.operation is
         when READ =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-
-          -- Initiate read response
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+          -- Start transaction
           read_data_channel_receive(rdata_value       => v_read_data(GC_DATA_WIDTH-1 downto 0),
                                     msg               => format_msg(v_cmd),
                                     clk               => clk,
@@ -536,7 +517,6 @@ begin
                                     scope             => C_CHANNEL_SCOPE,
                                     msg_id_panel      => v_msg_id_panel,
                                     config            => vvc_config.bfm_config);
-          -- TODO: What to do with RRESP?
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
@@ -550,8 +530,8 @@ begin
 
         when CHECK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-          -- Initiate check response
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+          -- Start transaction
           read_data_channel_check(rdata_exp           => v_normalised_data,
                                   msg                 => format_msg(v_cmd),
                                   clk                 => clk,
@@ -565,6 +545,7 @@ begin
       end case;
       last_read_data_channel_idx_executed <= v_cmd.cmd_idx;
       -- Set vvc transaction info back to default values
+      reset_r_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
@@ -599,25 +580,18 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
       -- Normalise address
       v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "Function called with to wide address. " & v_cmd.msg);
-      -- Handling commands
-      case v_cmd.operation is
-        when WRITE =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-          -- Initiate address channel
-          write_address_channel_write(awaddr_value      => std_logic_vector(v_normalised_addr),
-                                      msg                => format_msg(v_cmd),
-                                      clk                => clk,
-                                      write_addr_channel => axilite_vvc_master_if.write_address_channel,
-                                      scope              => C_CHANNEL_SCOPE,
-                                      msg_id_panel       => v_msg_id_panel,
-                                      config             => vvc_config.bfm_config);
+      set_ax_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+      -- Start transaction
+      write_address_channel_write(awaddr_value      => std_logic_vector(v_normalised_addr),
+                                  msg                => format_msg(v_cmd),
+                                  clk                => clk,
+                                  write_addr_channel => axilite_vvc_master_if.write_address_channel,
+                                  scope              => C_CHANNEL_SCOPE,
+                                  msg_id_panel       => v_msg_id_panel,
+                                  config             => vvc_config.bfm_config);
 
-        when others =>
-          tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
-      end case;
       -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_ax_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================
@@ -651,27 +625,20 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
       -- Normalise data
       v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "Function called with to wide data. " & v_cmd.msg);
-      -- Handling commands
-      case v_cmd.operation is
-        when WRITE =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-          -- Initiate data channel
-          write_data_channel_write(wdata_value        => v_normalised_data,
-                                   wstrb_value        => v_cmd.byte_enable((GC_DATA_WIDTH/8-1) downto 0),
-                                   msg                => format_msg(v_cmd),
-                                   clk                => clk,
-                                   write_data_channel => axilite_vvc_master_if.write_data_channel,
-                                   scope              => C_CHANNEL_SCOPE,
-                                   msg_id_panel       => v_msg_id_panel,
-                                   config             => vvc_config.bfm_config);
+      -- Set vvc transaction info
+      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+      -- Start transaction
+      write_data_channel_write(wdata_value        => v_normalised_data,
+                               wstrb_value        => v_cmd.byte_enable((GC_DATA_WIDTH/8-1) downto 0),
+                               msg                => format_msg(v_cmd),
+                               clk                => clk,
+                               write_data_channel => axilite_vvc_master_if.write_data_channel,
+                               scope              => C_CHANNEL_SCOPE,
+                               msg_id_panel       => v_msg_id_panel,
+                               config             => vvc_config.bfm_config);
 
-        when others =>
-          tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
-
-      end case;
       -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_w_vvc_transaction_info(vvc_transaction_info);
     end loop;
   end process;
 --===============================================================================================
@@ -709,26 +676,20 @@ begin
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
-      -- Handling commands
-      case v_cmd.operation is
-        when WRITE =>
-          -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-          -- Initiate data channel
-          write_response_channel_check(msg                => format_msg(v_cmd),
-                                       clk                => clk,
-                                       write_resp_channel => axilite_vvc_master_if.write_response_channel,
-                                       alert_level        => error,
-                                       scope              => C_CHANNEL_SCOPE,
-                                       msg_id_panel       => v_msg_id_panel,
-                                       config             => vvc_config.bfm_config);
+      -- Set vvc transaction info
+      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+      -- Receiving a write response
+      write_response_channel_check(msg                => format_msg(v_cmd),
+                                    clk                => clk,
+                                    write_resp_channel => axilite_vvc_master_if.write_response_channel,
+                                    alert_level        => error,
+                                    scope              => C_CHANNEL_SCOPE,
+                                    msg_id_panel       => v_msg_id_panel,
+                                    config             => vvc_config.bfm_config);
 
-        when others =>
-          tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
-
-      end case;
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
       -- Set vvc transaction info back to default values
+      reset_b_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;

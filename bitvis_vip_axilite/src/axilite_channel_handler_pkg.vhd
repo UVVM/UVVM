@@ -219,7 +219,7 @@ package body axilite_channel_handler_pkg is
       -- Assigning the write data channel outputs
       if cycle = config.num_aw_pipe_stages then
         write_addr_channel.awaddr  <= v_normalized_awaddr;
-        write_addr_channel.awprot  <= protection_to_slv(config.protection_setting);
+        write_addr_channel.awprot  <= axprot_to_slv(config.protection_setting);
         write_addr_channel.awvalid <= '1';
       end if;
       wait until rising_edge(clk);
@@ -263,7 +263,7 @@ package body axilite_channel_handler_pkg is
       -- Assigning the write data channel outputs
       if cycle = config.num_ar_pipe_stages then
         read_addr_channel.araddr  <= v_normalized_araddr;
-        read_addr_channel.arprot <= protection_to_slv(config.protection_setting);
+        read_addr_channel.arprot <= axprot_to_slv(config.protection_setting);
         read_addr_channel.arvalid <= '1';
       end if;
       wait until rising_edge(clk);

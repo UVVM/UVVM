@@ -21,6 +21,9 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library work;
+use work.axi_bfm_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
@@ -78,30 +81,126 @@ package transaction_pkg is
   -- Base transaction
   type t_base_transaction is record
     operation           : t_operation;
-    addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    byte_enable         : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation           => NO_OPERATION,
-    addr                => (others => '0'),
-    data                => (others => '0'),
-    byte_enable         => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
 
+  type t_ax_transaction is record
+    operation           : t_operation;
+    axid                : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
+    axaddr              : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    axlen               : unsigned(7 downto 0);
+    axsize              : integer range 1 to 128;
+    axburst             : t_axburst;
+    axlock              : t_axlock;
+    axcache             : std_logic_vector(3 downto 0);
+    axprot              : t_axprot;
+    axqos               : std_logic_vector(3 downto 0);
+    axregion            : std_logic_vector(3 downto 0);
+    axuser              : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_ax_transaction;
+
+  constant C_AX_TRANSACTION_DEFAULT : t_ax_transaction := (
+    operation           => NO_OPERATION,
+    axid                => (others=>'0'),
+    axaddr              => (others=>'0'),
+    axlen               => (others=>'0'),
+    axsize              => 4,
+    axburst             => INCR,
+    axlock              => NORMAL,
+    axcache             => (others=>'0'),
+    axprot              => UNPRIVILEGED_NONSECURE_DATA,
+    axqos               => (others=>'0'),
+    axregion            => (others=>'0'),
+    axuser              => (others=>'0'),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
+  type t_w_transaction is record
+    operation           : t_operation;
+    wdata               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    wstrb               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
+    wuser               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_w_transaction;
+
+  constant C_W_TRANSACTION_DEFAULT : t_w_transaction := (
+    operation           => NO_OPERATION,
+    wdata               => (others=>(others=>'0')),
+    wstrb               => (others=>(others=>'0')),
+    wuser               => (others=>(others=>'0')),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
+  type t_b_transaction is record
+    operation           : t_operation;
+    bid                 : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
+    bresp               : t_xresp;
+    buser               : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_b_transaction;
+
+  constant C_B_TRANSACTION_DEFAULT : t_b_transaction := (
+    operation           => NO_OPERATION,
+    bid                 => (others=>'0'),
+    bresp               => OKAY,
+    buser               => (others=>'0'),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
+  type t_r_transaction is record
+    operation           : t_operation;
+    rid                 : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
+    rdata               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    rresp               : t_xresp_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1);
+    ruser               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_r_transaction;
+
+  constant C_R_TRANSACTION_DEFAULT : t_r_transaction := (
+    operation           => NO_OPERATION,
+    rid                 => (others=>'0'),
+    rdata               => (others=>(others=>'0')),
+    rresp               => (others=>OKAY),
+    ruser               => (others=>(others=>'0')),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
   -- Transaction group
   type t_transaction_group is record
-    bt : t_base_transaction;
+    bt_wr : t_base_transaction;
+    bt_rd : t_base_transaction;
+    st_aw : t_ax_transaction;
+    st_w  : t_w_transaction;
+    st_b  : t_b_transaction;
+    st_ar : t_ax_transaction;
+    st_r  : t_r_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+    bt_wr => C_BASE_TRANSACTION_SET_DEFAULT,
+    bt_rd => C_BASE_TRANSACTION_SET_DEFAULT,
+    st_aw => C_AX_TRANSACTION_DEFAULT,
+    st_w  => C_W_TRANSACTION_DEFAULT,
+    st_b  => C_B_TRANSACTION_DEFAULT,
+    st_ar => C_AX_TRANSACTION_DEFAULT,
+    st_r  => C_R_TRANSACTION_DEFAULT
+  );
 
   -- Global transaction info trigger signal
   type t_axi_transaction_trigger_array is array (natural range <>) of std_logic;

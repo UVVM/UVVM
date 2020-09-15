@@ -32,17 +32,23 @@ package axilite_bfm_pkg is
   --===============================================================================================
   constant C_SCOPE : string := "AXILITE BFM";
 
-  type t_xresp is (OKAY, SLVERR, DECERR, EXOKAY); -- EXOKAY not supported for AXI-Lite, will raise TB_FAILURE
+   -- EXOKAY not supported for AXI-Lite, will raise TB_FAILURE
+  type t_xresp is (
+    OKAY, 
+    SLVERR, 
+    DECERR, 
+    EXOKAY
+  );
 
-  type t_axilite_protection is(
-    UNPRIVILIGED_UNSECURE_DATA,
-    UNPRIVILIGED_UNSECURE_INSTRUCTION,
-    UNPRIVILIGED_SECURE_DATA,
-    UNPRIVILIGED_SECURE_INSTRUCTION,
-    PRIVILIGED_UNSECURE_DATA,
-    PRIVILIGED_UNSECURE_INSTRUCTION,
-    PRIVILIGED_SECURE_DATA,
-    PRIVILIGED_SECURE_INSTRUCTION
+  type t_axprot is(
+    UNPRIVILEGED_NONSECURE_DATA,
+    UNPRIVILEGED_NONSECURE_INSTRUCTION,
+    UNPRIVILEGED_SECURE_DATA,
+    UNPRIVILEGED_SECURE_INSTRUCTION,
+    PRIVILEGED_NONSECURE_DATA,
+    PRIVILEGED_NONSECURE_INSTRUCTION,
+    PRIVILEGED_SECURE_DATA,
+    PRIVILEGED_SECURE_INSTRUCTION
   );
 
   -- Configuration record to be assigned in the test harness.
@@ -59,7 +65,7 @@ package axilite_bfm_pkg is
     match_strictness            : t_match_strictness;         -- Matching strictness for std_logic values in check procedures.
     expected_response           : t_xresp;                    -- Sets the expected response for both read and write transactions.
     expected_response_severity  : t_alert_level;              -- A response mismatch will have this severity.
-    protection_setting          : t_axilite_protection;       -- Sets the AXI access permissions (e.g. write to data/instruction, privileged and secure access).
+    protection_setting          : t_axprot;                   -- Sets the AXI access permissions (e.g. write to data/instruction, privileged and secure access).
     num_aw_pipe_stages          : natural;                    -- Write Address Channel pipeline steps.
     num_w_pipe_stages           : natural;                    -- Write Data Channel pipeline steps.
     num_ar_pipe_stages          : natural;                    -- Read Address Channel pipeline steps.
@@ -82,7 +88,7 @@ package axilite_bfm_pkg is
     match_strictness            => MATCH_EXACT,
     expected_response           => OKAY,
     expected_response_severity  => TB_FAILURE,
-    protection_setting          => UNPRIVILIGED_UNSECURE_DATA,
+    protection_setting          => UNPRIVILEGED_NONSECURE_DATA,
     num_aw_pipe_stages          => 1,
     num_w_pipe_stages           => 1,
     num_ar_pipe_stages          => 1,
@@ -157,7 +163,7 @@ package axilite_bfm_pkg is
   -- - This function returns an AXILITE interface with initialized signals.
   -- - All AXILITE input signals are initialized to 0
   -- - All AXILITE output signals are initialized to Z
-  -- - awprot and arprot are initialized to UNPRIVILIGED_UNSECURE_DATA
+  -- - awprot and arprot are initialized to UNPRIVILEGED_NONSECURE_DATA
   function init_axilite_if_signals(
     addr_width : natural;
     data_width : natural
@@ -167,7 +173,7 @@ package axilite_bfm_pkg is
   -- axilite_write
   ------------------------------------------
   -- This procedure writes data to the AXILITE interface specified in axilite_if
-  -- - The protection setting is set to UNPRIVILIGED_UNSECURE_DATA in this procedure
+  -- - The protection setting is set to UNPRIVILEGED_NONSECURE_DATA in this procedure
   -- - The byte enable input is set to 1 for all bytes in this procedure
   -- - When the write is completed, a log message is issued with log ID id_for_bfm
   procedure axilite_write (
@@ -239,8 +245,8 @@ package axilite_bfm_pkg is
     );
 
 
-  function protection_to_slv(
-    protection : t_axilite_protection
+  function axprot_to_slv(
+    axprot : t_axprot
   ) return std_logic_vector;
 
   function xresp_to_slv(
@@ -261,32 +267,31 @@ package body axilite_bfm_pkg is
   -- Support procedures
   ----------------------------------------------------
 
-  function protection_to_slv(
-    protection : t_axilite_protection
-    ) return std_logic_vector is
-    variable v_prot_slv : std_logic_vector(2 downto 0);
+  function axprot_to_slv(
+    axprot : t_axprot
+  ) return std_logic_vector is
+    variable v_axprot_slv : std_logic_vector(2 downto 0);
   begin
-    case protection is
-      when UNPRIVILIGED_SECURE_DATA =>
-        v_prot_slv := "000";
-      when PRIVILIGED_SECURE_DATA =>
-        v_prot_slv := "001";
-      when UNPRIVILIGED_UNSECURE_DATA =>
-        v_prot_slv := "010";
-      when PRIVILIGED_UNSECURE_DATA =>
-        v_prot_slv := "011";
-      when UNPRIVILIGED_SECURE_INSTRUCTION =>
-        v_prot_slv := "100";
-      when PRIVILIGED_SECURE_INSTRUCTION =>
-        v_prot_slv := "101";
-      when UNPRIVILIGED_UNSECURE_INSTRUCTION =>
-        v_prot_slv := "110";
-      when PRIVILIGED_UNSECURE_INSTRUCTION =>
-        v_prot_slv := "111";
+    case axprot is
+      when UNPRIVILEGED_SECURE_DATA =>
+        v_axprot_slv := "000";
+      when PRIVILEGED_SECURE_DATA =>
+        v_axprot_slv := "001";
+      when UNPRIVILEGED_NONSECURE_DATA =>
+        v_axprot_slv := "010";
+      when PRIVILEGED_NONSECURE_DATA =>
+        v_axprot_slv := "011";
+      when UNPRIVILEGED_SECURE_INSTRUCTION =>
+        v_axprot_slv := "100";
+      when PRIVILEGED_SECURE_INSTRUCTION =>
+        v_axprot_slv := "101";
+      when UNPRIVILEGED_NONSECURE_INSTRUCTION =>
+        v_axprot_slv := "110";
+      when PRIVILEGED_NONSECURE_INSTRUCTION =>
+        v_axprot_slv := "111";
     end case;
-
-    return v_prot_slv;
-  end function;
+    return v_axprot_slv;
+  end function axprot_to_slv;
 
   function xresp_to_slv(
     constant axilite_response_status  : in  t_xresp;
@@ -327,7 +332,7 @@ package body axilite_bfm_pkg is
     -- Write Address Channel
     init_if.write_address_channel.awaddr  := (init_if.write_address_channel.awaddr'range => '0');
     init_if.write_address_channel.awvalid := '0';
-    init_if.write_address_channel.awprot  := protection_to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
+    init_if.write_address_channel.awprot  := axprot_to_slv(UNPRIVILEGED_NONSECURE_DATA); --"010"
     init_if.write_address_channel.awready := 'Z';
     -- Write Data Channel
     init_if.write_data_channel.wdata   := (init_if.write_data_channel.wdata'range => '0');
@@ -341,7 +346,7 @@ package body axilite_bfm_pkg is
     -- Read Address Channel
     init_if.read_address_channel.araddr  := (init_if.read_address_channel.araddr'range => '0');
     init_if.read_address_channel.arvalid := '0';
-    init_if.read_address_channel.arprot  := protection_to_slv(UNPRIVILIGED_UNSECURE_DATA); --"010"
+    init_if.read_address_channel.arprot  := axprot_to_slv(UNPRIVILEGED_NONSECURE_DATA); --"010"
     init_if.read_address_channel.arready := 'Z';
     -- Read Data Channel
     init_if.read_data_channel.rready := '0';
@@ -416,7 +421,7 @@ package body axilite_bfm_pkg is
       if cycle = config.num_aw_pipe_stages then
         axilite_if.write_address_channel.awaddr  <= v_normalized_addr;
         axilite_if.write_address_channel.awvalid <= '1';
-        axilite_if.write_address_channel.awprot  <= protection_to_slv(config.protection_setting);
+        axilite_if.write_address_channel.awprot  <= axprot_to_slv(config.protection_setting);
       end if;
 
       wait until rising_edge(clk);
@@ -544,7 +549,7 @@ package body axilite_bfm_pkg is
       if axilite_if.read_address_channel.arready = '1' and cycle > config.num_ar_pipe_stages then
         axilite_if.read_address_channel.arvalid <= '0';
         axilite_if.read_address_channel.araddr(axilite_if.read_address_channel.araddr'length-1 downto 0)  <= (others => '0');
-        axilite_if.read_address_channel.arprot <= protection_to_slv(config.protection_setting);
+        axilite_if.read_address_channel.arprot <= axprot_to_slv(config.protection_setting);
         v_await_arready := false;
       end if;
 

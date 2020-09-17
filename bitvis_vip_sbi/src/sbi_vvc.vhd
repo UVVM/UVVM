@@ -108,6 +108,15 @@ architecture behave of sbi_vvc is
     end if;
   end function;
 
+
+  package sbi_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(GC_DATA_WIDTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use sbi_sb_pkg.all;
+
+  shared variable SBI_VVC_SB  : sbi_sb_pkg.t_generic_sb;
+
 begin
 
 

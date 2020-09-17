@@ -109,14 +109,6 @@ architecture behave of sbi_vvc is
   end function;
 
 
-  package sbi_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map (t_element         => std_logic_vector(GC_DATA_WIDTH-1 downto 0),
-                 element_match     => std_match,
-                 to_string_element => to_string);
-  use sbi_sb_pkg.all;
-
-  shared variable SBI_VVC_SB  : sbi_sb_pkg.t_generic_sb;
-
 begin
 
 
@@ -381,7 +373,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            SBI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+            SBI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,

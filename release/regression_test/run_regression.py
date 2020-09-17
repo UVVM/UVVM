@@ -52,11 +52,14 @@ def cd_to_module(module):
 
 def get_module_list():
   modules = []
-  for line in open("module_list.txt", 'r'):
-    if not line[0].strip() == "#":
-      modules.append(line.lower().rstrip('\n'))
-
-  return modules
+  try:
+    for line in open("module_list.txt", 'r'):
+      if not line[0].strip() == "#":
+        modules.append(line.lower().rstrip('\n'))
+    return modules
+  except FileNotFoundError:
+    print("Unable to locate module_list.txt")
+    sys.exit(1)
 
 
 def simulate_module(module, args):
@@ -72,20 +75,18 @@ def simulate_module(module, args):
     return int(e.returncode)
 
 
-def present_results(num_failing_tests, time_elapsed, regression_run_results, args):
+def present_results(num_failing_tests, time_elapsed, regression_run_results):
   if num_failing_tests > 0:
     result_string = "FAILED"
   else:
     result_string = "SUCCEEDED"
   print(60*'-' + "\nRegression test %s with a total of %d failing tests [%s sec]." %(result_string, num_failing_tests, time_elapsed))
   
-  # Present result from all modules if regression was run with full verbosity
-  verbose  = any(arg in ["-v", "-V"] for arg in args)
-  if verbose:
-    for module, errors in regression_run_results:
-      if errors == 0: result = "PASS" 
-      else: result = "FAIL"
-      print("[%s] %s : %d" %(result, module, errors))
+  # Present result from all modules
+  for module, errors in regression_run_results:
+    if errors == 0: result = "PASS" 
+    else: result = "FAIL"
+    print("[%s] %s : %d" %(result, module, errors))
   
 
 
@@ -115,7 +116,9 @@ def main():
   test_run_end = time.time()
   time_elapsed = str("%.2f" %(test_run_end - test_run_start))
 
-  present_results(num_failing_tests, time_elapsed, regression_run_results, args)
+  present_results(num_failing_tests, time_elapsed, regression_run_results)
+
+  sys.exit(num_failing_tests)
 
 
 

@@ -242,7 +242,10 @@ package vvc_methods_pkg is
   ) return t_vvc_result;
 
 
-  function pad_sb(
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+  function pad_sbi_sb(
     constant data : in std_logic_vector
   ) return std_logic_vector;
 
@@ -541,12 +544,16 @@ package body vvc_methods_pkg is
   end procedure;
 
 
-  function pad_sb(
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+
+  function pad_sbi_sb(
     constant data : in std_logic_vector
   ) return std_logic_vector is 
   begin
     return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_sb;
+  end function pad_sbi_sb;
 
 end package body vvc_methods_pkg;
 

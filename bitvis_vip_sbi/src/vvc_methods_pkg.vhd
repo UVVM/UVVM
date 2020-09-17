@@ -242,9 +242,9 @@ package vvc_methods_pkg is
   ) return t_vvc_result;
 
 
-  procedure pad_sb(
+  function pad_sb(
     constant data : in std_logic_vector
-  );
+  ) return std_logic_vector;
 
 end package vvc_methods_pkg;
 
@@ -541,12 +541,12 @@ package body vvc_methods_pkg is
   end procedure;
 
 
-  procedure pad_sb(
+  function pad_sb(
     constant data : in std_logic_vector
-  ) is 
+  ) return std_logic_vector is 
   begin
-    pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end procedure pad_sb;
+    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
+  end function pad_sb;
 
 end package body vvc_methods_pkg;
 

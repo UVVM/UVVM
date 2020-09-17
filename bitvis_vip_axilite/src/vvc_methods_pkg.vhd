@@ -133,7 +133,12 @@ package vvc_methods_pkg is
   shared variable shared_axilite_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable AXILITE_VVC_SB : t_generic_sb;
+  package axilite_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use axilite_sb_pkg.all;
+  shared variable AXILITE_VVC_SB  : axilite_sb_pkg.t_generic_sb;
 
 
   --==========================================================================================
@@ -221,6 +226,15 @@ package vvc_methods_pkg is
                                           constant command_queue_is_empty             : in    boolean;
                                           constant scope                              : in    string := C_VVC_NAME);
 
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+  function pad_axilite_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector;
+  
+  
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -446,6 +460,19 @@ package body vvc_methods_pkg is
     end if;    
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
+
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+
+  function pad_axilite_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector is 
+  begin
+    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
+  end function pad_axilite_sb;
+
 
 end package body vvc_methods_pkg;
 

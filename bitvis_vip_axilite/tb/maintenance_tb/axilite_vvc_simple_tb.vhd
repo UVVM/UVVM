@@ -227,7 +227,7 @@ begin
     axilite_write(AXILITE_VVCT,1, x"2000", x"efbeef","Write");  -- op1
     axilite_write(AXILITE_VVCT,1, x"3000", x"beef","Write");    -- op2
     axilite_write(AXILITE_VVCT,1, x"6000", x"54321","Write");   -- rw reg
-    AXILITE_VVC_SB.add_expected(1, pad_sb_slv(x"54321"));
+    AXILITE_VVC_SB.add_expected(1, pad_axilite_sb(x"54321"));
 
     -- Read from VVC 1
     axilite_read(AXILITE_VVCT, 1, x"3000", ""); -- just do a read
@@ -241,7 +241,7 @@ begin
     axilite_write(AXILITE_VVCT,2, x"0030", x"beef","Write");    -- op2
     axilite_write(AXILITE_VVCT,2, x"0040", x"54321","Write");   -- op3
     axilite_write(AXILITE_VVCT,2, x"0060", x"f00b0","Write");   -- rw reg
-    AXILITE_VVC_SB.add_expected(2, pad_sb_slv(x"f00b0"));
+    AXILITE_VVC_SB.add_expected(2, pad_axilite_sb(x"f00b0"));
 
     -- Read from VVC 2
     axilite_read(AXILITE_VVCT, 2, x"0040", ""); -- just do a read

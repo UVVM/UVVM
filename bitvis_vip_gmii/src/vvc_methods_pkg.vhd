@@ -103,8 +103,8 @@ package vvc_methods_pkg is
 
   -- Scoreboard
   package gmii_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map (t_element         => std_logic_vector(7 downto 0), --t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1),
-                 element_match     => std_match, --gmii_match,
+    generic map (t_element         => std_logic_vector(7 downto 0),
+                 element_match     => std_match,
                  to_string_element => to_string);
   use gmii_sb_pkg.all;
   shared variable GMII_VVC_SB  : gmii_sb_pkg.t_generic_sb;

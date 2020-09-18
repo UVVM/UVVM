@@ -341,7 +341,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               for i in 0 to v_cmd.num_bytes-1 loop
-                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, pad_i2c_sb(v_read_data(i)));
               end loop;
             else                            
               -- Store the result
@@ -437,7 +437,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               for i in 0 to v_cmd.num_bytes-1 loop
-                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, pad_i2c_sb(v_read_data(i)));
               end loop;
             else                            
               -- Store the result

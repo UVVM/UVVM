@@ -24,9 +24,6 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.transaction_pkg.all;
 use work.uart_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -37,7 +34,6 @@ use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
 
---=================================================================================================
 entity uart_tx_vvc is
   generic (
     GC_DATA_WIDTH                            : natural           := 8;
@@ -56,9 +52,6 @@ entity uart_tx_vvc is
     );
 end entity uart_tx_vvc;
 
-
---=================================================================================================
---=================================================================================================
 
 architecture behave of uart_tx_vvc is
 

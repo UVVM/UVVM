@@ -25,7 +25,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.C_SB_CONFIG_DEFAULT;
 
 use work.transaction_pkg.all;
 use work.uart_bfm_pkg.all;
@@ -36,8 +36,6 @@ use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
-
---=================================================================================================
 entity uart_rx_vvc is
   generic (
     GC_DATA_WIDTH                            : natural           := 8;
@@ -56,9 +54,6 @@ entity uart_rx_vvc is
     );
 end entity uart_rx_vvc;
 
-
---=================================================================================================
---=================================================================================================
 
 architecture behave of uart_rx_vvc is
 
@@ -319,7 +314,7 @@ begin
             end if;
 
             -- call SB check_received
-            UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(GC_DATA_WIDTH-1 downto 0));
+            UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data);
 
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,

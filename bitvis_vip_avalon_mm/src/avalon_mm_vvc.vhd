@@ -24,7 +24,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.C_SB_CONFIG_DEFAULT;
 
 use work.avalon_mm_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -383,7 +383,7 @@ begin
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+              AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH-1 downto 0)));
             else                            
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
@@ -587,7 +587,7 @@ begin
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+            AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else          
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,

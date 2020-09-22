@@ -27,10 +27,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
-
 -- Test case entity
 entity avalon_mm_vvc_tb is
   generic (
@@ -140,12 +136,12 @@ begin
     v_data_8 := x"10";
 
     avalon_mm_write(AVALON_MM_VVCT, 1, "0", v_data_8, "Write to Avalon MM 1");
-    AVALON_MM_VVC_SB.add_expected(1, pad_sb_slv(v_data_8));
+    AVALON_MM_VVC_SB.add_expected(1, pad_avalon_mm_sb(v_data_8));
     avalon_mm_read(AVALON_MM_VVCT, 1, "0", TO_SB, "Reading without expected timeout using SB");   
     await_completion(AVALON_MM_VVCT,1, 10000 ns, "Wait for avalon_mm_read to finish");
 
     avalon_mm_write(AVALON_MM_VVCT, 2, "0", v_data_8, "Write to Avalon MM 2");
-    AVALON_MM_VVC_SB.add_expected(2, pad_sb_slv(v_data_8));
+    AVALON_MM_VVC_SB.add_expected(2, pad_avalon_mm_sb(v_data_8));
     avalon_mm_read(AVALON_MM_VVCT, 2, "0", TO_SB, "Reading without expected timeout using SB");   
     await_completion(AVALON_MM_VVCT,2, 10000 ns, "Wait for avalon_mm_read to finish");
 

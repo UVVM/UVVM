@@ -37,10 +37,6 @@ context bitvis_vip_spi.vvc_context;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
--------------------------------------------------------------------------------
 
 entity spi_vvc_tb is
   generic (
@@ -50,8 +46,6 @@ entity spi_vvc_tb is
     GC_DATA_ARRAY_WIDTH : positive             := 8
     );
 end entity spi_vvc_tb;
-
--------------------------------------------------------------------------------
 
 architecture behav of spi_vvc_tb is
 

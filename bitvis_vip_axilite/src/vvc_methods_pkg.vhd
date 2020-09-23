@@ -206,7 +206,7 @@ package vvc_methods_pkg is
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
-  procedure set_ax_vvc_transaction_info(
+  procedure set_arw_vvc_transaction_info(
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
@@ -239,7 +239,7 @@ package vvc_methods_pkg is
     constant vvc_cmd                    : in t_vvc_cmd_record
   );
 
-  procedure reset_ax_vvc_transaction_info(
+  procedure reset_arw_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record
   );
@@ -448,7 +448,7 @@ package body vvc_methods_pkg is
     wait for 0 ns;
   end procedure set_global_vvc_transaction_info;
 
-  procedure set_ax_vvc_transaction_info(
+  procedure set_arw_vvc_transaction_info(
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
@@ -458,13 +458,13 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when WRITE =>
         vvc_transaction_info_group.st_aw.operation                                          := vvc_cmd.operation;
-        vvc_transaction_info_group.st_aw.axaddr                                             := vvc_cmd.addr;
+        vvc_transaction_info_group.st_aw.arwaddr                                            := vvc_cmd.addr;
         vvc_transaction_info_group.st_aw.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
         vvc_transaction_info_group.st_aw.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.st_aw.transaction_status                                 := IN_PROGRESS;
       when READ | CHECK =>
         vvc_transaction_info_group.st_ar.operation                                          := vvc_cmd.operation;
-        vvc_transaction_info_group.st_ar.axaddr                                             := vvc_cmd.addr;
+        vvc_transaction_info_group.st_ar.arwaddr                                            := vvc_cmd.addr;
         vvc_transaction_info_group.st_ar.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
         vvc_transaction_info_group.st_ar.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.st_ar.transaction_status                                 := IN_PROGRESS;
@@ -473,7 +473,7 @@ package body vvc_methods_pkg is
     end case;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;
-  end procedure set_ax_vvc_transaction_info;
+  end procedure set_arw_vvc_transaction_info;
 
   procedure set_w_vvc_transaction_info(
     signal vvc_transaction_info_trigger : inout std_logic;
@@ -542,21 +542,21 @@ package body vvc_methods_pkg is
     wait for 0 ns;
   end procedure reset_vvc_transaction_info;
 
-  procedure reset_ax_vvc_transaction_info(
+  procedure reset_arw_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record
   ) is
   begin
     case vvc_cmd.operation is
       when WRITE =>
-        vvc_transaction_info_group.st_aw := C_AX_TRANSACTION_DEFAULT;
+        vvc_transaction_info_group.st_aw := C_ARW_TRANSACTION_DEFAULT;
       when READ | CHECK =>
-        vvc_transaction_info_group.st_ar := C_AX_TRANSACTION_DEFAULT;
+        vvc_transaction_info_group.st_ar := C_ARW_TRANSACTION_DEFAULT;
       when others =>
         null;
     end case;
     wait for 0 ns;
-  end procedure reset_ax_vvc_transaction_info;
+  end procedure reset_arw_vvc_transaction_info;
 
   procedure reset_w_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group

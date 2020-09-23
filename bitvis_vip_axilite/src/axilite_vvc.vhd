@@ -450,7 +450,7 @@ begin
       case v_cmd.operation is
         when READ | CHECK =>
           -- Set vvc transaction info
-          set_ax_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+          set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
           -- Start transaction
           read_address_channel_write(araddr_value       => std_logic_vector(v_normalised_addr),
                                      msg                => format_msg(v_cmd),
@@ -464,7 +464,7 @@ begin
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
       -- Set vvc transaction info back to default values
-      reset_ax_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================
@@ -580,7 +580,7 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
       -- Normalise address
       v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "Function called with to wide address. " & v_cmd.msg);
-      set_ax_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
       -- Start transaction
       write_address_channel_write(awaddr_value      => std_logic_vector(v_normalised_addr),
                                   msg                => format_msg(v_cmd),
@@ -591,7 +591,7 @@ begin
                                   config             => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
-      reset_ax_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================

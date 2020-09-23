@@ -87,16 +87,16 @@ package transaction_pkg is
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
 
-  type t_ax_transaction is record
+  type t_arw_transaction is record
     operation           : t_operation;
-    axaddr              : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    arwaddr             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
-  end record t_ax_transaction;
+  end record t_arw_transaction;
 
-  constant C_AX_TRANSACTION_DEFAULT : t_ax_transaction := (
+  constant C_ARW_TRANSACTION_DEFAULT : t_arw_transaction := (
     operation           => NO_OPERATION,
-    axaddr              => (others=>'0'),
+    arwaddr             => (others=>'0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
   );
@@ -147,20 +147,20 @@ package transaction_pkg is
   type t_transaction_group is record
     bt_wr : t_base_transaction;
     bt_rd : t_base_transaction;
-    st_aw : t_ax_transaction;
+    st_aw : t_arw_transaction;
     st_w  : t_w_transaction;
     st_b  : t_b_transaction;
-    st_ar : t_ax_transaction;
+    st_ar : t_arw_transaction;
     st_r  : t_r_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt_wr => C_BASE_TRANSACTION_SET_DEFAULT,
     bt_rd => C_BASE_TRANSACTION_SET_DEFAULT,
-    st_aw => C_AX_TRANSACTION_DEFAULT,
+    st_aw => C_ARW_TRANSACTION_DEFAULT,
     st_w  => C_W_TRANSACTION_DEFAULT,
     st_b  => C_B_TRANSACTION_DEFAULT,
-    st_ar => C_AX_TRANSACTION_DEFAULT,
+    st_ar => C_ARW_TRANSACTION_DEFAULT,
     st_r  => C_R_TRANSACTION_DEFAULT
   );
 

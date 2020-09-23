@@ -43,6 +43,7 @@ architecture behav of axilite_slave_model is
   signal wr_state   : t_write_state;
   signal rd_state   : t_read_state;
   signal wdata      : std_logic_vector(C_AXI_DATA_WIDTH-1 downto 0);
+  signal wstrb      : std_logic_vector(C_AXI_DATA_WIDTH/8-1 downto 0);
   signal rdata      : std_logic_vector(C_AXI_DATA_WIDTH-1 downto 0);
   signal mem_model  : memory(0 to C_MEMORY_SIZE);
   signal wr_address : unsigned(31 downto 0);
@@ -89,6 +90,7 @@ begin
             
           elsif (wr_port_in.wvalid = '1') then -- go to wait for awvalid state
             wdata <= wr_port_in.wdata;
+            wstrb <= wr_port_in.wstrb;
             wr_port_out.wready  <= '0';
             wr_port_out.awready <= '1';
             wr_port_out.bvalid  <= '0';
@@ -128,7 +130,7 @@ begin
                 severity failure;
             end if;
             for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
-              if (wr_port_in.wstrb(i) = '1') then
+              if (wstrb(i) = '1') then
                 mem_model(to_integer(mem_addr)+i) <= wdata((i+1)*8-1 downto i*8);
               end if;
             end loop;

@@ -194,6 +194,7 @@ begin
     report_msg_id_panel(VOID);
 
     enable_log_msg(ALL_MESSAGES);
+    disable_log_msg(ID_POS_ACK);
     --disable_log_msg(ALL_MESSAGES);
     --enable_log_msg(ID_LOG_HDR);
 

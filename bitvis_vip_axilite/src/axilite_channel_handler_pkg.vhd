@@ -11,7 +11,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
+-- Description   : Package for accessing each AXI-Lite channel separately. Used by the VVC
 ------------------------------------------------------------------------------------------
 
 library ieee;
@@ -33,12 +33,27 @@ package axilite_channel_handler_pkg is
   --===============================================================================================
   -- Types and constants
   --===============================================================================================
-  constant C_SCOPE : string := "AXILITE CHANNEL HANDLER";
+  constant C_SCOPE : string := "AXILITE_CHANNEL_HANDLER";
 
 
   --===============================================================================================
   -- Procedures
   --===============================================================================================
+
+  ------------------------------------------
+  -- write_address_channel_write
+  ------------------------------------------
+  -- This procedure writes adress on the write address channel
+  -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
+  procedure write_address_channel_write (
+    constant awaddr_value       : in    std_logic_vector;
+    constant msg                : in    string;
+    signal   clk                : in    std_logic;
+    signal   write_addr_channel : inout t_axilite_write_address_channel;
+    constant scope              : in    string                := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+  );
 
   ------------------------------------------
   -- write_data_channel_write
@@ -57,15 +72,17 @@ package axilite_channel_handler_pkg is
   );
 
   ------------------------------------------
-  -- write_address_channel_write
+  -- write_response_channel_check
   ------------------------------------------
-  -- This procedure writes adress on the write address channel
-  -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
-  procedure write_address_channel_write (
-    constant awaddr_value       : in    std_logic_vector;
+  -- This procedure checks the write response on the write response channel
+  -- - If the received response was inconsistent with config.expected_response, 
+  --   an alert with severity config.expected_response_severity is issued.
+  -- - When completed, a log message with ID id_for_bfm is issued.
+  procedure write_response_channel_check (
     constant msg                : in    string;
     signal   clk                : in    std_logic;
-    signal   write_addr_channel : inout t_axilite_write_address_channel;
+    signal   write_resp_channel : inout t_axilite_write_response_channel;
+    constant alert_level        : in    t_alert_level         := error;
     constant scope              : in    string                := C_SCOPE;
     constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
     constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
@@ -86,23 +103,6 @@ package axilite_channel_handler_pkg is
     constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   );
   
-  ------------------------------------------
-  -- write_response_channel_check
-  ------------------------------------------
-  -- This procedure checks the write response on the write response channel
-  -- - If the received response was inconsistent with config.expected_response, 
-  --   an alert with severity config.expected_response_severity is issued.
-  -- - When completed, a log message with ID id_for_bfm is issued.
-  procedure write_response_channel_check (
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_resp_channel : inout t_axilite_write_response_channel;
-    constant alert_level        : in    t_alert_level         := error;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
-  );
-
   ------------------------------------------
   -- read_data_channel_receive
   ------------------------------------------
@@ -148,6 +148,52 @@ package body axilite_channel_handler_pkg is
   -- BFM procedures
   ----------------------------------------------------
 
+  procedure write_address_channel_write (
+    constant awaddr_value       : in    std_logic_vector;
+    constant msg                : in    string;
+    signal   clk                : in    std_logic;
+    signal   write_addr_channel : inout t_axilite_write_address_channel;
+    constant scope              : in    string                := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+  ) is
+    constant proc_call : string := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_await_awready     : boolean := true;
+    variable v_normalized_awaddr : std_logic_vector(write_addr_channel.awaddr'length-1 downto 0) :=
+      normalize_and_check(awaddr_value, write_addr_channel.awaddr, ALLOW_NARROWER, "AWADDR", "write_addr_channel.awaddr", msg);
+    -- Helper variables
+    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
+  begin
+    for cycle in 0 to config.max_wait_cycles loop
+      -- Wait according to config.bfm_sync setup
+      wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+      -- Assigning the write data channel outputs
+      if cycle = config.num_aw_pipe_stages then
+        write_addr_channel.awaddr  <= v_normalized_awaddr;
+        write_addr_channel.awprot  <= axprot_to_slv(config.protection_setting);
+        write_addr_channel.awvalid <= '1';
+      end if;
+      wait until rising_edge(clk);
+      -- Checking clock behavior
+      if v_time_of_rising_edge =  -1 ns then
+        v_time_of_rising_edge := now;
+      end if;
+      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
+                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      -- Checking if the write address channel access is done
+      if write_addr_channel.awready = '1' and cycle >= config.num_aw_pipe_stages then
+        -- Wait according to config.bfm_sync setup
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
+        write_addr_channel.awvalid <= '0';
+        v_await_awready := false;
+        exit;
+      end if;
+    end loop;
+    check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+  end procedure write_address_channel_write;
+
   procedure write_data_channel_write (
     constant wdata_value        : in    std_logic_vector;
     constant wstrb_value        : in    std_logic_vector;
@@ -187,7 +233,9 @@ package body axilite_channel_handler_pkg is
                                 config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write data channel access is done
       if write_data_channel.wready = '1' and cycle >= config.num_w_pipe_stages then
-        write_data_channel.wvalid <= '0' after config.clock_period/4;
+        -- Wait according to config.bfm_sync setup
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
+        write_data_channel.wvalid <= '0';
         v_await_wready := false;
         exit;
       end if;
@@ -195,94 +243,6 @@ package body axilite_channel_handler_pkg is
     check_value(not v_await_wready, config.max_wait_cycles_severity, ": Timeout waiting for WREADY", scope, ID_NEVER, msg_id_panel, proc_call);
     log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_data_channel_write;
-
-  procedure write_address_channel_write (
-    constant awaddr_value       : in    std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_addr_channel : inout t_axilite_write_address_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
-  ) is
-    constant proc_call : string := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_await_awready     : boolean := true;
-    variable v_normalized_awaddr : std_logic_vector(write_addr_channel.awaddr'length-1 downto 0) :=
-      normalize_and_check(awaddr_value, write_addr_channel.awaddr, ALLOW_NARROWER, "AWADDR", "write_addr_channel.awaddr", msg);
-    -- Helper variables
-    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
-    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
-  begin
-    for cycle in 0 to config.max_wait_cycles loop
-      -- Wait according to config.bfm_sync setup
-      wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-      -- Assigning the write data channel outputs
-      if cycle = config.num_aw_pipe_stages then
-        write_addr_channel.awaddr  <= v_normalized_awaddr;
-        write_addr_channel.awprot  <= axprot_to_slv(config.protection_setting);
-        write_addr_channel.awvalid <= '1';
-      end if;
-      wait until rising_edge(clk);
-      -- Checking clock behavior
-      if v_time_of_rising_edge =  -1 ns then
-        v_time_of_rising_edge := now;
-      end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
-      -- Checking if the write address channel access is done
-      if write_addr_channel.awready = '1' and cycle >= config.num_aw_pipe_stages then
-        write_addr_channel.awvalid <= '0' after config.clock_period/4;
-        v_await_awready := false;
-        exit;
-      end if;
-    end loop;
-    check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
-  end procedure write_address_channel_write;
-
-  procedure read_address_channel_write (
-    constant araddr_value       : in    std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   read_addr_channel  : inout t_axilite_read_address_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
-  ) is
-    constant proc_call : string := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_await_arready     : boolean := true;
-    variable v_normalized_araddr : std_logic_vector(read_addr_channel.araddr'length-1 downto 0) :=
-      normalize_and_check(araddr_value, read_addr_channel.araddr, ALLOW_NARROWER, "ARADDR", "read_addr_channel.araddr", msg);
-    -- Helper variables
-    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
-    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
-  begin
-    for cycle in 0 to config.max_wait_cycles loop
-      -- Wait according to config.bfm_sync setup
-      wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-      -- Assigning the write data channel outputs
-      if cycle = config.num_ar_pipe_stages then
-        read_addr_channel.araddr  <= v_normalized_araddr;
-        read_addr_channel.arprot <= axprot_to_slv(config.protection_setting);
-        read_addr_channel.arvalid <= '1';
-      end if;
-      wait until rising_edge(clk);
-      -- Checking clock behavior
-      if v_time_of_rising_edge =  -1 ns then
-        v_time_of_rising_edge := now;
-      end if;
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
-      -- Checking if the write address channel access is done
-      if read_addr_channel.arready = '1' and cycle >= config.num_ar_pipe_stages then
-        read_addr_channel.arvalid <= '0' after config.clock_period/4;
-        v_await_arready := false;
-        exit;
-      end if;
-    end loop;
-    check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, proc_call);
-    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
-  end procedure read_address_channel_write;
 
   procedure write_response_channel_check (
     constant msg                : in    string;
@@ -333,6 +293,52 @@ package body axilite_channel_handler_pkg is
     log(config.id_for_bfm, proc_call & "=> OK. " & add_msg_delimiter(msg), scope, msg_id_panel);
 
   end procedure write_response_channel_check;
+
+  procedure read_address_channel_write (
+    constant araddr_value       : in    std_logic_vector;
+    constant msg                : in    string;
+    signal   clk                : in    std_logic;
+    signal   read_addr_channel  : inout t_axilite_read_address_channel;
+    constant scope              : in    string                := C_SCOPE;
+    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config             : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+  ) is
+    constant proc_call : string := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
+    variable v_await_arready     : boolean := true;
+    variable v_normalized_araddr : std_logic_vector(read_addr_channel.araddr'length-1 downto 0) :=
+      normalize_and_check(araddr_value, read_addr_channel.araddr, ALLOW_NARROWER, "ARADDR", "read_addr_channel.araddr", msg);
+    -- Helper variables
+    variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
+    variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
+  begin
+    for cycle in 0 to config.max_wait_cycles loop
+      -- Wait according to config.bfm_sync setup
+      wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+      -- Assigning the write data channel outputs
+      if cycle = config.num_ar_pipe_stages then
+        read_addr_channel.araddr  <= v_normalized_araddr;
+        read_addr_channel.arprot <= axprot_to_slv(config.protection_setting);
+        read_addr_channel.arvalid <= '1';
+      end if;
+      wait until rising_edge(clk);
+      -- Checking clock behavior
+      if v_time_of_rising_edge =  -1 ns then
+        v_time_of_rising_edge := now;
+      end if;
+      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
+                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      -- Checking if the write address channel access is done
+      if read_addr_channel.arready = '1' and cycle >= config.num_ar_pipe_stages then
+        -- Wait according to config.bfm_sync setup
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
+        read_addr_channel.arvalid <= '0';
+        v_await_arready := false;
+        exit;
+      end if;
+    end loop;
+    check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, proc_call);
+    log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+  end procedure read_address_channel_write;
 
   procedure read_data_channel_receive (
     variable rdata_value        : out   std_logic_vector;

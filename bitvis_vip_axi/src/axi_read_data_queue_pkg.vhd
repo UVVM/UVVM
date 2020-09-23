@@ -11,13 +11,9 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
--- Description   : See library quick reference (under 'doc') and README-file(s)
+-- Description   : Package for the read data queue
 ------------------------------------------------------------------------------------------
 
-
-------------------------------------------------------------------------------------------
--- Package for the read data queue
-------------------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -115,6 +111,7 @@ package body axi_read_data_queue_pkg is
         end loop;
       end if;
       tb_error("Trying to fetch a non-existing element from queue");
+      return v_read_data;
     end function fetch_from_queue;
 
     procedure add_to_queue(

@@ -1,8 +1,8 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
-v0.X.X
+v0.1.0
 ----------
 Released: 2020-XX-XX
 
-Initial version of AXI VIP
+- Initial version of AXI VIP

@@ -319,7 +319,7 @@ begin
     variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0) := (others => '0');
     variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0) := (others => '0');
     variable v_cmd_queues_are_empty                   : boolean;
-  
+    variable v_finish2start_warning_triggered         : boolean := false;
   begin
 
     -- 0. Initialize the process prior to first command
@@ -442,6 +442,9 @@ begin
            ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
           alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
                 to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
+        elsif vvc_config.inter_bfm_delay.delay_type = TIME_FINISH2START and not v_finish2start_warning_triggered then
+          v_finish2start_warning_triggered := true;
+          tb_warning("Delay type TIME_FINISH2START is not supported by this VVC. Waiting according to TIME_START2START", C_SCOPE);
         end if;
       end if;
 
@@ -491,7 +494,7 @@ begin
       end if;
       v_normalized_araddr := normalize_and_check(v_cmd.addr, v_normalized_araddr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalized_araddr", "Function called with to araddr. " & v_cmd.msg);
       -- Set vvc transaction info
-      set_ax_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
       -- Start transaction
       read_address_channel_write(arid_value         => v_normalized_arid,
                                   araddr_value       => v_normalized_araddr,
@@ -512,7 +515,7 @@ begin
                                   config             => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
-      reset_ax_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process read_address_channel_executor;
 --===============================================================================================
@@ -706,7 +709,7 @@ begin
       end if;
       v_normalized_awaddr := normalize_and_check(v_cmd.addr, v_normalized_awaddr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalized_awaddr", "Function called with to awaddr. " & v_cmd.msg);
       -- Set vvc transaction info
-      set_ax_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd);
       -- Start transaction
       write_address_channel_write(awid_value         => v_normalized_awid,
                                   awaddr_value       => v_normalized_awaddr,
@@ -727,7 +730,7 @@ begin
                                   config             => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
-      reset_ax_vvc_transaction_info(vvc_transaction_info, v_cmd);
+      reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process write_address_channel_executor;
 --===============================================================================================

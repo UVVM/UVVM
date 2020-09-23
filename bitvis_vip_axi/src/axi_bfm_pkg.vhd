@@ -30,20 +30,21 @@ package axi_bfm_pkg is
   --===============================================================================================
   -- Types and constants for AXI BFMs
   --===============================================================================================
-  constant C_SCOPE : string := "AXI BFM";
+  constant C_SCOPE : string := "AXI_BFM";
 
-  constant C_EMPTY_SLV_ARRAY : t_slv_array(0 to 0)(-1 downto 0) := (others=>"");
+  constant C_EMPTY_SLV_ARRAY : t_slv_array(0 to 0)(0 downto 0) := (others=>"U");
 
   type t_xresp is (
     OKAY,
     EXOKAY,
     SLVERR,
-    DECERR
+    DECERR,
+    ILLEGAL
   );
 
   type t_xresp_array is array (natural range <>) of t_xresp;
   
-  constant C_EMPTY_XRESP_ARRAY : t_xresp_array(0 to -1) := (others=>OKAY);
+  constant C_EMPTY_XRESP_ARRAY : t_xresp_array(0 to 0) := (others=>ILLEGAL);
 
   type t_axprot is (
     UNPRIVILEGED_NONSECURE_DATA,
@@ -371,6 +372,8 @@ package body axi_bfm_pkg is
         v_xresp_slv := "11";
       when EXOKAY =>
         v_xresp_slv := "01";
+      when ILLEGAL =>
+        v_xresp_slv := "XX";
     end case;
     return v_xresp_slv;
   end function xresp_to_slv;
@@ -389,8 +392,7 @@ package body axi_bfm_pkg is
       when "11" =>
         return DECERR;
       when others =>
-        tb_error(to_string(value) & " is not a valid response", C_SCOPE);
-        return SLVERR;
+        return ILLEGAL;
     end case;
   end function slv_to_xresp;
 
@@ -552,7 +554,6 @@ package body axi_bfm_pkg is
     constant msg_id_panel       : in    t_msg_id_panel                := shared_msg_id_panel;
     constant config             : in    t_axi_bfm_config              := C_AXI_BFM_CONFIG_DEFAULT
   ) is 
-    constant proc_name : string := "axi_write";
     constant proc_call : string := "axi_write(A:" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) &
                                    ", " & to_string(wdata_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_awready : boolean := true;
@@ -571,6 +572,8 @@ package body axi_bfm_pkg is
     -- Helper variables
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
+    variable v_wready                 : std_logic;
+    variable v_awready                : std_logic;
   begin
     -- Setting default values
     if awid_value'length = 0 then
@@ -585,22 +588,14 @@ package body axi_bfm_pkg is
       v_awuser_value := normalize_and_check(awuser_value, axi_if.write_address_channel.awuser, ALLOW_WIDER_NARROWER, "awuser", "axi_if.write_address_channel.awuser", msg);
     end if;
 
-    if wstrb_value'length = 1 then
-      if wstrb_value(0)'length = 0 then
-        v_wstrb_value := (others=>(others=>'1')); -- Default value
-      else
-        v_wstrb_value := (others=>wstrb_value(0));
-      end if;
+    if wstrb_value'length = 1 and wstrb_value(0)'length = 1 and wstrb_value(0) = "U" then
+      v_wstrb_value := (others=>(others=>'1')); -- Default value
     else
       v_wstrb_value := normalize_and_check(wstrb_value, v_wstrb_value, ALLOW_WIDER_NARROWER, "wstrb", "v_wstrb_value", msg);
     end if;
 
-    if wuser_value'length = 1 then
-      if wuser_value(0)'length = 0 then
-        v_wuser_value := (others=>(others=>'0')); -- Default value
-      else
-        v_wuser_value := (others=>wuser_value(0));
-      end if;
+    if wuser_value'length = 1 and wuser_value(0)'length = 1 and wuser_value(0) = "U" then
+      v_wuser_value := (others=>(others=>'0')); -- Default value
     else
       v_wuser_value := normalize_and_check(wuser_value, v_wuser_value, ALLOW_WIDER_NARROWER, "wuser", "v_wuser_value", msg);
     end if;
@@ -650,29 +645,35 @@ package body axi_bfm_pkg is
 
         check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                   config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+
+        -- Sample ready signals
+        v_wready  := axi_if.write_data_channel.wready;
+        v_awready := axi_if.write_address_channel.awready;
+        -- Wait according to config.bfm_sync setup
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     
-        if axi_if.write_data_channel.wready = '1' and cycle >= config.num_w_pipe_stages then
-          axi_if.write_data_channel.wdata  <= (axi_if.write_data_channel.wdata'range => '0') after config.clock_period/4;
-          axi_if.write_data_channel.wstrb  <= (axi_if.write_data_channel.wstrb'range => '0') after config.clock_period/4;
-          axi_if.write_data_channel.wlast  <= '0' after config.clock_period/4;
-          axi_if.write_data_channel.wuser  <= (axi_if.write_data_channel.wuser'range => '0') after config.clock_period/4;
-          axi_if.write_data_channel.wvalid <= '0' after config.clock_period/4;
+        if v_wready = '1' and cycle >= config.num_w_pipe_stages then
+          axi_if.write_data_channel.wdata  <= (axi_if.write_data_channel.wdata'range => '0');
+          axi_if.write_data_channel.wstrb  <= (axi_if.write_data_channel.wstrb'range => '0');
+          axi_if.write_data_channel.wlast  <= '0';
+          axi_if.write_data_channel.wuser  <= (axi_if.write_data_channel.wuser'range => '0');
+          axi_if.write_data_channel.wvalid <= '0';
           v_await_wready := false;
         end if;
 
-        if axi_if.write_address_channel.awready = '1' and cycle >= config.num_aw_pipe_stages then
-          axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0') after config.clock_period/4;
-          axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0') after config.clock_period/4;
-          axi_if.write_address_channel.awlen    <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awsize   <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awburst  <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awlock   <= '0' after config.clock_period/4;
-          axi_if.write_address_channel.awcache  <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awprot   <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awqos    <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awregion <= (others=>'0') after config.clock_period/4;
-          axi_if.write_address_channel.awuser   <= (axi_if.write_address_channel.awuser'range => '0') after config.clock_period/4;
-          axi_if.write_address_channel.awvalid  <= '0' after config.clock_period/4;
+        if v_awready = '1' and cycle >= config.num_aw_pipe_stages then
+          axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0');
+          axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0');
+          axi_if.write_address_channel.awlen    <= (others=>'0');
+          axi_if.write_address_channel.awsize   <= (others=>'0');
+          axi_if.write_address_channel.awburst  <= (others=>'0');
+          axi_if.write_address_channel.awlock   <= '0';
+          axi_if.write_address_channel.awcache  <= (others=>'0');
+          axi_if.write_address_channel.awprot   <= (others=>'0');
+          axi_if.write_address_channel.awqos    <= (others=>'0');
+          axi_if.write_address_channel.awregion <= (others=>'0');
+          axi_if.write_address_channel.awuser   <= (axi_if.write_address_channel.awuser'range => '0');
+          axi_if.write_address_channel.awvalid  <= '0';
           v_await_awready := false;
         end if;
 
@@ -687,10 +688,10 @@ package body axi_bfm_pkg is
       v_await_wready := true;
     end loop;
 
-    -- Wait according to config.bfm_sync setup
-    wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-
     for cycle in 0 to config.max_wait_cycles loop
+
+      -- Wait according to config.bfm_sync setup
+      wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
       -- Brady - Add support for num_b_pipe_stages
       if cycle = config.num_b_pipe_stages then
@@ -721,12 +722,6 @@ package body axi_bfm_pkg is
 
     check_value(not v_await_bvalid, config.max_wait_cycles_severity, ": Timeout waiting for BVALID", scope, ID_NEVER, msg_id_panel, proc_call);
 
-    axi_if.write_address_channel.awaddr(axi_if.write_address_channel.awaddr'length-1 downto 0) <= (others => '0');
-    axi_if.write_address_channel.awvalid <= '0';
-    axi_if.write_data_channel.wdata(axi_if.write_data_channel.wdata'length-1 downto 0)   <= (others => '0');
-    axi_if.write_data_channel.wstrb(axi_if.write_data_channel.wstrb'length-1 downto 0)   <= (others => '1');
-    axi_if.write_data_channel.wvalid  <= '0';
-
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure axi_write;
 
@@ -755,7 +750,6 @@ package body axi_bfm_pkg is
   ) is
     constant local_proc_name : string := "axi_read"; -- Local proc_name; used if called from sequncer or VVC
     constant local_proc_call : string := local_proc_name & "(A:" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")"; -- Local proc_call; used if called from sequncer or VVC
-
     -- Normalize to the DUT addr/data widths
     variable v_normalized_addr : std_logic_vector(axi_if.read_address_channel.araddr'length-1 downto 0) :=
       normalize_and_check(std_logic_vector(araddr_value), axi_if.read_address_channel.araddr, ALLOW_WIDER_NARROWER, "addr", "axi_if.read_address_channel.araddr", msg);
@@ -769,7 +763,6 @@ package body axi_bfm_pkg is
     variable v_data_value             : std_logic_vector(axi_if.read_data_channel.rdata'length-1 downto 0);
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
-
   begin
     -- Setting default values
     if arid_value'length = 0 then
@@ -816,7 +809,7 @@ package body axi_bfm_pkg is
         axi_if.read_address_channel.arqos    <= arqos_value;
         axi_if.read_address_channel.arregion <= arregion_value;
         axi_if.read_address_channel.aruser   <= v_aruser_value;
-        axi_if.read_address_channel.arvalid <= '1';
+        axi_if.read_address_channel.arvalid  <= '1';
       end if;
 
       wait until rising_edge(clk);
@@ -828,18 +821,20 @@ package body axi_bfm_pkg is
                                 config.clock_period, config.clock_period_margin, config.clock_margin_severity);
 
       if axi_if.read_address_channel.arready = '1' and cycle >= config.num_ar_pipe_stages then
-        axi_if.read_address_channel.arid     <= (axi_if.read_address_channel.arid'range => '0') after config.clock_period/4;
-        axi_if.read_address_channel.araddr   <= (axi_if.read_address_channel.araddr'range => '0') after config.clock_period/4;
-        axi_if.read_address_channel.arlen    <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.arsize   <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.arburst  <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.arlock   <= '0' after config.clock_period/4;
-        axi_if.read_address_channel.arcache  <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.arprot   <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.arqos    <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.arregion <= (others=>'0') after config.clock_period/4;
-        axi_if.read_address_channel.aruser   <= (axi_if.read_address_channel.aruser'range => '0') after config.clock_period/4;
-        axi_if.read_address_channel.arvalid  <= '0' after config.clock_period/4;
+        -- Wait according to config.bfm_sync setup
+        wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
+        axi_if.read_address_channel.arid     <= (axi_if.read_address_channel.arid'range => '0');
+        axi_if.read_address_channel.araddr   <= (axi_if.read_address_channel.araddr'range => '0');
+        axi_if.read_address_channel.arlen    <= (others=>'0');
+        axi_if.read_address_channel.arsize   <= (others=>'0');
+        axi_if.read_address_channel.arburst  <= (others=>'0');
+        axi_if.read_address_channel.arlock   <= '0';
+        axi_if.read_address_channel.arcache  <= (others=>'0');
+        axi_if.read_address_channel.arprot   <= (others=>'0');
+        axi_if.read_address_channel.arqos    <= (others=>'0');
+        axi_if.read_address_channel.arregion <= (others=>'0');
+        axi_if.read_address_channel.aruser   <= (axi_if.read_address_channel.aruser'range => '0');
+        axi_if.read_address_channel.arvalid  <= '0';
         v_await_arready := false;
       end if;
 
@@ -862,7 +857,9 @@ package body axi_bfm_pkg is
         end if;
 
         wait until rising_edge(clk);
-        v_time_of_rising_edge := now;
+        if v_time_of_rising_edge = -1 ns then
+          v_time_of_rising_edge := now;
+        end if;
 
         if axi_if.read_data_channel.rvalid = '1' and cycle >= config.num_r_pipe_stages then
           v_await_rvalid := false;
@@ -915,18 +912,16 @@ package body axi_bfm_pkg is
     constant msg_id_panel   : in    t_msg_id_panel                := shared_msg_id_panel;
     constant config         : in    t_axi_bfm_config              := C_AXI_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name     : string := "axi_check";
     constant proc_call     : string := "axi_check(A:" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_rdata_value : t_slv_array(0 to to_integer(unsigned(arlen_value)))(axi_if.read_data_channel.rdata'length-1 downto 0);
     variable v_rresp_value : t_xresp_array(0 to to_integer(unsigned(arlen_value)));
     variable v_ruser_value : t_slv_array(0 to to_integer(unsigned(arlen_value)))(axi_if.read_data_channel.ruser'length-1 downto 0);
-    variable v_rresp_exp   : t_xresp_array(0 to to_integer(unsigned(arlen_value))) := (others=>OKAY);
+    variable v_rresp_exp   : t_xresp_array(0 to to_integer(unsigned(arlen_value))) := (others=>ILLEGAL);
     variable v_ruser_exp   : t_slv_array(0 to to_integer(unsigned(arlen_value)))(axi_if.read_data_channel.ruser'length-1 downto 0);
     variable v_check_ok    : boolean := true;
-    variable v_alert_radix : t_radix := HEX;
   begin
 
-    if rresp_exp'length = 0 then
+    if rresp_exp'length = 1 and rresp_exp(0) = ILLEGAL then
       v_rresp_exp := (others=>OKAY); -- Default value
     else
       if not rresp_exp'ascending then
@@ -939,12 +934,8 @@ package body axi_bfm_pkg is
       
     end if;
 
-    if ruser_exp'length = 1 then
-      if ruser_exp(0)'length = 0 then
-        v_ruser_exp := (others=>(others=>'0')); -- Default value
-      else
-        v_ruser_exp := (others=>ruser_exp(0));
-      end if;
+    if ruser_exp'length = 1 and ruser_exp(0)'length = 1 and ruser_exp(0) = "U" then
+      v_ruser_exp := (others=>(others=>'0')); -- Default value
     else
       v_ruser_exp := normalize_and_check(ruser_exp, v_ruser_exp, ALLOW_WIDER_NARROWER, "ruser_exp", "v_ruser_exp", msg);
     end if;

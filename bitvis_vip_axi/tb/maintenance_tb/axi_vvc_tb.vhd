@@ -91,6 +91,7 @@ begin
     variable v_wuser_wide : t_slv_array(0 to 1)(15 downto 0) := (x"0001", x"0001");
     variable v_ruser_wide : t_slv_array(0 to 1)(15 downto 0) := (x"0000", x"0000");
     variable v_wstrb_single_byte : t_slv_array(0 to 3)(3 downto 0) := (x"1", x"1", x"1", x"1");
+    variable v_timestamp  : time;
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -497,6 +498,49 @@ begin
       -- check_value(v_result.ruser(i), x"00", "Checking RUSER, index " & to_string(i), C_SCOPE);
     end loop;
 
+    --------------------------------------------------------------------------------------------------------------------
+    -- Testing inter bfm delay
+    --------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing TIME_START2START");
+    axi_write(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      awaddr            => x"00000000",
+      awlen             => x"03",
+      awsize            => 4,
+      wdata             => v_write_data,
+      msg               => "Testing AXI write"
+    );
+    await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
+    v_timestamp := now;
+    shared_axi_vvc_config(1).inter_bfm_delay.delay_type := TIME_START2START;
+    shared_axi_vvc_config(1).inter_bfm_delay.delay_in_time := 10 us;
+    axi_write(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      awaddr            => x"00000000",
+      awlen             => x"03",
+      awsize            => 4,
+      wdata             => v_write_data,
+      msg               => "Testing AXI write"
+    );
+    await_completion(AXI_VVCT, 1, 100 us, "Waiting for commands to finish");
+    check_value(now - v_timestamp, 10 us, ERROR, "Checking that inter-bfm delay was upheld");
+
+    log(ID_LOG_HDR, "Testing TIME_FINISH2START");
+    increment_expected_alerts(TB_WARNING,1, "Expecting warning because TIME_FINISH2START is not supported", C_SCOPE);
+    v_timestamp := now;
+    shared_axi_vvc_config(1).inter_bfm_delay.delay_type := TIME_FINISH2START;
+    axi_write(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      awaddr            => x"00000000",
+      awlen             => x"03",
+      awsize            => 4,
+      wdata             => v_write_data,
+      msg               => "Testing AXI write"
+    );
+    await_completion(AXI_VVCT, 1, 100 us, "Waiting for commands to finish");
 
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);

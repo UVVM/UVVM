@@ -91,36 +91,36 @@ package transaction_pkg is
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
 
-  type t_ax_transaction is record
+  type t_arw_transaction is record
     operation           : t_operation;
-    axid                : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
-    axaddr              : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    axlen               : unsigned(7 downto 0);
-    axsize              : integer range 1 to 128;
-    axburst             : t_axburst;
-    axlock              : t_axlock;
-    axcache             : std_logic_vector(3 downto 0);
-    axprot              : t_axprot;
-    axqos               : std_logic_vector(3 downto 0);
-    axregion            : std_logic_vector(3 downto 0);
-    axuser              : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
+    arwid               : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
+    arwaddr             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    arwlen              : unsigned(7 downto 0);
+    arwsize             : integer range 1 to 128;
+    arwburst            : t_axburst;
+    arwlock             : t_axlock;
+    arwcache            : std_logic_vector(3 downto 0);
+    arwprot             : t_axprot;
+    arwqos              : std_logic_vector(3 downto 0);
+    arwregion           : std_logic_vector(3 downto 0);
+    arwuser             : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
-  end record t_ax_transaction;
+  end record t_arw_transaction;
 
-  constant C_AX_TRANSACTION_DEFAULT : t_ax_transaction := (
+  constant C_ARW_TRANSACTION_DEFAULT : t_arw_transaction := (
     operation           => NO_OPERATION,
-    axid                => (others=>'0'),
-    axaddr              => (others=>'0'),
-    axlen               => (others=>'0'),
-    axsize              => 4,
-    axburst             => INCR,
-    axlock              => NORMAL,
-    axcache             => (others=>'0'),
-    axprot              => UNPRIVILEGED_NONSECURE_DATA,
-    axqos               => (others=>'0'),
-    axregion            => (others=>'0'),
-    axuser              => (others=>'0'),
+    arwid               => (others=>'0'),
+    arwaddr             => (others=>'0'),
+    arwlen              => (others=>'0'),
+    arwsize             => 4,
+    arwburst            => INCR,
+    arwlock             => NORMAL,
+    arwcache            => (others=>'0'),
+    arwprot             => UNPRIVILEGED_NONSECURE_DATA,
+    arwqos              => (others=>'0'),
+    arwregion           => (others=>'0'),
+    arwuser             => (others=>'0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
   );
@@ -185,20 +185,20 @@ package transaction_pkg is
   type t_transaction_group is record
     bt_wr : t_base_transaction;
     bt_rd : t_base_transaction;
-    st_aw : t_ax_transaction;
+    st_aw : t_arw_transaction;
     st_w  : t_w_transaction;
     st_b  : t_b_transaction;
-    st_ar : t_ax_transaction;
+    st_ar : t_arw_transaction;
     st_r  : t_r_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt_wr => C_BASE_TRANSACTION_SET_DEFAULT,
     bt_rd => C_BASE_TRANSACTION_SET_DEFAULT,
-    st_aw => C_AX_TRANSACTION_DEFAULT,
+    st_aw => C_ARW_TRANSACTION_DEFAULT,
     st_w  => C_W_TRANSACTION_DEFAULT,
     st_b  => C_B_TRANSACTION_DEFAULT,
-    st_ar => C_AX_TRANSACTION_DEFAULT,
+    st_ar => C_ARW_TRANSACTION_DEFAULT,
     st_r  => C_R_TRANSACTION_DEFAULT
   );
 

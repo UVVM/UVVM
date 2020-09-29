@@ -258,7 +258,6 @@ class Testbench:
 
       # Convert to upper case
       args = [arg.upper() for arg in args]
-      args = args[1].split(' ')
 
       # Arguments detected
       self.verbose  = any(arg in output_list for arg in args)

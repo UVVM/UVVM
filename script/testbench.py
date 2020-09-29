@@ -259,6 +259,11 @@ class Testbench:
       # Convert to upper case
       args = [arg.upper() for arg in args]
 
+      # If called from run_regression.py arguments will be a string, convert to list.
+      if len(args) > 1:
+        if ' ' in args[1]:
+          args = args[1].split(' ')
+
       # Arguments detected
       self.verbose  = any(arg in output_list for arg in args)
       self.modelsim = any(arg in modelsim_list for arg in args)

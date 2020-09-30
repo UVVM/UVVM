@@ -1,6 +1,11 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.x.x
+----------
+Released: 2020-xx-xx
+- Added SPI_VVC_SB scoreboard and pad_spi_sb() method.
+
 v3.8.2
 ----------
 Released: 2020-08-18

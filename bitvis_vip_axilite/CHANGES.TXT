@@ -5,6 +5,7 @@ v2.x.x
 ----------
 Released: 2020-xx-xx
 - Added support for independent channels in VVC
+- Added AXILITE_VVC_SB scoreboard and pad_axilite_sb() method.
 
 v2.7.1
 ----------

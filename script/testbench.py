@@ -258,6 +258,7 @@ class Testbench:
 
       # Convert to upper case
       args = [arg.upper() for arg in args]
+      args = args[1].split(' ')
 
       # If called from run_regression.py arguments will be a string, convert to list.
       if len(args) > 1:

@@ -225,6 +225,16 @@ package vvc_methods_pkg is
   -- AXIStream Receive
   --
   --------------------------------------------------------
+
+  procedure axistream_receive_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+    );
+
   procedure axistream_receive_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
@@ -235,11 +245,19 @@ package vvc_methods_pkg is
   procedure axistream_receive(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
     );
-
+    procedure axistream_receive(
+      signal   VVCT                : inout t_vvc_target_record;
+      constant vvc_instance_idx    : in    integer;
+      constant msg                 : in    string;
+      constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+      constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+      );
+  
 
   --------------------------------------------------------
   --
@@ -373,8 +391,8 @@ package vvc_methods_pkg is
                                           constant last_cmd_idx_executed              : in    natural;
                                           constant command_queue_is_empty             : in    boolean;
                                           constant scope                              : in    string := C_VVC_NAME);
-                                                  
-                                                  
+
+
 end package vvc_methods_pkg;
 
 
@@ -608,6 +626,7 @@ package body vvc_methods_pkg is
   procedure axistream_receive_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
+    constant data_routing        : in    t_data_routing;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -621,12 +640,43 @@ package body vvc_methods_pkg is
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, RECEIVE);
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
+    shared_vvc_cmd.data_routing        := data_routing;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure axistream_receive_bytes;
+
+  -- overload without data_routing
+  procedure axistream_receive_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "()";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  begin
+    axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
+  end procedure axistream_receive_bytes;
+
   -- Overloading procedure
+  procedure axistream_receive(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in    integer;
+    constant data_routing        : in    t_data_routing;
+    constant msg                 : in    string;
+    constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    -- Call overloaded procedure
+    axistream_receive_bytes(VVCT, vvc_instance_idx, data_routing, msg, scope, parent_msg_id_panel);
+  end procedure axistream_receive;
+
+  -- Overloading procedure without data_routing
   procedure axistream_receive(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
@@ -636,8 +686,10 @@ package body vvc_methods_pkg is
   ) is
   begin
     -- Call overloaded procedure
-    axistream_receive_bytes(VVCT, vvc_instance_idx, msg, scope, parent_msg_id_panel);
+    axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
   end procedure axistream_receive;
+
+
 
 
   --------------------------------------------------------
@@ -941,6 +993,7 @@ package body vvc_methods_pkg is
     end if;                                                          
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
+
 
 
 end package body vvc_methods_pkg;

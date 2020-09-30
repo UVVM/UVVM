@@ -335,8 +335,8 @@ begin
 
                   -- Request SB check result
                   if v_cmd.data_routing = TO_SB then
-                    -- call SB check_received
-                    alert(tb_warning, "Scoreboard type for AXIStream RECEIVE data not implemented");
+                     -- call SB check_received
+                     alert(tb_warning, "Scoreboard type for AXIStream RECEIVE data not implemented");
                   else                            
                      -- Store the result
                      work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,

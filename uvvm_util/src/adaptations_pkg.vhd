@@ -103,7 +103,7 @@ package adaptations_pkg is
     ID_BFM_WAIT,              -- Used inside a BFM to indicate that it is waiting for something (e.g. for ready)
     ID_BFM_POLL,              -- Used inside a BFM when polling until reading a given value. I.e. to show all reads until expected value found (e.g. for sbi_poll_until())
     ID_BFM_POLL_SUMMARY,      -- Used inside a BFM when showing the summary of data that has been received while waiting for expected data.
-    ID_CHANNEL_BFM,           --
+    ID_CHANNEL_BFM,           -- Used inside a BFM when the protocol is split into separate channels
     ID_TERMINATE_CMD,         -- Typically used inside a loop in a procedure to end the loop (e.g. for sbi_poll_until() or any looped generation of random stimuli
     -- Packet related data Ids with three levels of granularity, for differentiating between frames, packets and segments.
     -- Segment Ids, finest granularity of packet data
@@ -141,8 +141,8 @@ package adaptations_pkg is
     ID_IMMEDIATE_CMD_WAIT,    -- Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
-    ID_CHANNEL_EXECUTOR,      -- 
-    ID_CHANNEL_EXECUTOR_WAIT, -- 
+    ID_CHANNEL_EXECUTOR,      -- Message from a channel specific VVC executor process
+    ID_CHANNEL_EXECUTOR_WAIT, -- Message from a channel specific VVC executor process that it is actively waiting for a command
     ID_NEW_HVVC_CMD_SEQ,      -- Message from a lower level VVC which receives a new command sequence from an HVVC
     ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
     -- Await completion

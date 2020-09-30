@@ -203,6 +203,7 @@ package vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
@@ -210,6 +211,7 @@ package vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
@@ -217,6 +219,7 @@ package vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
@@ -224,6 +227,7 @@ package vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
@@ -231,6 +235,7 @@ package vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
@@ -428,6 +433,7 @@ package body vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
@@ -452,6 +458,7 @@ package body vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
@@ -479,6 +486,7 @@ package body vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
@@ -496,6 +504,7 @@ package body vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
@@ -511,6 +520,7 @@ package body vvc_methods_pkg is
     signal vvc_transaction_info_trigger : inout std_logic;
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin

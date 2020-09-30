@@ -91,6 +91,7 @@ package ti_protected_types_pkg is
       constant vvc_idx : in natural
     ) return integer;
 
+    -- Get information if the VVC supports await selected (waiting for a specific command) or not
     impure function priv_get_vvc_await_selected_supported(
       constant vvc_idx : in natural
     ) return boolean;
@@ -345,7 +346,7 @@ package body ti_protected_types_pkg is
     ) return boolean is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
-        "priv_get_vvc_last_cmd_idx_executed() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+        "priv_get_vvc_await_selected_supported() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_registered_vvc(vvc_idx).vvc_state.await_selected_supported;
     end function;
 

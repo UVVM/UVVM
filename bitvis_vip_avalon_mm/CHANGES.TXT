@@ -2,6 +2,12 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
+v2.x.x
+----------
+Released: 2020-xx-xx
+- Added AVALON_MM_VVC_SB scoreboard and pad_avalon_mm_sb() method.
+
+
 v2.7.1
 ----------
 Released: 2020-06-23

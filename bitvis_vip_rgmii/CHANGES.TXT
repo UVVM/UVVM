@@ -1,6 +1,11 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v0.x.x
+----------
+Released: 2020-xx-xx
+- Added RGMII_VVC_SB scoreboard.
+
 v0.3.2
 ----------
 Released: 2020-08-18

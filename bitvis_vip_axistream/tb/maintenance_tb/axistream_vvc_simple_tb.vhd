@@ -533,31 +533,6 @@ begin
     end loop;
 
 
-    ------------------------------------------------------------
-    log(ID_LOG_HDR, "TC: axistream scoreboard ");
-    ------------------------------------------------------------
-    v_numBytes := random(1, c_max_bytes);
-    v_numWords := integer(ceil(real(v_numBytes)/(real(GC_DATA_WIDTH)/8.0)));
-    for byte in 0 to v_numBytes-1 loop
-      v_data_array(byte) := random(v_data_array(0)'length);
-    end loop;
-
-    for word in 0 to v_numWords-1 loop
-        v_user_array(word) := random(v_user_array(0)'length);
-        v_strb_array(word) := random(v_strb_array(0)'length);
-        v_id_array(word)   := random(v_id_array(0)'length);
-        v_dest_array(word) := random(v_dest_array(0)'length);
-    end loop;
-
-    axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes-1), "transmit");
-    for idx in 0 to v_numBytes-1 loop
-      AXI_STREAM_VVC_SB.add_expected(1, v_data_array(idx));
-    end loop;
-    axistream_receive (AXISTREAM_VVCT, 1, TO_SB, "test axistream_receive / fetch_result (without tuser) ");
-    await_completion(AXISTREAM_VVCT, 1, 1 ms, "Wait for receive to finish");
-
-    AXI_STREAM_VVC_SB.report_counters(ALL_INSTANCES);
-
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------

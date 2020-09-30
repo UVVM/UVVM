@@ -1,6 +1,11 @@
 Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
+v0.x.x
+----------
+Released: 2020-xx-xx
+- Added ETHERNET_VVC_SB scoreboard.
+
 v0.1.1
 ----------
 Released: 2020-06-23

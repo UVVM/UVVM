@@ -308,14 +308,12 @@ begin
                 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
-
+            -- pad 8th bit as don't care if rx is 7 bits
             if v_num_data_bits = 7 then
               v_read_data(7) := '-';
             end if;
-
             -- call SB check_received
             UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data);
-
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                          cmd_idx     => v_cmd.cmd_idx,

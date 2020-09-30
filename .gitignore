@@ -16,3 +16,10 @@ vhdl_ls.toml
 
 # GHDL compilations
 *.cf
+
+# Python pyc
+__pycache__/
+.pytest_cache/
+
+# OS
+.DS_Store

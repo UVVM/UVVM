@@ -1,23 +1,6 @@
-# Ignore compiled libraries
-status.txt
-internal_script/vunit_out/*
-internal_script/__pycache__/*
-sim/
-sim/*.txt
 # Modelsim files
-sim/modelsim.ini
-sim/transcript
-sim/vsim.wlf
-sim/*.cr.mti
-sim/bitvis_vip_uart/*
-# RivieraPro files
-sim/compile/*
-sim/dataset*
-sim/elaboration.log
-sim/library.cfg
+sim/*
 # Sigasi files
 .library_mapping.xml
 .project
 .settings/*
-# OS
-.DS_Store

@@ -103,7 +103,7 @@ package gpio_bfm_pkg is
     constant data_exp     : in std_logic_vector;
     constant msg          : in string;
     signal data_port      : in std_logic_vector;
-    constant timeout      : in time              := 0 ns;  -- 0 = no timeout
+    constant timeout      : in time              := -1 ns;  -- -1 = no timeout
     constant alert_level  : in t_alert_level     := error;
     constant scope        : in string            := C_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
@@ -206,17 +206,32 @@ package body gpio_bfm_pkg is
     constant data_exp     : in std_logic_vector;
     constant msg          : in string;
     signal data_port      : in std_logic_vector;
-    constant timeout      : in time              := 0 ns;  -- 0 = no timeout
+    constant timeout      : in time              := -1 ns;  -- -1 = no timeout
     constant alert_level  : in t_alert_level     := error;
     constant scope        : in string            := C_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     ) is
-    constant name         : string := "gpio_expect(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
-    constant c_data_exp   : std_logic_vector(data_port'range) := data_exp;
+    constant name               : string := "gpio_expect(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+    constant c_data_exp         : std_logic_vector(data_port'range) := data_exp;
+    variable v_internal_timeout : time;
+    variable v_timestamp        : time := now;
+    variable v_time_lapse       : time;
+    variable v_data_ok          : boolean := true;
   begin
-    log(config.id_for_bfm, name & "=> Expecting value " & to_string(data_exp, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
-    await_value(data_port, c_data_exp, config.match_strictness, 0 ns, timeout, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, config.id_for_bfm, msg_id_panel);
+    if timeout = -1 ns then -- function was called without parameter
+      v_internal_timeout := config.timeout;
+    else
+      v_internal_timeout := timeout;
+    end if;
+    check_value(v_internal_timeout >= 0 ns, TB_FAILURE, "Configured negative timeout (not allowed). " & add_msg_delimiter(msg), scope, ID_NEVER, msg_id_panel);
+
+    await_value(data_port, c_data_exp, config.match_strictness, 0 ns, v_internal_timeout, alert_level, v_data_ok, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, msg_id_panel, name);
+    v_time_lapse := now - v_timestamp;
+
+    if v_data_ok then
+      log(config.id_for_bfm, name & "=> OK, expected data = " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & " after " & to_string(v_time_lapse) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    end if;
   end procedure;
 
 end package body gpio_bfm_pkg;

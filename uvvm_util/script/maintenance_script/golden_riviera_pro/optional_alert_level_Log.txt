@@ -44,6 +44,7 @@ UVVM:                ID_BFM                       : ENABLED
 UVVM:                ID_BFM_WAIT                  : ENABLED
 UVVM:                ID_BFM_POLL                  : ENABLED
 UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED
+UVVM:                ID_CHANNEL_BFM               : ENABLED
 UVVM:                ID_TERMINATE_CMD             : ENABLED
 UVVM:                ID_SEGMENT_INITIATE          : ENABLED
 UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
@@ -75,6 +76,8 @@ UVVM:                ID_IMMEDIATE_CMD             : ENABLED
 UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
 UVVM:                ID_CMD_EXECUTOR              : ENABLED
 UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
+UVVM:                ID_CHANNEL_EXECUTOR          : ENABLED
+UVVM:                ID_CHANNEL_EXECUTOR_WAIT     : ENABLED
 UVVM:                ID_NEW_HVVC_CMD_SEQ          : ENABLED
 UVVM:                ID_INSERTED_DELAY            : ENABLED
 UVVM:                ID_OLD_AWAIT_COMPLETION      : ENABLED

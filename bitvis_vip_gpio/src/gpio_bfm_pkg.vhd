@@ -64,8 +64,9 @@ package gpio_bfm_pkg is
     constant data_value   : in    std_logic_vector;  -- '-' means don't change
     constant msg          : in    string;
     signal data_port      : inout std_logic_vector;
-    constant scope        : in    string         := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel := shared_msg_id_panel
+    constant scope        : in    string            := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in    t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     );
 
   ---------------------------------------------------------------------------------
@@ -75,8 +76,9 @@ package gpio_bfm_pkg is
     variable data_value   : out std_logic_vector;
     constant msg          : in  string;
     signal data_port      : in  std_logic_vector;
-    constant scope        : in  string         := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel := shared_msg_id_panel
+    constant scope        : in  string            := C_SCOPE;
+    constant msg_id_panel : in  t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in  t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     );
 
   ---------------------------------------------------------------------------------
@@ -123,8 +125,9 @@ package body gpio_bfm_pkg is
     constant data_value   : in    std_logic_vector;  -- '-' means don't change
     constant msg          : in    string;
     signal data_port      : inout std_logic_vector;
-    constant scope        : in    string         := C_SCOPE;
-    constant msg_id_panel : in    t_msg_id_panel := shared_msg_id_panel
+    constant scope        : in    string            := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in    t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     ) is
     constant name         : string := "gpio_set(" & to_string(data_value) & ")";
     constant c_data_value : std_logic_vector(data_port'range) := data_value;
@@ -135,7 +138,7 @@ package body gpio_bfm_pkg is
         data_port(i) <= c_data_value(i);
       end if;
     end loop;
-    log(ID_BFM, name & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, name & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
 
@@ -147,12 +150,13 @@ package body gpio_bfm_pkg is
     variable data_value   : out std_logic_vector;
     constant msg          : in  string;
     signal data_port      : in  std_logic_vector;
-    constant scope        : in  string         := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel := shared_msg_id_panel
+    constant scope        : in  string            := C_SCOPE;
+    constant msg_id_panel : in  t_msg_id_panel    := shared_msg_id_panel;
+    constant config       : in  t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
     ) is
     constant name         : string := "gpio_get()";
   begin
-    log(ID_BFM, name & " => Read gpio value: " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    log(config.id_for_bfm, name & " => Read gpio value: " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     data_value := data_port;
   end procedure;
 
@@ -190,7 +194,7 @@ package body gpio_bfm_pkg is
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(data_port, c_data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
       alert(alert_level, name & "=> Failed. Was " & to_string(data_port, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(c_data_exp, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(ID_BFM, name & "=> OK, read data = " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, name & "=> OK, read data = " & to_string(data_port, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
   end procedure;
 
@@ -211,8 +215,8 @@ package body gpio_bfm_pkg is
     constant name         : string := "gpio_expect(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
     constant c_data_exp   : std_logic_vector(data_port'range) := data_exp;
   begin
-    log(ID_BFM, name & "=> Expecting value " & to_string(data_exp, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
-    await_value(data_port, c_data_exp, config.match_strictness, 0 ns, timeout, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_BFM, msg_id_panel);
+    log(config.id_for_bfm, name & "=> Expecting value " & to_string(data_exp, HEX_BIN_IF_INVALID, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg), scope, msg_id_panel);
+    await_value(data_port, c_data_exp, config.match_strictness, 0 ns, timeout, alert_level, msg, scope, HEX_BIN_IF_INVALID, SKIP_LEADING_0, config.id_for_bfm, msg_id_panel);
   end procedure;
 
 end package body gpio_bfm_pkg;

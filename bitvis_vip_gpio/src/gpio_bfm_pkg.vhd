@@ -40,7 +40,7 @@ package gpio_bfm_pkg is
     match_strictness : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm       : t_msg_id;           -- The message ID used as a general message ID in the GPIO BFM
     id_for_bfm_wait  : t_msg_id;           -- The message ID used for logging waits in the GPIO BFM.
-    id_for_bfm_poll  : t_msg_id;           -- The message ID used for logging polling in the GPIO BFM
+    timeout          : time;               -- Timeout value for the expect procedures
   end record;
 
   -- Define the default value for the BFM config
@@ -49,7 +49,7 @@ package gpio_bfm_pkg is
     match_strictness => MATCH_STD,
     id_for_bfm       => ID_BFM,
     id_for_bfm_wait  => ID_BFM_WAIT,
-    id_for_bfm_poll  => ID_BFM_POLL
+    timeout          => -1 ns
     );
 
 

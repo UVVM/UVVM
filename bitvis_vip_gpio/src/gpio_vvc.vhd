@@ -344,6 +344,23 @@ begin
                      msg_id_panel => v_msg_id_panel,
                      config       => vvc_config.bfm_config);
 
+        when CHECK_STABLE =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
+          -- Normalise data
+          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_check_stable() called with too wide data. " & v_cmd.msg);
+          transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
+
+          gpio_check_stable(data_exp     => v_normalised_data,
+                            stable_req   => v_cmd.stable_req,
+                            msg          => format_msg(v_cmd),
+                            data_port    => gpio_vvc_if,
+                            alert_level  => v_cmd.alert_level,
+                            scope        => C_SCOPE,
+                            msg_id_panel => v_msg_id_panel,
+                            config       => vvc_config.bfm_config);
+
         when EXPECT =>
           -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
@@ -360,6 +377,25 @@ begin
                       scope        => C_SCOPE,
                       msg_id_panel => v_msg_id_panel,
                       config       => vvc_config.bfm_config);
+
+        when EXPECT_STABLE =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
+          -- Normalise data
+          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_expect_stable() called with too wide data. " & v_cmd.msg);
+          transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
+
+          gpio_expect_stable(data_exp        => v_normalised_data,
+                             stable_req      => v_cmd.stable_req,
+                             stable_req_from => v_cmd.stable_req_from,
+                             msg             => format_msg(v_cmd),
+                             data_port       => gpio_vvc_if,
+                             timeout         => v_cmd.timeout,
+                             alert_level     => v_cmd.alert_level,
+                             scope           => C_SCOPE,
+                             msg_id_panel    => v_msg_id_panel,
+                             config          => vvc_config.bfm_config);
 
 
         -- UVVM common operations

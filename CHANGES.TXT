@@ -24,6 +24,11 @@ Released: 2020-xx-xx
 - Corrected default KEEP_LEADING_0 for check_value() in Util QR.
 - Removed SLV range check for t_slv_array version of normalize_and_check().
 - Removed VVC_Framework_Documentation_Overview.txt from VVC Framework /doc folder.     
+- Updated GPIO BFM config.
+- Fixed log messages in GPIO BFM.
+- Fixed default timeout parameter in gpio_expect() BFM procedure.
+- Added GPIO procedures gpio_check_stable() & gpio_expect_stable().
+- Renamed GPIO VVC procedure parameter instance_idx to vvc_instance_idx.
 
 
 v2 2020.08.21

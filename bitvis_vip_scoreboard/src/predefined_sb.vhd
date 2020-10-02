@@ -57,7 +57,7 @@ context uvvm_util.uvvm_util_context;
 use work.local_pkg.all;
 
 package slv_sb_pkg is new work.generic_sb_pkg
-  generic map (t_element         => std_logic_vector,
+  generic map (t_element         => std_logic_vector(C_SB_SLV_WIDTH-1 downto 0),
                element_match     => std_match,
                to_string_element => slv_to_string);
 

@@ -2,10 +2,11 @@ Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
 
-v2.x.x
+v2.7.0
 ----------
 Released: 2020-xx-xx
 - Added I2C_VVC_SB scoreboard and pad_i2c_sb() method.
+- Updated VVC scoreboard section in the QR.
 
 v2.6.2
 ----------

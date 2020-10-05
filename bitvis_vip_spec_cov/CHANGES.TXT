@@ -2,7 +2,7 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
 
-v0.x.x
+v0.4.0
 ----------
 Released: 2020-xx-xx
 - Removed shared_spec_cov_config alias from spec_cov_pkg.
@@ -11,7 +11,6 @@ Released: 2020-xx-xx
 - added enable/disable_tick_off_req() for controlling conditional requirement
   tick offs when tick_off_req_cov() in monitors or checkers have to be disabled
   in some testcases.
-
 
 v0.3.0
 ----------
@@ -22,12 +21,10 @@ Released: 2020-08-21
 - Removed COMPLIANCE in requirement to sub-requirement listing.
 - Improved requirement listing order in generated CSV files.
 
-
 v0.2.0
 ----------
 Released: 2020-08-18
 - Requirements not found in the requirements file are listed in CSV and to terminal.
-
 
 v0.1.0
 ----------

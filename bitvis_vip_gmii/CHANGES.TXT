@@ -1,11 +1,10 @@
 Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
-v0.x.x
+v0.4.0
 ----------
 Released: 2020-xx-xx
 - Added GMII_VVC_SB scoreboard.
-
 
 v0.3.1
 ----------

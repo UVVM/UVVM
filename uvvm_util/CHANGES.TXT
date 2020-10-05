@@ -4,7 +4,7 @@ UVVM Utility Library - Overview on Versions and Changes
 ----------------------------------------------------------------------
 
 
-v2.xx.x
+v2.15.0
 ----------
 Released: 2020-xx-xx
 - Added constant C_UVVM_VERSION with UVVM release version number.

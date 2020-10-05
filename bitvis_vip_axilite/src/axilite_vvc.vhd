@@ -212,6 +212,9 @@ begin
 
         case v_local_vvc_cmd.operation is
 
+          when AWAIT_COMPLETION =>
+            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, any_executors_busy, C_VVC_LABELS, last_cmd_idx_executed);
+
           when AWAIT_ANY_COMPLETION =>
              if not v_local_vvc_cmd.gen_boolean then
                 -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue

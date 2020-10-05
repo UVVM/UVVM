@@ -438,7 +438,7 @@ package body td_vvc_framework_common_methods_pkg is
 --  Methods
 --=========================================================================================
 
--- NOTE: ALL VVCs using this td_vvc_framework_common_methods_pkg package MUST have the following declared in their local vvc_cmd_pkg.
+-- NOTE: ALL VVCs using this td_vvc_framework_common_methods_pkg package MUST have the following declared in their local transaction_pkg.
 --       - The enumerated t_operation  (e.g. AWAIT_COMPLETION, ENABLE_LOG_MSG, etc.)
 --       Any VVC based on an older version of td_vvc_framework_common_methods_pkg must - if new operators have been introduced in td_vvc_framework_common_methods_pkg either
 --       a) include the new operator(s) in its t_operation, or

@@ -5,7 +5,6 @@ v2.8.0
 ----------
 Released: 2020-10-06
 - Added UART_VVC_SB scoreboard.
-- Added alert for unknown commands used with VVC transaction info.
 
 v2.7.2
 ----------

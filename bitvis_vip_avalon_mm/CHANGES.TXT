@@ -6,7 +6,6 @@ v2.8.0
 ----------
 Released: 2020-10-06
 - Added AVALON_MM_VVC_SB scoreboard and pad_avalon_mm_sb() method.
-- Added alert for unknown commands used with VVC transaction info.
 
 v2.7.1
 ----------

@@ -29,7 +29,6 @@ Released: 2020-10-06
 - Fixed default timeout parameter in gpio_expect() BFM procedure.
 - Added GPIO procedures gpio_check_stable() & gpio_expect_stable().
 - Renamed GPIO VVC procedure parameter instance_idx to vvc_instance_idx.
-- Added alert for unknown commands used with VVC transaction info.
 
 
 v2 2020.08.21

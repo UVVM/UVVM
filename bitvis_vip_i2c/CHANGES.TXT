@@ -7,7 +7,6 @@ v2.7.0
 Released: 2020-10-06
 - Added I2C_VVC_SB scoreboard and pad_i2c_sb() method.
 - Updated VVC scoreboard section in the QR.
-- Added alert for unknown commands used with VVC transaction info.
 
 v2.6.2
 ----------

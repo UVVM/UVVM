@@ -6,7 +6,6 @@ v2.8.0
 Released: 2020-10-06
 - Added support for independent channels in VVC
 - Added AXILITE_VVC_SB scoreboard and pad_axilite_sb() method.
-- Added alert for unknown commands used with VVC transaction info.
 
 v2.7.1
 ----------

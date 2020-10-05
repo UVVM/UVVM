@@ -11,8 +11,6 @@ Released: 2020-10-06
 - Added BFM and VVC procedures gpio_check_stable() & gpio_expect_stable().
 - Renamed VVC procedure parameter instance_idx to vvc_instance_idx.
 - Updated documentation.
-- Added alert for unknown commands used with VVC transaction info.
-
 
 v1.7.1
 ----------

@@ -680,7 +680,7 @@ package body vvc_methods_pkg is
           vvc_transaction_info_group.bt_rd := C_BASE_TRANSACTION_SET_DEFAULT;
         end if;
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        null;
     end case;
     wait for 0 ns;
   end procedure reset_vvc_transaction_info;

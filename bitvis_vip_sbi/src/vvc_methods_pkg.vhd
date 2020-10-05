@@ -505,7 +505,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.ct := C_COMPOUND_TRANSACTION_SET_DEFAULT;
 
       when others =>
-        null;
+        alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;

@@ -11,9 +11,9 @@ CHANGES.TXT in each module's sub-directory.
 
 
 
-v2 2020.xx.xx
+v2 2020.10.06
 --------------------
-Released: 2020-xx-xx
+Released: 2020-10-06
 - Added constant C_UVVM_VERSION with UVVM release version number.
 - Removed shared_spec_cov_config alias from spec_cov_pkg.
 - run_spec_cov.py script will now also create single_req_vs_single_tc.csv 
@@ -29,6 +29,7 @@ Released: 2020-xx-xx
 - Fixed default timeout parameter in gpio_expect() BFM procedure.
 - Added GPIO procedures gpio_check_stable() & gpio_expect_stable().
 - Renamed GPIO VVC procedure parameter instance_idx to vvc_instance_idx.
+- Added alert for unknown commands used with VVC transaction info.
 
 
 v2 2020.08.21

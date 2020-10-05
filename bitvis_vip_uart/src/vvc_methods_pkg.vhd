@@ -435,7 +435,6 @@ package body vvc_methods_pkg is
 
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
-
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
@@ -453,7 +452,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
 
       when others =>
-        null;
+        alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;

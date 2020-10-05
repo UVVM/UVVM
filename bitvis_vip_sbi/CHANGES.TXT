@@ -6,6 +6,7 @@ v2.8.0
 Released: 2020-xx-xx
 - Added SBI_VVC_SB scoreboard and pad_sbi_sb() method.
 - Updated VVC scoreboard section in the QR.
+- Added alert for unknown commands used with VVC transaction info.
 
 v2.7.2
 ----------

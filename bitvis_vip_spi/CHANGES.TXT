@@ -5,6 +5,7 @@ v3.9.0
 ----------
 Released: 2020-xx-xx
 - Added SPI_VVC_SB scoreboard and pad_spi_sb() method.
+- Added alert for unknown commands used with VVC transaction info.
 
 v3.8.2
 ----------

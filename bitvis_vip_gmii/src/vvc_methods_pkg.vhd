@@ -364,7 +364,7 @@ package body vvc_methods_pkg is
       when WRITE | READ | EXPECT =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
-        null;
+        alert(TB_ERROR, "VVC operation not recognized");
     end case;
 
     wait for 0 ns;

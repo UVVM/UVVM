@@ -1524,7 +1524,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("  --      vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;\n")
         print_linefeed(file_handle)
         file_handle.write("  --    when others =>\n")
-        file_handle.write("  --      null;\n")
+        file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\");\n")
         file_handle.write("  --  end case;\n")
         print_linefeed(file_handle)
         file_handle.write("    wait for 0 ns;\n")

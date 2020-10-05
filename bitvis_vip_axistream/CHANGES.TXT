@@ -1,6 +1,12 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+
+v4.7.2
+----------
+Released: 2020-xx-xx
+- Added alert for unknown commands used with VVC transaction info.
+
 v4.7.1
 ----------
 Released: 2020-06-23

@@ -5,6 +5,7 @@ v0.2.0
 ----------
 Released: 2020-xx-xx
 - Added ETHERNET_VVC_SB scoreboard.
+- Added alert for unknown commands used with VVC transaction info.
 
 v0.1.1
 ----------

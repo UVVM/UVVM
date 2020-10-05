@@ -3,7 +3,7 @@ Bitvis VIP Ethernet - Overview on Versions and Changes
 
 v0.2.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-10-06
 - Added ETHERNET_VVC_SB scoreboard.
 - Added alert for unknown commands used with VVC transaction info.
 

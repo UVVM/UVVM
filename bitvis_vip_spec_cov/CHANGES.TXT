@@ -4,7 +4,7 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 
 v0.4.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-10-06
 - Removed shared_spec_cov_config alias from spec_cov_pkg.
 - run_spec_cov.py script will now also create single_req_vs_single_tc.csv
   and single_tc_vs_single_req.csv

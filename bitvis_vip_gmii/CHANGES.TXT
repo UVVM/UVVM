@@ -3,7 +3,7 @@ Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and
 
 v0.4.0
 ----------
-Released: 2020-xx-xx
+Released: 2020-10-06
 - Added GMII_VVC_SB scoreboard.
 - Added alert for unknown commands used with VVC transaction info.
 

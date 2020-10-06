@@ -59,7 +59,8 @@ test_list = [
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_11.csv", "-s", "../sim/sc_11.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_12.csv", "-s", "../sim/sc_12.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_13.csv", "-s", "../sim/sc_13.csv"],
-            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_14.csv", "-s", "../sim/sc_14.csv"]
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_14.csv", "-s", "../sim/sc_14.csv"],
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_15.csv", "-s", "../sim/sc_15.csv"]
             ]
 
 
@@ -92,7 +93,12 @@ def run_tests():
 
 def verify_test_results():
     print("Verify test results...")
-    subprocess.call(["py", "../script/maintenance_script/verify_with_golden.py"], stderr=subprocess.PIPE)
+    num_errors = 0
+    try:
+        subprocess.check_call(["py", "../script/maintenance_script/verify_with_golden.py"], stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        num_errors = int(e.returncode)
+    sys.exit(num_errors)
 
 
 remove_specification_coverage_files()

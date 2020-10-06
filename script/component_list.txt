@@ -16,3 +16,4 @@ bitvis_vip_spi
 bitvis_vip_uart
 bitvis_vip_hvvc_to_vvc_bridge
 bitvis_vip_ethernet
+bitvis_vip_axi

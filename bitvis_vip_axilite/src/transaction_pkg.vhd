@@ -21,6 +21,9 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+library work;
+use work.axilite_bfm_pkg.all;
+
 --=================================================================================================
 --=================================================================================================
 --=================================================================================================
@@ -74,30 +77,92 @@ package transaction_pkg is
   -- Base transaction
   type t_base_transaction is record
     operation           : t_operation;
-    addr                : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);   -- Max width may be increased if required
-    data                : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    byte_enable         : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation           => NO_OPERATION,
-    addr                => (others => '0'),
-    data                => (others => '0'),
-    byte_enable         => (others => '0'),
     vvc_meta            => C_VVC_META_DEFAULT,
     transaction_status  => C_TRANSACTION_STATUS_DEFAULT
     );
 
+  type t_arw_transaction is record
+    operation           : t_operation;
+    arwaddr             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_arw_transaction;
+
+  constant C_ARW_TRANSACTION_DEFAULT : t_arw_transaction := (
+    operation           => NO_OPERATION,
+    arwaddr             => (others=>'0'),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
+  type t_w_transaction is record
+    operation           : t_operation;
+    wdata               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    wstrb               : std_logic_vector(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_w_transaction;
+
+  constant C_W_TRANSACTION_DEFAULT : t_w_transaction := (
+    operation           => NO_OPERATION,
+    wdata               => (others=>'0'),
+    wstrb               => (others=>'0'),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
+  type t_b_transaction is record
+    operation           : t_operation;
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_b_transaction;
+
+  constant C_B_TRANSACTION_DEFAULT : t_b_transaction := (
+    operation           => NO_OPERATION,
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
+  type t_r_transaction is record
+    operation           : t_operation;
+    rdata               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    vvc_meta            : t_vvc_meta;
+    transaction_status  : t_transaction_status;
+  end record t_r_transaction;
+
+  constant C_R_TRANSACTION_DEFAULT : t_r_transaction := (
+    operation           => NO_OPERATION,
+    rdata               => (others=>'0'),
+    vvc_meta            => C_VVC_META_DEFAULT,
+    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+  );
+
   -- Transaction group
   type t_transaction_group is record
-    bt : t_base_transaction;
+    bt_wr : t_base_transaction;
+    bt_rd : t_base_transaction;
+    st_aw : t_arw_transaction;
+    st_w  : t_w_transaction;
+    st_b  : t_b_transaction;
+    st_ar : t_arw_transaction;
+    st_r  : t_r_transaction;
   end record;
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
-    bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+    bt_wr => C_BASE_TRANSACTION_SET_DEFAULT,
+    bt_rd => C_BASE_TRANSACTION_SET_DEFAULT,
+    st_aw => C_ARW_TRANSACTION_DEFAULT,
+    st_w  => C_W_TRANSACTION_DEFAULT,
+    st_b  => C_B_TRANSACTION_DEFAULT,
+    st_ar => C_ARW_TRANSACTION_DEFAULT,
+    st_r  => C_R_TRANSACTION_DEFAULT
+  );
 
   -- Global transaction info trigger signal
   type t_axilite_transaction_trigger_array is array (natural range <>) of std_logic;

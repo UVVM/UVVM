@@ -29,10 +29,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_gpio;
 context bitvis_vip_gpio.vvc_context;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
-
 -- Test case entity
 entity gpio_vip_tb is
   generic (
@@ -170,7 +166,6 @@ begin
     check_value(gpio_2_output, v_expect_data, error, "Checking value of GPIO VVC 2");
     wait for C_CLK_PERIOD;              -- Margin
 
-
     --
     -- Set GPIO setting to 0xAA. Check GPIO setting
     --
@@ -200,7 +195,6 @@ begin
     await_completion(GPIO_VVCT, 2, C_GPIO_SET_MAX_TIME);
     check_value(gpio_2_output, v_expect_data, error, "Checking value of GPIO VVC 2");
     wait for C_CLK_PERIOD*4;            -- Margin
-
 
 
     --------------------------------------------------------------------------------------
@@ -258,20 +252,18 @@ begin
     wait for C_CLK_PERIOD;              -- Margin
 
 
-
-
     --------------------------------------------------------------------------------------
     --
     -- Test of GPIO VVC Get method
     --
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Get", C_SCOPE);
-    log("Testing get on GPIO VVC 1");
 
     --
     -- Set GPIO 1 input manually to 0x1D. Test GPIO Get method and check
     -- received data from GPIO setting.
     --
+    log("Testing get on GPIO VVC 1");
     v_set_data    := x"1D";
     v_expect_data := v_set_data;
     set_gpio(gpio_1_input, v_set_data, "GPIO 1 input");
@@ -292,7 +284,7 @@ begin
     log("Testing get on GPIO VVC 1 using SB");
     v_set_data    := x"5A";
     set_gpio(gpio_1_input, v_set_data, "GPIO 1 input");
-    GPIO_VVC_SB.add_expected(1, pad_sb_slv(v_set_data));
+    GPIO_VVC_SB.add_expected(1, pad_gpio_sb(v_set_data));
     -- Perform get, which stores the data in the VVC's Scoreboard
     gpio_get(GPIO_VVCT, 1, TO_SB, "Readback inside VVC using SB");
     await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
@@ -301,7 +293,7 @@ begin
     log("Testing get on GPIO VVC 2 using SB");
     v_set_data    := x"B8";
     gpio_set(GPIO_VVCT, 2, v_set_data, "Setting GPIO 2 input.");
-    GPIO_VVC_SB.add_expected(2, pad_sb_slv(v_set_data));
+    GPIO_VVC_SB.add_expected(2, pad_gpio_sb(v_set_data));
     -- Perform get, which stores the data in the VVC's Scoreboard
     gpio_get(GPIO_VVCT, 2, TO_SB, "Readback inside VVC using SB");
     await_completion(GPIO_VVCT, 2, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
@@ -316,12 +308,12 @@ begin
     --
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Check", C_SCOPE);
-    log("Testing check on GPIO VVC 1");
 
     --
     -- Set GPIO 1 input manually to 0x55. Call GPIO Check and check actual GPIO
     -- setting with expected GPIO setting.
     --
+    log("Testing check on GPIO VVC 1");
     v_set_data    := x"55";
     v_expect_data := v_set_data;
     set_gpio(gpio_1_input, v_set_data, "GPIO 1 input");
@@ -333,23 +325,43 @@ begin
 
     --------------------------------------------------------------------------------------
     --
+    -- Test of GPIO VVC Check Stable method
+    --
+    --------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Test of GPIO Check Stable", C_SCOPE);
+
+    --
+    -- Set GPIO 1 input to 0x77. Call GPIO Check Stable and check actual GPIO
+    -- setting is same as expected and that it has been stable for a certain time.
+    --
+    log("Testing check_stable on GPIO VVC 1");
+    v_set_data    := x"77";
+    v_expect_data := v_set_data;
+    set_gpio(gpio_1_input, v_set_data, "GPIO 1 input");
+    wait for C_CLK_PERIOD*5;
+    -- Perform get, which stores the data in the VVC
+    gpio_check_stable(GPIO_VVCT, 1, v_expect_data, C_CLK_PERIOD*5, "Readback inside VVC", error);
+    await_completion(GPIO_VVCT, 1, 1 us, "Wait for gpio_check_stable to finish");
+
+
+    --------------------------------------------------------------------------------------
+    --
     -- Test of GPIO VVC Expect method
     --
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Expect", C_SCOPE);
-    log("Testing gpio_expect as instant change check");
 
     --
     -- Set GPIO setting to 0xFF. Test GPIO Expect and that GPIO setting is
     -- updated immediately (within 0 ns).
     --
+    log("Testing gpio_expect as instant change check");
     v_set_data    := x"FF";
     v_expect_data := v_set_data;
     set_gpio(gpio_1_input, v_set_data, "Setting GPIO 1 input to 0xff");
     gpio_expect(GPIO_VVCT, 1, v_expect_data, 0 ns, "Checking GPIO 1", error);
     v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
     await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect to finish");
-
 
     --
     -- Set GPIO setting to 0xFF, then to 0x12 after 90 ns. Test GPIO Expect
@@ -367,10 +379,9 @@ begin
     v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
     await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect to finish");
 
-
     --
     -- Set GPIO setting to 0xFF, 0xAA, 0xAB, 0xAC and finally 0x00. Test GPIO
-    -- Expect by checking that GPIO setting is set to 0x00 after 10 clk persiods.
+    -- Expect by checking that GPIO setting is set to 0x00 after 10 clk periods.
     --
     log("Testing gpio_expect where value is not first to arrive");
     v_set_data    := x"FF";
@@ -386,6 +397,51 @@ begin
     v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
     await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect to finish");
 
+
+    --------------------------------------------------------------------------------------
+    --
+    -- Test of GPIO VVC Expect Stable method
+    --
+    --------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Test of GPIO Expect Stable", C_SCOPE);
+    --
+    -- Set GPIO 1 input to 0xAA. Call GPIO Expect Stable and check actual GPIO
+    -- setting is same as expected and that it remains stable for a certain time.
+    --
+    log("Testing gpio_expect_stable with expected stable value FROM_NOW");
+    v_set_data    := x"AA";
+    v_expect_data := v_set_data;
+    set_gpio(gpio_1_input, v_set_data, "Setting GPIO 1 input to 0xAA");
+    gpio_expect_stable(GPIO_VVCT, 1, v_expect_data, C_CLK_PERIOD*5, FROM_NOW, 0 ns, "Checking GPIO 1", error);
+    v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
+    await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect_stable to finish");
+
+    --
+    -- Set GPIO 1 input to 0xBB and wait. Call GPIO Expect Stable and check actual GPIO
+    -- setting is same as expected and that it has been stable for a certain time after
+    -- the last event.
+    --
+    log("Testing gpio_expect_stable with expected stable value FROM_LAST_EVENT");
+    v_set_data    := x"BB";
+    v_expect_data := v_set_data;
+    set_gpio(gpio_1_input, v_set_data, "Setting GPIO 1 input to 0xBB");
+    wait for C_CLK_PERIOD*5;
+    gpio_expect_stable(GPIO_VVCT, 1, v_expect_data, C_CLK_PERIOD*10, FROM_LAST_EVENT, 0 ns, "Checking GPIO 1", error);
+    v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
+    await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect_stable to finish");
+
+    --
+    -- Set GPIO 1 input to 0xCC after 10 ns. Call GPIO Expect Stable and wait until actual GPIO
+    -- setting is same as expected and that it remains stable for a certain time.
+    --
+    log("Testing gpio_expect_stable with expected stable value after a delayed update");
+    v_set_data    := x"CC";
+    v_expect_data := v_set_data;
+    gpio_expect_stable(GPIO_VVCT, 1, v_expect_data, C_CLK_PERIOD*5, FROM_NOW, 20 ns, "Checking GPIO 1", error);
+    wait for 10 ns;
+    set_gpio(gpio_1_input, v_set_data, "Setting GPIO 1 input to 0xCC");
+    v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
+    await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect_stable to finish");
 
 
     -----------------------------------------------------------------------------

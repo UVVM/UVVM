@@ -20,13 +20,11 @@ def main():
     golden_file_list = get_file_list("../script/maintenance_script/golden/")
     
     failing_verify_file = []
-    num_checked_files = 0
 
     for filename in filelist:
         golden_file = "../script/maintenance_script/golden/" + filename
 
         if os.path.isfile(golden_file):
-            num_checked_files += 1
             golden_file_lines = len(open(golden_file).readlines(  ))
             check_file_lines  = len(open(filename).readlines(  ))
             
@@ -78,7 +76,11 @@ def main():
 
 
     # Return the number of errors to caller
-    sys.exit(len(failing_verify_file) + num_missing_files)
+    num_errors = len(failing_verify_file) + num_missing_files
+    if num_errors != 0:
+        print("Golden failed with %d error(s)." %(num_errors))
+    sys.exit(num_errors)
+
 
 if __name__ == "__main__":
     main()

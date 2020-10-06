@@ -32,9 +32,10 @@ package ti_protected_types_pkg is
 
     -- Add a new VVC to the activity register and return its index
     impure function priv_register_vvc(
-      constant name     : in string;
-      constant instance : in natural;
-      constant channel  : in t_channel := NA
+      constant name                     : in string;
+      constant instance                 : in natural;
+      constant channel                  : in t_channel := NA;
+      constant await_selected_supported : in boolean   := true
     ) return integer;
 
     -- Update a VVC's state
@@ -89,6 +90,11 @@ package ti_protected_types_pkg is
     impure function priv_get_vvc_last_cmd_idx_executed(
       constant vvc_idx : in natural
     ) return integer;
+
+    -- Get information if the VVC supports await selected (waiting for a specific command) or not
+    impure function priv_get_vvc_await_selected_supported(
+      constant vvc_idx : in natural
+    ) return boolean;
 
     -- Get a VVC's name, instance and channel
     impure function priv_get_vvc_info(
@@ -197,9 +203,10 @@ package body ti_protected_types_pkg is
 
 
     impure function priv_register_vvc(
-      constant name     : in string;
-      constant instance : in natural;
-      constant channel  : in t_channel := NA
+      constant name                     : in string;
+      constant instance                 : in natural;
+      constant channel                  : in t_channel := NA;
+      constant await_selected_supported : in boolean := true
     ) return integer is
     begin
       if priv_last_registered_vvc_idx >= C_MAX_TB_VVC_NUM then
@@ -209,11 +216,12 @@ package body ti_protected_types_pkg is
       -- Set registered VVC index
       priv_last_registered_vvc_idx := priv_last_registered_vvc_idx + 1;
       -- Update register
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)   := to_upper(name);
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                 := instance;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                  := channel;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity              := INACTIVE;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_cmd_idx_executed := -1;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)       := to_upper(name);
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                     := instance;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                      := channel;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity                  := INACTIVE;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_cmd_idx_executed     := -1;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.await_selected_supported  := await_selected_supported;
       -- Return index
       return priv_last_registered_vvc_idx;
     end function;
@@ -331,6 +339,15 @@ package body ti_protected_types_pkg is
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
         "priv_get_vvc_last_cmd_idx_executed() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
       return priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed;
+    end function;
+
+    impure function priv_get_vvc_await_selected_supported(
+      constant vvc_idx : in natural
+    ) return boolean is
+    begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR, 
+        "priv_get_vvc_await_selected_supported() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      return priv_registered_vvc(vvc_idx).vvc_state.await_selected_supported;
     end function;
 
     impure function priv_get_vvc_info(

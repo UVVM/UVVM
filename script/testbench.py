@@ -259,6 +259,11 @@ class Testbench:
       # Convert to upper case
       args = [arg.upper() for arg in args]
 
+      # If called from run_regression.py arguments will be a string, convert to list.
+      if len(args) > 1:
+        if ' ' in args[1]:
+          args = args[1].split(' ')
+
       # Arguments detected
       self.verbose  = any(arg in output_list for arg in args)
       self.modelsim = any(arg in modelsim_list for arg in args)
@@ -493,6 +498,31 @@ class Testbench:
       Check if testcase is expected to fail.
       """
       return testcase.lower() in self.exp_failing_testcase
+
+
+    def run_verify_with_golden(self, script_file="verify_with_golden.py") -> int :
+      """
+      Check sim results with golden. 
+      Warning. Only a subset of modules have a golden.
+      """
+      print("Verifying with golden...")
+      simulator = "-modelsim"
+      if self.env_var["SIMULATOR"] == "RIVIERAPRO":
+        simulator = "-aldec"
+
+      num_errors = 0
+      script = "../script/maintenance_script/" + script_file
+      
+      try:
+        if self.verbose == False:
+          subprocess.check_call([sys.executable, script, simulator, ' '.join(sys.argv[1:])], env=self.env_var, stdout=FNULL, stderr=subprocess.PIPE)
+        else:
+          subprocess.check_call([sys.executable, script, simulator, ' '.join(sys.argv[1:])], env=self.env_var, stderr=subprocess.PIPE)
+      except subprocess.CalledProcessError as e:
+        num_errors = int(e.returncode)
+
+      print("Golden compare completed with %d error(s)." %(num_errors))
+      return num_errors
 
 
     def add_test_run_timing(self, time_elapsed):

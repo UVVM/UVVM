@@ -25,7 +25,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.C_SB_CONFIG_DEFAULT;
 
 use work.gpio_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -295,14 +295,15 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise data
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "gpio_set() called with to wide data. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "gpio_set() called with too wide data. " & v_cmd.msg);
           transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
 
           gpio_set(data_value   => v_normalised_data,
                    msg          => format_msg(v_cmd),
                    data_port    => gpio_vvc_if,
                    scope        => C_SCOPE,
-                   msg_id_panel => v_msg_id_panel);
+                   msg_id_panel => v_msg_id_panel,
+                   config       => vvc_config.bfm_config);
 
         when GET =>
           -- Set vvc_transaction_info
@@ -312,12 +313,13 @@ begin
                    msg          => format_msg(v_cmd),
                    data_port    => gpio_vvc_if,
                    scope        => C_SCOPE,
-                   msg_id_panel => v_msg_id_panel);
+                   msg_id_panel => v_msg_id_panel,
+                   config       => vvc_config.bfm_config);
 
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            GPIO_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_read_data(GC_DATA_WIDTH-1 downto 0)));
+            GPIO_VVC_SB.check_received(GC_INSTANCE_IDX, pad_gpio_sb(v_read_data(GC_DATA_WIDTH-1 downto 0)));
           else                            
             -- Store the result
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
@@ -331,7 +333,7 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise data
-          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_check() called with to wide data. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_check() called with too wide data. " & v_cmd.msg);
           transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
 
           gpio_check(data_exp     => v_normalised_data,
@@ -339,14 +341,32 @@ begin
                      data_port    => gpio_vvc_if,
                      alert_level  => v_cmd.alert_level,
                      scope        => C_SCOPE,
-                     msg_id_panel => v_msg_id_panel);
+                     msg_id_panel => v_msg_id_panel,
+                     config       => vvc_config.bfm_config);
+
+        when CHECK_STABLE =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
+          -- Normalise data
+          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_check_stable() called with too wide data. " & v_cmd.msg);
+          transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
+
+          gpio_check_stable(data_exp     => v_normalised_data,
+                            stable_req   => v_cmd.stable_req,
+                            msg          => format_msg(v_cmd),
+                            data_port    => gpio_vvc_if,
+                            alert_level  => v_cmd.alert_level,
+                            scope        => C_SCOPE,
+                            msg_id_panel => v_msg_id_panel,
+                            config       => vvc_config.bfm_config);
 
         when EXPECT =>
           -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise data
-          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_expect() called with to wide data. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_expect() called with too wide data. " & v_cmd.msg);
           transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
 
           gpio_expect(data_exp     => v_normalised_data,
@@ -355,8 +375,27 @@ begin
                       data_port    => gpio_vvc_if,
                       alert_level  => v_cmd.alert_level,
                       scope        => C_SCOPE,
-                      config       => vvc_config.bfm_config,
-                      msg_id_panel => v_msg_id_panel);
+                      msg_id_panel => v_msg_id_panel,
+                      config       => vvc_config.bfm_config);
+
+        when EXPECT_STABLE =>
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+
+          -- Normalise data
+          v_normalised_data := normalize_and_check(v_cmd.data_exp, v_normalised_data, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", "gpio_expect_stable() called with too wide data. " & v_cmd.msg);
+          transaction_info.data(GC_DATA_WIDTH-1 downto 0) := v_normalised_data;
+
+          gpio_expect_stable(data_exp        => v_normalised_data,
+                             stable_req      => v_cmd.stable_req,
+                             stable_req_from => v_cmd.stable_req_from,
+                             msg             => format_msg(v_cmd),
+                             data_port       => gpio_vvc_if,
+                             timeout         => v_cmd.timeout,
+                             alert_level     => v_cmd.alert_level,
+                             scope           => C_SCOPE,
+                             msg_id_panel    => v_msg_id_panel,
+                             config          => vvc_config.bfm_config);
 
 
         -- UVVM common operations

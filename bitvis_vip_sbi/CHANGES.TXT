@@ -1,12 +1,17 @@
 Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
+v2.8.0
+----------
+Released: 2020-10-06
+- Added SBI_VVC_SB scoreboard and pad_sbi_sb() method.
+- Updated VVC scoreboard section in the QR.
+
 v2.7.2
 ----------
 Released: 2020-08-18
 - Fixed missing possibility for exiting a WRITE loop.
 - Added explicit paths for framework methods in executor and interpreter.
-
 
 v2.7.1
 ----------

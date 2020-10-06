@@ -25,7 +25,7 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.C_SB_CONFIG_DEFAULT;
 
 use work.i2c_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
@@ -341,7 +341,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               for i in 0 to v_cmd.num_bytes-1 loop
-                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, pad_i2c_sb(v_read_data(i)));
               end loop;
             else                            
               -- Store the result
@@ -437,7 +437,7 @@ begin
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
               for i in 0 to v_cmd.num_bytes-1 loop
-                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data(i));
+                I2C_VVC_SB.check_received(GC_INSTANCE_IDX, pad_i2c_sb(v_read_data(i)));
               end loop;
             else                            
               -- Store the result

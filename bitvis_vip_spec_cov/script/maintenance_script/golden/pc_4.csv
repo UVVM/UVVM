@@ -2,6 +2,5 @@ NOTE: This coverage file is only valid when the last line is 'SUMMARY, TC_4, PAS
 TESTCASE_NAME: TC_4
 DELIMITER: ,
 
-REQ_4,TC_4_FAIL,FAIL
-REQ_4,TC_4,PASS
+REQ_4,TC_4,FAIL
 SUMMARY, TC_4, FAIL

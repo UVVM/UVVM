@@ -1,0 +1,259 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"0F". Expected x"0E".
+UVVM:                    My msg2, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"25". Expected x"24".
+UVVM:                    My msg3c, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"32". Expected x"3A".
+UVVM:                    My msg (none), Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"32". Expected x"3A".
+UVVM:                    My msg HEX, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was b"110010". Expected b"111010".
+UVVM:                    My msg BIN, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"32". Expected x"12".
+UVVM:                    My msg (none), Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"12". Expected x"32".
+UVVM:                    My msg HEX, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #8  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"012". Expected x"0XX".
+UVVM:                    My msg dontcare-in-extended-width HEX, AS_IS, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #9  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"01F". Expected x"012".
+UVVM:                    My msg HEX_BIN_IF_INVALID, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #10  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"0XX" (b"00000U00U0"). Expected x"012".
+UVVM:                    My msg HEX_BIN_IF_INVALID, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #11  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was true. Expected false. 
+UVVM:                    Boolean check true vs false, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #12  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was false. Expected true. 
+UVVM:                    Boolean check false vs true, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #13  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was true. Expected false. 
+UVVM:                    Boolean check true vs false, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #14  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was false. Expected true. 
+UVVM:                    Boolean check false vs true, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #15  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. unsigned  Was b"01100". Expected b"11100".
+UVVM:                    My msg U, BIN, AS_IS, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #16  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. unsigned  Was b"001100". Expected b"101100".
+UVVM:                    My msg U, BIN, AS_IS, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #17  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. signed  Was b"10101100". Expected b"10101101".
+UVVM:                    My msg S, BIN, AS_IS, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #18  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. int  Was 5. Expected 12345
+UVVM:                    My msg I, Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. int  Was 5. Expected 23456
+UVVM:                    My msg I, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #2  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. real  Was 5222.01. Expected 1421.02
+UVVM:                    My msg I, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #3  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. std_logic  Was '1'. Expected '0'
+UVVM:                    My msg SL, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #4  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. std_logic  Was '1'. Expected 'H'
+UVVM:                    My msg SL, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #5  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. std_logic  Was '-'. Expected '1'
+UVVM:                    My msg SL, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #6  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. time  Was 15000 ps. Expected 74 ps
+UVVM:                    My msg I, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #7  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. time  Was 15000 ps. Expected 14000 ps
+UVVM:                    My msg I, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #8  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. time  Was 15000 ps. Expected 74 ps
+UVVM:                    My msg I, Fail
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. slv  Was x"32". Expected x"2".
+UVVM:                    Check padding of different check_value SLV lengths (actual>expected)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. slv  Was x"A". Expected x"32".
+UVVM:                    Check padding of different check_value SLV lengths (actual<expected)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. slv  Was x"0A". Expected x"32".
+UVVM:                    Check padding of different check_value SLV lengths (actual=expected)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. t_slv_array  Was x"B". Expected x"C".
+UVVM:                    2check_value with t_slv_array of different array indexes
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. t_signed_array  Was x"D". Expected x"A".
+UVVM:                    2check_value with t_signed_array of different array indexes
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. t_unsigned_array  Was x"F". Expected x"D".
+UVVM:                    2check_value with t_unsigned_array of different array indexes
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was false. 'array lengths do not match'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    check_value() => Failed. Boolean was false. 'array directions do not match'
+UVVM: 

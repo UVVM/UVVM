@@ -26,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 
 use work.i2c_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -130,8 +129,12 @@ package vvc_methods_pkg is
   shared variable shared_i2c_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
   
   -- Scoreboard
-  shared variable I2C_VVC_SB : t_generic_sb;
-
+  package i2c_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use i2c_sb_pkg.all;
+  shared variable I2C_VVC_SB  : i2c_sb_pkg.t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -363,7 +366,14 @@ package vvc_methods_pkg is
                                           constant command_queue_is_empty             : in    boolean;
                                           constant scope                              : in    string := C_VVC_NAME);
                                                   
-                                                  
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+  function pad_i2c_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector;
+  
+  
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -796,5 +806,17 @@ package body vvc_methods_pkg is
     end if;                                                              
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
+
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+
+  function pad_i2c_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector is 
+  begin
+    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
+  end function pad_i2c_sb;
 
 end package body vvc_methods_pkg;

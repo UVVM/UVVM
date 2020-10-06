@@ -19,3 +19,4 @@ bitvis_vip_uart
 bitvis_vip_spec_cov
 bitvis_vip_hvvc_to_vvc_bridge
 bitvis_vip_ethernet
+bitvis_vip_axi

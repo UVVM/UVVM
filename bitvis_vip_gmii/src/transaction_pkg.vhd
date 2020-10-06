@@ -76,7 +76,7 @@ package transaction_pkg is
   -- Base transaction
   type t_base_transaction is record
     operation           : t_operation;
-    data_array          : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    data_array          : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1)(7 downto 0);
     vvc_meta            : t_vvc_meta;
     transaction_status  : t_transaction_status;
   end record;

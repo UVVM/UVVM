@@ -804,17 +804,21 @@ begin
       v_exp_slv_array(1)      := x"C";
       v_exp_signed_array(1)   := x"A";
       v_exp_unsigned_array(1) := x"D";
-      check_value(v_value_slv_array, v_exp_slv_array, tb_warning, "check_value with t_slv_array of different array indexes");
-      check_value(v_value_signed_array, v_exp_signed_array, tb_warning, "check_value with t_signed_array of different array indexes");
-      check_value(v_value_unsigned_array, v_exp_unsigned_array, tb_warning, "check_value with t_unsigned_array of different array indexes");
+      check_value(v_value_slv_array, v_exp_slv_array, tb_warning, "2check_value with t_slv_array of different array indexes");
+      check_value(v_value_signed_array, v_exp_signed_array, tb_warning, "2check_value with t_signed_array of different array indexes");
+      check_value(v_value_unsigned_array, v_exp_unsigned_array, tb_warning, "2check_value with t_unsigned_array of different array indexes");
+
+      log(ID_SEQUENCER, "Incrementing alert_stop_limit(TB_ERROR) for 1 provoked tb_error to pass in simulation.", C_SCOPE);
+      set_alert_stop_limit(TB_ERROR, 2);
 
       -- verify warning with arrays of different directions and unequal lengths
       v_exp_slv_array        := (others => "1010");
       v_exp_slv_array_4      := (others => "1010");
       v_exp_slv_array_revers := (others => "1010");
-      increment_expected_alerts(warning, 2);
+      increment_expected_alerts(tb_error, 1);
       check_value(v_exp_slv_array, v_exp_slv_array_4, tb_warning, "check_value with different array lenghts");
-      check_value(v_exp_slv_array, v_exp_slv_array_4, tb_warning, "check_value with different array directions");
+      increment_expected_alerts(tb_warning, 1);
+      check_value(v_exp_slv_array, v_exp_slv_array_revers, tb_warning, "check_value with different array directions");
 
       report_check_counters(VOID);
 
@@ -3587,9 +3591,11 @@ begin
       v_exp_slv_array        := (others => "1010");
       v_exp_slv_array_4      := (others => "1010");
       v_exp_slv_array_revers := (others => "1010");
-      increment_expected_alerts(warning, 2);
+      set_alert_stop_limit(tb_error, 2);
+      increment_expected_alerts(tb_error, 1);
       check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array lenghts");
-      check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array directions");
+      increment_expected_alerts(tb_warning, 1);
+      check_value(v_exp_slv_array, v_exp_slv_array_revers,"check_value with different array directions");
 
 --------------------------------------------------------------------------
 -- CHECK_VALUE_IN_RANGE(): Check_value_in_range without alert_level

@@ -37,10 +37,6 @@ context bitvis_vip_spi.vvc_context;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
--------------------------------------------------------------------------------
 
 entity spi_vvc_tb is
   generic (
@@ -50,8 +46,6 @@ entity spi_vvc_tb is
     GC_DATA_ARRAY_WIDTH : positive             := 8
     );
 end entity spi_vvc_tb;
-
--------------------------------------------------------------------------------
 
 architecture behav of spi_vvc_tb is
 
@@ -1268,13 +1262,13 @@ begin  -- architecture behav
 
       tx_word := random(GC_DATA_WIDTH);
       spi_master_transmit_only(SPI_VVCT, C_SPI_VVC_0, tx_word, "SPI Master transmit");
-      SPI_VVC_SB.add_expected(C_SPI_VVC_1, pad_sb_slv(tx_word));
+      SPI_VVC_SB.add_expected(C_SPI_VVC_1, pad_spi_sb(tx_word));
       spi_slave_receive_only(SPI_VVCT, C_SPI_VVC_1, TO_SB, "SPI Slave receive data and send to SB");
       await_slave_rx_completion(50 ms);
 
       tx_word := random(GC_DATA_WIDTH);
       spi_slave_transmit_only(SPI_VVCT, C_SPI_VVC_1, tx_word, "SPI Slave transmit");
-      SPI_VVC_SB.add_expected(C_SPI_VVC_0, pad_sb_slv(tx_word));
+      SPI_VVC_SB.add_expected(C_SPI_VVC_0, pad_spi_sb(tx_word));
       spi_master_receive_only(SPI_VVCT, C_SPI_VVC_0, TO_SB, "SPI Master receive data and send to SB");
       await_master_rx_completion(50 ms);
 

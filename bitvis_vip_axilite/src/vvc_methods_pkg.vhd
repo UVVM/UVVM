@@ -26,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 use work.axilite_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -133,7 +132,12 @@ package vvc_methods_pkg is
   shared variable shared_axilite_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable AXILITE_VVC_SB : t_generic_sb;
+  package axilite_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use axilite_sb_pkg.all;
+  shared variable AXILITE_VVC_SB  : axilite_sb_pkg.t_generic_sb;
 
 
   --==========================================================================================
@@ -204,11 +208,62 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record;
     constant vvc_config                 : in t_vvc_config;
-    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure set_arw_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure set_w_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure set_b_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  procedure set_r_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
 
   procedure reset_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
-    constant vvc_cmd                    : in t_vvc_cmd_record);
+    constant vvc_cmd                    : in t_vvc_cmd_record
+  );
+
+  procedure reset_arw_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record
+  );
+
+  procedure reset_w_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group
+  );
+
+  procedure reset_b_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group
+  );
+
+  procedure reset_r_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group
+  );
 
   --==============================================================================
   -- VVC Activity
@@ -221,6 +276,15 @@ package vvc_methods_pkg is
                                           constant command_queue_is_empty             : in    boolean;
                                           constant scope                              : in    string := C_VVC_NAME);
 
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+  function pad_axilite_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector;
+  
+  
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -386,36 +450,157 @@ package body vvc_methods_pkg is
     constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
-      when WRITE | READ | CHECK =>
-        vvc_transaction_info_group.bt.operation                                          := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.addr(vvc_cmd.addr'length-1 downto 0)               := vvc_cmd.addr;
-        vvc_transaction_info_group.bt.data(vvc_cmd.data'length-1 downto 0)               := vvc_cmd.data;
-        vvc_transaction_info_group.bt.byte_enable(vvc_cmd.byte_enable'length-1 downto 0) := vvc_cmd.byte_enable;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                                 := IN_PROGRESS;
-        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
-
+      when WRITE =>
+        vvc_transaction_info_group.bt_wr.operation                                          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt_wr.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+        vvc_transaction_info_group.bt_wr.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt_wr.transaction_status                                 := IN_PROGRESS;
+      when READ | CHECK =>
+        vvc_transaction_info_group.bt_rd.operation                                          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt_rd.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+        vvc_transaction_info_group.bt_rd.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt_rd.transaction_status                                 := IN_PROGRESS;
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
-
+    gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;
   end procedure set_global_vvc_transaction_info;
+
+  procedure set_arw_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE =>
+        vvc_transaction_info_group.st_aw.operation                                          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_aw.arwaddr                                            := vvc_cmd.addr;
+        vvc_transaction_info_group.st_aw.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+        vvc_transaction_info_group.st_aw.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_aw.transaction_status                                 := IN_PROGRESS;
+      when READ | CHECK =>
+        vvc_transaction_info_group.st_ar.operation                                          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_ar.arwaddr                                            := vvc_cmd.addr;
+        vvc_transaction_info_group.st_ar.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+        vvc_transaction_info_group.st_ar.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_ar.transaction_status                                 := IN_PROGRESS;
+      when others =>
+        alert(TB_ERROR, "VVC operation not recognized");
+    end case;
+    gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+    wait for 0 ns;
+  end procedure set_arw_vvc_transaction_info;
+
+  procedure set_w_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    vvc_transaction_info_group.st_w.operation                                          := vvc_cmd.operation;
+    vvc_transaction_info_group.st_w.wdata                                              := vvc_cmd.data;
+    vvc_transaction_info_group.st_w.wstrb                                              := vvc_cmd.byte_enable;
+    vvc_transaction_info_group.st_w.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+    vvc_transaction_info_group.st_w.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_w.transaction_status                                 := IN_PROGRESS;
+    gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+    wait for 0 ns;
+  end procedure set_w_vvc_transaction_info;
+
+  procedure set_b_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    vvc_transaction_info_group.st_b.operation                                          := vvc_cmd.operation;
+    vvc_transaction_info_group.st_b.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+    vvc_transaction_info_group.st_b.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_b.transaction_status                                 := IN_PROGRESS;
+    gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+    wait for 0 ns;
+  end procedure set_b_vvc_transaction_info;
+
+  procedure set_r_vvc_transaction_info(
+    signal vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record;
+    constant vvc_config                 : in t_vvc_config;
+    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    vvc_transaction_info_group.st_r.operation                                          := vvc_cmd.operation;
+    vvc_transaction_info_group.st_r.rdata                                              := vvc_cmd.data;
+    vvc_transaction_info_group.st_r.vvc_meta.msg(1 to vvc_cmd.msg'length)              := vvc_cmd.msg;
+    vvc_transaction_info_group.st_r.vvc_meta.cmd_idx                                   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_r.transaction_status                                 := IN_PROGRESS;
+    gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+    wait for 0 ns;
+  end procedure set_r_vvc_transaction_info;
 
   procedure reset_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
-      when WRITE | READ | CHECK =>
-        vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+      when WRITE =>
+        if vvc_cmd.cmd_idx = vvc_transaction_info_group.bt_wr.vvc_meta.cmd_idx then
+          vvc_transaction_info_group.bt_wr := C_BASE_TRANSACTION_SET_DEFAULT;
+        end if;
+      when READ | CHECK =>
+        if vvc_cmd.cmd_idx = vvc_transaction_info_group.bt_rd.vvc_meta.cmd_idx then
+          vvc_transaction_info_group.bt_rd := C_BASE_TRANSACTION_SET_DEFAULT;
+        end if;
       when others =>
         null;
     end case;
-
     wait for 0 ns;
   end procedure reset_vvc_transaction_info;
+
+  procedure reset_arw_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record
+  ) is
+  begin
+    case vvc_cmd.operation is
+      when WRITE =>
+        vvc_transaction_info_group.st_aw := C_ARW_TRANSACTION_DEFAULT;
+      when READ | CHECK =>
+        vvc_transaction_info_group.st_ar := C_ARW_TRANSACTION_DEFAULT;
+      when others =>
+        null;
+    end case;
+    wait for 0 ns;
+  end procedure reset_arw_vvc_transaction_info;
+
+  procedure reset_w_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group
+  ) is
+  begin
+    vvc_transaction_info_group.st_w := C_W_TRANSACTION_DEFAULT;
+  end procedure reset_w_vvc_transaction_info;
+
+  procedure reset_b_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group
+  ) is
+  begin
+    vvc_transaction_info_group.st_b := C_B_TRANSACTION_DEFAULT;
+  end procedure reset_b_vvc_transaction_info;
+
+  procedure reset_r_vvc_transaction_info(
+    variable vvc_transaction_info_group : inout t_transaction_group
+  ) is
+  begin
+    vvc_transaction_info_group.st_r := C_R_TRANSACTION_DEFAULT;
+  end procedure reset_r_vvc_transaction_info;
 
   --==============================================================================
   -- VVC Activity
@@ -446,6 +631,19 @@ package body vvc_methods_pkg is
     end if;    
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
+
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+
+  function pad_axilite_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector is 
+  begin
+    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
+  end function pad_axilite_sb;
+
 
 end package body vvc_methods_pkg;
 

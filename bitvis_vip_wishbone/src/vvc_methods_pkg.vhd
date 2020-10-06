@@ -26,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 use work.wishbone_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -121,8 +120,12 @@ package vvc_methods_pkg is
   shared variable shared_wishbone_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
   
   -- Scoreboard
-  shared variable WISHBONE_VVC_SB : t_generic_sb;
-
+  package wishbone_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use wishbone_sb_pkg.all;
+  shared variable WISHBONE_VVC_SB  : wishbone_sb_pkg.t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -184,7 +187,15 @@ package vvc_methods_pkg is
                                           constant last_cmd_idx_executed              : in    natural;
                                           constant command_queue_is_empty             : in    boolean;
                                           constant scope                              : in    string := C_VVC_NAME);
-                                                  
+
+                                          
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+  function pad_wishbone_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector;
+
 end package vvc_methods_pkg;
 
 
@@ -331,5 +342,18 @@ package body vvc_methods_pkg is
     end if;                                                              
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
+
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+
+  function pad_wishbone_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector is 
+  begin
+    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
+  end function pad_wishbone_sb;
+
 
 end package body vvc_methods_pkg;

@@ -366,32 +366,66 @@ reporting_dict = {}
 
 
 
-
-def write_specification_coverage_file(run_configuration, container, delimiter):
+def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
     """
-    This method will write all the results to the specification coverage CSV files.
-    The specification coverage file will have suffix : 
-        .req_vs_single_tc : requirement(s) listed with a testcase and compliance
-        .req_vs_tcs       : requirement(s) listed with testcase(s) and compliance
-        .tc_vs_reqs       : testcase(s) listed with requirement(s) and result
-
-
-    Parameters:
-        
-        run_configuration (dict) : selected configuration for this run.
-
-        requirement_container (Containter()) : container for requirement objects
+    Write minimalistic specification coverage files, i.e each requirement and each testcase once. 
+    """
     
-        testcase_container (Container()) : container for testcase objects
+    filename = run_configuration.get("spec_cov")
+    spec_cov_single_req_vs_single_tc_filename = filename[: filename.rfind(".")] + ".single_req_vs_single_tc.csv"
+    spec_cov_single_tc_vs_single_req_filename = filename[: filename.rfind(".")] + ".single_tc_vs_single_req.csv"
 
-        delimiter (char) : CSV delimiter
-    """
-    # Grab the global reporting dictionary
-    global reporting_dict
+    run_req_list     = []
+    not_run_req_list = []
+    for req in container.get_requirement_list():
+        tc_list = req.get_sorted_testcase_list()
+        tc = None
+        if tc_list: tc = tc_list[0]
+        if tc and not(tc.result == testcase_not_run_string):
+            run_req_list.append([req, tc])
+        else:
+            not_run_req_list.append([req, None])
 
-    #==========================================================================
-    # Present a summary to terminal
-    #==========================================================================
+    run_test_case_list     = []
+    not_run_test_case_list = []
+    for tc in container.get_testcase_list():
+        req_list = tc.get_all_requirement_list()
+        req = None
+        if req_list: req = req_list[0]
+        if req and not(req.compliance == not_tested_compliant_string):
+            run_test_case_list.append([tc, req])
+        else:
+            not_run_test_case_list.append([tc, None])
+
+    try:
+        with open(spec_cov_single_req_vs_single_tc_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
+            csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
+            for req, tc in (run_req_list + not_run_req_list):
+                if tc:
+                    csv_writer.writerow([req.name, tc.name, req.compliance])
+                else:
+                    csv_writer.writerow([req.name, "", not_tested_compliant_string])
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_req_vs_single_tc_filename))
+        abort(error_code = 1, msg = error_msg)
+
+    try:
+        with open(spec_cov_single_tc_vs_single_req_filename, mode='w', newline='') as to_file:
+            csv_writer = csv.writer(to_file, delimiter=delimiter)
+            csv_writer.writerow(["Testcase", "Requirement", "Result"])
+            for tc, req in (run_test_case_list + not_run_test_case_list):
+                if req:
+                    csv_writer.writerow([tc.name, req.name, tc.result])
+                else:
+                    csv_writer.writerow([tc.name, "", testcase_not_run_string])
+    except:
+        error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_tc_vs_single_req_filename))
+        abort(error_code = 1, msg = error_msg)
+
+
+
+def terminal_present_results(container, delimiter) -> dict:
     testcase_pass_list = []
     testcase_fail_list = []
     testcase_not_run_list = []
@@ -433,6 +467,8 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
     reporting_dict["non_compliant_requirements"] = requirement_non_compliant_list
     reporting_dict["num_non_verified_requirements"] = str(len(requirement_not_run_list))
     reporting_dict["non_verified_requirements"] = requirement_not_run_list
+    reporting_dict["num_not_listed_requirements"] = str(len(requirement_not_listed_list))
+    reporting_dict["not_listed_requirements"] = requirement_not_listed_list
 
     reporting_dict["num_passing_testcases"] = str(len(testcase_pass_list))
     reporting_dict["passing_testcases"] = testcase_pass_list
@@ -441,7 +477,9 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
     reporting_dict["num_not_run_testcases"] = str(len(testcase_not_run_list))
     reporting_dict["not_run_testcases"] = testcase_not_run_list
 
-    # Present summary on terminal
+    #==========================================================================
+    # Present a summary to terminal
+    #==========================================================================
     print("SUMMARY:")
     print("----------------------------------------------")
     print("Number of compliant requirements     : %d" %(len(requirement_compliant_list)))
@@ -490,6 +528,32 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
 
+
+
+
+def write_spec_cov_files(run_configuration, container, delimiter):
+    """
+    This method will write all the results to the specification coverage CSV files.
+    The specification coverage file will have suffix : 
+        .req_vs_single_tc : requirement(s) listed with a testcase and compliance
+        .req_vs_tcs       : requirement(s) listed with testcase(s) and compliance
+        .tc_vs_reqs       : testcase(s) listed with requirement(s) and result
+
+
+    Parameters:
+        
+        run_configuration (dict) : selected configuration for this run.
+
+        requirement_container (Containter()) : container for requirement objects
+    
+        testcase_container (Container()) : container for testcase objects
+
+        delimiter (char) : CSV delimiter
+    """
+    # Grab the global reporting dictionary
+    global reporting_dict
+
+
     #==========================================================================
     # Write the results to CSVs
     #==========================================================================
@@ -518,9 +582,9 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
                     csv_writer.writerow([requirement.name, sub_requirement_string])
-            if requirement_not_listed_list:
+            if reporting_dict.get("not_listed_requirements"):
                 csv_writer.writerow(["Not listed requirement(s)"])
-                for requirement in requirement_not_listed_list:
+                for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
 
     except:
@@ -558,9 +622,9 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
                     sub_requirement_string += " " + sub_requirement.name
                 if sub_requirement_string:
                     csv_writer.writerow([requirement.name, sub_requirement_string])
-            if requirement_not_listed_list:
+            if reporting_dict.get("not_listed_requirements"):
                 csv_writer.writerow(["Not listed requirement(s)"])
-                for requirement in requirement_not_listed_list:
+                for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
@@ -588,7 +652,7 @@ def write_specification_coverage_file(run_configuration, container, delimiter):
 
 
 
-def build_specification_compliance_list(run_configuration, container, delimiter):
+def build_spec_compliance_list(run_configuration, container, delimiter):
     """
     This method will update all requirements with COMPLIANT / NON COMPLIANT / NON VERIFIED based on 
     strictness level, testcase OR / AND listing and run, and sub-requirement compliance.
@@ -671,7 +735,7 @@ def build_specification_compliance_list(run_configuration, container, delimiter)
         abort(error_code = 1, msg = msg)
 
 
-def build_mapping_requirement_list(run_configuration, container, delimiter):
+def build_mapping_req_list(run_configuration, container, delimiter):
     """
     This method will create super-requirement(s) and connect super-requirement(s) with
     sub-requirement(s) as defined in the mapping requirement file.
@@ -725,7 +789,7 @@ def build_mapping_requirement_list(run_configuration, container, delimiter):
         abort(error_code = 1, msg = error_msg)
 
 
-def build_requirement_list(run_configuration, container, delimiter):
+def build_req_list(run_configuration, container, delimiter):
     """
     This method will create any requirement and testcase objects which have not been 
     created when reading the partial coverage file(s).
@@ -867,7 +931,7 @@ def find_pc_summary(partial_coverage_file, container):
     return False
 
 
-def build_partial_coverage_list(run_configuration, container):
+def build_parial_cov_list(run_configuration, container):
     """
     This method will read the delimiter written by the spec_cov_pkg.vhd to 
     the partial_coverage CSV files, and updated the global delimiter.
@@ -1259,17 +1323,19 @@ def main():
     #   that the CSV delimiter can be determined.
     #==========================================================================
 
-    build_partial_coverage_list(run_configuration, container)
-    build_requirement_list(run_configuration, container, delimiter)
-    build_mapping_requirement_list(run_configuration, container, delimiter)
-    build_specification_compliance_list(run_configuration, container, delimiter)
+    build_parial_cov_list(run_configuration, container)
+    build_req_list(run_configuration, container, delimiter)
+    build_mapping_req_list(run_configuration, container, delimiter)
+    build_spec_compliance_list(run_configuration, container, delimiter)
 
 
     #==========================================================================
     # Write the results to CSV files
     #==========================================================================
-    write_specification_coverage_file(run_configuration, container, delimiter)
+    terminal_present_results(container, delimiter)
 
+    write_spec_cov_files(run_configuration, container, delimiter)
+    write_single_listed_spec_cov_files(run_configuration, container, delimiter)
 
 
 

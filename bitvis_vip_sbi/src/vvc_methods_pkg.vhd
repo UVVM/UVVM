@@ -26,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
 
 use work.sbi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -124,7 +123,12 @@ package vvc_methods_pkg is
   shared variable shared_sbi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   -- Scoreboard
-  shared variable SBI_VVC_SB : t_generic_sb;
+  package sbi_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use sbi_sb_pkg.all;
+  shared variable SBI_VVC_SB  : sbi_sb_pkg.t_generic_sb;
 
 
   --==========================================================================================
@@ -236,6 +240,13 @@ package vvc_methods_pkg is
     constant data : in std_logic_vector
   ) return t_vvc_result;
 
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+  function pad_sbi_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector;
 
 end package vvc_methods_pkg;
 
@@ -530,6 +541,18 @@ package body vvc_methods_pkg is
     end if;                                                  
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
+
+
+  --==============================================================================
+  -- VVC Scoreboard helper method
+  --==============================================================================
+
+  function pad_sbi_sb(
+    constant data : in std_logic_vector
+  ) return std_logic_vector is 
+  begin
+    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
+  end function pad_sbi_sb;
 
 end package body vvc_methods_pkg;
 

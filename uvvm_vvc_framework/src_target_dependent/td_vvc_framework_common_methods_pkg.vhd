@@ -438,7 +438,7 @@ package body td_vvc_framework_common_methods_pkg is
 --  Methods
 --=========================================================================================
 
--- NOTE: ALL VVCs using this td_vvc_framework_common_methods_pkg package MUST have the following declared in their local vvc_cmd_pkg.
+-- NOTE: ALL VVCs using this td_vvc_framework_common_methods_pkg package MUST have the following declared in their local transaction_pkg.
 --       - The enumerated t_operation  (e.g. AWAIT_COMPLETION, ENABLE_LOG_MSG, etc.)
 --       Any VVC based on an older version of td_vvc_framework_common_methods_pkg must - if new operators have been introduced in td_vvc_framework_common_methods_pkg either
 --       a) include the new operator(s) in its t_operation, or
@@ -528,6 +528,12 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is registered use the new mechanism
     if v_vvc_idx_in_activity_register(0) /= c_index_not_found then
+      -- Checking if await selected (with a specified wanted_idx) is supported by this VVC
+      if wanted_idx /= -1 and not shared_vvc_activity_register.priv_get_vvc_await_selected_supported(v_vvc_idx_in_activity_register(0)) then
+        alert(TB_ERROR, v_proc_call.all & " await_completion with a specified wanted_idx is not supported by " & 
+            shared_vvc_activity_register.priv_get_vvc_name(v_vvc_idx_in_activity_register(0)) & ". " & 
+            add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
+      end if;
       -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
       -- Store it in a local variable since new commands might be executed from another sequencer.
       await_semaphore_in_delta_cycles(protected_semaphore);

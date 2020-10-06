@@ -35,13 +35,15 @@ end entity axilite_slave_model;
 
 architecture behav of axilite_slave_model is
 
-  type   axi_states is (addr_wait, rd_wait_valid, rd_wait_rdy,
-                        wr_wait_valid, wr_wait_awvalid);
+  type   t_read_state is (addr_wait, rd_wait_rdy);
+  type   t_write_state is (addr_wait, wr_wait_valid, wr_wait_awvalid, wr_wait_response);
+
   type   memory is array (INTEGER range <>) of std_logic_vector(7 downto 0);
 
-  signal wr_state   : axi_states;
-  signal rd_state   : axi_states;
+  signal wr_state   : t_write_state;
+  signal rd_state   : t_read_state;
   signal wdata      : std_logic_vector(C_AXI_DATA_WIDTH-1 downto 0);
+  signal wstrb      : std_logic_vector(C_AXI_DATA_WIDTH/8-1 downto 0);
   signal rdata      : std_logic_vector(C_AXI_DATA_WIDTH-1 downto 0);
   signal mem_model  : memory(0 to C_MEMORY_SIZE);
   signal wr_address : unsigned(31 downto 0);
@@ -84,9 +86,11 @@ begin
                 mem_model(to_integer(mem_addr)+i) <= wr_port_in.wdata((i+1)*8-1 downto i*8);
               end if;
             end loop;
+            wr_state <= wr_wait_response;
             
           elsif (wr_port_in.wvalid = '1') then -- go to wait for awvalid state
             wdata <= wr_port_in.wdata;
+            wstrb <= wr_port_in.wstrb;
             wr_port_out.wready  <= '0';
             wr_port_out.awready <= '1';
             wr_port_out.bvalid  <= '0';
@@ -114,8 +118,9 @@ begin
           end if;
 
         when wr_wait_awvalid =>
-          wr_port_out.wready  <= '1';
           if (wr_port_in.awvalid = '1') then
+            wr_port_out.awready <= '0';
+            wr_port_out.bvalid  <= '1';
             -- check that address is in valid region (within memory model)   
             mem_addr := unsigned(wr_port_in.awaddr);
             -- shift by offset
@@ -124,35 +129,34 @@ begin
               report "Axilite slave model got write address outside of allowed region - stopping"
                 severity failure;
             end if;
-            wr_port_out.bvalid  <= '1';
-            wr_port_out.wready <= '1'; 
-            wr_port_out.awready <= '0';  
             for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
-              if (wr_port_in.wstrb(i) = '1') then
+              if (wstrb(i) = '1') then
                 mem_model(to_integer(mem_addr)+i) <= wdata((i+1)*8-1 downto i*8);
               end if;
             end loop;
-            wr_state <= addr_wait;
+            wr_state <= wr_wait_response;
           end if;
           
-        when wr_wait_valid =>
-          wr_port_out.wready  <= '1';
-          
+        when wr_wait_valid =>          
           if (wr_port_in.wvalid = '1') then
+            wr_port_out.wready  <= '0';
             wr_port_out.bvalid  <= '1';
-            wr_port_out.awready <= '1';   
-
             for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
               if (wr_port_in.wstrb(i) = '1') then
                 mem_model(to_integer(wr_address)+i) <= wr_port_in.wdata((i+1)*8-1 downto i*8);
               end if;
             end loop;
+            wr_state <= wr_wait_response;
+          end if;
+
+        when wr_wait_response =>
+          if (wr_port_in.bready = '1') then
+            wr_port_out.wready  <= '1';
+            wr_port_out.awready <= '1';
+            wr_port_out.bvalid  <= '0';
             wr_state <= addr_wait;
           end if;
-      
-        when others =>
-          wr_state <= addr_wait;
-          
+
       end case;
 
     end if;
@@ -173,13 +177,11 @@ begin
     elsif rising_edge(aclk) then
       case rd_state is
         when addr_wait => 
-
+          rd_port_out.arready <= '1';
           -- read going on ?
           -- immediate read
-          if ((rd_port_in.arvalid = '1' ) and
-              (rd_port_in.rready = '1')) then
+          if rd_port_in.arvalid = '1' then
             rd_port_out.rvalid <= '1';
-            rd_port_out.arready <= '1';
             -- check that address is in valid region (within memory model)
             mem_addr := unsigned(rd_port_in.araddr);
             -- shift by offset
@@ -191,32 +193,16 @@ begin
             for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
               rd_port_out.rdata((i+1)*8-1 downto i*8) <= mem_model(to_integer(mem_addr)+i);
             end loop;
-          
-          elsif rd_port_in.arvalid = '1' then -- read
-            -- check that address is in valid region (within memory model)
-            mem_addr := unsigned(rd_port_in.araddr);
-            -- shift by offset
-            mem_addr := mem_addr - C_MEMORY_START;
-            if (to_integer(mem_addr) > C_MEMORY_SIZE) then
-              report "Axilite slave model got read address outside of allowed region - stopping"
-                severity failure;
+            if rd_port_in.rready = '0' then
+              rd_state <= rd_wait_rdy;
             end if;
-            rd_address <= mem_addr;
-            rd_port_out.arready <= '0';
-            rd_port_out.rvalid <= '0';
-            rd_state <= rd_wait_rdy;
-            
-          
-          elsif rd_port_in.rready = '1' then -- read
-            rd_port_out.arready <= '0';
-            rd_port_out.rvalid <= '0';
-            rd_state <= rd_wait_valid;
-          
           else
+            rd_port_out.rvalid  <= '0';
             rd_state <= addr_wait;
           end if;
 
         when rd_wait_rdy =>
+          rd_port_out.arready <= '0';
           if (rd_port_in.rready = '1') then
             rd_port_out.rvalid <= '1';
             rd_port_out.arready <= '1';
@@ -225,28 +211,7 @@ begin
             end loop;
             rd_state <= addr_wait;
           end if;
-          
-        when rd_wait_valid =>
-          if (rd_port_in.arvalid = '1') then
-            rd_port_out.rvalid <= '1';
-            rd_port_out.arready <= '1';
-            -- check that address is in valid region (within memory model)
-            mem_addr := unsigned(rd_port_in.araddr);
-            -- shift by offset
-            mem_addr := mem_addr - C_MEMORY_START;
-            if (to_integer(mem_addr) > C_MEMORY_SIZE) then
-              report "Axilite slave model got read address outside of allowed region - stopping"
-                severity failure;
-            end if;
-            for i in 0 to (C_AXI_DATA_WIDTH/8)-1 loop
-              rd_port_out.rdata((i+1)*8-1 downto i*8) <= mem_model(to_integer(mem_addr)+i);
-            end loop;
-            rd_state <= addr_wait;
-          end if;
-         
-        when others =>
-          rd_state <= addr_wait;
-          
+
       end case;
 
     end if;

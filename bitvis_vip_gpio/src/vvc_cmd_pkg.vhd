@@ -57,6 +57,8 @@ package vvc_cmd_pkg is
     -- VVC dedicated fields
     data                      : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     data_exp                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    stable_req                : time;
+    stable_req_from           : t_from_point_in_time;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -75,10 +77,11 @@ package vvc_cmd_pkg is
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
     parent_msg_id_panel       => C_UNUSED_MSG_ID_PANEL,
-
     -- VVC dedicated fields
     data                      => (others => '0'),
-    data_exp                  => (others => '0')
+    data_exp                  => (others => '0'),
+    stable_req                => 0 ns,
+    stable_req_from           => FROM_NOW
     );
 
 

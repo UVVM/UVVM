@@ -32,7 +32,7 @@ library bitvis_vip_uart;
 use bitvis_vip_uart.uart_bfm_pkg.all;
 
 library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.slv_sb_pkg.all;
+use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
 
@@ -157,14 +157,14 @@ begin
     for i in 1 to 5 loop
       for j in 1 to 4 loop
         v_data := random(8);
-        v_sbi_sb.add_expected(pad_sb_slv(v_data));
+        v_sbi_sb.add_expected(v_data);
         uart_transmit(v_data, "data to DUT", uart_tx, v_uart_config);
       end loop;
 
       for j in 1 to 4 loop
         sbi_poll_until(to_unsigned(C_ADDR_RX_DATA_VALID, 3), x"01", 0, 100 ns, "wait on data valid", clk, sbi_if, terminate_loop);
         sbi_read(to_unsigned(C_ADDR_RX_DATA, 3), v_data, "read data from DUT", clk, sbi_if);
-        v_sbi_sb.check_received(pad_sb_slv(v_data));
+        v_sbi_sb.check_received(v_data);
       end loop;
     end loop;
 
@@ -178,11 +178,11 @@ begin
     for i in 1 to 5 loop
       for j in 1 to 4 loop
         v_data := random(8);
-        v_uart_sb.add_expected(pad_sb_slv(v_data));
+        v_uart_sb.add_expected(v_data);
         sbi_poll_until(to_unsigned(C_ADDR_TX_READY, 3), x"01", 0, 100 ns, "wait on TX ready", clk, sbi_if, terminate_loop);
         sbi_write(to_unsigned(C_ADDR_TX_DATA, 3), v_data, "write data to DUT", clk, sbi_if);
         uart_receive(v_data, "data from DUT", uart_rx, terminate_loop, v_uart_config);
-        v_uart_sb.check_received(pad_sb_slv(v_data));
+        v_uart_sb.check_received(v_data);
       end loop;
     end loop;
 

@@ -38,7 +38,7 @@ package vvc_cmd_pkg is
   --==========================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    data_array                : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    data_array                : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1)(7 downto 0);
     data_array_length         : natural;
     num_bytes_read            : natural;
     -- Common VVC fields
@@ -95,7 +95,7 @@ package vvc_cmd_pkg is
   --   be defined as a record if multiple values shall be transported from the BFM
   --==========================================================================================
   type t_vvc_result is record
-    data_array           : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    data_array           : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1)(7 downto 0);
     data_array_length    : natural;
   end record;
 
@@ -131,6 +131,18 @@ package vvc_cmd_pkg is
     result : t_vvc_result
   ) return string;
 
+
+  function to_string(
+    bytes  : t_slv_array
+  ) return string;
+
+
+  function gmii_match(
+    constant actual   : in t_slv_array;
+    constant expected : in t_slv_array
+  ) return boolean;
+
+
 end package vvc_cmd_pkg;
 
 
@@ -143,5 +155,24 @@ package body vvc_cmd_pkg is
   begin
     return to_string(result.data_array'length) & " Bytes";
   end;
+
+  function to_string(
+    bytes  : t_slv_array
+  ) return string is
+  begin
+    return to_string(bytes'length) & " Bytes";
+  end function to_string;
+
+
+
+  -- Compares two GMII byte arrays and returns true if they are equal (used in scoreboard)
+  function gmii_match(
+    constant actual   : in t_slv_array;
+    constant expected : in t_slv_array
+  ) return boolean is
+  begin
+    return (actual = expected);
+  end function gmii_match;
+
 
 end package body vvc_cmd_pkg;

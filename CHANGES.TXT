@@ -9,6 +9,30 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+
+
+v2 2020.10.06
+--------------------
+Released: 2020-10-06
+- Added constant C_UVVM_VERSION with UVVM release version number.
+- Removed shared_spec_cov_config alias from spec_cov_pkg.
+- run_spec_cov.py script will now also create single_req_vs_single_tc.csv 
+  and single_tc_vs_single_req.csv 
+- added conditional requirement tick off functionality to specification
+  coverage VIP.
+- Corrected normalize_and_check() description in Util QR.
+- Corrected default KEEP_LEADING_0 for check_value() in Util QR.
+- Removed SLV range check for t_slv_array version of normalize_and_check().
+- Removed VVC_Framework_Documentation_Overview.txt from VVC Framework /doc folder.     
+- Updated GPIO BFM config.
+- Fixed log messages in GPIO BFM.
+- Fixed default timeout parameter in gpio_expect() BFM procedure.
+- Added GPIO procedures gpio_check_stable() & gpio_expect_stable().
+- Renamed GPIO VVC procedure parameter instance_idx to vvc_instance_idx.
+- Added AXI4 VIP.
+- Added support for independent channels in AXI-Lite VVC.
+
+
 v2 2020.08.21
 --------------------
 Released: 2020-08-21

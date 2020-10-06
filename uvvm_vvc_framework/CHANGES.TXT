@@ -11,6 +11,7 @@ Released: 2020-08-18
   packages in Utility Library.
 - Fixed wrongly commented code generated from vvc_generator.
 - Generated code from vvc_generator.py will now compile without user editing.
+- Removed VVC_Framework_Documentation_Overview.txt from /doc
 
 
 v2.11.0

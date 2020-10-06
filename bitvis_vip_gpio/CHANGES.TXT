@@ -1,6 +1,17 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.8.0
+----------
+Released: 2020-10-06
+- Added GPIO_VVC_SB scoreboard and pad_gpio_sb() method.
+- Removed id_for_bfm_poll and added timeout in BFM config.
+- Fixed log messages in BFM to use the id_for_bfm config.
+- Fixed default timeout parameter in gpio_expect() BFM procedure and updated the logging.
+- Added BFM and VVC procedures gpio_check_stable() & gpio_expect_stable().
+- Renamed VVC procedure parameter instance_idx to vvc_instance_idx.
+- Updated documentation.
+
 v1.7.1
 ----------
 Released: 2020-06-23

@@ -1,6 +1,12 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v2.8.0
+----------
+Released: 2020-10-06
+- Added support for independent channels in VVC
+- Added AXILITE_VVC_SB scoreboard and pad_axilite_sb() method.
+
 v2.7.1
 ----------
 Released: 2020-06-23

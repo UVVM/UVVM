@@ -1,6 +1,10 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.8.0
+----------
+Released: 2020-10-06
+- Added UART_VVC_SB scoreboard.
 
 v2.7.2
 ----------

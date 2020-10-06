@@ -354,11 +354,6 @@ package body bfm_common_pkg is
     elsif (not(value'ascending) and target'ascending) then
       tb_error("value instanciated as 'downto', target instanciated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
     end if;
-    if (value(0)'ascending and not(target(0)'ascending)) then
-      tb_error("value(n) instanciated as 'to', target(n) instanciated as 'dowto'." & add_msg_delimiter(msg), C_SCOPE);
-    elsif (not(value(0)'ascending) and target(0)'ascending) then
-      tb_error("value(n) instanciated as 'downto', target(n) instanciated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
-    end if;
 
     -- return ascending t_slv_array
     if (value'ascending) then

@@ -42,7 +42,7 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    SET, GET, CHECK, EXPECT
+    SET, GET, CHECK, CHECK_STABLE, EXPECT, EXPECT_STABLE
     );
 
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;

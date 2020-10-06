@@ -103,6 +103,7 @@ package adaptations_pkg is
     ID_BFM_WAIT,              -- Used inside a BFM to indicate that it is waiting for something (e.g. for ready)
     ID_BFM_POLL,              -- Used inside a BFM when polling until reading a given value. I.e. to show all reads until expected value found (e.g. for sbi_poll_until())
     ID_BFM_POLL_SUMMARY,      -- Used inside a BFM when showing the summary of data that has been received while waiting for expected data.
+    ID_CHANNEL_BFM,           -- Used inside a BFM when the protocol is split into separate channels
     ID_TERMINATE_CMD,         -- Typically used inside a loop in a procedure to end the loop (e.g. for sbi_poll_until() or any looped generation of random stimuli
     -- Packet related data Ids with three levels of granularity, for differentiating between frames, packets and segments.
     -- Segment Ids, finest granularity of packet data
@@ -140,6 +141,8 @@ package adaptations_pkg is
     ID_IMMEDIATE_CMD_WAIT,    -- Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete
     ID_CMD_EXECUTOR,          -- Message from VVC executor about correctly received command - prior to actual execution
     ID_CMD_EXECUTOR_WAIT,     -- Message from VVC executor that it is actively waiting for a command
+    ID_CHANNEL_EXECUTOR,      -- Message from a channel specific VVC executor process
+    ID_CHANNEL_EXECUTOR_WAIT, -- Message from a channel specific VVC executor process that it is actively waiting for a command
     ID_NEW_HVVC_CMD_SEQ,      -- Message from a lower level VVC which receives a new command sequence from an HVVC
     ID_INSERTED_DELAY,        -- Message from VVC executor that it is waiting a given delay
     -- Await completion
@@ -258,9 +261,12 @@ package adaptations_pkg is
 
   -- Default message Id panel intended for use in the VVCs
   constant C_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
-    ID_NEVER         => DISABLED,
-    ID_UTIL_BURIED   => DISABLED,
-    others           => ENABLED
+    ID_NEVER                  => DISABLED,
+    ID_UTIL_BURIED            => DISABLED,
+    ID_CHANNEL_BFM            => DISABLED,
+    ID_CHANNEL_EXECUTOR       => DISABLED,
+    ID_CHANNEL_EXECUTOR_WAIT  => DISABLED,
+    others                    => ENABLED
   );
 
   -- Deprecated, will be removed.
@@ -365,12 +371,14 @@ package adaptations_pkg is
   );
 
   type t_vvc_state is record
-    activity              : t_activity;
-    last_cmd_idx_executed : integer;
+    activity                  : t_activity;
+    last_cmd_idx_executed     : integer;
+    await_selected_supported  : boolean;
   end record;
   constant  C_VVC_STATE_DEFAULT : t_vvc_state := (
-    activity              => INACTIVE,
-    last_cmd_idx_executed => -1
+    activity                  => INACTIVE,
+    last_cmd_idx_executed     => -1,
+    await_selected_supported  => true
   );
 
   -- These values are used to indicate outdated sub-programs

@@ -32,6 +32,10 @@ use std.env.all;
 
 package methods_pkg is
 
+
+  constant C_UVVM_VERSION : string := "v2 2020.10.06";
+
+
 -- -- ============================================================================
 -- -- Initialisation and license
 -- -- ============================================================================
@@ -392,6 +396,21 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    ) return boolean;
+
+    impure function check_value(
     constant value        : unsigned;
     constant exp          : unsigned;
     constant alert_level  : t_alert_level;
@@ -406,18 +425,33 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value(
-    constant value        : signed;
-    constant exp          : signed;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant radix        : t_radix        := HEX_BIN_IF_INVALID;
-    constant format       : t_format_zeros := KEEP_LEADING_0;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "signed"
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
     ) return boolean;
+
+    impure function check_value(
+      constant value        : signed;
+      constant exp          : signed;
+      constant alert_level  : t_alert_level;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant radix        : t_radix        := HEX_BIN_IF_INVALID;
+      constant format       : t_format_zeros := KEEP_LEADING_0;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value()";
+      constant value_type   : string         := "signed"
+      ) return boolean;
 
 
   impure function check_value(
@@ -465,6 +499,21 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) return boolean;
+
+  impure function check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant alert_level  : t_alert_level;
@@ -476,6 +525,21 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_slv_array"
+    ) return boolean;
+
+  impure function check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
     ) return boolean;
 
   impure function check_value(
@@ -491,6 +555,21 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_signed_array"
     ) return boolean;
+  
+  impure function check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    ) return boolean;
 
   impure function check_value(
     constant value        : t_unsigned_array;
@@ -505,8 +584,8 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_unsigned_array"
     ) return boolean;
-
--- overloads for function versions of check_value (alert level optional)
+  
+  -- overloads for function versions of check_value (alert level optional)
   impure function check_value(
     constant value        : boolean;
     constant msg          : string;
@@ -575,6 +654,20 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    ) return boolean;
+
+  impure function check_value(
     constant value        : unsigned;
     constant exp          : unsigned;
     constant msg          : string;
@@ -585,6 +678,20 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "unsigned"
+    ) return boolean;
+  
+  impure function check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
     ) return boolean;
 
   impure function check_value(
@@ -599,8 +706,7 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "signed"
     ) return boolean;
-
-
+  
   impure function check_value(
     constant value        : integer;
     constant exp          : integer;
@@ -642,6 +748,20 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) return boolean;
+
+  impure function check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant msg          : string;
@@ -652,6 +772,20 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_slv_array"
+    ) return boolean;
+  
+  impure function check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
     ) return boolean;
 
   impure function check_value(
@@ -666,6 +800,20 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_signed_array"
     ) return boolean;
+  
+  impure function check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    ) return boolean;
 
   impure function check_value(
     constant value        : t_unsigned_array;
@@ -679,7 +827,7 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_unsigned_array"
     ) return boolean;
-
+  
 -- overloads for procedure version of check_value (no return value)
 
   procedure check_value(
@@ -733,6 +881,21 @@ package methods_pkg is
     );
 
   procedure check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    );
+
+  procedure check_value(
     constant value        : unsigned;
     constant exp          : unsigned;
     constant alert_level  : t_alert_level;
@@ -744,6 +907,21 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "unsigned"
+    );
+  
+  procedure check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
     );
 
   procedure check_value(
@@ -759,8 +937,7 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "signed"
     );
-
-
+  
   procedure check_value(
     constant value        : std_logic;
     constant exp          : std_logic;
@@ -829,6 +1006,21 @@ package methods_pkg is
     );
 
   procedure check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    );
+
+  procedure check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant alert_level  : t_alert_level;
@@ -840,6 +1032,21 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_slv_array"
+    );
+  
+  procedure check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
     );
 
   procedure check_value(
@@ -855,6 +1062,21 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_signed_array"
     );
+  
+  procedure check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    );
 
   procedure check_value(
     constant value        : t_unsigned_array;
@@ -869,6 +1091,7 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_unsigned_array"
     );
+
   -- Procedure overloads for check_value without mandatory alert_level
   procedure check_value(
     constant value        : boolean;
@@ -917,6 +1140,20 @@ package methods_pkg is
     );
 
   procedure check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    );
+
+  procedure check_value(
     constant value        : unsigned;
     constant exp          : unsigned;
     constant msg          : string;
@@ -927,6 +1164,20 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "unsigned"
+    );
+  
+  procedure check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
     );
 
   procedure check_value(
@@ -941,8 +1192,7 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "signed"
     );
-
-
+  
   procedure check_value(
     constant value        : std_logic;
     constant exp          : std_logic;
@@ -1005,6 +1255,20 @@ package methods_pkg is
     );
 
   procedure check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    );
+
+  procedure check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant msg          : string;
@@ -1015,6 +1279,20 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_slv_array"
+    );
+  
+  procedure check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
     );
 
   procedure check_value(
@@ -1031,6 +1309,20 @@ package methods_pkg is
     );
 
   procedure check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    );
+
+  procedure check_value(
     constant value        : t_unsigned_array;
     constant exp          : t_unsigned_array;
     constant msg          : string;
@@ -1042,7 +1334,8 @@ package methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_unsigned_array"
     );
-  -- 
+  
+    -- 
 
 
 -- Check_value_in_range
@@ -1297,6 +1590,19 @@ package methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_stable()";
     constant value_type   : string         := "boolean"
+    );
+
+  procedure check_stable(
+    signal target         : in  std_logic_vector;
+    constant stable_req   : in  time;
+    constant alert_level  : in  t_alert_level;
+    variable success      : out boolean;
+    constant msg          : in  string;
+    constant scope        : in  string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : in  t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : in  string         := "check_stable()";
+    constant value_type   : in  string         := "slv"
     );
 
   procedure check_stable(
@@ -1779,6 +2085,23 @@ package methods_pkg is
     );
 
   procedure await_value (
+    signal target             : in  std_logic_vector;
+    constant exp              : in  std_logic_vector;
+    constant match_strictness : in  t_match_strictness;
+    constant min_time         : in  time;
+    constant max_time         : in  time;
+    constant alert_level      : in  t_alert_level;
+    variable success          : out boolean;
+    constant msg              : in  string;
+    constant scope            : in  string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : in  t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : in  t_format_zeros := SKIP_LEADING_0;
+    constant msg_id           : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : in  t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : in  string         := ""
+    );
+
+  procedure await_value (
     signal target             : std_logic_vector;
     constant exp              : std_logic_vector;
     constant match_strictness : t_match_strictness;
@@ -1995,6 +2318,21 @@ package methods_pkg is
     constant scope           : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id          : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
+    );
+
+  procedure await_stable (
+    signal target            : in  std_logic_vector;
+    constant stable_req      : in  time;    -- Minimum stable requirement
+    constant stable_req_from : in  t_from_point_in_time;  -- Which point in time stable_req starts
+    constant timeout         : in  time;    -- Timeout if stable_req not achieved
+    constant timeout_from    : in  t_from_point_in_time;  -- Which point in time the timeout starts
+    constant alert_level     : in  t_alert_level;
+    variable success         : out boolean;
+    constant msg             : in  string;
+    constant scope           : in  string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id          : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel    : in  t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name     : in  string         := ""
     );
 
   procedure await_stable (
@@ -4030,21 +4368,63 @@ package body methods_pkg is
   end;
 
   impure function check_value(
-    constant value        : unsigned;
-    constant exp          : unsigned;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant radix        : t_radix        := HEX_BIN_IF_INVALID;
-    constant format       : t_format_zeros := KEEP_LEADING_0;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "unsigned"
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
     ) return boolean is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), alert_level, msg, scope,
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), match_strictness, alert_level, msg, scope,
+                              radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    ) return boolean is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), MATCH_STD, alert_level, msg, scope,
+                              radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
+    ) return boolean is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), match_strictness, alert_level, msg, scope,
                               radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
@@ -4064,7 +4444,7 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), alert_level, msg, scope,
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), MATCH_STD, alert_level, msg, scope,
                               radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
@@ -4168,6 +4548,45 @@ package body methods_pkg is
   end;
 
   impure function check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) return boolean is
+      variable v_len_check_ok : boolean := (value'length = exp'length);
+      variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+      -- adjust for array index differences
+      variable v_adj_idx      : integer := (value'low - exp'low);
+  begin
+    protected_check_counters.increment(CHECK_VALUE);
+
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        -- do not count CHECK_VALUE multiple times
+        protected_check_counters.decrement(CHECK_VALUE);
+        if not(check_value(value(idx + v_adj_idx), exp(idx), match_strictness, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
+          return false;
+        end if;
+      end loop;
+    else -- lenght or direction check not ok 
+      return false;
+    end if;    
+
+    return true;
+  end;
+
+  impure function check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant alert_level  : t_alert_level;
@@ -4180,20 +4599,48 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_slv_array"
     ) return boolean is
+      variable v_check_ok : boolean;
   begin
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
+    ) return boolean is
+      variable v_len_check_ok : boolean := (value'length = exp'length);
+      variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+      -- adjust for array index differences
+      variable v_adj_idx      : integer := (value'low - exp'low);
+    begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    if value'ascending /= exp'ascending then
-        alert(WARNING, "check_value(): value and exp t_slv_array have opposite directions.", scope);
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        -- do not count CHECK_VALUE multiple times
+        protected_check_counters.decrement(CHECK_VALUE);
+        if not(check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
+          return false;
+        end if;
+      end loop;
+    else -- length or direction check not ok
+      return false;
     end if;
 
-    for idx in exp'range loop
-      -- do not count CHECK_VALUE multiple times
-      protected_check_counters.decrement(CHECK_VALUE);
-      if not(check_value(value(idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
-        return false;
-      end if;
-    end loop;
     return true;
   end;
 
@@ -4210,17 +4657,40 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_signed_array"
     ) return boolean is
+      variable v_check_ok : boolean;
   begin
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    ) return boolean is
+      variable v_len_check_ok : boolean := (value'length = exp'length);
+      variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+      -- adjust for array index differences
+      variable v_adj_idx      : integer := (value'low - exp'low);
+    begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    if value'ascending /= exp'ascending then
-      alert(WARNING, "check_value(): value and exp t_signed_array have opposite directions.", scope);
-    end if;
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
 
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
       protected_check_counters.decrement(CHECK_VALUE);
-      if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
+      if not(check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
         return false;
       end if;
     end loop;
@@ -4240,23 +4710,11 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value()";
     constant value_type   : string         := "t_unsigned_array"
     ) return boolean is
+      variable v_check_ok : boolean;
   begin
-    protected_check_counters.increment(CHECK_VALUE);
-
-    if value'ascending /= exp'ascending then
-      alert(WARNING, "check_value(): value and exp t_unsigned_array have opposite directions.", scope);
-    end if;
-
-    for idx in exp'range loop
-      -- do not count CHECK_VALUE multiple times
-      protected_check_counters.decrement(CHECK_VALUE);
-      if not(check_value(std_logic_vector(value(idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type)) then
-        return false;
-      end if;
-    end loop;
-    return true;
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
   end;
-
 
   ----------------------------------------------------------------------
   -- Overloads for impure function check_value methods,
@@ -4355,7 +4813,27 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    v_check_ok := check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    ) return boolean is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), match_strictness, error, msg, scope,
+                              radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
 
@@ -4373,7 +4851,27 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), error, msg, scope,
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), MATCH_STD, error, msg, scope,
+                              radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
+    ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking
+  begin
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), match_strictness, error, msg, scope,
                               radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
@@ -4392,7 +4890,7 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean := true;  -- as default prior to checking
   begin
-    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), error, msg, scope,
+    v_check_ok := check_value(std_logic_vector(value), std_logic_vector(exp), MATCH_STD, error, msg, scope,
                               radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
@@ -4458,6 +4956,25 @@ package body methods_pkg is
   end;
 
   impure function check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking      
+  begin
+    v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant msg          : string;
@@ -4471,7 +4988,26 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean := true;  -- as default prior to checking      
   begin
-    v_check_ok := check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
+    ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking      
+  begin
+    v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
 
@@ -4489,7 +5025,26 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean := true;  -- as default prior to checking      
   begin
-    v_check_ok := check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end;
+
+  impure function check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    ) return boolean is
+    variable v_check_ok : boolean := true;  -- as default prior to checking      
+  begin
+    v_check_ok := check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
 
@@ -4507,10 +5062,9 @@ package body methods_pkg is
     ) return boolean is
     variable v_check_ok : boolean := true;  -- as default prior to checking      
   begin
-    v_check_ok := check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
     return v_check_ok;
   end;
-
 
   ----------------------------------------------------------------------
   -- Overloads for procedural check_value methods,
@@ -4614,6 +5168,25 @@ package body methods_pkg is
   end;
 
   procedure check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value(value, exp, match_strictness, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
     constant value        : unsigned;
     constant exp          : unsigned;
     constant alert_level  : t_alert_level;
@@ -4628,7 +5201,26 @@ package body methods_pkg is
     ) is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value(value, exp, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
+    ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value(value, exp, match_strictness, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4646,7 +5238,7 @@ package body methods_pkg is
     ) is
     variable v_check_ok : boolean;
   begin
-    v_check_ok := check_value(value, exp, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4710,17 +5302,72 @@ package body methods_pkg is
   end;
 
   procedure check_value(
-    constant value        : t_slv_array;
-    constant exp          : t_slv_array;
-    constant alert_level  : t_alert_level;
-    constant msg          : string;
-    constant scope        : string         := C_TB_SCOPE_DEFAULT;
-    constant radix        : t_radix        := HEX_BIN_IF_INVALID;
-    constant format       : t_format_zeros := KEEP_LEADING_0;
-    constant msg_id       : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_value()";
-    constant value_type   : string         := "t_slv_array"
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) is
+    variable v_check_ok     : boolean;
+    variable v_len_check_ok : boolean := (value'length = exp'length);
+    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
+    -- adjust for array index differences
+    variable v_adj_idx      : integer := (value'low - exp'low);
+  begin
+    protected_check_counters.increment(CHECK_VALUE);
+
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+    -- do not count called CHECK_VALUE
+    protected_check_counters.decrement(CHECK_VALUE, 2);
+
+    if v_len_check_ok and v_dir_check_ok then
+      for idx in exp'range loop
+        v_check_ok := check_value(value(idx + v_adj_idx), exp(idx), match_strictness, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+        -- do not count called CHECK_VALUE
+        protected_check_counters.decrement(CHECK_VALUE);
+      end loop;
+    end if;
+  end;
+
+  procedure check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) is
+    variable v_check_ok     : boolean;
+  begin
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
     ) is
     variable v_check_ok     : boolean;
     variable v_len_check_ok : boolean := (value'length = exp'length);
@@ -4737,7 +5384,7 @@ package body methods_pkg is
 
     if v_len_check_ok and v_dir_check_ok then
       for idx in exp'range loop
-        v_check_ok := check_value(value(idx + v_adj_idx), exp(idx), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), match_strictness, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
         -- do not count called CHECK_VALUE
         protected_check_counters.decrement(CHECK_VALUE);
       end loop;
@@ -4758,6 +5405,25 @@ package body methods_pkg is
     constant value_type   : string         := "t_signed_array"
     ) is
     variable v_check_ok     : boolean;
+  begin
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    ) is
+    variable v_check_ok     : boolean;
     variable v_len_check_ok : boolean := (value'length = exp'length);
     variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
     -- adjust for array index differences
@@ -4772,7 +5438,7 @@ package body methods_pkg is
 
     if v_len_check_ok and v_dir_check_ok then
       for idx in exp'range loop
-        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), match_strictness, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
         -- do not count called CHECK_VALUE
         protected_check_counters.decrement(CHECK_VALUE);
       end loop;
@@ -4793,25 +5459,8 @@ package body methods_pkg is
     constant value_type   : string         := "t_unsigned_array"
     ) is
     variable v_check_ok     : boolean;
-    variable v_len_check_ok : boolean := (value'length = exp'length);
-    variable v_dir_check_ok : boolean := (value'ascending = exp'ascending);
-    -- adjust for array index differences
-    variable v_adj_idx      : integer := (value'low - exp'low);
   begin
-    protected_check_counters.increment(CHECK_VALUE);
-
-    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
-    -- do not count called CHECK_VALUE
-    protected_check_counters.decrement(CHECK_VALUE, 2);
-
-    if v_len_check_ok and v_dir_check_ok then
-      for idx in exp'range loop
-        v_check_ok := check_value(std_logic_vector(value(idx + v_adj_idx)), std_logic_vector(exp(idx)), alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
-        -- do not count called CHECK_VALUE
-        protected_check_counters.decrement(CHECK_VALUE);
-      end loop;
-    end if;
+    v_check_ok := check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   ----------------------------------------------------------------------
@@ -4900,7 +5549,24 @@ package body methods_pkg is
     constant value_type   : string         := "slv"
     ) is
   begin
-    check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : unsigned;
+    constant exp              : unsigned;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "unsigned"
+    ) is
+  begin
+    check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4916,7 +5582,24 @@ package body methods_pkg is
     constant value_type   : string         := "unsigned"
     ) is
   begin
-    check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : signed;
+    constant exp              : signed;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "signed"
+    ) is
+  begin
+    check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4932,7 +5615,7 @@ package body methods_pkg is
     constant value_type   : string         := "signed"
     ) is
   begin
-    check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -4988,6 +5671,23 @@ package body methods_pkg is
   end;
 
   procedure check_value(
+    constant value            : t_slv_array;
+    constant exp              : t_slv_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_slv_array"
+    ) is
+  begin
+    check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
     constant value        : t_slv_array;
     constant exp          : t_slv_array;
     constant msg          : string;
@@ -5000,7 +5700,24 @@ package body methods_pkg is
     constant value_type   : string         := "t_slv_array"
     ) is
   begin
-    check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : t_signed_array;
+    constant exp              : t_signed_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_signed_array"
+    ) is
+  begin
+    check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -5016,7 +5733,24 @@ package body methods_pkg is
     constant value_type   : string         := "t_signed_array"
     ) is
   begin
-    check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure check_value(
+    constant value            : t_unsigned_array;
+    constant exp              : t_unsigned_array;
+    constant match_strictness : t_match_strictness;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : t_format_zeros := KEEP_LEADING_0;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : string         := "check_value()";
+    constant value_type       : string         := "t_unsigned_array"
+    ) is
+  begin
+    check_value(value, exp, match_strictness, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_value(
@@ -5032,7 +5766,7 @@ package body methods_pkg is
     constant value_type   : string         := "t_unsigned_array"
     ) is
   begin
-    check_value(value, exp, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
+    check_value(value, exp, MATCH_STD, error, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   ------------------------------------------------------------------------
@@ -5468,6 +6202,35 @@ package body methods_pkg is
   end;
 
   procedure check_stable(
+    signal target         : in  std_logic_vector;
+    constant stable_req   : in  time;
+    constant alert_level  : in  t_alert_level;
+    variable success      : out boolean;
+    constant msg          : in  string;
+    constant scope        : in  string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : in  t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : in  string         := "check_stable()";
+    constant value_type   : in  string         := "slv"
+    ) is
+    constant value_string       : string := 'x' & to_string(target, HEX);
+    constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
+    constant last_change        : time   := target'last_event;
+    constant last_change_string : string := to_string(last_change, ns);
+  begin
+    protected_check_counters.increment(CHECK_STABLE);
+    success := true;
+
+    if (last_change >= stable_req) then
+      log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      alert(alert_level, caller_name & " => Failed. Switched from " & last_value_string & " to " &
+            value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
+      success := false;
+    end if;
+  end;
+
+  procedure check_stable(
     signal target         : std_logic_vector;
     constant stable_req   : time;
     constant alert_level  : t_alert_level;
@@ -5478,19 +6241,9 @@ package body methods_pkg is
     constant caller_name  : string         := "check_stable()";
     constant value_type   : string         := "slv"
     ) is
-    constant value_string       : string := 'x' & to_string(target, HEX);
-    constant last_value_string  : string := 'x' & to_string(target'last_value, HEX);
-    constant last_change        : time   := target'last_event;
-    constant last_change_string : string := to_string(last_change, ns);
+    variable v_success : boolean;
   begin
-    protected_check_counters.increment(CHECK_STABLE);
-
-    if (last_change >= stable_req) then
-      log(msg_id, caller_name & " => OK. Stable at " & value_string & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-    else
-      alert(alert_level, caller_name & " => Failed. Switched from " & last_value_string & " to " &
-            value_string & " " & last_change_string & " ago. Expected stable for " & to_string(stable_req) & LF & msg, scope);
-    end if;
+    check_stable(target, stable_req, alert_level, v_success, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   procedure check_stable(
@@ -5732,6 +6485,42 @@ package body methods_pkg is
 ----------------------------------------------------------------------------
 
   procedure check_time_window(
+    constant success      : in  boolean;    -- F.ex target'event, or target=exp
+    constant elapsed_time : in  time;
+    constant min_time     : in  time;
+    constant max_time     : in  time;
+    constant alert_level  : in  t_alert_level;
+    constant name         : in  string;
+    variable check_is_ok  : out boolean;
+    constant msg          : in  string;
+    constant scope        : in  string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : in  t_msg_id_panel := shared_msg_id_panel
+    ) is
+  begin
+    protected_check_counters.increment(CHECK_TIME_WINDOW);
+    check_is_ok := true;
+
+    -- Sanity check
+    check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & LF & msg, scope, ID_NEVER, msg_id_panel, name);
+    -- do not count CHECK_VALUE from CHECK_TIME_WINDOW
+    protected_check_counters.decrement(CHECK_VALUE);
+
+    if elapsed_time < min_time then
+      alert(alert_level, name & " => Failed. Condition occurred too early, after " &
+            to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      check_is_ok := false;
+    elsif success then
+      log(msg_id, name & " => OK. Condition occurred after " &
+          to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else                                -- max_time reached with no success
+      alert(alert_level, name & " => Failed. Timed out after " &
+            to_string(max_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
+      check_is_ok := false;
+    end if;
+  end;
+
+  procedure check_time_window(
     constant success      : boolean;    -- F.ex target'event, or target=exp
     constant elapsed_time : time;
     constant min_time     : time;
@@ -5743,24 +6532,9 @@ package body methods_pkg is
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
     ) is
+    variable v_check_is_ok : boolean;
   begin
-    protected_check_counters.increment(CHECK_TIME_WINDOW);
-
-    -- Sanity check
-    check_value(max_time >= min_time, TB_ERROR, name & " => min_time must be less than max_time." & LF & msg, scope, ID_NEVER, msg_id_panel, name);
-    -- do not count CHECK_VALUE from CHECK_TIME_WINDOW
-    protected_check_counters.decrement(CHECK_VALUE);
-
-    if elapsed_time < min_time then
-      alert(alert_level, name & " => Failed. Condition occurred too early, after " &
-            to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
-    elsif success then
-      log(msg_id, name & " => OK. Condition occurred after " &
-          to_string(elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-    else                                -- max_time reached with no success
-      alert(alert_level, name & " => Failed. Timed out after " &
-            to_string(max_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope);
-    end if;
+    check_time_window(success, elapsed_time, min_time, max_time, alert_level, name, v_check_is_ok, msg, scope, msg_id, msg_id_panel);
   end;
 
 ----------------------------------------------------------------------------
@@ -6517,6 +7291,60 @@ package body methods_pkg is
   end;
 
   procedure await_value (
+    signal target             : in  std_logic_vector;
+    constant exp              : in  std_logic_vector;
+    constant match_strictness : in  t_match_strictness;
+    constant min_time         : in  time;
+    constant max_time         : in  time;
+    constant alert_level      : in  t_alert_level;
+    variable success          : out boolean;
+    constant msg              : in  string;
+    constant scope            : in  string         := C_TB_SCOPE_DEFAULT;
+    constant radix            : in  t_radix        := HEX_BIN_IF_INVALID;
+    constant format           : in  t_format_zeros := SKIP_LEADING_0;
+    constant msg_id           : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : in  t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name      : in  string         := ""
+    ) is
+    constant value_type : string := "slv";
+    constant start_time : time   := now;
+    constant v_exp_str  : string := to_string(exp, radix, format, INCL_RADIX);
+    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " &
+                              to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_proc_call : line;
+  begin
+    if caller_name = "" then
+      write(v_proc_call, name);
+    else
+      write(v_proc_call, caller_name);
+    end if;
+
+    -- AS_IS format has been deprecated and will be removed in the near future
+    if format = AS_IS then
+      deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
+    end if;
+
+    if matching_widths(target, exp) then
+      if match_strictness = MATCH_STD then
+        if not matching_values(target, exp) then
+          wait until matching_values(target, exp) for max_time;
+        end if;
+        check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
+      else
+        if (target /= exp) then
+          wait until (target = exp) for max_time;
+        end if;
+        check_time_window((target = exp), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
+      end if;
+
+    else
+      alert(alert_level, v_proc_call.all & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
+      success := false;
+    end if;
+    DEALLOCATE(v_proc_call);
+  end;
+
+  procedure await_value (
     signal target             : std_logic_vector;
     constant exp              : std_logic_vector;
     constant match_strictness : t_match_strictness;
@@ -6530,33 +7358,9 @@ package body methods_pkg is
     constant msg_id           : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
     ) is
-    constant value_type : string := "slv";
-    constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp, radix, format, INCL_RADIX);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " &
-                              to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_success : boolean;
   begin
-    -- AS_IS format has been deprecated and will be removed in the near future
-    if format = AS_IS then
-      deprecate(get_procedure_name_from_instance_name(target'instance_name), "format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.");
-    end if;
-
-    if matching_widths(target, exp) then
-      if match_strictness = MATCH_STD then
-        if not matching_values(target, exp) then
-          wait until matching_values(target, exp) for max_time;
-        end if;
-        check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, alert_level, name, msg, scope, msg_id, msg_id_panel);
-      else
-        if (target /= exp) then
-          wait until (target = exp) for max_time;
-        end if;
-        check_time_window((target = exp), now-start_time, min_time, max_time, alert_level, name, msg, scope, msg_id, msg_id_panel);
-      end if;
-
-    else
-      alert(alert_level, name & " => Failed. Widths did not match. " & add_msg_delimiter(msg), scope);
-    end if;
+    await_value(target, exp, match_strictness, min_time, max_time, alert_level, v_success, msg, scope, radix, format, msg_id, msg_id_panel);
   end;
 
   procedure await_value (
@@ -6836,6 +7640,65 @@ package body methods_pkg is
 -- Helper procedure:
 -- Convert time from 'FROM_LAST_EVENT' to 'FROM_NOW'
   procedure await_stable_calc_time (
+    constant target_last_event               : in    time;
+    constant stable_req                      : in    time;  -- Minimum stable requirement
+    constant stable_req_from                 : in    t_from_point_in_time;  -- Which point in time stable_req starts
+    constant timeout                         : in    time;  -- Timeout if stable_req not achieved
+    constant timeout_from                    : in    t_from_point_in_time;  -- Which point in time the timeout starts
+    variable stable_req_from_now             : inout time;  -- Calculated stable requirement from now
+    variable timeout_from_await_stable_entry : inout time;  -- Calculated timeout from procedure entry
+    constant alert_level                     : in    t_alert_level;
+    constant msg                             : in    string;
+    constant scope                           : in    string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id                          : in    t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel                    : in    t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name                     : in    string         := "await_stable_calc_time()";
+    variable stable_req_met                  : inout boolean;  -- When true, the stable requirement is satisfied
+    variable stable_req_success              : out   boolean
+    ) is
+  begin
+    stable_req_met := false;
+    stable_req_success := true;
+
+    -- Convert stable_req so that it points to "time_from_now"
+    if stable_req_from = FROM_NOW then
+      stable_req_from_now := stable_req;
+    elsif stable_req_from = FROM_LAST_EVENT then
+      -- Signal has already been stable for target'last_event,
+      -- so we can subtract this in the FROM_NOW version.
+      stable_req_from_now := stable_req - target_last_event;
+    else
+      alert(tb_error, caller_name & " => Unknown stable_req_from. " & add_msg_delimiter(msg), scope);
+      stable_req_success := false;
+    end if;
+
+    -- Convert timeout so that it points to "time_from_now"
+    if timeout_from = FROM_NOW then
+      timeout_from_await_stable_entry := timeout;
+    elsif timeout_from = FROM_LAST_EVENT then
+      timeout_from_await_stable_entry := timeout - target_last_event;
+    else
+      alert(tb_error, caller_name & " => Unknown timeout_from. " & add_msg_delimiter(msg), scope);
+      stable_req_success := false;
+    end if;
+
+    -- Check if requirement is already OK
+    if (stable_req_from_now <= 0 ns) then
+      log(msg_id, caller_name & " => OK. Condition occurred immediately. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      stable_req_met := true;
+    end if;
+
+    -- Check if it is impossible to achieve stable_req before timeout
+    if (stable_req_from_now > timeout_from_await_stable_entry) then
+      alert(alert_level, caller_name & " => Failed immediately: Stable for stable_req = " & to_string(stable_req_from_now, ns) &
+            " is not possible before timeout = " & to_string(timeout_from_await_stable_entry, ns) &
+            ". " & add_msg_delimiter(msg), scope);
+      stable_req_met := true;
+      stable_req_success := false;
+    end if;
+  end;
+
+  procedure await_stable_calc_time (
     constant target_last_event               :       time;
     constant stable_req                      :       time;  -- Minimum stable requirement
     constant stable_req_from                 :       t_from_point_in_time;  -- Which point in time stable_req starts
@@ -6851,59 +7714,27 @@ package body methods_pkg is
     constant caller_name                     :       string         := "await_stable_calc_time()";
     variable stable_req_met                  : inout boolean  -- When true, the stable requirement is satisfied
     ) is
+    variable v_stable_req_success : boolean;
   begin
-    stable_req_met := false;
-
-    -- Convert stable_req so that it points to "time_from_now"
-    if stable_req_from = FROM_NOW then
-      stable_req_from_now := stable_req;
-    elsif stable_req_from = FROM_LAST_EVENT then
-      -- Signal has already been stable for target'last_event,
-      -- so we can subtract this in the FROM_NOW version.
-      stable_req_from_now := stable_req - target_last_event;
-    else
-      alert(tb_error, caller_name & " => Unknown stable_req_from. " & add_msg_delimiter(msg), scope);
-    end if;
-
-    -- Convert timeout so that it points to "time_from_now"
-    if timeout_from = FROM_NOW then
-      timeout_from_await_stable_entry := timeout;
-    elsif timeout_from = FROM_LAST_EVENT then
-      timeout_from_await_stable_entry := timeout - target_last_event;
-    else
-      alert(tb_error, caller_name & " => Unknown timeout_from. " & add_msg_delimiter(msg), scope);
-    end if;
-
-    -- Check if requirement is already OK
-    if (stable_req_from_now <= 0 ns) then
-      log(msg_id, caller_name & " => OK. Condition occurred immediately. " & add_msg_delimiter(msg), scope, msg_id_panel);
-      stable_req_met := true;
-    end if;
-
-    -- Check if it is impossible to achieve stable_req before timeout
-    if (stable_req_from_now > timeout_from_await_stable_entry) then
-      alert(alert_level, caller_name & " => Failed immediately: Stable for stable_req = " & to_string(stable_req_from_now, ns) &
-            " is not possible before timeout = " & to_string(timeout_from_await_stable_entry, ns) &
-            ". " & add_msg_delimiter(msg), scope);
-      stable_req_met := true;
-    end if;
-
+    await_stable_calc_time(target_last_event, stable_req, stable_req_from, timeout, timeout_from, stable_req_from_now,
+      timeout_from_await_stable_entry, alert_level, msg, scope, msg_id, msg_id_panel, caller_name, stable_req_met, v_stable_req_success);
   end;
 
   -- Helper procedure:
   procedure await_stable_checks (
-    constant start_time                      :       time;  -- Time at await_stable() procedure entry
-    constant stable_req                      :       time;  -- Minimum stable requirement
+    constant start_time                      : in    time;  -- Time at await_stable() procedure entry
+    constant stable_req                      : in    time;  -- Minimum stable requirement
     variable stable_req_from_now             : inout time;  -- Minimum stable requirement from now
     variable timeout_from_await_stable_entry : inout time;  -- Timeout value converted to FROM_NOW
-    constant time_since_last_event           :       time;  -- Time since previous event
-    constant alert_level                     :       t_alert_level;
-    constant msg                             :       string;
-    constant scope                           :       string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id                          :       t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel                    :       t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name                     :       string         := "await_stable_checks()";
-    variable stable_req_met                  : inout boolean  -- When true, the stable requirement is satisfied
+    constant time_since_last_event           : in    time;  -- Time since previous event
+    constant alert_level                     : in    t_alert_level;
+    constant msg                             : in    string;
+    constant scope                           : in    string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id                          : in    t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel                    : in    t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name                     : in    string         := "await_stable_checks()";
+    variable stable_req_met                  : inout boolean;  -- When true, the stable requirement is satisfied
+    variable stable_req_success              : out   boolean
     ) is
     variable v_time_left    : time;     -- Remaining time until timeout
     variable v_elapsed_time : time := 0 ns;  -- Time since procedure entry
@@ -6917,6 +7748,7 @@ package body methods_pkg is
       log(msg_id, caller_name & " => OK. Condition occurred after " &
           to_string(v_elapsed_time, C_LOG_TIME_BASE) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       stable_req_met := true;
+      stable_req_success := true;
     end if;
 
     --
@@ -6935,8 +7767,29 @@ package body methods_pkg is
               "(time since last event = " & to_string(time_since_last_event, ns) &
               ". " & add_msg_delimiter(msg), scope);
         stable_req_met := true;
+        stable_req_success := false;
       end if;
     end if;
+  end;
+
+  procedure await_stable_checks (
+    constant start_time                      :       time;  -- Time at await_stable() procedure entry
+    constant stable_req                      :       time;  -- Minimum stable requirement
+    variable stable_req_from_now             : inout time;  -- Minimum stable requirement from now
+    variable timeout_from_await_stable_entry : inout time;  -- Timeout value converted to FROM_NOW
+    constant time_since_last_event           :       time;  -- Time since previous event
+    constant alert_level                     :       t_alert_level;
+    constant msg                             :       string;
+    constant scope                           :       string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id                          :       t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel                    :       t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name                     :       string         := "await_stable_checks()";
+    variable stable_req_met                  : inout boolean  -- When true, the stable requirement is satisfied
+    ) is
+    variable v_stable_req_success : boolean;
+  begin
+    await_stable_checks(start_time, stable_req, stable_req_from_now, timeout_from_await_stable_entry, time_since_last_event,
+      alert_level, msg, scope, msg_id, msg_id_panel, caller_name, stable_req_met, v_stable_req_success);
   end;
 
 -- Await Stable Procedures
@@ -7073,16 +7926,18 @@ package body methods_pkg is
   end;
 
   procedure await_stable (
-    signal target            : std_logic_vector;
-    constant stable_req      : time;    -- Minimum stable requirement
-    constant stable_req_from : t_from_point_in_time;  -- Which point in time stable_req starts
-    constant timeout         : time;    -- Timeout if stable_req not achieved
-    constant timeout_from    : t_from_point_in_time;  -- Which point in time the timeout starts
-    constant alert_level     : t_alert_level;
-    constant msg             : string;
-    constant scope           : string         := C_TB_SCOPE_DEFAULT;
-    constant msg_id          : t_msg_id       := ID_POS_ACK;
-    constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
+    signal target            : in  std_logic_vector;
+    constant stable_req      : in  time;    -- Minimum stable requirement
+    constant stable_req_from : in  t_from_point_in_time;  -- Which point in time stable_req starts
+    constant timeout         : in  time;    -- Timeout if stable_req not achieved
+    constant timeout_from    : in  t_from_point_in_time;  -- Which point in time the timeout starts
+    constant alert_level     : in  t_alert_level;
+    variable success         : out boolean;
+    constant msg             : in  string;
+    constant scope           : in  string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id          : in  t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel    : in  t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name     : in  string         := ""
     ) is
     constant value_type : string := "std_logic_vector";
     constant start_time : time   := now;
@@ -7091,7 +7946,14 @@ package body methods_pkg is
     variable v_stable_req_from_now     : time;  -- Stable_req relative to now.
     variable v_timeout_from_proc_entry : time;  -- Timeout relative to time of procedure entry
     variable v_stable_req_met          : boolean := false;  -- When true, the procedure is done and has logged a conclusion.
+    variable v_proc_call               : line;
   begin
+    if caller_name = "" then
+      write(v_proc_call, name);
+    else
+      write(v_proc_call, caller_name);
+    end if;
+
     -- Use a helper procedure to simplify overloading
     await_stable_calc_time(
       target_last_event               => target'last_event,
@@ -7106,15 +7968,15 @@ package body methods_pkg is
       scope                           => scope,
       msg_id                          => msg_id,
       msg_id_panel                    => msg_id_panel,
-      caller_name                     => name,
-      stable_req_met                  => v_stable_req_met);
+      caller_name                     => v_proc_call.all,
+      stable_req_met                  => v_stable_req_met,
+      stable_req_success              => success);
 
     -- Start waiting for target'event or stable_req time, unless :
     --  - stable_req already achieved, or
     --  - it is already too late to be stable for stable_req before timeout will occurr
     while not v_stable_req_met loop
       wait until target'event for v_stable_req_from_now;
-
       -- Use a helper procedure to simplify overloading
       await_stable_checks (
         start_time                      => start_time,
@@ -7127,10 +7989,29 @@ package body methods_pkg is
         scope                           => scope,
         msg_id                          => msg_id,
         msg_id_panel                    => msg_id_panel,
-        caller_name                     => name,
-        stable_req_met                  => v_stable_req_met);
-
+        caller_name                     => v_proc_call.all,
+        stable_req_met                  => v_stable_req_met,
+        stable_req_success              => success);
     end loop;
+
+    DEALLOCATE(v_proc_call);
+  end;
+
+  procedure await_stable (
+    signal target            : std_logic_vector;
+    constant stable_req      : time;    -- Minimum stable requirement
+    constant stable_req_from : t_from_point_in_time;  -- Which point in time stable_req starts
+    constant timeout         : time;    -- Timeout if stable_req not achieved
+    constant timeout_from    : t_from_point_in_time;  -- Which point in time the timeout starts
+    constant alert_level     : t_alert_level;
+    constant msg             : string;
+    constant scope           : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id          : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
+    ) is
+    variable v_success : boolean;
+  begin
+    await_stable(target, stable_req, stable_req_from, timeout, timeout_from, alert_level, v_success, msg, scope, msg_id, msg_id_panel);
   end;
 
   procedure await_stable (

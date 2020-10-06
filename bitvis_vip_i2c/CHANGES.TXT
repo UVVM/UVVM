@@ -1,11 +1,17 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+
+v2.7.0
+----------
+Released: 2020-10-06
+- Added I2C_VVC_SB scoreboard and pad_i2c_sb() method.
+- Updated VVC scoreboard section in the QR.
+
 v2.6.2
 ----------
 Released: 2020-08-18
 - Added section with required local defined BFM configuration in BFM QR.
-
 
 v2.6.1
 ----------

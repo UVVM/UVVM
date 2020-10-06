@@ -1,6 +1,11 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+v2.2.0
+----------
+Released: 2020-10-06
+- Deprecated predefined scoreboard package slv_sb_pkg.
+
 v2.1.3
 ----------
 Released: 2020-08-18

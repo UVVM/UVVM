@@ -27,6 +27,9 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_hvvc_to_vvc_bridge;
 use bitvis_vip_hvvc_to_vvc_bridge.support_pkg.all;
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
 use work.support_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
@@ -115,7 +118,15 @@ package vvc_methods_pkg is
   shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
 
   -- Scoreboard
-  shared variable ETHERNET_VVC_SB : t_generic_sb;
+  package ethernet_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => t_ethernet_frame,
+                 element_match     => ethernet_match,
+                 to_string_element => to_string);
+  use ethernet_sb_pkg.all;
+  shared variable ETHERNET_VVC_SB  : ethernet_sb_pkg.t_generic_sb;
+
+
+
 
 
   --==========================================================================================

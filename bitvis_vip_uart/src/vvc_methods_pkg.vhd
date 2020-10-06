@@ -26,8 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv8_sb_pkg.all;
-
 
 use work.uart_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -153,8 +151,12 @@ package vvc_methods_pkg is
   shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
 
   -- Scoreboard
-  shared variable UART_VVC_SB : t_generic_sb;
-
+  package uart_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use uart_sb_pkg.all;
+  shared variable UART_VVC_SB  : uart_sb_pkg.t_generic_sb;
   
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -433,7 +435,6 @@ package body vvc_methods_pkg is
 
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
-
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
@@ -512,7 +513,6 @@ package body vvc_methods_pkg is
       bfm_configured_error_injection_setting := (random(0.0, 1.0) <= probability);
     end if;
   end procedure determine_error_injection;
-
 
 
 end package body vvc_methods_pkg;

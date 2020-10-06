@@ -289,7 +289,7 @@ def add_leaf_includes(file_handle, vvc_name, features):
 
     if features["scoreboard"]:
         file_handle.write("library bitvis_vip_scoreboard;\n")
-        file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
+        file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.C_SB_CONFIG_DEFAULT;\n")
         print_linefeed(file_handle)
 
     file_handle.write("use work."+vvc_name.lower()+"_bfm_pkg.all;\n")
@@ -764,7 +764,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
             file_handle.write("        --     -- Request SB check result\n")
             file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
             file_handle.write("        --       -- call SB check_received\n")
-            file_handle.write("        --       "+vvc_name.upper()+"_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_result(GC_DATA_WIDTH-1 downto 0)));\n")
+            file_handle.write("        --       "+vvc_name.upper()+"_VVC_SB.check_received(GC_INSTANCE_IDX, pad_"+vvc_name+"_sb(v_result(GC_DATA_WIDTH-1 downto 0)));\n")
             file_handle.write("        --     else\n")
             file_handle.write("        --       -- Store the result\n")
             file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
@@ -794,7 +794,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
             file_handle.write("        --     -- Request SB check result\n")
             file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
             file_handle.write("        --       -- call SB check_received\n")
-            file_handle.write("        --       "+vvc_name.upper()+"_VVC_SB.check_received(GC_INSTANCE_IDX, pad_sb_slv(v_result(GC_DATA_WIDTH-1 downto 0)));\n")
+            file_handle.write("        --       "+vvc_name.upper()+"_VVC_SB.check_received(GC_INSTANCE_IDX, pad_"+vvc_name+"_sb(v_result(GC_DATA_WIDTH-1 downto 0)));\n")
             file_handle.write("        --     else\n")
             file_handle.write("        --       -- Store the result\n")
             file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
@@ -1223,7 +1223,6 @@ def add_methods_pkg_includes(file_handle, vvc_name, features):
     if features["scoreboard"]:
         file_handle.write("library bitvis_vip_scoreboard;\n")
         file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
-        file_handle.write("use bitvis_vip_scoreboard.slv_sb_pkg.all;\n")
         print_linefeed(file_handle)
     file_handle.write("use work."+vvc_name.lower()+"_bfm_pkg.all;\n")
     file_handle.write("use work.vvc_cmd_pkg.all;\n")
@@ -1322,7 +1321,12 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     print_linefeed(file_handle)
     if features["scoreboard"]:
         file_handle.write("  -- Scoreboard\n") 
-        file_handle.write("  shared variable "+vvc_name.upper()+"_VVC_SB : t_generic_sb;\n") 
+        file_handle.write("  package "+vvc_name+"_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg\n")
+        file_handle.write("       generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),\n")
+        file_handle.write("                    element_match     => std_match,\n")
+        file_handle.write("                    to_string_element => to_string);\n")
+        file_handle.write("  use "+vvc_name+"_sb_pkg.all;\n")
+        file_handle.write("  shared variable "+vvc_name.upper()+"_VVC_SB  : "+vvc_name+"_sb_pkg.t_generic_sb;\n")
         print_linefeed(file_handle)
     print_linefeed(file_handle)
     file_handle.write("  "+division_line+"\n")
@@ -1386,6 +1390,15 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
         file_handle.write("                                          constant last_cmd_idx_executed              : in    natural;\n")
         file_handle.write("                                          constant command_queue_is_empty             : in    boolean;\n")
         file_handle.write("                                          constant scope                              : in string := C_VVC_NAME);\n")    
+        print_linefeed(file_handle)
+
+    if features["scoreboard"]:
+        file_handle.write("  --==============================================================================\n")
+        file_handle.write("  -- VVC Scoreboard helper method\n")
+        file_handle.write("  --==============================================================================\n")
+        file_handle.write("    function pad_"+vvc_name+"_sb(\n")
+        file_handle.write("      constant data : in std_logic_vector\n")
+        file_handle.write("    ) return std_logic_vector;\n")
         print_linefeed(file_handle)
 
     file_handle.write("end package vvc_methods_pkg;\n")
@@ -1511,7 +1524,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("  --      vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;\n")
         print_linefeed(file_handle)
         file_handle.write("  --    when others =>\n")
-        file_handle.write("  --      null;\n")
+        file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\");\n")
         file_handle.write("  --  end case;\n")
         print_linefeed(file_handle)
         file_handle.write("    wait for 0 ns;\n")
@@ -1549,6 +1562,18 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("    end if;\n")
         file_handle.write("    gen_pulse(global_trigger_vvc_activity_register, 0 ns, \"pulsing global trigger for vvc activity\", scope, ID_NEVER);\n")
         file_handle.write("  end procedure;\n")
+        print_linefeed(file_handle)
+
+    if features["scoreboard"]:
+        file_handle.write("  --==============================================================================\n")
+        file_handle.write("  -- VVC Scoreboard helper method\n")
+        file_handle.write("  --==============================================================================\n")
+        file_handle.write("    function pad_"+vvc_name+"_sb(\n")
+        file_handle.write("      constant data : in std_logic_vector\n")
+        file_handle.write("    ) return std_logic_vector is \n")
+        file_handle.write("    begin\n")
+        file_handle.write("      return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);\n")
+        file_handle.write("    end function pad_"+vvc_name+"_sb;\n")
         print_linefeed(file_handle)
 
     print_linefeed(file_handle)

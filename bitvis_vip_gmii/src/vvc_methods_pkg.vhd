@@ -26,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 
 use work.gmii_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -102,7 +101,12 @@ package vvc_methods_pkg is
   shared variable shared_gmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
 
   -- Scoreboard
-  shared variable GMII_VVC_SB : t_generic_sb;
+  package gmii_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+    generic map (t_element         => std_logic_vector(7 downto 0),
+                 element_match     => std_match,
+                 to_string_element => to_string);
+  use gmii_sb_pkg.all;
+  shared variable GMII_VVC_SB  : gmii_sb_pkg.t_generic_sb;
 
 
   --==========================================================================================
@@ -116,7 +120,7 @@ package vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
-    constant data_array          : in    t_byte_array;
+    constant data_array          : in    t_slv_array;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -166,7 +170,7 @@ package vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
-    constant data_exp            : in    t_byte_array;
+    constant data_exp            : in    t_slv_array;
     constant msg                 : in    string;
     constant alert_level         : in    t_alert_level  := ERROR;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
@@ -210,7 +214,7 @@ package body vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
-    constant data_array          : in    t_byte_array;
+    constant data_array          : in    t_slv_array;
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -302,7 +306,7 @@ package body vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in    integer;
     constant channel             : in    t_channel;
-    constant data_exp            : in    t_byte_array;
+    constant data_exp            : in    t_slv_array;
     constant msg                 : in    string;
     constant alert_level         : in    t_alert_level  := ERROR;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;

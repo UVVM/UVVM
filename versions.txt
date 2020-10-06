@@ -1,22 +1,23 @@
 This project uses the following versions:
-  uvvm_util, version v2.14.2
+  uvvm_util, version v2.15.0
   uvvm_vvc_framework, version v2.11.1
   bitvis_irqc, version v1.0.11
   bitvis_uart, version v1.1.5
-  bitvis_vip_avalon_mm, version v2.7.1
+  bitvis_vip_avalon_mm, version v2.8.0
   bitvis_vip_avalon_st, version v1.2.1
-  bitvis_vip_axilite, version v2.7.1
+  bitvis_vip_axilite, version v2.8.0
   bitvis_vip_axistream, version v4.7.1
   bitvis_vip_clock_generator, version v1.4.0
   bitvis_vip_error_injection, version v0.1.0
-  bitvis_vip_gmii, version v0.3.1
-  bitvis_vip_gpio, version v1.7.1
-  bitvis_vip_i2c, version v2.6.2
-  bitvis_vip_rgmii, version v0.3.2
-  bitvis_vip_sbi, version v2.7.2
-  bitvis_vip_scoreboard, version v2.1.3
-  bitvis_vip_spi, version v3.8.2
-  bitvis_vip_uart, version v2.7.2
-  bitvis_vip_spec_cov, version v0.3.0
+  bitvis_vip_gmii, version v0.4.0
+  bitvis_vip_gpio, version v1.8.0
+  bitvis_vip_i2c, version v2.7.0
+  bitvis_vip_rgmii, version v0.4.0
+  bitvis_vip_sbi, version v2.8.0
+  bitvis_vip_scoreboard, version v2.2.0
+  bitvis_vip_spi, version v3.9.0
+  bitvis_vip_uart, version v2.8.0
+  bitvis_vip_spec_cov, version v0.4.0
   bitvis_vip_hvvc_to_vvc_bridge, version v0.1.1
-  bitvis_vip_ethernet, version v0.1.1
+  bitvis_vip_ethernet, version v0.2.0
+  bitvis_vip_axi, version v0.1.0

@@ -90,6 +90,7 @@ package adaptations_pkg is
     ID_GEN_PULSE,             -- Used for logging when a gen_pulse procedure starts pulsing a signal
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
+    ID_RAND_GEN,              -- Used for logging the randomization functions
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
     -- Directly inside test sequencers

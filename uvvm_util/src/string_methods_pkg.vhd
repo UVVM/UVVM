@@ -1047,7 +1047,7 @@ package body string_methods_pkg is
     prefix          : t_radix_prefix := EXCL_RADIX;
     format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
     ) return string is
-    variable v_val_slv : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(val, 32));
+    variable v_val_slv : std_logic_vector(31 downto 0) := std_logic_vector(to_signed(val, 32));
     variable v_line    : line;
     variable v_result  : string(1 to 40);
     variable v_width   : natural;

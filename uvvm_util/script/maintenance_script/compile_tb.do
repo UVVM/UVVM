@@ -38,3 +38,6 @@ eval vcom  $compdirectives  $tb_path/generic_queue_array_tb.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/simplified_data_queue_tb.vhd"
 eval vcom  $compdirectives  $tb_path/simplified_data_queue_tb.vhd
+
+echo "eval vcom  $compdirectives  $tb_path/rand_tb.vhd"
+eval vcom  $compdirectives  $tb_path/rand_tb.vhd

@@ -231,6 +231,48 @@ begin
       log("v_slv:" & to_hstring(v_slv));
     end loop;
 
+    log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 3);
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, ONLY,(0,1,2));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, EXCL,(0,1,2));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(15,16,17));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 3, EXCL,(1,2));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(15,16,17), EXCL,(1,2));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 2, EXCL,(1,2), INCL,(15,16,17));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(15,16), INCL,(17,18));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+    for i in 0 to 4 loop
+      v_slv := v_rand.rand(v_slv'length, 0, 5, EXCL,(1,2), EXCL,(0,3));
+      log("v_slv:" & to_hstring(v_slv));
+    end loop;
+
     ------------------------------------------------------------
     -- Std_logic & boolean
     ------------------------------------------------------------

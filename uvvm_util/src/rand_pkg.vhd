@@ -253,6 +253,44 @@ package rand_pkg is
       constant ext_proc_call : string         := "")
     return std_logic_vector;
 
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : natural;
+      constant max_value     : natural;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
+
+    impure function rand(
+      constant length        : positive;
+      constant set_type      : t_set_type;
+      constant set_values    : t_natural_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : natural;
+      constant max_value     : natural;
+      constant set_type      : t_set_type;
+      constant set_values    : t_natural_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : natural;
+      constant max_value     : natural;
+      constant set_type1     : t_set_type;
+      constant set_values1   : t_natural_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : t_natural_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
+
     ------------------------------------------------------------
     -- Random std_logic & boolean
     ------------------------------------------------------------
@@ -945,6 +983,64 @@ package body rand_pkg is
       variable v_ret : unsigned(length-1 downto 0);
     begin
       v_ret := rand(length, msg_id_panel);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : natural;
+      constant max_value     : natural;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := rand(length, min_value, max_value, msg_id_panel);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant set_type      : t_set_type;
+      constant set_values    : t_natural_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := rand(length, set_type, set_values, msg_id_panel);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : natural;
+      constant max_value     : natural;
+      constant set_type      : t_set_type;
+      constant set_values    : t_natural_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := rand(length, min_value, max_value, set_type, set_values, msg_id_panel);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : natural;
+      constant max_value     : natural;
+      constant set_type1     : t_set_type;
+      constant set_values1   : t_natural_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : t_natural_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, msg_id_panel);
       return std_logic_vector(v_ret);
     end function;
 

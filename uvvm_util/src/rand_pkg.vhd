@@ -440,6 +440,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random value in the range [min_value:max_value]
       case v_rand_dist is
         when UNIFORM =>
           random(min_value, max_value, v_seed1, v_seed2, v_ret);
@@ -465,6 +466,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random value within the set of values
       if set_type /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
       end if;
@@ -494,13 +496,13 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
-      -- Add values to the range
+      -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
         v_ret := rand(min_value, max_value+set_values'length, msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := normalized_set_values(v_ret-max_value-1);
         end if;
-      -- Remove values from the range
+      -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif set_type = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
@@ -546,21 +548,21 @@ package body rand_pkg is
         end loop;
       end if;
 
-      -- Add values to the range
+      -- Generate a random value in the range [min_value:max_value] plus both sets of values
       if set_type1 = INCL and set_type2 = INCL then
         alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, INCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
-      -- Remove values from the range
+      -- Generate a random value in the range [min_value:max_value] minus both sets of values
       elsif set_type1 = EXCL and set_type2 = EXCL then
         alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
-      -- Add and remove values from the range
+      -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
       elsif set_type1 = INCL and set_type2 = EXCL then
         v_ret := rand(min_value, max_value+set_values1'length, EXCL, set_values2, msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := normalized_set_values1(v_ret-max_value-1);
         end if;
-      -- Add and remove values from the range
+      -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif set_type1 = EXCL and set_type2 = INCL then
         v_ret := rand(min_value, max_value+set_values2'length, EXCL, set_values1, msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
@@ -606,16 +608,16 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       if uniqueness = NON_UNIQUE then
-        -- Generate a random value for each element of the vector
+        -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
-        -- Check if vector size is enough to generate unique values
+        -- Check if it is possible to generate unique values for the complete vector
         if (max_value + 1 - min_value) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
         else
-          -- Generate a random value for each element of the vector
+          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
@@ -653,16 +655,16 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       if uniqueness = NON_UNIQUE then
-        -- Generate a random value for each element of the vector
+        -- Generate a random value within the set of values for each element of the vector
         for i in 0 to size-1 loop
           v_ret(i) := rand(set_type, set_values, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
-        -- Check if vector size is enough to generate unique values
+        -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
         else
-          -- Generate a random value for each element of the vector
+          -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
@@ -703,17 +705,17 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       if uniqueness = NON_UNIQUE then
-        -- Generate a random value for each element of the vector
+        -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type, set_values, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
-        -- Check if vector size is enough to generate unique values
+        -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if (max_value + 1 - min_value + v_set_values_len) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
         else
-          -- Generate a random value for each element of the vector
+          -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
@@ -757,18 +759,18 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       if uniqueness = NON_UNIQUE then
-        -- Generate a random value for each element of the vector
+        -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
-        -- Check if vector size is enough to generate unique values
+        -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if (max_value + 1 - min_value + v_set_values_len) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
         else
-          -- Generate a random value for each element of the vector
+          -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
@@ -811,7 +813,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
-      -- Iterate through each bit and randomly set to 0 or 1
+      -- Generate a random value for each bit of the vector
       for i in 0 to length-1 loop
         v_ret(i downto i) := to_unsigned(rand(0, 1, msg_id_panel, v_proc_call.all), 1);
       end loop;
@@ -833,6 +835,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random value in the range [min_value:max_value]
       check_parameters_within_range(length, min_value, max_value, msg_id_panel);
       v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
 
@@ -855,8 +858,10 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       check_parameters_within_range(length, set_values, msg_id_panel);
+      -- Generate a random value within the set of values
       if set_type = ONLY then
         v_ret := rand(ONLY, integer_vector(set_values), msg_id_panel, v_proc_call.all);
+      -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
         while v_gen_new_random loop
           v_ret := to_integer(rand(length, msg_id_panel, v_proc_call.all));
@@ -886,6 +891,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
       check_parameters_within_range(length, min_value, max_value, msg_id_panel);
       check_parameters_within_range(length, set_values, msg_id_panel);
       v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), msg_id_panel, v_proc_call.all);
@@ -913,6 +919,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
       check_parameters_within_range(length, min_value, max_value, msg_id_panel);
       check_parameters_within_range(length, set_values1, msg_id_panel);
       check_parameters_within_range(length, set_values2, msg_id_panel);
@@ -955,6 +962,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random bit
       v_ret := rand(1, msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -972,6 +980,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      -- Generate a random bit
       v_ret := rand(1, msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);

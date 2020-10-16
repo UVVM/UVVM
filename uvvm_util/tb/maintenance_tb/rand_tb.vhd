@@ -172,6 +172,47 @@ begin
     end loop;
 
     ------------------------------------------------------------
+    -- Real
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing real (min/max)");
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-2.0, 2.0);
+      log("v_real:" & to_string(v_real));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing real (set of values)");
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(ONLY,(-2.0,0.1234,2.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing real (min/max + set of values)");
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-2.0, 2.0, INCL,(15.0,16.0,17.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-2.0, 2.0, EXCL,(-1.0,0.0,1.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-2.0, 2.0, INCL,(15.0,16.0,17.0), EXCL,(-1.0,0.0,1.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-2.0, 2.0, EXCL,(-1.0,0.0,1.0), INCL,(15.0,16.0,17.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-2.0, 2.0, INCL,(15.0,16.0), INCL,(17.0,18.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+    for i in 0 to 4 loop
+      v_real := v_rand.rand(-3.0, 3.0, EXCL,(-2.0,-1.0,0.0), EXCL,(1.0,2.0));
+      log("v_real:" & to_string(v_real));
+    end loop;
+
+    ------------------------------------------------------------
     -- Unsigned
     ------------------------------------------------------------
     log(ID_LOG_HDR, "Testing unsigned (length)");

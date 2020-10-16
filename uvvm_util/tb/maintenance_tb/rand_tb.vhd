@@ -56,6 +56,8 @@ begin
 
     set_alert_stop_limit(TB_ERROR,0); --TODO: remove
 
+    increment_expected_alerts(TB_WARNING, 1);
+
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package");
     --------------------------------------------------------------------------------
@@ -72,7 +74,13 @@ begin
     v_rand.set_rand_dist(GAUSSIAN);
     v_rand.set_rand_dist(UNIFORM);
 
-    --TODO: for all rand() test corner cases (negative values, min range, max range, 1 value in set_values)
+    v_rand.set_scope("MY SCOPE");
+
+    --TODO: for all rand() test corner cases
+    --      *negative values
+    --      *min & max range: within length limits (uns,sig,slv), inverted order
+    --      *set of values: within lenght limits (uns,sig,slv), only 1 value
+    -- We could either have an overload with integer instead of integer_vector OR use a function to return integer_vector: INCL/EXCL? VECTOR?
     ------------------------------------------------------------
     -- Integer
     ------------------------------------------------------------

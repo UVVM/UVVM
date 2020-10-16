@@ -245,6 +245,7 @@ package rand_pkg is
 
     ------------------------------------------------------------
     -- Random std_logic_vector
+    -- The std_logic_vector values are interpreted as unsigned.
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
@@ -277,18 +278,44 @@ package body rand_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_rand is protected body
-    variable v_scope     : line := new string'(C_SCOPE);
-    variable v_seed1     : positive := C_INIT_SEED_1;
-    variable v_seed2     : positive := C_INIT_SEED_2;
-    variable v_rand_dist : t_rand_dist := UNIFORM;
+    variable v_scope                : line        := new string'(C_SCOPE);
+    variable v_seed1                : positive    := C_INIT_SEED_1;
+    variable v_seed2                : positive    := C_INIT_SEED_2;
+    variable v_rand_dist            : t_rand_dist := UNIFORM;
+    variable v_warned_same_set_type : boolean     := false;
 
     ------------------------------------------------------------
-    -- Internal functions
+    -- Internal functions and procedures
     ------------------------------------------------------------
+    -- Returns true if a value is contained in a vector
+    function check_value_in_vector(
+      constant value  : integer;
+      constant vector : integer_vector)
+    return boolean is
+      variable v_found : boolean := false;
+    begin
+      for i in vector'range loop
+        if value = vector(i) then
+          v_found := true;
+          exit;
+        end if;
+      end loop;
+      return v_found;
+    end function;
+
+    -- Overload
+    function check_value_in_vector(
+      constant value  : integer;
+      constant vector : t_natural_vector)
+    return boolean is
+      variable v_found : boolean := false;
+    begin
+      return check_value_in_vector(value, integer_vector(vector));
+    end function;
+
     -- Logs the procedure call unless it is called from another
-    -- procedure to avoid duplicate logs.
-    -- It also generates the correct procedure call to be used
-    -- for logging or alerts.
+    -- procedure to avoid duplicate logs. It also generates the
+    -- correct procedure call to be used for logging or alerts.
     procedure log_proc_call(
       constant msg_id          : in    t_msg_id;
       constant proc_call       : in    string;
@@ -306,30 +333,39 @@ package body rand_pkg is
       end if;
     end procedure;
 
-    -- Check if a value is contained in a vector
-    function check_value_in_vector(
-      constant value  : integer;
-      constant vector : integer_vector)
-    return boolean is
-      variable v_found : boolean := false;
+    -- Checks that the parameters are within a valid range
+    -- for the given length
+    procedure check_parameters_within_range(
+      constant length       : in natural;
+      constant min_value    : in natural;
+      constant max_value    : in natural;
+      constant msg_id_panel : in t_msg_id_panel) is
     begin
-      for i in vector'range loop
-        if value = vector(i) then
-          v_found := true;
-          exit;
-        end if;
-      end loop;
-      return v_found;
-    end function;
+      check_value_in_range(min_value, 0, 2**length-1, TB_WARNING, "lenght is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      check_value_in_range(max_value, 0, 2**length-1, TB_WARNING, "lenght is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+    end procedure;
 
-    function check_value_in_vector(
-      constant value  : integer;
-      constant vector : t_natural_vector)
-    return boolean is
-      variable v_found : boolean := false;
+    -- Overload
+    procedure check_parameters_within_range(
+      constant length       : in natural;
+      constant set_values   : in t_natural_vector;
+      constant msg_id_panel : in t_msg_id_panel) is
     begin
-      return check_value_in_vector(value, integer_vector(vector));
-    end function;
+      for i in set_values'range loop
+        check_value_in_range(set_values(i), 0, 2**length-1, TB_WARNING, "lenght is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      end loop;
+    end procedure;
+
+    -- Generates an alert (only once)
+    procedure alert_same_set_type(
+      constant set_type  : in t_set_type;
+      constant proc_call : in string) is
+    begin
+      if not(v_warned_same_set_type) then
+        alert(TB_WARNING, proc_call & "=> Used same type for both set of values: " & to_upper(to_string(set_type)), v_scope.all);
+        v_warned_same_set_type := true;
+      end if;
+    end procedure;
 
     ------------------------------------------------------------
     -- Randomization distribution
@@ -406,7 +442,7 @@ package body rand_pkg is
 
       case v_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, v_seed1, v_seed2, v_ret); --Q: Call random() from methods_pkg or copy implementation?
+          random(min_value, max_value, v_seed1, v_seed2, v_ret);
         when GAUSSIAN =>
           --TODO: implementation
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
@@ -512,9 +548,11 @@ package body rand_pkg is
 
       -- Add values to the range
       if set_type1 = INCL and set_type2 = INCL then
+        alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, INCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Remove values from the range
       elsif set_type1 = EXCL and set_type2 = EXCL then
+        alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Add and remove values from the range
       elsif set_type1 = INCL and set_type2 = EXCL then
@@ -795,6 +833,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel);
       v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -815,6 +854,7 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      check_parameters_within_range(length, set_values, msg_id_panel);
       if set_type = ONLY then
         v_ret := rand(ONLY, integer_vector(set_values), msg_id_panel, v_proc_call.all);
       elsif set_type = EXCL then
@@ -846,6 +886,8 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel);
+      check_parameters_within_range(length, set_values, msg_id_panel);
       v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -871,6 +913,9 @@ package body rand_pkg is
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel);
+      check_parameters_within_range(length, set_values1, msg_id_panel);
+      check_parameters_within_range(length, set_values2, msg_id_panel);
       v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -883,6 +928,7 @@ package body rand_pkg is
 
     ------------------------------------------------------------
     -- Random std_logic_vector
+    -- The std_logic_vector values are interpreted as unsigned.
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;

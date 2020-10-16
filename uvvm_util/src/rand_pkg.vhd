@@ -172,6 +172,39 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Random time
     ------------------------------------------------------------
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time;
+
+    impure function rand(
+      constant set_type      : t_set_type;
+      constant set_values    : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time;
+
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant set_type      : t_set_type;
+      constant set_values    : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time;
+
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant set_type1     : t_set_type;
+      constant set_values1   : time_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time;
 
     ------------------------------------------------------------
     -- Random integer_vector
@@ -418,15 +451,6 @@ package body rand_pkg is
 
     -- Overload
     function check_value_in_vector(
-      constant value  : integer;
-      constant vector : t_natural_vector)
-    return boolean is
-      variable v_found : boolean := false;
-    begin
-      return check_value_in_vector(value, integer_vector(vector));
-    end function;
-
-    function check_value_in_vector(
       constant value  : real;
       constant vector : real_vector)
     return boolean is
@@ -439,6 +463,32 @@ package body rand_pkg is
         end if;
       end loop;
       return v_found;
+    end function;
+
+    -- Overload
+    function check_value_in_vector(
+      constant value  : time;
+      constant vector : time_vector)
+    return boolean is
+      variable v_found : boolean := false;
+    begin
+      for i in vector'range loop
+        if value = vector(i) then
+          v_found := true;
+          exit;
+        end if;
+      end loop;
+      return v_found;
+    end function;
+
+    -- Overload
+    function check_value_in_vector(
+      constant value  : integer;
+      constant vector : t_natural_vector)
+    return boolean is
+      variable v_found : boolean := false;
+    begin
+      return check_value_in_vector(value, integer_vector(vector));
     end function;
 
     -- Logs the procedure call unless it is called from another
@@ -469,8 +519,8 @@ package body rand_pkg is
       constant max_value    : in natural;
       constant msg_id_panel : in t_msg_id_panel) is
     begin
-      check_value_in_range(min_value, 0, 2**length-1, TB_WARNING, "lenght is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
-      check_value_in_range(max_value, 0, 2**length-1, TB_WARNING, "lenght is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      check_value_in_range(min_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      check_value_in_range(max_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
     end procedure;
 
     -- Overload
@@ -480,7 +530,7 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel) is
     begin
       for i in set_values'range loop
-        check_value_in_range(set_values(i), 0, 2**length-1, TB_WARNING, "lenght is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        check_value_in_range(set_values(i), 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
       end loop;
     end procedure;
 
@@ -863,6 +913,156 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Random time
     ------------------------------------------------------------
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time is
+      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ")";
+      variable v_proc_call : line;
+      variable v_ret       : time;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value in the range [min_value:max_value]
+      case v_rand_dist is
+        when UNIFORM =>
+          random(min_value, max_value, v_seed1, v_seed2, v_ret);
+        when GAUSSIAN =>
+          --TODO: implementation
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
+      end case;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant set_type      : t_set_type;
+      constant set_values    : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time is
+      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
+      variable v_proc_call        : line;
+      alias normalized_set_values : time_vector(0 to set_values'length-1) is set_values;
+      variable v_ret              : integer;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value within the set of values
+      if set_type /= ONLY then
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+      end if;
+      v_ret := rand(0, set_values'length-1, msg_id_panel, v_proc_call.all);
+
+      DEALLOCATE(v_proc_call);
+      return normalized_set_values(v_ret);
+    end function;
+
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant set_type      : t_set_type;
+      constant set_values    : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time is
+      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+        to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
+      constant C_TIME_UNIT  : time := std.env.resolution_limit;
+      variable v_proc_call        : line;
+      alias normalized_set_values : time_vector(0 to set_values'length-1) is set_values;
+      variable v_gen_new_random   : boolean := true;
+      variable v_ret              : time;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value in the range [min_value:max_value] plus the set of values
+      if set_type = INCL then
+        v_ret := rand(min_value, max_value+(set_values'length*C_TIME_UNIT), msg_id_panel, v_proc_call.all);
+        if v_ret > max_value then
+          v_ret := normalized_set_values((v_ret-max_value)/C_TIME_UNIT-1);
+        end if;
+      -- Generate a random value in the range [min_value:max_value] minus the set of values
+      elsif set_type = EXCL then
+        while v_gen_new_random loop
+          v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
+          v_gen_new_random := check_value_in_vector(v_ret, set_values);
+        end loop;
+      else
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant min_value     : time;
+      constant max_value     : time;
+      constant set_type1     : t_set_type;
+      constant set_values1   : time_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : time_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return time is
+      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+        to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
+        to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ")";
+      constant C_TIME_UNIT  : time := std.env.resolution_limit;
+      variable v_proc_call           : line;
+      alias normalized_set_values1   : time_vector(0 to set_values1'length-1) is set_values1;
+      alias normalized_set_values2   : time_vector(0 to set_values2'length-1) is set_values2;
+      variable v_combined_set_values : time_vector(0 to set_values1'length+set_values2'length-1);
+      variable v_ret                 : time;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Create a new set of values in case both are the same type
+      if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
+        for i in v_combined_set_values'range loop
+          if i < set_values1'length then
+            v_combined_set_values(i) := set_values1(i);
+          else
+            v_combined_set_values(i) := set_values2(i-set_values1'length);
+          end if;
+        end loop;
+      end if;
+
+      -- Generate a random value in the range [min_value:max_value] plus both sets of values
+      if set_type1 = INCL and set_type2 = INCL then
+        alert_same_set_type(set_type1, v_proc_call.all);
+        v_ret := rand(min_value, max_value, INCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
+      -- Generate a random value in the range [min_value:max_value] minus both sets of values
+      elsif set_type1 = EXCL and set_type2 = EXCL then
+        alert_same_set_type(set_type1, v_proc_call.all);
+        v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
+      -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
+      elsif set_type1 = INCL and set_type2 = EXCL then
+        v_ret := rand(min_value, max_value+(set_values1'length*C_TIME_UNIT), EXCL, set_values2, msg_id_panel, v_proc_call.all);
+        if v_ret > max_value then
+          v_ret := normalized_set_values1((v_ret-max_value)/C_TIME_UNIT-1);
+        end if;
+      -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
+      elsif set_type1 = EXCL and set_type2 = INCL then
+        v_ret := rand(min_value, max_value+(set_values2'length*C_TIME_UNIT), EXCL, set_values1, msg_id_panel, v_proc_call.all);
+        if v_ret > max_value then
+          v_ret := normalized_set_values2((v_ret-max_value)/C_TIME_UNIT-1);
+        end if;
+      else
+        if not(set_type1 = INCL or set_type1 = EXCL) then
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), v_scope.all);
+        else
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), v_scope.all);
+        end if;
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
 
     ------------------------------------------------------------
     -- Random integer_vector

@@ -79,7 +79,9 @@ begin
     --TODO: for all rand() test corner cases
     --      *negative values
     --      *min & max range: within length limits (uns,sig,slv), inverted order
-    --      *set of values: within lenght limits (uns,sig,slv), only 1 value
+    --      *set of values: within length limits (uns,sig,slv), only 1 value
+    --      *real: use different decimals
+    --      *time: use different time units
     -- We could either have an overload with integer instead of integer_vector OR use a function to return integer_vector: INCL/EXCL? VECTOR?
     ------------------------------------------------------------
     -- Integer
@@ -259,6 +261,47 @@ begin
     for i in 0 to 4 loop
       v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, INCL,(-3.0,3.0), INCL,(4.0,5.0), UNIQUE);
       log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+
+    ------------------------------------------------------------
+    -- Time
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing time (min/max)");
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-2 ps, 2 ps);
+      log("v_time:" & to_string(v_time));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing time (set of values)");
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(ONLY,(-2 ps,0 ps,2 ps));
+      log("v_time:" & to_string(v_time));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing time (min/max + set of values)");
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-2 ps, 2 ps, INCL,(15 ps,16 ps,17 ps));
+      log("v_time:" & to_string(v_time));
+    end loop;
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-2 ps, 2 ps, EXCL,(-1 ps,0 ps,1 ps));
+      log("v_time:" & to_string(v_time));
+    end loop;
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-2 ps, 2 ps, INCL,(15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,1 ps));
+      log("v_time:" & to_string(v_time));
+    end loop;
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-2 ps, 2 ps, EXCL,(-1 ps,0 ps,1 ps), INCL,(15 ps,16 ps,17 ps));
+      log("v_time:" & to_string(v_time));
+    end loop;
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-2 ps, 2 ps, INCL,(15 ps,16 ps), INCL,(17 ps,18 ps));
+      log("v_time:" & to_string(v_time));
+    end loop;
+    for i in 0 to 4 loop
+      v_time := v_rand.rand(-3 ps, 3 ps, EXCL,(-2 ps,-1 ps,0 ps), EXCL,(1 ps,2 ps));
+      log("v_time:" & to_string(v_time));
     end loop;
 
     ------------------------------------------------------------

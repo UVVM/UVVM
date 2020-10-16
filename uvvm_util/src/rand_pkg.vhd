@@ -221,6 +221,47 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Random real_vector
     ------------------------------------------------------------
+    impure function rand(
+      constant size          : positive;
+      constant min_value     : real;
+      constant max_value     : real;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector;
+
+    impure function rand(
+      constant size          : positive;
+      constant set_type      : t_set_type;
+      constant set_values    : real_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector;
+
+    impure function rand(
+      constant size          : positive;
+      constant min_value     : real;
+      constant max_value     : real;
+      constant set_type      : t_set_type;
+      constant set_values    : real_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector;
+
+    impure function rand(
+      constant size          : positive;
+      constant min_value     : real;
+      constant max_value     : real;
+      constant set_type1     : t_set_type;
+      constant set_values1   : real_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : real_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector;
 
     ------------------------------------------------------------
     -- Random time_vector
@@ -1029,6 +1070,185 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Random real_vector
     ------------------------------------------------------------
+    impure function rand(
+      constant size          : positive;
+      constant min_value     : real;
+      constant max_value     : real;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector is
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
+        ", " & to_upper(to_string(uniqueness)) & ")";
+      variable v_proc_call       : line;
+      variable v_gen_new_random  : boolean := true;
+      variable v_ret             : real_vector(0 to size-1);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      if uniqueness = NON_UNIQUE then
+        -- Generate a random value in the range [min_value:max_value] for each element of the vector
+        for i in 0 to size-1 loop
+          v_ret(i) := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
+        end loop;
+      elsif uniqueness = UNIQUE then
+        -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
+        for i in 0 to size-1 loop
+          v_gen_new_random := true;
+          while v_gen_new_random loop
+            v_ret(i) := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
+            if i > 0 then
+              v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            else
+              v_gen_new_random := false;
+            end if;
+          end loop;
+        end loop;
+      else
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant size          : positive;
+      constant set_type      : t_set_type;
+      constant set_values    : real_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector is
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) &
+        ", " & to_upper(to_string(uniqueness)) & ")";
+      variable v_proc_call       : line;
+      variable v_gen_new_random  : boolean := true;
+      variable v_ret             : real_vector(0 to size-1);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      if uniqueness = NON_UNIQUE then
+        -- Generate a random value within the set of values for each element of the vector
+        for i in 0 to size-1 loop
+          v_ret(i) := rand(set_type, set_values, msg_id_panel, v_proc_call.all);
+        end loop;
+      elsif uniqueness = UNIQUE then
+        -- Check if it is possible to generate unique values for the complete vector
+        if (set_values'length) < size then
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+        else
+          -- Generate an unique random value within the set of values for each element of the vector
+          for i in 0 to size-1 loop
+            v_gen_new_random := true;
+            while v_gen_new_random loop
+              v_ret(i) := rand(set_type, set_values, msg_id_panel, v_proc_call.all);
+              if i > 0 then
+                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+              else
+                v_gen_new_random := false;
+              end if;
+            end loop;
+          end loop;
+        end if;
+      else
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant size          : positive;
+      constant min_value     : real;
+      constant max_value     : real;
+      constant set_type      : t_set_type;
+      constant set_values    : real_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector is
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+        to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
+      variable v_proc_call       : line;
+      variable v_gen_new_random  : boolean := true;
+      variable v_ret             : real_vector(0 to size-1);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      if uniqueness = NON_UNIQUE then
+        -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
+        for i in 0 to size-1 loop
+          v_ret(i) := rand(min_value, max_value, set_type, set_values, msg_id_panel, v_proc_call.all);
+        end loop;
+      elsif uniqueness = UNIQUE then
+        -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
+        for i in 0 to size-1 loop
+          v_gen_new_random := true;
+          while v_gen_new_random loop
+            v_ret(i) := rand(min_value, max_value, set_type, set_values, msg_id_panel, v_proc_call.all);
+            if i > 0 then
+              v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            else
+              v_gen_new_random := false;
+            end if;
+          end loop;
+        end loop;
+      else
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant size          : positive;
+      constant min_value     : real;
+      constant max_value     : real;
+      constant set_type1     : t_set_type;
+      constant set_values1   : real_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : real_vector;
+      constant uniqueness    : t_uniqueness   := NON_UNIQUE;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return real_vector is
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+        to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
+        to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
+      variable v_proc_call       : line;
+      variable v_gen_new_random  : boolean := true;
+      variable v_ret             : real_vector(0 to size-1);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      if uniqueness = NON_UNIQUE then
+        -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
+        for i in 0 to size-1 loop
+          v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, msg_id_panel, v_proc_call.all);
+        end loop;
+      elsif uniqueness = UNIQUE then
+        -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
+        for i in 0 to size-1 loop
+          v_gen_new_random := true;
+          while v_gen_new_random loop
+            v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, msg_id_panel, v_proc_call.all);
+            if i > 0 then
+              v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            else
+              v_gen_new_random := false;
+            end if;
+          end loop;
+        end loop;
+      else
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
 
     ------------------------------------------------------------
     -- Random time_vector

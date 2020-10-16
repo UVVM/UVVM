@@ -213,6 +213,55 @@ begin
     end loop;
 
     ------------------------------------------------------------
+    -- Real Vector
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing real_vector (min/max)");
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, UNIQUE);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing real_vector (set of values)");
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.0,0.0,1.0,2.0));
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.0,0.0,1.0,2.0), UNIQUE);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing real_vector (min/max + set of values)");
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, INCL,(-3.0,3.0));
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, INCL,(-3.0,3.0), UNIQUE);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 5.0, EXCL,(-1.0,0.0,1.0), UNIQUE);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, INCL,(-3.0,3.0), EXCL,(-1.0,0.0,1.0));
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, INCL,(-3.0,3.0,4.0), EXCL,(-1.0,0.0,1.0), UNIQUE);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, INCL,(-3.0,3.0), INCL,(4.0,5.0), UNIQUE);
+      log("v_real_vec:" & to_string(v_real_vec));
+    end loop;
+
+    ------------------------------------------------------------
     -- Unsigned
     ------------------------------------------------------------
     log(ID_LOG_HDR, "Testing unsigned (length)");

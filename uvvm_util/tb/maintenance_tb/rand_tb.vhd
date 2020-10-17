@@ -405,6 +405,57 @@ begin
     end loop;
 
     ------------------------------------------------------------
+    -- Signed
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing signed (length)");
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length);
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing signed (min/max)");
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -2, 2);
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing signed (set of values)");
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, ONLY,(-2,0,2));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, EXCL,(-1,0,1));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(15,16,17));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(-1,0,1));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(15,16,17), EXCL,(-1,0,1));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(-1,0,1), INCL,(15,16,17));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(15,16), INCL,(17,18));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+    for i in 0 to 4 loop
+      v_sig := v_rand.rand(v_sig'length, -3, 3, EXCL,(-2,-1,0), EXCL,(1,2));
+      log("v_sig:" & to_string(v_sig, DEC));
+    end loop;
+
+    ------------------------------------------------------------
     -- Std_logic_vector
     ------------------------------------------------------------
     log(ID_LOG_HDR, "Testing std_logic_vector (length)");

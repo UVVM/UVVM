@@ -391,6 +391,49 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Random signed
     ------------------------------------------------------------
+    impure function rand(
+      constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand(
+      constant length        : positive;
+      constant set_type      : t_set_type;
+      constant set_values    : integer_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant set_type      : t_set_type;
+      constant set_values    : integer_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant set_type1     : t_set_type;
+      constant set_values1   : integer_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : integer_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
 
     ------------------------------------------------------------
     -- Random std_logic_vector
@@ -522,16 +565,6 @@ package body rand_pkg is
       return v_found;
     end function;
 
-    -- Overload
-    function check_value_in_vector(
-      constant value  : integer;
-      constant vector : t_natural_vector)
-    return boolean is
-      variable v_found : boolean := false;
-    begin
-      return check_value_in_vector(value, integer_vector(vector));
-    end function;
-
     -- Logs the procedure call unless it is called from another
     -- procedure to avoid duplicate logs. It also generates the
     -- correct procedure call to be used for logging or alerts.
@@ -555,23 +588,34 @@ package body rand_pkg is
     -- Checks that the parameters are within a valid range
     -- for the given length
     procedure check_parameters_within_range(
-      constant length       : in natural;
-      constant min_value    : in natural;
-      constant max_value    : in natural;
-      constant msg_id_panel : in t_msg_id_panel) is
+      constant length        : in natural;
+      constant min_value     : in integer;
+      constant max_value     : in integer;
+      constant msg_id_panel  : in t_msg_id_panel;
+      constant signed_values : in boolean) is
     begin
-      check_value_in_range(min_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
-      check_value_in_range(max_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      if signed_values then
+        check_value_in_range(min_value, -2**(length-1), 2**(length-1)-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        check_value_in_range(max_value, -2**(length-1), 2**(length-1)-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      else
+        check_value_in_range(min_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        check_value_in_range(max_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+      end if;
     end procedure;
 
     -- Overload
     procedure check_parameters_within_range(
-      constant length       : in natural;
-      constant set_values   : in t_natural_vector;
-      constant msg_id_panel : in t_msg_id_panel) is
+      constant length        : in natural;
+      constant set_values    : in integer_vector;
+      constant msg_id_panel  : in t_msg_id_panel;
+      constant signed_values : in boolean) is
     begin
       for i in set_values'range loop
-        check_value_in_range(set_values(i), 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        if signed_values then
+          check_value_in_range(set_values(i), -2**(length-1), 2**(length-1)-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        else
+          check_value_in_range(set_values(i), 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        end if;
       end loop;
     end procedure;
 
@@ -1734,7 +1778,7 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       -- Generate a random value in the range [min_value:max_value]
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel);
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
       v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -1751,19 +1795,21 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
       variable v_proc_call       : line;
       variable v_gen_new_random  : boolean := true;
+      variable v_unsigned        : unsigned(length-1 downto 0);
       variable v_ret             : integer;
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
-      check_parameters_within_range(length, set_values, msg_id_panel);
+      check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
       -- Generate a random value within the set of values
       if set_type = ONLY then
         v_ret := rand(ONLY, integer_vector(set_values), msg_id_panel, v_proc_call.all);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
         while v_gen_new_random loop
-          v_ret := to_integer(rand(length, msg_id_panel, v_proc_call.all));
-          v_gen_new_random := check_value_in_vector(v_ret, set_values);
+          v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
+          v_ret  := to_integer(v_unsigned);
+          v_gen_new_random := check_value_in_vector(v_ret, integer_vector(set_values));
         end loop;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
@@ -1790,8 +1836,8 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel);
-      check_parameters_within_range(length, set_values, msg_id_panel);
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
+      check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
       v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -1818,9 +1864,9 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel);
-      check_parameters_within_range(length, set_values1, msg_id_panel);
-      check_parameters_within_range(length, set_values2, msg_id_panel);
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
+      check_parameters_within_range(length, integer_vector(set_values1), msg_id_panel, signed_values => false);
+      check_parameters_within_range(length, integer_vector(set_values2), msg_id_panel, signed_values => false);
       v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), msg_id_panel, v_proc_call.all);
 
       DEALLOCATE(v_proc_call);
@@ -1830,6 +1876,134 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Random signed
     ------------------------------------------------------------
+    impure function rand(
+      constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
+      variable v_proc_call : line;
+      variable v_ret       : signed(length-1 downto 0);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value for each bit of the vector
+      for i in 0 to length-1 loop
+        v_ret(i downto i) := signed(to_unsigned(rand(0, 1, msg_id_panel, v_proc_call.all), 1));
+      end loop;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ")";
+      variable v_proc_call : line;
+      variable v_ret       : integer;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value in the range [min_value:max_value]
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
+      v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
+
+      DEALLOCATE(v_proc_call);
+      return to_signed(v_ret,length);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant set_type      : t_set_type;
+      constant set_values    : integer_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
+      variable v_proc_call       : line;
+      variable v_gen_new_random  : boolean := true;
+      variable v_signed          : signed(length-1 downto 0);
+      variable v_ret             : integer;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
+      -- Generate a random value within the set of values
+      if set_type = ONLY then
+        v_ret := rand(ONLY, integer_vector(set_values), msg_id_panel, v_proc_call.all);
+      -- Generate a random value in the vector's range minus the set of values
+      elsif set_type = EXCL then
+        while v_gen_new_random loop
+          v_signed := rand(length, msg_id_panel, v_proc_call.all);
+          v_ret := to_integer(v_signed);
+          v_gen_new_random := check_value_in_vector(v_ret, set_values);
+        end loop;
+      else
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+      end if;
+
+      DEALLOCATE(v_proc_call);
+      return to_signed(v_ret,length);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant set_type      : t_set_type;
+      constant set_values    : integer_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
+        ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
+      variable v_proc_call : line;
+      variable v_ret       : integer;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
+      check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
+      v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), msg_id_panel, v_proc_call.all);
+
+      DEALLOCATE(v_proc_call);
+      return to_signed(v_ret,length);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant set_type1     : t_set_type;
+      constant set_values1   : integer_vector;
+      constant set_type2     : t_set_type;
+      constant set_values2   : integer_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
+        ", " & to_upper(to_string(set_type1)) & ":" & to_string(set_values1) &
+        ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ")";
+      variable v_proc_call : line;
+      variable v_ret       : integer;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
+      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
+      check_parameters_within_range(length, set_values1, msg_id_panel, signed_values => true);
+      check_parameters_within_range(length, set_values2, msg_id_panel, signed_values => true);
+      v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), msg_id_panel, v_proc_call.all);
+
+      DEALLOCATE(v_proc_call);
+      return to_signed(v_ret,length);
+    end function;
 
     ------------------------------------------------------------
     -- Random std_logic_vector

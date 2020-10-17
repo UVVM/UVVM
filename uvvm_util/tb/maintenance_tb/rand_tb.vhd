@@ -305,6 +305,55 @@ begin
     end loop;
 
     ------------------------------------------------------------
+    -- Time Vector
+    ------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing time_vector (min/max)");
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, UNIQUE);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing time_vector (set of values)");
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(-2 ps,-1 ps,0 ps,1 ps,2 ps));
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(-2 ps,-1 ps,0 ps,1 ps,2 ps), UNIQUE);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+
+    log(ID_LOG_HDR, "Testing time_vector (min/max + set of values)");
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-3 ps,3 ps));
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-3 ps,3 ps), UNIQUE);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 5 ps, EXCL,(-1 ps,0 ps,1 ps), UNIQUE);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-3 ps,3 ps), EXCL,(-1 ps,0 ps,1 ps));
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-3 ps,3 ps,4 ps), EXCL,(-1 ps,0 ps,1 ps), UNIQUE);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+    for i in 0 to 4 loop
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-3 ps,3 ps), INCL,(4 ps,5 ps), UNIQUE);
+      log("v_time_vec:" & to_string(v_time_vec));
+    end loop;
+
+    ------------------------------------------------------------
     -- Unsigned
     ------------------------------------------------------------
     log(ID_LOG_HDR, "Testing unsigned (length)");

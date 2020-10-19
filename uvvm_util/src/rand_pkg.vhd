@@ -651,8 +651,19 @@ package body rand_pkg is
     ------------------------------------------------------------
     procedure set_rand_seeds(
       constant str : in string) is
+      constant C_STR_LEN : natural := str'length;
+      constant C_MAX_POS : natural := integer'right;
     begin
-      --TODO: implementation
+      -- Create the seeds by accumulating the ASCII values of the string,
+      -- multiplied by a factor so they are widely spread, and making sure
+      -- they don't overflow the positive range.
+      for i in 1 to C_STR_LEN/2 loop
+        v_seed1 := (v_seed1 + char_to_ascii(str(i))*128) mod C_MAX_POS;
+      end loop;
+      v_seed2 := (v_seed2 + v_seed1) mod C_MAX_POS;
+      for i in C_STR_LEN/2+1 to C_STR_LEN loop
+        v_seed2 := (v_seed2 + char_to_ascii(str(i))*128) mod C_MAX_POS;
+      end loop;
     end procedure;
 
     procedure set_rand_seeds(

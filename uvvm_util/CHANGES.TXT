@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.15.1
+----------
+Released: 2020-XX-XX
+- Fixed to_string(integer) function using a negative value.
+- Fixed random time function by using the simulator base time unit instead of ns.
 
 v2.15.0
 ----------
@@ -11,7 +16,6 @@ Released: 2020-10-06
 - Corrected normalize_and_check() description in QR.
 - Corrected default KEEP_LEADING_0 for check_value() in QR.
 - Removed SLV range check for t_slv_array version of normalize_and_check().
-
 
 v2.14.2
 ----------

@@ -10,6 +10,12 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2020.XX.XX
+--------------------
+Released: 2020-XX-XX
+- Fixed to_string(integer) function using a negative value.
+- Fixed random time function by using the simulator base time unit instead of ns.
+
 
 v2 2020.10.06
 --------------------
@@ -41,7 +47,6 @@ Released: 2020-08-21
 - tick_off_req_cov() parameter.
 - Removed testcase as parameter in tick_off_req_cov() call.
 - Added missing queue, FIFO and stack in Util package.
-
 
 
 v2 2020.08.18

@@ -90,6 +90,10 @@ def main(argv):
   tb.set_tb_name("rand_tb")
   tb.run_simulation()
 
+  # Setup testbench and run
+  tb.set_tb_name("funct_cov_tb")
+  tb.run_simulation()
+
   # Print simulation results
   tb.print_statistics()
 

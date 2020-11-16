@@ -8,6 +8,7 @@ v2.15.1
 Released: 2020-XX-XX
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
+- Fixed random function overflowing with maximum values in min/max range.
 
 v2.15.0
 ----------

@@ -6660,7 +6660,7 @@ package body methods_pkg is
     -- Random real-number value in range 0 to 1.0
     uniform(v_seed1, v_seed2, v_rand);
     -- Scale to a random integer between min_value and max_value
-    v_target := min_value + integer(trunc(v_rand*real(1+max_value-min_value)));
+    v_target := integer(real(min_value) + trunc(v_rand*(1.0+real(max_value)-real(min_value))));
   end;
 
   -- Set target to a random integer between min_value and max_value
@@ -6695,7 +6695,7 @@ package body methods_pkg is
     -- Random real-number value in range 0 to 1.0
     uniform(v_seed1, v_seed2, v_rand);
     -- Scale to a random integer between min_value and max_value
-    v_rand_int := min_value/time_unit + integer(trunc(v_rand*real(1 + max_value/time_unit - min_value/time_unit)));
+    v_rand_int := integer(real(min_value/time_unit) + trunc(v_rand*(1.0+real(max_value/time_unit)-real(min_value/time_unit))));
     v_target   := v_rand_int * time_unit;
   end;
 

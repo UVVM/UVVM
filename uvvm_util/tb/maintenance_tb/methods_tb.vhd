@@ -1891,6 +1891,16 @@ begin
         -- Reset counter
         ctr(iteration) <= 0;
       end loop;
+      -- Test the max limit
+      for iteration in 1 to 10 loop
+        random(0, integer'right, v_seed1, v_seed2, v_i);
+        check_value_in_range(v_i, 0, integer'right, error, "Random integer function in range, OK", C_SCOPE, ID_NEVER);
+      end loop;
+      -- Test the min & max limits (not self checking)
+      for iteration in 1 to 10 loop
+        random(integer'left, integer'right, v_seed1, v_seed2, v_i);
+        log(ID_SEQUENCER, "Random int procedure = " & to_string(v_i), C_SCOPE);
+      end loop;
 
       -- Test the random real function
       for iteration in 1 to 5 loop

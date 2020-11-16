@@ -593,13 +593,16 @@ package body rand_pkg is
       constant max_value     : in integer;
       constant msg_id_panel  : in t_msg_id_panel;
       constant signed_values : in boolean) is
+      constant proc_name : string := "check_parameters_within_range";
+      variable v_len : natural;
     begin
+      v_len := length when length < 32 else 32; -- Length is limited by integer size
       if signed_values then
-        check_value_in_range(min_value, -2**(length-1), 2**(length-1)-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
-        check_value_in_range(max_value, -2**(length-1), 2**(length-1)-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
+        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
       else
-        check_value_in_range(min_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
-        check_value_in_range(max_value, 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+        check_value_in_range(min_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
+        check_value_in_range(max_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
       end if;
     end procedure;
 
@@ -609,12 +612,15 @@ package body rand_pkg is
       constant set_values    : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel;
       constant signed_values : in boolean) is
+      constant proc_name : string := "check_parameters_within_range";
+      variable v_len : natural;
     begin
+      v_len := length when length < 32 else 32; -- Length is limited by integer size
       for i in set_values'range loop
         if signed_values then
-          check_value_in_range(set_values(i), -2**(length-1), 2**(length-1)-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
         else
-          check_value_in_range(set_values(i), 0, 2**length-1, TB_WARNING, "length is only " & to_string(length) & " bits.", v_scope.all, ID_NEVER, msg_id_panel);
+          check_value_in_range(set_values(i), 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
         end if;
       end loop;
     end procedure;
@@ -631,7 +637,7 @@ package body rand_pkg is
     end procedure;
 
     ------------------------------------------------------------
-    -- Randomization distribution
+    -- Configuration
     ------------------------------------------------------------
     procedure set_rand_dist(
       constant rand_dist : in t_rand_dist) is
@@ -715,6 +721,10 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       -- Generate a random value in the range [min_value:max_value]
+      if min_value > max_value then
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+        return 0;
+      end if;
       case v_rand_dist is
         when UNIFORM =>
           random(min_value, max_value, v_seed1, v_seed2, v_ret);
@@ -870,6 +880,10 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       -- Generate a random value in the range [min_value:max_value]
+      if min_value > max_value then
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+        return 0.0;
+      end if;
       case v_rand_dist is
         when UNIFORM =>
           random(min_value, max_value, v_seed1, v_seed2, v_ret);
@@ -1022,6 +1036,10 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       -- Generate a random value in the range [min_value:max_value]
+      if min_value > max_value then
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+        return 0 ns;
+      end if;
       case v_rand_dist is
         when UNIFORM =>
           random(min_value, max_value, v_seed1, v_seed2, v_ret);

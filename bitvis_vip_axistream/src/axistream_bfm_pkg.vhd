@@ -762,12 +762,14 @@ package body axistream_bfm_pkg is
       -- Set tvalid low (once per transmission or multiple random times)
       -------------------------------------------------------------------
       if v_byte_in_word = 0 and (config.valid_low_duration > 0 or config.valid_low_duration = C_RANDOM) then
+        v_valid_low_cycle_count := 0;
         -- Check if pulse duration is defined or random
         if config.valid_low_duration > 0 then
           v_valid_low_duration := config.valid_low_duration;
         elsif config.valid_low_duration = C_RANDOM then
           v_valid_low_duration := random(1,5);
         end if;
+
         -- Deassert tvalid once per transmission on a specific word
         if config.valid_low_at_word_num = byte/c_num_bytes_per_word then
           while v_valid_low_cycle_count < v_valid_low_duration loop
@@ -775,6 +777,7 @@ package body axistream_bfm_pkg is
             wait until rising_edge(clk);
             wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
           end loop;
+
         -- Deassert tvalid multiple random times per transmission
         elsif config.valid_low_at_word_num = C_MULTIPLE_RANDOM and v_next_deassert_byte = byte then
           while v_valid_low_cycle_count < v_valid_low_duration loop
@@ -1355,6 +1358,7 @@ package body axistream_bfm_pkg is
       -- Set tready low before given byte (once per transmission or multiple random times)
       --------------------------------------------------------------------------------------
       if v_byte_in_word = 0 and (config.ready_low_duration > 0 or config.ready_low_duration = C_RANDOM) then
+        v_ready_low_cycle_count := 0;
         -- Check if pulse duration is defined or random
         if config.ready_low_duration > 0 then
           v_ready_low_duration := config.ready_low_duration;

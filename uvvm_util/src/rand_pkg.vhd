@@ -36,29 +36,29 @@ package rand_pkg is
   -- Types
   ------------------------------------------------------------
   type t_rand_dist is (UNIFORM, GAUSSIAN);
-
   type t_set_type is (ONLY, INCL, EXCL);
-
   type t_uniqueness is (UNIQUE, NON_UNIQUE);
-
-  type t_weight_int is record
-    value  : integer;
-    weight : natural;
+  type t_weight_mode is (NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT, DEFAULT_MODE);
+  
+  type t_val_weight_int is record
+    value     : integer;
+    weight    : natural;
+  end record;
+  type t_range_weight_int is record
+    min_value : integer;
+    max_value : integer;
+    weight    : natural;
+  end record;
+  type t_range_weight_mode_int is record
+    min_value : integer;
+    max_value : integer;
+    weight    : natural;
+    mode      : t_weight_mode;
   end record;
 
-  type t_weight_real is record
-    value  : real;
-    weight : natural;
-  end record;
-
-  type t_weight_time is record
-    value  : time;
-    weight : natural;
-  end record;
-
-  type t_weight_int_vector is array (natural range <>) of t_weight_int;
-  type t_weight_real_vector is array (natural range <>) of t_weight_real;
-  type t_weight_time_vector is array (natural range <>) of t_weight_time;
+  type t_val_weight_int_vec         is array (natural range <>) of t_val_weight_int;
+  type t_range_weight_int_vec       is array (natural range <>) of t_range_weight_int;
+  type t_range_weight_mode_int_vec  is array (natural range <>) of t_range_weight_mode_int;
 
   ------------------------------------------------------------
   -- Protected type
@@ -70,6 +70,9 @@ package rand_pkg is
     ------------------------------------------------------------
     procedure set_rand_dist(
       constant rand_dist : in t_rand_dist);
+
+    procedure set_range_weight_default_mode(
+      constant mode : in t_weight_mode);
 
     procedure set_scope(
       constant scope : in string);
@@ -498,6 +501,33 @@ package rand_pkg is
       constant ext_proc_call : string         := "")
     return boolean;
 
+    ------------------------------------------------------------
+    -- Random weighted integer
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer;
+
+    impure function rand_range_weight(
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer;
+
+    impure function rand_range_weight_mode(
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer;
+
+    -- Random weighted unsigned
+    -- Random weighted signed
+    -- Random weighted std_logic_vector
+    --Q: Random weighted real?
+    --Q: Random weighted time?
+
   end protected t_rand;
 
 end package rand_pkg;
@@ -508,15 +538,76 @@ package body rand_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_rand is protected body
-    variable v_scope                : line        := new string'(C_SCOPE);
-    variable v_seed1                : positive    := C_INIT_SEED_1;
-    variable v_seed2                : positive    := C_INIT_SEED_2;
-    variable v_rand_dist            : t_rand_dist := UNIFORM;
-    variable v_warned_same_set_type : boolean     := false;
+    variable v_scope                : line          := new string'(C_SCOPE);
+    variable v_seed1                : positive      := C_INIT_SEED_1;
+    variable v_seed2                : positive      := C_INIT_SEED_2;
+    variable v_rand_dist            : t_rand_dist   := UNIFORM;
+    variable v_weight_mode          : t_weight_mode := COMBINED_WEIGHT;
+    variable v_warned_same_set_type : boolean       := false;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
     ------------------------------------------------------------
+    -- Returns the string representation of the weight vector, e.g.
+    --   10=w{30},[20:30]=w{30},40=w{50}
+    function to_string(
+      constant weight_vector : t_range_weight_mode_int_vec)
+    return string is
+      alias normalized_weight_vector : t_range_weight_mode_int_vec(0 to weight_vector'length-1) is weight_vector;
+      variable v_line    : line;
+      variable v_str     : string(1 to 100);
+      variable v_str_len : natural;
+    begin
+      for i in normalized_weight_vector'range loop
+        if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
+          write(v_line, to_string(normalized_weight_vector(i).min_value));
+          write(v_line, string'("=w{"));
+          write(v_line, to_string(normalized_weight_vector(i).weight));
+          write(v_line, '}');
+        else
+          write(v_line, '[');
+          write(v_line, to_string(normalized_weight_vector(i).min_value));
+          write(v_line, ':');
+          write(v_line, to_string(normalized_weight_vector(i).max_value));
+          write(v_line, string'("]=w{"));
+          write(v_line, to_string(normalized_weight_vector(i).weight));
+          write(v_line, '}');
+        end if;
+        if i < normalized_weight_vector'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+
+      v_str_len := v_line.all'length;
+      v_str(1 to v_str_len) := v_line.all;
+      DEALLOCATE(v_line);
+      return v_str(1 to v_str_len);
+    end function;
+
+    -- Overload
+    function to_string(
+      constant weight_vector : t_range_weight_int_vec)
+    return string is
+      variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
+    begin
+      for i in weight_vector'range loop
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, DEFAULT_MODE);
+      end loop;
+      return to_string(v_weight_vector);
+    end function;
+
+    -- Overload
+    function to_string(
+      constant weight_vector : t_val_weight_int_vec)
+    return string is
+      variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
+    begin
+      for i in weight_vector'range loop
+        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, DEFAULT_MODE);
+      end loop;
+      return to_string(v_weight_vector);
+    end function;
+
     -- Returns true if a value is contained in a vector
     function check_value_in_vector(
       constant value  : integer;
@@ -643,6 +734,12 @@ package body rand_pkg is
       constant rand_dist : in t_rand_dist) is
     begin
       v_rand_dist := rand_dist;
+    end procedure;
+
+    procedure set_range_weight_default_mode(
+      constant mode : in t_weight_mode) is
+    begin
+      v_weight_mode := mode;
     end procedure;
 
     procedure set_scope(
@@ -2144,6 +2241,92 @@ package body rand_pkg is
 
       DEALLOCATE(v_proc_call);
       return v_ret(0) = '1';
+    end function;
+
+    ------------------------------------------------------------
+    -- Random weighted integer
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer is
+      constant C_LOCAL_CALL : string := "rand_val_weight(" & to_string(weight_vector) & ")";
+      variable v_proc_call     : line;
+      variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      for i in weight_vector'range loop
+        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, DEFAULT_MODE);
+      end loop;
+
+      return rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
+    end function;
+
+    impure function rand_range_weight(
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer is
+      constant C_LOCAL_CALL : string := "rand_range_weight(" & to_string(weight_vector) & ")";
+      variable v_proc_call     : line;
+      variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      for i in weight_vector'range loop
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, DEFAULT_MODE);
+      end loop;
+
+      return rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
+    end function;
+
+    impure function rand_range_weight_mode(
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer is
+      constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weight_vector) & ")";
+      variable v_proc_call         : line;
+      variable v_mode              : t_weight_mode;
+      variable v_acc_weight        : natural := 0;
+      variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
+      variable v_weight_idx        : natural := 0;
+      variable v_values_in_range   : natural := 0;
+      variable v_ret               : integer;
+    begin
+      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+
+      -- Create a new vector with the accumulated weights
+      for i in weight_vector'range loop
+        v_mode := v_weight_mode when weight_vector(i).mode = DEFAULT_MODE else weight_vector(i).mode;
+        -- Divide the weight between the number of values in the range
+        if v_mode = COMBINED_WEIGHT then
+          v_acc_weight := v_acc_weight + weight_vector(i).weight;
+        -- Use the same weight for each value in the range
+        elsif v_mode = INDIVIDUAL_WEIGHT then
+          v_values_in_range := weight_vector(i).max_value - weight_vector(i).min_value + 1;
+          check_value(v_values_in_range > 0, TB_ERROR, "The min_value parameter must be less or equal than max_value", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+          v_acc_weight := v_acc_weight + weight_vector(i).weight*v_values_in_range;
+        end if;
+        v_acc_weight_vector(i) := v_acc_weight;
+      end loop;
+      check_value(v_acc_weight > 0, TB_ERROR, "The total weight of the values must be greater than 0", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+
+      -- Generate a random value between 1 and the total accumulated weight
+      v_weight_idx := rand(1, v_acc_weight, msg_id_panel, v_proc_call.all);
+
+      -- Associate the random value to the original value in the vector based on the weight
+      for i in v_acc_weight_vector'range loop
+        if v_weight_idx <= v_acc_weight_vector(i) then
+          v_ret := rand(weight_vector(i).min_value, weight_vector(i).max_value, msg_id_panel, v_proc_call.all);
+          exit;
+        end if;
+      end loop;
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
     end function;
 
   end protected body t_rand;

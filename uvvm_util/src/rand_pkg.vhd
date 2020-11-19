@@ -549,8 +549,8 @@ package body rand_pkg is
     -- Internal functions and procedures
     ------------------------------------------------------------
     -- Returns the string representation of the weight vector, e.g.
-    --   10=w{30},[20:30]=w{30},40=w{50}
-    function to_string(
+    --   10=W{30},[20:30]=CW{30},40=W{50}
+    impure function to_string(
       constant weight_vector : t_range_weight_mode_int_vec)
     return string is
       alias normalized_weight_vector : t_range_weight_mode_int_vec(0 to weight_vector'length-1) is weight_vector;
@@ -561,7 +561,7 @@ package body rand_pkg is
       for i in normalized_weight_vector'range loop
         if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
           write(v_line, to_string(normalized_weight_vector(i).min_value));
-          write(v_line, string'("=w{"));
+          write(v_line, string'("=W{"));
           write(v_line, to_string(normalized_weight_vector(i).weight));
           write(v_line, '}');
         else
@@ -569,7 +569,15 @@ package body rand_pkg is
           write(v_line, to_string(normalized_weight_vector(i).min_value));
           write(v_line, ':');
           write(v_line, to_string(normalized_weight_vector(i).max_value));
-          write(v_line, string'("]=w{"));
+          if normalized_weight_vector(i).mode = INDIVIDUAL_WEIGHT then
+            write(v_line, string'("]=IW{"));
+          elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
+            write(v_line, string'("]=CW{"));
+          elsif v_weight_mode = INDIVIDUAL_WEIGHT then
+            write(v_line, string'("]=IW{"));
+          elsif v_weight_mode = COMBINED_WEIGHT then
+            write(v_line, string'("]=CW{"));
+          end if;
           write(v_line, to_string(normalized_weight_vector(i).weight));
           write(v_line, '}');
         end if;
@@ -585,7 +593,7 @@ package body rand_pkg is
     end function;
 
     -- Overload
-    function to_string(
+    impure function to_string(
       constant weight_vector : t_range_weight_int_vec)
     return string is
       variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
@@ -597,7 +605,7 @@ package body rand_pkg is
     end function;
 
     -- Overload
-    function to_string(
+    impure function to_string(
       constant weight_vector : t_val_weight_int_vec)
     return string is
       variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
@@ -684,16 +692,16 @@ package body rand_pkg is
       constant max_value     : in integer;
       constant msg_id_panel  : in t_msg_id_panel;
       constant signed_values : in boolean) is
-      constant proc_name : string := "check_parameters_within_range";
+      constant C_PROC_NAME : string := "check_parameters_within_range";
       variable v_len : natural;
     begin
       v_len := length when length < 32 else 32; -- Length is limited by integer size
       if signed_values then
-        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
-        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
+        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
       else
-        check_value_in_range(min_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
-        check_value_in_range(max_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
+        check_value_in_range(min_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
       end if;
     end procedure;
 
@@ -703,15 +711,15 @@ package body rand_pkg is
       constant set_values    : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel;
       constant signed_values : in boolean) is
-      constant proc_name : string := "check_parameters_within_range";
+      constant C_PROC_NAME : string := "check_parameters_within_range";
       variable v_len : natural;
     begin
       v_len := length when length < 32 else 32; -- Length is limited by integer size
       for i in set_values'range loop
         if signed_values then
-          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
+          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         else
-          check_value_in_range(set_values(i), 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, proc_name);
+          check_value_in_range(set_values(i), 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         end if;
       end loop;
     end procedure;
@@ -739,7 +747,11 @@ package body rand_pkg is
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode) is
     begin
-      v_weight_mode := mode;
+      if mode = COMBINED_WEIGHT or mode = INDIVIDUAL_WEIGHT then
+        v_weight_mode := mode;
+      else
+        alert(TB_ERROR, "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")=> Failed. Mode not supported", v_scope.all);
+      end if;
     end procedure;
 
     procedure set_scope(
@@ -2300,19 +2312,25 @@ package body rand_pkg is
 
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
-        v_mode := v_weight_mode when weight_vector(i).mode = DEFAULT_MODE else weight_vector(i).mode;
+        v_mode := v_weight_mode when (weight_vector(i).mode = DEFAULT_MODE or weight_vector(i).mode = NA) else weight_vector(i).mode;
         -- Divide the weight between the number of values in the range
         if v_mode = COMBINED_WEIGHT then
           v_acc_weight := v_acc_weight + weight_vector(i).weight;
         -- Use the same weight for each value in the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
+          if weight_vector(i).min_value > weight_vector(i).max_value then
+            alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
+            return 0;
+          end if;
           v_values_in_range := weight_vector(i).max_value - weight_vector(i).min_value + 1;
-          check_value(v_values_in_range > 0, TB_ERROR, "The min_value parameter must be less or equal than max_value", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
           v_acc_weight := v_acc_weight + weight_vector(i).weight*v_values_in_range;
         end if;
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
-      check_value(v_acc_weight > 0, TB_ERROR, "The total weight of the values must be greater than 0", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+      if v_acc_weight = 0 then
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", v_scope.all);
+        return 0;
+      end if;
 
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, msg_id_panel, v_proc_call.all);

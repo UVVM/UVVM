@@ -17,11 +17,14 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use std.textio.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 package rand_tb_pkg is
+
+  type t_integer_cnt  is array (integer range <>) of integer;
 
   ------------------------------------------------------------
   -- Check within range
@@ -273,7 +276,7 @@ package rand_tb_pkg is
   -- Check within range and sets of values
   ------------------------------------------------------------
   -- Base function (integer)
-  function check_rand_value(
+  impure function check_rand_value(
     constant value       : integer;
     constant min_range   : integer;
     constant max_range   : integer;
@@ -284,7 +287,7 @@ package rand_tb_pkg is
   return boolean;
 
   -- Base function (real)
-  function check_rand_value(
+  impure function check_rand_value(
     constant value       : real;
     constant min_range   : real;
     constant max_range   : real;
@@ -295,7 +298,7 @@ package rand_tb_pkg is
   return boolean;
 
   -- Base function (time)
-  function check_rand_value(
+  impure function check_rand_value(
     constant value       : time;
     constant min_range   : time;
     constant max_range   : time;
@@ -394,6 +397,12 @@ package rand_tb_pkg is
     constant set_values1 : in t_natural_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector);
+
+  -- Prints an array of values with their corresponding weight count and weight percentage.
+  -- Checks that the weight count is within margins of the expected count. And resets the weight counts.
+  procedure print_and_check_weights(
+    variable weight_cnt  : inout t_integer_cnt;
+    constant weight_dist : in    integer_vector);
 
 end package rand_tb_pkg;
 
@@ -961,7 +970,7 @@ package body rand_tb_pkg is
   -- Check within range and sets of values
   ------------------------------------------------------------
   -- Base function (integer)
-  function check_rand_value(
+  impure function check_rand_value(
     constant value       : integer;
     constant min_range   : integer;
     constant max_range   : integer;
@@ -970,8 +979,9 @@ package body rand_tb_pkg is
     constant set_type2   : t_set_type;
     constant set_values2 : integer_vector)
   return boolean is
+    constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER);
+    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = INCL then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
@@ -985,7 +995,7 @@ package body rand_tb_pkg is
   end function;
 
   -- Base function (real)
-  function check_rand_value(
+  impure function check_rand_value(
     constant value       : real;
     constant min_range   : real;
     constant max_range   : real;
@@ -994,8 +1004,9 @@ package body rand_tb_pkg is
     constant set_type2   : t_set_type;
     constant set_values2 : real_vector)
   return boolean is
+    constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER);
+    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = INCL then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
@@ -1009,7 +1020,7 @@ package body rand_tb_pkg is
   end function;
 
   -- Base function (time)
-  function check_rand_value(
+  impure function check_rand_value(
     constant value       : time;
     constant min_range   : time;
     constant max_range   : time;
@@ -1018,8 +1029,9 @@ package body rand_tb_pkg is
     constant set_type2   : t_set_type;
     constant set_values2 : time_vector)
   return boolean is
+    constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER);
+    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = INCL then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
@@ -1195,6 +1207,94 @@ package body rand_tb_pkg is
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     end if;
+  end procedure;
+
+  -- Prints an array of values with their corresponding weight count and weight percentage.
+  -- Checks that the weight count is within margins of the expected count. And resets the weight counts.
+  procedure print_and_check_weights(
+    variable weight_cnt  : inout t_integer_cnt;
+    constant weight_dist : in    integer_vector) is
+    constant C_PROC_NAME      : string := "print_and_check_weights";
+    constant C_PREFIX         : string := C_LOG_PREFIX & fill_string(' ', C_LOG_MSG_ID_WIDTH+C_LOG_TIME_WIDTH+C_LOG_SCOPE_WIDTH+4);
+    constant C_COL_WIDTH      : natural := 7;
+    constant C_NUM_WEIGHTS    : natural := weight_dist'length;
+    constant C_MARGIN         : natural := 30; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
+    variable v_line           : line;
+    variable v_line_copy      : line;
+    variable v_tot_weight     : natural := 0;
+    variable v_weight_cnt_vld : integer_vector(0 to C_NUM_WEIGHTS-1);
+    variable v_idx            : natural := 0;
+    variable v_val_size       : natural := 0;
+    variable v_percentage     : natural := 0;
+  begin
+    -- Calculate the total weight
+    for i in weight_dist'range loop
+      v_tot_weight := v_tot_weight + weight_dist(i);
+    end loop;
+
+    -- Copy the valid weight counts (greater than 0) to a new vector
+    for i in weight_cnt'range loop
+      if weight_cnt(i) > 0 then
+        v_weight_cnt_vld(v_idx) := weight_cnt(i);
+        v_idx := v_idx + 1;
+      end if;
+    end loop;
+    check_value(v_idx = C_NUM_WEIGHTS, TB_ERROR, "Length of weight_dist (" & to_string(C_NUM_WEIGHTS) & ") doesn't match expected number of valid weight_cnt (" &
+      to_string(v_idx) & ").", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+
+    -- Print upper line
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    -- Print info
+    for row in 0 to 2 loop
+      case row is
+        when 0 =>
+          write(v_line, string'("value: "));
+          for i in weight_cnt'range loop
+            if weight_cnt(i) > 0 then
+              v_val_size := integer'image(i)'length;
+              write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(i));
+            end if;
+          end loop;
+        when 1 =>
+          write(v_line, string'("weight:"));
+          for i in weight_dist'range loop
+            v_percentage := weight_dist(i)*100/v_tot_weight;
+            v_val_size := integer'image(v_percentage)'length + 1;
+            write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_percentage) & "%");
+          end loop;
+        when 2 =>
+          write(v_line, string'("hits:  "));
+          for i in v_weight_cnt_vld'range loop
+            v_val_size := integer'image(v_weight_cnt_vld(i))'length;
+            write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_weight_cnt_vld(i)));
+          end loop;
+      end case;
+      write(v_line, LF);
+    end loop;
+    -- Print bottom line
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
+
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
+
+    -- Write the info string to transcript
+    write (v_line_copy, v_line.all);  -- copy line
+    writeline(OUTPUT, v_line);
+    writeline(LOG_FILE, v_line_copy);
+    deallocate(v_line);
+    deallocate(v_line_copy);
+
+    -- Check the weight counts are within margin
+    for i in v_weight_cnt_vld'range loop
+      v_percentage := (weight_dist(i)*100/v_tot_weight)*10; -- Multiply by 10 since there are 1000 samples
+      check_value_in_range(v_weight_cnt_vld(i), v_percentage-C_MARGIN, v_percentage+C_MARGIN, TB_WARNING, "Number of hits is outside expected margin.",
+        C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    end loop;
+
+    -- Reset weight counts
+    for i in weight_cnt'range loop
+      weight_cnt(i) := 0;
+    end loop;
   end procedure;
 
 end package body rand_tb_pkg;

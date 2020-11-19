@@ -17,6 +17,9 @@ Released: 2020-XX-XX
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.
 - Fixed Axistream C_MULTIPLE_RANDOM for valid & ready low not working.
+- Fixed bug in to_string functions for t_slv_array, t_unsigned_array and t_signed_array that
+  caused a failure when using wide words
+- Improved to_string functions for slv, signed and unsigned when printing long decimal values
 
 
 v2 2020.10.06

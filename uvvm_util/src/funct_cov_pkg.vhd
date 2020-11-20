@@ -35,10 +35,10 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
-  type t_cov_bin_content is (VALUES, MIN_MAX, TRANSITION);
+  type t_cov_bin_type is (VAL, RAN, TRN);
 
   type t_cov_bin is record
-    contains   : t_cov_bin_content;
+    contains   : t_cov_bin_type;
     values     : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
     num_values : natural;
     hits       : natural;
@@ -255,7 +255,7 @@ package body funct_cov_pkg is
     begin
       log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
-      v_bins(v_bin_idx).contains   := VALUES;
+      v_bins(v_bin_idx).contains   := VAL;
       v_bins(v_bin_idx).values(0)  := value;
       v_bins(v_bin_idx).num_values := 1;
       v_bins(v_bin_idx).hits       := 0;
@@ -296,7 +296,7 @@ package body funct_cov_pkg is
     begin
       log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
-      v_bins(v_bin_idx).contains   := VALUES;
+      v_bins(v_bin_idx).contains   := VAL;
       v_bins(v_bin_idx).values(0 to set_values'length-1) := set_values;
       v_bins(v_bin_idx).num_values := set_values'length;
       v_bins(v_bin_idx).hits       := 0;
@@ -402,7 +402,7 @@ package body funct_cov_pkg is
     begin
       log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
-      v_bins(v_bin_idx).contains   := MIN_MAX;
+      v_bins(v_bin_idx).contains   := RAN;
       v_bins(v_bin_idx).values(0)  := min_value;
       v_bins(v_bin_idx).values(1)  := max_value;
       v_bins(v_bin_idx).num_values := 2;
@@ -470,7 +470,7 @@ package body funct_cov_pkg is
 
     --procedure add_bin_t(set_transitions : integer_vector) is
     --begin
-    --  v_bins(v_bin_idx).contains   := TRANSITION;
+    --  v_bins(v_bin_idx).contains   := TRN;
     --  v_bins(v_bin_idx).values(0 to set_transitions'length-1) := set_transitions;
     --  v_bins(v_bin_idx).num_values := set_transitions'length;
     --  v_bins(v_bin_idx).hits       := 0;
@@ -495,17 +495,17 @@ package body funct_cov_pkg is
         case v_bins(i).contains is
           --when ILLEGAL =>
             --
-          when VALUES =>
+          when VAL =>
             for j in 0 to v_bins(i).num_values-1 loop
               if value = v_bins(i).values(j) then
                 v_bins(i).hits := v_bins(i).hits + 1;
               end if;
             end loop;
-          when MIN_MAX =>
+          when RAN =>
             if value >= v_bins(i).values(0) and value <= v_bins(i).values(1) then
               v_bins(i).hits := v_bins(i).hits + 1;
             end if;
-          when TRANSITION =>
+          when TRN =>
             --
         end case;
       end loop;
@@ -592,7 +592,7 @@ package body funct_cov_pkg is
 
       -- Print bins
       for i in 0 to v_bin_idx-1 loop
-        if v_bins(i).contains = VALUES then
+        if v_bins(i).contains = VAL then
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(to_string(v_bins(i).values(0 to v_bins(i).num_values-1)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -602,7 +602,7 @@ package body funct_cov_pkg is
             justify(to_string(v_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(is_bin_covered(v_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        elsif v_bins(i).contains = MIN_MAX then
+        elsif v_bins(i).contains = RAN then
           write(v_line, justify(
             fill_string(' ', 5) &
             justify("(" & to_string(v_bins(i).values(0)) & " to " & to_string(v_bins(i).values(1)) & ")", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &

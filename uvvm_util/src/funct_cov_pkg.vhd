@@ -69,7 +69,7 @@ package funct_cov_pkg is
     procedure add_bin_single(
       constant value         : in integer;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
@@ -90,7 +90,7 @@ package funct_cov_pkg is
     procedure add_bin_multiple(
       constant set_values    : in integer_vector;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
@@ -114,7 +114,7 @@ package funct_cov_pkg is
       constant max_value     : in integer;
       constant num_bins      : in natural := 0; --Q: this default doesn't make sense here, probably need to make new function or be required
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
@@ -140,7 +140,7 @@ package funct_cov_pkg is
       constant min_value     : in integer;
       constant max_value     : in integer;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
@@ -163,7 +163,7 @@ package funct_cov_pkg is
     procedure add_bins_slv(
       constant vector        : in std_logic_vector;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
@@ -245,7 +245,7 @@ package body funct_cov_pkg is
     procedure add_bin_single(
       constant value         : in integer;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
@@ -286,7 +286,7 @@ package body funct_cov_pkg is
     procedure add_bin_multiple(
       constant set_values    : in integer_vector;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
@@ -330,7 +330,7 @@ package body funct_cov_pkg is
       constant max_value     : in integer;
       constant num_bins      : in natural := 0;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
@@ -392,7 +392,7 @@ package body funct_cov_pkg is
       constant min_value     : in integer;
       constant max_value     : in integer;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
@@ -436,7 +436,7 @@ package body funct_cov_pkg is
     procedure add_bins_slv(
       constant vector        : in std_logic_vector;
       constant min_cov       : in positive;
-      constant rand_weight   : in positive;
+      constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is

@@ -445,7 +445,6 @@ begin
         axistream_expect_bytes (AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes-1), v_user_array(0 to v_numWords-1), "expect,   tlast wrong ,i="&to_string(i), NO_ALERT);
 
         -- due to the premature tlast, make an extra call to read the remaining (corrupt) packet
-        increment_expected_alerts(warning, 1);
         axistream_expect_bytes (AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes-1), v_user_array(0 to v_numWords-1), "expect,   tlast wrong ,i="&to_string(i), NO_ALERT);
 
         await_completion(AXISTREAM_VVCT, 1, 1 ms);

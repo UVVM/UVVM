@@ -869,9 +869,6 @@ package body rand_pkg is
       return normalized_set_values(v_ret);
     end function;
 
-    --Q: IMPLEMENTATION OPTIONS:
-    -- 1. make a new vector, add values min->max + set_values, use rand(set_values) --> slower, safer, but can't implement in real or time
-    -- 2. use rand(min,max+num_values), if rand>max replace for set_values(i) --> faster, but problem if max is close to integer'max (test)
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
@@ -891,9 +888,17 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
-        v_ret := rand(min_value, max_value+set_values'length, msg_id_panel, v_proc_call.all);
-        if v_ret > max_value then
-          v_ret := normalized_set_values(v_ret-max_value-1);
+        -- Avoid an integer overflow by adding the set_values to the max_value or subtracting them from the min_value
+        if max_value <= integer'right-set_values'length then
+          v_ret := rand(min_value, max_value+set_values'length, msg_id_panel, v_proc_call.all);
+          if v_ret > max_value then
+            v_ret := normalized_set_values(v_ret-max_value-1);
+          end if;
+        else
+          v_ret := rand(min_value-set_values'length, max_value, msg_id_panel, v_proc_call.all);
+          if v_ret < min_value then
+            v_ret := normalized_set_values(min_value-v_ret-1);
+          end if;
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif set_type = EXCL then

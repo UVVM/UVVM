@@ -38,7 +38,7 @@ package rand_pkg is
   type t_rand_dist is (UNIFORM, GAUSSIAN);
   type t_set_type is (ONLY, INCL, EXCL);
   type t_uniqueness is (UNIQUE, NON_UNIQUE);
-  type t_weight_mode is (NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT, DEFAULT_MODE);
+  type t_weight_mode is (NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT);
   
   type t_val_weight_int is record
     value     : integer;
@@ -599,7 +599,7 @@ package body rand_pkg is
       variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
     begin
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, DEFAULT_MODE);
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
       end loop;
       return to_string(v_weight_vector);
     end function;
@@ -611,7 +611,7 @@ package body rand_pkg is
       variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
     begin
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, DEFAULT_MODE);
+        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, v_weight_mode);
       end loop;
       return to_string(v_weight_vector);
     end function;
@@ -2270,7 +2270,7 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, DEFAULT_MODE);
+        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, v_weight_mode);
       end loop;
 
       return rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
@@ -2288,7 +2288,7 @@ package body rand_pkg is
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
 
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, DEFAULT_MODE);
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
       end loop;
 
       return rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
@@ -2312,7 +2312,7 @@ package body rand_pkg is
 
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
-        v_mode := v_weight_mode when (weight_vector(i).mode = DEFAULT_MODE or weight_vector(i).mode = NA) else weight_vector(i).mode;
+        v_mode := v_weight_mode when weight_vector(i).mode = NA else weight_vector(i).mode;
         -- Divide the weight between the number of values in the range
         if v_mode = COMBINED_WEIGHT then
           v_acc_weight := v_acc_weight + weight_vector(i).weight;

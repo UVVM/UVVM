@@ -110,9 +110,12 @@ begin
 
 
       --TODO: for all rand() test corner cases
-      --      *vector_types: (set of values) only 1 value
-      --         We could either have an overload with integer instead of integer_vector OR use a function to return integer_vector: INCL/EXCL? VECTOR?
-      --      *how to check that different random values are generated?
+      --      *check that different random values are generated?
+      --         Could store value in an array and check for some threshold (all of them have been selected at least once)
+      --      *min/max + set of values (only 1 value)
+      --         We could either have an overload with integer instead of integer_vector OR make the user type cast integer_vector
+      --      *how to check distributions
+      --         Store value in an array and check waveform to see distribution
       ------------------------------------------------------------
       -- Integer
       ------------------------------------------------------------
@@ -717,7 +720,7 @@ begin
       -- Ranges with explicit mode
       -----------------------------
       for i in 1 to C_NUM_DIST_REPETITIONS loop
-        v_int := v_rand.rand_range_weight_mode(((-5,-3,30,DEFAULT_MODE),(0,0,20,NA),(9,10,50,COMBINED_WEIGHT)));
+        v_int := v_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(9,10,50,COMBINED_WEIGHT)));
         v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
@@ -727,9 +730,8 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_LOG_HDR, "Testing weighted integer (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 4);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
       v_rand.set_range_weight_default_mode(NA);
-      v_rand.set_range_weight_default_mode(DEFAULT_MODE);
       v_int := v_rand.rand_val_weight(((1,0),(2,0),(3,0)));
       v_int := v_rand.rand_range_weight(((10,5,50),(1,1,50)));
 

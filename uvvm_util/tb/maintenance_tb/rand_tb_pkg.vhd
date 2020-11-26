@@ -398,10 +398,10 @@ package rand_tb_pkg is
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector);
 
-  -- Prints an array of values with their corresponding weight count and weight percentage.
-  -- Checks that the weight count is within margins of the expected count. And resets the weight counts.
-  procedure print_and_check_weights(
-    variable weight_cnt  : inout t_integer_cnt;
+  -- Prints an array of values with their corresponding counters and weight percentage.
+  -- Checks that the counters are within expected margins according to their weight percentage. Also resets the counters.
+  procedure check_weight_distribution(
+    variable value_cnt   : inout t_integer_cnt;
     constant weight_dist : in    integer_vector);
 
 end package rand_tb_pkg;
@@ -1209,16 +1209,18 @@ package body rand_tb_pkg is
     end if;
   end procedure;
 
-  -- Prints an array of values with their corresponding weight count and weight percentage.
-  -- Checks that the weight count is within margins of the expected count. And resets the weight counts.
-  procedure print_and_check_weights(
-    variable weight_cnt  : inout t_integer_cnt;
+  -- Prints an array of values with their corresponding counters and weight percentage.
+  -- Checks that the counters are within expected margins according to their weight percentage. Also resets the counters.
+  --  *value_cnt is a vector which contains the counter for each index (value)
+  --  *weight_dist is the expected weight distribution, in ascending order, for each valid counter
+  procedure check_weight_distribution(
+    variable value_cnt   : inout t_integer_cnt;
     constant weight_dist : in    integer_vector) is
-    constant C_PROC_NAME      : string := "print_and_check_weights";
+    constant C_PROC_NAME      : string := "check_weight_distribution";
     constant C_PREFIX         : string := C_LOG_PREFIX & fill_string(' ', C_LOG_MSG_ID_WIDTH+C_LOG_TIME_WIDTH+C_LOG_SCOPE_WIDTH+4);
     constant C_COL_WIDTH      : natural := 7;
     constant C_NUM_WEIGHTS    : natural := weight_dist'length;
-    constant C_MARGIN         : natural := 30; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
+    constant C_MARGIN         : natural := 50; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
     variable v_line           : line;
     variable v_line_copy      : line;
     variable v_tot_weight     : natural := 0;
@@ -1233,13 +1235,13 @@ package body rand_tb_pkg is
     end loop;
 
     -- Copy the valid weight counts (greater than 0) to a new vector
-    for i in weight_cnt'range loop
-      if weight_cnt(i) > 0 then
-        v_weight_cnt_vld(v_idx) := weight_cnt(i);
+    for i in value_cnt'range loop
+      if value_cnt(i) > 0 then
+        v_weight_cnt_vld(v_idx) := value_cnt(i);
         v_idx := v_idx + 1;
       end if;
     end loop;
-    check_value(v_idx = C_NUM_WEIGHTS, TB_ERROR, "Length of weight_dist (" & to_string(C_NUM_WEIGHTS) & ") doesn't match expected number of valid weight_cnt (" &
+    check_value(v_idx = C_NUM_WEIGHTS, TB_ERROR, "Length of weight_dist (" & to_string(C_NUM_WEIGHTS) & ") doesn't match expected number of valid value_cnt (" &
       to_string(v_idx) & ").", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
 
     -- Print upper line
@@ -1249,8 +1251,8 @@ package body rand_tb_pkg is
       case row is
         when 0 =>
           write(v_line, string'("value: "));
-          for i in weight_cnt'range loop
-            if weight_cnt(i) > 0 then
+          for i in value_cnt'range loop
+            if value_cnt(i) > 0 then
               v_val_size := integer'image(i)'length;
               write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(i));
             end if;
@@ -1263,7 +1265,7 @@ package body rand_tb_pkg is
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_percentage) & "%");
           end loop;
         when 2 =>
-          write(v_line, string'("hits:  "));
+          write(v_line, string'("count: "));
           for i in v_weight_cnt_vld'range loop
             v_val_size := integer'image(v_weight_cnt_vld(i))'length;
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_weight_cnt_vld(i)));
@@ -1292,8 +1294,8 @@ package body rand_tb_pkg is
     end loop;
 
     -- Reset weight counts
-    for i in weight_cnt'range loop
-      weight_cnt(i) := 0;
+    for i in value_cnt'range loop
+      value_cnt(i) := 0;
     end loop;
   end procedure;
 

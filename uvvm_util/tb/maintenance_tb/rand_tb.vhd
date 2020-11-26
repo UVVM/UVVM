@@ -34,7 +34,7 @@ end entity;
 architecture func of rand_tb is
 
   constant C_NUM_RAND_REPETITIONS : natural := 5;
-  constant C_NUM_DIST_REPETITIONS : natural := 1000; -- Changing this value affects print_and_check_weights() C_MARGIN.
+  constant C_NUM_DIST_REPETITIONS : natural := 1000; -- Changing this value affects check_weight_distribution() C_MARGIN.
 
 begin
 
@@ -58,7 +58,8 @@ begin
     variable v_slv_long : std_logic_vector(39 downto 0);
     variable v_std      : std_logic;
     variable v_bln      : boolean;
-    variable v_weight_cnt : t_integer_cnt(-10 to 10) := (others => 0);
+
+    variable v_value_cnt : t_integer_cnt(-10 to 10) := (others => 0);
 
   begin
 
@@ -648,88 +649,303 @@ begin
     --===================================================================================
     elsif GC_TEST = "weighted_rand" then
     --===================================================================================
-      ------------------------------------------------------------
-      -- Weighted integer
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing weighted integer - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
       log(ID_SEQUENCER, "Reducing log messages from rand_pkg");
       disable_log_msg(ID_LOG_MSG_CTRL);
 
-      -----------------
-      -- Single values
-      -----------------
+      ------------------------------------------------------------
+      -- Weighted integer
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted integer (single values) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
       for i in 1 to C_NUM_DIST_REPETITIONS loop
         v_int := v_rand.rand_val_weight(((-5,1),(10,3)));
-        v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      print_and_check_weights(v_weight_cnt, (1,3));
+      check_weight_distribution(v_value_cnt, (1,3));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
-        v_int := v_rand.rand_val_weight(((-5,1),(5,0)));
-        v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
+        v_int := v_rand.rand_val_weight(((-5,1),(10,0)));
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
       v_int_vec(0) := 1;
-      print_and_check_weights(v_weight_cnt, v_int_vec(0 to 0));
+      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
         v_int := v_rand.rand_val_weight(((-5,10),(0,30),(10,60)));
-        v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      print_and_check_weights(v_weight_cnt, (10,30,60));
+      check_weight_distribution(v_value_cnt, (10,30,60));
       enable_log_msg(ID_RAND_GEN);
 
-      ----------------------------
-      -- Ranges with default mode
-      ----------------------------
+
+      log(ID_LOG_HDR, "Testing weighted integer (ranges w/default mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       for i in 1 to C_NUM_DIST_REPETITIONS loop
         v_int := v_rand.rand_range_weight(((-5,-3,30),(0,0,20),(9,10,50)));
-        v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      print_and_check_weights(v_weight_cnt, (10,10,10,20,25,25));
+      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       for i in 1 to C_NUM_DIST_REPETITIONS loop
         v_int := v_rand.rand_range_weight(((-5,-3,30),(0,0,20),(9,10,50)));
-        v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      print_and_check_weights(v_weight_cnt, (30,30,30,20,50,50));
+      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
       enable_log_msg(ID_RAND_GEN);
 
-      -----------------------------
-      -- Ranges with explicit mode
-      -----------------------------
+
+      log(ID_LOG_HDR, "Testing weighted integer (ranges w/explicit mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
       for i in 1 to C_NUM_DIST_REPETITIONS loop
         v_int := v_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(9,10,50,COMBINED_WEIGHT)));
-        v_weight_cnt(v_int) := v_weight_cnt(v_int) + 1;
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      print_and_check_weights(v_weight_cnt, (30,30,30,20,25,25));
+      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_LOG_HDR, "Testing weighted integer (invalid parameters)");
+      ------------------------------------------------------------
+      -- Weighted unsigned
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted unsigned (single values) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_uns := v_rand.rand_val_weight(v_uns'length,((5,1),(10,3)));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (1,3));
+      enable_log_msg(ID_RAND_GEN);
+
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_uns := v_rand.rand_val_weight(v_uns'length,((5,1),(10,0)));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      v_int_vec(0) := 1;
+      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      enable_log_msg(ID_RAND_GEN);
+
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_uns := v_rand.rand_val_weight(v_uns'length,((0,10),(5,30),(10,60)));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (10,30,60));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing weighted unsigned (ranges w/default mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_uns := v_rand.rand_range_weight(v_uns'length,((0,2,30),(5,5,20),(9,10,50)));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      enable_log_msg(ID_RAND_GEN);
+
+      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_uns := v_rand.rand_range_weight(v_uns'length,((0,2,30),(5,5,20),(9,10,50)));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing weighted unsigned (ranges w/explicit mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_uns := v_rand.rand_range_weight_mode(v_uns'length,((0,2,30,INDIVIDUAL_WEIGHT),(5,5,20,NA),(9,10,50,COMBINED_WEIGHT)));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      enable_log_msg(ID_RAND_GEN);
+
+      ------------------------------------------------------------
+      -- Weighted signed
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted signed (single values) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,1),(10,3)));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (1,3));
+      enable_log_msg(ID_RAND_GEN);
+
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,1),(10,0)));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      v_int_vec(0) := 1;
+      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      enable_log_msg(ID_RAND_GEN);
+
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,10),(0,30),(10,60)));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (10,30,60));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing weighted signed (ranges w/default mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(9,10,50)));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      enable_log_msg(ID_RAND_GEN);
+
+      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(9,10,50)));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing weighted signed (ranges w/explicit mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_sig := v_rand.rand_range_weight_mode(v_sig'length,((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(9,10,50,COMBINED_WEIGHT)));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      enable_log_msg(ID_RAND_GEN);
+
+      ------------------------------------------------------------
+      -- Weighted std_logic_vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (single values) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_slv := v_rand.rand_val_weight(v_slv'length,((5,1),(10,3)));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (1,3));
+      enable_log_msg(ID_RAND_GEN);
+
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_slv := v_rand.rand_val_weight(v_slv'length,((5,1),(10,0)));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      v_int_vec(0) := 1;
+      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      enable_log_msg(ID_RAND_GEN);
+
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_slv := v_rand.rand_val_weight(v_slv'length,((0,10),(5,30),(10,60)));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (10,30,60));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (ranges w/default mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_slv := v_rand.rand_range_weight(v_slv'length,((0,2,30),(5,5,20),(9,10,50)));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      enable_log_msg(ID_RAND_GEN);
+
+      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_slv := v_rand.rand_range_weight(v_slv'length,((0,2,30),(5,5,20),(9,10,50)));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (ranges w/explicit mode) - Generate " & to_string(C_NUM_DIST_REPETITIONS) & " random values for each test");
+      for i in 1 to C_NUM_DIST_REPETITIONS loop
+        v_slv := v_rand.rand_range_weight_mode(v_slv'length,((0,2,30,INDIVIDUAL_WEIGHT),(5,5,20,NA),(9,10,50,COMBINED_WEIGHT)));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      enable_log_msg(ID_RAND_GEN);
+
+
+      log(ID_LOG_HDR, "Testing invalid parameters");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
       v_rand.set_range_weight_default_mode(NA);
       v_int := v_rand.rand_val_weight(((1,0),(2,0),(3,0)));

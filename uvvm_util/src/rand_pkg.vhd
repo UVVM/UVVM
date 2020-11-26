@@ -522,11 +522,86 @@ package rand_pkg is
       constant ext_proc_call : string         := "")
     return integer;
 
+    ------------------------------------------------------------
+    -- Random weighted real
+    ------------------------------------------------------------
+
+    ------------------------------------------------------------
+    -- Random weighted time
+    ------------------------------------------------------------
+
+    ------------------------------------------------------------
     -- Random weighted unsigned
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant length        : positive;
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned;
+
+    impure function rand_range_weight(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned;
+
+    impure function rand_range_weight_mode(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned;
+
+    ------------------------------------------------------------
     -- Random weighted signed
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant length        : positive;
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand_range_weight(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand_range_weight_mode(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    ------------------------------------------------------------
     -- Random weighted std_logic_vector
-    --Q: Random weighted real?
-    --Q: Random weighted time?
+    -- The std_logic_vector values are interpreted as unsigned.
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant length        : positive;
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
+
+    impure function rand_range_weight(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
+
+    impure function rand_range_weight_mode(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector;
 
   end protected t_rand;
 
@@ -2350,6 +2425,132 @@ package body rand_pkg is
 
       DEALLOCATE(v_proc_call);
       return v_ret;
+    end function;
+
+    ------------------------------------------------------------
+    -- Random weighted real
+    ------------------------------------------------------------
+
+    ------------------------------------------------------------
+    -- Random weighted time
+    ------------------------------------------------------------
+
+    ------------------------------------------------------------
+    -- Random weighted unsigned
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant length        : positive;
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned is
+      variable v_ret : unsigned(0 to length-1);
+    begin
+      v_ret := to_unsigned(rand_val_weight(weight_vector, msg_id_panel, ext_proc_call), length);
+      return v_ret;
+    end function;
+
+    impure function rand_range_weight(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned is
+      variable v_ret : unsigned(0 to length-1);
+    begin
+      v_ret := to_unsigned(rand_range_weight(weight_vector, msg_id_panel, ext_proc_call), length);
+      return v_ret;
+    end function;
+
+    impure function rand_range_weight_mode(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned is
+      variable v_ret : unsigned(0 to length-1);
+    begin
+      v_ret := to_unsigned(rand_range_weight_mode(weight_vector, msg_id_panel, ext_proc_call), length);
+      return v_ret;
+    end function;
+
+    ------------------------------------------------------------
+    -- Random weighted signed
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant length        : positive;
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      variable v_ret : signed(0 to length-1);
+    begin
+      v_ret := to_signed(rand_val_weight(weight_vector, msg_id_panel, ext_proc_call), length);
+      return v_ret;
+    end function;
+
+    impure function rand_range_weight(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      variable v_ret : signed(0 to length-1);
+    begin
+      v_ret := to_signed(rand_range_weight(weight_vector, msg_id_panel, ext_proc_call), length);
+      return v_ret;
+    end function;
+
+    impure function rand_range_weight_mode(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      variable v_ret : signed(0 to length-1);
+    begin
+      v_ret := to_signed(rand_range_weight_mode(weight_vector, msg_id_panel, ext_proc_call), length);
+      return v_ret;
+    end function;
+
+    ------------------------------------------------------------
+    -- Random weighted std_logic_vector
+    -- The std_logic_vector values are interpreted as unsigned.
+    ------------------------------------------------------------
+    impure function rand_val_weight(
+      constant length        : positive;
+      constant weight_vector : t_val_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(0 to length-1);
+    begin
+      v_ret := to_unsigned(rand_val_weight(weight_vector, msg_id_panel, ext_proc_call), length);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand_range_weight(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(0 to length-1);
+    begin
+      v_ret := to_unsigned(rand_range_weight(weight_vector, msg_id_panel, ext_proc_call), length);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand_range_weight_mode(
+      constant length        : positive;
+      constant weight_vector : t_range_weight_mode_int_vec;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(0 to length-1);
+    begin
+      v_ret := to_unsigned(rand_range_weight_mode(weight_vector, msg_id_panel, ext_proc_call), length);
+      return std_logic_vector(v_ret);
     end function;
 
   end protected body t_rand;

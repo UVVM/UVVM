@@ -624,7 +624,7 @@ package body rand_pkg is
     -- Internal functions and procedures
     ------------------------------------------------------------
     -- Returns the string representation of the weight vector, e.g.
-    --   10=W{30},[20:30]=CW{30},40=W{50}
+    --   (10,30),([20:30],30,CW),(40,50)
     impure function to_string(
       constant weight_vector : t_range_weight_mode_int_vec)
     return string is
@@ -635,26 +635,28 @@ package body rand_pkg is
     begin
       for i in normalized_weight_vector'range loop
         if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
+          write(v_line, '(');
           write(v_line, to_string(normalized_weight_vector(i).min_value));
-          write(v_line, string'("=W{"));
+          write(v_line, ',');
           write(v_line, to_string(normalized_weight_vector(i).weight));
-          write(v_line, '}');
+          write(v_line, ')');
         else
-          write(v_line, '[');
+          write(v_line, string'("(["));
           write(v_line, to_string(normalized_weight_vector(i).min_value));
           write(v_line, ':');
           write(v_line, to_string(normalized_weight_vector(i).max_value));
-          if normalized_weight_vector(i).mode = INDIVIDUAL_WEIGHT then
-            write(v_line, string'("]=IW{"));
-          elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
-            write(v_line, string'("]=CW{"));
-          elsif v_weight_mode = INDIVIDUAL_WEIGHT then
-            write(v_line, string'("]=IW{"));
-          elsif v_weight_mode = COMBINED_WEIGHT then
-            write(v_line, string'("]=CW{"));
-          end if;
+          write(v_line, string'("],"));
           write(v_line, to_string(normalized_weight_vector(i).weight));
-          write(v_line, '}');
+          if normalized_weight_vector(i).mode = INDIVIDUAL_WEIGHT then
+            write(v_line, string'(",IW"));
+          elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
+            write(v_line, string'(",CW"));
+          elsif v_weight_mode = INDIVIDUAL_WEIGHT then
+            write(v_line, string'(",IW"));
+          elsif v_weight_mode = COMBINED_WEIGHT then
+            write(v_line, string'(",CW"));
+          end if;
+          write(v_line, ')');
         end if;
         if i < normalized_weight_vector'length-1 then
           write(v_line, ',');

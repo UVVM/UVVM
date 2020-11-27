@@ -25,6 +25,7 @@ context uvvm_util.uvvm_util_context;
 package rand_tb_pkg is
 
   type t_integer_cnt  is array (integer range <>) of integer;
+  type t_weight_dist_vec is array (natural range <>) of integer_vector;
 
   ------------------------------------------------------------
   -- Check within range
@@ -398,11 +399,11 @@ package rand_tb_pkg is
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector);
 
-  -- Prints an array of values with their corresponding counters and weight percentage.
+  -- Prints the weighted distribution results (value/range, weight percentage, count).
   -- Checks that the counters are within expected margins according to their weight percentage. Also resets the counters.
   procedure check_weight_distribution(
     variable value_cnt   : inout t_integer_cnt;
-    constant weight_dist : in    integer_vector);
+    constant weight_dist : in    t_weight_dist_vec);
 
 end package rand_tb_pkg;
 
@@ -1209,40 +1210,34 @@ package body rand_tb_pkg is
     end if;
   end procedure;
 
-  -- Prints an array of values with their corresponding counters and weight percentage.
+  -- Prints the weighted distribution results (value/range, weight percentage, count).
   -- Checks that the counters are within expected margins according to their weight percentage. Also resets the counters.
-  --  *value_cnt is a vector which contains the counter for each index (value)
-  --  *weight_dist is the expected weight distribution, in ascending order, for each valid counter
+  --  *value_cnt is a vector which contains the counter for each index (value). When testing real or time values, the index will
+  --   be the truncated value.
+  --  *weight_dist is the expected weight distribution represented by elements of [value,weight] or [min,max,weight]. The min/max
+  --   element is used for real and time values where we need to check the range as a whole.
   procedure check_weight_distribution(
     variable value_cnt   : inout t_integer_cnt;
-    constant weight_dist : in    integer_vector) is
+    constant weight_dist : in    t_weight_dist_vec) is
     constant C_PROC_NAME      : string := "check_weight_distribution";
     constant C_PREFIX         : string := C_LOG_PREFIX & fill_string(' ', C_LOG_MSG_ID_WIDTH+C_LOG_TIME_WIDTH+C_LOG_SCOPE_WIDTH+4);
     constant C_COL_WIDTH      : natural := 7;
-    constant C_NUM_WEIGHTS    : natural := weight_dist'length;
-    constant C_MARGIN         : natural := 50; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
+    constant C_WEIGHT_IDX     : natural := (weight_dist(weight_dist'low)'right);
+    constant C_MARGIN         : natural := 40; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
     variable v_line           : line;
     variable v_line_copy      : line;
     variable v_tot_weight     : natural := 0;
-    variable v_weight_cnt_vld : integer_vector(0 to C_NUM_WEIGHTS-1);
-    variable v_idx            : natural := 0;
     variable v_val_size       : natural := 0;
     variable v_percentage     : natural := 0;
+    variable v_count          : natural := 0;
+    variable v_count_vec      : integer_vector(0 to weight_dist'length-1);
   begin
+    check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values).", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+
     -- Calculate the total weight
     for i in weight_dist'range loop
-      v_tot_weight := v_tot_weight + weight_dist(i);
+      v_tot_weight := v_tot_weight + weight_dist(i)(C_WEIGHT_IDX);
     end loop;
-
-    -- Copy the valid weight counts (greater than 0) to a new vector
-    for i in value_cnt'range loop
-      if value_cnt(i) > 0 then
-        v_weight_cnt_vld(v_idx) := value_cnt(i);
-        v_idx := v_idx + 1;
-      end if;
-    end loop;
-    check_value(v_idx = C_NUM_WEIGHTS, TB_ERROR, "Length of weight_dist (" & to_string(C_NUM_WEIGHTS) & ") doesn't match expected number of valid value_cnt (" &
-      to_string(v_idx) & ").", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
 
     -- Print upper line
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
@@ -1251,24 +1246,40 @@ package body rand_tb_pkg is
       case row is
         when 0 =>
           write(v_line, string'("value: "));
-          for i in value_cnt'range loop
-            if value_cnt(i) > 0 then
-              v_val_size := integer'image(i)'length;
-              write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(i));
+          for i in weight_dist'range loop
+            -- Single
+            if weight_dist(i)'length = 2 or weight_dist(i)(0) = weight_dist(i)(1) then
+              v_val_size := integer'image(weight_dist(i)(0))'length;
+              write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(weight_dist(i)(0)));
+            -- Min:Max
+            else
+              v_val_size := integer'image(weight_dist(i)(0))'length + 1 + integer'image(weight_dist(i)(1))'length;
+              write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(weight_dist(i)(0)) & ":" & to_string(weight_dist(i)(1)));
             end if;
           end loop;
         when 1 =>
           write(v_line, string'("weight:"));
           for i in weight_dist'range loop
-            v_percentage := weight_dist(i)*100/v_tot_weight;
+            v_percentage := weight_dist(i)(C_WEIGHT_IDX)*100/v_tot_weight;
             v_val_size := integer'image(v_percentage)'length + 1;
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_percentage) & "%");
           end loop;
         when 2 =>
           write(v_line, string'("count: "));
-          for i in v_weight_cnt_vld'range loop
-            v_val_size := integer'image(v_weight_cnt_vld(i))'length;
-            write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_weight_cnt_vld(i)));
+          for i in weight_dist'range loop
+            if weight_dist(i)'length = 2 then
+              v_count := value_cnt(weight_dist(i)(0));
+              value_cnt(weight_dist(i)(0)) := 0; -- Reset counter
+            else
+              for idx in weight_dist(i)(0) to weight_dist(i)(1) loop
+                v_count := v_count + value_cnt(idx);
+                value_cnt(idx) := 0; -- Reset counter
+              end loop;
+            end if;
+            v_val_size := integer'image(v_count)'length;
+            write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_count));
+            v_count_vec(i) := v_count;
+            v_count := 0;
           end loop;
       end case;
       write(v_line, LF);
@@ -1286,16 +1297,19 @@ package body rand_tb_pkg is
     deallocate(v_line);
     deallocate(v_line_copy);
 
-    -- Check the weight counts are within margin
-    for i in v_weight_cnt_vld'range loop
-      v_percentage := (weight_dist(i)*100/v_tot_weight)*10; -- Multiply by 10 since there are 1000 samples
-      check_value_in_range(v_weight_cnt_vld(i), v_percentage-C_MARGIN, v_percentage+C_MARGIN, TB_WARNING, "Number of hits is outside expected margin.",
-        C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    -- Check that all the expected weight counts were reset, meaning that no unexpected random values were generated
+    for i in value_cnt'range loop
+      if value_cnt(i) > 0 then
+        alert(ERROR, C_PROC_NAME & " => Failed. Unexpected random value: " & to_string(i));
+        value_cnt(i) := 0;
+      end if;
     end loop;
 
-    -- Reset weight counts
-    for i in value_cnt'range loop
-      value_cnt(i) := 0;
+    -- Check the weight counts are within margin
+    for i in v_count_vec'range loop
+      v_percentage := (weight_dist(i)(C_WEIGHT_IDX)*100/v_tot_weight)*10; -- Multiply by 10 since there are 1000 samples
+      check_value_in_range(v_count_vec(i), v_percentage-C_MARGIN, v_percentage+C_MARGIN, WARNING, "Counter is outside expected margin.",
+        C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     end loop;
   end procedure;
 

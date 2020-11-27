@@ -2328,7 +2328,7 @@ package body rand_pkg is
     begin
       -- Convert the weight vector to base type
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, v_weight_mode);
+        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, NA);
       end loop;
       v_local_call := new string'("rand_val_weight(" & to_string(v_weight_vector) & ")");
       log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
@@ -2384,7 +2384,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
           return 0;
         end if;
-        v_mode := v_weight_mode when weight_vector(i).mode = NA else weight_vector(i).mode;
+        v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
         -- Divide the weight between the number of values in the range
         if v_mode = COMBINED_WEIGHT then
           v_acc_weight := v_acc_weight + weight_vector(i).weight;

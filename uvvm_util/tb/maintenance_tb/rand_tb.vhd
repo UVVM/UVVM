@@ -663,7 +663,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (1,3));
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,3)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -673,8 +673,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      v_int_vec(0) := 1;
-      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,0)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -684,7 +683,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,30,60));
+      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(10,60)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -698,7 +697,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
@@ -710,7 +709,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,50),(10,50)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -722,7 +721,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       ------------------------------------------------------------
@@ -736,7 +735,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (1,3));
+      check_weight_distribution(v_value_cnt, ((5,1),(10,3)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -746,8 +745,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      v_int_vec(0) := 1;
-      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      check_weight_distribution(v_value_cnt, ((5,1),(10,0)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -757,7 +755,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,30,60));
+      check_weight_distribution(v_value_cnt, ((0,10),(5,30),(10,60)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -771,7 +769,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      check_weight_distribution(v_value_cnt, ((0,10),(1,10),(2,10),(5,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
@@ -783,7 +781,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,50),(10,50)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -795,7 +793,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       ------------------------------------------------------------
@@ -809,7 +807,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (1,3));
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,3)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -819,8 +817,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      v_int_vec(0) := 1;
-      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,0)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -830,7 +827,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,30,60));
+      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(10,60)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -844,7 +841,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
@@ -856,7 +853,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,50),(10,50)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -868,7 +865,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       ------------------------------------------------------------
@@ -882,7 +879,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (1,3));
+      check_weight_distribution(v_value_cnt, ((5,1),(10,3)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -892,8 +889,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      v_int_vec(0) := 1;
-      check_weight_distribution(v_value_cnt, v_int_vec(0 to 0));
+      check_weight_distribution(v_value_cnt, ((5,1),(10,0)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_DIST_REPETITIONS loop
@@ -903,7 +899,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,30,60));
+      check_weight_distribution(v_value_cnt, ((0,10),(5,30),(10,60)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -917,7 +913,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (10,10,10,20,25,25));
+      check_weight_distribution(v_value_cnt, ((0,10),(1,10),(2,10),(5,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
@@ -929,7 +925,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,50,50));
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,50),(10,50)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -941,7 +937,7 @@ begin
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, (30,30,30,20,25,25));
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
 

@@ -669,30 +669,6 @@ package body rand_pkg is
       return v_str(1 to v_str_len);
     end function;
 
-    -- Overload
-    impure function to_string(
-      constant weight_vector : t_range_weight_int_vec)
-    return string is
-      variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
-    begin
-      for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
-      end loop;
-      return to_string(v_weight_vector);
-    end function;
-
-    -- Overload
-    impure function to_string(
-      constant weight_vector : t_val_weight_int_vec)
-    return string is
-      variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
-    begin
-      for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, v_weight_mode);
-      end loop;
-      return to_string(v_weight_vector);
-    end function;
-
     -- Returns true if a value is contained in a vector
     function check_value_in_vector(
       constant value  : integer;
@@ -2345,17 +2321,22 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand_val_weight(" & to_string(weight_vector) & ")";
+      variable v_local_call    : line;
       variable v_proc_call     : line;
       variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
+      variable v_ret           : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
+      -- Convert the weight vector to base type
       for i in weight_vector'range loop
         v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, v_weight_mode);
       end loop;
+      v_local_call := new string'("rand_val_weight(" & to_string(v_weight_vector) & ")");
+      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
 
-      return rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
+      v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
     end function;
 
     impure function rand_range_weight(
@@ -2363,17 +2344,22 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand_range_weight(" & to_string(weight_vector) & ")";
+      variable v_local_call    : line;
       variable v_proc_call     : line;
       variable v_weight_vector : t_range_weight_mode_int_vec(weight_vector'range);
+      variable v_ret           : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
+      -- Convert the weight vector to base type
       for i in weight_vector'range loop
         v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
       end loop;
+      v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
+      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
 
-      return rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
+      v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
+
+      DEALLOCATE(v_proc_call);
+      return v_ret;
     end function;
 
     impure function rand_range_weight_mode(
@@ -2394,16 +2380,16 @@ package body rand_pkg is
 
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
+        if weight_vector(i).min_value > weight_vector(i).max_value then
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
+          return 0;
+        end if;
         v_mode := v_weight_mode when weight_vector(i).mode = NA else weight_vector(i).mode;
         -- Divide the weight between the number of values in the range
         if v_mode = COMBINED_WEIGHT then
           v_acc_weight := v_acc_weight + weight_vector(i).weight;
         -- Use the same weight for each value in the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
-          if weight_vector(i).min_value > weight_vector(i).max_value then
-            alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
-            return 0;
-          end if;
           v_values_in_range := weight_vector(i).max_value - weight_vector(i).min_value + 1;
           v_acc_weight := v_acc_weight + weight_vector(i).weight*v_values_in_range;
         end if;

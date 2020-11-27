@@ -624,7 +624,7 @@ package body rand_pkg is
     -- Internal functions and procedures
     ------------------------------------------------------------
     -- Returns the string representation of the weight vector, e.g.
-    --   (10,30),([20:30],30,CW),(40,50)
+    --   (10,30),([20:30],30,COMBINED),(40,50)
     impure function to_string(
       constant weight_vector : t_range_weight_mode_int_vec)
     return string is
@@ -648,13 +648,13 @@ package body rand_pkg is
           write(v_line, string'("],"));
           write(v_line, to_string(normalized_weight_vector(i).weight));
           if normalized_weight_vector(i).mode = INDIVIDUAL_WEIGHT then
-            write(v_line, string'(",IW"));
+            write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
-            write(v_line, string'(",CW"));
+            write(v_line, string'(",COMBINED"));
           elsif v_weight_mode = INDIVIDUAL_WEIGHT then
-            write(v_line, string'(",IW"));
+            write(v_line, string'(",INDIVIDUAL"));
           elsif v_weight_mode = COMBINED_WEIGHT then
-            write(v_line, string'(",CW"));
+            write(v_line, string'(",COMBINED"));
           end if;
           write(v_line, ')');
         end if;

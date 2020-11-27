@@ -2374,6 +2374,7 @@ package body rand_pkg is
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
+      variable v_previous_dist     : t_rand_dist := v_rand_dist;
       variable v_ret               : integer;
     begin
       log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
@@ -2400,9 +2401,10 @@ package body rand_pkg is
         return 0;
       end if;
 
+      -- Change distribution to UNIFORM
+      v_rand_dist := UNIFORM;
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, msg_id_panel, v_proc_call.all);
-
       -- Associate the random value to the original value in the vector based on the weight
       for i in v_acc_weight_vector'range loop
         if v_weight_idx <= v_acc_weight_vector(i) then
@@ -2410,6 +2412,8 @@ package body rand_pkg is
           exit;
         end if;
       end loop;
+      -- Restore previous distribution
+      v_rand_dist := v_previous_dist;
 
       DEALLOCATE(v_proc_call);
       return v_ret;

@@ -35,6 +35,7 @@ architecture func of rand_tb is
 
   constant C_NUM_RAND_REPETITIONS   : natural := 5;
   constant C_NUM_WEIGHT_REPETITIONS : natural := 1000; -- Changing this value affects check_weight_distribution() C_MARGIN.
+  constant C_NUM_CYCLIC_REPETITIONS : natural := 3;
 
 begin
 
@@ -59,6 +60,7 @@ begin
     variable v_std        : std_logic;
     variable v_bln        : boolean;
     variable v_value_cnt  : t_integer_cnt(-10 to 10) := (others => 0);
+    variable v_num_values : natural;
 
   begin
 
@@ -1075,6 +1077,351 @@ begin
       v_rand.set_range_weight_default_mode(NA);
       v_int := v_rand.rand_val_weight(((1,0),(2,0),(3,0)));
       v_int := v_rand.rand_range_weight(((10,5,50),(1,1,50)));
+
+    --===================================================================================
+    elsif GC_TEST = "cyclic_rand" then
+    --===================================================================================
+      ------------------------------------------------------------
+      -- Random cyclic integer
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing integer (min/max)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(-2, 2, CYCLIC);
+        check_rand_value(v_int, -2, 2);
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing integer (set of values)");
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(ONLY,(-2,0,1,3), CYCLIC);
+        check_rand_value(v_int, (-2,0,1,3));
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing integer (min/max + set of values)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(-1, 1, INCL,(-3,3), CYCLIC);
+        check_rand_value(v_int, -1, 1, INCL,(-3,3));
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(-3, 3, EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_int, -3, 3, EXCL,(-1,0,1));
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 6;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(-3, 3, INCL,(-5,5), EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_int, -3, 3, INCL,(-5,5), EXCL,(-1,0,1));
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      ------------------------------------------------------------
+      -- Random cyclic integer vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing integer_vector (min/max)");
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -2, 2);
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -2, 2);
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      log(ID_LOG_HDR, "Testing integer_vector (set of values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, (-2,-1,0,1,2));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, (-2,-1,0,1,2));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-5,6), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -1, 1, INCL,(-5,6));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-5,6), UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -1, 1, INCL,(-5,6));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -3, 4, EXCL,(-1,0,1));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -3, 4, EXCL,(-1,0,1));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_rand_cyclic(v_value_cnt, v_num_values);
+      end loop;
+
+      ------------------------------------------------------------
+      -- Random cyclic unsigned
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing unsigned (min/max)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, 0, 4, CYCLIC);
+        check_rand_value(v_uns, 0, 4);
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing unsigned (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, ONLY,(0,2,4), CYCLIC);
+        check_rand_value(v_uns, (0,2,4));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_uns := v_rand.rand(v_uns'length, EXCL,(0,1,2), CYCLIC);
+      check_rand_value(v_uns, 0, 2**v_uns'length-1, EXCL,(0,1,2));
+
+      log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
+      v_num_values := 7;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5,8), CYCLIC);
+        check_rand_value(v_uns, 0, 4, INCL,(5,8));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, 0, 4, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_uns, 0, 4, EXCL,(0,1,2));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5,8,9), EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_uns, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      ------------------------------------------------------------
+      -- Random cyclic signed
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing signed (min/max)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, -2, 2, CYCLIC);
+        check_rand_value(v_sig, -2, 2);
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing signed (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, ONLY,(-2,0,2), CYCLIC);
+        check_rand_value(v_sig, (-2,0,2));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_sig := v_rand.rand(v_sig'length, EXCL,(-1,0,1), CYCLIC);
+      check_rand_value(v_sig, -2**(v_sig'length-1), 2**(v_sig'length-1)-1, EXCL,(-1,0,1));
+
+      log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
+      v_num_values := 7;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-5,8), CYCLIC);
+        check_rand_value(v_sig, -2, 2, INCL,(-5,8));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_sig, -2, 2, EXCL,(-1,0,1));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-5,8,9), EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_sig, -2, 2, INCL,(-5,8,9), EXCL,(-1,0,1));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      ------------------------------------------------------------
+      -- Random cyclic std_logic_vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, 0, 4, CYCLIC);
+        check_rand_value(v_slv, 0, 4);
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, ONLY,(0,2,4), CYCLIC);
+        check_rand_value(v_slv, (0,2,4));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_slv := v_rand.rand(v_slv'length, EXCL,(0,1,2), CYCLIC);
+      check_rand_value(v_slv, 0, 2**v_slv'length-1, EXCL,(0,1,2));
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
+      v_num_values := 7;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5,8), CYCLIC);
+        check_rand_value(v_slv, 0, 4, INCL,(5,8));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, 0, 4, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_slv, 0, 4, EXCL,(0,1,2));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5,8,9), EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_slv, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_rand_cyclic(v_value_cnt, v_num_values);
+        end if;
+      end loop;
 
     end if;
 

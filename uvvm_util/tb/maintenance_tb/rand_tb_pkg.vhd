@@ -405,6 +405,11 @@ package rand_tb_pkg is
     variable value_cnt   : inout t_integer_cnt;
     constant weight_dist : in    t_weight_dist_vec);
 
+  -- Check that each value has been generated only once
+  procedure check_rand_cyclic(
+    variable value_cnt  : inout t_integer_cnt;
+    constant num_values : in    natural);
+
 end package rand_tb_pkg;
 
 package body rand_tb_pkg is
@@ -1311,6 +1316,29 @@ package body rand_tb_pkg is
       check_value_in_range(v_count_vec(i), v_percentage-C_MARGIN, v_percentage+C_MARGIN, WARNING, "Counter is outside expected margin.",
         C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     end loop;
+  end procedure;
+
+  -- Check that each value has been generated only once
+  procedure check_rand_cyclic(
+    variable value_cnt  : inout t_integer_cnt;
+    constant num_values : in    natural) is
+    constant C_PROC_NAME : string := "check_rand_cyclic";
+    variable v_cnt       : natural := 0;
+  begin
+    -- Count the values that have been generated only once
+    for i in value_cnt'range loop
+      if value_cnt(i) = 1 then
+        v_cnt := v_cnt + 1;
+      end if;
+      -- Reset value counters
+      value_cnt(i) := 0;
+    end loop;
+
+    if v_cnt = num_values then
+      log(ID_POS_ACK, C_PROC_NAME & " => OK.");
+    else
+      alert(ERROR, C_PROC_NAME & " => Failed, some values were repeated.");
+    end if;
   end procedure;
 
 end package body rand_tb_pkg;

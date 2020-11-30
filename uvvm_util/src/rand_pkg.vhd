@@ -2574,6 +2574,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2597,6 +2598,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2680,6 +2682,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2703,6 +2706,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2786,6 +2790,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2809,6 +2814,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;

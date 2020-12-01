@@ -25,6 +25,8 @@ Released: 2020-12-XX
 - Added how to start demo testbench from within Modelsim to testbench_guide PDF in Bitvis UART VIP.
 - Added max_receptions default value to uart_bfm_quickref.pdf.
 - Removed "addr" parameter from axistream_receive VVC method call in quick reference.
+- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
+- Removed xConstrRandFuncCov folder and content.
 
 
 v2 2020.10.06

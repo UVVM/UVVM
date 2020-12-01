@@ -186,9 +186,6 @@ package adaptations_pkg is
     others              => ENABLED
   );
 
-  -- If false, uses the default message id panel. If true, it uses a separate message id panel.
-  constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
-
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
   constant C_MSG_ID_INDENT : t_msg_id_indent := (
     ID_IMMEDIATE_CMD_WAIT    => "  ..",

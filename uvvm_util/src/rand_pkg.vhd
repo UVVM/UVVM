@@ -938,13 +938,14 @@ package body rand_pkg is
       constant C_PROC_NAME : string := "check_parameters_within_range";
       variable v_len : natural;
     begin
-      v_len := length when length < 32 else 32; -- Length is limited by integer size
+      v_len := length when length < 32 else
+               31 when not(signed_values) else 32; -- Length is limited by integer size
       if signed_values then
         check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
       else
-        check_value_in_range(min_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(min_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
       end if;
     end procedure;
 
@@ -957,12 +958,13 @@ package body rand_pkg is
       constant C_PROC_NAME : string := "check_parameters_within_range";
       variable v_len : natural;
     begin
-      v_len := length when length < 32 else 32; -- Length is limited by integer size
+      v_len := length when length < 32 else
+               31 when not(signed_values) else 32; -- Length is limited by integer size
       for i in set_values'range loop
         if signed_values then
           check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         else
-          check_value_in_range(set_values(i), 0, 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          check_value_in_range(set_values(i), 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         end if;
       end loop;
     end procedure;

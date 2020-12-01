@@ -28,7 +28,7 @@ package rand_tb_pkg is
   type t_weight_dist_vec is array (natural range <>) of integer_vector;
 
   ------------------------------------------------------------
-  -- Check within range
+  -- Check value within range
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
@@ -106,7 +106,7 @@ package rand_tb_pkg is
     constant max_range   : in natural);
 
   ------------------------------------------------------------
-  -- Check within set of values
+  -- Check value within set of values
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
@@ -172,7 +172,7 @@ package rand_tb_pkg is
     constant set_values  : in t_natural_vector);
 
   ------------------------------------------------------------
-  -- Check within range and set of values
+  -- Check value within range and set of values
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
@@ -274,7 +274,7 @@ package rand_tb_pkg is
     constant set_values  : in t_natural_vector);
 
   ------------------------------------------------------------
-  -- Check within range and sets of values
+  -- Check value within range and sets of values
   ------------------------------------------------------------
   -- Base function (integer)
   impure function check_rand_value(
@@ -399,6 +399,15 @@ package rand_tb_pkg is
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector);
 
+  ------------------------------------------------------------
+  -- Check distributions
+  ------------------------------------------------------------
+  -- Check that each value has been generated at least once
+  procedure check_uniform_distribution(
+    variable value_cnt        : inout t_integer_cnt;
+    constant num_values       : in    natural;
+    constant match_num_values : in    boolean := true);
+
   -- Prints the weighted distribution results (value/range, weight percentage, count).
   -- Checks that the counters are within expected margins according to their weight percentage. Also resets the counters.
   procedure check_weight_distribution(
@@ -415,7 +424,7 @@ end package rand_tb_pkg;
 package body rand_tb_pkg is
 
   ------------------------------------------------------------
-  -- Check within range
+  -- Check value within range
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
@@ -589,7 +598,7 @@ package body rand_tb_pkg is
   end procedure;
 
   ------------------------------------------------------------
-  -- Check within set of values
+  -- Check value within set of values
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
@@ -754,7 +763,7 @@ package body rand_tb_pkg is
   end procedure;
 
   ------------------------------------------------------------
-  -- Check within range and set of values
+  -- Check value within range and set of values
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
@@ -973,7 +982,7 @@ package body rand_tb_pkg is
   end procedure;
 
   ------------------------------------------------------------
-  -- Check within range and sets of values
+  -- Check value within range and sets of values
   ------------------------------------------------------------
   -- Base function (integer)
   impure function check_rand_value(
@@ -1212,6 +1221,33 @@ package body rand_tb_pkg is
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
+    end if;
+  end procedure;
+
+  ------------------------------------------------------------
+  -- Check distributions
+  ------------------------------------------------------------
+  -- Check that each value has been generated at least once
+  procedure check_uniform_distribution(
+    variable value_cnt        : inout t_integer_cnt;
+    constant num_values       : in    natural;
+    constant match_num_values : in    boolean := true) is
+    constant C_PROC_NAME : string := "check_uniform_distribution";
+    variable v_cnt       : natural := 0;
+  begin
+    -- Check that the values have been generated at least once
+    for i in value_cnt'range loop
+      if value_cnt(i) > 0 then
+        v_cnt := v_cnt + 1;
+      end if;
+      -- Reset value counters
+      value_cnt(i) := 0;
+    end loop;
+
+    if (match_num_values and v_cnt = num_values) or (not(match_num_values) and v_cnt >= num_values) then
+      log(ID_POS_ACK, C_PROC_NAME & " => OK.");
+    else
+      alert(ERROR, C_PROC_NAME & " => Failed, some values were not generated.");
     end if;
   end procedure;
 

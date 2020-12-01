@@ -124,7 +124,7 @@ package adaptations_pkg is
     ID_FRAME_COMPLETE,        -- Notify that a frame has been transmitted or received
     ID_FRAME_HDR,             -- Notify that a frame header has been transmitted or received. It also writes header info
     ID_FRAME_DATA,            -- Notify that a frame data has been transmitted or received. It also writes frame data
-    -- OSVVM Ids
+    -- Coverage Ids
     ID_COVERAGE_MAKEBIN,      -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
     ID_COVERAGE_ADDBIN,       -- Log messages from AddBin/AddCross
     ID_COVERAGE_ICOVER,       -- ICover logging, NB: Very low level debugging. Can result in large amount of data.
@@ -186,7 +186,7 @@ package adaptations_pkg is
     others              => ENABLED
   );
 
-  -- If false, OSVVM uses the default message id panel. If true, it uses a separate message id panel.
+  -- If false, uses the default message id panel. If true, it uses a separate message id panel.
   constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
 
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);

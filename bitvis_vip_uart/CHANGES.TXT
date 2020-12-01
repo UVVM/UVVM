@@ -6,6 +6,7 @@ v2.8.1
 ----------
 Released: 2020-12-xx
 - Added how to start demo testbench from within Modelsim to testbench_guide PDF.
+- Added max_receptions default value to uart_bfm_quickref.pdf.
 
 
 v2.8.0

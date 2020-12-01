@@ -1364,33 +1364,33 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing weighted signed (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
-        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,1),(10,3)));
+        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,1),(7,3)));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, ((-5,1),(10,3)));
+      check_weight_distribution(v_value_cnt, ((-5,1),(7,3)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
-        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,1),(10,0)));
+        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,1),(7,0)));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, ((-5,1),(10,0)));
+      check_weight_distribution(v_value_cnt, ((-5,1),(7,0)));
       enable_log_msg(ID_RAND_GEN);
 
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
-        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,10),(0,30),(10,60)));
+        v_sig := v_rand.rand_val_weight(v_sig'length,((-5,10),(0,30),(7,60)));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(10,60)));
+      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(7,60)));
       enable_log_msg(ID_RAND_GEN);
 
 
@@ -1398,37 +1398,37 @@ begin
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
-        v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(9,10,50)));
+        v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(6,7,50)));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(9,25),(10,25)));
+      check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(6,25),(7,25)));
       enable_log_msg(ID_RAND_GEN);
 
       log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
-        v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(9,10,50)));
+        v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(6,7,50)));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,50),(10,50)));
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(6,50),(7,50)));
       enable_log_msg(ID_RAND_GEN);
 
 
       log(ID_LOG_HDR, "Testing weighted signed (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
-        v_sig := v_rand.rand_range_weight_mode(v_sig'length,((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(9,10,50,COMBINED_WEIGHT)));
+        v_sig := v_rand.rand_range_weight_mode(v_sig'length,((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(6,7,50,COMBINED_WEIGHT)));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i = 1 then
           disable_log_msg(ID_RAND_GEN);
         end if;
       end loop;
-      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,25),(10,25)));
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(6,25),(7,25)));
       enable_log_msg(ID_RAND_GEN);
 
       ------------------------------------------------------------
@@ -1767,8 +1767,8 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
       v_num_values := 7;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-5,8), CYCLIC);
-        check_rand_value(v_sig, -2, 2, INCL,(-5,8));
+        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8,7), CYCLIC);
+        check_rand_value(v_sig, -2, 2, INCL,(-8,7));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1787,8 +1787,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-5,8,9), EXCL,(-1,0,1), CYCLIC);
-        check_rand_value(v_sig, -2, 2, INCL,(-5,8,9), EXCL,(-1,0,1));
+        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8,6,7), EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_sig, -2, 2, INCL,(-8,6,7), EXCL,(-1,0,1));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);

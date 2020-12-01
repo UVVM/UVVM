@@ -415,7 +415,7 @@ package rand_tb_pkg is
     constant weight_dist : in    t_weight_dist_vec);
 
   -- Check that each value has been generated only once
-  procedure check_rand_cyclic(
+  procedure check_cyclic_distribution(
     variable value_cnt  : inout t_integer_cnt;
     constant num_values : in    natural);
 
@@ -1355,10 +1355,10 @@ package body rand_tb_pkg is
   end procedure;
 
   -- Check that each value has been generated only once
-  procedure check_rand_cyclic(
+  procedure check_cyclic_distribution(
     variable value_cnt  : inout t_integer_cnt;
     constant num_values : in    natural) is
-    constant C_PROC_NAME : string := "check_rand_cyclic";
+    constant C_PROC_NAME : string := "check_cyclic_distribution";
     variable v_cnt       : natural := 0;
   begin
     -- Count the values that have been generated only once

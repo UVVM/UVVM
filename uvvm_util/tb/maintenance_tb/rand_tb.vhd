@@ -1523,7 +1523,7 @@ begin
         check_rand_value(v_int, -2, 2);
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1534,7 +1534,7 @@ begin
         check_rand_value(v_int, (-2,0,1,3));
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1545,7 +1545,7 @@ begin
         check_rand_value(v_int, -1, 1, INCL,(-3,3));
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1555,7 +1555,7 @@ begin
         check_rand_value(v_int, -3, 3, EXCL,(-1,0,1));
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1565,7 +1565,7 @@ begin
         check_rand_value(v_int, -3, 3, INCL,(-5,5), EXCL,(-1,0,1));
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1580,7 +1580,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1590,7 +1590,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       log(ID_LOG_HDR, "Testing integer_vector (set of values)");
@@ -1601,7 +1601,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1611,7 +1611,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
@@ -1622,7 +1622,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1632,7 +1632,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1642,7 +1642,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1652,7 +1652,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1662,7 +1662,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       v_num_values := 5; -- same as v_int_vec'length
@@ -1672,7 +1672,7 @@ begin
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
-        check_rand_cyclic(v_value_cnt, v_num_values);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       ------------------------------------------------------------
@@ -1685,7 +1685,7 @@ begin
         check_rand_value(v_uns, 0, 4);
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1696,7 +1696,7 @@ begin
         check_rand_value(v_uns, (0,2,4));
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1711,7 +1711,7 @@ begin
         check_rand_value(v_uns, 0, 4, INCL,(5,8));
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1721,7 +1721,7 @@ begin
         check_rand_value(v_uns, 0, 4, EXCL,(0,1,2));
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1731,7 +1731,7 @@ begin
         check_rand_value(v_uns, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1745,7 +1745,7 @@ begin
         check_rand_value(v_sig, -2, 2);
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1756,7 +1756,7 @@ begin
         check_rand_value(v_sig, (-2,0,2));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1771,7 +1771,7 @@ begin
         check_rand_value(v_sig, -2, 2, INCL,(-5,8));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1781,7 +1781,7 @@ begin
         check_rand_value(v_sig, -2, 2, EXCL,(-1,0,1));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1791,7 +1791,7 @@ begin
         check_rand_value(v_sig, -2, 2, INCL,(-5,8,9), EXCL,(-1,0,1));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1805,7 +1805,7 @@ begin
         check_rand_value(v_slv, 0, 4);
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1816,7 +1816,7 @@ begin
         check_rand_value(v_slv, (0,2,4));
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1831,7 +1831,7 @@ begin
         check_rand_value(v_slv, 0, 4, INCL,(5,8));
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1841,7 +1841,7 @@ begin
         check_rand_value(v_slv, 0, 4, EXCL,(0,1,2));
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 
@@ -1851,7 +1851,7 @@ begin
         check_rand_value(v_slv, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
-          check_rand_cyclic(v_value_cnt, v_num_values);
+          check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
 

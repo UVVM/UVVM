@@ -8,6 +8,8 @@ Released: 2020-XX-XX
 - Fixed C_MULTIPLE_RANDOM for valid & ready low not working.
 - Added BFM configurations to control the probability of multiple random tvalid/tready low cycles
   and the maximum random duration of tvalid/tready low deassertion.
+- Removed "addr" parameter from axistream_receive VVC method call in quick reference.
+
 
 v4.7.1
 ----------

@@ -24,6 +24,7 @@ Released: 2020-12-XX
 - Improved to_string functions for slv, signed and unsigned when printing long decimal values.
 - Added how to start demo testbench from within Modelsim to testbench_guide PDF in Bitvis UART VIP.
 - Added max_receptions default value to uart_bfm_quickref.pdf.
+- Removed "addr" parameter from axistream_receive VVC method call in quick reference.
 
 
 v2 2020.10.06

@@ -1,6 +1,13 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+
+v2.8.1
+----------
+Released: 2020-12-xx
+- Added how to start demo testbench from within Modelsim to testbench_guide PDF.
+
+
 v2.8.0
 ----------
 Released: 2020-10-06

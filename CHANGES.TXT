@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2020.XX.XX
+v2 2020.12.XX
 --------------------
-Released: 2020-XX-XX
+Released: 2020-12-XX
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.
@@ -21,7 +21,8 @@ Released: 2020-XX-XX
   and the maximum random duration of tvalid/tready low deassertion.
 - Fixed bug in to_string functions for t_slv_array, t_unsigned_array and t_signed_array that
   caused a failure when using wide words
-- Improved to_string functions for slv, signed and unsigned when printing long decimal values
+- Improved to_string functions for slv, signed and unsigned when printing long decimal values.
+- Added how to start demo testbench from within Modelsim to testbench_guide PDF in Bitvis UART VIP.
 
 
 v2 2020.10.06

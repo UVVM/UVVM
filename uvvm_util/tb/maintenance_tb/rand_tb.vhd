@@ -72,7 +72,7 @@ begin
     --===================================================================================
     if GC_TEST = "basic_rand" then
     --===================================================================================
-      increment_expected_alerts(TB_WARNING, 1);
+      increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
 
       --TODO: test actual implementation
       log(ID_LOG_HDR, "Testing distributions");
@@ -1540,10 +1540,10 @@ begin
       end loop;
 
       log(ID_LOG_HDR, "Testing integer (min/max + set of values)");
-      v_num_values := 5;
+      v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_int := v_rand.rand(-1, 1, INCL,(-3,3), CYCLIC);
-        check_rand_value(v_int, -1, 1, INCL,(-3,3));
+        v_int := v_rand.rand(-1, 1, INCL,(3), CYCLIC);
+        check_rand_value(v_int, -1, 1, INCL,(3,3)); -- use vector to save overload
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1560,10 +1560,31 @@ begin
         end if;
       end loop;
 
+      log(ID_LOG_HDR, "Testing integer (min/max + 2 sets of values)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(-2, 2, INCL,(-5), EXCL,(1), CYCLIC);
+        check_rand_value(v_int, -2, 2, INCL,(-5,-5), EXCL,(1,1)); -- use vector to save overload
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(-2, 2, INCL,(-5,5,6), EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_int, -2, 2, INCL,(-5,5,6), EXCL,(-1,0,1));
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_int := v_rand.rand(-3, 3, INCL,(-5,5), EXCL,(-1,0,1), CYCLIC);
-        check_rand_value(v_int, -3, 3, INCL,(-5,5), EXCL,(-1,0,1));
+        v_int := v_rand.rand(-2, 2, EXCL,(0), INCL,(6,7), CYCLIC);
+        check_rand_value(v_int, -2, 2, EXCL,(0,0), INCL,(6,7)); -- use vector to save overload
         v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1618,8 +1639,8 @@ begin
       log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-5,6), NON_UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -1, 1, INCL,(-5,6));
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 2, INCL,(-5), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -1, 2, INCL,(-5,-5)); -- use vector to save overload
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -1656,10 +1677,11 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
+      log(ID_LOG_HDR, "Testing integer_vector (min/max + 2 sets of values)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), NON_UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5), EXCL,(1), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -2, 2, INCL,(-5,-5), EXCL,(1,1)); -- use vector to save overload
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -1670,6 +1692,16 @@ begin
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), UNIQUE, CYCLIC);
         check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
+        for j in v_int_vec'range loop
+          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
+        end loop;
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_num_values := 5; -- same as v_int_vec'length
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, EXCL,(-1), INCL,(-5,6,8), UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -1, 1, EXCL,(-1,-1), INCL,(-5,6,8)); -- use vector to save overload
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -1706,10 +1738,10 @@ begin
       check_rand_value(v_uns, 0, 2**v_uns'length-1, EXCL,(0,1,2));
 
       log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
-      v_num_values := 7;
+      v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5,8), CYCLIC);
-        check_rand_value(v_uns, 0, 4, INCL,(5,8));
+        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5), CYCLIC);
+        check_rand_value(v_uns, 0, 4, INCL,(5,5)); -- use vector to save overload
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1726,10 +1758,31 @@ begin
         end if;
       end loop;
 
+      log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5), EXCL,(0), CYCLIC);
+        check_rand_value(v_uns, 0, 4, INCL,(5,5), EXCL,(0,0)); -- use vector to save overload
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5,8,9), EXCL,(0,1,2), CYCLIC);
         check_rand_value(v_uns, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
+        v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, 0, 2, EXCL,(0), INCL,(5,8,9), CYCLIC);
+        check_rand_value(v_uns, 0, 2, EXCL,(0,0), INCL,(5,8,9)); -- use vector to save overload
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1766,10 +1819,10 @@ begin
       check_rand_value(v_sig, -2**(v_sig'length-1), 2**(v_sig'length-1)-1, EXCL,(-1,0,1));
 
       log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
-      v_num_values := 7;
+      v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8,7), CYCLIC);
-        check_rand_value(v_sig, -2, 2, INCL,(-8,7));
+        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8), CYCLIC);
+        check_rand_value(v_sig, -2, 2, INCL,(-8,-8)); -- use vector to save overload
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1786,10 +1839,31 @@ begin
         end if;
       end loop;
 
+      log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8), EXCL,(1), CYCLIC);
+        check_rand_value(v_sig, -2, 2, INCL,(-8,-8), EXCL,(1,1)); -- use vector to save overload
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8,6,7), EXCL,(-1,0,1), CYCLIC);
         check_rand_value(v_sig, -2, 2, INCL,(-8,6,7), EXCL,(-1,0,1));
+        v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, -1, 1, EXCL,(0), INCL,(-8,6,7), CYCLIC);
+        check_rand_value(v_sig, -1, 1, EXCL,(0,0), INCL,(-8,6,7)); -- use vector to save overload
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1826,10 +1900,10 @@ begin
       check_rand_value(v_slv, 0, 2**v_slv'length-1, EXCL,(0,1,2));
 
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
-      v_num_values := 7;
+      v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5,8), CYCLIC);
-        check_rand_value(v_slv, 0, 4, INCL,(5,8));
+        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(8), CYCLIC);
+        check_rand_value(v_slv, 0, 4, INCL,(8,8)); -- use vector to save overload
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1846,10 +1920,31 @@ begin
         end if;
       end loop;
 
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5), EXCL,(0), CYCLIC);
+        check_rand_value(v_slv, 0, 4, INCL,(5,5), EXCL,(0,0)); -- use vector to save overload
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5,8,9), EXCL,(0,1,2), CYCLIC);
         check_rand_value(v_slv, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
+        v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, 0, 2, EXCL,(0), INCL,(5,8,9), CYCLIC);
+        check_rand_value(v_slv, 0, 2, EXCL,(0,0), INCL,(5,8,9)); -- use vector to save overload
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);

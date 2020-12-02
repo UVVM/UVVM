@@ -1247,7 +1247,7 @@ package body rand_tb_pkg is
     if (match_num_values and v_cnt = num_values) or (not(match_num_values) and v_cnt >= num_values) then
       log(ID_POS_ACK, C_PROC_NAME & " => OK.");
     else
-      alert(ERROR, C_PROC_NAME & " => Failed, some values were not generated.");
+      alert(ERROR, C_PROC_NAME & " => Failed, " & to_string(num_values-v_cnt) & " values were not generated.");
     end if;
   end procedure;
 

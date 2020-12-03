@@ -120,6 +120,9 @@ package rand_pkg is
     procedure set_scope(
       constant scope : in string);
 
+    procedure clear_rand_cyclic(
+      constant VOID : t_void);
+
     ------------------------------------------------------------
     -- Randomization seeds
     ------------------------------------------------------------
@@ -1325,6 +1328,13 @@ package body rand_pkg is
     begin
       DEALLOCATE(v_scope);
       v_scope := new string'(scope);
+    end procedure;
+
+    procedure clear_rand_cyclic(
+      constant VOID : t_void) is
+    begin
+      DEALLOCATE(v_cyclic_current_function);
+      v_cyclic_current_function := new string'("");
     end procedure;
 
     ------------------------------------------------------------

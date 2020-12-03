@@ -1951,6 +1951,29 @@ begin
         end if;
       end loop;
 
+      ------------------------------------------------------------
+      -- Clear random cyclic
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing clear_rand_cyclic");
+      log(ID_SEQUENCER, "Generate some values");
+      v_num_values := 7;
+      for i in 1 to v_num_values-2 loop
+        v_int := v_rand.rand(-3, 3, CYCLIC);
+        check_rand_value(v_int, -3, 3);
+      end loop;
+
+      log(ID_SEQUENCER, "Clear the random cyclic list");
+      v_rand.clear_rand_cyclic(VOID);
+
+      log(ID_SEQUENCER, "Generate whole range of values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(-3, 3, CYCLIC);
+        check_rand_value(v_int, -3, 3);
+        v_value_cnt(v_int) := v_value_cnt(v_int) + 1;
+      end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
+
+
     end if;
 
 

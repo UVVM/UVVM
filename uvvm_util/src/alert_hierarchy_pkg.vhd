@@ -109,7 +109,7 @@ package body alert_hierarchy_pkg is
     ) is
     variable v_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
     variable v_parent_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(parent_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
-    variable v_hierarchy_node : t_hierarchy_node;
+    variable v_hierarchy_node : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
     variable v_found : boolean := false;
   begin
       global_hierarchy_tree.contains_scope_return_data(v_scope, v_found, v_hierarchy_node);

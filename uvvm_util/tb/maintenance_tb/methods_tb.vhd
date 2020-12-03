@@ -214,7 +214,7 @@ begin
     variable v_string                 : string(1 to 10);
     variable v_line                   : line;
     variable v_local_hierarchy_tree   : t_hierarchy_linked_list;
-    variable v_dummy_hierarchy_node   : t_hierarchy_node;
+    variable v_dummy_hierarchy_node   : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
     variable v_alert_stop_limit       : natural;
     variable v_alert_count            : natural;
     variable v_slv_array              : t_slv_array(2 downto 0)(3 downto 0);

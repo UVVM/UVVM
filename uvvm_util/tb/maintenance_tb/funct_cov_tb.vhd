@@ -64,10 +64,13 @@ begin
     v_cov_point.add_bins(bin_vector(v_addr), 5, 2, "addr1");
     v_cov_point.add_bins(bin_vector(v_addr), 5, "addr2");
     v_cov_point.add_bins(bin_vector(v_addr), "addr3");
+    v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "size");
 
     v_cov_point.sample_coverage(0);
+    v_cov_point.sample_coverage(1);
+    v_cov_point.sample_coverage(3);
     v_cov_point.sample_coverage(5);
-    v_cov_point.sample_coverage(20);
+    v_cov_point.sample_coverage(7);
     v_cov_point.print_summary(VOID);
 
 

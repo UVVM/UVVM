@@ -77,6 +77,11 @@ package funct_cov_pkg is
     constant vector     : std_logic_vector)
   return t_cov_bin_vector;
 
+  -- Creates a bin a transition of values
+  function bin_transition(
+    constant set_values : integer_vector)
+  return t_cov_bin_vector;
+
   ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
@@ -213,13 +218,26 @@ package body funct_cov_pkg is
     return v_ret;
   end function;
 
+  -- Creates a bin a transition of values
+  function bin_transition(
+    constant set_values : integer_vector)
+  return t_cov_bin_vector is
+    variable v_ret : t_cov_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := TRN;
+    v_ret(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).num_values := set_values'length;
+    return v_ret;
+  end function;
+
   ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected body
-    variable v_scope   : line    := new string'(C_SCOPE);
-    variable v_bins    : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable v_bin_idx : natural := 0;
+    variable v_scope          : line    := new string'(C_SCOPE);
+    variable v_bins           : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
+    variable v_bin_idx        : natural := 0;
+    variable v_transition_idx : natural := 0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -267,7 +285,14 @@ package body funct_cov_pkg is
             write(v_line, string'("bin_range"));
             write(v_line, "(" & to_string(bins(i).values(0)) & " to " & to_string(bins(i).values(1)) & ")");
           when TRN =>
-            --TODO
+            write(v_line, string'("bin_transition("));
+            for j in 0 to bins(i).num_values-1 loop
+              write(v_line, to_string(bins(i).values(j)));
+              if j < bins(i).num_values-1 then
+                write(v_line, string'("->"));
+              end if;
+            end loop;
+            write(v_line, ')');
           when others =>
         end case;
         if i < bins'length-1 then
@@ -408,7 +433,16 @@ package body funct_cov_pkg is
               v_bins(i).hits := v_bins(i).hits + 1;
             end if;
           when TRN =>
-            --TODO
+            if value = v_bins(i).values(v_transition_idx) then
+              if v_transition_idx < v_bins(i).num_values-1 then
+                v_transition_idx := v_transition_idx + 1;
+              else
+                v_transition_idx := 0;
+                v_bins(i).hits   := v_bins(i).hits + 1;
+              end if;
+            else
+              v_transition_idx := 0;
+            end if;
           when ILL_VAL =>
             for j in 0 to v_bins(i).num_values-1 loop
               if value = v_bins(i).values(j) then

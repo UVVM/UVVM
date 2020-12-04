@@ -57,14 +57,15 @@ begin
     v_cov_point.add_bins(bin((8,9,10)), "set3");
     v_cov_point.add_bins(bin_range(0, 5, 1), 5, 2, "split_range1");
     v_cov_point.add_bins(bin_range(6, 10, 1), 5, "split_range2");
-    v_cov_point.add_bins(bin_range(0, 10, 1), "split_range3");
+    v_cov_point.add_bins(bin_range(0, 10, 2), "split_range3");
     v_cov_point.add_bins(bin_range(0, 5), 5, 2, "range1");
     v_cov_point.add_bins(bin_range(6, 10), 5, "range2");
     v_cov_point.add_bins(bin_range(0, 10), "range3");
     v_cov_point.add_bins(bin_vector(v_addr), 5, 2, "addr1");
     v_cov_point.add_bins(bin_vector(v_addr), 5, "addr2");
     v_cov_point.add_bins(bin_vector(v_addr), "addr3");
-    v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "size");
+    v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "transition");
+    v_cov_point.add_bins(bin(50) & bin((100,200,300)) & bin_range(50, 100, 2), 5, 2, "single_line");
 
     v_cov_point.sample_coverage(0);
     v_cov_point.sample_coverage(1);

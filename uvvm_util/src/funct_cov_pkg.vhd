@@ -36,6 +36,14 @@ package funct_cov_pkg is
   -- Types
   ------------------------------------------------------------
   type t_cov_bin_type is (VAL, RAN, TRN, ILL_VAL);
+  type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE);
+
+  type t_new_bin is record
+    contains   : t_cov_bin_type;
+    values     : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
+    num_values : natural;
+  end record;
+  type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
   type t_cov_bin is record
     contains   : t_cov_bin_type;
@@ -46,10 +54,7 @@ package funct_cov_pkg is
     weight     : natural;
     name       : string(1 to C_MAX_BIN_NAME_LENGTH);
   end record;
-
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
-
-  type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE);
 
   ------------------------------------------------------------
   -- Functions
@@ -57,12 +62,12 @@ package funct_cov_pkg is
   -- Creates a bin with a single value
   function bin(
     constant value      : integer)
-  return t_cov_bin_vector;
+  return t_new_bin_vector;
 
   -- Creates a bin with multiple values
   function bin(
     constant set_values : integer_vector)
-  return t_cov_bin_vector;
+  return t_new_bin_vector;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
   -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
@@ -70,17 +75,17 @@ package funct_cov_pkg is
     constant min_value  : integer;
     constant max_value  : integer;
     constant num_bins   : natural := 0)
-  return t_cov_bin_vector;
+  return t_new_bin_vector;
 
   -- Creates a bin for each value in the vector's range
   function bin_vector(
     constant vector     : std_logic_vector)
-  return t_cov_bin_vector;
+  return t_new_bin_vector;
 
   -- Creates a bin a transition of values
   function bin_transition(
     constant set_values : integer_vector)
-  return t_cov_bin_vector;
+  return t_new_bin_vector;
 
   ------------------------------------------------------------
   -- Protected type
@@ -97,20 +102,20 @@ package funct_cov_pkg is
     -- Bins
     ------------------------------------------------------------
     procedure add_bins(
-      constant bin           : in t_cov_bin_vector;
+      constant bin           : in t_new_bin_vector;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_bins(
-      constant bin           : in t_cov_bin_vector;
+      constant bin           : in t_new_bin_vector;
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_bins(
-      constant bin           : in t_cov_bin_vector;
+      constant bin           : in t_new_bin_vector;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
@@ -136,8 +141,8 @@ package body funct_cov_pkg is
   -- Creates a bin with a single value
   function bin(
     constant value      : integer)
-  return t_cov_bin_vector is
-    variable v_ret : t_cov_bin_vector(0 to 0);
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
   begin
     v_ret(0).contains   := VAL;
     v_ret(0).values(0)  := value;
@@ -148,8 +153,8 @@ package body funct_cov_pkg is
   -- Creates a bin with multiple values
   function bin(
     constant set_values : integer_vector)
-  return t_cov_bin_vector is
-    variable v_ret : t_cov_bin_vector(0 to 0);
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
   begin
     v_ret(0).contains   := VAL;
     v_ret(0).values(0 to set_values'length-1) := set_values;
@@ -172,11 +177,11 @@ package body funct_cov_pkg is
     constant min_value  : integer;
     constant max_value  : integer;
     constant num_bins   : natural := 0)
-  return t_cov_bin_vector is
+  return t_new_bin_vector is
     constant C_RANGE_WIDTH : integer := (max_value - min_value + 1); --TODO: absolute value
     variable v_div_range   : integer;
     variable v_num_bins    : integer;
-    variable v_ret : t_cov_bin_vector(0 to C_RANGE_WIDTH-1);
+    variable v_ret : t_new_bin_vector(0 to C_RANGE_WIDTH-1);
   begin
     -- Create a bin for each value in the range
     if num_bins = 0 then
@@ -209,8 +214,8 @@ package body funct_cov_pkg is
   -- Creates a bin for each value in the vector's range
   function bin_vector(
     constant vector     : std_logic_vector)
-  return t_cov_bin_vector is
-    variable v_ret : t_cov_bin_vector(0 to 2**vector'length-1);
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 2**vector'length-1);
   begin
     for i in v_ret'range loop
       v_ret(i to i) := bin(i);
@@ -221,8 +226,8 @@ package body funct_cov_pkg is
   -- Creates a bin a transition of values
   function bin_transition(
     constant set_values : integer_vector)
-  return t_cov_bin_vector is
-    variable v_ret : t_cov_bin_vector(0 to 0);
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
   begin
     v_ret(0).contains   := TRN;
     v_ret(0).values(0 to set_values'length-1) := set_values;
@@ -264,7 +269,7 @@ package body funct_cov_pkg is
 
     -- Returns the string representation of the bins
     function to_string(
-      bins : t_cov_bin_vector)
+      bins : t_new_bin_vector)
     return string is
       variable v_line   : line;
       variable v_result : string(1 to 500);
@@ -358,7 +363,7 @@ package body funct_cov_pkg is
     -- Bins
     ------------------------------------------------------------
     procedure add_bins(
-      constant bin           : in t_cov_bin_vector;
+      constant bin           : in t_new_bin_vector;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
@@ -381,7 +386,7 @@ package body funct_cov_pkg is
     end procedure;
 
     procedure add_bins(
-      constant bin           : in t_cov_bin_vector;
+      constant bin           : in t_new_bin_vector;
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
@@ -390,7 +395,7 @@ package body funct_cov_pkg is
     end procedure;
 
     procedure add_bins(
-      constant bin           : in t_cov_bin_vector;
+      constant bin           : in t_new_bin_vector;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
     begin

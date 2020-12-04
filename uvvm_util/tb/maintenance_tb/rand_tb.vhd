@@ -1953,9 +1953,8 @@ begin
       end loop;
 
       ------------------------------------------------------------
-      -- Clear random cyclic
-      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing clear_rand_cyclic");
+      ------------------------------------------------------------
       log(ID_SEQUENCER, "Generate some values");
       v_num_values := 7;
       for i in 1 to v_num_values-2 loop
@@ -1974,6 +1973,41 @@ begin
       end loop;
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing random cyclic performance");
+      ------------------------------------------------------------
+      disable_log_msg(ID_RAND_GEN);
+
+      v_num_values := 100;
+      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(1, v_num_values, CYCLIC);
+      end loop;
+
+      v_num_values := 1000;
+      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(1, v_num_values, CYCLIC);
+      end loop;
+
+      v_num_values := 10000;
+      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(1, v_num_values, CYCLIC);
+      end loop;
+
+      v_num_values := 100000;
+      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(1, v_num_values, CYCLIC);
+      end loop;
+
+      -- Note that this test already slows down simulation considerably.
+      v_num_values := 1000000;
+      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(1, v_num_values, CYCLIC);
+      end loop;
 
     end if;
 

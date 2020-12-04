@@ -1239,7 +1239,8 @@ package body rand_pkg is
       constant proc_call       : in    string;
       constant ext_proc_call   : in    string;
       variable new_proc_call   : inout line;
-      constant msg_id_panel    : in    t_msg_id_panel) is
+      constant msg_id_panel    : in    t_msg_id_panel;
+      constant print_log       : in    boolean := true) is
     begin
       -- Called directly from sequencer/VVC
       if ext_proc_call = "" then
@@ -1249,6 +1250,15 @@ package body rand_pkg is
       else
         write(new_proc_call, ext_proc_call);
       end if;
+    end procedure;
+
+    -- Generates the correct procedure call to be used for logging or alerts
+    procedure create_proc_call(
+      constant proc_call       : in    string;
+      constant ext_proc_call   : in    string;
+      variable new_proc_call   : inout line) is
+    begin
+      log_proc_call(ID_NEVER, proc_call, ext_proc_call, new_proc_call, shared_msg_id_panel, false);
     end procedure;
 
     -- Checks that the parameters are within a valid range
@@ -1405,7 +1415,7 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- If a different function in cyclic mode is called, regenerate the list
       if cyclic_mode = CYCLIC and v_proc_call.all /= v_cyclic_current_function.all then
@@ -1441,6 +1451,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
       end case;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1458,7 +1469,7 @@ package body rand_pkg is
       alias normalized_set_values : integer_vector(0 to set_values'length-1) is set_values;
       variable v_ret              : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value within the set of values
       if set_type /= ONLY then
@@ -1466,6 +1477,7 @@ package body rand_pkg is
       end if;
       v_ret := rand(0, set_values'length-1, cyclic_mode, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return normalized_set_values(v_ret);
     end function;
@@ -1500,7 +1512,7 @@ package body rand_pkg is
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
@@ -1526,6 +1538,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1583,7 +1596,7 @@ package body rand_pkg is
       variable v_combined_set_values : integer_vector(0 to set_values1'length+set_values2'length-1);
       variable v_ret                 : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
       if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
@@ -1624,6 +1637,7 @@ package body rand_pkg is
         end if;
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1641,7 +1655,7 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : real;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
@@ -1656,6 +1670,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
       end case;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1671,7 +1686,7 @@ package body rand_pkg is
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
       variable v_ret              : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value within the set of values
       if set_type /= ONLY then
@@ -1679,6 +1694,7 @@ package body rand_pkg is
       end if;
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return normalized_set_values(v_ret);
     end function;
@@ -1711,7 +1727,7 @@ package body rand_pkg is
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : real;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
@@ -1729,6 +1745,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1783,7 +1800,7 @@ package body rand_pkg is
       variable v_combined_set_values : real_vector(0 to set_values1'length+set_values2'length-1);
       variable v_ret                 : real;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
       if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
@@ -1824,6 +1841,7 @@ package body rand_pkg is
         end if;
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1841,7 +1859,7 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : time;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
@@ -1856,6 +1874,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
       end case;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1871,7 +1890,7 @@ package body rand_pkg is
       alias normalized_set_values : time_vector(0 to set_values'length-1) is set_values;
       variable v_ret              : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value within the set of values
       if set_type /= ONLY then
@@ -1879,6 +1898,7 @@ package body rand_pkg is
       end if;
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return normalized_set_values(v_ret);
     end function;
@@ -1912,7 +1932,7 @@ package body rand_pkg is
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : time;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
@@ -1930,6 +1950,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1985,7 +2006,7 @@ package body rand_pkg is
       variable v_combined_set_values : time_vector(0 to set_values1'length+set_values2'length-1);
       variable v_ret                 : time;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
       if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
@@ -2026,6 +2047,7 @@ package body rand_pkg is
         end if;
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2048,7 +2070,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
@@ -2077,6 +2099,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2096,7 +2119,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
@@ -2125,6 +2148,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2163,7 +2187,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
@@ -2193,6 +2217,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2255,7 +2280,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
@@ -2286,6 +2311,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2307,7 +2333,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
@@ -2331,6 +2357,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2349,7 +2376,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
@@ -2378,6 +2405,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2413,7 +2441,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
@@ -2437,6 +2465,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2495,7 +2524,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
@@ -2519,6 +2548,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2541,7 +2571,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
@@ -2570,6 +2600,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2588,7 +2619,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
@@ -2617,6 +2648,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2654,7 +2686,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
@@ -2684,6 +2716,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2744,7 +2777,7 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
@@ -2775,6 +2808,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2791,13 +2825,14 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : unsigned(length-1 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value for each bit of the vector
       for i in 0 to length-1 loop
         v_ret(i downto i) := to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1);
       end loop;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2813,16 +2848,19 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
         ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call : line;
-      variable v_ret       : integer;
+      variable v_ret_int   : integer;
+      variable v_ret       : unsigned(length-1 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value]
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
-      v_ret := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
+      v_ret_int := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
+      v_ret     := to_unsigned(v_ret_int,length);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
-      return to_unsigned(v_ret,length);
+      return v_ret;
     end function;
 
     impure function rand(
@@ -2838,28 +2876,31 @@ package body rand_pkg is
       variable v_proc_call       : line;
       variable v_gen_new_random  : boolean := true;
       variable v_unsigned        : unsigned(length-1 downto 0);
-      variable v_ret             : integer;
+      variable v_ret_int         : integer;
+      variable v_ret             : unsigned(length-1 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
       -- Generate a random value within the set of values
       if set_type = ONLY then
-        v_ret := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
         check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
-          v_ret  := to_integer(v_unsigned);
-          v_gen_new_random := check_value_in_vector(v_ret, integer_vector(set_values));
+          v_ret_int  := to_integer(v_unsigned);
+          v_gen_new_random := check_value_in_vector(v_ret_int, integer_vector(set_values));
         end loop;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
       end if;
+      v_ret := to_unsigned(v_ret_int,length);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
-      return to_unsigned(v_ret,length);
+      return v_ret;
     end function;
 
     impure function rand(
@@ -2890,17 +2931,20 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
         ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call : line;
-      variable v_ret       : integer;
+      variable v_ret_int   : integer;
+      variable v_ret       : unsigned(length-1 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
       check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
-      v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+      v_ret_int := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+      v_ret     := to_unsigned(v_ret_int,length);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
-      return to_unsigned(v_ret,length);
+      return v_ret;
     end function;
 
     impure function rand(
@@ -2954,18 +2998,21 @@ package body rand_pkg is
         ", " & to_upper(to_string(set_type1)) & ":" & to_string(set_values1) &
         ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call : line;
-      variable v_ret       : integer;
+      variable v_ret_int   : integer;
+      variable v_ret       : unsigned(length-1 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
       check_parameters_within_range(length, integer_vector(set_values1), msg_id_panel, signed_values => false);
       check_parameters_within_range(length, integer_vector(set_values2), msg_id_panel, signed_values => false);
-      v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, v_proc_call.all);
+      v_ret_int := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, v_proc_call.all);
+      v_ret     := to_unsigned(v_ret_int,length);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
-      return to_unsigned(v_ret,length);
+      return v_ret;
     end function;
 
     ------------------------------------------------------------
@@ -2980,13 +3027,14 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : signed(length-1 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value for each bit of the vector
       for i in 0 to length-1 loop
         v_ret(i downto i) := signed(to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1));
       end loop;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3004,12 +3052,13 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value]
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
       v_ret := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3029,7 +3078,7 @@ package body rand_pkg is
       variable v_signed          : signed(length-1 downto 0);
       variable v_ret             : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
       -- Generate a random value within the set of values
@@ -3047,6 +3096,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
       end if;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3081,13 +3131,14 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
       check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
       v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3145,7 +3196,7 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
@@ -3153,6 +3204,7 @@ package body rand_pkg is
       check_parameters_within_range(length, set_values2, msg_id_panel, signed_values => true);
       v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3296,11 +3348,12 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : unsigned(0 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random bit
       v_ret := rand(1, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret(0);
     end function;
@@ -3314,11 +3367,12 @@ package body rand_pkg is
       variable v_proc_call : line;
       variable v_ret       : unsigned(0 downto 0);
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random bit
       v_ret := rand(1, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret(0) = '1';
     end function;
@@ -3341,10 +3395,11 @@ package body rand_pkg is
         v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, NA);
       end loop;
       v_local_call := new string'("rand_val_weight(" & to_string(v_weight_vector) & ")");
-      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3365,10 +3420,11 @@ package body rand_pkg is
         v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
-      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3389,7 +3445,7 @@ package body rand_pkg is
       variable v_previous_dist     : t_rand_dist := v_rand_dist;
       variable v_ret               : integer;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
@@ -3427,6 +3483,7 @@ package body rand_pkg is
       -- Restore previous distribution
       v_rand_dist := v_previous_dist;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3449,10 +3506,11 @@ package body rand_pkg is
         v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, NA);
       end loop;
       v_local_call := new string'("rand_val_weight(" & to_string(v_weight_vector) & ")");
-      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3473,10 +3531,11 @@ package body rand_pkg is
         v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
-      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3497,7 +3556,7 @@ package body rand_pkg is
       variable v_previous_dist     : t_rand_dist := v_rand_dist;
       variable v_ret               : real;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
@@ -3535,6 +3594,7 @@ package body rand_pkg is
       -- Restore previous distribution
       v_rand_dist := v_previous_dist;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3557,10 +3617,11 @@ package body rand_pkg is
         v_weight_vector(i) := (weight_vector(i).value, weight_vector(i).value, weight_vector(i).weight, NA);
       end loop;
       v_local_call := new string'("rand_val_weight(" & to_string(v_weight_vector) & ")");
-      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3581,10 +3642,11 @@ package body rand_pkg is
         v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
-      log_proc_call(ID_RAND_GEN, v_local_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3605,7 +3667,7 @@ package body rand_pkg is
       variable v_previous_dist     : t_rand_dist := v_rand_dist;
       variable v_ret               : time;
     begin
-      log_proc_call(ID_RAND_GEN, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
@@ -3643,6 +3705,7 @@ package body rand_pkg is
       -- Restore previous distribution
       v_rand_dist := v_previous_dist;
 
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;

@@ -738,14 +738,12 @@ begin
       v_num_values := 3; -- only need to check that it doesn't generate the same value
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length);
-        log("v_uns:" & to_string(v_uns, HEX, KEEP_LEADING_0, INCL_RADIX));
         v_value_cnt(to_integer(v_uns)) := v_value_cnt(to_integer(v_uns)) + 1;
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values, match_num_values => false);
 
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.rand(v_uns_long'length);
-        log("v_uns_long:" & to_string(v_uns_long, HEX, KEEP_LEADING_0, INCL_RADIX));
       end loop;
 
       log(ID_LOG_HDR, "Testing unsigned (min/max)");
@@ -848,14 +846,12 @@ begin
       v_num_values := 3; -- only need to check that it doesn't generate the same value
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length);
-        log("v_sig:" & to_string(v_sig, DEC));
         v_value_cnt(to_integer(v_sig)) := v_value_cnt(to_integer(v_sig)) + 1;
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values, match_num_values => false);
 
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_sig_long := v_rand.rand(v_sig_long'length);
-        log("v_sig_long:" & to_string(v_sig_long, DEC));
       end loop;
 
       log(ID_LOG_HDR, "Testing signed (min/max)");
@@ -958,14 +954,12 @@ begin
       v_num_values := 3; -- only need to check that it doesn't generate the same value
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length);
-        log("v_slv:" & to_string(v_slv, HEX, KEEP_LEADING_0, INCL_RADIX));
         v_value_cnt(to_integer(unsigned(v_slv))) := v_value_cnt(to_integer(unsigned(v_slv))) + 1;
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values, match_num_values => false);
 
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long'length);
-        log("v_slv_long:" & to_string(v_slv_long, HEX, KEEP_LEADING_0, INCL_RADIX));
       end loop;
 
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
@@ -1067,7 +1061,6 @@ begin
       log(ID_LOG_HDR, "Testing std_logic & boolean");
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_std := v_rand.rand(VOID);
-        log("v_std:" & to_string(v_std));
         v_bit_check := (v_bit_check or "10") when v_std else (v_bit_check or "01");
       end loop;
       check_value(v_bit_check, "11", ERROR, "Check '0' and '1' are generated");
@@ -1075,7 +1068,6 @@ begin
 
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_bln := v_rand.rand(VOID);
-        log("v_bln:" & to_string(v_bln));
         v_bit_check := (v_bit_check or "10") when v_bln else (v_bit_check or "01");
       end loop;
       check_value(v_bit_check, "11", ERROR, "Check true and false are generated");

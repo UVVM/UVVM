@@ -35,7 +35,7 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
-  type t_cov_bin_type is (VAL, RAN, TRN);
+  type t_cov_bin_type is (VAL, RAN, TRN, ILL_VAL);
 
   type t_cov_bin is record
     contains   : t_cov_bin_type;
@@ -52,6 +52,32 @@ package funct_cov_pkg is
   type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE);
 
   ------------------------------------------------------------
+  -- Functions
+  ------------------------------------------------------------
+  -- Creates a bin with a single value
+  function bin(
+    constant value      : integer)
+  return t_cov_bin_vector;
+
+  -- Creates a bin with multiple values
+  function bin(
+    constant set_values : integer_vector)
+  return t_cov_bin_vector;
+
+  -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
+  -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
+  function bin_range(
+    constant min_value  : integer;
+    constant max_value  : integer;
+    constant num_bins   : natural := 0)
+  return t_cov_bin_vector;
+
+  -- Creates a bin for each value in the vector's range
+  function bin_vector(
+    constant vector     : std_logic_vector)
+  return t_cov_bin_vector;
+
+  ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected
@@ -65,122 +91,24 @@ package funct_cov_pkg is
     ------------------------------------------------------------
     -- Bins
     ------------------------------------------------------------
-    -- Adds a bin with a single value
-    procedure add_bin_single(
-      constant value         : in integer;
+    procedure add_bins(
+      constant bin           : in t_cov_bin_vector;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "");
-    --# my_cov_point.add_bin_single(50, 5, 2, "size")
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-    procedure add_bin_single(
-      constant value         : in integer;
+    procedure add_bins(
+      constant bin           : in t_cov_bin_vector;
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-    procedure add_bin_single(
-      constant value         : in integer;
+    procedure add_bins(
+      constant bin           : in t_cov_bin_vector;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-    -- Adds a bin with multiple values --Q: OR each val in own bin?
-    procedure add_bin_multiple(
-      constant set_values    : in integer_vector;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "");
-    --# my_cov_point.add_bin_multiple((0,10,90,100), 5, 2, "size")
-
-    procedure add_bin_multiple(
-      constant set_values    : in integer_vector;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    procedure add_bin_multiple(
-      constant set_values    : in integer_vector;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
-    -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
-    procedure add_bins_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant num_bins      : in natural := 0; --Q: this default doesn't make sense here, probably need to make new function or be required
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "");
-    --# my_cov_point.add_bins_range(0, 100, 10, 5, 2, "size")
-
-    procedure add_bins_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant num_bins      : in natural := 0;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    procedure add_bins_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant num_bins      : in natural := 0;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    -- Adds a bin with a range of values
-    procedure add_bin_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "");
-    --# my_cov_point.add_bin_range(0, 100, 5, 2, "size")
-
-    procedure add_bin_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    procedure add_bin_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    -- Adds a bin for each value in the vector's range
-    procedure add_bins_slv(
-      constant vector        : in std_logic_vector;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "");
-    --# my_cov_point.add_bins_slv(v_addr, 5, 2, "size")
-
-    procedure add_bins_slv(
-      constant vector        : in std_logic_vector;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    procedure add_bins_slv(
-      constant vector        : in std_logic_vector;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
-    --Q: useful to have bin with a set of values? requires t_cov_bin to have an integer_vector with a MAX size instead of 2 integers min/max
 
     ------------------------------------------------------------
     -- Coverage
@@ -196,6 +124,94 @@ package funct_cov_pkg is
 end package funct_cov_pkg;
 
 package body funct_cov_pkg is
+
+  ------------------------------------------------------------
+  -- Functions
+  ------------------------------------------------------------
+  -- Creates a bin with a single value
+  function bin(
+    constant value      : integer)
+  return t_cov_bin_vector is
+    variable v_ret : t_cov_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := VAL;
+    v_ret(0).values(0)  := value;
+    v_ret(0).num_values := 1;
+    return v_ret;
+  end function;
+
+  -- Creates a bin with multiple values
+  function bin(
+    constant set_values : integer_vector)
+  return t_cov_bin_vector is
+    variable v_ret : t_cov_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := VAL;
+    v_ret(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).num_values := set_values'length;
+    return v_ret;
+  end function;
+
+  -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
+  -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
+  --Q: if division has a residue, either leave it to the last bin or spread it among bins (OSSVM)
+  --   -- 1 to 2, 3 to 4, 5 to 6, 7 to 10
+  --   -- 1 to 2, 3 to 4, 5 to 7, 8 to 10
+  -- **10 /  1; = 10                -- 1 to 10
+  -- **10 /  2; = 5                 -- 1 to 5, 6 to 10
+  -- 10 /  4; = 2 (round down 2.5)  -- 1 to 2, 3 to 4, 5 to 6, 7 to 8
+  -- 10 /  9; = 1 (round down 1.1)
+  -- **10 / 10; = 1                 -- 1 to 1, 2 to 2, ...,  10 to 10
+  -- **10 / 11; = 0                 -- 1 to 1, 2 to 2, ...,  10 to 10
+  function bin_range(
+    constant min_value  : integer;
+    constant max_value  : integer;
+    constant num_bins   : natural := 0)
+  return t_cov_bin_vector is
+    constant C_RANGE_WIDTH : integer := (max_value - min_value + 1); --TODO: absolute value
+    variable v_div_range   : integer;
+    variable v_num_bins    : integer;
+    variable v_ret : t_cov_bin_vector(0 to C_RANGE_WIDTH-1);
+  begin
+    -- Create a bin for each value in the range
+    if num_bins = 0 then
+      for i in min_value to max_value loop
+        v_ret(i-min_value to i-min_value) := bin(i);
+      end loop;
+      v_num_bins  := C_RANGE_WIDTH;
+    -- Create several bins
+    elsif min_value <= max_value then
+      if C_RANGE_WIDTH > num_bins then
+        v_div_range := C_RANGE_WIDTH / num_bins;
+        v_num_bins  := num_bins;
+      else
+        v_div_range := C_RANGE_WIDTH;
+        v_num_bins  := 1;
+      end if;
+      --TODO: figure out what to do with remaining values
+      for i in 0 to v_num_bins-1 loop
+        v_ret(i).contains   := RAN;
+        v_ret(i).values(0)  := min_value+v_div_range*i;
+        v_ret(i).values(1)  := min_value+v_div_range*(i+1)-1;
+        v_ret(i).num_values := 2;
+      end loop;
+    else
+      --alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+    end if;
+    return v_ret(0 to v_num_bins-1);
+  end function;
+
+  -- Creates a bin for each value in the vector's range
+  function bin_vector(
+    constant vector     : std_logic_vector)
+  return t_cov_bin_vector is
+    variable v_ret : t_cov_bin_vector(0 to 2**vector'length-1);
+  begin
+    for i in v_ret'range loop
+      v_ret(i to i) := bin(i);
+    end loop;
+    return v_ret;
+  end function;
 
   ------------------------------------------------------------
   -- Protected type
@@ -228,6 +244,81 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
+    -- Returns the string representation of the bins
+    function to_string(
+      bins : t_cov_bin_vector)
+    return string is
+      variable v_line   : line;
+      variable v_result : string(1 to 500);
+      variable v_width  : natural;
+    begin
+      for i in bins'range loop
+        case bins(i).contains is
+          when VAL =>
+            write(v_line, string'("bin"));
+            if bins(i).num_values = 1 then
+              write(v_line, '(');
+              write(v_line, to_string(bins(i).values(0)));
+              write(v_line, ')');
+            else
+              write(v_line, to_string(bins(i).values(0 to bins(i).num_values-1)));
+            end if;
+          when RAN =>
+            write(v_line, string'("bin_range"));
+            write(v_line, "(" & to_string(bins(i).values(0)) & " to " & to_string(bins(i).values(1)) & ")");
+          when TRN =>
+            --TODO
+          when others =>
+        end case;
+        if i < bins'length-1 then
+          write(v_line, string'(","));
+        end if;
+      end loop;
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end function;
+
+    -- Returns the string representation of the bin content
+    function to_string(
+      bin_type       : t_cov_bin_type;
+      bin_values     : integer_vector;
+      bin_num_values : natural)
+    return string is
+      variable v_line   : line;
+      variable v_result : string(1 to 100);
+      variable v_width  : natural;
+    begin
+      write(v_line, '(');
+      case bin_type is
+        when VAL =>
+          for i in 0 to bin_num_values-1 loop
+            write(v_line, to_string(bin_values(i)));
+            if i < bin_num_values-1 then
+              write(v_line, string'(","));
+            end if;
+          end loop;
+        when RAN =>
+          write(v_line, to_string(bin_values(0)) & " to " & to_string(bin_values(1)));
+        when TRN =>
+          for i in 0 to bin_num_values-1 loop
+            write(v_line, to_string(bin_values(i)));
+            if i < bin_num_values-1 then
+              write(v_line, string'("->"));
+            end if;
+          end loop;
+        when others =>
+      end case;
+      write(v_line, ')');
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end function;
+
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
@@ -241,231 +332,44 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Bins
     ------------------------------------------------------------
-    -- Adds a bin with a single value
-    procedure add_bin_single(
-      constant value         : in integer;
+    procedure add_bins(
+      constant bin           : in t_cov_bin_vector;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_bin_single(value:" & to_string(value) & ", min_cov:" & to_string(min_cov) &
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_bins(" & to_string(bin) & ", min_cov:" & to_string(min_cov) &
         ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       variable v_proc_call : line;
     begin
-      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
-      v_bins(v_bin_idx).contains   := VAL;
-      v_bins(v_bin_idx).values(0)  := value;
-      v_bins(v_bin_idx).num_values := 1;
-      v_bins(v_bin_idx).hits       := 0;
-      v_bins(v_bin_idx).min_hits   := min_cov;
-      v_bins(v_bin_idx).weight     := rand_weight;
-      v_bins(v_bin_idx).name(1 to bin_name'length) := bin_name;
-      v_bin_idx := v_bin_idx + 1;
-    end procedure;
-
-    procedure add_bin_single(
-      constant value         : in integer;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bin_single(value, min_cov, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    procedure add_bin_single(
-      constant value         : in integer;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bin_single(value, 1, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    -- Adds a bin with multiple values
-    procedure add_bin_multiple(
-      constant set_values    : in integer_vector;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_bin_multiple(values:" & to_string(set_values) & ", min_cov:" & to_string(min_cov) &
-        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
-      variable v_proc_call : line;
-    begin
-      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
-      v_bins(v_bin_idx).contains   := VAL;
-      v_bins(v_bin_idx).values(0 to set_values'length-1) := set_values;
-      v_bins(v_bin_idx).num_values := set_values'length;
-      v_bins(v_bin_idx).hits       := 0;
-      v_bins(v_bin_idx).min_hits   := min_cov;
-      v_bins(v_bin_idx).weight     := rand_weight;
-      v_bins(v_bin_idx).name(1 to bin_name'length) := bin_name;
-      v_bin_idx := v_bin_idx + 1;
-    end procedure;
-
-    procedure add_bin_multiple(
-      constant set_values    : in integer_vector;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bin_multiple(set_values, min_cov, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    procedure add_bin_multiple(
-      constant set_values    : in integer_vector;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bin_multiple(set_values, 1, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
-    -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
-    procedure add_bins_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant num_bins      : in natural := 0;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_bins_range(min:" & to_string(min_value) & ", max:" & to_string(max_value) &
-        ", bins:" & to_string(num_bins) & ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
-      constant C_RANGE_WIDTH : integer := (max_value - min_value + 1);
-      variable v_proc_call   : line;
-      variable v_div_range   : integer;
-      variable v_num_bins    : integer;
-    begin
-      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
-      -- Create a bin for each value in the range
-      if num_bins = 0 then
-        for i in min_value to max_value loop
-          add_bin_single(i, min_cov, rand_weight, bin_name & "_" & to_string(i), msg_id_panel, v_proc_call.all);
-        end loop;
-      -- Create several bins
-      elsif min_value <= max_value then
-        if C_RANGE_WIDTH > num_bins then
-          v_div_range := C_RANGE_WIDTH / num_bins;
-          v_num_bins  := num_bins;
-        else
-          v_div_range := 1;
-          v_num_bins  := C_RANGE_WIDTH;
-        end if;
-        --TODO: figure out what to do with remaining values
-        for i in 0 to v_num_bins-1 loop
-          add_bin_range(min_value+v_div_range*i, min_value+v_div_range*(i+1)-1, min_cov, rand_weight, bin_name & "_" & to_string(i), msg_id_panel, v_proc_call.all);
-        end loop;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
-      end if;
-    end procedure;
-
-    procedure add_bins_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant num_bins      : in natural := 0;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bins_range(min_value, max_value, num_bins, min_cov, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    procedure add_bins_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant num_bins      : in natural := 0;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bins_range(min_value, max_value, num_bins, 1, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    -- Adds a bin with a range of values
-    procedure add_bin_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_bin_range(min:" & to_string(min_value) & ", max:" & to_string(max_value) &
-        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
-      variable v_proc_call : line;
-    begin
-      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
-      v_bins(v_bin_idx).contains   := RAN;
-      v_bins(v_bin_idx).values(0)  := min_value;
-      v_bins(v_bin_idx).values(1)  := max_value;
-      v_bins(v_bin_idx).num_values := 2;
-      v_bins(v_bin_idx).hits       := 0;
-      v_bins(v_bin_idx).min_hits   := min_cov;
-      v_bins(v_bin_idx).weight     := rand_weight;
-      v_bins(v_bin_idx).name(1 to bin_name'length) := bin_name;
-      v_bin_idx := v_bin_idx + 1;
-    end procedure;
-
-    procedure add_bin_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant min_cov       : in positive;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bin_range(min_value, max_value, min_cov, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    procedure add_bin_range(
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-    begin
-      add_bin_range(min_value, max_value, 1, 1, bin_name, msg_id_panel);
-    end procedure;
-
-    -- Adds a bin for each value in the vector's range
-    procedure add_bins_slv(
-      constant vector        : in std_logic_vector;
-      constant min_cov       : in positive;
-      constant rand_weight   : in natural;
-      constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_bins_slv(vector:" & to_string(vector'length) &
-        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
-      variable v_proc_call : line;
-    begin
-      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, ext_proc_call, v_proc_call, msg_id_panel);
-
-      for i in 0 to 2**vector'length-1 loop
-        add_bin_single(i, min_cov, rand_weight, bin_name & "_" & to_string(i), msg_id_panel, v_proc_call.all);
+      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, "", v_proc_call, msg_id_panel); --TODO: check if replace for simple log
+      for i in bin'range loop
+        v_bins(v_bin_idx).contains   := bin(i).contains;
+        v_bins(v_bin_idx).values     := bin(i).values;
+        v_bins(v_bin_idx).num_values := bin(i).num_values;
+        v_bins(v_bin_idx).hits       := 0;
+        v_bins(v_bin_idx).min_hits   := min_cov;
+        v_bins(v_bin_idx).weight     := rand_weight;
+        v_bins(v_bin_idx).name(1 to bin_name'length) := bin_name;
+        v_bin_idx := v_bin_idx + 1;
       end loop;
     end procedure;
 
-    procedure add_bins_slv(
-      constant vector        : in std_logic_vector;
+    procedure add_bins(
+      constant bin           : in t_cov_bin_vector;
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
     begin
-      add_bins_slv(vector, min_cov, 1, bin_name, msg_id_panel);
+      add_bins(bin, min_cov, 1, bin_name, msg_id_panel);
     end procedure;
 
-    procedure add_bins_slv(
-      constant vector        : in std_logic_vector;
+    procedure add_bins(
+      constant bin           : in t_cov_bin_vector;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
     begin
-      add_bins_slv(vector, 1, 1, bin_name, msg_id_panel);
+      add_bins(bin, 1, 1, bin_name, msg_id_panel);
     end procedure;
 
     --procedure add_bin_t(set_transitions : integer_vector) is
@@ -493,8 +397,6 @@ package body funct_cov_pkg is
     begin
       for i in 0 to v_bin_idx-1 loop
         case v_bins(i).contains is
-          --when ILLEGAL =>
-            --
           when VAL =>
             for j in 0 to v_bins(i).num_values-1 loop
               if value = v_bins(i).values(j) then
@@ -506,7 +408,13 @@ package body funct_cov_pkg is
               v_bins(i).hits := v_bins(i).hits + 1;
             end if;
           when TRN =>
-            --
+            --TODO
+          when ILL_VAL =>
+            for j in 0 to v_bins(i).num_values-1 loop
+              if value = v_bins(i).values(j) then
+                alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", v_scope.all);
+              end if;
+            end loop;
         end case;
       end loop;
     end procedure;
@@ -592,20 +500,10 @@ package body funct_cov_pkg is
 
       -- Print bins
       for i in 0 to v_bin_idx-1 loop
-        if v_bins(i).contains = VAL then
+        if (v_bins(i).contains = VAL or v_bins(i).contains = RAN or v_bins(i).contains = TRN) then
           write(v_line, justify(
             fill_string(' ', 5) &
-            justify(to_string(v_bins(i).values(0 to v_bins(i).num_values-1)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(is_bin_covered(v_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        elsif v_bins(i).contains = RAN then
-          write(v_line, justify(
-            fill_string(' ', 5) &
-            justify("(" & to_string(v_bins(i).values(0)) & " to " & to_string(v_bins(i).values(1)) & ")", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(v_bins(i).contains, v_bins(i).values, v_bins(i).num_values), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(v_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(v_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(v_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &

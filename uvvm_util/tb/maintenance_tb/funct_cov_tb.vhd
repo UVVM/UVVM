@@ -49,21 +49,21 @@ begin
     log(ID_LOG_HDR_LARGE, "Start Simulation of Functional Coverage package");
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Testing add_bin()");
-    v_cov_point.add_bin_single(1, 5, 2, "val1");
-    v_cov_point.add_bin_single(2, 5, "val2");
-    v_cov_point.add_bin_single(3, "val3");
-    v_cov_point.add_bin_multiple((0,2,4,6), 5, 2, "set1");
-    v_cov_point.add_bin_multiple((1,3,5,7), 5, "set2");
-    v_cov_point.add_bin_multiple((8,9,10), "set3");
-    v_cov_point.add_bins_range(0, 5, 1, 5, 2, "split_range1");
-    v_cov_point.add_bins_range(6, 10, 1, 5, "split_range2");
-    v_cov_point.add_bins_range(0, 10, 1, "split_range3");
-    v_cov_point.add_bin_range(0, 5, 5, 2, "range1");
-    v_cov_point.add_bin_range(6, 10, 5, "range2");
-    v_cov_point.add_bin_range(0, 10, "range3");
-    v_cov_point.add_bins_slv(v_addr, 5, 2, "addr1");
-    v_cov_point.add_bins_slv(v_addr, 5, "addr2");
-    v_cov_point.add_bins_slv(v_addr, "addr3");
+    v_cov_point.add_bins(bin(1), 5, 2, "val1");
+    v_cov_point.add_bins(bin(2), 5, "val2");
+    v_cov_point.add_bins(bin(3), "val3");
+    v_cov_point.add_bins(bin((0,2,4,6)), 5, 2, "set1");
+    v_cov_point.add_bins(bin((1,3,5,7)), 5, "set2");
+    v_cov_point.add_bins(bin((8,9,10)), "set3");
+    v_cov_point.add_bins(bin_range(0, 5, 1), 5, 2, "split_range1");
+    v_cov_point.add_bins(bin_range(6, 10, 1), 5, "split_range2");
+    v_cov_point.add_bins(bin_range(0, 10, 1), "split_range3");
+    v_cov_point.add_bins(bin_range(0, 5), 5, 2, "range1");
+    v_cov_point.add_bins(bin_range(6, 10), 5, "range2");
+    v_cov_point.add_bins(bin_range(0, 10), "range3");
+    v_cov_point.add_bins(bin_vector(v_addr), 5, 2, "addr1");
+    v_cov_point.add_bins(bin_vector(v_addr), 5, "addr2");
+    v_cov_point.add_bins(bin_vector(v_addr), "addr3");
 
     v_cov_point.sample_coverage(0);
     v_cov_point.sample_coverage(5);

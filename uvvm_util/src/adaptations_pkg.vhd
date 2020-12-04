@@ -185,6 +185,7 @@ package adaptations_pkg is
     ID_COVERAGE_MAKEBIN => DISABLED,
     ID_COVERAGE_ADDBIN  => DISABLED,
     ID_COVERAGE_ICOVER  => DISABLED,
+    ID_RAND_GEN         => DISABLED,
     others              => ENABLED
   );
 

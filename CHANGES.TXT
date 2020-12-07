@@ -29,6 +29,7 @@ Released: 2020-12-XX
 - Removed xConstrRandFuncCov folder and content.
 - Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
 - Added Bitvis VIP Spec Cov to component_list.txt for compile_all.do script.
+- Added TB_ERROR for unknown VVC operation calls to reset_vvc_transaction_info() in all VIPs.
 
 
 v2 2020.10.06

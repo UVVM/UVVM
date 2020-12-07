@@ -2,6 +2,11 @@ Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v1.2.2
+----------
+Released: 2020-12-xx
+- Added alert for unknown VVC operations to reset_vvc_transaction_info() method.
+
 v1.2.1
 ----------
 Released: 2020-06-23

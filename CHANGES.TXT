@@ -28,6 +28,7 @@ Released: 2020-12-XX
 - Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
 - Removed xConstrRandFuncCov folder and content.
 - Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
+- Added Bitvis VIP Spec Cov to component_list.txt for compile_all.do script.
 
 
 v2 2020.10.06

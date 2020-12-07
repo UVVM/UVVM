@@ -233,8 +233,8 @@ package vvc_methods_pkg is
     constant scope        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
-    variable vvc_transaction_info_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record);
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record);
 
   --==============================================================================
   -- VVC Activity
@@ -525,8 +525,8 @@ package body vvc_methods_pkg is
   end procedure set_global_vvc_transaction_info;
 
   procedure reset_vvc_transaction_info(
-    variable vvc_transaction_info_group    : inout t_transaction_group;
-    constant vvc_cmd      : in t_vvc_cmd_record) is
+    variable vvc_transaction_info_group : inout t_transaction_group;
+    constant vvc_cmd                    : in t_vvc_cmd_record) is
   begin
     case vvc_cmd.operation is
       when WRITE | RESET | LOCK | UNLOCK =>
@@ -536,7 +536,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.st := C_SUB_TRANSACTION_SET_DEFAULT;
 
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        null;
     end case;
 
     wait for 0 ns;

@@ -308,9 +308,6 @@ begin
                                                         result        => v_result);
           end if;
 
-          -- Set vvc transaction info back to default values
-          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
         when EXPECT =>
           -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
@@ -323,9 +320,6 @@ begin
                        scope         => C_SCOPE,
                        msg_id_panel  => v_msg_id_panel,
                        config        => vvc_config.bfm_config);
-
-          -- Set vvc transaction info back to default values
-          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         -- UVVM common operations
         --===================================
@@ -362,6 +356,8 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
+      -- Set VVC Transaction Info back to default values
+      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --==========================================================================================

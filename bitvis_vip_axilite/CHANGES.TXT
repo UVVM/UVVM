@@ -5,7 +5,6 @@ v2.8.1
 ----------
 Released: 2020-xx-xx
 - Updated missing info in CHANGES.TXT
-- Added alert for unknown VVC operations to reset_vvc_transaction_info() method.
 
 v2.8.0
 ----------

@@ -1,12 +1,6 @@
 Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
-
-v0.2.1
-----------
-Released: 2020-12-xx
-- Added alert for unknown VVC operations to reset_vvc_transaction_info() method.
-
 v0.2.0
 ----------
 Released: 2020-10-06

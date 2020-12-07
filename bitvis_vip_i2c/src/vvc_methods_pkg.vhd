@@ -771,7 +771,7 @@ package body vvc_methods_pkg is
            SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        null;
     end case;
 
     wait for 0 ns;

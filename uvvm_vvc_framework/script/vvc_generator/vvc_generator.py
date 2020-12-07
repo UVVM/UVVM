@@ -716,11 +716,6 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("        --               config        => vvc_config.bfm_config);\n")
     print_linefeed(file_handle)
 
-    if features["transaction_info"]:
-        file_handle.write("        --    -- Set vvc_transaction_info back to default values\n")
-        file_handle.write("        --    reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
-        print_linefeed(file_handle)
-
     if number_of_executors > 1:
         file_handle.write("        --  Example of pipelined read, eg. Avalon interface.\n")
     else:
@@ -783,11 +778,6 @@ def add_vvc_executor(file_handle, vvc_channel, features):
             file_handle.write("        --                                       result        => v_result);\n")
 
         file_handle.write("        --  end if;\n")
-        if features["transaction_info"]:
-            file_handle.write("        --     -- Set vvc_transaction_info back to default values\n")
-            file_handle.write("        --     reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
-            print_linefeed(file_handle)
-
 
     else:
         file_handle.write("        --     "+vvc_name.lower()+"_read(addr_value    => v_normalised_addr,\n")
@@ -817,11 +807,6 @@ def add_vvc_executor(file_handle, vvc_channel, features):
             file_handle.write("        --                                                 cmd_idx       => v_cmd.cmd_idx,\n")
             file_handle.write("        --                                                 result        => v_result);\n")
         
-        if features["transaction_info"]:
-            file_handle.write("        --     -- Set vvc_transaction_info back to default values\n")
-            file_handle.write("        --     reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
-            print_linefeed(file_handle)
-
 
     print_linefeed(file_handle)
     print_linefeed(file_handle)
@@ -866,7 +851,10 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     print_linefeed(file_handle)
     file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
-
+    if features["transaction_info"]:
+        file_handle.write("      --    -- Set vvc_transaction_info back to default values\n")
+        file_handle.write("      --    reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
+        print_linefeed(file_handle)
     file_handle.write("    end loop;\n")
     file_handle.write("  end process;\n")
     file_handle.write(division_line+"\n")
@@ -947,10 +935,6 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,\n")
     file_handle.write("        --                                                 cmd_idx      => v_cmd.cmd_idx,\n")
     file_handle.write("        --                                                 data         => v_result);\n")
-    if features["transaction_info"]:
-        file_handle.write("        --     -- Set vvc_transaction_info back to default values\n")
-        file_handle.write("        --     reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
-        print_linefeed(file_handle)
     
     print_linefeed(file_handle)
     file_handle.write("        --   when CHECK =>\n")
@@ -971,10 +955,6 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("        --                              msg_id_panel        => v_msg_id_panel,\n")
     file_handle.write("        --                              config              => vvc_config.bfm_config);\n")
     print_linefeed(file_handle)
-    if features["transaction_info"]:
-        file_handle.write("        --     -- Set vvc_transaction_info back to default values\n")
-        file_handle.write("        --     reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
-        print_linefeed(file_handle)
 
     print_linefeed(file_handle)
     file_handle.write("          when others =>")
@@ -984,6 +964,10 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     print_linefeed(file_handle)
     file_handle.write("      last_read_response_idx_executed <= v_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
+    if features["transaction_info"]:
+        file_handle.write("      --    -- Set vvc_transaction_info back to default values\n")
+        file_handle.write("      --    reset_vvc_transaction_info(vvc_transaction_info, v_cmd);\n")
+        print_linefeed(file_handle)
 
     file_handle.write("    end loop;\n")
     print_linefeed(file_handle)
@@ -1540,7 +1524,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("  --      vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;\n")
         print_linefeed(file_handle)
         file_handle.write("  --    when others =>\n")
-        file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\");\n")
+        file_handle.write("  --      null;\n")
         file_handle.write("  --  end case;\n")
         print_linefeed(file_handle)
         file_handle.write("    wait for 0 ns;\n")

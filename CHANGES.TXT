@@ -13,14 +13,6 @@ CHANGES.TXT in each module's sub-directory.
 v2 2020.12.XX
 --------------------
 Released: 2020-12-XX
-- Fixed to_string(integer) function using a negative value.
-- Fixed random time function by using the simulator base time unit instead of ns.
-- Fixed random function overflowing with maximum values in min/max range.
-- Fixed Axistream C_MULTIPLE_RANDOM for valid & ready low not working.
-- Added Axistream BFM configurations to control the probability of multiple random tvalid/tready low cycles
-  and the maximum random duration of tvalid/tready low deassertion.
-- Fixed bug in to_string functions for t_slv_array, t_unsigned_array and t_signed_array that
-  caused a failure when using wide words
 - Improved to_string functions for slv, signed and unsigned when printing long decimal values.
 - Added how to start demo testbench from within Modelsim to testbench_guide PDF in Bitvis UART VIP.
 - Added max_receptions default value to uart_bfm_quickref.pdf.
@@ -29,7 +21,14 @@ Released: 2020-12-XX
 - Removed xConstrRandFuncCov folder and content.
 - Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
 - Added Bitvis VIP Spec Cov to component_list.txt for compile_all.do script.
-- Added TB_ERROR for unknown VVC operation calls to reset_vvc_transaction_info() in all VIPs.
+- Fixed to_string(integer) function using a negative value.
+- Fixed random time function by using the simulator base time unit instead of ns.
+- Fixed random function overflowing with maximum values in min/max range.
+- Fixed Axistream C_MULTIPLE_RANDOM for valid & ready low not working.
+- Added Axistream BFM configurations to control the probability of multiple random tvalid/tready low cycles
+  and the maximum random duration of tvalid/tready low deassertion.
+- Fixed bug in to_string functions for t_slv_array, t_unsigned_array and t_signed_array that
+  caused a failure when using wide words
 
 
 v2 2020.10.06

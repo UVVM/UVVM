@@ -1,12 +1,6 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
-
-v2.7.1
-----------
-Released: 2020-12-xx
-- Added alert for unknown VVC operations to reset_vvc_transaction_info() method.
-
 v2.7.0
 ----------
 Released: 2020-10-06

@@ -1,12 +1,6 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
-
-v0.1.1
-----------
-Released: 2020-10-06
-- Added alert for unknown VVC operations to reset_vvc_transaction_info() method.
-
 v0.1.0
 ----------
 Released: 2020-10-06

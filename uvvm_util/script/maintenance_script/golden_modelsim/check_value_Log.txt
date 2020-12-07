@@ -225,7 +225,7 @@ UVVM:
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 2. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"'. 'Test wide vector, HEX, OK'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv d"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF (too wide to be converted to
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF (too wide to be converted to
 UVVM:                                                                           integer)"'. 'Test wide vector, DEC, OK'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Boolean check true vs true, OK'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return true'

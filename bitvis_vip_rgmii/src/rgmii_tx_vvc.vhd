@@ -285,6 +285,9 @@ begin
                       msg_id_panel  => v_msg_id_panel,
                       config        => vvc_config.bfm_config);
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
@@ -320,10 +323,6 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-
-      -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
     end loop;
   end process;
 --==========================================================================================

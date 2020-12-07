@@ -305,6 +305,9 @@ begin
                    msg_id_panel => v_msg_id_panel,
                    config       => vvc_config.bfm_config);
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         when GET =>
           -- Set vvc_transaction_info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
@@ -327,6 +330,8 @@ begin
                                                         result       => v_read_data);
           end if;
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         when CHECK =>
           -- Set vvc transaction info
@@ -343,6 +348,9 @@ begin
                      scope        => C_SCOPE,
                      msg_id_panel => v_msg_id_panel,
                      config       => vvc_config.bfm_config);
+
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         when CHECK_STABLE =>
           -- Set vvc transaction info
@@ -361,6 +369,9 @@ begin
                             msg_id_panel => v_msg_id_panel,
                             config       => vvc_config.bfm_config);
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         when EXPECT =>
           -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
@@ -377,6 +388,9 @@ begin
                       scope        => C_SCOPE,
                       msg_id_panel => v_msg_id_panel,
                       config       => vvc_config.bfm_config);
+
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         when EXPECT_STABLE =>
           -- Set vvc transaction info
@@ -397,6 +411,8 @@ begin
                              msg_id_panel    => v_msg_id_panel,
                              config          => vvc_config.bfm_config);
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         -- UVVM common operations
         --===================================
@@ -435,10 +451,6 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
-      -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
     end loop;
 
   end process;

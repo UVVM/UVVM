@@ -319,7 +319,10 @@ begin
                                                          cmd_idx     => v_cmd.cmd_idx,
                                                          result      => v_read_data);
           end if;
-              
+
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+          
 
         when EXPECT =>
           -- Set transaction info
@@ -340,6 +343,8 @@ begin
                       scope                 => C_SCOPE,
                       msg_id_panel          => v_msg_id_panel);
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
 
         when INSERT_DELAY =>
@@ -375,9 +380,6 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
-      -- Set transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
 --===============================================================================================

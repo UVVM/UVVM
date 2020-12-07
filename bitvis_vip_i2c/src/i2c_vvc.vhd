@@ -317,6 +317,9 @@ begin
             alert(error, "Master transmit called when VVC is in slave mode.", C_SCOPE);
           end if;
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         when MASTER_RECEIVE =>
           if GC_MASTER_MODE then        -- master receive
             -- Set vvc transaction info
@@ -353,6 +356,9 @@ begin
             alert(error, "Master receive called when VVC is in slave mode.", C_SCOPE);
           end if;
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         when MASTER_CHECK =>
           if GC_MASTER_MODE then        -- master check
             -- Set vvc transaction info
@@ -375,6 +381,9 @@ begin
           else  -- attempted master check when in slave mode
             alert(error, "Master check called when VVC is in slave mode.", C_SCOPE);
           end if;
+
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         when MASTER_QUICK_CMD =>
           if GC_MASTER_MODE then        -- master check
@@ -399,6 +408,9 @@ begin
             alert(error, "Master quick command called when VVC is in slave mode.", C_SCOPE);
           end if;
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         when SLAVE_TRANSMIT =>
           if not GC_MASTER_MODE then    -- slave transmit
             -- Set vvc transaction info
@@ -417,6 +429,9 @@ begin
             alert(error, "Slave transmit called when VVC is in master mode.", C_SCOPE);
           end if;
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+          
         when SLAVE_RECEIVE =>
           if not GC_MASTER_MODE then    -- requires slave mode
             -- Set vvc transaction info
@@ -449,6 +464,9 @@ begin
             alert(error, "Slave receive called when VVC is in master mode.", C_SCOPE);
           end if;
 
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
         when SLAVE_CHECK =>
           if not GC_MASTER_MODE then    -- slave check
             -- Set vvc transaction info
@@ -468,6 +486,9 @@ begin
           else  -- attempted slave check when in master mode
             alert(error, "Slave check called when VVC is in master mode.", C_SCOPE);
           end if;
+
+          -- Set vvc transaction info back to default values
+          reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
         -- UVVM common operations
         --===================================
@@ -506,10 +527,6 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
-      -- Set vvc transaction info back to default values
-      reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
     end loop;
   end process;
   --===============================================================================================

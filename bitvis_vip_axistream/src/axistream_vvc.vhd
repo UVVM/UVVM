@@ -315,6 +315,9 @@ begin
                   alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
                end if;
 
+               -- Set vvc transaction info back to default values
+               reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
+
             when RECEIVE =>
                if not GC_VVC_IS_MASTER then
                   -- Set vvc transaction info
@@ -347,6 +350,8 @@ begin
                   alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
                end if;
 
+               -- Set vvc transaction info back to default values
+               reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
             when EXPECT =>
                if not GC_VVC_IS_MASTER then
@@ -370,6 +375,9 @@ begin
                else
                   alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
                end if;
+
+               -- Set vvc transaction info back to default values
+               reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
              -- UVVM common operations
              --===================================
@@ -408,10 +416,6 @@ begin
          last_cmd_idx_executed <= v_cmd.cmd_idx;
          -- Reset the transaction info for waveview
          transaction_info   := C_TRANSACTION_INFO_DEFAULT;
-
-        -- Set vvc transaction info back to default values
-        reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
       end loop;
    end process;
 --========================================================================================================================

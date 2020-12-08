@@ -41,7 +41,7 @@ use work.transaction_pkg.all;
 entity spi_vvc is
   generic (
     GC_DATA_WIDTH                            : natural          := 8;
-    GC_DATA_ARRAY_WIDTH                      : natural          := 32;
+    GC_DATA_ARRAY_WIDTH                      : natural          := C_SPI_VVC_DATA_ARRAY_WIDTH;
     GC_INSTANCE_IDX                          : natural          := 1;  -- Instance index for this SPI_VVCT instance
     GC_MASTER_MODE                           : boolean          := true;
     GC_SPI_CONFIG                            : t_spi_bfm_config := C_SPI_BFM_CONFIG_DEFAULT;  -- Behavior specification for BFM

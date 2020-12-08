@@ -33,7 +33,7 @@ use std.env.all;
 package methods_pkg is
 
 
-  constant C_UVVM_VERSION : string := "v2 2020.10.06";
+  constant C_UVVM_VERSION : string := "v2 2020.12.08";
 
 
 -- -- ============================================================================
@@ -6598,13 +6598,21 @@ package body methods_pkg is
     return v_rand_scaled;
   end;
 
-  -- Return a random time between min time and max time, using overload for the integer version of random()
+  -- Return a random time between min time and max time
+  -- Use global seeds
   impure function random (
     constant min_value : time;
     constant max_value : time
     ) return time is
+    variable v_rand_scaled : time;
+    variable v_seed1       : positive := shared_seed1;
+    variable v_seed2       : positive := shared_seed2;
   begin
-    return random(min_value/1 ns, max_value/1 ns) * 1 ns;
+    random(min_value, max_value, v_seed1, v_seed2, v_rand_scaled);
+    -- Write back seeds
+    shared_seed1 := v_seed1;
+    shared_seed2 := v_seed2;
+    return v_rand_scaled;
   end;
 
   --
@@ -6652,7 +6660,7 @@ package body methods_pkg is
     -- Random real-number value in range 0 to 1.0
     uniform(v_seed1, v_seed2, v_rand);
     -- Scale to a random integer between min_value and max_value
-    v_target := min_value + integer(trunc(v_rand*real(1+max_value-min_value)));
+    v_target := integer(real(min_value) + trunc(v_rand*(1.0+real(max_value)-real(min_value))));
   end;
 
   -- Set target to a random integer between min_value and max_value
@@ -6680,14 +6688,15 @@ package body methods_pkg is
     variable v_seed2   : inout positive;
     variable v_target  : inout time
     ) is
+    constant time_unit  : time := std.env.resolution_limit;
     variable v_rand     : real;
     variable v_rand_int : integer;
   begin
     -- Random real-number value in range 0 to 1.0
     uniform(v_seed1, v_seed2, v_rand);
     -- Scale to a random integer between min_value and max_value
-    v_rand_int := min_value/1 ns + integer(trunc(v_rand*real(1 + max_value/1 ns - min_value / 1 ns)));
-    v_target   := v_rand_int * 1 ns;
+    v_rand_int := integer(real(min_value/time_unit) + trunc(v_rand*(1.0+real(max_value/time_unit)-real(min_value/time_unit))));
+    v_target   := v_rand_int * time_unit;
   end;
 
   -- Set global seeds

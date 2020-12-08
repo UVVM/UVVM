@@ -347,10 +347,9 @@ begin
             if terminate_current_cmd.is_active = '1' then
               exit;
             end if;
-
           end loop;
 
-
+    
         when READ =>
           -- Set VVC Transaction Info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
@@ -380,7 +379,6 @@ begin
                                                          result      => v_read_data);
           end if;
 
-
         when CHECK =>
           -- Set VVC Transaction Info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
@@ -401,7 +399,6 @@ begin
                     scope        => C_SCOPE,
                     msg_id_panel => v_msg_id_panel,
                     config       => vvc_config.bfm_config);
-
 
         when POLL_UNTIL =>
           -- Set VVC Transaction Info
@@ -426,8 +423,6 @@ begin
                          scope          => C_SCOPE,
                          msg_id_panel   => v_msg_id_panel,
                          config         => vvc_config.bfm_config);
-
-
 
           -- UVVM common operations
           --===================================
@@ -466,7 +461,6 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
       -- Set VVC Transaction Info back to default values
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;

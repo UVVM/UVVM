@@ -140,24 +140,34 @@ UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         integer procedure: ctr(11) =       24
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         integer procedure: ctr(12) =       19
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         integer procedure: ctr(13) =       27
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = 1696538084
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = 1444254049
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = -79746802
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = 1249112244
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = 999149533
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = 1849154016
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = 2060080162
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = -1311453570
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = -177838257
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random int procedure = -1894313752
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real function = 0.014844
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real function = 0.014752
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real function = 0.021915
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real function = 0.018639
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real function = 0.012342
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.016826
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.022461
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.013650
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.019103
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.010356
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(10) =       26
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(11) =       49
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(12) =       21
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(13) =       28
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(10) =       26
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(11) =       49
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(12) =       21
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(13) =       28
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.015613
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.019191
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.014498
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.029138
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Random real procedure = 0.024971
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(10) =       37
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(11) =       56
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(12) =       31
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time function (ns) : ctr(13) =        0
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(10) =       37
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(11) =       56
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(12) =       31
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         time procedure (ns) : ctr(13) =        0
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***

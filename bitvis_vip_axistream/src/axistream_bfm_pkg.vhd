@@ -70,49 +70,57 @@ package axistream_bfm_pkg is
   type t_axistream_bfm_config is
   record
     -- Common
-    max_wait_cycles             : integer;            -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready or valid signals from the DUT.
-    max_wait_cycles_severity    : t_alert_level;      -- The above timeout will have this severity
-    clock_period                : time;               -- Period of the clock signal.
-    clock_period_margin         : time;               -- Input clock period margin to specified clock_period
-    clock_margin_severity       : t_alert_level;      -- The above margin will have this severity
-    setup_time                  : time;               -- Setup time for generated signals, set to clock_period/4
-    hold_time                   : time;               -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                    : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    match_strictness            : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    byte_endianness             : t_byte_endianness;  -- Byte ordering from left (big-endian) or right (little-endian)
+    max_wait_cycles                : integer;               -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready or valid signals from the DUT.
+    max_wait_cycles_severity       : t_alert_level;         -- The above timeout will have this severity
+    clock_period                   : time;                  -- Period of the clock signal.
+    clock_period_margin            : time;                  -- Input clock period margin to specified clock_period
+    clock_margin_severity          : t_alert_level;         -- The above margin will have this severity
+    setup_time                     : time;                  -- Setup time for generated signals, set to clock_period/4
+    hold_time                      : time;                  -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                       : t_bfm_sync;            -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness               : t_match_strictness;    -- Matching strictness for std_logic values in check procedures.
+    byte_endianness                : t_byte_endianness;     -- Byte ordering from left (big-endian) or right (little-endian)
     -- config for axistream_transmit()
-    valid_low_at_word_num       : integer;            -- Word index where the Source BFM shall deassert valid
-    valid_low_duration          : integer;            -- Number of clock cycles to deassert valid
+    valid_low_at_word_num          : integer;               -- Word index where the Source BFM shall deassert valid
+    valid_low_multiple_random_prob : real range 0.0 to 1.0; -- Probability of how often valid shall be deasserted when using C_MULTIPLE_RANDOM
+    valid_low_duration             : integer;               -- Number of clock cycles to deassert valid
+    valid_low_max_random_duration  : integer;               -- Maximum number of clock cycles to deassert valid when using C_RANDOM
     -- config for axistream_receive()
-    check_packet_length         : boolean;            -- When true, receive() will check that last is set at data_array'high
-    protocol_error_severity     : t_alert_level;      -- severity if protocol errors are detected by axistream_receive()
-    ready_low_at_word_num       : integer;            -- Word index where the Sink BFM shall deassert ready
-    ready_low_duration          : integer;            -- Number of clock cycles to deassert ready
-    ready_default_value         : std_logic;          -- Which value the BFM shall set ready to between accesses.
+    check_packet_length            : boolean;               -- When true, receive() will check that last is set at data_array'high
+    protocol_error_severity        : t_alert_level;         -- severity if protocol errors are detected by axistream_receive()
+    ready_low_at_word_num          : integer;               -- Word index where the Sink BFM shall deassert ready
+    ready_low_multiple_random_prob : real range 0.0 to 1.0; -- Probability of how often ready shall be deasserted when using C_MULTIPLE_RANDOM
+    ready_low_duration             : integer;               -- Number of clock cycles to deassert ready
+    ready_low_max_random_duration  : integer;               -- Maximum number of clock cycles to deassert ready when using C_RANDOM
+    ready_default_value            : std_logic;             -- Which value the BFM shall set ready to between accesses.
     -- Common
-    id_for_bfm                  : t_msg_id;           -- The message ID used as a general message ID in the BFM
+    id_for_bfm                     : t_msg_id;              -- The message ID used as a general message ID in the BFM
   end record;
 
   -- Define the default value for the BFM config
   constant C_AXISTREAM_BFM_CONFIG_DEFAULT : t_axistream_bfm_config := (
-    max_wait_cycles             => 100,
-    max_wait_cycles_severity    => ERROR,
-    clock_period                => -1 ns,
-    clock_period_margin         => 0 ns,
-    clock_margin_severity       => TB_ERROR,
-    setup_time                  => -1 ns,
-    hold_time                   => -1 ns,
-    bfm_sync                    => SYNC_ON_CLOCK_ONLY,
-    match_strictness            => MATCH_EXACT,
-    byte_endianness             => LOWER_BYTE_LEFT,
-    valid_low_at_word_num       => 0,
-    valid_low_duration          => 0,
-    check_packet_length         => false,
-    protocol_error_severity     => ERROR,
-    ready_low_at_word_num       => 0,
-    ready_low_duration          => 0,
-    ready_default_value         => '0',
-    id_for_bfm                  => ID_BFM
+    max_wait_cycles                => 100,
+    max_wait_cycles_severity       => ERROR,
+    clock_period                   => -1 ns,
+    clock_period_margin            => 0 ns,
+    clock_margin_severity          => TB_ERROR,
+    setup_time                     => -1 ns,
+    hold_time                      => -1 ns,
+    bfm_sync                       => SYNC_ON_CLOCK_ONLY,
+    match_strictness               => MATCH_EXACT,
+    byte_endianness                => LOWER_BYTE_LEFT,
+    valid_low_at_word_num          => 0,
+    valid_low_multiple_random_prob => 0.5,
+    valid_low_duration             => 0,
+    valid_low_max_random_duration  => 5,
+    check_packet_length            => false,
+    protocol_error_severity        => ERROR,
+    ready_low_at_word_num          => 0,
+    ready_low_multiple_random_prob => 0.5,
+    ready_low_duration             => 0,
+    ready_low_max_random_duration  => 5,
+    ready_default_value            => '0',
+    id_for_bfm                     => ID_BFM
     );
 
   --========================================================================================================================
@@ -711,7 +719,6 @@ package body axistream_bfm_pkg is
     variable v_time_of_falling_edge         : time    := -1 ns;  -- time stamp for clk period checking
     variable v_valid_low_duration           : natural := 0;
     variable v_valid_low_cycle_count        : natural := 0;
-    variable v_next_deassert_byte           : natural := c_num_bytes_per_word; -- C_MULTIPLE_RANDOM always deasserts on second word the first time
     variable v_timeout                      : boolean := false;
     variable v_tready                       : std_logic; -- Sampled tready for the current clock cycle
   begin
@@ -762,12 +769,14 @@ package body axistream_bfm_pkg is
       -- Set tvalid low (once per transmission or multiple random times)
       -------------------------------------------------------------------
       if v_byte_in_word = 0 and (config.valid_low_duration > 0 or config.valid_low_duration = C_RANDOM) then
+        v_valid_low_cycle_count := 0;
         -- Check if pulse duration is defined or random
         if config.valid_low_duration > 0 then
           v_valid_low_duration := config.valid_low_duration;
         elsif config.valid_low_duration = C_RANDOM then
-          v_valid_low_duration := random(1,5);
+          v_valid_low_duration := random(1,config.valid_low_max_random_duration);
         end if;
+
         -- Deassert tvalid once per transmission on a specific word
         if config.valid_low_at_word_num = byte/c_num_bytes_per_word then
           while v_valid_low_cycle_count < v_valid_low_duration loop
@@ -775,14 +784,14 @@ package body axistream_bfm_pkg is
             wait until rising_edge(clk);
             wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
           end loop;
+
         -- Deassert tvalid multiple random times per transmission
-        elsif config.valid_low_at_word_num = C_MULTIPLE_RANDOM and v_next_deassert_byte = byte then
+        elsif config.valid_low_at_word_num = C_MULTIPLE_RANDOM and random(0.0,1.0) <= config.valid_low_multiple_random_prob then
           while v_valid_low_cycle_count < v_valid_low_duration loop
             v_valid_low_cycle_count := v_valid_low_cycle_count + 1;
             wait until rising_edge(clk);
             wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
           end loop;
-          v_next_deassert_byte := byte + (1+random(1,5))*c_num_bytes_per_word; -- avoid deasserting on the next word
         end if;
       end if;
 
@@ -1299,7 +1308,6 @@ package body axistream_bfm_pkg is
     variable v_word_idx              : integer;
     variable v_ready_low_duration    : natural := 0;
     variable v_ready_low_cycle_count : natural := 0;
-    variable v_next_deassert_byte    : natural := 0;
     variable v_time_of_rising_edge   : time    := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge  : time    := -1 ns;  -- time stamp for clk period checking
     variable v_sample_data_now       : boolean := false;
@@ -1355,11 +1363,12 @@ package body axistream_bfm_pkg is
       -- Set tready low before given byte (once per transmission or multiple random times)
       --------------------------------------------------------------------------------------
       if v_byte_in_word = 0 and (config.ready_low_duration > 0 or config.ready_low_duration = C_RANDOM) then
+        v_ready_low_cycle_count := 0;
         -- Check if pulse duration is defined or random
         if config.ready_low_duration > 0 then
           v_ready_low_duration := config.ready_low_duration;
         elsif config.ready_low_duration = C_RANDOM then
-          v_ready_low_duration := random(1,5);
+          v_ready_low_duration := random(1,config.ready_low_max_random_duration);
         end if;
 
         -- Deassert tready once per transmission on a specific word
@@ -1389,14 +1398,13 @@ package body axistream_bfm_pkg is
           end loop;
 
         -- Deassert tready multiple random times per transmission
-        elsif config.ready_low_at_word_num = C_MULTIPLE_RANDOM and v_next_deassert_byte = v_byte_cnt then
+        elsif config.ready_low_at_word_num = C_MULTIPLE_RANDOM and random(0.0,1.0) <= config.ready_low_multiple_random_prob then
           axistream_if.tready <= '0';
           while v_ready_low_cycle_count < v_ready_low_duration loop
             v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
             wait until rising_edge(clk);
             wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
           end loop;
-          v_next_deassert_byte := v_byte_cnt + (1+random(1,5))*c_num_bytes_per_word; -- avoid deasserting on the next word
         end if;
       end if;
 

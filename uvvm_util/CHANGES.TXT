@@ -3,6 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.15.1
+----------
+Released: 2020-12-08
+- Fixed to_string(integer) function using a negative value.
+- Fixed random time function by using the simulator base time unit instead of ns.
+- Fixed random function overflowing with maximum values in min/max range.
+- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
+- Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
+- Added C_SPI_VVC_DATA_ARRAY_WIDTH to adaptation_pkg.
 
 v2.15.0
 ----------
@@ -11,7 +20,6 @@ Released: 2020-10-06
 - Corrected normalize_and_check() description in QR.
 - Corrected default KEEP_LEADING_0 for check_value() in QR.
 - Removed SLV range check for t_slv_array version of normalize_and_check().
-
 
 v2.14.2
 ----------

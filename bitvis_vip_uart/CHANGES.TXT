@@ -1,6 +1,13 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+
+v2.8.1
+----------
+Released: 2020-12-08
+- Added how to start demo testbench from within Modelsim to testbench_guide PDF.
+- Added max_receptions default value to uart_bfm_quickref.pdf.
+
 v2.8.0
 ----------
 Released: 2020-10-06

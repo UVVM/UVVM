@@ -445,7 +445,6 @@ begin
         axistream_expect_bytes (AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes-1), v_user_array(0 to v_numWords-1), "expect,   tlast wrong ,i="&to_string(i), NO_ALERT);
 
         -- due to the premature tlast, make an extra call to read the remaining (corrupt) packet
-        increment_expected_alerts(warning, 1);
         axistream_expect_bytes (AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes-1), v_user_array(0 to v_numWords-1), "expect,   tlast wrong ,i="&to_string(i), NO_ALERT);
 
         await_completion(AXISTREAM_VVCT, 1, 1 ms);
@@ -468,9 +467,9 @@ begin
     axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array, "expect ");
     await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
 
-    --------------------------------------------------------------
-    log(ID_LOG_HDR, "TC: Test different configurations of ready low");
-    --------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "TC: Test different configurations of ready default value with ready low");
+    -------------------------------------------------------------------------------------------
     for i in 0 to 3 loop
       shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_default_value   := '0' when i < 2 else '1';
       shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_default_value    := '0' when i < 2 else '1';
@@ -501,10 +500,10 @@ begin
       await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
     end loop;
 
-    --------------------------------------------------------------
+    --------------------------------------------------------------------------
     log(ID_LOG_HDR ,"TC: Test random configurations of valid and ready low");
-    --------------------------------------------------------------
-    for i in 0 to 39 loop
+    --------------------------------------------------------------------------
+    for i in 0 to 59 loop
       if i < 20 then
         shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_at_word_num := random(0,5);
         shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_duration    := random(0,5);
@@ -523,6 +522,47 @@ begin
         shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_duration     := C_RANDOM;
         shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_at_word_num   := C_MULTIPLE_RANDOM;
         shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_duration      := C_RANDOM;
+        if i < 30 then
+          -- Probability of multiple random is zero
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 0.0;
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 20;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob  := 0.0;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration   := 20;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 0.0;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 20;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob   := 0.0;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration    := 20;
+        elsif i < 40 then
+          -- Probability of multiple random is low and max random duration is high
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 0.1;
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 20;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob  := 0.1;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration   := 20;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 0.1;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 20;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob   := 0.1;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration    := 20;
+        elsif i < 50 then
+          -- Probability of multiple random is 50/50 and max random duration is low
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 0.5;
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 5;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob  := 0.5;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration   := 5;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 0.5;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 5;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob   := 0.5;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration    := 5;
+        else
+          -- Probability of multiple random is 100% (every cycle) and max random duration is 1
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 1.0;
+          shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 1;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob  := 1.0;
+          shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration   := 1;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 1.0;
+          shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 1;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob   := 1.0;
+          shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration    := 1;
+        end if;
       end if;
       axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 15), "transmit 16 bytes");
       axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 15), "expect 16 bytes");

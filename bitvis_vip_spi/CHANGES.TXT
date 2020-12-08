@@ -1,6 +1,12 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.9.1
+----------
+Released: 2020-12-08
+- Added C_SPI_VVC_DATA_ARRAY_WIDTH as default value for GC_DATA_ARRAY_WIDTH in
+  VVC entity generic and C_VVC_CMD_MAX_WORDS in transaction_pkg.
+
 v3.9.0
 ----------
 Released: 2020-10-06

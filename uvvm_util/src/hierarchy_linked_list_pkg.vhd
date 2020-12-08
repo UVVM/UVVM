@@ -139,7 +139,8 @@ type t_hierarchy_linked_list is protected body
     base_scope : string := "";
     stop_limit : t_alert_counters) is
     variable v_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
-    variable base_node : t_hierarchy_node := (v_base_scope,
+    variable base_node : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH)) := (
+                                              v_base_scope,
                                               (others => (others => 0)),
                                               stop_limit,
                                               (others => true));
@@ -312,7 +313,7 @@ type t_hierarchy_linked_list is protected body
     variable v_child_ptr : t_element_ptr;
     variable v_found : boolean := false;
     variable v_parent_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(parent_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
-    variable v_hierarchy_node : t_hierarchy_node;
+    variable v_hierarchy_node : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
   begin
     v_hierarchy_node := hierarchy_node;
     v_hierarchy_node.name := justify(hierarchy_node.name, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
@@ -464,7 +465,7 @@ type t_hierarchy_linked_list is protected body
     variable v_msg       : line; -- msg after pot. replacement of \n
     variable v_info      : line;
     variable v_hierarchy : line; -- stores the hierarchy propagation
-    variable v_parent_node : t_hierarchy_node;
+    variable v_parent_node : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
     variable v_do_print : boolean := false; -- Enable/disable print of alert message
   begin
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then

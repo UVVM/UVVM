@@ -466,7 +466,6 @@ begin
                           msg_id_panel        => v_msg_id_panel,
                           config              => vvc_config.bfm_config);
 
-
         -- UVVM common operations
         --===================================
         when INSERT_DELAY =>
@@ -504,8 +503,7 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info   := C_TRANSACTION_INFO_DEFAULT;
-
-      -- Set vvc transaction info back to default values
+      -- Set VVC Transaction Info back to default values
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
@@ -618,7 +616,6 @@ begin
 
       -- Set vvc transaction info back to default values
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
     end loop;
 
   end process;

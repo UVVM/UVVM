@@ -41,7 +41,7 @@ use work.transaction_pkg.all;
 entity spi_vvc is
   generic (
     GC_DATA_WIDTH                            : natural          := 8;
-    GC_DATA_ARRAY_WIDTH                      : natural          := 32;
+    GC_DATA_ARRAY_WIDTH                      : natural          := C_SPI_VVC_DATA_ARRAY_WIDTH;
     GC_INSTANCE_IDX                          : natural          := 1;  -- Instance index for this SPI_VVCT instance
     GC_MASTER_MODE                           : boolean          := true;
     GC_SPI_CONFIG                            : t_spi_bfm_config := C_SPI_BFM_CONFIG_DEFAULT;  -- Behavior specification for BFM
@@ -725,10 +725,8 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
-      -- Set vvc transaction info back to default values
+      -- Set VVC Transaction Info back to default values
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
-
     end loop;
   end process;
 --========================================================================================================================

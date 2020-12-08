@@ -43,7 +43,7 @@ package adaptations_pkg is
   constant C_LOG_TIME_WIDTH     : natural := 16; -- 3 chars used for unit eg. " ns"
   constant C_LOG_TIME_BASE      : time    := ns; -- Unit in which time is shown in log (ns | ps)
   constant C_LOG_TIME_DECIMALS  : natural := 1; -- Decimals to show for given C_LOG_TIME_BASE
-  constant C_LOG_SCOPE_WIDTH    : natural := 30; -- Maximum scope length, has to match C_HIERARCHY_NODE_NAME_LENGTH in types_pkg
+  constant C_LOG_SCOPE_WIDTH    : natural := 30; -- Maximum scope length
   constant C_LOG_LINE_WIDTH     : natural := 175;
   constant C_LOG_INFO_WIDTH     : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
@@ -124,7 +124,7 @@ package adaptations_pkg is
     ID_FRAME_COMPLETE,        -- Notify that a frame has been transmitted or received
     ID_FRAME_HDR,             -- Notify that a frame header has been transmitted or received. It also writes header info
     ID_FRAME_DATA,            -- Notify that a frame data has been transmitted or received. It also writes frame data
-    -- OSVVM Ids
+    -- Coverage Ids
     ID_COVERAGE_MAKEBIN,      -- Log messages from MakeBin (IllegalBin/GenBin/IgnoreBin)
     ID_COVERAGE_ADDBIN,       -- Log messages from AddBin/AddCross
     ID_COVERAGE_ICOVER,       -- ICover logging, NB: Very low level debugging. Can result in large amount of data.
@@ -186,9 +186,6 @@ package adaptations_pkg is
     others              => ENABLED
   );
 
-  -- If false, OSVVM uses the default message id panel. If true, it uses a separate message id panel.
-  constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS : boolean := TRUE;
-
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
   constant C_MSG_ID_INDENT : t_msg_id_indent := (
     ID_IMMEDIATE_CMD_WAIT    => "  ..",
@@ -221,9 +218,9 @@ package adaptations_pkg is
   -- Hierarchical alerts
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_ENABLE_HIERARCHICAL_ALERTS : boolean := false;
-  constant C_BASE_HIERARCHY_LEVEL : string(1 to 5) := "Total";
-
-  constant C_EMPTY_NODE : t_hierarchy_node := ("                              ",
+  constant C_BASE_HIERARCHY_LEVEL       : string(1 to 5) := "Total";
+  constant C_HIERARCHY_NODE_NAME_LENGTH : natural := C_LOG_SCOPE_WIDTH;
+  constant C_EMPTY_NODE : t_hierarchy_node := ((1 to C_HIERARCHY_NODE_NAME_LENGTH => ' '),
                                                 (others => (others => 0)),
                                                 (others => 0),
                                                 (others => true));
@@ -318,6 +315,11 @@ package adaptations_pkg is
     ID_DATA => DISABLED,
     others  => DISABLED
   );
+
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- VVC Adaptions
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_SPI_VVC_DATA_ARRAY_WIDTH : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical-VVCs

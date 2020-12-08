@@ -48,7 +48,7 @@ package transaction_pkg is
 
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
   constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_MAX_WORDS         : natural := 8;
+  constant C_VVC_CMD_MAX_WORDS         : natural := C_SPI_VVC_DATA_ARRAY_WIDTH;
 
   --==========================================================================================
   --

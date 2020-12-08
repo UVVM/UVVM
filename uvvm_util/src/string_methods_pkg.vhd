@@ -1047,7 +1047,7 @@ package body string_methods_pkg is
     prefix          : t_radix_prefix := EXCL_RADIX;
     format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
     ) return string is
-    variable v_val_slv : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(val, 32));
+    variable v_val_slv : std_logic_vector(31 downto 0) := std_logic_vector(to_signed(val, 32));
     variable v_line    : line;
     variable v_result  : string(1 to 40);
     variable v_width   : natural;
@@ -1147,14 +1147,18 @@ package body string_methods_pkg is
       end if;
       write(v_line, adjust_leading_0(to_hstring(val), format));
     elsif radix = DEC then
-      if prefix = INCL_RADIX then
-        write(v_line, string'("d"""));
-        v_use_end_char := true;
-      end if;
       -- Assuming that val is not signed
       if (val'length > 31) then
+        if prefix = INCL_RADIX then
+          write(v_line, string'("x"""));
+          v_use_end_char := true;
+        end if;
         write(v_line, to_hstring(val) & " (too wide to be converted to integer)" );
       else
+        if prefix = INCL_RADIX then
+          write(v_line, string'("d"""));
+          v_use_end_char := true;
+        end if;
         write(v_line, adjust_leading_0(to_string(to_integer(unsigned(val))), format));
       end if;
     elsif radix = HEX_BIN_IF_INVALID then
@@ -1204,7 +1208,7 @@ package body string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
     variable v_line         : line;
-    variable v_result       : string(1 to 10 + 2 * val'length); --
+    variable v_result       : string(1 to 20 + 2 * val'length); --
     variable v_width        : natural;
     variable v_use_end_char : boolean := false;
   begin
@@ -1216,13 +1220,13 @@ package body string_methods_pkg is
         return "";
       end if;
 
-      if prefix = INCL_RADIX then
-        write(v_line, string'("d"""));
-        v_use_end_char := true;
-      end if;
       if (val'length > 32) then
-        write(v_line, to_string(std_logic_vector(val),radix, format, prefix) & " (too wide to be converted to integer)" );
+        write(v_line, to_string(std_logic_vector(val), HEX, format, prefix) & " (too wide to be converted to integer)" );
       else
+        if prefix = INCL_RADIX then
+          write(v_line, string'("d"""));
+          v_use_end_char := true;
+        end if;
         write(v_line, adjust_leading_0(to_string(to_integer(signed(val))), format));
       end if;
 
@@ -1247,9 +1251,12 @@ package body string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
     variable v_line   : line;
-    variable v_result : string(1 to 2 +            -- parentheses
-                              2*(val'length - 1) + -- commas
-                              26*val'length);      -- 26 is max length of returned value from slv to_string()
+    variable v_result : string(1 to 2 +                         -- parentheses
+                               2*(val'length - 1) +             -- commas
+                               3*val'length +                   -- Radix prefixes
+                               val'element'length*val'length +  -- Maximum length of the array elements
+                               14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
+                              ); 
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1284,9 +1291,12 @@ package body string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
     variable v_line   : line;
-    variable v_result : string(1 to 2 +             -- parentheses
-                               2*(val'length - 1) + -- commas
-                               26*val'length);      -- 26 is max length of returned value from slv to_string()
+    variable v_result : string(1 to 2 +                         -- parentheses
+                               2*(val'length - 1) +             -- commas + space
+                               3*val'length +                   -- Radix prefixes + ""
+                               val'element'length*val'length +  -- Maximum length of the array elements
+                               14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
+                              );
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1322,8 +1332,11 @@ package body string_methods_pkg is
     ) return string is
     variable v_line   : line;
     variable v_result : string(1 to 2 +             -- parentheses
-                               2*(val'length - 1) + -- commas
-                               26*val'length);      -- 26 is max length of returned value from slv to_string()
+                               2*(val'length - 1) +             -- commas
+                               3*val'length +                   -- Radix prefixes
+                               val'element'length*val'length +  -- Maximum length of the array elements
+                               14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
+                              );
     variable v_width  : natural;
   begin
     if val'length = 0 then

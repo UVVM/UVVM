@@ -16,10 +16,9 @@
 echo "********************* DEPENDENCIES ***************************"
 echo "1. UVVM Utility library"
 echo "2. UVVM VVC Framework library"
-echo "3. xConstrRandFuncCov"
-echo "4. Bitvis VIP SBI"
-echo "5. Bitvis VIP UART"
-echo "6. Bitvis VIP Clock Generator"
+echo "3. Bitvis VIP SBI"
+echo "4. Bitvis VIP UART"
+echo "5. Bitvis VIP Clock Generator"
 echo "**************************************************************"
 
 

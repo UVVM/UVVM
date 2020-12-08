@@ -1,7 +1,6 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
-
 v2.7.0
 ----------
 Released: 2020-10-06

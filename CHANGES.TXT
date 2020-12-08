@@ -10,6 +10,27 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2020.12.08
+--------------------
+Released: 2020-12-08
+- Improved to_string functions for slv, signed and unsigned when printing long decimal values.
+- Added how to start demo testbench from within Modelsim to testbench_guide PDF in Bitvis UART VIP.
+- Added max_receptions default value to uart_bfm_quickref.pdf.
+- Added C_SPI_VVC_DATA_ARRAY_WIDTH to adaptation_pkg.
+- Removed "addr" parameter from axistream_receive VVC method call in quick reference.
+- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
+- Removed xConstrRandFuncCov folder and content.
+- Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
+- Added Bitvis VIP Spec Cov to component_list.txt for compile_all.do script.
+- Fixed to_string(integer) function using a negative value.
+- Fixed random time function by using the simulator base time unit instead of ns.
+- Fixed random function overflowing with maximum values in min/max range.
+- Fixed Axistream C_MULTIPLE_RANDOM for valid & ready low not working.
+- Added Axistream BFM configurations to control the probability of multiple random tvalid/tready low cycles
+  and the maximum random duration of tvalid/tready low deassertion.
+- Fixed bug in to_string functions for t_slv_array, t_unsigned_array and t_signed_array that
+  caused a failure when using wide words.
+
 
 v2 2020.10.06
 --------------------
@@ -41,7 +62,6 @@ Released: 2020-08-21
 - tick_off_req_cov() parameter.
 - Removed testcase as parameter in tick_off_req_cov() call.
 - Added missing queue, FIFO and stack in Util package.
-
 
 
 v2 2020.08.18

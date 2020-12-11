@@ -45,6 +45,7 @@ def main(argv):
            "test_open_no_existing_req_file",
            "test_sub_requirement_pass",
            "test_sub_requirement_fail",
+           "test_sub_requirement_omitted",
            "test_incomplete_testcase",
            "test_testcase_with_multiple_reqs",
            "test_requirement_name_match", 

@@ -61,6 +61,8 @@ class Requirement():
         self.__testcases_are_or_listed    = False
         self.__req_is_defined_in_req_file = False
         self.__req_file_idx               = 0
+        self.__req_is_user_omitted        = False
+
 
     @property
     def name(self) -> str :
@@ -68,6 +70,7 @@ class Requirement():
     @name.setter
     def name(self, req_name) -> None :
         self.__req_name = req_name
+
 
     @property
     def description(self) -> str :
@@ -147,6 +150,7 @@ class Requirement():
 
         
     def add_super_requirement(self, super_requirement) -> None :
+        if self.is_user_omitted: return
         if not(super_requirement in self.__super_requirement_list):
             self.__super_requirement_list.append(super_requirement)
 
@@ -156,6 +160,7 @@ class Requirement():
 
 
     def add_sub_requirement(self, sub_requirement) -> None :
+        if self.is_user_omitted: return
         if not(sub_requirement in self.__sub_requirement_list):
             self.__sub_requirement_list.append(sub_requirement)
 
@@ -163,13 +168,22 @@ class Requirement():
     def get_sub_requirement_list(self) -> list :
         return self.__sub_requirement_list
 
+
+    @property
+    def is_user_omitted(self) -> bool:
+        return self.__req_is_user_omitted
+    @is_user_omitted.setter
+    def is_user_omitted(self, is_omitted):
+        self.__req_is_user_omitted = is_omitted
+
     @property
     def compliance(self) -> str :
         # Update if dependent on any sub-requirements
         for sub_requirement in self.__sub_requirement_list:
             # Do not overwrite NON_COMPLIANT
             if not(self.__req_compliance == non_compliant_string):
-                self.__req_compliance = sub_requirement.compliance
+                if not(sub_requirement.is_user_omitted):
+                    self.__req_compliance = sub_requirement.compliance
         return self.__req_compliance
 
     @compliance.setter
@@ -833,6 +847,11 @@ def build_req_list(run_configuration, container, delimiter):
                         requirement = container.get_requirement(requirement_name)
                         requirement.found_in_requirement_file = True
                         requirement.requirement_file_idx = row
+
+                        # Check, and mark, if user has chosen to omitt this requirement.
+                        if requirement_name.startswith('#'): requirement.is_user_omitted = True
+
+                        # Add requirement to the container
                         container.add_requirement_to_organized_list(requirement)
 
                     # Requirement description

@@ -451,6 +451,7 @@ def terminal_present_results(container, delimiter) -> dict:
     requirement_compliant_list = []
     requirement_non_compliant_list = []
     requirement_not_run_list = []
+    requirement_omitted_list = []
     requirement_not_listed_list = []
 
     for testcase in container.get_testcase_list():
@@ -466,7 +467,8 @@ def terminal_present_results(container, delimiter) -> dict:
 
     for requirement in container.get_requirement_list():
         if requirement.compliance == not_tested_compliant_string:
-            requirement_not_run_list.append(requirement)
+            if requirement.is_user_omitted: requirement_omitted_list.append(requirement)
+            else: requirement_not_run_list.append(requirement)
         elif requirement.compliance == non_compliant_string:
             requirement_non_compliant_list.append(requirement)
         elif requirement.compliance == compliant_string:
@@ -485,6 +487,8 @@ def terminal_present_results(container, delimiter) -> dict:
     reporting_dict["non_compliant_requirements"] = requirement_non_compliant_list
     reporting_dict["num_non_verified_requirements"] = str(len(requirement_not_run_list))
     reporting_dict["non_verified_requirements"] = requirement_not_run_list
+    reporting_dict["num_omitted_requirements"] = str(len(requirement_omitted_list))
+    reporting_dict["omitted_requirements"] = requirement_omitted_list
     reporting_dict["num_not_listed_requirements"] = str(len(requirement_not_listed_list))
     reporting_dict["not_listed_requirements"] = requirement_not_listed_list
 
@@ -504,6 +508,7 @@ def terminal_present_results(container, delimiter) -> dict:
     print("Number of non compliant requirements : %d" %(len(requirement_non_compliant_list)))
     print("Number of non verified requirements  : %d" %(len(requirement_not_run_list)))
     print("Number of not listed requirements    : %s" %(len(requirement_not_listed_list)))
+    print("Number of user omitted requirements  : %s" %(len(requirement_omitted_list)))
     print("Number of passing testcases : %d" %(len(testcase_pass_list)))
     print("Number of failing testcases : %d" %(len(testcase_fail_list)))
     print("Number of not run testcases : %d" %(len(testcase_not_run_list)))
@@ -522,6 +527,11 @@ def terminal_present_results(container, delimiter) -> dict:
     if requirement_not_run_list:
         print("Not verified requirement(s) :")
         for item in requirement_not_run_list:
+            print("%s%s " %(item.name, delimiter), end='')
+        print("\n")
+    if requirement_omitted_list:
+        print("User omitted requirement(s) :")
+        for item in requirement_omitted_list:
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
     if requirement_not_listed_list:
@@ -605,6 +615,11 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
 
+            if reporting_dict.get("omitted_requirements"):
+                csv_writer.writerow(["User omitted requirement(s)"])
+                for requirement in reporting_dict.get("omitted_requirements"):
+                    csv_writer.writerow([requirement.name])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -644,6 +659,11 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
+            if reporting_dict.get("omitted_requirements"):
+                csv_writer.writerow(["User omitted requirement(s)"])
+                for requirement in reporting_dict.get("omitted_requirements"):
+                    csv_writer.writerow([requirement.name])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_tc_filename))
         abort(error_code = 1, msg = error_msg)

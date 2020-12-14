@@ -2,6 +2,11 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
 
+v0.4.1
+----------
+Released: 2020-12-xx
+- Added option for omitting a requirement in the post-processing Python script.
+
 v0.4.0
 ----------
 Released: 2020-10-06

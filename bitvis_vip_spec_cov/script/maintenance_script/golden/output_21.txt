@@ -1,0 +1,33 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : ../tb/maintenance_tb/sub_req_file.csv
+partial_cov          : ../sim/pc_17.csv
+requirement_map_list : ../tb/maintenance_tb/sub_req_omit_map_file.csv
+spec_cov             : ../sim/sc_17.csv
+clean                : False
+strictness           : 0
+config               : None
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 6
+Number of non compliant requirements : 0
+Number of non verified requirements  : 0
+Number of not listed requirements    : 0
+Number of user omitted requirements  : 0
+Number of passing testcases : 1
+Number of failing testcases : 0
+Number of not run testcases : 5
+
+
+Compliant requirement(s) :
+UART_REQ_BR_A, UART_REQ_BR_B, UART_REQ_ODD, UART_REQ_EVEN, UART_REQ_OMIT, UART_REQ_GENERAL_OMIT, 
+
+Passing testcase(s) :
+TC_SUB_REQ_OMIT, 
+
+Not run testcase(s) :
+TC_5, TC_6, TC_1, TC_2, TC_3, 
+

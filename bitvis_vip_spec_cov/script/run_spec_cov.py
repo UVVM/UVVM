@@ -713,7 +713,9 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     #==========================================================================
     if strictness == '0':
         for requirement in container.get_requirement_list():
-            
+            if requirement.is_user_omitted:
+                continue
+
             for testcase in requirement.get_actual_testcase_list():
                 if testcase.result == testcase_fail_string:
                     requirement.compliance = non_compliant_string
@@ -728,6 +730,9 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     elif strictness == '1':
 
         for requirement in container.get_requirement_list():
+            if requirement.is_user_omitted:
+                continue
+
             if requirement.is_or_listed:
                 # One of the listed testcases for the requirement has been run
                 ok = any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
@@ -747,6 +752,8 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     #==========================================================================
     elif strictness == '2':
         for requirement in container.get_requirement_list():
+            if requirement.is_user_omitted:
+                continue
 
             # Verify that required testcases have been run
             if requirement.is_or_listed:
@@ -898,14 +905,15 @@ def build_req_list(run_configuration, container, delimiter):
 
                         # OR-listed requirements
                         if len(row) > 3:
-                            requirement.is_or_listed = True
+                            requirement.is_or_listed = False
                         # AND-listed requirements
                         else:
-                            requirement.is_or_listed = False
+                            requirement.is_or_listed = True
 
                         # Connect: requirement <-> testcase
-                        requirement.add_expected_testcase(testcase)
-                        testcase.add_expected_requirement(requirement)
+                        if not(requirement.is_user_omitted):
+                            requirement.add_expected_testcase(testcase)
+                            testcase.add_expected_requirement(requirement)
 
         container.organize_requirements()
     except:

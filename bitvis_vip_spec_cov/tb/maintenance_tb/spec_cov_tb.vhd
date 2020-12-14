@@ -317,6 +317,36 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
+      elsif GC_TEST = "test_sub_requirement_omitted_check_pass" then
+      --
+      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
+      --
+      log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);  
+      -- Run testcase
+      initialize_req_cov("TC_SUB_REQ_OMIT", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "pc_17.csv");   
+      tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_OMIT", PASS, "ticking off UART_REQ_OMIT", LIST_EVERY_TICKOFF, C_SCOPE);
+      -- End testcase
+      finalize_req_cov(VOID);
+
+      elsif GC_TEST = "test_sub_requirement_omitted_check_fail" then
+        --
+        -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
+        --
+        log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);  
+        -- Run testcase
+        initialize_req_cov("TC_SUB_REQ_OMIT", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "pc_18.csv");   
+        tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("UART_REQ_OMIT", FAIL, "ticking off UART_REQ_OMIT", LIST_EVERY_TICKOFF, C_SCOPE);
+        -- End testcase
+        finalize_req_cov(VOID);
+
     elsif GC_TEST = "test_incomplete_testcase" then
       --
       -- This test will run requirements for testing incomplete testcase with run_spec_cov.py

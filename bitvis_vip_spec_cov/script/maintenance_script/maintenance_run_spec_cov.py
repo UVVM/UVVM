@@ -31,8 +31,8 @@
 #                           |                      |                  |           |                       |                                                        | UART_REQ_EVEN |                             |
 #---------------------------|----------------------|------------------|-----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
 # sub_req_file.csv	        |UART_REQ_GENERAL_OMIT | TC_SUB_REQ_OMIT  | pc_16.csv | sub_req_map_file.csv  | Testing omitted sub-requirement.                       | UART_REQ_BR_A |                             | sc_16.csv
-#                           |                      |                  |           |                       |                                                        | UART_REQ_BR_B |                             | 
-#                           |                      |                  |           |                       |                                                        | UART_REQ_ODD  |                             | 
+#                           |                      |                  | pc_17.csv |                       |                                                        | UART_REQ_BR_B |                             | sc_17.csv
+#                           |                      |                  | pc_18.cav |                       |                                                        | UART_REQ_ODD  |                             | sc_18.csv
 #                           |                      |                  |           |                       |                                                        | UART_REQ_EVEN |                             |
 #                           |                      |                  |           |                       |                                                        | UART_REQ_OMIT |                             |
 #---------------------------|----------------------|------------------|-----------|-----------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
@@ -67,7 +67,9 @@ test_list = [
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_13.csv", "-s", "../sim/sc_13.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_14.csv", "-s", "../sim/sc_14.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_15.csv", "-s", "../sim/sc_15.csv"],
-            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_16.csv", "-s", "../sim/sc_16.csv"]
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_16.csv", "-s", "../sim/sc_16.csv"],
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_17.csv", "-s", "../sim/sc_17.csv"],
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_18.csv", "-s", "../sim/sc_18.csv"]
             ]
 
 def remove_specification_coverage_files():

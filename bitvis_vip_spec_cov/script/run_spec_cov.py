@@ -454,6 +454,7 @@ def terminal_present_results(container, delimiter) -> dict:
     requirement_omitted_list = []
     requirement_not_listed_list = []
 
+    # Build testcase lists
     for testcase in container.get_testcase_list():
         if testcase.result == testcase_not_run_string:
             testcase_not_run_list.append(testcase)
@@ -465,6 +466,7 @@ def terminal_present_results(container, delimiter) -> dict:
             print("WARNING! Unknown result for testcase : %s." %(testcase.name))
             testcase_fail_list.append(testcase)
 
+    # Build requirement lists
     for requirement in container.get_requirement_list():
         if requirement.compliance == not_tested_compliant_string:
             if requirement.is_user_omitted: requirement_omitted_list.append(requirement)
@@ -476,7 +478,7 @@ def terminal_present_results(container, delimiter) -> dict:
         else:
             print("WARNING! Unknown result for requirement : %s." %(requirement.name))
             requirement_non_compliant_list.append(requirement)
-        if not requirement.found_in_requirement_file:
+        if not(requirement.found_in_requirement_file) and not(requirement.is_sub_requirement):
             requirement_not_listed_list.append(requirement)
 
 

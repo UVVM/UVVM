@@ -69,7 +69,8 @@ test_list = [
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/req_file.csv", "-p", "../sim/pc_15.csv", "-s", "../sim/sc_15.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_16.csv", "-s", "../sim/sc_16.csv"],
             ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_17.csv", "-s", "../sim/sc_17.csv"],
-            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_18.csv", "-s", "../sim/sc_18.csv"]
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_18.csv", "-s", "../sim/sc_18.csv"],
+            ["python", "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/sub_req_file.csv", "-m", "../tb/maintenance_tb/sub_req_omit_map_file.csv", "-p", "../sim/pc_19.csv", "-s", "../sim/sc_19.csv"]
             ]
 
 def remove_specification_coverage_files():

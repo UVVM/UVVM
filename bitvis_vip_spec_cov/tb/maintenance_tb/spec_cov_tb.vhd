@@ -303,6 +303,24 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
+    elsif GC_TEST = "test_sub_requirement_incomplete" then
+      --
+      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
+      --
+      log(ID_LOG_HDR, "Testing incomplete sub-requirement tick off.", C_SCOPE);  
+      -- Run testcase
+      initialize_req_cov("TC_SUB_REQ", "../tb/maintenance_tb/sub_req_file.csv", "pc_19.csv");   
+      tick_off_req_cov("UART_REQ_BR_A", PASS, "testing UART_REQ_BR_A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+
+      log(ID_SEQUENCER, "Not ticking off UART_REQ_BR_B.", C_SCOPE);
+      --tick_off_req_cov("UART_REQ_BR_B", PASS, "testing UART_REQ_BR_B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+
+      tick_off_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_ODD with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+      tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+      -- End testcase
+      finalize_req_cov(VOID);
+
+
     elsif GC_TEST = "test_sub_requirement_omitted" then
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py

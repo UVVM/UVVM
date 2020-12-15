@@ -12,8 +12,8 @@ config               : None
 
 SUMMARY:
 ----------------------------------------------
-Number of compliant requirements     : 4
-Number of non compliant requirements : 0
+Number of compliant requirements     : 3
+Number of non compliant requirements : 1
 Number of non verified requirements  : 1
 Number of not listed requirements    : 0
 Number of user omitted requirements  : 1
@@ -23,7 +23,10 @@ Number of not run testcases : 6
 
 
 Compliant requirement(s) :
-UART_REQ_BR_A, UART_REQ_ODD, UART_REQ_EVEN, UART_REQ_GENERAL_OMIT, 
+UART_REQ_BR_A, UART_REQ_ODD, UART_REQ_EVEN, 
+
+Non compliant requirement(s) :
+UART_REQ_GENERAL_OMIT, 
 
 Not verified requirement(s) :
 UART_REQ_BR_B, 

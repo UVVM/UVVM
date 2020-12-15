@@ -107,6 +107,8 @@ def verify_test_results():
         subprocess.check_call(["py", "../script/maintenance_script/verify_with_golden.py"], stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as e:
         num_errors = int(e.returncode)
+    if num_errors != 0:
+        print("Golden failed with %d errors!" %(num_errors))
     sys.exit(num_errors)
 
 

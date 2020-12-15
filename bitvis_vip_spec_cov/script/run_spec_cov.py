@@ -185,7 +185,10 @@ class Requirement():
             # Do not overwrite NON_COMPLIANT
             if not(self.__req_compliance == non_compliant_string):
                 if not(sub_requirement.is_user_omitted):
-                    self.__req_compliance = sub_requirement.compliance
+                    if sub_requirement.compliance == not_tested_compliant_string:
+                        self.__req_compliance = non_compliant_string
+                    else:    
+                        self.__req_compliance = sub_requirement.compliance
         return self.__req_compliance
 
     @compliance.setter
@@ -478,7 +481,7 @@ def terminal_present_results(container, delimiter) -> dict:
         else:
             print("WARNING! Unknown result for requirement : %s." %(requirement.name))
             requirement_non_compliant_list.append(requirement)
-        if not(requirement.found_in_requirement_file) and not(requirement.is_sub_requirement):
+        if not(requirement.found_in_requirement_file) or not(requirement.is_sub_requirement):
             requirement_not_listed_list.append(requirement)
 
 

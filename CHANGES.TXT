@@ -14,6 +14,7 @@ v2 2020.12.xx
 --------------------
 Released: 2020-12-xx
 - Added option for omitting a requirement in the post-processing Specification Coverage Python script.
+- Fixed sub-requirements could be listed as not-run requirements in CSV files by Specification Coverage Python script.
 
 
 v2 2020.12.08

@@ -6,6 +6,8 @@ v0.4.1
 ----------
 Released: 2020-12-xx
 - Added option for omitting a requirement in the post-processing Python script.
+- Fixed sub-requirements could be listed as not-run requirements in CSV files.
+
 
 v0.4.0
 ----------

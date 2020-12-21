@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2020.12.xx
+v2 2020.12.21
 --------------------
-Released: 2020-12-xx
+Released: 2020-12-21
 - Added option for omitting a requirement in the post-processing Specification Coverage Python script.
 - Fixed sub-requirements could be listed as not-run requirements in CSV files by Specification Coverage Python script.
 

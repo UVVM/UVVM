@@ -1,19 +1,22 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
+------------------------------------------------------------------------------------------
+-- Local package
+------------------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -36,20 +39,6 @@ package body local_pkg is
   end function;
 end package body local_pkg;
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
-
-use work.generic_sb_pkg;
-use work.local_pkg.all;
-
-------------------------------------------------------------------------------------------
--- Package declarations
-------------------------------------------------------------------------------------------
-
 ------------------------------------------------------------------------------------------
 --
 --  slv_sb_pkg
@@ -58,13 +47,42 @@ use work.local_pkg.all;
 --    the constant C_SB_SLV_WIDTH located under scoreboard adaptions in adaptions_pkg.
 --
 ------------------------------------------------------------------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+use work.local_pkg.all;
+
+-- WARNING! The slv_sb_pkg will be deprecated 
 package slv_sb_pkg is new work.generic_sb_pkg
   generic map (t_element         => std_logic_vector(C_SB_SLV_WIDTH-1 downto 0),
                element_match     => std_match,
                to_string_element => slv_to_string);
 
 
+------------------------------------------------------------------------------------------
+--
+--  slv8_sb_pkg
+--
+--    Predefined scoreboard package for std_logic_vector(7 downto 0).
+--
+------------------------------------------------------------------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
+
+use work.local_pkg.all;
+
+package slv8_sb_pkg is new work.generic_sb_pkg
+  generic map (t_element         => std_logic_vector(7 downto 0),
+               element_match     => std_match,
+               to_string_element => slv_to_string);
 
 ------------------------------------------------------------------------------------------
 --

@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -52,11 +53,12 @@ package vvc_cmd_pkg is
     alert_level               : t_alert_level;
     delay                     : time;
     quietness                 : t_quietness;
-    use_provided_msg_id_panel : t_use_provided_msg_id_panel;
-    msg_id_panel              : t_msg_id_panel;
+    parent_msg_id_panel       : t_msg_id_panel;
     -- VVC dedicated fields
     data                      : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
     data_exp                  : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    stable_req                : time;
+    stable_req_from           : t_from_point_in_time;
   end record;
 
   constant C_VVC_CMD_DEFAULT : t_vvc_cmd_record := (
@@ -74,12 +76,12 @@ package vvc_cmd_pkg is
     timeout                   => 0 ns,
     delay                     => 0 ns,
     quietness                 => NON_QUIET,
-    use_provided_msg_id_panel => DO_NOT_USE_PROVIDED_MSG_ID_PANEL,
-    msg_id_panel              => C_VVC_MSG_ID_PANEL_DEFAULT,
-
+    parent_msg_id_panel       => C_UNUSED_MSG_ID_PANEL,
     -- VVC dedicated fields
     data                      => (others => '0'),
-    data_exp                  => (others => '0')
+    data_exp                  => (others => '0'),
+    stable_req                => 0 ns,
+    stable_req_from           => FROM_NOW
     );
 
 

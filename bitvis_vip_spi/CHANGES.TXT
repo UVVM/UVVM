@@ -1,6 +1,51 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.9.1
+----------
+Released: 2020-12-08
+- Added C_SPI_VVC_DATA_ARRAY_WIDTH as default value for GC_DATA_ARRAY_WIDTH in
+  VVC entity generic and C_VVC_CMD_MAX_WORDS in transaction_pkg.
+
+v3.9.0
+----------
+Released: 2020-10-06
+- Added SPI_VVC_SB scoreboard and pad_spi_sb() method.
+
+v3.8.2
+----------
+Released: 2020-08-18
+- Added section with required local defined BFM configuration in BFM QR.
+
+v3.8.1
+----------
+Released: 2020-06-23
+- Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
+  or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
+
+v3.8.0
+----------
+Released: 2020-05-19
+- Added shared_spi_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+
+v3.7.1
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in VVC QR.
+
+v3.7.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Added data_routing parameter to VVC receive procedure for sending data to scoreboard.
+
 v3.6.0
 ----------
 Released: 2020-01-24

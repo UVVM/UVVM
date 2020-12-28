@@ -1,6 +1,51 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v2.8.1
+----------
+Released: 2020-12-08
+- Updated missing info in CHANGES.TXT
+
+v2.8.0
+----------
+Released: 2020-10-06
+- Added support for independent channels in VVC
+- Added AXILITE_VVC_SB scoreboard and pad_axilite_sb() method.
+- Changes in the BFM configuration record:
+- - Renamed t_axilite_response_status to t_xresp
+- - Renamed t_axilite_protection to t_axprot
+- - Fixed typos in the t_axprot record elements
+- - Fixed incorrect values when converting from the t_axprot record element to slv
+
+v2.7.1
+----------
+Released: 2020-06-23
+- Added match_strictness to BFM config and use it in check/expect procedures. Also print HEX
+  or BIN value in BFM check/expect alert logs depending on what kind of error it is. Updated BFM QR.
+
+v2.7.0
+----------
+Released: 2020-05-19
+- Added shared_axilite_vvc_transaction_info information to quick reference.
+- Changed VVC activity methods parameters and default scope.
+- Updated quick reference Activity Watchdog section and BFM config record description.
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+  other minor improvements.
+
+v2.6.1
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in VVC QR.
+
+v2.6.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Renamed Direct Transaction Transfer to transaction info.
+- Added data_routing parameter to VVC read procedure for sending data to scoreboard.
+
 v2.5.1
 ----------
 Released: 2020-02-16

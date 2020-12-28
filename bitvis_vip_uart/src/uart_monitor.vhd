@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -44,8 +45,8 @@ end entity uart_monitor;
 
 architecture behave of uart_monitor is
 
-  alias tx_transaction_info       : t_transaction is shared_uart_monitor_transaction_info(TX, GC_INSTANCE_IDX).bt;
-  alias rx_transaction_info       : t_transaction is shared_uart_monitor_transaction_info(RX, GC_INSTANCE_IDX).bt;
+  alias tx_transaction_info       : t_base_transaction is shared_uart_monitor_transaction_info(TX, GC_INSTANCE_IDX).bt;
+  alias rx_transaction_info       : t_base_transaction is shared_uart_monitor_transaction_info(RX, GC_INSTANCE_IDX).bt;
 
   alias tx_transaction_trigger    : std_logic     is global_uart_monitor_transaction_trigger(TX, GC_INSTANCE_IDX);
   alias rx_transaction_trigger    : std_logic     is global_uart_monitor_transaction_trigger(RX, GC_INSTANCE_IDX);
@@ -59,7 +60,7 @@ architecture behave of uart_monitor is
     constant  operation           : in    t_operation;
     constant  C_LOG_PREFIX        : in    string;
     signal    transaction_trigger : inout std_logic;
-    variable  transaction_info    : inout t_transaction;
+    variable  transaction_info    : inout t_base_transaction;
     signal    uart_line           : in    std_logic;
     variable  monitor_config      : in    t_uart_monitor_config
   ) is
@@ -171,8 +172,8 @@ architecture behave of uart_monitor is
         transaction_info.transaction_status := SUCCEEDED;
       end if;
 
-      -- Pulse DTT trigger signal for updated transaction information
-      gen_pulse(transaction_trigger, 0 ns, BLOCKING, "pulsing monitor DTT trigger");
+      -- Pulse transaction info trigger signal for updated transaction information
+      gen_pulse(transaction_trigger, 0 ns, BLOCKING, "pulsing monitor transaction info trigger");
 
       -- Await non-active line if no stop bit has been detected
       if (and(v_stop_bit_error) or (interface_config.num_stop_bits = STOP_BITS_ONE and v_stop_bit_error(0))) and uart_line /= '1' then

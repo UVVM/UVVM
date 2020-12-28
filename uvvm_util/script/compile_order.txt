@@ -9,4 +9,9 @@
 ../src/license_pkg.vhd
 ../src/methods_pkg.vhd
 ../src/bfm_common_pkg.vhd
+../src/generic_queue_pkg.vhd
+../src/data_queue_pkg.vhd
+../src/data_fifo_pkg.vhd
+../src/data_stack_pkg.vhd
 ../src/uvvm_util_context.vhd
+

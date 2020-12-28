@@ -1,7 +1,53 @@
 UVVM VVC Framework - Overview on Versions and Changes
-==============================================================
 
 ----------------------------------------------------------------------
+
+
+v2.11.1
+----------
+Released: 2020-08-18
+- Added deprecated warning to ti_data_fifo_pkg, ti_data_queue_pkg, ti_data_stack_pkg and
+  ti_generic_queue_pkg. These will no longer be maintained and users should use the 
+  packages in Utility Library.
+- Fixed wrongly commented code generated from vvc_generator.
+- Generated code from vvc_generator.py will now compile without user editing.
+- Removed VVC_Framework_Documentation_Overview.txt from /doc
+
+
+v2.11.0
+----------
+Released: 2020-06-23
+- Renamed t_vvc_list to t_vvc_info_list and await_completion() parameter vvc_list to vvc_info_list.
+- Updated UVVM Essential Mechanisms with the Hierarchical VVCs section.
+
+v2.10.0
+----------
+Released: 2020-05-19
+- Set vvc_status.current_cmd_idx to 0 after a VVC finishes executing a command to signal that there
+  is no command being executed.
+- Added new await_completion command for several VVCs which doesn't block them while waiting.
+- Setting Activity Watchdog num_exp_vvc = 0 will omit checking the number of VVCs registered.
+
+v2.9.0
+----------
+Released: 2020-04-20
+- Added section 6.7 regarding transaction info usage in VVC Framework Essential Mechanisms document.
+- Added advanced and basic choice to vvc_generator.py
+
+v2.8.0
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  td_vvc_framework_common_methods_pkg procedures.
+- Updated vvc_generator.py script to implement usage of parent_msg_id_panel.
+- Moved alert_level parameter placement in VVC procedure example in vvc_generator.py script.
+
+v2.7.3
+----------
+Released: 2020-03-06
+- Removed t_transaction_info from vvc_generator.py script.
+- Fixed bug in the generic queue where deleting the last element would make elements added
+  after the delete disappear.
 
 v2.7.2
 ----------

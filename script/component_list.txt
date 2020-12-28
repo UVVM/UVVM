@@ -1,5 +1,6 @@
 uvvm_util
 uvvm_vvc_framework
+bitvis_vip_scoreboard
 bitvis_vip_avalon_mm
 bitvis_vip_avalon_st
 bitvis_vip_axilite
@@ -11,6 +12,9 @@ bitvis_vip_gpio
 bitvis_vip_i2c
 bitvis_vip_rgmii
 bitvis_vip_sbi
-bitvis_vip_scoreboard
 bitvis_vip_spi
 bitvis_vip_uart
+bitvis_vip_hvvc_to_vvc_bridge
+bitvis_vip_ethernet
+bitvis_vip_axi
+bitvis_vip_spec_cov

@@ -3,6 +3,67 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.15.1
+----------
+Released: 2020-12-08
+- Fixed to_string(integer) function using a negative value.
+- Fixed random time function by using the simulator base time unit instead of ns.
+- Fixed random function overflowing with maximum values in min/max range.
+- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
+- Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
+- Added C_SPI_VVC_DATA_ARRAY_WIDTH to adaptation_pkg.
+
+v2.15.0
+----------
+Released: 2020-10-06
+- Added constant C_UVVM_VERSION with UVVM release version number.
+- Corrected normalize_and_check() description in QR.
+- Corrected default KEEP_LEADING_0 for check_value() in QR.
+- Removed SLV range check for t_slv_array version of normalize_and_check().
+
+v2.14.2
+----------
+Released: 2020-08-21
+- Added missing queue, FIFO and stack in Util package.
+
+v2.14.1
+----------
+Released: 2020-08-18
+- Removed C_VVCT_ALL_INSTANCES as it is a duplicate of ALL_INSTANCES. 
+- Added fix with gen_pulse() method for slv with don't care.
+- Added more info to set_log_destination method in Util QR.
+
+v2.14.0
+----------
+Released: 2020-05-19
+- Added new msg_ids in adaptations_pkg: ID_NEW_HVVC_CMD_SEQ & ID_VVC_ACTIVITY, ID_AWAIT_COMPLETION,
+  ID_AWAIT_COMPLETION_LIST, ID_AWAIT_COMPLETION_WAIT, ID_AWAIT_COMPLETION_END.
+- Added new type t_activity(ACTIVE, INACTIVE) to types_pkg.
+- Added missing t_byte_endianness enums.
+
+v2.13.1
+----------
+Released: 2020-04-20
+- Updated Util QR check_value() with MATCH_STD_INCL_Z option.
+
+v2.13.0
+----------
+Released: 2020-03-30
+- Added NA element to type t_enabled.
+- Added C_UNUSED_MSG_ID_PANEL and removed t_vvc record in adaptations_pkg.
+- Removed type t_use_provided_msg_id_panel.
+- Added CHECK counters and report_check_counters() method.
+
+v2.12.0
+----------
+Released: 2020-03-06
+- Added 3 new msg_ids in adaptations_pkg: ID_PACKET_PREAMBLE, ID_PACKET_CHECKSUM and ID_PACKET_GAP.
+- Moved t_channel from types_pkg to adaptations_pkg.
+- Changed t_byte_endianness elements names and added an alias t_word_endianness.
+- Removed unnecessary ascending parameter in convert_slv_array_to_byte_array function.
+- Added functions convert_byte_array_to_slv and convert_slv_to_byte_array to methods_pkg.
+
+
 v2.11.1
 ----------
 Released: 2020-02-16

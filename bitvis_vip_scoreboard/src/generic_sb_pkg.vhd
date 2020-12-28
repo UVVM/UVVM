@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2018 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -22,9 +23,6 @@ use std.textio.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
-
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_generic_queue_pkg;
 
 use work.generic_sb_support_pkg.all;
 
@@ -516,6 +514,7 @@ package generic_sb_pkg is
 
   end protected t_generic_sb;
 
+
 end package generic_sb_pkg;
 
 
@@ -533,12 +532,12 @@ package body generic_sb_pkg is
   end record;
 
   -- Declaration of sb_queue_pkg used to store all entries
-  package sb_queue_pkg is new uvvm_vvc_framework.ti_generic_queue_pkg
+  package sb_queue_pkg is new uvvm_util.generic_queue_pkg
   generic map (
         t_generic_element        => t_sb_entry,
         scope                    => "SB_queue",
-        GC_QUEUE_COUNT_MAX       => 1000,
-        GC_QUEUE_COUNT_THRESHOLD => 750);
+        GC_QUEUE_COUNT_MAX       => GC_QUEUE_COUNT_MAX,
+        GC_QUEUE_COUNT_THRESHOLD => GC_QUEUE_COUNT_THRESHOLD);
 
   use sb_queue_pkg.all;
 
@@ -548,21 +547,21 @@ package body generic_sb_pkg is
     -- Variables
     ----------------------------------------------------------------------------------------------------
     variable vr_scope            : string(1 to C_LOG_SCOPE_WIDTH) := (1 to 4 => "?_SB", others => NUL);
-    variable vr_config           : t_sb_config_array(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => sb_config_default);
-    variable vr_instance_enabled : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM)    := (others => false);
+    variable vr_config           : t_sb_config_array(0 to C_MAX_SB_INSTANCE_IDX) := (others => sb_config_default);
+    variable vr_instance_enabled : boolean_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => false);
     variable vr_sb_queue         : sb_queue_pkg.t_generic_queue;
 
-    type t_msg_id_panel_array is array(0 to C_MAX_QUEUE_INSTANCE_NUM) of t_msg_id_panel;
+    type t_msg_id_panel_array is array(0 to C_MAX_SB_INSTANCE_IDX) of t_msg_id_panel;
     variable vr_msg_id_panel_array : t_msg_id_panel_array := (others => C_SB_MSG_ID_PANEL_DEFAULT);
 
     -- Counters
-    variable vr_entered_cnt         : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_match_cnt           : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_mismatch_cnt        : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_drop_cnt            : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_initial_garbage_cnt : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_delete_cnt          : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
-    variable vr_overdue_check_cnt   : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => -1);
+    variable vr_entered_cnt         : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable vr_match_cnt           : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable vr_mismatch_cnt        : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable vr_drop_cnt            : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable vr_initial_garbage_cnt : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable vr_delete_cnt          : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable vr_overdue_check_cnt   : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
 
 
 
@@ -573,8 +572,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) is
     begin
-      check_value_in_range(instance, 0, C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
-          "Instance must be within range 0 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
+      check_value_in_range(instance, 0, C_MAX_SB_INSTANCE_IDX, TB_ERROR,
+          "Instance must be within range 0 to C_MAX_SB_INSTANCE_IDX, " & to_string(C_MAX_SB_INSTANCE_IDX) & ".", vr_scope, ID_NEVER);
     end procedure check_instance_in_range;
 
     procedure check_instance_enabled(
@@ -666,8 +665,8 @@ package body generic_sb_pkg is
     begin
 
       -- Check if range is within limits
-      check_value(sb_config_array'low >= 0 and sb_config_array'high <= C_MAX_QUEUE_INSTANCE_NUM, TB_ERROR,
-        "Configuration array must be within range 0 to C_MAX_QUEUE_INSTANCE_NUM, " & to_string(C_MAX_QUEUE_INSTANCE_NUM) & ".", vr_scope, ID_NEVER);
+      check_value(sb_config_array'low >= 0 and sb_config_array'high <= C_MAX_SB_INSTANCE_IDX, TB_ERROR,
+        "Configuration array must be within range 0 to C_MAX_SB_INSTANCE_IDX, " & to_string(C_MAX_SB_INSTANCE_IDX) & ".", vr_scope, ID_NEVER);
 
       -- Apply config to the defined range
       for i in sb_config_array'low to sb_config_array'high loop
@@ -725,9 +724,10 @@ package body generic_sb_pkg is
     ) is
       constant proc_name : string := "enable";
     begin
-      -- Check if instance is within range
+      -- Check if instance is within range and not already enabled
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
+        check_value(not vr_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already enabled", vr_scope, ID_NEVER);
       end if;
 
       if ext_proc_call = "" then
@@ -744,7 +744,7 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         vr_instance_enabled := (others => true);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           if vr_entered_cnt(i) = -1 then
             vr_entered_cnt(i)         := 0;
             vr_match_cnt(i)           := 0;
@@ -801,9 +801,10 @@ package body generic_sb_pkg is
     ) is
       constant proc_name : string := "disable";
     begin
-      -- Check if instance is within range
+      -- Check if instance is within range and not already disabled
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
+        check_value(vr_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already disabled", vr_scope, ID_NEVER);
       end if;
 
       if instance = ALL_INSTANCES then
@@ -866,8 +867,8 @@ package body generic_sb_pkg is
                      tag              => pad_string(tag, NUL, C_SB_TAG_WIDTH),
                      entry_time       => now);
 
-      if instance = ALL_ENABLED_INSTANCES then
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+      if instance = ALL_INSTANCES then
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           if vr_instance_enabled(i) then
             -- add entry
             vr_sb_queue.add(i, v_sb_entry);
@@ -1092,18 +1093,14 @@ package body generic_sb_pkg is
 
     begin
 
-      -- Check if instance is within range
-      if instance /= ALL_ENABLED_INSTANCES then
-        check_instance_in_range(instance);
-      end if;
-
-      if instance = ALL_ENABLED_INSTANCES then
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+      if instance = ALL_INSTANCES then
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           if vr_instance_enabled(i) then
             check_received_instance(i);
           end if;
         end loop;
       else
+        check_instance_in_range(instance);
         check_instance_enabled(instance);
         check_received_instance(instance);
       end if;
@@ -1155,21 +1152,11 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_DATA, proc_name & "() => flushing all instances. " & add_msg_delimiter(msg), vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           -- update counters
           vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
           -- flush queue
           vr_sb_queue.flush(i);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        log(ID_DATA, proc_name & "() => flushing all enabled instances. " & add_msg_delimiter(msg), vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
-            -- update counters
-            vr_delete_cnt(i) := vr_delete_cnt(i) + vr_sb_queue.get_count(i);
-            -- flush queue
-            vr_sb_queue.flush(i);
-          end if;
         end loop;
       else
         if ext_proc_call = "" then
@@ -1236,15 +1223,8 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & "() => reseting all instances. " & add_msg_delimiter(msg), vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
             reset_instance(i);
-        end loop;
-      elsif instance = ALL_ENABLED_INSTANCES then
-        log(ID_CTRL, proc_name & "() => reseting all enabled instances. " & add_msg_delimiter(msg), vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if vr_instance_enabled(i) then
-            reset_instance(i);
-          end if;
         end loop;
       else
         if ext_proc_call = "" then
@@ -1284,8 +1264,24 @@ package body generic_sb_pkg is
     impure function is_empty(
       constant instance : in integer
     ) return boolean is
+      variable v_is_empty : boolean := true;
     begin
-      return vr_sb_queue.is_empty(instance);
+      if instance /= ALL_INSTANCES then
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
+        v_is_empty := vr_sb_queue.is_empty(instance);
+      else
+        for idx in 0 to C_MAX_SB_INSTANCE_IDX loop
+          -- an instance is not empty
+          if vr_instance_enabled(idx) then
+            if not(vr_sb_queue.is_empty(idx)) then
+              v_is_empty := false;
+            end if;
+          end if;
+        end loop; 
+      end if;
+      
+      return v_is_empty;
     end function is_empty;
 
     impure function is_empty(
@@ -1309,6 +1305,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_entered_cnt(instance);
     end function get_entered_count;
 
@@ -1336,6 +1334,8 @@ package body generic_sb_pkg is
       if vr_entered_cnt(instance) = -1 then
         return -1;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         return vr_sb_queue.get_count(instance);
       end if;
     end function get_pending_count;
@@ -1360,6 +1360,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_match_cnt(instance);
     end function get_match_count;
 
@@ -1383,6 +1385,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_mismatch_cnt(instance);
     end function get_mismatch_count;
 
@@ -1407,6 +1411,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_drop_cnt(instance);
     end function get_drop_count;
 
@@ -1431,6 +1437,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_initial_garbage_cnt(instance);
     end function get_initial_garbage_count;
 
@@ -1455,6 +1463,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_delete_cnt(instance);
     end function get_delete_count;
 
@@ -1479,6 +1489,8 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
+      check_instance_in_range(instance);
+      check_instance_enabled(instance);
       return vr_overdue_check_cnt(instance);
     end function get_overdue_check_count;
 
@@ -1530,10 +1542,12 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled for all instances.", vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           vr_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         if ext_proc_call = "" then
           log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled.", vr_scope & "," & to_string(instance));
         else
@@ -1568,10 +1582,12 @@ package body generic_sb_pkg is
     begin
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled for all instances.", vr_scope);
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           vr_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         if ext_proc_call = "" then
           log(instance, ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled.", vr_scope & "," & to_string(instance));
         else
@@ -1602,14 +1618,18 @@ package body generic_sb_pkg is
       constant instance      : in integer;
       constant ext_proc_call : in string := ""
     ) is
-      variable v_line            : line;
-      variable v_line_copy       : line;
-      variable v_status_failed   : boolean  := true;
-      variable v_mismatch        : boolean  := false;
-      constant C_HEADER          : string   := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
-      constant prefix            : string   := C_LOG_PREFIX & "     ";
-      constant log_counter_width : positive := 8; -- shouldn't be smaller than 8 due to the counters names
-      variable v_log_extra_space : integer  := 0;
+      variable v_line                               : line;
+      variable v_line_copy                          : line;
+      variable v_status_failed                      : boolean   := true;
+      variable v_mismatch                           : boolean   := false;
+      variable v_no_enabled_instances               : boolean   := true;
+      constant C_HEADER                             : string    := "*** SCOREBOARD COUNTERS SUMMARY: " & to_string(vr_scope) & " ***";
+      constant prefix                               : string    := C_LOG_PREFIX & "     ";
+      constant log_counter_width                    : positive  := 8; -- shouldn't be smaller than 8 due to the counters names
+      variable v_log_extra_space                    : integer   := 0;
+      constant C_MAX_SB_INSTANCE_IDX_STRING      : string    := to_string(C_MAX_SB_INSTANCE_IDX);
+      constant C_MAX_SB_INSTANCE_IDX_STRING_LEN  : natural   := C_MAX_SB_INSTANCE_IDX_STRING'length;
+
 
         -- add simulation time stamp to scoreboard report header
         impure function timestamp_header(value : time; txt : string) return string is
@@ -1671,14 +1691,16 @@ package body generic_sb_pkg is
           justify("OVERDUE_CHECK"  , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
           left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      if instance = ALL_INSTANCES or instance = ALL_ENABLED_INSTANCES then
-        for i in 1 to C_MAX_QUEUE_INSTANCE_NUM loop
-          if instance = ALL_INSTANCES or (instance = ALL_ENABLED_INSTANCES and vr_instance_enabled(i)) then
+      if instance = ALL_INSTANCES THEN
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
+          if (instance = ALL_INSTANCES and vr_instance_enabled(i)) then
+            v_no_enabled_instances := false;
+
             write(v_line,
             justify(
               "instance: " &
-              justify(to_string(i), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-              fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
+              justify(to_string(i), right, C_MAX_SB_INSTANCE_IDX_STRING_LEN, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+              fill_string(' ', 20-4-10-C_MAX_SB_INSTANCE_IDX_STRING_LEN) &
               justify(to_string(get_entered_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify(to_string(get_pending_count(i))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify(to_string(get_match_count(i))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1690,12 +1712,20 @@ package body generic_sb_pkg is
               left, C_LOG_LINE_WIDTH - prefix'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
+
+        -- report if no enabled instances was found
+        if v_no_enabled_instances then
+          write(v_line, "No enabled instances was found." & LF);
+        end if;
+
       else
+        check_instance_in_range(instance);
+        check_instance_enabled(instance);
         write(v_line,
           justify(
             "instance: " &
-            justify(to_string(instance), right, to_string(C_MAX_QUEUE_INSTANCE_NUM)'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-            fill_string(' ', 20-4-10-to_string(C_MAX_QUEUE_INSTANCE_NUM)'length) &
+            justify(to_string(instance), right, C_MAX_SB_INSTANCE_IDX_STRING_LEN, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+            fill_string(' ', 20-4-10-C_MAX_SB_INSTANCE_IDX_STRING_LEN) &
             justify(to_string(get_entered_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_pending_count(instance))        , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_match_count(instance))          , center, log_counter_width, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1752,7 +1782,7 @@ package body generic_sb_pkg is
       variable v_sb_entry : t_sb_entry;
     begin
       -- Check if instance is within range
-      if instance /= ALL_ENABLED_INSTANCES then
+      if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
       end if;
 
@@ -1761,8 +1791,8 @@ package body generic_sb_pkg is
                      tag              => pad_string(tag, NUL, C_SB_TAG_WIDTH),
                      entry_time       => now);
 
-      if instance = ALL_ENABLED_INSTANCES then
-        for i in 0 to C_MAX_QUEUE_INSTANCE_NUM loop
+      if instance = ALL_INSTANCES then
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           if vr_instance_enabled(i) then
             -- Check that instance is enabled
             check_queue_empty(i);
@@ -1785,7 +1815,7 @@ package body generic_sb_pkg is
 
       -- Logging
       if ext_proc_call = "" then
-        if instance = ALL_ENABLED_INSTANCES then
+        if instance = ALL_INSTANCES then
           if identifier_option = POSITION then
             if tag_usage = NO_TAG then
               log(ID_DATA, proc_name & "() => inserted expected after entry with position " & to_string(identifier) & " for all enabled instances. Expected: "

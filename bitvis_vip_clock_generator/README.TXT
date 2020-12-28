@@ -1,8 +1,9 @@
 -----------------------------------------------------------
--- Directory structure                                   --
+-- Directory structure                                   -- 
 -----------------------------------------------------------
 
-- bitvis_vip_clock_generator : An example VIP that uses UVVM
-  - doc               			 : Quick Reference for VVC
-  - script            			 : Compile scripts
-  - src               			 : VVC source code
+- bitvis_vip_clock_generator  : A VIP that uses UVVM
+  - doc               	      : Quick Reference for BFM and VVC
+  - script            	      : Compile scripts
+  - src               	      : Clock Generator VVC source code
+

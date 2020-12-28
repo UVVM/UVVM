@@ -1,13 +1,14 @@
 --================================================================================================================================
--- Copyright (c) 2019 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
--- THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
 --================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------
 -- Description : See library quick reference (under 'doc') and README-file(s)
@@ -50,20 +51,21 @@ package avalon_st_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_avalon_st_bfm_config is
   record
-    max_wait_cycles             : natural;       -- Used for setting the maximum cycles to wait before an alert is issued when
-                                                 -- waiting for ready or valid signals from the DUT.
-    max_wait_cycles_severity    : t_alert_level; -- Severity if max_wait_cycles expires.
-    clock_period                : time;          -- Period of the clock signal.
-    clock_period_margin         : time;          -- Input clock period margin to specified clock_period
-    clock_margin_severity       : t_alert_level; -- The above margin will have this severity
-    setup_time                  : time;          -- Setup time for generated signals, set to clock_period/4
-    hold_time                   : time;          -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                    : t_bfm_sync;    -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    symbol_width                : natural;       -- Number of data bits per symbol.
-    first_symbol_in_msb         : boolean;       -- Symbol ordering. When true, first-order symbol is in most significant bits.
-    max_channel                 : natural;       -- Maximum number of channels that the interface supports.
-    use_packet_transfer         : boolean;       -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
-    id_for_bfm                  : t_msg_id;      -- The message ID used as a general message ID in the BFM
+    max_wait_cycles             : natural;            -- Used for setting the maximum cycles to wait before an alert is issued when
+                                                      -- waiting for ready or valid signals from the DUT.
+    max_wait_cycles_severity    : t_alert_level;      -- Severity if max_wait_cycles expires.
+    clock_period                : time;               -- Period of the clock signal.
+    clock_period_margin         : time;               -- Input clock period margin to specified clock_period
+    clock_margin_severity       : t_alert_level;      -- The above margin will have this severity
+    setup_time                  : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                   : time;               -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                    : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness            : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    symbol_width                : natural;            -- Number of data bits per symbol.
+    first_symbol_in_msb         : boolean;            -- Symbol ordering. When true, first-order symbol is in most significant bits.
+    max_channel                 : natural;            -- Maximum number of channels that the interface supports.
+    use_packet_transfer         : boolean;            -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
+    id_for_bfm                  : t_msg_id;           -- The message ID used as a general message ID in the BFM
   end record;
 
   -- Define the default value for the BFM config
@@ -76,6 +78,7 @@ package avalon_st_bfm_pkg is
     setup_time                  => -1 ns,
     hold_time                   => -1 ns,
     bfm_sync                    => SYNC_ON_CLOCK_ONLY,
+    match_strictness            => MATCH_EXACT,
     symbol_width                => 8,
     first_symbol_in_msb         => true,
     max_channel                 => 0,
@@ -135,7 +138,7 @@ package avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   procedure avalon_st_receive (
@@ -146,7 +149,7 @@ package avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ---------------------------------------------------------------------------------------------
@@ -234,12 +237,12 @@ package body avalon_st_bfm_pkg is
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "avalon_st_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " sym, ch:" &
-                                   to_string(channel_value, DEC, AS_IS) & ")";
     constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
+    constant proc_name : string := "avalon_st_transmit";
+    constant proc_call : string := proc_name & "(" & to_string(data_array'length) & " words/" & to_string(data_array'length*c_symbols_per_beat) &
+                                   " sym, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
     -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
@@ -420,13 +423,14 @@ package body avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is  
-    constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " sym)";
     constant c_data_word_size   : natural := data_array(data_array'low)'length;
     constant c_sym_width        : natural := config.symbol_width;
     constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
+    constant local_proc_name : string := "avalon_st_receive";  -- Internal proc_name; Used if called from sequencer or VVC
+    constant local_proc_call : string := local_proc_name & "(" & to_string(data_array'length) & " words/" &
+                                         to_string(data_array'length*c_symbols_per_beat) & " sym)";
     -- Normalize to the DUT channel/data widths
     variable v_normalized_chan : std_logic_vector(channel_value'length-1 downto 0) := (others => '0');
     variable v_normalized_data : t_slv_array(0 to data_array'length-1)(c_data_word_size-1 downto 0);
@@ -444,11 +448,11 @@ package body avalon_st_bfm_pkg is
     variable v_time_of_falling_edge : time    := -1 ns;  -- time stamp for clk period checking
   begin
 
-    -- If called from sequencer/VVC, show 'avalon_st_receive()...' in log
     if ext_proc_call = "" then
+      -- Called directly from sequencer/VVC, log 'avalon_st_receive()...'
       write(v_proc_call, local_proc_call);
-    -- If called from other BFM procedure like avalon_st_expect, log 'avalon_st_expect() while executing avalon_st_receive()...'
     else
+      -- Called from another BFM procedure, log 'ext_proc_call while executing avalon_st_receive()...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -609,8 +613,14 @@ package body avalon_st_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " &
         add_msg_delimiter(msg), scope);
     else
-      log(ID_PACKET_COMPLETE, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      if ext_proc_call = "" then
+        log(ID_PACKET_COMPLETE, v_proc_call.all & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      else
+        -- Log will be handled by calling procedure (e.g. avalon_st_expect)
+      end if;
     end if;
+
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   ---------------------------------------------------------------------------------------------
@@ -625,7 +635,7 @@ package body avalon_st_bfm_pkg is
     constant scope            : in    string                 := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from other BFM procedure
+    constant ext_proc_call    : in    string := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     variable v_channel : std_logic_vector(avalon_st_if.channel'range);
   begin
@@ -646,10 +656,11 @@ package body avalon_st_bfm_pkg is
     constant msg_id_panel     : in    t_msg_id_panel         := shared_msg_id_panel;
     constant config           : in    t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
+    constant c_data_word_size   : natural := data_exp(data_exp'low)'length;
+    constant c_symbols_per_beat : natural := avalon_st_if.data'length/config.symbol_width; -- Number of symbols transferred per cycle
     constant proc_name : string := "avalon_st_expect";
-    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " sym, ch:" &
-                                   to_string(channel_exp, DEC, AS_IS) & ")";
-    constant c_data_word_size     : natural := data_exp(data_exp'low)'length;
+    constant proc_call : string := proc_name & "(" & to_string(data_exp'length) & " words/" & to_string(data_exp'length*c_symbols_per_beat) &
+                                   " sym, ch:" & to_string(channel_exp, DEC, AS_IS) & ")";
     -- Helper variables
     variable v_normalized_chan    : std_logic_vector(avalon_st_if.channel'length-1 downto 0) :=
       normalize_and_check(channel_exp, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
@@ -659,6 +670,7 @@ package body avalon_st_bfm_pkg is
     variable v_channel_error      : boolean := false;
     variable v_data_error_cnt     : natural := 0;
     variable v_first_wrong_symbol : natural;
+    variable v_alert_radix        : t_radix;
   begin
 
     check_value(data_exp'ascending, TB_FAILURE, "Sanity check: Check that data_exp is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -675,8 +687,8 @@ package body avalon_st_bfm_pkg is
     -- Report the first wrong symbol (iterate from the last to the first)
     for symbol in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(symbol)'range loop
-        -- Expected set to don't care or received value matches expected
-        if (v_normalized_data(symbol)(i) = '-') or (v_rx_data_array(symbol)(i) = v_normalized_data(symbol)(i)) then
+        -- Allow don't care in expected value and use match strictness from config for comparison
+        if v_normalized_data(symbol)(i) = '-' or check_value(v_rx_data_array(symbol)(i), v_normalized_data(symbol)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
         else
           -- Received symbol doesn't match
@@ -688,9 +700,11 @@ package body avalon_st_bfm_pkg is
 
     -- Done. Report result
     if v_data_error_cnt /= 0 then
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_symbol), v_normalized_data(v_first_wrong_symbol), MATCH_STD, NO_ALERT, msg) else HEX;
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in symbol# " &
-        to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) &
-        ". Expected " & to_string(v_normalized_data(v_first_wrong_symbol), HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+        to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), v_alert_radix, AS_IS, INCL_RADIX) &
+        ". Expected " & to_string(v_normalized_data(v_first_wrong_symbol), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_channel_error then
       alert(alert_level, proc_call & "=> Failed. Wrong channel. Was " & to_string(v_rx_channel, HEX, AS_IS, INCL_RADIX) &
         ". Expected " & to_string(v_normalized_chan, HEX, AS_IS, INCL_RADIX) & ". " & msg, scope);

@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -58,23 +59,24 @@ package avalon_mm_bfm_pkg is
   -- Configuration record to be assigned in the test harness.
   type t_avalon_mm_bfm_config is
   record
-    max_wait_cycles           : integer;        -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
-    max_wait_cycles_severity  : t_alert_level;  -- The above timeout will have this severity
-    clock_period              : time;           -- Period of the clock signal.
-    clock_period_margin       : time;           -- Input clock period accuracy margin to specified clock_period
-    clock_margin_severity     : t_alert_level;  -- The above margin will have this severity
-    setup_time                : time;           -- Setup time for generated signals, set to clock_period/4
-    hold_time                 : time;           -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                  : t_bfm_sync;     -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    num_wait_states_read      : natural;        -- use_waitrequest = false -> this controls the (fixed) latency for read
-    num_wait_states_write     : natural;        -- use_waitrequest = false -> this controls the (fixed) latency for write
-    use_waitrequest           : boolean;        -- slave uses waitrequest
-    use_readdatavalid         : boolean;        -- slave uses readdatavalid (variable latency)
-    use_response_signal       : boolean;        -- Whether or not to check the response signal on read
-    use_begintransfer         : boolean;        -- Whether or not to assert begintransfer on start of transfer (Altera recommends not to use)
-    id_for_bfm                : t_msg_id;       -- The message ID used as a general message ID in the Avalon BFM
-    id_for_bfm_wait           : t_msg_id;       -- The message ID used for logging waits in the Avalon BFM
-    id_for_bfm_poll           : t_msg_id;       -- The message ID used for logging polling in the Avalon BFM
+    max_wait_cycles           : integer;            -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
+    max_wait_cycles_severity  : t_alert_level;      -- The above timeout will have this severity
+    clock_period              : time;               -- Period of the clock signal.
+    clock_period_margin       : time;               -- Input clock period accuracy margin to specified clock_period
+    clock_margin_severity     : t_alert_level;      -- The above margin will have this severity
+    setup_time                : time;               -- Setup time for generated signals, set to clock_period/4
+    hold_time                 : time;               -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                  : t_bfm_sync;         -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness          : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    num_wait_states_read      : natural;            -- use_waitrequest = false -> this controls the (fixed) latency for read
+    num_wait_states_write     : natural;            -- use_waitrequest = false -> this controls the (fixed) latency for write
+    use_waitrequest           : boolean;            -- slave uses waitrequest
+    use_readdatavalid         : boolean;            -- slave uses readdatavalid (variable latency)
+    use_response_signal       : boolean;            -- Whether or not to check the response signal on read
+    use_begintransfer         : boolean;            -- Whether or not to assert begintransfer on start of transfer (Altera recommends not to use)
+    id_for_bfm                : t_msg_id;           -- The message ID used as a general message ID in the Avalon BFM
+    id_for_bfm_wait           : t_msg_id;           -- The message ID used for logging waits in the Avalon BFM
+    id_for_bfm_poll           : t_msg_id;           -- The message ID used for logging polling in the Avalon BFM
   end record;
 
   constant C_AVALON_MM_BFM_CONFIG_DEFAULT : t_avalon_mm_bfm_config := (
@@ -86,6 +88,7 @@ package avalon_mm_bfm_pkg is
     setup_time                => -1 ns,
     hold_time                 => -1 ns,
     bfm_sync                  => SYNC_ON_CLOCK_ONLY,
+    match_strictness          => MATCH_EXACT,
     num_wait_states_read      => 0,
     num_wait_states_write     => 0,
     use_waitrequest           => true,
@@ -163,7 +166,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read"  -- Overwrite if called from another procedure
     );
 
   procedure avalon_mm_check (
@@ -196,7 +199,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like avalon_mm_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   procedure avalon_mm_read_response (
@@ -208,7 +211,7 @@ package avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- Overwrite if called from another procedure
   );
 
   procedure avalon_mm_check_response (
@@ -451,7 +454,7 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read"  -- Overwrite if called from another procedure
     ) is
   begin
     avalon_mm_read_request(addr_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_name);
@@ -520,7 +523,7 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call    : in  string                    := ""  -- External proc_call; overwrite if called from other BFM procedure like avalon_mm_check
+    constant ext_proc_call    : in  string                    := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     -- local_proc_* used if called from sequencer or VVC
     constant local_proc_name          : string := "avalon_mm_read_request";
@@ -532,6 +535,7 @@ package body avalon_mm_bfm_pkg is
 
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
+    variable v_clock_period           : time := -1 ns;
 
   begin
     if config.bfm_sync = SYNC_WITH_SETUP_AND_HOLD then
@@ -541,10 +545,10 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     if ext_proc_call = "" then
-      -- called from sequencer/VVC, show 'avalon_mm_read_request...' in log
+      -- Called directly from sequencer/VVC, log 'avalon_mm_read_request...'
       write(v_proc_call, local_proc_call);
     else
-      -- called from other BFM procedure like axistream_expect, log 'avalon_mm_check() while executing avalon_mm_read_request...'
+      -- Called from another BFM procedure, log 'ext_proc_call while executing avalon_mm_read_request...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
 
@@ -562,6 +566,9 @@ package body avalon_mm_bfm_pkg is
 
     check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                               config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+
+    -- Get the clock period from the clk signal in case it is not configured
+    v_clock_period := abs(v_time_of_rising_edge - v_time_of_falling_edge) * 2;
 
     -- Set the clock period for avalon_mm_read_response()
     shared_avalon_clock_period.time_of_falling_edge := v_time_of_falling_edge;
@@ -591,12 +598,15 @@ package body avalon_mm_bfm_pkg is
       end loop;
     end if;
 
-    
-    if ext_proc_call = "" then -- proc_name = "avalon_mm_read_request"
+    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period/4;
+
+    if ext_proc_call = "" then
       log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;
 
-    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after config.clock_period/4;
+    DEALLOCATE(v_proc_call);
   end procedure avalon_mm_read_request;
 
 
@@ -609,7 +619,7 @@ package body avalon_mm_bfm_pkg is
     constant scope            : in  string                    := C_SCOPE;
     constant msg_id_panel     : in  t_msg_id_panel            := shared_msg_id_panel;
     constant config           : in  t_avalon_mm_bfm_config    := C_AVALON_MM_BFM_CONFIG_DEFAULT;
-    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- overwrite if called from other procedure like avalon_mm_check
+    constant proc_name        : in  string                    := "avalon_mm_read_response"  -- Overwrite if called from another procedure
     ) is
     constant proc_call : string := "avalon_mm_read_response(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
 
@@ -686,15 +696,16 @@ package body avalon_mm_bfm_pkg is
       normalize_and_check(data_exp, avalon_mm_if.readdata, ALLOW_NARROWER, "data", "avalon_mm_if.readdata", msg);
 
     -- Helper variables
-    variable v_data_value : std_logic_vector(avalon_mm_if.readdata'length-1 downto 0) := (others => '0');
-    variable v_check_ok   : boolean;
+    variable v_data_value  : std_logic_vector(avalon_mm_if.readdata'length-1 downto 0) := (others => '0');
+    variable v_check_ok    : boolean := true;
+    variable v_alert_radix : t_radix;
   begin
 
     avalon_mm_read_response(addr_value, v_data_value, msg, clk, avalon_mm_if, scope, msg_id_panel, config, proc_name);
 
-    v_check_ok := true;
-    for i in 0 to (v_normalized_data'length)-1 loop
-      if v_normalized_data(i) = '-' or v_normalized_data(i) = v_data_value(i) then
+    for i in v_normalized_data'range loop
+      -- Allow don't care in expected value and use match strictness from config for comparison
+      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -703,7 +714,9 @@ package body avalon_mm_bfm_pkg is
     end loop;
 
     if not v_check_ok then
-      alert(alert_level, proc_call & "=> Failed. slv Was " & to_string(v_data_value, HEX, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      -- Use binary representation when mismatch is due to weak signals
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg) else HEX;
+      alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;

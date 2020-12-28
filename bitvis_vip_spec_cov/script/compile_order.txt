@@ -1,0 +1,4 @@
+# library bitvis_vip_spec_cov
+../src/local_adaptations_pkg.vhd
+../src/csv_file_reader_pkg.vhd
+../src/spec_cov_pkg.vhd

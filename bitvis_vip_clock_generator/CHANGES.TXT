@@ -1,6 +1,25 @@
 Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
+v1.4.0
+----------
+Released: 2020-05-19
+- Removed await_completion and await_any_completion() from VVC commands.
+- Changed VVC activity methods parameters and default scope.
+- Corrected assertion report msg for GC_CLOCK_NAME check.
+- Updated quick reference Activity Watchdog section.
+
+v1.3.4
+----------
+Released: 2020-04-20
+- Added reference to verbosity control in VVC QR.
+
+
+v1.3.3
+----------
+Released: 2020-03-30
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg.
 
 v1.3.2
 ----------

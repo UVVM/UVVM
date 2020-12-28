@@ -1,0 +1,17 @@
+Bitvis VIP Ethernet - Overview on Versions and Changes
+==============================================================
+
+v0.2.0
+----------
+Released: 2020-10-06
+- Added ETHERNET_VVC_SB scoreboard.
+
+v0.1.1
+----------
+Released: 2020-06-23
+- Updated GC_PHY_INTERFACE description in QuickRef.
+
+v0.1.0
+----------
+Released: 2020-05-19
+- Initial version of Ethernet VIP.

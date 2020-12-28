@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -61,7 +62,7 @@ architecture func of uvvm_demo_tb is
   constant C_ACTIVITY_WATCHDOG_TIMEOUT : time := 50 * C_BIT_PERIOD;
 
   -- Watchdog timer control signal
-  constant C_SIMPLE_WATCHDOG_TIMEOUT  : time            := 1 sec; -- never timeout during DEMO TB
+  constant C_GENERAL_WATCHDOG_TIMEOUT : time            := 1 sec; -- never timeout during DEMO TB
   signal watchdog_ctrl_terminate      : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
   signal watchdog_ctrl_init           : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
   signal watchdog_ctrl_extend         : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
@@ -71,14 +72,14 @@ architecture func of uvvm_demo_tb is
 begin
 
   ------------------------------------------------
-  -- Process: watchdog timer
+  -- Process: general watchdog timer
   ------------------------------------------------
   -- Note: these timers should have a minimum timeout that
   -- covers all the tests in this testbench or else it will fail.
-  watchdog_timer(watchdog_ctrl_terminate, C_SIMPLE_WATCHDOG_TIMEOUT, ERROR, "Watchdog A");
-  watchdog_timer(watchdog_ctrl_init,      C_SIMPLE_WATCHDOG_TIMEOUT, ERROR, "Watchdog B");
-  watchdog_timer(watchdog_ctrl_extend,    C_SIMPLE_WATCHDOG_TIMEOUT, ERROR, "Watchdog C");
-  watchdog_timer(watchdog_ctrl_reinit,    C_SIMPLE_WATCHDOG_TIMEOUT, ERROR, "Watchdog D");
+  watchdog_timer(watchdog_ctrl_terminate, C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog A");
+  watchdog_timer(watchdog_ctrl_init,      C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog B");
+  watchdog_timer(watchdog_ctrl_extend,    C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog C");
+  watchdog_timer(watchdog_ctrl_reinit,    C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog D");
 
 
   -----------------------------------------------------------------------------
@@ -189,10 +190,10 @@ begin
       shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob    := 0.0;
 
       -- Print report of Scoreboard counters
-      shared_sbi_sb.report_counters(VOID);
+      SBI_VVC_SB.report_counters(VOID);
 
       -- Empty SB for next test
-      shared_sbi_sb.reset("Empty SB for next test");
+      SBI_VVC_SB.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -238,10 +239,10 @@ begin
       await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
       -- Print report of Scoreboard counters
-      shared_sbi_sb.report_counters(VOID);
+      SBI_VVC_SB.report_counters(VOID);
 
       -- Empty SBI SB for next test
-      shared_sbi_sb.reset("Empty SB for next test");
+      SBI_VVC_SB.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -305,10 +306,10 @@ begin
       end loop;
 
       -- Print report of Scoreboard counters
-      shared_uart_sb.report_counters(VOID);
+      UART_VVC_SB.report_counters(VOID);
 
       -- Empty SB for next test
-      shared_uart_sb.reset("Empty SB for next test");
+      UART_VVC_SB.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -371,10 +372,10 @@ begin
       end loop;
 
       -- Print report of Scoreboard counters
-      shared_uart_sb.report_counters(VOID);
+      UART_VVC_SB.report_counters(VOID);
 
       -- Empty SB for next test
-      shared_uart_sb.reset("Empty SB for next test");
+      UART_VVC_SB.reset("Empty SB for next test");
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
@@ -389,17 +390,17 @@ begin
   --   4. Extending watchdog C timeout is tested, and timeout is tested.
   --   5. Reinitialization of watchdog D is tested, and timeout is tested.
   --
-  procedure test_simple_watchdog(void : t_void) is
+  procedure test_general_watchdog(void : t_void) is
   begin
-      log(ID_LOG_HDR_XL, "Test simple watchdog.\n\n"&
-                          "This test demonstrate configuration and usage of the simple watchdog.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test general watchdog.\n\n"&
+                          "This test demonstrate configuration and usage of the general watchdog.", C_SCOPE);
 
       log(ID_SEQUENCER, "Incrementing UVVM stop limit\n", C_SCOPE);
-      -- To prevent the 4 simple watchdogs from stopping the TB, increase the stop limit.
+      -- To prevent the 4 general watchdogs from stopping the TB, increase the stop limit.
       set_alert_stop_limit(ERROR, 6); -- Note: stop limit was set to 2 in test_activity_watchdog()
 
 
-      log(ID_SEQUENCER, "Reconfigure simple watchdogs for test\n", C_SCOPE);
+      log(ID_SEQUENCER, "Reconfigure general watchdogs for test\n", C_SCOPE);
       -- Reinitialize the watchdogs with short timeout
       reinitialize_watchdog(watchdog_ctrl_terminate,  110 ns); -- wd A
       reinitialize_watchdog(watchdog_ctrl_init,       120 ns); -- wd B
@@ -408,53 +409,53 @@ begin
 
       -- Wait until watchdog A almost has timeout, then terminate it.
       wait for 100 ns;
-      log(ID_LOG_HDR, "Testing watchdog timer A (110 ns) - terminate command", C_SCOPE);
-      terminate_watchdog(watchdog_ctrl_terminate); -- terminate simple watchdog A
+      log(ID_LOG_HDR, "Testing general watchdog timer A (110 ns) - terminate command", C_SCOPE);
+      terminate_watchdog(watchdog_ctrl_terminate); -- terminate general watchdog A
 
       -- Wait until watchdog B has a timeout, and let it timeout with alert.
-      log(ID_LOG_HDR, "Testing watchdog timer B (120 ns) - initial timeout", C_SCOPE);
+      log(ID_LOG_HDR, "Testing general watchdog timer B (120 ns) - initial timeout", C_SCOPE);
       wait for 19 ns;
-      log(ID_SEQUENCER, "Watchdog B still running - waiting for timeout", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog B still running - waiting for timeout", C_SCOPE);
       increment_expected_alerts(ERROR);
-      wait for 1 ns; -- simple watchdog B has timeout
+      wait for 1 ns; -- general watchdog B has timeout
 
       -- Extend watchdog C timeout with 100 ns, new timeout will be 230 ns.
-      log(ID_LOG_HDR, "Testing watchdog timer C (130 ns) - extend command with input value", C_SCOPE);
+      log(ID_LOG_HDR, "Testing general watchdog timer C (130 ns) - extend command with input value", C_SCOPE);
       extend_watchdog(watchdog_ctrl_extend, 100 ns); -- 120 ns
       wait for 100 ns;
       -- 10 ns util watchdog C has a timeout, exted with previous timeout
-      log(ID_SEQUENCER, "Watchdog C still running - extend command with previous input value (100 ns)", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - extend command with previous input value (100 ns)", C_SCOPE);
       extend_watchdog(watchdog_ctrl_extend); -- 220
       wait for 130 ns;
-      log(ID_SEQUENCER, "Watchdog C still running - extend command with input value 300 ns", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - extend command with input value 300 ns", C_SCOPE);
       extend_watchdog(watchdog_ctrl_extend, 300 ns); -- 350
       wait for 300 ns;
-      log(ID_SEQUENCER, "Watchdog C still running - extend command with input value 300 ns", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - extend command with input value 300 ns", C_SCOPE);
       extend_watchdog(watchdog_ctrl_extend, 300 ns); -- 650
       wait for 300 ns;
-      log(ID_SEQUENCER, "Watchdog C still running - extend command with previous input value (300 ns)", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - extend command with previous input value (300 ns)", C_SCOPE);
       extend_watchdog(watchdog_ctrl_extend); -- 950
       wait for 130 ns;
-      log(ID_SEQUENCER, "Watchdog C still running - reinitialize command with input value 101 ns", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - reinitialize command with input value 101 ns", C_SCOPE);
       reinitialize_watchdog(watchdog_ctrl_extend, 101 ns); -- 1080
       wait for 100 ns;
-      log(ID_SEQUENCER, "Watchdog C still running - extend command with input value 300 ns", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - extend command with input value 300 ns", C_SCOPE);
       extend_watchdog(watchdog_ctrl_extend, 300 ns); -- 1180
       wait for 300 ns;
-      log(ID_SEQUENCER, "Watchdog C still running - waiting for timeout", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog C still running - waiting for timeout", C_SCOPE);
       increment_expected_alerts(ERROR); -- 1480
-      wait for 1 ns; -- simple wathdog C has timeout
+      wait for 1 ns; -- general wathdog C has timeout
 
-      log(ID_LOG_HDR, "Testing watchdog timer D (5000 ns) - reinitialize command (100 ns)", C_SCOPE);
+      log(ID_LOG_HDR, "Testing general watchdog timer D (5000 ns) - reinitialize command (100 ns)", C_SCOPE);
       reinitialize_watchdog(watchdog_ctrl_reinit, 100 ns);
       wait for 99 ns;
-      log(ID_SEQUENCER, "Watchdog D still running - waiting for timeout", C_SCOPE);
+      log(ID_SEQUENCER, "General watchdog D still running - waiting for timeout", C_SCOPE);
       increment_expected_alerts(ERROR);
-      wait for 1 ns; -- simple watchdog D has timeout
+      wait for 1 ns; -- genral watchdog D has timeout
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
-  end procedure test_simple_watchdog;
+  end procedure test_general_watchdog;
 
 
 
@@ -528,7 +529,7 @@ begin
     test_randomise(VOID);
     test_protocol_checker(VOID);
     test_activity_watchdog(VOID);
-    test_simple_watchdog(VOID);
+    test_general_watchdog(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

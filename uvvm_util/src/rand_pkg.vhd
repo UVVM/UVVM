@@ -1046,15 +1046,15 @@ package body rand_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_rand is protected body
-    variable v_scope                   : line              := new string'(C_SCOPE);
-    variable v_seed1                   : positive          := C_INIT_SEED_1;
-    variable v_seed2                   : positive          := C_INIT_SEED_2;
-    variable v_rand_dist               : t_rand_dist       := UNIFORM;
-    variable v_weight_mode             : t_weight_mode     := COMBINED_WEIGHT;
-    variable v_warned_same_set_type    : boolean           := false;
-    variable v_cyclic_current_function : line              := new string'("");
-    variable v_cyclic_list             : t_cyclic_list_ptr;
-    variable v_cyclic_list_num_items   : natural           := 0;
+    variable priv_scope                   : line              := new string'(C_SCOPE);
+    variable priv_seed1                   : positive          := C_INIT_SEED_1;
+    variable priv_seed2                   : positive          := C_INIT_SEED_2;
+    variable priv_rand_dist               : t_rand_dist       := UNIFORM;
+    variable priv_weight_mode             : t_weight_mode     := COMBINED_WEIGHT;
+    variable priv_warned_same_set_type    : boolean           := false;
+    variable priv_cyclic_current_function : line              := new string'("");
+    variable priv_cyclic_list             : t_cyclic_list_ptr;
+    variable priv_cyclic_list_num_items   : natural           := 0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1087,9 +1087,9 @@ package body rand_pkg is
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
             write(v_line, string'(",COMBINED"));
-          elsif v_weight_mode = INDIVIDUAL_WEIGHT then
+          elsif priv_weight_mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
-          elsif v_weight_mode = COMBINED_WEIGHT then
+          elsif priv_weight_mode = COMBINED_WEIGHT then
             write(v_line, string'(",COMBINED"));
           end if;
           write(v_line, ')');
@@ -1132,9 +1132,9 @@ package body rand_pkg is
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
             write(v_line, string'(",COMBINED"));
-          elsif v_weight_mode = INDIVIDUAL_WEIGHT then
+          elsif priv_weight_mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
-          elsif v_weight_mode = COMBINED_WEIGHT then
+          elsif priv_weight_mode = COMBINED_WEIGHT then
             write(v_line, string'(",COMBINED"));
           end if;
           write(v_line, ')');
@@ -1177,9 +1177,9 @@ package body rand_pkg is
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weight_vector(i).mode = COMBINED_WEIGHT then
             write(v_line, string'(",COMBINED"));
-          elsif v_weight_mode = INDIVIDUAL_WEIGHT then
+          elsif priv_weight_mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
-          elsif v_weight_mode = COMBINED_WEIGHT then
+          elsif priv_weight_mode = COMBINED_WEIGHT then
             write(v_line, string'(",COMBINED"));
           end if;
           write(v_line, ')');
@@ -1256,7 +1256,7 @@ package body rand_pkg is
     begin
       -- Called directly from sequencer/VVC
       if ext_proc_call = "" then
-        log(msg_id, proc_call, v_scope.all, msg_id_panel);
+        log(msg_id, proc_call, priv_scope.all, msg_id_panel);
         write(new_proc_call, proc_call);
       -- Called from another procedure
       else
@@ -1287,11 +1287,11 @@ package body rand_pkg is
       v_len := length when length < 32 else
                31 when not(signed_values) else 32; -- Length is limited by integer size
       if signed_values then
-        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
       else
-        check_value_in_range(min_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(min_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
       end if;
     end procedure;
 
@@ -1308,9 +1308,9 @@ package body rand_pkg is
                31 when not(signed_values) else 32; -- Length is limited by integer size
       for i in set_values'range loop
         if signed_values then
-          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         else
-          check_value_in_range(set_values(i), 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", v_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          check_value_in_range(set_values(i), 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
         end if;
       end loop;
     end procedure;
@@ -1320,9 +1320,9 @@ package body rand_pkg is
       constant set_type  : in t_set_type;
       constant proc_call : in string) is
     begin
-      if not(v_warned_same_set_type) then
-        alert(TB_WARNING, proc_call & "=> Used same type for both set of values: " & to_upper(to_string(set_type)), v_scope.all);
-        v_warned_same_set_type := true;
+      if not(priv_warned_same_set_type) then
+        alert(TB_WARNING, proc_call & "=> Used same type for both set of values: " & to_upper(to_string(set_type)), priv_scope.all);
+        priv_warned_same_set_type := true;
       end if;
     end procedure;
 
@@ -1332,23 +1332,23 @@ package body rand_pkg is
     procedure set_rand_dist(
       constant rand_dist : in t_rand_dist) is
     begin
-      v_rand_dist := rand_dist;
+      priv_rand_dist := rand_dist;
     end procedure;
 
     impure function get_rand_dist(
       constant VOID : t_void)
     return t_rand_dist is
     begin
-      return v_rand_dist;
+      return priv_rand_dist;
     end function;
 
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode) is
     begin
       if mode = COMBINED_WEIGHT or mode = INDIVIDUAL_WEIGHT then
-        v_weight_mode := mode;
+        priv_weight_mode := mode;
       else
-        alert(TB_ERROR, "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")=> Failed. Mode not supported", v_scope.all);
+        alert(TB_ERROR, "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")=> Failed. Mode not supported", priv_scope.all);
       end if;
     end procedure;
 
@@ -1356,28 +1356,28 @@ package body rand_pkg is
       constant VOID : t_void)
     return t_weight_mode is
     begin
-      return v_weight_mode;
+      return priv_weight_mode;
     end function;
 
     procedure set_scope(
       constant scope : in string) is
     begin
-      DEALLOCATE(v_scope);
-      v_scope := new string'(scope);
+      DEALLOCATE(priv_scope);
+      priv_scope := new string'(scope);
     end procedure;
 
     impure function get_scope(
       constant VOID : t_void)
     return string is
     begin
-      return v_scope.all;
+      return priv_scope.all;
     end function;
 
     procedure clear_rand_cyclic(
       constant VOID : t_void) is
     begin
-      DEALLOCATE(v_cyclic_current_function);
-      v_cyclic_current_function := new string'("");
+      DEALLOCATE(priv_cyclic_current_function);
+      priv_cyclic_current_function := new string'("");
     end procedure;
 
     ------------------------------------------------------------
@@ -1392,11 +1392,11 @@ package body rand_pkg is
       -- multiplied by a factor so they are widely spread, and making sure
       -- they don't overflow the positive range.
       for i in 1 to C_STR_LEN/2 loop
-        v_seed1 := (v_seed1 + char_to_ascii(str(i))*128) mod C_MAX_POS;
+        priv_seed1 := (priv_seed1 + char_to_ascii(str(i))*128) mod C_MAX_POS;
       end loop;
-      v_seed2 := (v_seed2 + v_seed1) mod C_MAX_POS;
+      priv_seed2 := (priv_seed2 + priv_seed1) mod C_MAX_POS;
       for i in C_STR_LEN/2+1 to C_STR_LEN loop
-        v_seed2 := (v_seed2 + char_to_ascii(str(i))*128) mod C_MAX_POS;
+        priv_seed2 := (priv_seed2 + char_to_ascii(str(i))*128) mod C_MAX_POS;
       end loop;
     end procedure;
 
@@ -1404,23 +1404,23 @@ package body rand_pkg is
       constant seed1 : in positive; 
       constant seed2 : in positive) is
     begin
-      v_seed1 := seed1;
-      v_seed2 := seed2;
+      priv_seed1 := seed1;
+      priv_seed2 := seed2;
     end procedure;
 
     procedure set_rand_seeds(
       constant seeds : in t_positive_vector(0 to 1)) is
     begin
-      v_seed1 := seeds(0);
-      v_seed2 := seeds(1);
+      priv_seed1 := seeds(0);
+      priv_seed2 := seeds(1);
     end procedure;
 
     procedure get_rand_seeds(
       variable seed1 : out positive;
       variable seed2 : out positive) is
     begin
-      seed1 := v_seed1;
-      seed2 := v_seed2;
+      seed1 := priv_seed1;
+      seed2 := priv_seed2;
     end procedure;
 
     impure function get_rand_seeds(
@@ -1428,8 +1428,8 @@ package body rand_pkg is
     return t_positive_vector is
       variable v_ret : t_positive_vector(0 to 1);
     begin
-      v_ret(0) := v_seed1;
-      v_ret(1) := v_seed2;
+      v_ret(0) := priv_seed1;
+      v_ret(1) := priv_seed2;
       return v_ret;
     end function;
 
@@ -1451,37 +1451,37 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- If a different function in cyclic mode is called, regenerate the list
-      if cyclic_mode = CYCLIC and v_proc_call.all /= v_cyclic_current_function.all then
-        DEALLOCATE(v_cyclic_current_function);
-        DEALLOCATE(v_cyclic_list);
-        v_cyclic_current_function := new string'(v_proc_call.all);
-        v_cyclic_list             := new t_cyclic_list(min_value to max_value);
-        v_cyclic_list_num_items   := 0;
+      if cyclic_mode = CYCLIC and v_proc_call.all /= priv_cyclic_current_function.all then
+        DEALLOCATE(priv_cyclic_current_function);
+        DEALLOCATE(priv_cyclic_list);
+        priv_cyclic_current_function := new string'(v_proc_call.all);
+        priv_cyclic_list             := new t_cyclic_list(min_value to max_value);
+        priv_cyclic_list_num_items   := 0;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0;
       end if;
-      case v_rand_dist is
+      case priv_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, v_seed1, v_seed2, v_ret);
+          random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
           -- Generate unique values within the constraints before repeating
           if cyclic_mode = CYCLIC then
-            while v_cyclic_list(v_ret) = '1' loop
-              random(min_value, max_value, v_seed1, v_seed2, v_ret);
+            while priv_cyclic_list(v_ret) = '1' loop
+              random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
             end loop;
-            v_cyclic_list(v_ret)    := '1';
-            v_cyclic_list_num_items := v_cyclic_list_num_items + 1;
-            if v_cyclic_list_num_items >= v_cyclic_list'length then
-              v_cyclic_list.all       := (v_cyclic_list'range => '0');
-              v_cyclic_list_num_items := 0;
+            priv_cyclic_list(v_ret)    := '1';
+            priv_cyclic_list_num_items := priv_cyclic_list_num_items + 1;
+            if priv_cyclic_list_num_items >= priv_cyclic_list'length then
+              priv_cyclic_list.all       := (priv_cyclic_list'range => '0');
+              priv_cyclic_list_num_items := 0;
             end if;
           end if;
         when GAUSSIAN =>
           --TODO: implementation
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -1506,7 +1506,7 @@ package body rand_pkg is
 
       -- Generate a random value within the set of values
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
       v_ret := rand(0, set_values'length-1, cyclic_mode, msg_id_panel, v_proc_call.all);
 
@@ -1568,7 +1568,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -1664,9 +1664,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope.all);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope.all);
         end if;
       end if;
 
@@ -1692,15 +1692,15 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0.0;
       end if;
-      case v_rand_dist is
+      case priv_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, v_seed1, v_seed2, v_ret);
+          random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
           --TODO: implementation
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -1723,7 +1723,7 @@ package body rand_pkg is
 
       -- Generate a random value within the set of values
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
@@ -1775,7 +1775,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -1868,9 +1868,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope.all);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope.all);
         end if;
       end if;
 
@@ -1896,15 +1896,15 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0 ns;
       end if;
-      case v_rand_dist is
+      case priv_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, v_seed1, v_seed2, v_ret);
+          random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
           --TODO: implementation
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(v_rand_dist)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -1927,7 +1927,7 @@ package body rand_pkg is
 
       -- Generate a random value within the set of values
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
@@ -1980,7 +1980,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2074,9 +2074,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope.all);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope.all);
         end if;
       end if;
 
@@ -2113,7 +2113,7 @@ package body rand_pkg is
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
         if (max_value - min_value + 1) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -2129,7 +2129,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2162,7 +2162,7 @@ package body rand_pkg is
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2178,7 +2178,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2231,7 +2231,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2247,7 +2247,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2325,7 +2325,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2341,7 +2341,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2387,7 +2387,7 @@ package body rand_pkg is
           end loop;
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2419,7 +2419,7 @@ package body rand_pkg is
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2435,7 +2435,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2495,7 +2495,7 @@ package body rand_pkg is
           end loop;
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2578,7 +2578,7 @@ package body rand_pkg is
           end loop;
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2614,7 +2614,7 @@ package body rand_pkg is
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
         if ((max_value - min_value)/C_TIME_UNIT + 1) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -2630,7 +2630,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2662,7 +2662,7 @@ package body rand_pkg is
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2678,7 +2678,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2730,7 +2730,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2746,7 +2746,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2822,7 +2822,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2838,7 +2838,7 @@ package body rand_pkg is
           end loop;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2920,14 +2920,14 @@ package body rand_pkg is
         v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
-        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
           v_ret_int  := to_integer(v_unsigned);
           v_gen_new_random := check_value_in_vector(v_ret_int, integer_vector(set_values));
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
       v_ret := to_unsigned(v_ret_int,length);
 
@@ -3119,14 +3119,14 @@ package body rand_pkg is
         v_ret := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
-        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", v_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_signed := rand(length, msg_id_panel, v_proc_call.all);
           v_ret := to_integer(v_signed);
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -3450,7 +3450,7 @@ package body rand_pkg is
     begin
       -- Convert the weight vector to base type
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, priv_weight_mode);
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
       create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
@@ -3475,7 +3475,7 @@ package body rand_pkg is
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
-      variable v_previous_dist     : t_rand_dist := v_rand_dist;
+      variable v_previous_dist     : t_rand_dist := priv_rand_dist;
       variable v_ret               : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3483,7 +3483,7 @@ package body rand_pkg is
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
         if weight_vector(i).min_value > weight_vector(i).max_value then
-          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope.all);
           return 0;
         end if;
         v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -3498,12 +3498,12 @@ package body rand_pkg is
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
-        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope.all);
         return 0;
       end if;
 
       -- Change distribution to UNIFORM
-      v_rand_dist := UNIFORM;
+      priv_rand_dist := UNIFORM;
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, NON_CYCLIC, msg_id_panel, v_proc_call.all);
       -- Associate the random value to the original value in the vector based on the weight
@@ -3514,7 +3514,7 @@ package body rand_pkg is
         end if;
       end loop;
       -- Restore previous distribution
-      v_rand_dist := v_previous_dist;
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3561,7 +3561,7 @@ package body rand_pkg is
     begin
       -- Convert the weight vector to base type
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, priv_weight_mode);
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
       create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
@@ -3586,7 +3586,7 @@ package body rand_pkg is
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
-      variable v_previous_dist     : t_rand_dist := v_rand_dist;
+      variable v_previous_dist     : t_rand_dist := priv_rand_dist;
       variable v_ret               : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3594,7 +3594,7 @@ package body rand_pkg is
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
         if weight_vector(i).min_value > weight_vector(i).max_value then
-          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope.all);
           return 0.0;
         end if;
         v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -3603,18 +3603,18 @@ package body rand_pkg is
           v_acc_weight := v_acc_weight + weight_vector(i).weight;
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
-          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for real type", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for real type", priv_scope.all);
           return 0.0;
         end if;
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
-        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope.all);
         return 0.0;
       end if;
 
       -- Change distribution to UNIFORM
-      v_rand_dist := UNIFORM;
+      priv_rand_dist := UNIFORM;
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, NON_CYCLIC, msg_id_panel, v_proc_call.all);
       -- Associate the random value to the original value in the vector based on the weight
@@ -3625,7 +3625,7 @@ package body rand_pkg is
         end if;
       end loop;
       -- Restore previous distribution
-      v_rand_dist := v_previous_dist;
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3672,7 +3672,7 @@ package body rand_pkg is
     begin
       -- Convert the weight vector to base type
       for i in weight_vector'range loop
-        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, v_weight_mode);
+        v_weight_vector(i) := (weight_vector(i).min_value, weight_vector(i).max_value, weight_vector(i).weight, priv_weight_mode);
       end loop;
       v_local_call := new string'("rand_range_weight(" & to_string(v_weight_vector) & ")");
       create_proc_call(v_local_call.all, ext_proc_call, v_proc_call);
@@ -3697,7 +3697,7 @@ package body rand_pkg is
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
-      variable v_previous_dist     : t_rand_dist := v_rand_dist;
+      variable v_previous_dist     : t_rand_dist := priv_rand_dist;
       variable v_ret               : time;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3705,7 +3705,7 @@ package body rand_pkg is
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
         if weight_vector(i).min_value > weight_vector(i).max_value then
-          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope.all);
           return std.env.resolution_limit;
         end if;
         v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -3714,18 +3714,18 @@ package body rand_pkg is
           v_acc_weight := v_acc_weight + weight_vector(i).weight;
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
-          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for time type", v_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for time type", priv_scope.all);
           return std.env.resolution_limit;
         end if;
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
-        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", v_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope.all);
         return std.env.resolution_limit;
       end if;
 
       -- Change distribution to UNIFORM
-      v_rand_dist := UNIFORM;
+      priv_rand_dist := UNIFORM;
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, NON_CYCLIC, msg_id_panel, v_proc_call.all);
       -- Associate the random value to the original value in the vector based on the weight
@@ -3736,7 +3736,7 @@ package body rand_pkg is
         end if;
       end loop;
       -- Restore previous distribution
-      v_rand_dist := v_previous_dist;
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);

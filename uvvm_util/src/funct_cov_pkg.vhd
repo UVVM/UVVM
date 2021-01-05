@@ -206,7 +206,7 @@ package body funct_cov_pkg is
         v_ret(i).num_values := 2;
       end loop;
     else
-      --alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", v_scope.all);
+      --alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
     end if;
     return v_ret(0 to v_num_bins-1);
   end function;
@@ -239,10 +239,10 @@ package body funct_cov_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected body
-    variable v_scope          : line    := new string'(C_SCOPE);
-    variable v_bins           : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable v_bin_idx        : natural := 0;
-    variable v_transition_idx : natural := 0;
+    variable priv_scope          : line    := new string'(C_SCOPE);
+    variable priv_bins           : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
+    variable priv_bin_idx        : natural := 0;
+    variable priv_transition_idx : natural := 0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -259,7 +259,7 @@ package body funct_cov_pkg is
     begin
       -- Called directly from sequencer/VVC
       if ext_proc_call = "" then
-        log(msg_id, proc_call, v_scope.all, msg_id_panel);
+        log(msg_id, proc_call, priv_scope.all, msg_id_panel);
         write(new_proc_call, proc_call);
       -- Called from another procedure
       else
@@ -355,8 +355,8 @@ package body funct_cov_pkg is
     procedure set_scope(
       constant scope : in string) is
     begin
-      DEALLOCATE(v_scope);
-      v_scope := new string'(scope);
+      DEALLOCATE(priv_scope);
+      priv_scope := new string'(scope);
     end procedure;
 
     ------------------------------------------------------------
@@ -374,14 +374,14 @@ package body funct_cov_pkg is
     begin
       log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, "", v_proc_call, msg_id_panel); --TODO: check if replace for simple log
       for i in bin'range loop
-        v_bins(v_bin_idx).contains   := bin(i).contains;
-        v_bins(v_bin_idx).values     := bin(i).values;
-        v_bins(v_bin_idx).num_values := bin(i).num_values;
-        v_bins(v_bin_idx).hits       := 0;
-        v_bins(v_bin_idx).min_hits   := min_cov;
-        v_bins(v_bin_idx).weight     := rand_weight;
-        v_bins(v_bin_idx).name(1 to bin_name'length) := bin_name;
-        v_bin_idx := v_bin_idx + 1;
+        priv_bins(priv_bin_idx).contains   := bin(i).contains;
+        priv_bins(priv_bin_idx).values     := bin(i).values;
+        priv_bins(priv_bin_idx).num_values := bin(i).num_values;
+        priv_bins(priv_bin_idx).hits       := 0;
+        priv_bins(priv_bin_idx).min_hits   := min_cov;
+        priv_bins(priv_bin_idx).weight     := rand_weight;
+        priv_bins(priv_bin_idx).name(1 to bin_name'length) := bin_name;
+        priv_bin_idx := priv_bin_idx + 1;
       end loop;
     end procedure;
 
@@ -404,14 +404,14 @@ package body funct_cov_pkg is
 
     --procedure add_bin_t(set_transitions : integer_vector) is
     --begin
-    --  v_bins(v_bin_idx).contains   := TRN;
-    --  v_bins(v_bin_idx).values(0 to set_transitions'length-1) := set_transitions;
-    --  v_bins(v_bin_idx).num_values := set_transitions'length;
-    --  v_bins(v_bin_idx).hits       := 0;
-    --  v_bins(v_bin_idx).min_hits   := 1;
-    --  v_bins(v_bin_idx).weight     := 1;
-    --  v_bins(v_bin_idx).name(1 to 10) := "transition";
-    --  v_bin_idx := v_bin_idx + 1;
+    --  priv_bins(priv_bin_idx).contains   := TRN;
+    --  priv_bins(priv_bin_idx).values(0 to set_transitions'length-1) := set_transitions;
+    --  priv_bins(priv_bin_idx).num_values := set_transitions'length;
+    --  priv_bins(priv_bin_idx).hits       := 0;
+    --  priv_bins(priv_bin_idx).min_hits   := 1;
+    --  priv_bins(priv_bin_idx).weight     := 1;
+    --  priv_bins(priv_bin_idx).name(1 to 10) := "transition";
+    --  priv_bin_idx := priv_bin_idx + 1;
     --end procedure;
 
     ------------------------------------------------------------
@@ -425,33 +425,33 @@ package body funct_cov_pkg is
     procedure sample_coverage(
       constant value : in integer) is
     begin
-      for i in 0 to v_bin_idx-1 loop
-        case v_bins(i).contains is
+      for i in 0 to priv_bin_idx-1 loop
+        case priv_bins(i).contains is
           when VAL =>
-            for j in 0 to v_bins(i).num_values-1 loop
-              if value = v_bins(i).values(j) then
-                v_bins(i).hits := v_bins(i).hits + 1;
+            for j in 0 to priv_bins(i).num_values-1 loop
+              if value = priv_bins(i).values(j) then
+                priv_bins(i).hits := priv_bins(i).hits + 1;
               end if;
             end loop;
           when RAN =>
-            if value >= v_bins(i).values(0) and value <= v_bins(i).values(1) then
-              v_bins(i).hits := v_bins(i).hits + 1;
+            if value >= priv_bins(i).values(0) and value <= priv_bins(i).values(1) then
+              priv_bins(i).hits := priv_bins(i).hits + 1;
             end if;
           when TRN =>
-            if value = v_bins(i).values(v_transition_idx) then
-              if v_transition_idx < v_bins(i).num_values-1 then
-                v_transition_idx := v_transition_idx + 1;
+            if value = priv_bins(i).values(priv_transition_idx) then
+              if priv_transition_idx < priv_bins(i).num_values-1 then
+                priv_transition_idx := priv_transition_idx + 1;
               else
-                v_transition_idx := 0;
-                v_bins(i).hits   := v_bins(i).hits + 1;
+                priv_transition_idx := 0;
+                priv_bins(i).hits   := priv_bins(i).hits + 1;
               end if;
             else
-              v_transition_idx := 0;
+              priv_transition_idx := 0;
             end if;
           when ILL_VAL =>
-            for j in 0 to v_bins(i).num_values-1 loop
-              if value = v_bins(i).values(j) then
-                alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", v_scope.all);
+            for j in 0 to priv_bins(i).num_values-1 loop
+              if value = priv_bins(i).values(j) then
+                alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", priv_scope.all);
               end if;
             end loop;
         end case;
@@ -463,7 +463,7 @@ package body funct_cov_pkg is
     procedure print_summary(
       constant VOID : in t_void) is
       constant C_PREFIX          : string := C_LOG_PREFIX & "     ";
-      constant C_HEADER          : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(v_scope.all) & " ***";
+      constant C_HEADER          : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope.all) & " ***";
       constant C_COLUMN_WIDTH    : positive := 15;
       variable v_line            : line;
       variable v_line_copy       : line;
@@ -517,7 +517,7 @@ package body funct_cov_pkg is
       -- Calculate how much space we can insert between the columns of the report
       v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_COLUMN_WIDTH*5 - C_MAX_BIN_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
-        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_MAX_BIN_NAME_LENGTH is too big, the report will not be properly aligned.", v_scope.all);
+        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_MAX_BIN_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope.all);
         v_log_extra_space := 1;
       end if;
 
@@ -538,16 +538,16 @@ package body funct_cov_pkg is
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print bins
-      for i in 0 to v_bin_idx-1 loop
-        if (v_bins(i).contains = VAL or v_bins(i).contains = RAN or v_bins(i).contains = TRN) then
+      for i in 0 to priv_bin_idx-1 loop
+        if (priv_bins(i).contains = VAL or priv_bins(i).contains = RAN or priv_bins(i).contains = TRN) then
           write(v_line, justify(
             fill_string(' ', 5) &
-            justify(to_string(v_bins(i).contains, v_bins(i).values, v_bins(i).num_values), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(is_bin_covered(v_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_bins(i).contains, priv_bins(i).values, priv_bins(i).num_values), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(is_bin_covered(priv_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;

@@ -114,11 +114,23 @@ package rand_pkg is
     procedure set_rand_dist(
       constant rand_dist : in t_rand_dist);
 
+    impure function get_rand_dist(
+      constant VOID : t_void)
+    return t_rand_dist;
+
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode);
 
+    impure function get_range_weight_default_mode(
+      constant VOID : t_void)
+    return t_weight_mode;
+
     procedure set_scope(
       constant scope : in string);
+
+    impure function get_scope(
+      constant VOID : t_void)
+    return string;
 
     procedure clear_rand_cyclic(
       constant VOID : t_void);
@@ -1323,6 +1335,13 @@ package body rand_pkg is
       v_rand_dist := rand_dist;
     end procedure;
 
+    impure function get_rand_dist(
+      constant VOID : t_void)
+    return t_rand_dist is
+    begin
+      return v_rand_dist;
+    end function;
+
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode) is
     begin
@@ -1333,12 +1352,26 @@ package body rand_pkg is
       end if;
     end procedure;
 
+    impure function get_range_weight_default_mode(
+      constant VOID : t_void)
+    return t_weight_mode is
+    begin
+      return v_weight_mode;
+    end function;
+
     procedure set_scope(
       constant scope : in string) is
     begin
       DEALLOCATE(v_scope);
       v_scope := new string'(scope);
     end procedure;
+
+    impure function get_scope(
+      constant VOID : t_void)
+    return string is
+    begin
+      return v_scope.all;
+    end function;
 
     procedure clear_rand_cyclic(
       constant VOID : t_void) is

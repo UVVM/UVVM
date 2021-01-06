@@ -35,7 +35,7 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
-  type t_cov_bin_type is (VAL, RAN, TRN, ILL_VAL);
+  type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN);
   type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE);
 
   type t_new_bin is record
@@ -86,6 +86,28 @@ package funct_cov_pkg is
   -- Creates a bin a transition of values
   function bin_transition(
     constant set_values : integer_vector)
+  return t_new_bin_vector;
+
+  -- Creates an ignore bin with a single value
+  function ignore_bin(
+    constant value      : integer)
+  return t_new_bin_vector;
+
+  -- Creates an ignore bin with a range of values
+  function ignore_bin_range(
+    constant min_value  : integer;
+    constant max_value  : integer)
+  return t_new_bin_vector;
+
+  -- Creates an illegal bin with a single value
+  function illegal_bin(
+    constant value      : integer)
+  return t_new_bin_vector;
+
+  -- Creates an illegal bin with a range of values
+  function illegal_bin_range(
+    constant min_value  : integer;
+    constant max_value  : integer)
   return t_new_bin_vector;
 
   ------------------------------------------------------------
@@ -239,6 +261,58 @@ package body funct_cov_pkg is
     return v_ret;
   end function;
 
+  -- Creates an ignore bin with a single value
+  function ignore_bin(
+    constant value      : integer)
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := VAL_IGNORE;
+    v_ret(0).values(0)  := value;
+    v_ret(0).num_values := 1;
+    return v_ret;
+  end function;
+
+  -- Creates an ignore bin with a range of values
+  function ignore_bin_range(
+    constant min_value  : integer;
+    constant max_value  : integer)
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := RAN_IGNORE;
+    v_ret(0).values(0)  := min_value;
+    v_ret(0).values(1)  := max_value;
+    v_ret(0).num_values := 2;
+    return v_ret;
+  end function;
+
+  -- Creates an illegal bin with a single value
+  function illegal_bin(
+    constant value      : integer)
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := VAL_ILLEGAL;
+    v_ret(0).values(0)  := value;
+    v_ret(0).num_values := 1;
+    return v_ret;
+  end function;
+
+  -- Creates an illegal bin with a range of values
+  function illegal_bin_range(
+    constant min_value  : integer;
+    constant max_value  : integer)
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := RAN_ILLEGAL;
+    v_ret(0).values(0)  := min_value;
+    v_ret(0).values(1)  := max_value;
+    v_ret(0).num_values := 2;
+    return v_ret;
+  end function;
+
   ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
@@ -270,7 +344,7 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
-    -- Returns the string representation of the bins
+    -- Returns the string representation of the bin vector
     function to_string(
       bins : t_new_bin_vector)
     return string is
@@ -280,8 +354,14 @@ package body funct_cov_pkg is
     begin
       for i in bins'range loop
         case bins(i).contains is
-          when VAL =>
-            write(v_line, string'("bin"));
+          when VAL | VAL_IGNORE | VAL_ILLEGAL =>
+            if bins(i).contains = VAL then
+              write(v_line, string'("bin"));
+            elsif bins(i).contains = VAL_IGNORE then
+              write(v_line, string'("ignore_bin"));
+            else
+              write(v_line, string'("illegal_bin"));
+            end if;
             if bins(i).num_values = 1 then
               write(v_line, '(');
               write(v_line, to_string(bins(i).values(0)));
@@ -289,8 +369,14 @@ package body funct_cov_pkg is
             else
               write(v_line, to_string(bins(i).values(0 to bins(i).num_values-1)));
             end if;
-          when RAN =>
-            write(v_line, string'("bin_range"));
+          when RAN | RAN_IGNORE | RAN_ILLEGAL =>
+            if bins(i).contains = RAN then
+              write(v_line, string'("bin_range"));
+            elsif bins(i).contains = RAN_IGNORE then
+              write(v_line, string'("ignore_bin_range"));
+            else
+              write(v_line, string'("illegal_bin_range"));
+            end if;
             write(v_line, "(" & to_string(bins(i).values(0)) & " to " & to_string(bins(i).values(1)) & ")");
           when TRN =>
             write(v_line, string'("bin_transition("));
@@ -301,7 +387,6 @@ package body funct_cov_pkg is
               end if;
             end loop;
             write(v_line, ')');
-          when others =>
         end case;
         if i < bins'length-1 then
           write(v_line, string'(","));
@@ -343,6 +428,7 @@ package body funct_cov_pkg is
             end if;
           end loop;
         when others =>
+          --TODO
       end case;
       write(v_line, ')');
 
@@ -447,12 +533,8 @@ package body funct_cov_pkg is
             else
               priv_bins(i).transition_idx := 0;
             end if;
-          when ILL_VAL =>
-            for j in 0 to priv_bins(i).num_values-1 loop
-              if value = priv_bins(i).values(j) then
-                alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", priv_scope.all);
-              end if;
-            end loop;
+          when others =>
+            --TODO: alert, this should never happen
         end case;
       end loop;
     end procedure;

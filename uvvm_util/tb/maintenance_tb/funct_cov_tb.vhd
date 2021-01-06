@@ -64,7 +64,8 @@ begin
     v_cov_point.add_bins(bin_vector(v_addr), 5, 2, "addr1");
     v_cov_point.add_bins(bin_vector(v_addr), 5, "addr2");
     v_cov_point.add_bins(bin_vector(v_addr), "addr3");
-    v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "transition");
+    v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "transition_odd");
+    v_cov_point.add_bins(bin_transition((2,4,6,8)), 1, 1, "transition_even");
     v_cov_point.add_bins(bin(50) & bin((100,200,300)) & bin_range(50, 100, 2), 5, 2, "single_line");
 
     v_cov_point.sample_coverage(0);
@@ -72,6 +73,10 @@ begin
     v_cov_point.sample_coverage(3);
     v_cov_point.sample_coverage(5);
     v_cov_point.sample_coverage(7);
+    v_cov_point.sample_coverage(2);
+    v_cov_point.sample_coverage(4);
+    v_cov_point.sample_coverage(6);
+    v_cov_point.sample_coverage(8);
     v_cov_point.print_summary(VOID);
 
 

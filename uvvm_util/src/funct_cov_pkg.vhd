@@ -14,9 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use std.textio.all;
 
 use work.types_pkg.all;
@@ -46,13 +46,14 @@ package funct_cov_pkg is
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
   type t_cov_bin is record
-    contains   : t_cov_bin_type;
-    values     : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
-    num_values : natural;
-    hits       : natural;
-    min_hits   : natural;
-    weight     : natural;
-    name       : string(1 to C_MAX_BIN_NAME_LENGTH);
+    contains       : t_cov_bin_type;
+    values         : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
+    num_values     : natural;
+    transition_idx : natural;
+    hits           : natural;
+    min_hits       : natural;
+    weight         : natural;
+    name           : string(1 to C_MAX_BIN_NAME_LENGTH);
   end record;
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
 
@@ -98,6 +99,10 @@ package funct_cov_pkg is
     procedure set_scope(
       constant scope : in string);
 
+    impure function get_scope(
+      constant VOID : t_void)
+    return string;
+
     ------------------------------------------------------------
     -- Bins
     ------------------------------------------------------------
@@ -118,7 +123,6 @@ package funct_cov_pkg is
       constant bin           : in t_new_bin_vector;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
-
 
     ------------------------------------------------------------
     -- Coverage
@@ -242,7 +246,6 @@ package body funct_cov_pkg is
     variable priv_scope          : line    := new string'(C_SCOPE);
     variable priv_bins           : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bin_idx        : natural := 0;
-    variable priv_transition_idx : natural := 0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -359,6 +362,13 @@ package body funct_cov_pkg is
       priv_scope := new string'(scope);
     end procedure;
 
+    impure function get_scope(
+      constant VOID : t_void)
+    return string is
+    begin
+      return priv_scope.all;
+    end function;
+
     ------------------------------------------------------------
     -- Bins
     ------------------------------------------------------------
@@ -374,12 +384,13 @@ package body funct_cov_pkg is
     begin
       log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, "", v_proc_call, msg_id_panel); --TODO: check if replace for simple log
       for i in bin'range loop
-        priv_bins(priv_bin_idx).contains   := bin(i).contains;
-        priv_bins(priv_bin_idx).values     := bin(i).values;
-        priv_bins(priv_bin_idx).num_values := bin(i).num_values;
-        priv_bins(priv_bin_idx).hits       := 0;
-        priv_bins(priv_bin_idx).min_hits   := min_cov;
-        priv_bins(priv_bin_idx).weight     := rand_weight;
+        priv_bins(priv_bin_idx).contains       := bin(i).contains;
+        priv_bins(priv_bin_idx).values         := bin(i).values;
+        priv_bins(priv_bin_idx).num_values     := bin(i).num_values;
+        priv_bins(priv_bin_idx).transition_idx := 0;
+        priv_bins(priv_bin_idx).hits           := 0;
+        priv_bins(priv_bin_idx).min_hits       := min_cov;
+        priv_bins(priv_bin_idx).weight         := rand_weight;
         priv_bins(priv_bin_idx).name(1 to bin_name'length) := bin_name;
         priv_bin_idx := priv_bin_idx + 1;
       end loop;
@@ -401,18 +412,6 @@ package body funct_cov_pkg is
     begin
       add_bins(bin, 1, 1, bin_name, msg_id_panel);
     end procedure;
-
-    --procedure add_bin_t(set_transitions : integer_vector) is
-    --begin
-    --  priv_bins(priv_bin_idx).contains   := TRN;
-    --  priv_bins(priv_bin_idx).values(0 to set_transitions'length-1) := set_transitions;
-    --  priv_bins(priv_bin_idx).num_values := set_transitions'length;
-    --  priv_bins(priv_bin_idx).hits       := 0;
-    --  priv_bins(priv_bin_idx).min_hits   := 1;
-    --  priv_bins(priv_bin_idx).weight     := 1;
-    --  priv_bins(priv_bin_idx).name(1 to 10) := "transition";
-    --  priv_bin_idx := priv_bin_idx + 1;
-    --end procedure;
 
     ------------------------------------------------------------
     -- Coverage
@@ -438,15 +437,15 @@ package body funct_cov_pkg is
               priv_bins(i).hits := priv_bins(i).hits + 1;
             end if;
           when TRN =>
-            if value = priv_bins(i).values(priv_transition_idx) then
-              if priv_transition_idx < priv_bins(i).num_values-1 then
-                priv_transition_idx := priv_transition_idx + 1;
+            if value = priv_bins(i).values(priv_bins(i).transition_idx) then
+              if priv_bins(i).transition_idx < priv_bins(i).num_values-1 then
+                priv_bins(i).transition_idx := priv_bins(i).transition_idx + 1;
               else
-                priv_transition_idx := 0;
-                priv_bins(i).hits   := priv_bins(i).hits + 1;
+                priv_bins(i).transition_idx := 0;
+                priv_bins(i).hits           := priv_bins(i).hits + 1;
               end if;
             else
-              priv_transition_idx := 0;
+              priv_bins(i).transition_idx := 0;
             end if;
           when ILL_VAL =>
             for j in 0 to priv_bins(i).num_values-1 loop

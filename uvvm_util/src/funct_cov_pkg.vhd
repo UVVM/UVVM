@@ -326,10 +326,12 @@ package body funct_cov_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected body
-    variable priv_scope          : line    := new string'(C_SCOPE);
-    variable priv_bins           : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_bin_idx        : natural := 0;
-    variable priv_rand_gen       : t_rand;
+    variable priv_scope                         : line    := new string'(C_SCOPE);
+    variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
+    variable priv_bin_idx                       : natural := 0;
+    variable priv_rand_gen                      : t_rand;
+    variable priv_rand_transition_bin_idx       : integer := -1;
+    variable priv_rand_transition_bin_value_idx : natural := 0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -515,12 +517,25 @@ package body funct_cov_pkg is
     impure function rand(
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
     return integer is
+      constant C_LOCAL_CALL      : string := "rand()";
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bin_idx-1);
       variable v_acc_weight      : integer := 0;
       variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
       variable v_bin_idx         : integer;
       variable v_ret             : integer;
     begin
+      -- A transition bin returns all the transition values before allowing to select a different bin value
+      if priv_rand_transition_bin_idx /= -1 then
+        if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).num_values then
+          v_ret := priv_bins(priv_rand_transition_bin_idx).values(priv_rand_transition_bin_value_idx);
+          priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
+          log(ID_FUNCT_COV, C_LOCAL_CALL & " => " & to_string(v_ret), priv_scope.all, msg_id_panel);
+          return v_ret;
+        else
+          priv_rand_transition_bin_idx := -1;
+        end if;
+      end if;
+
       -- Assign each bin a randomization weight
       for i in 0 to priv_bin_idx-1 loop
         v_bin_weight_list(i).value := i;
@@ -556,13 +571,14 @@ package body funct_cov_pkg is
       elsif priv_bins(v_bin_idx).contains = RAN then
         v_ret := priv_rand_gen.rand(priv_bins(v_bin_idx).values(0), priv_bins(v_bin_idx).values(1), NON_CYCLIC, msg_id_panel);
       elsif priv_bins(v_bin_idx).contains = TRN then
-        --TODO: implement
-        v_ret := 0;
+        v_ret := priv_bins(v_bin_idx).values(0);
+        priv_rand_transition_bin_value_idx := 1;
+        priv_rand_transition_bin_idx := v_bin_idx;
       else
-        --alert(TB_FAILURE, "rand() => Failed. This type should never be selected.", priv_scope.all);
+        alert(TB_FAILURE, C_LOCAL_CALL & " => Failed. Unexpected error.", priv_scope.all);
       end if;
 
-      log(ID_FUNCT_COV, "rand() => " & to_string(v_ret), priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, C_LOCAL_CALL & " => " & to_string(v_ret), priv_scope.all, msg_id_panel);
       return v_ret;
     end function;
 

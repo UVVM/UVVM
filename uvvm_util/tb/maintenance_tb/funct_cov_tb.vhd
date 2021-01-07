@@ -39,6 +39,7 @@ begin
   --------------------------------------------------------------------------------
   p_main : process
     variable v_cov_point : t_cov_point;
+    variable v_value     : integer;
     variable v_addr       : std_logic_vector(1 downto 0);
 
   begin
@@ -101,6 +102,11 @@ begin
     --v_cov_point.add_bins(bin_range(15,20,1), 30, 1, "val3");
     --v_cov_point.add_bins(ignore_bin(100), 20, 1, "val1");
     --v_cov_point.add_bins(illegal_bin(200), 20, 1, "val1");
+
+    -- transition
+    v_cov_point.add_bins(bin(5), 10, 1, "val1");
+    v_cov_point.add_bins(bin_transition((10,12,14)), 30, 1, "val2");
+    v_cov_point.add_bins(bin_range(15,20,1), 30, 1, "val3");
 
     for i in 0 to 99 loop
       v_value := v_cov_point.rand;

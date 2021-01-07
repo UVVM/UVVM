@@ -49,6 +49,8 @@ begin
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Functional Coverage package");
     --------------------------------------------------------------------------------
+    enable_log_msg(ID_FUNCT_COV);
+
     log(ID_LOG_HDR, "Testing add_bin()");
     v_cov_point.add_bins(bin(1), 5, 2, "val1");
     v_cov_point.add_bins(bin(2), 5, "val2");

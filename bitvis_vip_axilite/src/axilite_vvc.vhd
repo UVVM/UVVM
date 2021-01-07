@@ -415,7 +415,6 @@ begin
       end if;
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
-
     end loop;
   end process;
 --===============================================================================================

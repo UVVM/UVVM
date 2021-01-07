@@ -100,15 +100,15 @@ package string_methods_pkg is
     occurrence  : positive := 1 -- stop on N'th occurrence of delimeter pair. Default first occurrence
     ) return string;
 
-  function get_procedure_name_from_instance_name(
+  impure function get_procedure_name_from_instance_name(
     val        : string
     ) return string;
 
-  function get_process_name_from_instance_name(
+  impure function get_process_name_from_instance_name(
     val        : string
     ) return string;
 
-  function get_entity_name_from_instance_name(
+  impure function get_entity_name_from_instance_name(
     val        : string
     ) return string;
 
@@ -194,7 +194,7 @@ package string_methods_pkg is
     truncate        : t_truncate_string := DISALLOW_TRUNCATE
     ) return string;
 
-  function to_string(
+  impure function to_string(
     val             : integer;
     width           : natural;
     justified       : side;
@@ -205,7 +205,7 @@ package string_methods_pkg is
     format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
     ) return string;
 
-  function to_string(
+  impure function to_string(
     val             : integer;
     radix           : t_radix;
     prefix          : t_radix_prefix;
@@ -691,11 +691,17 @@ package body string_methods_pkg is
 --     std_logic,std_logic,std_logic,std_logic_vector,time,string,t_msg_id_panel,t_sbi_config]:msg'
 -- - Procedure name: Search for 2nd last param in path name and remove all inside []
 
-  function get_procedure_name_from_instance_name(
+  impure function get_procedure_name_from_instance_name(
     val        : string
     ) return string is
     variable v_line     : line;
     variable v_msg_line : line;
+    impure function return_and_deallocate return string is
+      constant r : string := v_line.all;
+    begin
+      DEALLOCATE(v_line);
+      return r;
+    end function;
   begin
     bitvis_assert(val'length > 2, FAILURE, "String input is not wide enough (<3)", "get_procedure_name_from_instance_name()");
     write(v_line, get_string_between_delimiters(val, ':', '[', RIGHT));
@@ -706,14 +712,20 @@ package body string_methods_pkg is
     end if;
     bitvis_assert(v_line'length > 0, ERROR, "No procedure name found. " & v_msg_line.all, "get_procedure_name_from_instance_name()");
     DEALLOCATE(v_msg_line);
-    return v_line.all;
+    return return_and_deallocate;
   end;
 
-  function get_process_name_from_instance_name(
+  impure function get_process_name_from_instance_name(
     val        : string
     ) return string is
     variable v_line : line;
     variable v_msg_line : line;
+    impure function return_and_deallocate return string is
+      constant r : string := v_line.all;
+    begin
+      DEALLOCATE(v_line);
+      return r;
+    end function;
   begin
     bitvis_assert(val'length > 2, FAILURE, "String input is not wide enough (<3)", "get_process_name_from_instance_name()");
     write(v_line, get_string_between_delimiters(val, ':', ':', RIGHT));
@@ -723,14 +735,20 @@ package body string_methods_pkg is
       write(v_msg_line, string'(" "));
     end if;
     bitvis_assert(v_line'length > 0, ERROR, "No process name found", "get_process_name_from_instance_name()");
-    return v_line.all;
+    return return_and_deallocate;
   end;
 
-  function get_entity_name_from_instance_name(
+  impure function get_entity_name_from_instance_name(
     val        : string
     ) return string is
     variable v_line : line;
     variable v_msg_line : line;
+    impure function return_and_deallocate return string is
+      constant r : string := v_line.all;
+    begin
+      DEALLOCATE(v_line);
+      return r;
+    end function;
   begin
     bitvis_assert(val'length > 2, FAILURE, "String input is not wide enough (<3)", "get_entity_name_from_instance_name()");
     if string_contains_char(val, '@') then  -- for path with instantiations
@@ -744,7 +762,7 @@ package body string_methods_pkg is
       write(v_msg_line, string'(" "));
     end if;
     bitvis_assert(v_line'length > 0, ERROR, "No entity name found", "get_entity_name_from_instance_name()");
-    return v_line.all;
+    return return_and_deallocate;
   end;
 
 
@@ -1059,7 +1077,7 @@ package body string_methods_pkg is
     return justify(to_string(val), justified, width, format_spaces, truncate);
   end;
 
-  function to_string(
+  impure function to_string(
     val             : integer;
     width           : natural;
     justified       : side;
@@ -1071,9 +1089,15 @@ package body string_methods_pkg is
     ) return string is
     variable v_val_slv : std_logic_vector(31 downto 0) := std_logic_vector(to_signed(val, 32));
     variable v_line    : line;
-    variable v_result  : string(1 to 40);
     variable v_width   : natural;
     variable v_use_end_char : boolean := false;
+    impure function return_and_deallocate return string is
+      constant r : string := v_line.all;
+    begin
+      DEALLOCATE(v_line);
+      return r;
+    end function;
+
   begin
     if radix = DEC then
       if prefix = INCL_RADIX then
@@ -1097,23 +1121,22 @@ package body string_methods_pkg is
     if v_use_end_char then
       write(v_line, string'(""""));
     end if;
-
-    v_width := v_line'length;
-    v_result(1 to v_width) := v_line.all;
-    deallocate(v_line);
-    return v_result(1 to v_width);
+    return return_and_deallocate;
   end;
 
-  function to_string(
+  impure function to_string(
     val             : integer;
     radix           : t_radix;
     prefix          : t_radix_prefix;
     format          : t_format_zeros := SKIP_LEADING_0 -- | KEEP_LEADING_0
     ) return string is
     variable v_line : line;
+    variable v_len  : natural;
   begin
     write(v_line, to_string(val));
-    return to_string(val, v_line'length, LEFT, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE, radix, prefix, format);
+    v_len := v_line'length;
+    deallocate(v_line);
+    return to_string(val, v_len, LEFT, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE, radix, prefix, format);
   end;
 
   -- This function has been deprecated and will be removed in the next major release
@@ -1609,6 +1632,8 @@ package body string_methods_pkg is
     write (v_line_copy, v_line.all);  -- copy line
     writeline(OUTPUT, v_line);
     writeline(LOG_FILE, v_line_copy);
+    deallocate(v_line);
+    deallocate(v_line_copy);
   end;
 
   procedure to_string(

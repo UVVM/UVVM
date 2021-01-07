@@ -24,6 +24,7 @@ use work.adaptations_pkg.all;
 use work.string_methods_pkg.all;
 use work.global_signals_and_shared_variables_pkg.all;
 use work.methods_pkg.all;
+use work.rand_pkg.all;
 
 package funct_cov_pkg is
 
@@ -147,10 +148,18 @@ package funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
+    -- Randomization
+    ------------------------------------------------------------
+    impure function rand(
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+    return integer;
+
+    ------------------------------------------------------------
     -- Coverage
     ------------------------------------------------------------
     procedure sample_coverage(
-      constant value : in integer);
+      constant value         : in integer;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure print_summary(
       constant VOID : in t_void);
@@ -320,6 +329,7 @@ package body funct_cov_pkg is
     variable priv_scope          : line    := new string'(C_SCOPE);
     variable priv_bins           : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bin_idx        : natural := 0;
+    variable priv_rand_gen       : t_rand;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -500,6 +510,63 @@ package body funct_cov_pkg is
     end procedure;
 
     ------------------------------------------------------------
+    -- Randomization
+    ------------------------------------------------------------
+    impure function rand(
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+    return integer is
+      variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bin_idx-1);
+      variable v_acc_weight      : integer := 0;
+      variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
+      variable v_bin_idx         : integer;
+      variable v_ret             : integer;
+    begin
+      -- Assign each bin a randomization weight
+      for i in 0 to priv_bin_idx-1 loop
+        v_bin_weight_list(i).value := i;
+        if (priv_bins(i).contains = VAL or priv_bins(i).contains = RAN or priv_bins(i).contains = TRN) and priv_bins(i).hits < priv_bins(i).min_hits then
+          v_bin_weight_list(i).weight := priv_bins(i).weight;
+        else
+          v_bin_weight_list(i).weight := 0;
+        end if;
+        v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
+      end loop;
+      -- When all bins have reached their min_hits re-enable valid bins for selection
+      if v_acc_weight = 0 then
+        for i in 0 to priv_bin_idx-1 loop
+          if (priv_bins(i).contains = VAL or priv_bins(i).contains = RAN or priv_bins(i).contains = TRN) then
+            v_bin_weight_list(i).weight := priv_bins(i).weight;
+          end if;
+        end loop;
+      end if;
+
+      -- Choose a random bin index
+      v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);
+
+      -- Select the random bin value to return (ignore and illegal bin values are never selected)
+      if priv_bins(v_bin_idx).contains = VAL then
+        if priv_bins(v_bin_idx).num_values = 1 then
+          v_ret := priv_bins(v_bin_idx).values(0);
+        else
+          for i in 0 to priv_bins(v_bin_idx).num_values-1 loop
+            v_values_vec(i) := priv_bins(v_bin_idx).values(i);
+          end loop;
+          v_ret := priv_rand_gen.rand(ONLY, v_values_vec(0 to priv_bins(v_bin_idx).num_values-1), NON_CYCLIC, msg_id_panel);
+        end if;
+      elsif priv_bins(v_bin_idx).contains = RAN then
+        v_ret := priv_rand_gen.rand(priv_bins(v_bin_idx).values(0), priv_bins(v_bin_idx).values(1), NON_CYCLIC, msg_id_panel);
+      elsif priv_bins(v_bin_idx).contains = TRN then
+        --TODO: implement
+        v_ret := 0;
+      else
+        --alert(TB_FAILURE, "rand() => Failed. This type should never be selected.", priv_scope.all);
+      end if;
+
+      log(ID_FUNCT_COV, "rand() => " & to_string(v_ret), priv_scope.all, msg_id_panel);
+      return v_ret;
+    end function;
+
+    ------------------------------------------------------------
     -- Coverage
     ------------------------------------------------------------
     --Q: Do we need ignore bins? is it to show in some report how many hits some values we don't care got?
@@ -508,7 +575,8 @@ package body funct_cov_pkg is
     --   SV uses ignore bins for automatically created bins (using a vector) to remove the unwanted values
     --   --> so if we generate bins with a big range or a vector, we can use ignore bins to remove them from the sampling
     procedure sample_coverage(
-      constant value : in integer) is
+      constant value         : in integer;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
     begin
       for i in 0 to priv_bin_idx-1 loop
         case priv_bins(i).contains is

@@ -79,6 +79,35 @@ begin
     v_cov_point.sample_coverage(8);
     v_cov_point.print_summary(VOID);
 
+    log(ID_LOG_HDR, "Testing rand()");
+    --enable_log_msg(ID_RAND_GEN);
+    --v_cov_point.add_bins(bin(5), 5, 2, "val1");
+    --v_cov_point.add_bins(bin((10,12,14)), 5, 1, "val2");
+    --v_cov_point.add_bins(bin_range(15,20,1), 5, 1, "val3");
+
+    -- one bin stops generating values
+    --v_cov_point.add_bins(bin(5), 20, 1, "val1");
+    --v_cov_point.add_bins(bin((10,12,14)), 50, 1, "val2");
+    --v_cov_point.add_bins(bin_range(15,20,1), 50, 1, "val3");
+
+    -- one bin stops generating values then resumes when others reach their goal
+    --v_cov_point.add_bins(bin(5), 20, 1, "val1");
+    --v_cov_point.add_bins(bin((10,12,14)), 30, 1, "val2");
+    --v_cov_point.add_bins(bin_range(15,20,1), 30, 1, "val3");
+
+    -- ignore and illegal
+    --v_cov_point.add_bins(bin(5), 20, 1, "val1");
+    --v_cov_point.add_bins(bin((10,12,14)), 30, 1, "val2");
+    --v_cov_point.add_bins(bin_range(15,20,1), 30, 1, "val3");
+    --v_cov_point.add_bins(ignore_bin(100), 20, 1, "val1");
+    --v_cov_point.add_bins(illegal_bin(200), 20, 1, "val1");
+
+    for i in 0 to 99 loop
+      v_value := v_cov_point.rand;
+      v_cov_point.sample_coverage(v_value);
+    end loop;
+
+    v_cov_point.print_summary(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

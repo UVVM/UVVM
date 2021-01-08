@@ -14,10 +14,10 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-use IEEE.math_real.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.math_real.all;
 use std.textio.all;
 
 use work.types_pkg.all;
@@ -102,6 +102,43 @@ package rand_pkg is
   type t_val_weight_time_vec         is array (natural range <>) of t_val_weight_time;
   type t_range_weight_time_vec       is array (natural range <>) of t_range_weight_time;
   type t_range_weight_mode_time_vec  is array (natural range <>) of t_range_weight_mode_time;
+
+  ------------------------------------------------------------
+  -- Base procedures
+  ------------------------------------------------------------
+  alias random_uniform is random[integer, integer, positive, positive, integer];
+  alias random_uniform is random[real, real, positive, positive, real];
+  alias random_uniform is random[time, time, positive, positive, time];
+
+  -- Returns a real pseudo-random number with Gaussian distribution.
+  -- It uses the Marsaglia polar method to generate a normally distributed
+  -- random number from uniformly distributed random numbers.
+  procedure gaussian(
+    constant mean          : in    real;
+    constant std_deviation : in    real;
+    variable seed1         : inout positive;
+    variable seed2         : inout positive;
+    variable target        : inout real);
+
+  -- Returns an integer pseudo-random number with Gaussian distribution within a specified range.
+  procedure random_gaussian(
+    constant min_value     : in    integer;
+    constant max_value     : in    integer;
+    constant mean          : in    real;
+    constant std_deviation : in    real;
+    variable seed1         : inout positive;
+    variable seed2         : inout positive;
+    variable target        : inout integer);
+
+  -- Returns a real pseudo-random number with Gaussian distribution within a specified range.
+  procedure random_gaussian(
+    constant min_value     : in    real;
+    constant max_value     : in    real;
+    constant mean          : in    real;
+    constant std_deviation : in    real;
+    variable seed1         : inout positive;
+    variable seed2         : inout positive;
+    variable target        : inout real);
 
   ------------------------------------------------------------
   -- Protected type
@@ -1041,6 +1078,68 @@ package rand_pkg is
 end package rand_pkg;
 
 package body rand_pkg is
+
+  ------------------------------------------------------------
+  -- Base procedures
+  ------------------------------------------------------------
+  -- Returns a real pseudo-random number with Gaussian distribution.
+  -- It uses the Marsaglia polar method to generate a normally distributed
+  -- random number from uniformly distributed random numbers.
+  procedure gaussian(
+    constant mean          : in    real;
+    constant std_deviation : in    real;
+    variable seed1         : inout positive;
+    variable seed2         : inout positive;
+    variable target        : inout real) is
+    variable v_u     : real;
+    variable v_v     : real;
+    variable v_s     : real;
+    variable v_valid : boolean := false;
+  begin
+    while not(v_valid) loop
+      random_uniform(-1.0, 1.0, seed1, seed2, v_u);
+      random_uniform(-1.0, 1.0, seed1, seed2, v_v);
+      v_s     := v_u*v_u + v_v*v_v;
+      v_valid := v_s > 0.0 and v_s < 1.0;
+    end loop;
+    target := mean + std_deviation * v_u * sqrt((-2.0 * log(v_s))/v_s);
+  end procedure;
+
+  -- Returns an integer pseudo-random number with Gaussian distribution within a specified range.
+  procedure random_gaussian(
+    constant min_value     : in    integer;
+    constant max_value     : in    integer;
+    constant mean          : in    real;
+    constant std_deviation : in    real;
+    variable seed1         : inout positive;
+    variable seed2         : inout positive;
+    variable target        : inout integer) is
+    variable v_rand  : real;
+    variable v_valid : boolean := false;
+  begin
+    while not(v_valid) loop
+      gaussian(mean, std_deviation, seed1, seed2, v_rand);
+      target  := integer(round(v_rand));
+      v_valid := target >= min_value and target <= max_value;
+    end loop;
+  end procedure;
+
+  -- Returns a real pseudo-random number with Gaussian distribution within a specified range.
+  procedure random_gaussian(
+    constant min_value     : in    real;
+    constant max_value     : in    real;
+    constant mean          : in    real;
+    constant std_deviation : in    real;
+    variable seed1         : inout positive;
+    variable seed2         : inout positive;
+    variable target        : inout real) is
+    variable v_valid : boolean := false;
+  begin
+    while not(v_valid) loop
+      gaussian(mean, std_deviation, seed1, seed2, target);
+      v_valid := target >= min_value and target <= max_value;
+    end loop;
+  end procedure;
 
   ------------------------------------------------------------
   -- Protected type

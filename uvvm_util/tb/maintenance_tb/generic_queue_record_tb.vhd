@@ -32,6 +32,7 @@ use IEEE.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+--hdlunit:tb
 -- Test case entity
 entity generic_queue_record_tb is
   generic (

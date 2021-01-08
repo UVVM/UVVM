@@ -27,7 +27,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_axilite;
 use bitvis_vip_axilite.axilite_bfm_pkg.all;
 
-
+--hdlunit:tb
 -- Test case entity
 entity axilite_simple_tb is
   generic (

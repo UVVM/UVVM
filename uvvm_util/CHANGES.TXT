@@ -3,6 +3,14 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+
+v2.15.x
+----------
+Released: 2021-xx-xx
+- Fixed width detection method for to_string() functions that would make
+  GHDL simulator to fail.
+
+
 v2.15.1
 ----------
 Released: 2020-12-08

@@ -1601,16 +1601,22 @@ package body rand_pkg is
     return integer is
       constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(cyclic_mode)) & ")";
-      variable v_proc_call : line;
-      variable v_mean      : real;
-      variable v_std_dev   : real;
-      variable v_ret       : integer;
+      variable v_proc_call     : line;
+      variable v_previous_dist : t_rand_dist := priv_rand_dist;
+      variable v_mean          : real;
+      variable v_std_dev       : real;
+      variable v_ret           : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0;
+      end if;
+      if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
@@ -1639,12 +1645,14 @@ package body rand_pkg is
           end if;
 
         when GAUSSIAN =>
-          check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect for " & to_upper(to_string(priv_rand_dist)) & " distribution", priv_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
           -- Default values for the mean and standard deviation are relative to the given range
           v_mean    := priv_mean when priv_mean_configured else real(min_value + (max_value - min_value)/2);
           v_std_dev := priv_std_dev when priv_std_dev_configured else real(min_value + (max_value - min_value)/6);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
       end case;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -1662,15 +1670,24 @@ package body rand_pkg is
         to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : integer_vector(0 to set_values'length-1) is set_values;
+      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_ret              : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      -- Generate a random value within the set of values
       if set_type /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
+
+      -- Generate a random value within the set of values
       v_ret := rand(0, set_values'length-1, cyclic_mode, msg_id_panel, v_proc_call.all);
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -1704,10 +1721,16 @@ package body rand_pkg is
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : integer_vector(0 to set_values'length-1) is set_values;
+      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
@@ -1732,6 +1755,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -1883,15 +1909,24 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
+      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_ret              : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      -- Generate a random value within the set of values
       if set_type /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
+
+      -- Generate a random value within the set of values
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -1923,10 +1958,16 @@ package body rand_pkg is
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
+      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       if set_type = INCL then
@@ -1943,6 +1984,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2266,10 +2310,17 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
         ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
@@ -2298,6 +2349,9 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
+
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -2315,10 +2369,17 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) &
         ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
@@ -2346,6 +2407,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2382,11 +2446,18 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
@@ -2415,6 +2486,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2475,11 +2549,18 @@ package body rand_pkg is
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " &
         to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
@@ -2510,6 +2591,9 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
+
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -2529,10 +2613,17 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
         ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
@@ -2556,6 +2647,9 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
+
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -2572,10 +2666,17 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) &
         ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
@@ -2603,6 +2704,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2637,10 +2741,17 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
@@ -2663,6 +2774,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2720,10 +2834,17 @@ package body rand_pkg is
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
+      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
@@ -2746,6 +2867,9 @@ package body rand_pkg is
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3021,15 +3145,24 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
-      variable v_proc_call : line;
-      variable v_ret       : unsigned(length-1 downto 0);
+      variable v_proc_call     : line;
+      variable v_previous_dist : t_rand_dist := priv_rand_dist;
+      variable v_ret           : unsigned(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       -- Generate a random value for each bit of the vector
       for i in 0 to length-1 loop
         v_ret(i downto i) := to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1);
       end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3223,15 +3356,24 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
-      variable v_proc_call : line;
-      variable v_ret       : signed(length-1 downto 0);
+      variable v_proc_call     : line;
+      variable v_previous_dist : t_rand_dist := priv_rand_dist;
+      variable v_ret           : signed(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       -- Generate a random value for each bit of the vector
       for i in 0 to length-1 loop
         v_ret(i downto i) := signed(to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1));
       end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := v_previous_dist;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3668,8 +3810,12 @@ package body rand_pkg is
         return 0;
       end if;
 
-      -- Change distribution to UNIFORM
-      priv_rand_dist := UNIFORM;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
+
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, NON_CYCLIC, msg_id_panel, v_proc_call.all);
       -- Associate the random value to the original value in the vector based on the weight
@@ -3679,6 +3825,7 @@ package body rand_pkg is
           exit;
         end if;
       end loop;
+
       -- Restore previous distribution
       priv_rand_dist := v_previous_dist;
 
@@ -3779,8 +3926,11 @@ package body rand_pkg is
         return 0.0;
       end if;
 
-      -- Change distribution to UNIFORM
-      priv_rand_dist := UNIFORM;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
+
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, NON_CYCLIC, msg_id_panel, v_proc_call.all);
       -- Associate the random value to the original value in the vector based on the weight
@@ -3790,6 +3940,7 @@ package body rand_pkg is
           exit;
         end if;
       end loop;
+
       -- Restore previous distribution
       priv_rand_dist := v_previous_dist;
 
@@ -3890,8 +4041,11 @@ package body rand_pkg is
         return std.env.resolution_limit;
       end if;
 
-      -- Change distribution to UNIFORM
-      priv_rand_dist := UNIFORM;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope.all);
+        priv_rand_dist := UNIFORM;
+      end if;
+
       -- Generate a random value between 1 and the total accumulated weight
       v_weight_idx := rand(1, v_acc_weight, NON_CYCLIC, msg_id_panel, v_proc_call.all);
       -- Associate the random value to the original value in the vector based on the weight
@@ -3901,6 +4055,7 @@ package body rand_pkg is
           exit;
         end if;
       end loop;
+
       -- Restore previous distribution
       priv_rand_dist := v_previous_dist;
 

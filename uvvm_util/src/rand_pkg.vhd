@@ -1583,7 +1583,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
       end case;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1609,7 +1609,7 @@ package body rand_pkg is
       end if;
       v_ret := rand(0, set_values'length-1, cyclic_mode, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return normalized_set_values(v_ret);
     end function;
@@ -1670,7 +1670,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1769,7 +1769,7 @@ package body rand_pkg is
         end if;
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1802,7 +1802,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
       end case;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1826,7 +1826,7 @@ package body rand_pkg is
       end if;
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return normalized_set_values(v_ret);
     end function;
@@ -1877,7 +1877,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -1973,7 +1973,7 @@ package body rand_pkg is
         end if;
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2006,7 +2006,7 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
       end case;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2030,7 +2030,7 @@ package body rand_pkg is
       end if;
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return normalized_set_values(v_ret);
     end function;
@@ -2082,7 +2082,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2179,7 +2179,7 @@ package body rand_pkg is
         end if;
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2231,7 +2231,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2280,7 +2280,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2349,7 +2349,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2443,7 +2443,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2489,7 +2489,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2537,7 +2537,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2597,7 +2597,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2680,7 +2680,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2732,7 +2732,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2780,7 +2780,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2848,7 +2848,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2940,7 +2940,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2964,7 +2964,7 @@ package body rand_pkg is
         v_ret(i downto i) := to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1);
       end loop;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -2990,7 +2990,7 @@ package body rand_pkg is
       v_ret_int := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
       v_ret     := to_unsigned(v_ret_int,length);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3030,7 +3030,7 @@ package body rand_pkg is
       end if;
       v_ret := to_unsigned(v_ret_int,length);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3074,7 +3074,7 @@ package body rand_pkg is
       v_ret_int := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
       v_ret     := to_unsigned(v_ret_int,length);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3142,7 +3142,7 @@ package body rand_pkg is
       v_ret_int := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, v_proc_call.all);
       v_ret     := to_unsigned(v_ret_int,length);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3166,7 +3166,7 @@ package body rand_pkg is
         v_ret(i downto i) := signed(to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1));
       end loop;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3190,7 +3190,7 @@ package body rand_pkg is
       check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
       v_ret := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3228,7 +3228,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3270,7 +3270,7 @@ package body rand_pkg is
       check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
       v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3336,7 +3336,7 @@ package body rand_pkg is
       check_parameters_within_range(length, set_values2, msg_id_panel, signed_values => true);
       v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return to_signed(v_ret,length);
     end function;
@@ -3485,7 +3485,7 @@ package body rand_pkg is
       -- Generate a random bit
       v_ret := rand(1, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret(0);
     end function;
@@ -3504,7 +3504,7 @@ package body rand_pkg is
       -- Generate a random bit
       v_ret := rand(1, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret(0) = '1';
     end function;
@@ -3531,7 +3531,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3556,7 +3556,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3615,7 +3615,7 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := v_previous_dist;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3642,7 +3642,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3667,7 +3667,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3726,7 +3726,7 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := v_previous_dist;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
@@ -3753,7 +3753,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3778,7 +3778,7 @@ package body rand_pkg is
 
       v_ret := rand_range_weight_mode(v_weight_vector, msg_id_panel, v_proc_call.all);
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_local_call);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -3837,7 +3837,7 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := v_previous_dist;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & " => " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
     end function;

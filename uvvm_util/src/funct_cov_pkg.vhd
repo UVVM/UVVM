@@ -529,7 +529,7 @@ package body funct_cov_pkg is
         if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).num_values then
           v_ret := priv_bins(priv_rand_transition_bin_idx).values(priv_rand_transition_bin_value_idx);
           priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
-          log(ID_FUNCT_COV, C_LOCAL_CALL & " => " & to_string(v_ret), priv_scope.all, msg_id_panel);
+          log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
           return v_ret;
         else
           priv_rand_transition_bin_idx := -1;
@@ -575,10 +575,10 @@ package body funct_cov_pkg is
         priv_rand_transition_bin_value_idx := 1;
         priv_rand_transition_bin_idx := v_bin_idx;
       else
-        alert(TB_FAILURE, C_LOCAL_CALL & " => Failed. Unexpected error.", priv_scope.all);
+        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error.", priv_scope.all);
       end if;
 
-      log(ID_FUNCT_COV, C_LOCAL_CALL & " => " & to_string(v_ret), priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
       return v_ret;
     end function;
 

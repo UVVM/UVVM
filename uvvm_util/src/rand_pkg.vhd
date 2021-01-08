@@ -155,6 +155,20 @@ package rand_pkg is
       constant VOID : t_void)
     return t_rand_dist;
 
+    procedure set_rand_dist_mean(
+      constant mean : in real);
+
+    impure function get_rand_dist_mean(
+      constant VOID : t_void)
+    return real;
+
+    procedure set_rand_dist_std_deviation(
+      constant std_deviation : in real);
+
+    impure function get_rand_dist_std_deviation(
+      constant VOID : t_void)
+    return real;
+
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode);
 
@@ -1154,6 +1168,11 @@ package body rand_pkg is
     variable priv_cyclic_current_function : line              := new string'("");
     variable priv_cyclic_list             : t_cyclic_list_ptr;
     variable priv_cyclic_list_num_items   : natural           := 0;
+    variable priv_mean_configured         : boolean           := false;
+    variable priv_std_dev_configured      : boolean           := false;
+    -- Default values for the mean and standard deviation are relative to the given range, i.e. default values below are ignored
+    variable priv_mean                    : real              := 0.0;
+    variable priv_std_dev                 : real              := 0.0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1441,6 +1460,44 @@ package body rand_pkg is
       return priv_rand_dist;
     end function;
 
+    procedure set_rand_dist_mean(
+      constant mean : in real) is
+    begin
+      priv_mean := mean;
+      priv_mean_configured := true;
+    end procedure;
+
+    impure function get_rand_dist_mean(
+      constant VOID : t_void)
+    return real is
+    begin
+      if not(priv_mean_configured) then
+        alert(TB_NOTE, "get_rand_dist_mean()=> mean has not been configured, using default", priv_scope.all);
+      end if;
+      return priv_mean;
+    end function;
+
+    procedure set_rand_dist_std_deviation(
+      constant std_deviation : in real) is
+    begin
+      if std_deviation > 0.0 then
+        priv_std_dev := std_deviation;
+        priv_std_dev_configured := true;
+      else
+        alert(TB_ERROR, "set_rand_dist_std_deviation(" & to_string(std_deviation) & ")=> Failed. Must use positive values", priv_scope.all);
+      end if;
+    end procedure;
+
+    impure function get_rand_dist_std_deviation(
+      constant VOID : t_void)
+    return real is
+    begin
+      if not(priv_std_dev_configured) then
+        alert(TB_NOTE, "get_rand_dist_std_deviation()=> std_deviation has not been configured, using default", priv_scope.all);
+      end if;
+      return priv_std_dev;
+    end function;
+
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode) is
     begin
@@ -1545,31 +1602,33 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call : line;
+      variable v_mean      : real;
+      variable v_std_dev   : real;
       variable v_ret       : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      -- If a different function in cyclic mode is called, regenerate the list
-      if cyclic_mode = CYCLIC and v_proc_call.all /= priv_cyclic_current_function.all then
-        DEALLOCATE(priv_cyclic_current_function);
-        DEALLOCATE(priv_cyclic_list);
-        priv_cyclic_current_function := new string'(v_proc_call.all);
-        priv_cyclic_list             := new t_cyclic_list(min_value to max_value);
-        priv_cyclic_list_num_items   := 0;
-      end if;
-
-      -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0;
       end if;
+
+      -- Generate a random value in the range [min_value:max_value]
       case priv_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
-          -- Generate unique values within the constraints before repeating
+          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
           if cyclic_mode = CYCLIC then
+            -- If a different function in cyclic mode is called, regenerate the list
+            if v_proc_call.all /= priv_cyclic_current_function.all then
+              DEALLOCATE(priv_cyclic_current_function);
+              DEALLOCATE(priv_cyclic_list);
+              priv_cyclic_current_function := new string'(v_proc_call.all);
+              priv_cyclic_list             := new t_cyclic_list(min_value to max_value);
+              priv_cyclic_list_num_items   := 0;
+            end if;
+            -- Generate unique values within the constraints before repeating
             while priv_cyclic_list(v_ret) = '1' loop
-              random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+              random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
             end loop;
             priv_cyclic_list(v_ret)    := '1';
             priv_cyclic_list_num_items := priv_cyclic_list_num_items + 1;
@@ -1578,9 +1637,13 @@ package body rand_pkg is
               priv_cyclic_list_num_items := 0;
             end if;
           end if;
+
         when GAUSSIAN =>
-          --TODO: implementation
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
+          check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect for " & to_upper(to_string(priv_rand_dist)) & " distribution", priv_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+          -- Default values for the mean and standard deviation are relative to the given range
+          v_mean    := priv_mean when priv_mean_configured else real(min_value + (max_value - min_value)/2);
+          v_std_dev := priv_std_dev when priv_std_dev_configured else real(min_value + (max_value - min_value)/6);
+          random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -1785,6 +1848,8 @@ package body rand_pkg is
     return real is
       constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ")";
       variable v_proc_call : line;
+      variable v_mean      : real;
+      variable v_std_dev   : real;
       variable v_ret       : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -1796,10 +1861,12 @@ package body rand_pkg is
       end if;
       case priv_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
-          --TODO: implementation
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
+          -- Default values for the mean and standard deviation are relative to the given range
+          v_mean    := priv_mean when priv_mean_configured else (min_value + (max_value - min_value)/2.0);
+          v_std_dev := priv_std_dev when priv_std_dev_configured else (min_value + (max_value - min_value)/6.0);
+          random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2000,10 +2067,10 @@ package body rand_pkg is
       end if;
       case priv_rand_dist is
         when UNIFORM =>
-          random(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
-          --TODO: implementation
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
+          return 0 ns;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);

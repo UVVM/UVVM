@@ -1277,7 +1277,7 @@ package body string_methods_pkg is
     variable v_result : string(1 to 2 +                         -- parentheses
                                2*(val'length - 1) +             -- commas
                                3*val'length +                   -- Radix prefixes
-                               val'element'length*val'length +  -- Maximum length of the array elements
+                               val(val'low)'length*val'length + -- Maximum length of the array elements
                                14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
                               ); 
     variable v_width  : natural;
@@ -1317,7 +1317,7 @@ package body string_methods_pkg is
     variable v_result : string(1 to 2 +                         -- parentheses
                                2*(val'length - 1) +             -- commas + space
                                3*val'length +                   -- Radix prefixes + ""
-                               val'element'length*val'length +  -- Maximum length of the array elements
+                               val(val'low)'length*val'length + -- Maximum length of the array elements
                                14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
                               );
     variable v_width  : natural;
@@ -1357,7 +1357,7 @@ package body string_methods_pkg is
     variable v_result : string(1 to 2 +             -- parentheses
                                2*(val'length - 1) +             -- commas
                                3*val'length +                   -- Radix prefixes
-                               val'element'length*val'length +  -- Maximum length of the array elements
+                               val(val'low)'length*val'length + -- Maximum length of the array elements
                                14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
                               );
     variable v_width  : natural;

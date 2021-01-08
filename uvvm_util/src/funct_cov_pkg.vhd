@@ -357,7 +357,7 @@ package body funct_cov_pkg is
     end procedure;
 
     -- Returns the string representation of the bin vector
-    function to_string(
+    impure function to_string(
       bins : t_new_bin_vector)
     return string is
       variable v_line   : line;

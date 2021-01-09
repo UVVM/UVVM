@@ -43,25 +43,27 @@ begin
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
-    variable v_rand       : t_rand;
-    variable v_seeds      : t_positive_vector(0 to 1);
-    variable v_int        : integer;
-    variable v_real       : real;
-    variable v_time       : time;
-    variable v_int_vec    : integer_vector(0 to 4);
-    variable v_real_vec   : real_vector(0 to 4);
-    variable v_time_vec   : time_vector(0 to 4);
-    variable v_uns        : unsigned(3 downto 0);
-    variable v_uns_long   : unsigned(39 downto 0);
-    variable v_sig        : signed(3 downto 0);
-    variable v_sig_long   : signed(39 downto 0);
-    variable v_slv        : std_logic_vector(3 downto 0);
-    variable v_slv_long   : std_logic_vector(39 downto 0);
-    variable v_std        : std_logic;
-    variable v_bln        : boolean;
-    variable v_value_cnt  : t_integer_cnt(-20 to 20) := (others => 0);
-    variable v_num_values : natural;
-    variable v_bit_check  : std_logic_vector(1 downto 0);
+    variable v_rand          : t_rand;
+    variable v_seeds         : t_positive_vector(0 to 1);
+    variable v_int           : integer;
+    variable v_real          : real;
+    variable v_time          : time;
+    variable v_int_vec       : integer_vector(0 to 4);
+    variable v_real_vec      : real_vector(0 to 4);
+    variable v_time_vec      : time_vector(0 to 4);
+    variable v_uns           : unsigned(3 downto 0);
+    variable v_uns_long      : unsigned(39 downto 0);
+    variable v_sig           : signed(3 downto 0);
+    variable v_sig_long      : signed(39 downto 0);
+    variable v_slv           : std_logic_vector(3 downto 0);
+    variable v_slv_long      : std_logic_vector(39 downto 0);
+    variable v_std           : std_logic;
+    variable v_bln           : boolean;
+    variable v_value_cnt     : t_integer_cnt(-20 to 20) := (others => 0);
+    variable v_num_values    : natural;
+    variable v_bit_check     : std_logic_vector(1 downto 0);
+    variable v_mean          : real;
+    variable v_std_deviation : real;
 
   begin
 
@@ -2016,6 +2018,359 @@ begin
       for i in 1 to v_num_values loop
         v_int := v_rand.rand(1, v_num_values, CYCLIC);
       end loop;
+
+    --===================================================================================
+    elsif GC_TEST = "rand_gaussian" then
+    --===================================================================================
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Gaussian distribution");
+      ------------------------------------------------------------
+      v_rand.set_rand_dist(GAUSSIAN);
+      check_value(GAUSSIAN = v_rand.get_rand_dist(VOID), ERROR, "Checking distribution");
+      v_rand.set_rand_dist_mean(5.0);
+      check_value(5.0, v_rand.get_rand_dist_mean(VOID), ERROR, "Checking mean");
+      v_rand.set_rand_dist_std_deviation(1.0);
+      check_value(1.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
+
+      increment_expected_alerts(TB_NOTE, 2);
+      v_rand.clear_rand_dist_mean(VOID);
+      check_value(0.0, v_rand.get_rand_dist_mean(VOID), ERROR, "Checking mean config was cleared");
+      v_rand.clear_rand_dist_std_deviation(VOID);
+      check_value(0.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation config was cleared");
+
+      disable_log_msg(ID_POS_ACK);
+      disable_log_msg(ID_RAND_GEN);
+      v_num_values := 5000;
+
+      ------------------------------------------------------------
+      -- Integer
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, -10, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, 0, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, -10, 0);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      -- Integer Vector
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, -10, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, 0, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, -10, 0);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      -- Real
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, -10, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, 0, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, -10, 0);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      -- Real Vector
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, -10, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, 0, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, -10, 0);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      -- Unsigned
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, 20);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 10, 20);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, 10);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      -- Signed
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, -10, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, 0, 10);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, -10, 0);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      -- Std_logic_vector
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, 20);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 10, 20);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, 10);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing invalid parameters");
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_rand.set_rand_dist_std_deviation(-1.0);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      increment_expected_alerts(TB_WARNING, 51);
+      -- Gaussian distribution only allows min/max constraints and
+      -- cannot be combined with cyclic or unique parameters
+      v_int := v_rand.rand(-2, 2, CYCLIC);
+      v_int := v_rand.rand(ONLY,(-2,0,2));
+      v_int := v_rand.rand(-1, 1, INCL,(-10));
+      v_int := v_rand.rand(-2, 2, EXCL,(-1,0,1));
+      v_int := v_rand.rand(-2, 2, INCL,(-10), EXCL,(1));
+
+      v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, NON_UNIQUE, CYCLIC);
+      v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE);
+      v_int_vec(0 to 0) := v_rand.rand(1, ONLY,(-2,-1,0,1,2));
+      v_int_vec         := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE);
+      v_int_vec(0 to 0) := v_rand.rand(1, -1, 1, INCL,(-10));
+      v_int_vec         := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10,15), UNIQUE);
+      v_int_vec(0 to 0) := v_rand.rand(1, -3, 4, EXCL,(-1,0,1));
+      v_int_vec         := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE);
+      v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, INCL,(-10), EXCL,(1));
+      v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-10,15,16), EXCL,(-1,0,1), UNIQUE);
+
+      v_real := v_rand.rand(ONLY,(-2.0,0.555,2.0));
+      v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5));
+      v_real := v_rand.rand(-1.0, 1.0, EXCL,(-1.0,0.0,1.0));
+      v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5), EXCL,(-1.0));
+
+      v_real_vec         := v_rand.rand(v_real_vec'length, -2.0, 2.0, UNIQUE);
+      v_real_vec(0 to 0) := v_rand.rand(1, ONLY,(-2.0,-1.1,0.25,1.1,2.0));
+      v_real_vec         := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.1,0.25,1.1,2.0), UNIQUE);
+      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, INCL,(15.5));
+      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), UNIQUE);
+      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, EXCL,(-1.0,0.0,1.0));
+      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), UNIQUE);
+      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, INCL,(15.5), EXCL,(-1.0));
+      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,0.0,1.0), UNIQUE);
+
+      v_time := v_rand.rand(-2 ps, 2 ps);
+
+      v_uns := v_rand.rand(v_uns'length);
+      v_uns := v_rand.rand(v_uns'length, 0, 3, CYCLIC);
+      v_uns := v_rand.rand(v_uns'length, ONLY,(0,1,2));
+      v_uns := v_rand.rand(v_uns'length, EXCL,(0,1));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7));
+      v_uns := v_rand.rand(v_uns'length, 0, 3, EXCL,(1,2));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7), EXCL,(1));
+
+      v_sig := v_rand.rand(v_sig'length);
+      v_sig := v_rand.rand(v_sig'length, -2, 2, CYCLIC);
+      v_sig := v_rand.rand(v_sig'length, ONLY,(-2,0,2));
+      v_sig := v_rand.rand(v_sig'length, EXCL,(0,1));
+      v_sig := v_rand.rand(v_sig'length, -1, 1, INCL,(-8));
+      v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(-1,0,1));
+      v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8), EXCL,(1));
+
+      v_slv := v_rand.rand(v_slv'length);
+      v_slv := v_rand.rand(v_slv'length, 0, 3, CYCLIC);
+      v_slv := v_rand.rand(v_slv'length, ONLY,(0,1,2));
+      v_slv := v_rand.rand(v_slv'length, EXCL,(0,1));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7));
+      v_slv := v_rand.rand(v_slv'length, 0, 3, EXCL,(1,2));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7), EXCL,(1));
+
+      v_std := v_rand.rand(VOID);
+      v_bln := v_rand.rand(VOID);
 
     end if;
 

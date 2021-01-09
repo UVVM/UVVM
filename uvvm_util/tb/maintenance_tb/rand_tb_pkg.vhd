@@ -17,6 +17,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;
 use std.textio.all;
 
 library uvvm_util;
@@ -398,6 +399,21 @@ package rand_tb_pkg is
     constant set_values1 : in t_natural_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector);
+
+  ------------------------------------------------------------
+  -- Generate distributions
+  ------------------------------------------------------------
+  -- Generates a number of random values of a certain type using the Gaussian distribution
+  procedure generate_gaussian_distribution(
+    variable rand_gen           : inout t_rand;
+    variable value_cnt          : inout t_integer_cnt;
+    constant value_type         : in    string;
+    constant num_values         : in    natural;
+    constant min_value          : in    integer;
+    constant max_value          : in    integer;
+    constant use_default_config : in    boolean := true;
+    constant mean               : in    real := 0.0;
+    constant std_deviation      : in    real := 0.0);
 
   ------------------------------------------------------------
   -- Check distributions
@@ -1222,6 +1238,94 @@ package body rand_tb_pkg is
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     end if;
+  end procedure;
+
+  ------------------------------------------------------------
+  -- Generate distributions
+  ------------------------------------------------------------
+  -- Generates a number of random values of a certain type using the Gaussian distribution
+  procedure generate_gaussian_distribution(
+    variable rand_gen           : inout t_rand;
+    variable value_cnt          : inout t_integer_cnt;
+    constant value_type         : in    string;
+    constant num_values         : in    natural;
+    constant min_value          : in    integer;
+    constant max_value          : in    integer;
+    constant use_default_config : in    boolean := true;
+    constant mean               : in    real := 0.0;
+    constant std_deviation      : in    real := 0.0) is
+    constant C_PROC_NAME : string := "generate_gaussian_distribution";
+    variable v_int       : integer;
+    variable v_int_vec   : integer_vector(0 to 0);
+    variable v_real      : real;
+    variable v_real_vec  : real_vector(0 to 0);
+    variable v_uns       : unsigned(4 downto 0);
+    variable v_sig       : signed(5 downto 0);
+    variable v_slv       : std_logic_vector(4 downto 0);
+  begin
+    if use_default_config then
+      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) &
+        ", max: " & to_string(max_value) & ", default mean & std_deviation");
+    else
+      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) &
+        ", max: " & to_string(max_value) & ", mean: " & to_string(mean) & ", std_deviation: " & to_string(std_deviation));
+      rand_gen.set_rand_dist_mean(mean);
+      check_value(mean, rand_gen.get_rand_dist_mean(VOID), ERROR, "Checking mean");
+      rand_gen.set_rand_dist_std_deviation(std_deviation);
+      check_value(std_deviation, rand_gen.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
+    end if;
+
+    for i in 1 to num_values loop
+      if value_type = "INT" then
+        v_int := rand_gen.rand(min_value, max_value);
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      elsif value_type = "INT_VEC" then
+        v_int_vec := rand_gen.rand(v_int_vec'length, min_value, max_value);
+        check_rand_value(v_int_vec(0), min_value, max_value);
+        value_cnt(v_int_vec(0)) := value_cnt(v_int_vec(0)) + 1;
+
+      elsif value_type = "REAL" then
+        v_real := rand_gen.rand(real(min_value), real(max_value));
+        v_int  := integer(round(v_real));
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      elsif value_type = "REAL_VEC" then
+        v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
+        v_int      := integer(round(v_real_vec(0)));
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      elsif value_type = "UNS" then
+        v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
+        v_int := to_integer(v_uns);
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      elsif value_type = "SIG" then
+        v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
+        v_int := to_integer(v_sig);
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      elsif value_type = "SLV" then
+        v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
+        v_int := to_integer(unsigned(v_slv));
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      else
+        alert(TB_ERROR, C_PROC_NAME & " => Failed, " & to_string(value_type) & " not supported.");
+      end if;
+    end loop;
+
+    -- Wait before clearing the counters so that the distribution can be seen in the waveform
+    wait for 100 ns;
+    for i in value_cnt'range loop
+      value_cnt(i) := 0;
+    end loop;
   end procedure;
 
   ------------------------------------------------------------

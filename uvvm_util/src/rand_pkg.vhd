@@ -162,12 +162,18 @@ package rand_pkg is
       constant VOID : t_void)
     return real;
 
+    procedure clear_rand_dist_mean(
+      constant VOID : t_void);
+
     procedure set_rand_dist_std_deviation(
       constant std_deviation : in real);
 
     impure function get_rand_dist_std_deviation(
       constant VOID : t_void)
     return real;
+
+    procedure clear_rand_dist_std_deviation(
+      constant VOID : t_void);
 
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode);
@@ -1477,6 +1483,13 @@ package body rand_pkg is
       return priv_mean;
     end function;
 
+    procedure clear_rand_dist_mean(
+      constant VOID : t_void) is
+    begin
+      priv_mean := 0.0;
+      priv_mean_configured := false;
+    end procedure;
+
     procedure set_rand_dist_std_deviation(
       constant std_deviation : in real) is
     begin
@@ -1497,6 +1510,13 @@ package body rand_pkg is
       end if;
       return priv_std_dev;
     end function;
+
+    procedure clear_rand_dist_std_deviation(
+      constant VOID : t_void) is
+    begin
+      priv_std_dev := 0.0;
+      priv_std_dev_configured := false;
+    end procedure;
 
     procedure set_range_weight_default_mode(
       constant mode : in t_weight_mode) is
@@ -1647,7 +1667,7 @@ package body rand_pkg is
         when GAUSSIAN =>
           -- Default values for the mean and standard deviation are relative to the given range
           v_mean    := priv_mean when priv_mean_configured else real(min_value + (max_value - min_value)/2);
-          v_std_dev := priv_std_dev when priv_std_dev_configured else real(min_value + (max_value - min_value)/6);
+          v_std_dev := priv_std_dev when priv_std_dev_configured else real((max_value - min_value)/6);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
       end case;
 
@@ -1880,18 +1900,19 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0.0;
       end if;
+
+      -- Generate a random value in the range [min_value:max_value]
       case priv_rand_dist is
         when UNIFORM =>
           random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
           -- Default values for the mean and standard deviation are relative to the given range
           v_mean    := priv_mean when priv_mean_configured else (min_value + (max_value - min_value)/2.0);
-          v_std_dev := priv_std_dev when priv_std_dev_configured else (min_value + (max_value - min_value)/6.0);
+          v_std_dev := priv_std_dev when priv_std_dev_configured else ((max_value - min_value)/6.0);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
       end case;
 
@@ -2104,11 +2125,12 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      -- Generate a random value in the range [min_value:max_value]
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
         return 0 ns;
       end if;
+
+      -- Generate a random value in the range [min_value:max_value]
       case priv_rand_dist is
         when UNIFORM =>
           random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
@@ -2135,10 +2157,11 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      -- Generate a random value within the set of values
       if set_type /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
       end if;
+
+      -- Generate a random value within the set of values
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);

@@ -77,11 +77,6 @@ begin
     --===================================================================================
       increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
 
-      --TODO: test actual implementation
-      log(ID_LOG_HDR, "Testing distributions");
-      v_rand.set_rand_dist(GAUSSIAN);
-      v_rand.set_rand_dist(UNIFORM);
-
       v_rand.set_scope("MY SCOPE");
       check_value("MY SCOPE", v_rand.get_scope(VOID), ERROR, "Checking scope");
 

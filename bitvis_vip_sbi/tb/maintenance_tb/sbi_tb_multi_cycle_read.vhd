@@ -31,7 +31,7 @@ context bitvis_vip_sbi.vvc_context;
 -- Test case entity
 entity sbi_tb_multi_cycle_read is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -110,8 +110,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
 
@@ -144,7 +144,7 @@ begin
     --------------------------------------------------------------------------------------
     -- Verifying
     --------------------------------------------------------------------------------------
-    if GC_TEST = "fixed_wait_read_test" then
+    if GC_TESTCASE = "fixed_wait_read_test" then
       log(ID_LOG_HDR, "Check that the fixed wait cycles are working correct");
 
       enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);

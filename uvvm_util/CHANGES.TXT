@@ -8,7 +8,7 @@ v2.15.x
 ----------
 Released: 2021-xx-xx
 - Fixed width detection method for to_string() functions that would make
-  GHDL simulator to fail.
+  GHDL simulator fail or create null arrays.
 
 
 v2.15.1

@@ -1274,7 +1274,8 @@ package body string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
 
-      function get_string_len(val:t_slv_array) return integer is
+      -- helper function to prevent null arrays
+      function get_string_len(val : t_slv_array) return integer is
         variable v_parantheses            : integer := 2; -- parentheses
         variable v_commas                 : integer := 0; -- commas
         variable v_radix_prefix           : integer := 0; -- Radix prefixes
@@ -1292,16 +1293,8 @@ package body string_methods_pkg is
         return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len + v_max_ext_msg_len);
       end function;
 
-    variable v_line           : line;
-    --variable v_num_elements   : integer := get_num_elements(val);   -- number of elements in array
-    --variable v_element_len    : integer := get_element_width(val);  -- array element width
+    variable v_line   : line;
     variable v_result : string(1 to get_string_len(val)); 
-                              --2 +                             -- parentheses
-                              -- 2*(v_num_elements - 1) +             -- commas
-                              -- 3*v_num_elements +                   -- Radix prefixes
-                              -- v_element_len*v_num_elements +       -- Maximum length of the array elements
-                              -- 14*v_num_elements                    -- Extra length of element in case of potential message "too wide to convert to integer"
-                              --); 
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1336,7 +1329,8 @@ package body string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
 
-      function get_string_len(val:t_signed_array) return integer is
+      -- helper function to prevent null arrays
+      function get_string_len(val : t_signed_array) return integer is
         variable v_parantheses            : integer := 2; -- parentheses
         variable v_commas                 : integer := 0; -- commas
         variable v_radix_prefix           : integer := 0; -- Radix prefixes
@@ -1354,16 +1348,8 @@ package body string_methods_pkg is
         return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len + v_max_ext_msg_len);
       end function;
 
-    variable v_line           : line;
-    --variable v_num_elements   : integer := get_num_elements(val);   -- number of elements in array
-    --variable v_element_len    : integer := get_element_width(val);  -- array element width
+    variable v_line   : line;
     variable v_result : string(1 to get_string_len(val)); 
-                              --2 +                             -- parentheses
-                              -- 2*(v_num_elements - 1) +             -- commas
-                              -- 3*v_num_elements +                   -- Radix prefixes
-                              -- v_element_len*v_num_elements +       -- Maximum length of the array elements
-                              -- 14*v_num_elements                    -- Extra length of element in case of potential message "too wide to convert to integer"
-                              --); 
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1398,7 +1384,8 @@ package body string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
 
-      function get_string_len(val:t_unsigned_array) return integer is
+      -- helper function to prevent null arrays
+      function get_string_len(val : t_unsigned_array) return integer is
         variable v_parantheses            : integer := 2; -- parentheses
         variable v_commas                 : integer := 0; -- commas
         variable v_radix_prefix           : integer := 0; -- Radix prefixes
@@ -1416,16 +1403,8 @@ package body string_methods_pkg is
         return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len + v_max_ext_msg_len);
       end function;
 
-    variable v_line           : line;
-    --variable v_num_elements   : integer := get_num_elements(val);   -- number of elements in array
-    --variable v_element_len    : integer := get_element_width(val);  -- array element width
-    variable v_result : string(1 to get_string_len(val)); 
-                              --2 +                             -- parentheses
-                              -- 2*(v_num_elements - 1) +             -- commas
-                              -- 3*v_num_elements +                   -- Radix prefixes
-                              -- v_element_len*v_num_elements +       -- Maximum length of the array elements
-                              -- 14*v_num_elements                    -- Extra length of element in case of potential message "too wide to convert to integer"
-                              --);                 
+    variable v_line   : line;
+    variable v_result : string(1 to get_string_len(val));              
     variable v_width  : natural;
   begin
     if val'length = 0 then

@@ -21,15 +21,13 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-
--- Test case entity
+--HDLUnit:TB
 entity funct_cov_tb is
   generic(
-    GC_TEST : string  := "UVVM"
+    GC_TESTCASE : string
   );
 end entity;
 
--- Test case architecture
 architecture func of funct_cov_tb is
 
 begin

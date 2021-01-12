@@ -23,14 +23,13 @@ context uvvm_util.uvvm_util_context;
 
 use work.rand_tb_pkg.all;
 
--- Test case entity
+--HDLUnit:TB
 entity rand_tb is
   generic(
-    GC_TEST : string  := "UVVM"
+    GC_TESTCASE : string
   );
 end entity;
 
--- Test case architecture
 architecture func of rand_tb is
 
   constant C_NUM_RAND_REPETITIONS   : natural := 6;
@@ -68,12 +67,12 @@ begin
   begin
 
     --------------------------------------------------------------------------------
-    log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package - " & GC_TEST);
+    log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package - " & GC_TESTCASE);
     --------------------------------------------------------------------------------
     enable_log_msg(ID_RAND_GEN);
 
     --===================================================================================
-    if GC_TEST = "rand_basic" then
+    if GC_TESTCASE = "rand_basic" then
     --===================================================================================
       increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
 
@@ -1072,7 +1071,7 @@ begin
       v_bit_check := "00";
 
     --===================================================================================
-    elsif GC_TEST = "rand_weighted" then
+    elsif GC_TESTCASE = "rand_weighted" then
     --===================================================================================
       log(ID_SEQUENCER, "Reducing log messages from rand_pkg");
       disable_log_msg(ID_LOG_MSG_CTRL);
@@ -1515,7 +1514,7 @@ begin
       v_int := v_rand.rand_range_weight(((10,5,50),(1,1,50)));
 
     --===================================================================================
-    elsif GC_TEST = "rand_cyclic" then
+    elsif GC_TESTCASE = "rand_cyclic" then
     --===================================================================================
       ------------------------------------------------------------
       -- Random cyclic integer
@@ -1976,7 +1975,7 @@ begin
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
     --===================================================================================
-    elsif GC_TEST = "rand_cyclic_performance" then
+    elsif GC_TESTCASE = "rand_cyclic_performance" then
     --===================================================================================
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing random cyclic performance");
@@ -2015,7 +2014,7 @@ begin
       end loop;
 
     --===================================================================================
-    elsif GC_TEST = "rand_gaussian" then
+    elsif GC_TESTCASE = "rand_gaussian" then
     --===================================================================================
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution");

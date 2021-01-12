@@ -274,7 +274,7 @@ begin
 
     else
       if GC_TEST /= "ALL" then
-        alert(tb_error, "Unsupported test");
+        alert(tb_error, "Unsupported test: " & GC_TEST);
       end if;
     end if;
 

@@ -36,7 +36,7 @@ use work.ethernet_sbi_pkg.all;
 -- Test case entity
 entity ethernet_sbi_tb is
   generic (
-    GC_TEST         : string    := "UVVM";
+    GC_TESTCASE     : string    := "UVVM";
     GC_DATA_WIDTH   : positive  := 8);
 end entity ethernet_sbi_tb;
 
@@ -114,8 +114,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);

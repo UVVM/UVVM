@@ -328,7 +328,9 @@ package body funct_cov_pkg is
   type t_cov_point is protected body
     variable priv_scope                         : line    := new string'(C_SCOPE);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_bin_idx                       : natural := 0;
+    variable priv_bins_idx                      : natural := 0;
+    variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
+    variable priv_invalid_bins_idx              : natural := 0;
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer := -1;
     variable priv_rand_transition_bin_value_idx : natural := 0;
@@ -336,26 +338,6 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Internal functions and procedures
     ------------------------------------------------------------
-    -- Logs the procedure call unless it is called from another
-    -- procedure to avoid duplicate logs. It also generates the
-    -- correct procedure call to be used for logging or alerts.
-    procedure log_proc_call(
-      constant msg_id          : in    t_msg_id;
-      constant proc_call       : in    string;
-      constant ext_proc_call   : in    string;
-      variable new_proc_call   : inout line;
-      constant msg_id_panel    : in    t_msg_id_panel) is
-    begin
-      -- Called directly from sequencer/VVC
-      if ext_proc_call = "" then
-        log(msg_id, proc_call, priv_scope.all, msg_id_panel);
-        write(new_proc_call, proc_call);
-      -- Called from another procedure
-      else
-        write(new_proc_call, ext_proc_call);
-      end if;
-    end procedure;
-
     -- Returns the string representation of the bin vector
     impure function to_string(
       bins : t_new_bin_vector)
@@ -421,18 +403,29 @@ package body funct_cov_pkg is
       variable v_result : string(1 to 100);
       variable v_width  : natural;
     begin
-      write(v_line, '(');
       case bin_type is
-        when VAL =>
+        when VAL | VAL_IGNORE | VAL_ILLEGAL =>
+          if bin_type = VAL_IGNORE then
+            write(v_line, string'("IGN"));
+          elsif bin_type = VAL_ILLEGAL then
+            write(v_line, string'("ILL"));
+          end if;
+          write(v_line, '(');
           for i in 0 to bin_num_values-1 loop
             write(v_line, to_string(bin_values(i)));
             if i < bin_num_values-1 then
               write(v_line, string'(","));
             end if;
           end loop;
-        when RAN =>
-          write(v_line, to_string(bin_values(0)) & " to " & to_string(bin_values(1)));
+        when RAN | RAN_IGNORE | RAN_ILLEGAL =>
+          if bin_type = RAN_IGNORE then
+            write(v_line, string'("IGN"));
+          elsif bin_type = RAN_ILLEGAL then
+            write(v_line, string'("ILL"));
+          end if;
+          write(v_line, '(' & to_string(bin_values(0)) & " to " & to_string(bin_values(1)));
         when TRN =>
+          write(v_line, '(');
           for i in 0 to bin_num_values-1 loop
             write(v_line, to_string(bin_values(i)));
             if i < bin_num_values-1 then
@@ -478,19 +471,32 @@ package body funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_bins(" & to_string(bin) & ", min_cov:" & to_string(min_cov) &
         ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
-      variable v_proc_call : line;
     begin
-      log_proc_call(ID_FUNCT_COV, C_LOCAL_CALL, "", v_proc_call, msg_id_panel); --TODO: check if replace for simple log
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+
+      -- Store the bins in the corresponding bin structure
       for i in bin'range loop
-        priv_bins(priv_bin_idx).contains       := bin(i).contains;
-        priv_bins(priv_bin_idx).values         := bin(i).values;
-        priv_bins(priv_bin_idx).num_values     := bin(i).num_values;
-        priv_bins(priv_bin_idx).transition_idx := 0;
-        priv_bins(priv_bin_idx).hits           := 0;
-        priv_bins(priv_bin_idx).min_hits       := min_cov;
-        priv_bins(priv_bin_idx).weight         := rand_weight;
-        priv_bins(priv_bin_idx).name(1 to bin_name'length) := bin_name;
-        priv_bin_idx := priv_bin_idx + 1;
+        if bin(i).contains = VAL_IGNORE or bin(i).contains = RAN_IGNORE or bin(i).contains = VAL_ILLEGAL or bin(i).contains = RAN_ILLEGAL then
+          priv_invalid_bins(priv_invalid_bins_idx).contains                   := bin(i).contains;
+          priv_invalid_bins(priv_invalid_bins_idx).values                     := bin(i).values;
+          priv_invalid_bins(priv_invalid_bins_idx).num_values                 := bin(i).num_values;
+          priv_invalid_bins(priv_invalid_bins_idx).transition_idx             := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).hits                       := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).min_hits                   := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).weight                     := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length) := bin_name;
+          priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
+        else
+          priv_bins(priv_bins_idx).contains                   := bin(i).contains;
+          priv_bins(priv_bins_idx).values                     := bin(i).values;
+          priv_bins(priv_bins_idx).num_values                 := bin(i).num_values;
+          priv_bins(priv_bins_idx).transition_idx             := 0;
+          priv_bins(priv_bins_idx).hits                       := 0;
+          priv_bins(priv_bins_idx).min_hits                   := min_cov;
+          priv_bins(priv_bins_idx).weight                     := rand_weight;
+          priv_bins(priv_bins_idx).name(1 to bin_name'length) := bin_name;
+          priv_bins_idx := priv_bins_idx + 1;
+        end if;
       end loop;
     end procedure;
 
@@ -518,7 +524,7 @@ package body funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
     return integer is
       constant C_LOCAL_CALL      : string := "rand()";
-      variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bin_idx-1);
+      variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);
       variable v_acc_weight      : integer := 0;
       variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
       variable v_bin_idx         : integer;
@@ -537,9 +543,9 @@ package body funct_cov_pkg is
       end if;
 
       -- Assign each bin a randomization weight
-      for i in 0 to priv_bin_idx-1 loop
+      for i in 0 to priv_bins_idx-1 loop
         v_bin_weight_list(i).value := i;
-        if (priv_bins(i).contains = VAL or priv_bins(i).contains = RAN or priv_bins(i).contains = TRN) and priv_bins(i).hits < priv_bins(i).min_hits then
+        if priv_bins(i).hits < priv_bins(i).min_hits then
           v_bin_weight_list(i).weight := priv_bins(i).weight;
         else
           v_bin_weight_list(i).weight := 0;
@@ -548,10 +554,8 @@ package body funct_cov_pkg is
       end loop;
       -- When all bins have reached their min_hits re-enable valid bins for selection
       if v_acc_weight = 0 then
-        for i in 0 to priv_bin_idx-1 loop
-          if (priv_bins(i).contains = VAL or priv_bins(i).contains = RAN or priv_bins(i).contains = TRN) then
-            v_bin_weight_list(i).weight := priv_bins(i).weight;
-          end if;
+        for i in 0 to priv_bins_idx-1 loop
+          v_bin_weight_list(i).weight := priv_bins(i).weight;
         end loop;
       end if;
 
@@ -585,42 +589,72 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Coverage
     ------------------------------------------------------------
-    --Q: Do we need ignore bins? is it to show in some report how many hits some values we don't care got?
-    --   OSVVM uses ignore bins when concatenating bins, e.g. CovBin2.AddBins( GenBin(1,2) & IgnoreBin(3,4) & GenBin(5,6) & ALL_ILLEGAL ) ;
-    -- how does ALL work?
-    --   SV uses ignore bins for automatically created bins (using a vector) to remove the unwanted values
-    --   --> so if we generate bins with a big range or a vector, we can use ignore bins to remove them from the sampling
     procedure sample_coverage(
       constant value         : in integer;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL     : string := "sample_coverage(" & to_string(value) & ")";
+      variable v_invalid_sample : boolean := false;
     begin
-      for i in 0 to priv_bin_idx-1 loop
-        case priv_bins(i).contains is
-          when VAL =>
-            for j in 0 to priv_bins(i).num_values-1 loop
-              if value = priv_bins(i).values(j) then
-                priv_bins(i).hits := priv_bins(i).hits + 1;
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+
+      -- Check if the value should be ignored or is illegal
+      l_bin_loop : for i in 0 to priv_invalid_bins_idx-1 loop
+        case priv_invalid_bins(i).contains is
+          when VAL_IGNORE | VAL_ILLEGAL =>
+            for j in 0 to priv_invalid_bins(i).num_values-1 loop
+              if value = priv_invalid_bins(i).values(j) then
+                v_invalid_sample := true;
+                priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
+                if priv_invalid_bins(i).contains = VAL_ILLEGAL then
+                  alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", priv_scope.all);
+                  exit l_bin_loop;
+                end if;
               end if;
             end loop;
-          when RAN =>
-            if value >= priv_bins(i).values(0) and value <= priv_bins(i).values(1) then
-              priv_bins(i).hits := priv_bins(i).hits + 1;
-            end if;
-          when TRN =>
-            if value = priv_bins(i).values(priv_bins(i).transition_idx) then
-              if priv_bins(i).transition_idx < priv_bins(i).num_values-1 then
-                priv_bins(i).transition_idx := priv_bins(i).transition_idx + 1;
-              else
-                priv_bins(i).transition_idx := 0;
-                priv_bins(i).hits           := priv_bins(i).hits + 1;
+          when RAN_IGNORE | RAN_ILLEGAL =>
+            if value >= priv_invalid_bins(i).values(0) and value <= priv_invalid_bins(i).values(1) then
+              v_invalid_sample := true;
+              priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
+              if priv_invalid_bins(i).contains = RAN_ILLEGAL then
+                alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", priv_scope.all);
+                exit l_bin_loop;
               end if;
-            else
-              priv_bins(i).transition_idx := 0;
             end if;
           when others =>
-            --TODO: alert, this should never happen
+            alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error.", priv_scope.all);
         end case;
       end loop;
+
+      -- Check if the value is in the valid bins
+      if not(v_invalid_sample) then
+        for i in 0 to priv_bins_idx-1 loop
+          case priv_bins(i).contains is
+            when VAL =>
+              for j in 0 to priv_bins(i).num_values-1 loop
+                if value = priv_bins(i).values(j) then
+                  priv_bins(i).hits := priv_bins(i).hits + 1;
+                end if;
+              end loop;
+            when RAN =>
+              if value >= priv_bins(i).values(0) and value <= priv_bins(i).values(1) then
+                priv_bins(i).hits := priv_bins(i).hits + 1;
+              end if;
+            when TRN =>
+              if value = priv_bins(i).values(priv_bins(i).transition_idx) then
+                if priv_bins(i).transition_idx < priv_bins(i).num_values-1 then
+                  priv_bins(i).transition_idx := priv_bins(i).transition_idx + 1;
+                else
+                  priv_bins(i).transition_idx := 0;
+                  priv_bins(i).hits           := priv_bins(i).hits + 1;
+                end if;
+              else
+                priv_bins(i).transition_idx := 0;
+              end if;
+            when others =>
+              alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error.", priv_scope.all);
+          end case;
+        end loop;
+      end if;
     end procedure;
 
     --Q: use same report as scoreboard?
@@ -678,7 +712,6 @@ package body funct_cov_pkg is
         end function timestamp_header;
 
     begin
-
       -- Calculate how much space we can insert between the columns of the report
       v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_COLUMN_WIDTH*5 - C_MAX_BIN_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
@@ -703,18 +736,29 @@ package body funct_cov_pkg is
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print bins
-      for i in 0 to priv_bin_idx-1 loop
-        if (priv_bins(i).contains = VAL or priv_bins(i).contains = RAN or priv_bins(i).contains = TRN) then
-          write(v_line, justify(
-            fill_string(' ', 5) &
-            justify(to_string(priv_bins(i).contains, priv_bins(i).values, priv_bins(i).num_values), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(is_bin_covered(priv_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        end if;
+      for i in 0 to priv_bins_idx-1 loop
+        write(v_line, justify(
+          fill_string(' ', 5) &
+          justify(to_string(priv_bins(i).contains, priv_bins(i).values, priv_bins(i).num_values), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(is_bin_covered(priv_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+          left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+      end loop;
+
+      -- Print invalid bins
+      for i in 0 to priv_invalid_bins_idx-1 loop
+        write(v_line, justify(
+          fill_string(' ', 5) &
+          justify(to_string(priv_invalid_bins(i).contains, priv_invalid_bins(i).values, priv_invalid_bins(i).num_values), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_invalid_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_invalid_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_invalid_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_invalid_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(is_bin_covered(priv_invalid_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+          left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end loop;
 
       -- Print report bottom line

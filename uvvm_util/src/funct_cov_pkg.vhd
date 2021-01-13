@@ -36,7 +36,7 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
-  type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN);
+  type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
   type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE);
 
   type t_new_bin is record
@@ -100,6 +100,11 @@ package funct_cov_pkg is
     constant max_value  : integer)
   return t_new_bin_vector;
 
+  -- Creates an ignore bin with a transition of values
+  function ignore_bin_transition(
+    constant set_values : integer_vector)
+  return t_new_bin_vector;
+
   -- Creates an illegal bin with a single value
   function illegal_bin(
     constant value      : integer)
@@ -109,6 +114,11 @@ package funct_cov_pkg is
   function illegal_bin_range(
     constant min_value  : integer;
     constant max_value  : integer)
+  return t_new_bin_vector;
+
+  -- Creates an illegal bin with a transition of values
+  function illegal_bin_transition(
+    constant set_values : integer_vector)
   return t_new_bin_vector;
 
   ------------------------------------------------------------
@@ -296,6 +306,18 @@ package body funct_cov_pkg is
     return v_ret;
   end function;
 
+  -- Creates an ignore bin with a transition of values
+  function ignore_bin_transition(
+    constant set_values : integer_vector)
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := TRN_IGNORE;
+    v_ret(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).num_values := set_values'length;
+    return v_ret;
+  end function;
+
   -- Creates an illegal bin with a single value
   function illegal_bin(
     constant value      : integer)
@@ -322,6 +344,18 @@ package body funct_cov_pkg is
     return v_ret;
   end function;
 
+  -- Creates an illegal bin with a transition of values
+  function illegal_bin_transition(
+    constant set_values : integer_vector)
+  return t_new_bin_vector is
+    variable v_ret : t_new_bin_vector(0 to 0);
+  begin
+    v_ret(0).contains   := TRN_ILLEGAL;
+    v_ret(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).num_values := set_values'length;
+    return v_ret;
+  end function;
+
   ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
@@ -340,7 +374,8 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Returns the string representation of the bin vector
     impure function to_string(
-      bins : t_new_bin_vector)
+      bins           : t_new_bin_vector;
+      use_in_summary : boolean := false)
     return string is
       variable v_line   : line;
       variable v_result : string(1 to 500);
@@ -350,11 +385,11 @@ package body funct_cov_pkg is
         case bins(i).contains is
           when VAL | VAL_IGNORE | VAL_ILLEGAL =>
             if bins(i).contains = VAL then
-              write(v_line, string'("bin"));
+              write(v_line, string'(return_string1_if_true_otherwise_string2("", "bin", use_in_summary)));
             elsif bins(i).contains = VAL_IGNORE then
-              write(v_line, string'("ignore_bin"));
+              write(v_line, string'(return_string1_if_true_otherwise_string2("IGN", "ignore_bin", use_in_summary)));
             else
-              write(v_line, string'("illegal_bin"));
+              write(v_line, string'(return_string1_if_true_otherwise_string2("ILL", "illegal_bin", use_in_summary)));
             end if;
             if bins(i).num_values = 1 then
               write(v_line, '(');
@@ -365,15 +400,22 @@ package body funct_cov_pkg is
             end if;
           when RAN | RAN_IGNORE | RAN_ILLEGAL =>
             if bins(i).contains = RAN then
-              write(v_line, string'("bin_range"));
+              write(v_line, string'(return_string1_if_true_otherwise_string2("", "bin_range", use_in_summary)));
             elsif bins(i).contains = RAN_IGNORE then
-              write(v_line, string'("ignore_bin_range"));
+              write(v_line, string'(return_string1_if_true_otherwise_string2("IGN", "ignore_bin_range", use_in_summary)));
             else
-              write(v_line, string'("illegal_bin_range"));
+              write(v_line, string'(return_string1_if_true_otherwise_string2("ILL", "illegal_bin_range", use_in_summary)));
             end if;
             write(v_line, "(" & to_string(bins(i).values(0)) & " to " & to_string(bins(i).values(1)) & ")");
-          when TRN =>
-            write(v_line, string'("bin_transition("));
+          when TRN | TRN_IGNORE | TRN_ILLEGAL =>
+            if bins(i).contains = TRN then
+              write(v_line, string'(return_string1_if_true_otherwise_string2("", "bin_transition", use_in_summary)));
+            elsif bins(i).contains = TRN_IGNORE then
+              write(v_line, string'(return_string1_if_true_otherwise_string2("IGN", "ignore_bin_transition", use_in_summary)));
+            else
+              write(v_line, string'(return_string1_if_true_otherwise_string2("ILL", "illegal_bin_transition", use_in_summary)));
+            end if;
+            write(v_line, '(');
             for j in 0 to bins(i).num_values-1 loop
               write(v_line, to_string(bins(i).values(j)));
               if j < bins(i).num_values-1 then
@@ -383,7 +425,7 @@ package body funct_cov_pkg is
             write(v_line, ')');
         end case;
         if i < bins'length-1 then
-          write(v_line, string'(","));
+          write(v_line, string'(return_string1_if_true_otherwise_string2("x", ",", use_in_summary)));
         end if;
       end loop;
 
@@ -424,7 +466,12 @@ package body funct_cov_pkg is
             write(v_line, string'("ILL"));
           end if;
           write(v_line, '(' & to_string(bin_values(0)) & " to " & to_string(bin_values(1)));
-        when TRN =>
+        when TRN | TRN_IGNORE | TRN_ILLEGAL =>
+          if bin_type = TRN_IGNORE then
+            write(v_line, string'("IGN"));
+          elsif bin_type = TRN_ILLEGAL then
+            write(v_line, string'("ILL"));
+          end if;
           write(v_line, '(');
           for i in 0 to bin_num_values-1 loop
             write(v_line, to_string(bin_values(i)));
@@ -432,8 +479,6 @@ package body funct_cov_pkg is
               write(v_line, string'("->"));
             end if;
           end loop;
-        when others =>
-          --TODO
       end case;
       write(v_line, ')');
 
@@ -476,17 +521,7 @@ package body funct_cov_pkg is
 
       -- Store the bins in the corresponding bin structure
       for i in bin'range loop
-        if bin(i).contains = VAL_IGNORE or bin(i).contains = RAN_IGNORE or bin(i).contains = VAL_ILLEGAL or bin(i).contains = RAN_ILLEGAL then
-          priv_invalid_bins(priv_invalid_bins_idx).contains                   := bin(i).contains;
-          priv_invalid_bins(priv_invalid_bins_idx).values                     := bin(i).values;
-          priv_invalid_bins(priv_invalid_bins_idx).num_values                 := bin(i).num_values;
-          priv_invalid_bins(priv_invalid_bins_idx).transition_idx             := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).hits                       := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).min_hits                   := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).weight                     := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length) := bin_name;
-          priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
-        else
+        if bin(i).contains = VAL or bin(i).contains = RAN or bin(i).contains = TRN then
           priv_bins(priv_bins_idx).contains                   := bin(i).contains;
           priv_bins(priv_bins_idx).values                     := bin(i).values;
           priv_bins(priv_bins_idx).num_values                 := bin(i).num_values;
@@ -496,6 +531,16 @@ package body funct_cov_pkg is
           priv_bins(priv_bins_idx).weight                     := rand_weight;
           priv_bins(priv_bins_idx).name(1 to bin_name'length) := bin_name;
           priv_bins_idx := priv_bins_idx + 1;
+        else
+          priv_invalid_bins(priv_invalid_bins_idx).contains                   := bin(i).contains;
+          priv_invalid_bins(priv_invalid_bins_idx).values                     := bin(i).values;
+          priv_invalid_bins(priv_invalid_bins_idx).num_values                 := bin(i).num_values;
+          priv_invalid_bins(priv_invalid_bins_idx).transition_idx             := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).hits                       := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).min_hits                   := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).weight                     := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length) := bin_name;
+          priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
         end if;
       end loop;
     end procedure;
@@ -579,7 +624,7 @@ package body funct_cov_pkg is
         priv_rand_transition_bin_value_idx := 1;
         priv_rand_transition_bin_idx := v_bin_idx;
       else
-        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error.", priv_scope.all);
+        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).contains)), priv_scope.all);
       end if;
 
       log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
@@ -606,7 +651,7 @@ package body funct_cov_pkg is
                 v_invalid_sample := true;
                 priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
                 if priv_invalid_bins(i).contains = VAL_ILLEGAL then
-                  alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", priv_scope.all);
+                  alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_bins(i to i)), priv_scope.all);
                   exit l_bin_loop;
                 end if;
               end if;
@@ -616,12 +661,28 @@ package body funct_cov_pkg is
               v_invalid_sample := true;
               priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
               if priv_invalid_bins(i).contains = RAN_ILLEGAL then
-                alert(TB_WARNING, "Bin " & to_string(value) & " is illegal.", priv_scope.all);
+                alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_bins(i to i)), priv_scope.all);
                 exit l_bin_loop;
               end if;
             end if;
+          when TRN_IGNORE | TRN_ILLEGAL =>
+            if value = priv_invalid_bins(i).values(priv_invalid_bins(i).transition_idx) then
+              if priv_invalid_bins(i).transition_idx < priv_invalid_bins(i).num_values-1 then
+                priv_invalid_bins(i).transition_idx := priv_invalid_bins(i).transition_idx + 1;
+              else
+                v_invalid_sample := true;
+                priv_invalid_bins(i).transition_idx := 0;
+                priv_invalid_bins(i).hits           := priv_invalid_bins(i).hits + 1;
+                if priv_invalid_bins(i).contains = TRN_ILLEGAL then
+                  alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_bins(i to i)), priv_scope.all);
+                  exit l_bin_loop;
+                end if;
+              end if;
+            else
+              priv_invalid_bins(i).transition_idx := 0;
+            end if;
           when others =>
-            alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error.", priv_scope.all);
+            alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).contains)), priv_scope.all);
         end case;
       end loop;
 
@@ -651,7 +712,7 @@ package body funct_cov_pkg is
                 priv_bins(i).transition_idx := 0;
               end if;
             when others =>
-              alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error.", priv_scope.all);
+              alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).contains)), priv_scope.all);
           end case;
         end loop;
       end if;

@@ -72,6 +72,8 @@ begin
       v_cov_point.add_bins(bin_vector(v_slv), "addr3");
       v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "transition_odd");
       v_cov_point.add_bins(bin_transition((2,4,6,8)), 1, 1, "transition_even");
+      v_cov_point.add_bins(ignore_bin_transition((200,201)), 1, 1, "transition_ignore");
+      v_cov_point.add_bins(illegal_bin_transition((300,301)), 1, 1, "transition_illegal");
       v_cov_point.add_bins(ignore_bin(0), "ignore1");
       v_cov_point.add_bins(ignore_bin(255), "ignore2");
       v_cov_point.add_bins(illegal_bin(256), "illegal");
@@ -86,6 +88,10 @@ begin
       v_cov_point.sample_coverage(4);
       v_cov_point.sample_coverage(6);
       v_cov_point.sample_coverage(8);
+      v_cov_point.sample_coverage(200);
+      v_cov_point.sample_coverage(201);
+      v_cov_point.sample_coverage(300);
+      v_cov_point.sample_coverage(301);
       v_cov_point.sample_coverage(255);
       increment_expected_alerts(TB_WARNING, 1);
       v_cov_point.sample_coverage(256);

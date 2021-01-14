@@ -39,6 +39,7 @@ begin
     variable v_cov_point : t_cov_point;
     variable v_cov_cross : t_cov_point;
     variable v_value     : integer;
+    variable v_values    : integer_vector(0 to 1);
     variable v_slv       : std_logic_vector(1 downto 0);
 
   begin
@@ -157,10 +158,20 @@ begin
       v_cov_cross.add_cross(bin_range(253, 254), bin_range(50, 100, 2), 2, 10, "crossbin1");
       v_cov_cross.sample_coverage((253,50));
 
+      for i in 0 to 9 loop
+        v_values := v_cov_cross.rand;
+        v_cov_cross.sample_coverage(v_values);
+      end loop;
+
       v_cov_cross.add_cross(bin(100), bin_transition((1, 5, 10)), 2, 10, "crossbin2");
       v_cov_cross.sample_coverage((100,1));
       v_cov_cross.sample_coverage((100,5));
       v_cov_cross.sample_coverage((100,10));
+
+      for i in 0 to 9 loop
+        v_values := v_cov_cross.rand;
+        v_cov_cross.sample_coverage(v_values);
+      end loop;
 
       v_cov_cross.add_cross(illegal_bin(500) & bin(100), bin_range(2, 3), 2, 10, "crossbin3");
       increment_expected_alerts(TB_WARNING, 1);

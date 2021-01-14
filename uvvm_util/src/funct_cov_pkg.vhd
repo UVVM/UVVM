@@ -190,6 +190,10 @@ package funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
     return integer;
 
+    impure function rand(
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+    return integer_vector;
+
     ------------------------------------------------------------
     -- Coverage
     ------------------------------------------------------------
@@ -699,35 +703,28 @@ package body funct_cov_pkg is
     begin
       -- A transition bin returns all the transition values before allowing to select a different bin value
       if priv_rand_transition_bin_idx /= -1 then
-        if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).num_values then
-          v_ret := priv_bins(priv_rand_transition_bin_idx).values(priv_rand_transition_bin_value_idx);
-          priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
-          log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
-          return v_ret;
-        else
-          priv_rand_transition_bin_idx := -1;
-        end if;
-      end if;
-
-      -- Assign each bin a randomization weight
-      for i in 0 to priv_bins_idx-1 loop
-        v_bin_weight_list(i).value := i;
-        if priv_bins(i).hits < priv_bins(i).min_hits then
-          v_bin_weight_list(i).weight := priv_bins(i).weight;
-        else
-          v_bin_weight_list(i).weight := 0;
-        end if;
-        v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
-      end loop;
-      -- When all bins have reached their min_hits re-enable valid bins for selection
-      if v_acc_weight = 0 then
+        v_bin_idx := priv_rand_transition_bin_idx;
+      else
+        -- Assign each bin a randomization weight
         for i in 0 to priv_bins_idx-1 loop
-          v_bin_weight_list(i).weight := priv_bins(i).weight;
+          v_bin_weight_list(i).value := i;
+          if priv_bins(i).hits < priv_bins(i).min_hits then
+            v_bin_weight_list(i).weight := priv_bins(i).weight;
+          else
+            v_bin_weight_list(i).weight := 0;
+          end if;
+          v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
         end loop;
-      end if;
+        -- When all bins have reached their min_hits re-enable valid bins for selection
+        if v_acc_weight = 0 then
+          for i in 0 to priv_bins_idx-1 loop
+            v_bin_weight_list(i).weight := priv_bins(i).weight;
+          end loop;
+        end if;
 
-      -- Choose a random bin index
-      v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);
+        -- Choose a random bin index
+        v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);
+      end if;
 
       -- Select the random bin value to return (ignore and illegal bin values are never selected)
       if priv_bins(v_bin_idx).contains = VAL then
@@ -742,12 +739,94 @@ package body funct_cov_pkg is
       elsif priv_bins(v_bin_idx).contains = RAN then
         v_ret := priv_rand_gen.rand(priv_bins(v_bin_idx).values(0), priv_bins(v_bin_idx).values(1), NON_CYCLIC, msg_id_panel);
       elsif priv_bins(v_bin_idx).contains = TRN then
-        v_ret := priv_bins(v_bin_idx).values(0);
-        priv_rand_transition_bin_value_idx := 1;
-        priv_rand_transition_bin_idx := v_bin_idx;
+        if priv_rand_transition_bin_idx = -1 then
+          v_ret := priv_bins(v_bin_idx).values(0);
+          priv_rand_transition_bin_value_idx := 1;
+          priv_rand_transition_bin_idx       := v_bin_idx;
+        else
+          v_ret := priv_bins(priv_rand_transition_bin_idx).values(priv_rand_transition_bin_value_idx);
+          if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).num_values-1 then
+            priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
+          else
+            priv_rand_transition_bin_idx       := -1;
+            priv_rand_transition_bin_value_idx := 0;
+          end if;
+        end if;
       else
         alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).contains)), priv_scope.all);
       end if;
+
+      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+    return integer_vector is
+      constant C_LOCAL_CALL      : string := "rand()";
+      variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_cross_idx-1);
+      variable v_acc_weight      : integer := 0;
+      variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
+      variable v_bin_idx         : integer;
+      variable v_ret             : integer_vector(0 to priv_num_bins_crossed-1);
+    begin
+      -- A transition bin returns all the transition values before allowing to select a different bin value
+      if priv_rand_transition_bin_idx /= -1 then
+        v_bin_idx := priv_rand_transition_bin_idx;
+      else
+        -- Assign each bin a randomization weight
+        for i in 0 to priv_cross_idx-1 loop
+          v_bin_weight_list(i).value := i;
+          if priv_cross(i).hits < priv_cross(i).min_hits then
+            v_bin_weight_list(i).weight := priv_cross(i).weight;
+          else
+            v_bin_weight_list(i).weight := 0;
+          end if;
+          v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
+        end loop;
+        -- When all bins have reached their min_hits re-enable valid bins for selection
+        if v_acc_weight = 0 then
+          for i in 0 to priv_cross_idx-1 loop
+            v_bin_weight_list(i).weight := priv_cross(i).weight;
+          end loop;
+        end if;
+
+        -- Choose a random bin index
+        v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);
+      end if;
+
+      -- Select the random bin values to return (ignore and illegal bin values are never selected)
+      for i in 0 to priv_num_bins_crossed-1 loop
+        v_values_vec := (others => 0);
+        if priv_cross(v_bin_idx).bins(i).contains = VAL then
+          if priv_cross(v_bin_idx).bins(i).num_values = 1 then
+            v_ret(i) := priv_cross(v_bin_idx).bins(i).values(0);
+          else
+            for j in 0 to priv_cross(v_bin_idx).bins(i).num_values-1 loop
+              v_values_vec(j) := priv_cross(v_bin_idx).bins(i).values(j);
+            end loop;
+            v_ret(i) := priv_rand_gen.rand(ONLY, v_values_vec(0 to priv_cross(v_bin_idx).bins(i).num_values-1), NON_CYCLIC, msg_id_panel);
+          end if;
+        elsif priv_cross(v_bin_idx).bins(i).contains = RAN then
+          v_ret(i) := priv_rand_gen.rand(priv_cross(v_bin_idx).bins(i).values(0), priv_cross(v_bin_idx).bins(i).values(1), NON_CYCLIC, msg_id_panel);
+        elsif priv_cross(v_bin_idx).bins(i).contains = TRN then
+          if priv_rand_transition_bin_idx = -1 then
+            v_ret(i) := priv_cross(v_bin_idx).bins(i).values(0);
+            priv_rand_transition_bin_idx       := v_bin_idx;
+            priv_rand_transition_bin_value_idx := 1;
+          else
+            v_ret(i) := priv_cross(priv_rand_transition_bin_idx).bins(i).values(priv_rand_transition_bin_value_idx);
+            if priv_rand_transition_bin_value_idx < priv_cross(priv_rand_transition_bin_idx).bins(i).num_values-1 then
+              priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
+            else
+              priv_rand_transition_bin_idx       := -1;
+              priv_rand_transition_bin_value_idx := 0;
+            end if;
+          end if;
+        else
+          alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_cross(v_bin_idx).bins(i).contains)), priv_scope.all);
+        end if;
+      end loop;
 
       log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
       return v_ret;

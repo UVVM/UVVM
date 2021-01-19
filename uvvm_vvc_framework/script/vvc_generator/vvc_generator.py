@@ -1473,7 +1473,6 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
     file_handle.write("  -- -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC\n")
     file_handle.write("  --   set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, "
                       "QUEUED, RECEIVE);\n")
-    file_handle.write("  --   shared_vvc_cmd.operation           := RECEIVE;\n")
     file_handle.write("  --   shared_vvc_cmd.alert_level         := alert_level;\n")
     file_handle.write("  --   shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;\n")
     file_handle.write("  --   if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then\n")

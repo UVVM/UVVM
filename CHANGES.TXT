@@ -16,6 +16,7 @@ Released: 2021-xx-xx
 - Fixed width detection method for to_string() functions that would make
   GHDL simulator fail or create null arrays.
 - Minor update in uart_receive example in VVC QuickRef.
+- Removed duplicate setting of shared_vvc_cmd.operation in several VVC procedures and vvc_generator script.
 
 
 v2 2020.12.21

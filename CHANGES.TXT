@@ -15,6 +15,7 @@ v2 2021.xx.xx
 Released: 2021-xx-xx
 - Fixed width detection method for to_string() functions that would make
   GHDL simulator fail or create null arrays.
+- Minor update in uart_receive example in VVC QuickRef.
 
 
 v2 2020.12.21

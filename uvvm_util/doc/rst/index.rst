@@ -5,7 +5,8 @@ Utility library documentation
    :maxdepth: 2
    :caption: Contents:
 
-   randomization.rst
+   rand_pkg_overview.rst
+   rand_pkg.rst
    types.rst
 
 UVVM

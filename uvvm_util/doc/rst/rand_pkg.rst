@@ -1,21 +1,10 @@
-Advanced randomization
-======================
-The functionality for advanced randomization is contained in *uvvm_util/src/rand_pkg.vhd*.
+rand_pkg
+========
 
-To generate random values using this package it is necessary to first create a variable with the protected type **t_rand**.
-
-.. code-block::
-
-    Example:
-    variable my_rand : t_rand;
-    addr := my_rand.rand(0,255);
-
-
-Method descriptions
--------------------
+.. _set_rand_dist:
 
 set_rand_dist()
-^^^^^^^^^^^^^^^
+---------------
 Configures the randomization distribution to be used with the rand() functions. ::
 
     set_rand_dist(rand_dist)
@@ -32,8 +21,10 @@ Configures the randomization distribution to be used with the rand() functions. 
     my_rand.set_rand_dist(GAUSSIAN);
 
 
+.. _set_scope:
+
 set_scope()
-^^^^^^^^^^^
+-----------
 Configures the scope used in the log messages. ::
 
     set_scope(scope)
@@ -50,8 +41,10 @@ Configures the scope used in the log messages. ::
     my_rand.set_scope("MY_SCOPE");
 
 
+.. _set_rand_seeds:
+
 set_rand_seeds()
-^^^^^^^^^^^^^^^^
+----------------
 Configures the randomization seeds. ::
 
     set_rand_seeds(str)
@@ -78,8 +71,10 @@ Configures the randomization seeds. ::
     my_rand.set_rand_seeds(seed_vector);
 
 
+.. _get_rand_seeds:
+
 get_rand_seeds()
-^^^^^^^^^^^^^^^^
+----------------
 Returns the randomization seeds. ::
 
     get_rand_seeds(seed1, seed2)
@@ -98,18 +93,23 @@ Returns the randomization seeds. ::
 .. code-block::
 
     Examples:
-    my_rand.get_rand_seeds(seed1, seed2)
-    seed_vector := my_rand.get_rand_seeds(VOID)
+    my_rand.get_rand_seeds(seed1, seed2);
+    seed_vector := my_rand.get_rand_seeds(VOID);
 
+
+.. _rand_int:
 
 rand() {int}
-^^^^^^^^^^^^
+------------
 Returns a random integer value. ::
 
-    integer := rand(min_value, max_value, [msg_id_panel])
-    integer := rand(set_type, set_values, [msg_id_panel])
-    integer := rand(min_value, max_value, set_type, set_values, [msg_id_panel])
-    integer := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [msg_id_panel])
+    integer := rand(min_value, max_value, [cyclic_mode, [msg_id_panel]])
+    integer := rand(set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type, set_value, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type1, set_value1, set_type2, set_value2, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type1, set_value1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                                   |
@@ -118,9 +118,13 @@ Returns a random integer value. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_set_type`            | Defines how to handle the set_values in relation to the range |
+| constant | set_type           | in     | :ref:`t_set_type`            | Defines how to handle the set of values                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | integer_vector               | A set of values to generate the random number                 |
+| constant | set_value          | in     | integer                      | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controlles verbosity within a specified scope                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -128,20 +132,27 @@ Returns a random integer value. ::
 .. code-block::
 
     Examples:
-    rand_int := my_rand.rand(0, 50)
-    rand_int := my_rand.rand(ONLY, (0,10,40,50))
-    rand_int := my_rand.rand(0, 50, INCL,(60,70,80))
-    rand_int := my_rand.rand(0, 50, EXCL,(25,35))
-    rand_int := my_rand.rand(0, 50, INCL,(60,70,80), EXCL,(25,35))
+    rand_int := my_rand.rand(0, 50);
+    rand_int := my_rand.rand(ONLY, (0,10,40,50));
+    rand_int := my_rand.rand(0, 50, INCL,(60));
+    rand_int := my_rand.rand(0, 50, EXCL,(25,35));
+    rand_int := my_rand.rand(0, 50, INCL,(60), EXCL,(25));
+    rand_int := my_rand.rand(0, 50, INCL,(60), EXCL,(25,35));
+    rand_int := my_rand.rand(0, 50, INCL,(60,70,80), EXCL,(25,35), CYCLIC);
 
+
+.. _rand_real:
 
 rand() {real}
-^^^^^^^^^^^^^
+-------------
 Returns a random real value. ::
 
     real := rand(min_value, max_value, [msg_id_panel])
     real := rand(set_type, set_values, [msg_id_panel])
+    real := rand(min_value, max_value, set_type, set_value, [msg_id_panel])
     real := rand(min_value, max_value, set_type, set_values, [msg_id_panel])
+    real := rand(min_value, max_value, set_type1, set_value1, set_type2, set_value2, [msg_id_panel])
+    real := rand(min_value, max_value, set_type1, set_value1, set_type2, set_values2, [msg_id_panel])
     real := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -151,9 +162,11 @@ Returns a random real value. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | real                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_set_type`            | Defines how to handle the set_values in relation to the range |
+| constant | set_type           | in     | :ref:`t_set_type`            | Defines how to handle the set of values                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | real_vector                  | A set of values to generate the random number                 |
+| constant | set_value          | in     | real                         | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_values         | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controlles verbosity within a specified scope                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -161,8 +174,10 @@ Returns a random real value. ::
 .. code-block::
 
     Examples:
-    rand_real := my_rand.rand(0.0, 9.99)
-    rand_real := my_rand.rand(ONLY, (0.0,1.0,1.5,2.0))
-    rand_real := my_rand.rand(0, 9.99, INCL,(0.0,1.0,1.5,2.0))
-    rand_real := my_rand.rand(0, 9.99, EXCL,(5.0,6.0))
-    rand_real := my_rand.rand(0, 9.99, INCL,(0.0,1.0,1.5,2.0), EXCL,(5.0,6.0))
+    rand_real := my_rand.rand(0.0, 9.99);
+    rand_real := my_rand.rand(ONLY, (0.0,1.0,1.5,2.0));
+    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0));
+    rand_real := my_rand.rand(0.0, 9.99, EXCL,(5.0,6.0));
+    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0), EXCL,(5.0));
+    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0), EXCL,(5.0,6.0));
+    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0,30.0,40.0), EXCL,(5.0,6.0));

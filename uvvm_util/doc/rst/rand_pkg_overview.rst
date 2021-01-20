@@ -1,0 +1,128 @@
+Advanced randomization
+======================
+The functionality for advanced randomization can be found in *uvvm_util/src/rand_pkg.vhd*.
+
+To generate a random value using this package it is necessary to import the utility library, create a variable with the protected 
+type *t_rand* and call the ``rand()`` function from the variable.
+
+.. code-block::
+    :linenos:
+
+    library uvvm_util;
+    context uvvm_util.uvvm_util_context;
+
+    p_main : process
+      variable my_rand : t_rand;
+    begin
+      -- Generate a random value between 0 and 255
+      addr := my_rand.rand(0, 255);
+      ...
+
+Constraints
+-----------
+
+There are different ways of constraining the random value in a clear and consistent manner:
+
+.. code-block::
+
+    -- 1. min & max values
+    addr := my_rand.rand(0, 99); -- Generates a value between 0 and 99
+    -- 2. set of values
+    addr := my_rand.rand(ONLY,(0,5,10)); -- Generates a value which is either 0, 5 or 10
+    -- 3. min & max + set of values
+    addr := my_rand.rand(0, 50, INCL,(60,70,80)); -- Generates a value between 0 and 50 and either 60, 70 or 80
+    addr := my_rand.rand(0, 50, EXCL,(25));       -- Generates a value between 0 and 50 except for 25
+    -- 4. min & max + two sets of values
+    addr := my_rand.rand(0, 50, INCL,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
+
+Types
+-----
+
+The ``rand()`` function can return the following types:
+
+    * :ref:`integer <rand_int>`
+    * integer_vector
+    * :ref:`real <rand_real>`
+    * real_vector
+    * time
+    * time_vector
+    * unsigned
+    * signed
+    * std_logic_vector
+    * std_logic
+    * boolean
+
+When returning a vector type (integer, real or time) it is possible to generate unique random values for each element of the vector 
+by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function:
+
+.. code-block::
+
+    addr_vec := my_rand.rand(addr_vec'length, 0, 50, UNIQUE);
+
+Seeds
+-----
+
+Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They 
+can be initialized using any string or two positive values.
+
+.. code-block::
+
+    my_rand.set_rand_seeds("STRING");
+    my_rand.set_rand_seeds(10, 100);
+
+Cyclic generation
+-----------------
+
+By setting the parameter *cyclic_mode = CYCLIC* in the ``rand()`` function, it is possible to generate random values which will
+not repeat until all the values within the constraints have been generated. Once this happens, the process starts over.
+
+* The supported types are integer, integer_vector, unsigned, signed and std_logic_vector.
+* Note that the state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function with different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
+* Also note that when using a large range of values it might slow down the simulation as it requires more iterations to find the missing values.
+
+Distributions
+-------------
+
+By default, the Uniform distribution is used with the ``rand()`` function, however it is also possible to select other distributions
+with the procedure ``set_rand_dist()``.
+
+Gaussian (Normal)
+^^^^^^^^^^^^^^^^^
+* Only the min/max constraints are supported when using this distribution.
+* Cannot be combined with cyclic or unique parameters.
+* Cannot be combined with weighted randomization functions.
+* The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
+* To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures.
+* If not configured, the mean will be (max-min)/2 and the std_deviation will be (max-min)/6.
+
+Weighted
+^^^^^^^^
+This distribution does NOT use the ``set_rand_dist()`` procedure, but instead uses different randomization functions with constraints
+of (value + weight) or (range of values + weight). Note that the sum of all weights need not be 100 since the probability = weight/sum_of_weights.
+
+When specifying a weight for a range of values there are two possible scenarios:
+
+#. Combined weight: The given weight is divided into the number of values within the range and each value is assigned a fraction of it.
+#. Individual weight: The given weight is assigned equally to each value within the range.
+
+The default mode is COMBINED_WEIGHT, however this can be changed using the ``set_range_weight_default_mode()`` procedure. Alternatively,
+it is possible to explicitly define the mode in the ``rand_range_weight_mode()`` function.
+
+.. code-block::
+
+    -- 1. value, weight
+    my_rand.rand_val_weight(((-5,10),(0,30),(5,60))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
+    -- 2. range(min/max), weight
+    my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with their corresponding weights and default mode
+    -- 3. range(min/max), weight, weight mode
+    my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with their corresponding weights and explicit modes
+
+The supported types are integer, real, time, unsigned, signed and std_logic_vector.
+
+Additional info
+---------------
+
+Log messages within the procedures and functions in the *rand_pkg* use the msg_id ID_RAND_GEN which is disabled by default.
+
+The default scope for log messages in the *rand_pkg* is C_SCOPE defined in adaptations_pkg, it can be updated using the procedure
+``set_scope()``.

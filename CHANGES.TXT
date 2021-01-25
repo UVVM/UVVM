@@ -18,6 +18,7 @@ Released: 2021-xx-xx
 - Minor update in uart_receive example in VVC QuickRef.
 - Removed duplicate setting of shared_vvc_cmd.operation in several VVC procedures and vvc_generator script.
 - Added new line charecter in compile order txt files.
+- Updated the GPIO VVC QR with information on how to use the VVC as input, output or inout.
 
 
 v2 2020.12.21

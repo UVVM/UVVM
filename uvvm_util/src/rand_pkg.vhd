@@ -1375,8 +1375,7 @@ package body rand_pkg is
       constant proc_call       : in    string;
       constant ext_proc_call   : in    string;
       variable new_proc_call   : inout line;
-      constant msg_id_panel    : in    t_msg_id_panel;
-      constant print_log       : in    boolean := true) is
+      constant msg_id_panel    : in    t_msg_id_panel) is
     begin
       -- Called directly from sequencer/VVC
       if ext_proc_call = "" then
@@ -1394,7 +1393,7 @@ package body rand_pkg is
       constant ext_proc_call   : in    string;
       variable new_proc_call   : inout line) is
     begin
-      log_proc_call(ID_NEVER, proc_call, ext_proc_call, new_proc_call, shared_msg_id_panel, false);
+      log_proc_call(ID_NEVER, proc_call, ext_proc_call, new_proc_call, shared_msg_id_panel);
     end procedure;
 
     -- Checks that the parameters are within a valid range

@@ -30,7 +30,7 @@ package funct_cov_pkg is
 
   constant C_MAX_NUM_CROSS_BINS  : positive := 15;
   --TODO: move to adaptations_pkg?
-  constant C_MAX_NUM_BINS        : positive := 100;
+  constant C_MAX_NUM_BINS        : positive := 100; --Q: make it possible to grow?
   constant C_MAX_NUM_BIN_VALUES  : positive := 10;
   constant C_MAX_BIN_NAME_LENGTH : positive := 20;
 
@@ -38,7 +38,7 @@ package funct_cov_pkg is
   -- Types
   ------------------------------------------------------------
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
-  type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE);
+  type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE); --TODO: use
 
   type t_new_bin is record
     contains   : t_cov_bin_type;
@@ -47,19 +47,16 @@ package funct_cov_pkg is
   end record;
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
-  type t_cross_bin is record
+  type t_bin is record
     contains       : t_cov_bin_type;
     values         : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
     num_values     : natural;
     transition_idx : natural;
   end record;
-  type t_cross_bin_vector is array (natural range <>) of t_cross_bin;
+  type t_bin_vector is array (natural range <>) of t_bin;
 
   type t_cov_bin is record
-    contains       : t_cov_bin_type;
-    values         : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
-    num_values     : natural;
-    transition_idx : natural;
+    cross_bins     : t_bin_vector(0 to C_MAX_NUM_CROSS_BINS-1);
     hits           : natural;
     min_hits       : natural;
     weight         : natural;
@@ -67,14 +64,6 @@ package funct_cov_pkg is
   end record;
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
 
-  type t_cov_cross is record
-    bins           : t_cross_bin_vector(0 to C_MAX_NUM_CROSS_BINS-1);
-    hits           : natural;
-    min_hits       : natural;
-    weight         : natural;
-    name           : string(1 to C_MAX_BIN_NAME_LENGTH);
-  end record;
-  type t_cov_cross_vector is array (natural range <>) of t_cov_cross;
 
   ------------------------------------------------------------
   -- Functions
@@ -187,11 +176,12 @@ package funct_cov_pkg is
     -- Randomization
     ------------------------------------------------------------
     impure function rand(
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer;
 
     impure function rand(
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
     return integer_vector;
 
     ------------------------------------------------------------
@@ -203,7 +193,8 @@ package funct_cov_pkg is
 
     procedure sample_coverage(
       constant values        : in integer_vector;
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "");
 
     procedure print_summary(
       constant VOID : in t_void);
@@ -400,10 +391,6 @@ package body funct_cov_pkg is
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_invalid_bins_idx              : natural := 0;
     variable priv_num_bins_crossed              : integer := -1;
-    variable priv_cross                         : t_cov_cross_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_cross_idx                     : natural := 0;
-    variable priv_invalid_cross                 : t_cov_cross_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_invalid_cross_idx             : natural := 0;
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer := -1;
     variable priv_rand_transition_bin_value_idx : natural := 0;
@@ -476,7 +463,7 @@ package body funct_cov_pkg is
 
     -- Overload
     impure function to_string(
-      bins           : t_cross_bin_vector;
+      bins           : t_bin_vector;
       use_in_summary : boolean := false)
     return string is
       variable v_new_bin_vector : t_new_bin_vector(bins'range);
@@ -489,73 +476,20 @@ package body funct_cov_pkg is
       return to_string(v_new_bin_vector, use_in_summary);
     end function;
 
-    -- Overload
-    impure function to_string(
-      bins           : t_cov_bin_vector;
-      use_in_summary : boolean := false)
-    return string is
-      variable v_new_bin_vector : t_new_bin_vector(bins'range);
+    -- Generates the correct procedure call to be used for logging or alerts
+    procedure create_proc_call(
+      constant proc_call     : in    string;
+      constant ext_proc_call : in    string;
+      variable new_proc_call : inout line) is
     begin
-      for i in v_new_bin_vector'range loop
-        v_new_bin_vector(i).contains   := bins(i).contains;
-        v_new_bin_vector(i).values     := bins(i).values;
-        v_new_bin_vector(i).num_values := bins(i).num_values;
-      end loop;
-      return to_string(v_new_bin_vector, use_in_summary);
-    end function;
-
-    -- Returns the string representation of the bin content
-    function to_string(
-      bin_type       : t_cov_bin_type;
-      bin_values     : integer_vector;
-      bin_num_values : natural)
-    return string is
-      variable v_line   : line;
-      variable v_result : string(1 to 100);
-      variable v_width  : natural;
-    begin
-      case bin_type is
-        when VAL | VAL_IGNORE | VAL_ILLEGAL =>
-          if bin_type = VAL_IGNORE then
-            write(v_line, string'("IGN"));
-          elsif bin_type = VAL_ILLEGAL then
-            write(v_line, string'("ILL"));
-          end if;
-          write(v_line, '(');
-          for i in 0 to bin_num_values-1 loop
-            write(v_line, to_string(bin_values(i)));
-            if i < bin_num_values-1 then
-              write(v_line, string'(","));
-            end if;
-          end loop;
-        when RAN | RAN_IGNORE | RAN_ILLEGAL =>
-          if bin_type = RAN_IGNORE then
-            write(v_line, string'("IGN"));
-          elsif bin_type = RAN_ILLEGAL then
-            write(v_line, string'("ILL"));
-          end if;
-          write(v_line, '(' & to_string(bin_values(0)) & " to " & to_string(bin_values(1)));
-        when TRN | TRN_IGNORE | TRN_ILLEGAL =>
-          if bin_type = TRN_IGNORE then
-            write(v_line, string'("IGN"));
-          elsif bin_type = TRN_ILLEGAL then
-            write(v_line, string'("ILL"));
-          end if;
-          write(v_line, '(');
-          for i in 0 to bin_num_values-1 loop
-            write(v_line, to_string(bin_values(i)));
-            if i < bin_num_values-1 then
-              write(v_line, string'("->"));
-            end if;
-          end loop;
-      end case;
-      write(v_line, ')');
-
-      v_width := v_line'length;
-      v_result(1 to v_width) := v_line.all;
-      deallocate(v_line);
-      return v_result(1 to v_width);
-    end function;
+      -- Called directly from sequencer/VVC
+      if ext_proc_call = "" then
+        write(new_proc_call, proc_call);
+      -- Called from another procedure
+      else
+        write(new_proc_call, ext_proc_call);
+      end if;
+    end procedure;
 
     ------------------------------------------------------------
     -- Configuration
@@ -588,27 +522,34 @@ package body funct_cov_pkg is
     begin
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
 
+      -- The number of bins crossed is set on the first call and can't be changed
+      if priv_num_bins_crossed = -1 then
+        priv_num_bins_crossed := 1;
+      elsif priv_num_bins_crossed /= 1 then
+        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Cannot mix different number of crossed bins.", priv_scope.all);
+      end if;
+
       -- Store the bins in the corresponding bin structure
       for i in bin'range loop
         if bin(i).contains = VAL or bin(i).contains = RAN or bin(i).contains = TRN then
-          priv_bins(priv_bins_idx).contains                   := bin(i).contains;
-          priv_bins(priv_bins_idx).values                     := bin(i).values;
-          priv_bins(priv_bins_idx).num_values                 := bin(i).num_values;
-          priv_bins(priv_bins_idx).transition_idx             := 0;
-          priv_bins(priv_bins_idx).hits                       := 0;
-          priv_bins(priv_bins_idx).min_hits                   := min_cov;
-          priv_bins(priv_bins_idx).weight                     := rand_weight;
-          priv_bins(priv_bins_idx).name(1 to bin_name'length) := bin_name;
+          priv_bins(priv_bins_idx).cross_bins(0).contains       := bin(i).contains;
+          priv_bins(priv_bins_idx).cross_bins(0).values         := bin(i).values;
+          priv_bins(priv_bins_idx).cross_bins(0).num_values     := bin(i).num_values;
+          priv_bins(priv_bins_idx).cross_bins(0).transition_idx := 0;
+          priv_bins(priv_bins_idx).hits                         := 0;
+          priv_bins(priv_bins_idx).min_hits                     := min_cov;
+          priv_bins(priv_bins_idx).weight                       := rand_weight;
+          priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
           priv_bins_idx := priv_bins_idx + 1;
         else
-          priv_invalid_bins(priv_invalid_bins_idx).contains                   := bin(i).contains;
-          priv_invalid_bins(priv_invalid_bins_idx).values                     := bin(i).values;
-          priv_invalid_bins(priv_invalid_bins_idx).num_values                 := bin(i).num_values;
-          priv_invalid_bins(priv_invalid_bins_idx).transition_idx             := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).hits                       := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).min_hits                   := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).weight                     := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length) := bin_name;
+          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).contains       := bin(i).contains;
+          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).values         := bin(i).values;
+          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).num_values     := bin(i).num_values;
+          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).transition_idx := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).weight                       := 0;
+          priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
           priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
         end if;
       end loop;
@@ -656,33 +597,33 @@ package body funct_cov_pkg is
           if (bin1(i).contains = VAL or bin1(i).contains = RAN or bin1(i).contains = TRN) and
              (bin2(j).contains = VAL or bin2(j).contains = RAN or bin2(j).contains = TRN)
           then
-            priv_cross(priv_cross_idx).bins(0).contains           := bin1(i).contains;
-            priv_cross(priv_cross_idx).bins(0).values             := bin1(i).values;
-            priv_cross(priv_cross_idx).bins(0).num_values         := bin1(i).num_values;
-            priv_cross(priv_cross_idx).bins(0).transition_idx     := 0;
-            priv_cross(priv_cross_idx).bins(1).contains           := bin2(j).contains;
-            priv_cross(priv_cross_idx).bins(1).values             := bin2(j).values;
-            priv_cross(priv_cross_idx).bins(1).num_values         := bin2(j).num_values;
-            priv_cross(priv_cross_idx).bins(1).transition_idx     := 0;
-            priv_cross(priv_cross_idx).hits                       := 0;
-            priv_cross(priv_cross_idx).min_hits                   := min_cov;
-            priv_cross(priv_cross_idx).weight                     := rand_weight;
-            priv_cross(priv_cross_idx).name(1 to bin_name'length) := bin_name;
-            priv_cross_idx := priv_cross_idx + 1;
+            priv_bins(priv_bins_idx).cross_bins(0).contains       := bin1(i).contains;
+            priv_bins(priv_bins_idx).cross_bins(0).values         := bin1(i).values;
+            priv_bins(priv_bins_idx).cross_bins(0).num_values     := bin1(i).num_values;
+            priv_bins(priv_bins_idx).cross_bins(0).transition_idx := 0;
+            priv_bins(priv_bins_idx).cross_bins(1).contains       := bin2(j).contains;
+            priv_bins(priv_bins_idx).cross_bins(1).values         := bin2(j).values;
+            priv_bins(priv_bins_idx).cross_bins(1).num_values     := bin2(j).num_values;
+            priv_bins(priv_bins_idx).cross_bins(1).transition_idx := 0;
+            priv_bins(priv_bins_idx).hits                         := 0;
+            priv_bins(priv_bins_idx).min_hits                     := min_cov;
+            priv_bins(priv_bins_idx).weight                       := rand_weight;
+            priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
+            priv_bins_idx := priv_bins_idx + 1;
           else
-            priv_invalid_cross(priv_invalid_cross_idx).bins(0).contains           := bin1(i).contains;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(0).values             := bin1(i).values;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(0).num_values         := bin1(i).num_values;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(0).transition_idx     := 0;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(1).contains           := bin2(j).contains;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(1).values             := bin2(j).values;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(1).num_values         := bin2(j).num_values;
-            priv_invalid_cross(priv_invalid_cross_idx).bins(1).transition_idx     := 0;
-            priv_invalid_cross(priv_invalid_cross_idx).hits                       := 0;
-            priv_invalid_cross(priv_invalid_cross_idx).min_hits                   := 0;
-            priv_invalid_cross(priv_invalid_cross_idx).weight                     := 0;
-            priv_invalid_cross(priv_invalid_cross_idx).name(1 to bin_name'length) := bin_name;
-            priv_invalid_cross_idx := priv_invalid_cross_idx + 1;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).contains       := bin1(i).contains;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).values         := bin1(i).values;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).num_values     := bin1(i).num_values;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).transition_idx := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).contains       := bin2(j).contains;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).values         := bin2(j).values;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).num_values     := bin2(j).num_values;
+            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).transition_idx := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).weight                       := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
+            priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
           end if;
         end loop;
       end loop;
@@ -692,15 +633,31 @@ package body funct_cov_pkg is
     -- Randomization
     ------------------------------------------------------------
     impure function rand(
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer is
+      constant C_LOCAL_CALL  : string := "rand()";
+      variable v_ret         : integer_vector(0 to 0);
+    begin
+      v_ret := rand(msg_id_panel, C_LOCAL_CALL);
+      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope.all, msg_id_panel);
+      return v_ret(0);
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return integer_vector is
       constant C_LOCAL_CALL      : string := "rand()";
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);
       variable v_acc_weight      : integer := 0;
       variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
       variable v_bin_idx         : integer;
-      variable v_ret             : integer;
+      variable v_ret             : integer_vector(0 to priv_num_bins_crossed-1);
     begin
+      if priv_num_bins_crossed = -1 then
+        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Coverage point has not been initialized", priv_scope.all);
+      end if;
+
       -- A transition bin returns all the transition values before allowing to select a different bin value
       if priv_rand_transition_bin_idx /= -1 then
         v_bin_idx := priv_rand_transition_bin_idx;
@@ -726,97 +683,28 @@ package body funct_cov_pkg is
         v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);
       end if;
 
-      -- Select the random bin value to return (ignore and illegal bin values are never selected)
-      if priv_bins(v_bin_idx).contains = VAL then
-        if priv_bins(v_bin_idx).num_values = 1 then
-          v_ret := priv_bins(v_bin_idx).values(0);
-        else
-          for i in 0 to priv_bins(v_bin_idx).num_values-1 loop
-            v_values_vec(i) := priv_bins(v_bin_idx).values(i);
-          end loop;
-          v_ret := priv_rand_gen.rand(ONLY, v_values_vec(0 to priv_bins(v_bin_idx).num_values-1), NON_CYCLIC, msg_id_panel);
-        end if;
-      elsif priv_bins(v_bin_idx).contains = RAN then
-        v_ret := priv_rand_gen.rand(priv_bins(v_bin_idx).values(0), priv_bins(v_bin_idx).values(1), NON_CYCLIC, msg_id_panel);
-      elsif priv_bins(v_bin_idx).contains = TRN then
-        if priv_rand_transition_bin_idx = -1 then
-          v_ret := priv_bins(v_bin_idx).values(0);
-          priv_rand_transition_bin_value_idx := 1;
-          priv_rand_transition_bin_idx       := v_bin_idx;
-        else
-          v_ret := priv_bins(priv_rand_transition_bin_idx).values(priv_rand_transition_bin_value_idx);
-          if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).num_values-1 then
-            priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
-          else
-            priv_rand_transition_bin_idx       := -1;
-            priv_rand_transition_bin_value_idx := 0;
-          end if;
-        end if;
-      else
-        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).contains)), priv_scope.all);
-      end if;
-
-      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
-      return v_ret;
-    end function;
-
-    impure function rand(
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel)
-    return integer_vector is
-      constant C_LOCAL_CALL      : string := "rand()";
-      variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_cross_idx-1);
-      variable v_acc_weight      : integer := 0;
-      variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
-      variable v_bin_idx         : integer;
-      variable v_ret             : integer_vector(0 to priv_num_bins_crossed-1);
-    begin
-      -- A transition bin returns all the transition values before allowing to select a different bin value
-      if priv_rand_transition_bin_idx /= -1 then
-        v_bin_idx := priv_rand_transition_bin_idx;
-      else
-        -- Assign each bin a randomization weight
-        for i in 0 to priv_cross_idx-1 loop
-          v_bin_weight_list(i).value := i;
-          if priv_cross(i).hits < priv_cross(i).min_hits then
-            v_bin_weight_list(i).weight := priv_cross(i).weight;
-          else
-            v_bin_weight_list(i).weight := 0;
-          end if;
-          v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
-        end loop;
-        -- When all bins have reached their min_hits re-enable valid bins for selection
-        if v_acc_weight = 0 then
-          for i in 0 to priv_cross_idx-1 loop
-            v_bin_weight_list(i).weight := priv_cross(i).weight;
-          end loop;
-        end if;
-
-        -- Choose a random bin index
-        v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);
-      end if;
-
       -- Select the random bin values to return (ignore and illegal bin values are never selected)
       for i in 0 to priv_num_bins_crossed-1 loop
         v_values_vec := (others => 0);
-        if priv_cross(v_bin_idx).bins(i).contains = VAL then
-          if priv_cross(v_bin_idx).bins(i).num_values = 1 then
-            v_ret(i) := priv_cross(v_bin_idx).bins(i).values(0);
+        if priv_bins(v_bin_idx).cross_bins(i).contains = VAL then
+          if priv_bins(v_bin_idx).cross_bins(i).num_values = 1 then
+            v_ret(i) := priv_bins(v_bin_idx).cross_bins(i).values(0);
           else
-            for j in 0 to priv_cross(v_bin_idx).bins(i).num_values-1 loop
-              v_values_vec(j) := priv_cross(v_bin_idx).bins(i).values(j);
+            for j in 0 to priv_bins(v_bin_idx).cross_bins(i).num_values-1 loop
+              v_values_vec(j) := priv_bins(v_bin_idx).cross_bins(i).values(j);
             end loop;
-            v_ret(i) := priv_rand_gen.rand(ONLY, v_values_vec(0 to priv_cross(v_bin_idx).bins(i).num_values-1), NON_CYCLIC, msg_id_panel);
+            v_ret(i) := priv_rand_gen.rand(ONLY, v_values_vec(0 to priv_bins(v_bin_idx).cross_bins(i).num_values-1), NON_CYCLIC, msg_id_panel);
           end if;
-        elsif priv_cross(v_bin_idx).bins(i).contains = RAN then
-          v_ret(i) := priv_rand_gen.rand(priv_cross(v_bin_idx).bins(i).values(0), priv_cross(v_bin_idx).bins(i).values(1), NON_CYCLIC, msg_id_panel);
-        elsif priv_cross(v_bin_idx).bins(i).contains = TRN then
+        elsif priv_bins(v_bin_idx).cross_bins(i).contains = RAN then
+          v_ret(i) := priv_rand_gen.rand(priv_bins(v_bin_idx).cross_bins(i).values(0), priv_bins(v_bin_idx).cross_bins(i).values(1), NON_CYCLIC, msg_id_panel);
+        elsif priv_bins(v_bin_idx).cross_bins(i).contains = TRN then
           if priv_rand_transition_bin_idx = -1 then
-            v_ret(i) := priv_cross(v_bin_idx).bins(i).values(0);
+            v_ret(i) := priv_bins(v_bin_idx).cross_bins(i).values(0);
             priv_rand_transition_bin_idx       := v_bin_idx;
             priv_rand_transition_bin_value_idx := 1;
           else
-            v_ret(i) := priv_cross(priv_rand_transition_bin_idx).bins(i).values(priv_rand_transition_bin_value_idx);
-            if priv_rand_transition_bin_value_idx < priv_cross(priv_rand_transition_bin_idx).bins(i).num_values-1 then
+            v_ret(i) := priv_bins(priv_rand_transition_bin_idx).cross_bins(i).values(priv_rand_transition_bin_value_idx);
+            if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).cross_bins(i).num_values-1 then
               priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
             else
               priv_rand_transition_bin_idx       := -1;
@@ -824,11 +712,14 @@ package body funct_cov_pkg is
             end if;
           end if;
         else
-          alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_cross(v_bin_idx).bins(i).contains)), priv_scope.all);
+          alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).cross_bins(i).contains)), priv_scope.all);
         end if;
       end loop;
 
-      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
+      -- Do not print log message when being called from another function
+      if ext_proc_call = "" then
+        log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
+      end if;
       return v_ret;
     end function;
 
@@ -838,138 +729,70 @@ package body funct_cov_pkg is
     procedure sample_coverage(
       constant value         : in integer;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL     : string := "sample_coverage(" & to_string(value) & ")";
-      variable v_invalid_sample : boolean := false;
+      constant C_LOCAL_CALL  : string := "sample_coverage(" & to_string(value) & ")";
+      variable v_values      : integer_vector(0 to 0) := (0 => value);
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
-
-      -- Check if the value should be ignored or is illegal
-      l_bin_loop : for i in 0 to priv_invalid_bins_idx-1 loop
-        case priv_invalid_bins(i).contains is
-          when VAL_IGNORE | VAL_ILLEGAL =>
-            for j in 0 to priv_invalid_bins(i).num_values-1 loop
-              if value = priv_invalid_bins(i).values(j) then
-                v_invalid_sample := true;
-                priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
-                if priv_invalid_bins(i).contains = VAL_ILLEGAL then
-                  alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_bins(i to i)), priv_scope.all);
-                  exit l_bin_loop;
-                end if;
-              end if;
-            end loop;
-          when RAN_IGNORE | RAN_ILLEGAL =>
-            if value >= priv_invalid_bins(i).values(0) and value <= priv_invalid_bins(i).values(1) then
-              v_invalid_sample := true;
-              priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
-              if priv_invalid_bins(i).contains = RAN_ILLEGAL then
-                alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_bins(i to i)), priv_scope.all);
-                exit l_bin_loop;
-              end if;
-            end if;
-          when TRN_IGNORE | TRN_ILLEGAL =>
-            if value = priv_invalid_bins(i).values(priv_invalid_bins(i).transition_idx) then
-              if priv_invalid_bins(i).transition_idx < priv_invalid_bins(i).num_values-1 then
-                priv_invalid_bins(i).transition_idx := priv_invalid_bins(i).transition_idx + 1;
-              else
-                v_invalid_sample := true;
-                priv_invalid_bins(i).transition_idx := 0;
-                priv_invalid_bins(i).hits           := priv_invalid_bins(i).hits + 1;
-                if priv_invalid_bins(i).contains = TRN_ILLEGAL then
-                  alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_bins(i to i)), priv_scope.all);
-                  exit l_bin_loop;
-                end if;
-              end if;
-            else
-              priv_invalid_bins(i).transition_idx := 0;
-            end if;
-          when others =>
-            alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).contains)), priv_scope.all);
-        end case;
-      end loop;
-
-      -- Check if the value is in the valid bins
-      if not(v_invalid_sample) then
-        for i in 0 to priv_bins_idx-1 loop
-          case priv_bins(i).contains is
-            when VAL =>
-              for j in 0 to priv_bins(i).num_values-1 loop
-                if value = priv_bins(i).values(j) then
-                  priv_bins(i).hits := priv_bins(i).hits + 1;
-                end if;
-              end loop;
-            when RAN =>
-              if value >= priv_bins(i).values(0) and value <= priv_bins(i).values(1) then
-                priv_bins(i).hits := priv_bins(i).hits + 1;
-              end if;
-            when TRN =>
-              if value = priv_bins(i).values(priv_bins(i).transition_idx) then
-                if priv_bins(i).transition_idx < priv_bins(i).num_values-1 then
-                  priv_bins(i).transition_idx := priv_bins(i).transition_idx + 1;
-                else
-                  priv_bins(i).transition_idx := 0;
-                  priv_bins(i).hits           := priv_bins(i).hits + 1;
-                end if;
-              else
-                priv_bins(i).transition_idx := 0;
-              end if;
-            when others =>
-              alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).contains)), priv_scope.all);
-          end case;
-        end loop;
-      end if;
+      sample_coverage(v_values, msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
     procedure sample_coverage(
       constant values        : in integer_vector;
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL        : string := "sample_coverage(" & to_string(values) & ")";
+      variable v_proc_call         : line;
       variable v_invalid_sample    : boolean := false;
       variable v_value_match       : std_logic_vector(0 to priv_num_bins_crossed-1) := (others => '0');
       variable v_illegal_match_idx : integer := -1;
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
 
-      check_value(values'length, priv_num_bins_crossed, TB_FAILURE, "Number of values does not match the number of crossed bins.", priv_scope.all, ID_NEVER, msg_id_panel, C_LOCAL_CALL);
+      if priv_num_bins_crossed = -1 then
+        alert(TB_FAILURE, v_proc_call.all & "=> Failed. Coverage point has not been initialized", priv_scope.all);
+      elsif priv_num_bins_crossed /= values'length then
+        alert(TB_FAILURE, v_proc_call.all & "=> Failed. Number of values does not match the number of crossed bins", priv_scope.all);
+      end if;
 
       -- Check if the values should be ignored or are illegal
-      l_cross_bin_loop : for i in 0 to priv_invalid_cross_idx-1 loop
+      l_bin_loop : for i in 0 to priv_invalid_bins_idx-1 loop
         for j in 0 to priv_num_bins_crossed-1 loop
-          case priv_invalid_cross(i).bins(j).contains is
+          case priv_invalid_bins(i).cross_bins(j).contains is
             when VAL | VAL_IGNORE | VAL_ILLEGAL =>
-              for k in 0 to priv_invalid_cross(i).bins(j).num_values-1 loop
-                if values(j) = priv_invalid_cross(i).bins(j).values(k) then
+              for k in 0 to priv_invalid_bins(i).cross_bins(j).num_values-1 loop
+                if values(j) = priv_invalid_bins(i).cross_bins(j).values(k) then
                   v_value_match(j)    := '1';
-                  v_illegal_match_idx := j when priv_invalid_cross(i).bins(j).contains = VAL_ILLEGAL;
+                  v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = VAL_ILLEGAL;
                 end if;
               end loop;
             when RAN | RAN_IGNORE | RAN_ILLEGAL =>
-              if values(j) >= priv_invalid_cross(i).bins(j).values(0) and values(j) <= priv_invalid_cross(i).bins(j).values(1) then
+              if values(j) >= priv_invalid_bins(i).cross_bins(j).values(0) and values(j) <= priv_invalid_bins(i).cross_bins(j).values(1) then
                 v_value_match(j)    := '1';
-                v_illegal_match_idx := j when priv_invalid_cross(i).bins(j).contains = RAN_ILLEGAL;
+                v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = RAN_ILLEGAL;
               end if;
             when TRN | TRN_IGNORE | TRN_ILLEGAL =>
-              if values(j) = priv_invalid_cross(i).bins(j).values(priv_invalid_cross(i).bins(j).transition_idx) then
-                if priv_invalid_cross(i).bins(j).transition_idx < priv_invalid_cross(i).bins(j).num_values-1 then
-                  priv_invalid_cross(i).bins(j).transition_idx := priv_invalid_cross(i).bins(j).transition_idx + 1;
+              if values(j) = priv_invalid_bins(i).cross_bins(j).values(priv_invalid_bins(i).cross_bins(j).transition_idx) then
+                if priv_invalid_bins(i).cross_bins(j).transition_idx < priv_invalid_bins(i).cross_bins(j).num_values-1 then
+                  priv_invalid_bins(i).cross_bins(j).transition_idx := priv_invalid_bins(i).cross_bins(j).transition_idx + 1;
                 else
-                  priv_invalid_cross(i).bins(j).transition_idx := 0;
+                  priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
                   v_value_match(j)    := '1';
-                  v_illegal_match_idx := j when priv_invalid_cross(i).bins(j).contains = TRN_ILLEGAL;
+                  v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = TRN_ILLEGAL;
                 end if;
               else
-                priv_invalid_cross(i).bins(j).transition_idx := 0;
+                priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
               end if;
             when others =>
-              alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_cross(i).bins(j).contains)), priv_scope.all);
+              alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope.all);
           end case;
         end loop;
 
         if and(v_value_match) = '1' then
           v_invalid_sample := true;
-          priv_invalid_cross(i).hits := priv_invalid_cross(i).hits + 1;
+          priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
           if v_illegal_match_idx /= -1 then
-            alert(TB_WARNING, C_LOCAL_CALL & "=> Sampled " & to_string(priv_invalid_cross(i).bins(v_illegal_match_idx to v_illegal_match_idx)), priv_scope.all);
-            exit l_cross_bin_loop;
+            alert(TB_WARNING, v_proc_call.all & "=> Sampled " & to_string(priv_invalid_bins(i).cross_bins(v_illegal_match_idx to v_illegal_match_idx)), priv_scope.all);
+            exit l_bin_loop;
           end if;
         end if;
         v_value_match       := (others => '0');
@@ -978,37 +801,37 @@ package body funct_cov_pkg is
 
       -- Check if the values are in the valid bins
       if not(v_invalid_sample) then
-        for i in 0 to priv_cross_idx-1 loop
+        for i in 0 to priv_bins_idx-1 loop
           for j in 0 to priv_num_bins_crossed-1 loop
-            case priv_cross(i).bins(j).contains is
+            case priv_bins(i).cross_bins(j).contains is
               when VAL =>
-                for k in 0 to priv_cross(i).bins(j).num_values-1 loop
-                  if values(j) = priv_cross(i).bins(j).values(k) then
+                for k in 0 to priv_bins(i).cross_bins(j).num_values-1 loop
+                  if values(j) = priv_bins(i).cross_bins(j).values(k) then
                     v_value_match(j) := '1';
                   end if;
                 end loop;
               when RAN =>
-                if values(j) >= priv_cross(i).bins(j).values(0) and values(j) <= priv_cross(i).bins(j).values(1) then
+                if values(j) >= priv_bins(i).cross_bins(j).values(0) and values(j) <= priv_bins(i).cross_bins(j).values(1) then
                   v_value_match(j) := '1';
                 end if;
               when TRN =>
-                if values(j) = priv_cross(i).bins(j).values(priv_cross(i).bins(j).transition_idx) then
-                  if priv_cross(i).bins(j).transition_idx < priv_cross(i).bins(j).num_values-1 then
-                    priv_cross(i).bins(j).transition_idx := priv_cross(i).bins(j).transition_idx + 1;
+                if values(j) = priv_bins(i).cross_bins(j).values(priv_bins(i).cross_bins(j).transition_idx) then
+                  if priv_bins(i).cross_bins(j).transition_idx < priv_bins(i).cross_bins(j).num_values-1 then
+                    priv_bins(i).cross_bins(j).transition_idx := priv_bins(i).cross_bins(j).transition_idx + 1;
                   else
-                    priv_cross(i).bins(j).transition_idx := 0;
+                    priv_bins(i).cross_bins(j).transition_idx := 0;
                     v_value_match(j) := '1';
                   end if;
                 else
-                  priv_cross(i).bins(j).transition_idx := 0;
+                  priv_bins(i).cross_bins(j).transition_idx := 0;
                 end if;
               when others =>
-                alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_cross(i).bins(j).contains)), priv_scope.all);
+                alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope.all);
             end case;
           end loop;
 
           if and(v_value_match) = '1' then
-            priv_cross(i).hits := priv_cross(i).hits + 1;
+            priv_bins(i).hits := priv_bins(i).hits + 1;
           end if;
           v_value_match := (others => '0');
         end loop;
@@ -1018,6 +841,7 @@ package body funct_cov_pkg is
 
     --Q: use same report as scoreboard?
     --Q: how to handle bins with several values? make COLUMN_WIDTH for BINS bigger than others - how big?, truncate and add "..."
+    --Q: always write to log and file? do like log and have a generic name and possible to modify?
     procedure print_summary(
       constant VOID : in t_void) is
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
@@ -1028,25 +852,14 @@ package body funct_cov_pkg is
       variable v_line_copy        : line;
       variable v_log_extra_space  : integer := 0;
 
-      function is_bin_covered(bin : t_cov_bin) return string is
+      function is_bin_covered(cov_bin : t_cov_bin) return string is
       begin
-        if bin.contains = VAL_ILLEGAL or bin.contains = RAN_ILLEGAL or bin.contains = TRN_ILLEGAL then
-          return "-";
-        elsif bin.hits >= bin.min_hits then
-          return "YES";
-        else
-          return "NO";
-        end if;
-      end function;
-
-      function is_bin_covered(cross : t_cov_cross) return string is
-      begin
-        for i in cross.bins'range loop
-          if cross.bins(i).contains = VAL_ILLEGAL or cross.bins(i).contains = RAN_ILLEGAL or cross.bins(i).contains = TRN_ILLEGAL then
+        for i in cov_bin.cross_bins'range loop
+          if cov_bin.cross_bins(i).contains = VAL_ILLEGAL or cov_bin.cross_bins(i).contains = RAN_ILLEGAL or cov_bin.cross_bins(i).contains = TRN_ILLEGAL then
             return "-";
           end if;
         end loop;
-        if cross.hits >= cross.min_hits then
+        if cov_bin.hits >= cov_bin.min_hits then
           return "YES";
         else
           return "NO";
@@ -1115,7 +928,7 @@ package body funct_cov_pkg is
       for i in 0 to priv_bins_idx-1 loop
         write(v_line, justify(
           fill_string(' ', 5) &
-          justify(to_string(priv_bins(i).contains, priv_bins(i).values, priv_bins(i).num_values), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1128,38 +941,12 @@ package body funct_cov_pkg is
       for i in 0 to priv_invalid_bins_idx-1 loop
         write(v_line, justify(
           fill_string(' ', 5) &
-          justify(to_string(priv_invalid_bins(i).contains, priv_invalid_bins(i).values, priv_invalid_bins(i).num_values), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+          justify(to_string(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_invalid_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_invalid_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_invalid_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(to_string(priv_invalid_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
           justify(is_bin_covered(priv_invalid_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-          left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-      end loop;
-
-      -- Print cross bins
-      for i in 0 to priv_cross_idx-1 loop
-        write(v_line, justify(
-          fill_string(' ', 5) &
-          justify(to_string(priv_cross(i).bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_cross(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_cross(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_cross(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_cross(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(is_bin_covered(priv_cross(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-          left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-      end loop;
-
-      -- Print cross invalid bins
-      for i in 0 to priv_invalid_cross_idx-1 loop
-        write(v_line, justify(
-          fill_string(' ', 5) &
-          justify(to_string(priv_invalid_cross(i).bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_cross(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_cross(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_cross(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_cross(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(is_bin_covered(priv_invalid_cross(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
           left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
       end loop;
 

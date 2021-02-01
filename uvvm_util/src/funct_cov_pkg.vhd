@@ -46,6 +46,7 @@ package funct_cov_pkg is
     num_values : natural;
   end record;
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
+  type t_new_bin_array is array (natural range <>) of t_new_bin_vector(0 to C_MAX_NUM_BINS-1);
 
   type t_bin is record
     contains       : t_cov_bin_type;
@@ -167,6 +168,15 @@ package funct_cov_pkg is
     procedure add_cross(
       constant bin1          : in t_new_bin_vector;
       constant bin2          : in t_new_bin_vector;
+      constant min_cov       : in positive;
+      constant rand_weight   : in natural;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_vector;
+      constant bin2          : in t_new_bin_vector;
+      constant bin3          : in t_new_bin_vector;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
@@ -491,6 +501,77 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
+    -- Checks that the number of bins used does not change
+    procedure check_num_bins_crossed(
+      constant num_bins_crossed : in natural;
+      constant local_call       : in string) is
+    begin
+      -- The number of bins crossed is set on the first call and can't be changed
+      if priv_num_bins_crossed = -1 then
+        priv_num_bins_crossed := num_bins_crossed;
+      elsif priv_num_bins_crossed /= num_bins_crossed then
+        alert(TB_FAILURE, local_call & "=> Failed. Cannot mix different number of crossed bins.", priv_scope.all);
+      end if;
+    end procedure;
+
+    -- Adds bins in a recursive way
+    procedure add_bins_recursive(
+      constant bin_array     : in    t_new_bin_array;
+      constant bin_array_len : in    integer_vector;
+      constant bin_array_idx : in    integer;
+      variable idx_reg       : inout integer_vector;
+      constant min_cov       : in    positive;
+      constant rand_weight   : in    natural;
+      constant bin_name      : in    string) is
+      constant C_NUM_CROSS_BINS : natural := bin_array'length;
+      variable v_bin_is_valid   : boolean := true;
+    begin
+      -- Iterate through the bins in the current array element
+      for i in 0 to bin_array_len(bin_array_idx)-1 loop
+        -- Store the bin index for the current element of the array
+        idx_reg(bin_array_idx) := i;
+        -- Last element of the array has been reached, add bins
+        if bin_array_idx = C_NUM_CROSS_BINS-1 then
+          -- Check that all the bins being added are valid
+          for j in 0 to C_NUM_CROSS_BINS-1 loop
+            v_bin_is_valid := v_bin_is_valid and (bin_array(j)(idx_reg(j)).contains = VAL or
+                                                  bin_array(j)(idx_reg(j)).contains = RAN or
+                                                  bin_array(j)(idx_reg(j)).contains = TRN);
+          end loop;
+          -- Store valid bins
+          if v_bin_is_valid then
+            for j in 0 to C_NUM_CROSS_BINS-1 loop
+              priv_bins(priv_bins_idx).cross_bins(j).contains       := bin_array(j)(idx_reg(j)).contains;
+              priv_bins(priv_bins_idx).cross_bins(j).values         := bin_array(j)(idx_reg(j)).values;
+              priv_bins(priv_bins_idx).cross_bins(j).num_values     := bin_array(j)(idx_reg(j)).num_values;
+              priv_bins(priv_bins_idx).cross_bins(j).transition_idx := 0;
+            end loop;
+            priv_bins(priv_bins_idx).hits                         := 0;
+            priv_bins(priv_bins_idx).min_hits                     := min_cov;
+            priv_bins(priv_bins_idx).weight                       := rand_weight;
+            priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
+            priv_bins_idx := priv_bins_idx + 1;
+          -- Store ignore or illegal bins
+          else
+            for j in 0 to C_NUM_CROSS_BINS-1 loop
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).contains       := bin_array(j)(idx_reg(j)).contains;
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).values         := bin_array(j)(idx_reg(j)).values;
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).num_values     := bin_array(j)(idx_reg(j)).num_values;
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).transition_idx := 0;
+            end loop;
+            priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := min_cov;
+            priv_invalid_bins(priv_invalid_bins_idx).weight                       := rand_weight;
+            priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
+            priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
+          end if;
+        -- Go to the next element of the array
+        else
+          add_bins_recursive(bin_array, bin_array_len, bin_array_idx+1, idx_reg, min_cov, rand_weight, bin_name);
+        end if;
+      end loop;
+    end procedure;
+
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
@@ -519,40 +600,19 @@ package body funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_bins(" & to_string(bin) & ", min_cov:" & to_string(min_cov) &
         ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS : natural := 1;
+      variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_bin_array_len  : integer_vector(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
 
-      -- The number of bins crossed is set on the first call and can't be changed
-      if priv_num_bins_crossed = -1 then
-        priv_num_bins_crossed := 1;
-      elsif priv_num_bins_crossed /= 1 then
-        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Cannot mix different number of crossed bins.", priv_scope.all);
-      end if;
+      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
 
-      -- Store the bins in the corresponding bin structure
-      for i in bin'range loop
-        if bin(i).contains = VAL or bin(i).contains = RAN or bin(i).contains = TRN then
-          priv_bins(priv_bins_idx).cross_bins(0).contains       := bin(i).contains;
-          priv_bins(priv_bins_idx).cross_bins(0).values         := bin(i).values;
-          priv_bins(priv_bins_idx).cross_bins(0).num_values     := bin(i).num_values;
-          priv_bins(priv_bins_idx).cross_bins(0).transition_idx := 0;
-          priv_bins(priv_bins_idx).hits                         := 0;
-          priv_bins(priv_bins_idx).min_hits                     := min_cov;
-          priv_bins(priv_bins_idx).weight                       := rand_weight;
-          priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
-          priv_bins_idx := priv_bins_idx + 1;
-        else
-          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).contains       := bin(i).contains;
-          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).values         := bin(i).values;
-          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).num_values     := bin(i).num_values;
-          priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).transition_idx := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).weight                       := 0;
-          priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
-          priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
-        end if;
-      end loop;
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      v_bin_array(0)(0 to bin'length-1) := bin;
+      v_bin_array_len(0) := bin'length;
+      add_bins_recursive(v_bin_array, v_bin_array_len, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
 
     procedure add_bins(
@@ -579,54 +639,52 @@ package body funct_cov_pkg is
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & to_string(bin1) & "),(" & to_string(bin2) & "), min_cov:" & to_string(min_cov) &
-        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross((" & to_string(bin1) & "),(" & to_string(bin2) &
+        "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS : natural := 2;
+      variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_bin_array_len  : integer_vector(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
 
-      -- The number of bins crossed is set on the first call and can't be changed
-      if priv_num_bins_crossed = -1 then
-        priv_num_bins_crossed := 2;
-      elsif priv_num_bins_crossed /= 2 then
-        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Cannot mix different number of crossed bins.", priv_scope.all);
-      end if;
+      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
 
-      -- Store the crossed bins in the corresponding bin structure
-      for i in bin1'range loop
-        for j in bin2'range loop
-          if (bin1(i).contains = VAL or bin1(i).contains = RAN or bin1(i).contains = TRN) and
-             (bin2(j).contains = VAL or bin2(j).contains = RAN or bin2(j).contains = TRN)
-          then
-            priv_bins(priv_bins_idx).cross_bins(0).contains       := bin1(i).contains;
-            priv_bins(priv_bins_idx).cross_bins(0).values         := bin1(i).values;
-            priv_bins(priv_bins_idx).cross_bins(0).num_values     := bin1(i).num_values;
-            priv_bins(priv_bins_idx).cross_bins(0).transition_idx := 0;
-            priv_bins(priv_bins_idx).cross_bins(1).contains       := bin2(j).contains;
-            priv_bins(priv_bins_idx).cross_bins(1).values         := bin2(j).values;
-            priv_bins(priv_bins_idx).cross_bins(1).num_values     := bin2(j).num_values;
-            priv_bins(priv_bins_idx).cross_bins(1).transition_idx := 0;
-            priv_bins(priv_bins_idx).hits                         := 0;
-            priv_bins(priv_bins_idx).min_hits                     := min_cov;
-            priv_bins(priv_bins_idx).weight                       := rand_weight;
-            priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
-            priv_bins_idx := priv_bins_idx + 1;
-          else
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).contains       := bin1(i).contains;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).values         := bin1(i).values;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).num_values     := bin1(i).num_values;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(0).transition_idx := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).contains       := bin2(j).contains;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).values         := bin2(j).values;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).num_values     := bin2(j).num_values;
-            priv_invalid_bins(priv_invalid_bins_idx).cross_bins(1).transition_idx := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).weight                       := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
-            priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
-          end if;
-        end loop;
-      end loop;
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      v_bin_array(0)(0 to bin1'length-1) := bin1;
+      v_bin_array(1)(0 to bin2'length-1) := bin2;
+      v_bin_array_len(0) := bin1'length;
+      v_bin_array_len(1) := bin2'length;
+      add_bins_recursive(v_bin_array, v_bin_array_len, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+    end procedure;
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_vector;
+      constant bin2          : in t_new_bin_vector;
+      constant bin3          : in t_new_bin_vector;
+      constant min_cov       : in positive;
+      constant rand_weight   : in natural;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross((" & to_string(bin1) & "),(" & to_string(bin2) & "),(" & to_string(bin3) &
+        "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS : natural := 3;
+      variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_bin_array_len  : integer_vector(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
+    begin
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+
+      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      v_bin_array(0)(0 to bin1'length-1) := bin1;
+      v_bin_array(1)(0 to bin2'length-1) := bin2;
+      v_bin_array(2)(0 to bin3'length-1) := bin3;
+      v_bin_array_len(0) := bin1'length;
+      v_bin_array_len(1) := bin2'length;
+      v_bin_array_len(2) := bin3'length;
+      add_bins_recursive(v_bin_array, v_bin_array_len, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
 
     ------------------------------------------------------------

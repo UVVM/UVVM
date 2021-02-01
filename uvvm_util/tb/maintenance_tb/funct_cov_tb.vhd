@@ -36,11 +36,13 @@ begin
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
-    variable v_cov_point : t_cov_point;
-    variable v_cov_cross : t_cov_point;
-    variable v_value     : integer;
-    variable v_values    : integer_vector(0 to 1);
-    variable v_slv       : std_logic_vector(1 downto 0);
+    variable v_cov_point    : t_cov_point;
+    variable v_cov_cross_x2 : t_cov_point;
+    variable v_cov_cross_x3 : t_cov_point;
+    variable v_value        : integer;
+    variable v_values_x2    : integer_vector(0 to 1);
+    variable v_values_x3    : integer_vector(0 to 2);
+    variable v_slv          : std_logic_vector(1 downto 0);
 
   begin
 
@@ -54,6 +56,11 @@ begin
     --===================================================================================
     if GC_TESTCASE = "test" then
     --===================================================================================
+      --log(ID_LOG_HDR, "Testing uninitialized cov_point");
+      --v_value := v_cov_point.rand;
+      --v_cov_point.sample_coverage(5);
+      --v_cov_point.print_summary(VOID);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing add_bin()");
       ------------------------------------------------------------
@@ -92,6 +99,7 @@ begin
       v_cov_point.sample_coverage(8);
       v_cov_point.sample_coverage(200);
       v_cov_point.sample_coverage(201);
+      increment_expected_alerts(TB_WARNING, 1);
       v_cov_point.sample_coverage(300);
       v_cov_point.sample_coverage(301);
       v_cov_point.sample_coverage(255);
@@ -102,7 +110,7 @@ begin
       --------------------------------------------------------------
       --log(ID_LOG_HDR, "Testing rand()");
       --------------------------------------------------------------
-      --enable_log_msg(ID_RAND_GEN);
+      ----enable_log_msg(ID_RAND_GEN);
 
       --v_cov_point.add_bins(bin(5), 5, 2, "val1");
       --v_cov_point.add_bins(bin((10,12,14)), 5, 1, "val2");
@@ -153,37 +161,50 @@ begin
       --v_cov_point.print_summary(VOID);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing cross");
+      log(ID_LOG_HDR, "Testing cross x2");
       ------------------------------------------------------------
-      v_cov_cross.add_cross(bin_range(253, 254), bin_range(50, 100, 2), 2, 10, "crossbin1");
-      v_cov_cross.sample_coverage((253,50));
+      v_cov_cross_x2.add_cross(bin_range(253, 254), bin_range(50, 100, 2), 2, 10, "crossbin1");
+      v_cov_cross_x2.sample_coverage((253,50));
 
       for i in 0 to 9 loop
-        v_values := v_cov_cross.rand;
-        v_cov_cross.sample_coverage(v_values);
+        v_values_x2 := v_cov_cross_x2.rand;
+        v_cov_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
-      v_cov_cross.add_cross(bin(100), bin_transition((1, 5, 10)), 2, 10, "crossbin2");
-      v_cov_cross.sample_coverage((100,1));
-      v_cov_cross.sample_coverage((100,5));
-      v_cov_cross.sample_coverage((100,10));
+      v_cov_cross_x2.add_cross(bin(100), bin_transition((1, 5, 10)), 2, 10, "crossbin2");
+      v_cov_cross_x2.sample_coverage((100,1));
+      v_cov_cross_x2.sample_coverage((100,5));
+      v_cov_cross_x2.sample_coverage((100,10));
 
       for i in 0 to 9 loop
-        v_values := v_cov_cross.rand;
-        v_cov_cross.sample_coverage(v_values);
+        v_values_x2 := v_cov_cross_x2.rand;
+        v_cov_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
-      v_cov_cross.add_cross(illegal_bin(500) & bin(100), bin_range(2, 3), 2, 10, "crossbin3");
+      v_cov_cross_x2.add_cross(illegal_bin(500) & bin(100), bin_range(2, 3), 2, 10, "crossbin3");
       increment_expected_alerts(TB_WARNING, 1);
-      v_cov_cross.sample_coverage((500,3));
+      v_cov_cross_x2.sample_coverage((500,3));
 
-      v_cov_cross.add_cross(bin(100), illegal_bin_transition((12, 13, 14)), 2, 10, "crossbin4");
+      v_cov_cross_x2.add_cross(bin(100), illegal_bin_transition((12, 13, 14)), 2, 10, "crossbin4");
       increment_expected_alerts(TB_WARNING, 1);
-      v_cov_cross.sample_coverage((100,12));
-      v_cov_cross.sample_coverage((100,13));
-      v_cov_cross.sample_coverage((100,14));
+      v_cov_cross_x2.sample_coverage((100,12));
+      v_cov_cross_x2.sample_coverage((100,13));
+      v_cov_cross_x2.sample_coverage((100,14));
 
-      v_cov_cross.print_summary(VOID);
+      v_cov_cross_x2.print_summary(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross x3");
+      ------------------------------------------------------------
+      v_cov_cross_x3.add_cross(illegal_bin(5), bin((20,30)), bin_range(50,52), 4, 10, "crossbin1");
+      v_cov_cross_x3.add_cross(bin_range(253, 254), bin_range(50, 100, 2), bin_range(500, 501), 2, 10, "crossbin1");
+      v_cov_cross_x3.add_cross(bin(10), bin((20,30)), bin_range(50,52), 4, 10, "crossbin1");
+      for i in 0 to 9 loop
+        v_values_x3 := v_cov_cross_x3.rand;
+        v_cov_cross_x3.sample_coverage(v_values_x3);
+      end loop;
+
+      v_cov_cross_x3.print_summary(VOID);
 
     end if;
 

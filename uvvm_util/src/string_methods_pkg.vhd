@@ -350,6 +350,11 @@ package string_methods_pkg is
     msg : string
   ) return string;
 
+  -- Returns a string with a timestamp and a text. Used in report headers
+  function timestamp_header(
+    value : time;
+    txt   : string) return string;
+
 end package string_methods_pkg;
 
 
@@ -1295,13 +1300,28 @@ package body string_methods_pkg is
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
+
+      -- helper function to prevent null arrays
+      function get_string_len(val : t_slv_array) return integer is
+        variable v_parantheses            : integer := 2; -- parentheses
+        variable v_commas                 : integer := 0; -- commas
+        variable v_radix_prefix           : integer := 0; -- Radix prefixes
+        variable v_max_array_element_len  : integer := 0; -- Maximum length of the array elements
+        variable v_max_ext_msg_len        : integer := 0; -- Extra length of element in case of potential message "too wide to convert to integer"
+      begin
+        if val'length > 0 then
+          v_commas          := 2 * (val'length - 1);
+          v_radix_prefix    := 3 * val'length;
+          v_max_ext_msg_len := 14 * val'length;
+          if val'low >= 0 then
+            v_max_array_element_len := val(val'low)'length * val'length;
+          end if;
+        end if;
+        return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len + v_max_ext_msg_len);
+      end function;
+
     variable v_line   : line;
-    variable v_result : string(1 to 2 +                         -- parentheses
-                               2*(val'length - 1) +             -- commas
-                               3*val'length +                   -- Radix prefixes
-                               val'element'length*val'length +  -- Maximum length of the array elements
-                               14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
-                              ); 
+    variable v_result : string(1 to get_string_len(val)); 
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1335,13 +1355,28 @@ package body string_methods_pkg is
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
+
+      -- helper function to prevent null arrays
+      function get_string_len(val : t_signed_array) return integer is
+        variable v_parantheses            : integer := 2; -- parentheses
+        variable v_commas                 : integer := 0; -- commas
+        variable v_radix_prefix           : integer := 0; -- Radix prefixes
+        variable v_max_array_element_len  : integer := 0; -- Maximum length of the array elements
+        variable v_max_ext_msg_len        : integer := 0; -- Extra length of element in case of potential message "too wide to convert to integer"
+      begin
+        if val'length > 0 then
+          v_commas          := 2 * (val'length - 1);
+          v_radix_prefix    := 3 * val'length;
+          v_max_ext_msg_len := 14 * val'length;
+          if val'low >= 0 then
+            v_max_array_element_len := val(val'low)'length * val'length;
+          end if;
+        end if;
+        return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len + v_max_ext_msg_len);
+      end function;
+
     variable v_line   : line;
-    variable v_result : string(1 to 2 +                         -- parentheses
-                               2*(val'length - 1) +             -- commas + space
-                               3*val'length +                   -- Radix prefixes + ""
-                               val'element'length*val'length +  -- Maximum length of the array elements
-                               14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
-                              );
+    variable v_result : string(1 to get_string_len(val)); 
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1375,13 +1410,28 @@ package body string_methods_pkg is
     format  : t_format_zeros := KEEP_LEADING_0;  -- | SKIP_LEADING_0
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string is
+
+      -- helper function to prevent null arrays
+      function get_string_len(val : t_unsigned_array) return integer is
+        variable v_parantheses            : integer := 2; -- parentheses
+        variable v_commas                 : integer := 0; -- commas
+        variable v_radix_prefix           : integer := 0; -- Radix prefixes
+        variable v_max_array_element_len  : integer := 0; -- Maximum length of the array elements
+        variable v_max_ext_msg_len        : integer := 0; -- Extra length of element in case of potential message "too wide to convert to integer"
+      begin
+        if val'length > 0 then
+          v_commas          := 2 * (val'length - 1);
+          v_radix_prefix    := 3 * val'length;
+          v_max_ext_msg_len := 14 * val'length;
+          if val'low >= 0 then
+            v_max_array_element_len := val(val'low)'length * val'length;
+          end if;
+        end if;
+        return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len + v_max_ext_msg_len);
+      end function;
+
     variable v_line   : line;
-    variable v_result : string(1 to 2 +             -- parentheses
-                               2*(val'length - 1) +             -- commas
-                               3*val'length +                   -- Radix prefixes
-                               val'element'length*val'length +  -- Maximum length of the array elements
-                               14*val'length                    -- Extra length of element in case of potential message "too wide to convert to integer"
-                              );
+    variable v_result : string(1 to get_string_len(val));              
     variable v_width  : natural;
   begin
     if val'length = 0 then
@@ -1741,8 +1791,6 @@ package body string_methods_pkg is
     end if;
   end;
 
-
-
   function add_msg_delimiter(
     msg : string
   ) return string is
@@ -1758,4 +1806,40 @@ package body string_methods_pkg is
     end if;
     return "";
   end;
+
+  -- Returns a string with a timestamp and a text. Used in report headers
+  function timestamp_header(
+    value : time;
+    txt   : string) return string is
+    variable v_line             : line;
+    variable v_delimiter_pos    : natural;
+    variable v_timestamp_width  : natural;
+    variable v_result           : string(1 to 50);
+    variable v_return           : string(1 to txt'length) := txt;
+  begin
+    -- get a time stamp
+    write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
+    v_timestamp_width := v_line'length;
+    v_result(1 to v_timestamp_width) := v_line.all;
+    deallocate(v_line);
+    v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
+
+    -- truncate decimals and add units
+    if v_delimiter_pos > 0 then
+      if C_LOG_TIME_BASE = ns then
+        v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ns";
+      else
+        v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ps";
+      end if;
+      v_timestamp_width := v_delimiter_pos + 4;
+    end if;
+    -- add a space after the timestamp
+    v_timestamp_width := v_timestamp_width + 1;
+    v_result(v_timestamp_width to v_timestamp_width) := " ";
+
+    -- add time string to return string
+    v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
+    return v_return(1 to txt'length);
+  end function timestamp_header;
+
 end package body string_methods_pkg;

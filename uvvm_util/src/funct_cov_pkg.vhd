@@ -206,6 +206,14 @@ package funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
 
+    impure function get_coverage(
+      constant VOID : t_void)
+    return real;
+
+    impure function coverage_complete(
+      constant VOID : t_void)
+    return boolean;
+
     procedure print_summary(
       constant VOID : in t_void);
 
@@ -484,6 +492,58 @@ package body funct_cov_pkg is
         v_new_bin_vector(i).num_values := bins(i).num_values;
       end loop;
       return to_string(v_new_bin_vector, use_in_summary);
+    end function;
+
+    -- Returns true if the bin is ignored
+    impure function is_bin_ignore(
+      constant bin : t_cov_bin)
+    return boolean is
+      variable v_is_ignore : boolean := false;
+    begin
+      for i in 0 to priv_num_bins_crossed-1 loop
+        v_is_ignore := v_is_ignore or (bin.cross_bins(i).contains = VAL_IGNORE or
+                                       bin.cross_bins(i).contains = RAN_IGNORE or
+                                       bin.cross_bins(i).contains = TRN_IGNORE);
+      end loop;
+      return v_is_ignore;
+    end function;
+
+    -- Returns true if the bin is illegal
+    impure function is_bin_illegal(
+      constant bin : t_cov_bin)
+    return boolean is
+      variable v_is_illegal : boolean := false;
+    begin
+      for i in 0 to priv_num_bins_crossed-1 loop
+        v_is_illegal := v_is_illegal or (bin.cross_bins(i).contains = VAL_ILLEGAL or
+                                         bin.cross_bins(i).contains = RAN_ILLEGAL or
+                                         bin.cross_bins(i).contains = TRN_ILLEGAL);
+      end loop;
+      return v_is_illegal;
+    end function;
+
+    -- Returns the number of covered bins
+    impure function get_num_covered_bins(
+      constant VOID : t_void)
+    return integer is
+      variable v_cnt : integer := 0;
+    begin
+      for i in 0 to priv_bins_idx-1 loop
+        v_cnt := v_cnt + 1 when priv_bins(i).hits >= priv_bins(i).min_hits;
+      end loop;
+      return v_cnt;
+    end function;
+
+    -- Returns the number of illegal bins
+    impure function get_num_illegal_bins(
+      constant VOID : t_void)
+    return integer is
+      variable v_cnt : integer := 0;
+    begin
+      for i in 0 to priv_invalid_bins_idx-1 loop
+        v_cnt := v_cnt + 1 when is_bin_illegal(priv_invalid_bins(i));
+      end loop;
+      return v_cnt;
     end function;
 
     -- Generates the correct procedure call to be used for logging or alerts
@@ -894,69 +954,61 @@ package body funct_cov_pkg is
           v_value_match := (others => '0');
         end loop;
       end if;
-
     end procedure;
 
-    --Q: use same report as scoreboard?
-    --Q: how to handle bins with several values? make COLUMN_WIDTH for BINS bigger than others - how big?, truncate and add "..."
+    impure function get_coverage(
+      constant VOID : t_void)
+    return real is
+      variable v_num_cov_bins : integer := 0;
+    begin
+      if priv_bins_idx > 0 then
+        v_num_cov_bins := get_num_covered_bins(VOID);
+        return real(v_num_cov_bins)*100.0/real(priv_bins_idx);
+      else
+        return 0.0;
+      end if;
+    end function;
+
+    --Q: is_covered/covered/coverage_complete
+    impure function coverage_complete(
+      constant VOID : t_void)
+    return boolean is
+      variable v_cov_complete : boolean := true;
+    begin
+      for i in 0 to priv_bins_idx-1 loop
+        if priv_bins(i).hits < priv_bins(i).min_hits then
+          v_cov_complete := false;
+          exit;
+        end if;
+      end loop;
+      return v_cov_complete;
+    end function;
+
     --Q: always write to log and file? do like log and have a generic name and possible to modify?
     procedure print_summary(
       constant VOID : in t_void) is
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
       constant C_HEADER           : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope.all) & " ***";
-      constant C_BIN_COLUMN_WIDTH : positive := 40;
+      constant C_BIN_COLUMN_WIDTH : positive := 40; --Q: how to handle when bins overflow the column? trucante and "..."? currently shifts everything
       constant C_COLUMN_WIDTH     : positive := 15;
       variable v_line             : line;
       variable v_line_copy        : line;
       variable v_log_extra_space  : integer := 0;
 
-      function is_bin_covered(cov_bin : t_cov_bin) return string is
+      impure function get_bin_status(cov_bin : t_cov_bin) return string is
       begin
-        for i in cov_bin.cross_bins'range loop
-          if cov_bin.cross_bins(i).contains = VAL_ILLEGAL or cov_bin.cross_bins(i).contains = RAN_ILLEGAL or cov_bin.cross_bins(i).contains = TRN_ILLEGAL then
-            return "-";
-          end if;
-        end loop;
-        if cov_bin.hits >= cov_bin.min_hits then
-          return "YES";
+        if is_bin_illegal(cov_bin) then
+          return "ILLEGAL";
+        elsif is_bin_ignore(cov_bin) then
+          return "IGNORE";
         else
-          return "NO";
+          if cov_bin.hits >= cov_bin.min_hits then
+            return "COVERED";
+          else
+            return "UNCOVERED";
+          end if;
         end if;
       end function;
-
-      --TODO: move this function from scoreboard to another package to reuse
-      -- add simulation time stamp to scoreboard report header
-      impure function timestamp_header(value : time; txt : string) return string is
-          variable v_line             : line;
-          variable v_delimiter_pos    : natural;
-          variable v_timestamp_width  : natural;
-          variable v_result           : string(1 to 50);
-          variable v_return           : string(1 to txt'length) := txt;
-        begin
-          -- get a time stamp
-          write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
-          v_timestamp_width := v_line'length;
-          v_result(1 to v_timestamp_width) := v_line.all;
-          deallocate(v_line);
-          v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
-
-          -- truncate decimals and add units
-          if v_delimiter_pos > 0 then
-            if C_LOG_TIME_BASE = ns then
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ns";
-            else
-              v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ps";
-            end if;
-            v_timestamp_width := v_delimiter_pos + 4;
-          end if;
-          -- add a space after the timestamp
-          v_timestamp_width := v_timestamp_width + 1;
-          v_result(v_timestamp_width to v_timestamp_width) := " ";
-
-          -- add time string to return string
-          v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
-          return v_return(1 to txt'length);
-        end function timestamp_header;
 
     begin
       -- Calculate how much space we can insert between the columns of the report
@@ -969,6 +1021,9 @@ package body funct_cov_pkg is
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                     timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+                    "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & " out of " & to_string(priv_bins_idx) & LF &
+                    "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
+                    "Coverage:       " & to_string(get_coverage(VOID),2) & "%" & LF &
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers
@@ -979,33 +1034,67 @@ package body funct_cov_pkg is
         justify("MIN_HITS" , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("WEIGHT"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("NAME"     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("COVERED"  , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+        justify("STATUS"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-      -- Print bins
-      for i in 0 to priv_bins_idx-1 loop
-        write(v_line, justify(
-          fill_string(' ', 5) &
-          justify(to_string(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(is_bin_covered(priv_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-          left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+      -- Print illegal bins
+      for i in 0 to priv_invalid_bins_idx-1 loop
+        if is_bin_illegal(priv_invalid_bins(i)) then
+          write(v_line, justify(
+            fill_string(' ', 5) &
+            justify(to_string(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_invalid_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+        end if;
       end loop;
 
-      -- Print invalid bins
+      -- Print ignore bins
       for i in 0 to priv_invalid_bins_idx-1 loop
-        write(v_line, justify(
-          fill_string(' ', 5) &
-          justify(to_string(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(to_string(priv_invalid_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-          justify(is_bin_covered(priv_invalid_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-          left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+        if is_bin_ignore(priv_invalid_bins(i)) then
+          write(v_line, justify(
+            fill_string(' ', 5) &
+            justify(to_string(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_invalid_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+        end if;
+      end loop;
+
+      -- Print uncovered bins
+      for i in 0 to priv_bins_idx-1 loop
+        if priv_bins(i).hits < priv_bins(i).min_hits then
+          write(v_line, justify(
+            fill_string(' ', 5) &
+            justify(to_string(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+        end if;
+      end loop;
+
+      -- Print covered bins
+      for i in 0 to priv_bins_idx-1 loop
+        if priv_bins(i).hits >= priv_bins(i).min_hits then
+          write(v_line, justify(
+            fill_string(' ', 5) &
+            justify(to_string(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).hits)     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).min_hits) , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)     , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_bins(i))     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+        end if;
       end loop;
 
       -- Print report bottom line

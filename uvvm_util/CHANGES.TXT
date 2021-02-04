@@ -9,7 +9,7 @@ v2.15.x
 Released: 2021-xx-xx
 - Fixed width detection method for to_string() functions that would make
   GHDL simulator fail or create null arrays.
-
+- Moved timestamp_header() function from generic_sb_pkg to string_methods_pkg.
 
 v2.15.1
 ----------

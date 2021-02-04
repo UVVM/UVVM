@@ -19,6 +19,7 @@ Released: 2021-xx-xx
 - Removed duplicate setting of shared_vvc_cmd.operation in several VVC procedures and vvc_generator script.
 - Added new line charecter in compile order txt files.
 - Updated the GPIO VVC QR with information on how to use the VVC as input, output or inout.
+- Moved timestamp_header() function from generic_sb_pkg to string_methods_pkg.
 
 
 v2 2020.12.21

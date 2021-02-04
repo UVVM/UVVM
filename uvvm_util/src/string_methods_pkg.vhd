@@ -272,6 +272,28 @@ package string_methods_pkg is
     prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
     ) return string;
 
+  impure function to_string(
+    val     : integer_vector;
+    radix   : t_radix        := DEC;
+    format  : t_format_zeros := SKIP_LEADING_0;  -- | KEEP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string;
+
+  impure function to_string(
+    val     : t_natural_vector;
+    radix   : t_radix        := DEC;
+    format  : t_format_zeros := SKIP_LEADING_0;  -- | KEEP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string;
+
+  function to_string(
+    val     : real_vector
+    ) return string;
+
+  function to_string(
+    val     : time_vector
+    ) return string;
+
   --========================================================
   -- Handle types defined at lower levels
   --========================================================
@@ -1420,6 +1442,121 @@ package body string_methods_pkg is
 
       for idx in val'range loop
         write(v_line, to_string(val(idx), radix, format, prefix));
+
+        if (idx < val'right) and (val'ascending) then
+          write(v_line, string'(", "));
+        elsif (idx > val'right) and not(val'ascending) then
+          write(v_line, string'(", "));
+        end if;
+
+      end loop;
+      write(v_line, string'(")"));
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end if;
+  end function;
+
+  impure function to_string(
+    val     : integer_vector;
+    radix   : t_radix        := DEC;
+    format  : t_format_zeros := SKIP_LEADING_0;  -- | KEEP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string is
+    variable v_line   : line;
+    variable v_result : string(1 to 2 +            -- parentheses
+                              2*(val'length - 1) + -- commas
+                              32*val'length);
+    variable v_width  : natural;
+  begin
+    if val'length = 0 then
+      return "";
+    else
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));
+
+      for idx in val'range loop
+        write(v_line, to_string(val(idx), radix, prefix, format));
+
+        if (idx < val'right) and (val'ascending) then
+          write(v_line, string'(", "));
+        elsif (idx > val'right) and not(val'ascending) then
+          write(v_line, string'(", "));
+        end if;
+
+      end loop;
+      write(v_line, string'(")"));
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end if;
+  end function;
+
+  impure function to_string(
+    val     : t_natural_vector;
+    radix   : t_radix        := DEC;
+    format  : t_format_zeros := SKIP_LEADING_0;  -- | KEEP_LEADING_0
+    prefix  : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+    ) return string is
+  begin
+    return to_string(integer_vector(val), radix, format, prefix);
+  end function;
+
+  function to_string(
+    val     : real_vector
+    ) return string is
+    variable v_line   : line;
+    variable v_result : string(1 to 2 +            -- parentheses
+                              2*(val'length - 1) + -- commas
+                              32*val'length);
+    variable v_width  : natural;
+  begin
+    if val'length = 0 then
+      return "";
+    else
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));
+
+      for idx in val'range loop
+        write(v_line, to_string(val(idx)));
+
+        if (idx < val'right) and (val'ascending) then
+          write(v_line, string'(", "));
+        elsif (idx > val'right) and not(val'ascending) then
+          write(v_line, string'(", "));
+        end if;
+
+      end loop;
+      write(v_line, string'(")"));
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end if;
+  end function;
+
+  function to_string(
+    val     : time_vector
+    ) return string is
+    variable v_line   : line;
+    variable v_result : string(1 to 2 +            -- parentheses
+                              2*(val'length - 1) + -- commas
+                              32*val'length);
+    variable v_width  : natural;
+  begin
+    if val'length = 0 then
+      return "";
+    else
+      -- Comma-separate all array members and return
+      write(v_line, string'("("));
+
+      for idx in val'range loop
+        write(v_line, to_string(val(idx)));
 
         if (idx < val'right) and (val'ascending) then
           write(v_line, string'(", "));

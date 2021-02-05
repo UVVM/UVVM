@@ -46,7 +46,14 @@ package funct_cov_pkg is
     num_values : natural;
   end record;
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
-  type t_new_bin_array is array (natural range <>) of t_new_bin_vector(0 to C_MAX_NUM_BINS-1);
+  constant C_EMPTY_NEW_BIN_VECTOR : t_new_bin_vector(0 to 0) := (0 => (contains => VAL, values => (others => 0), num_values => 0));
+
+  type t_new_cov_bin is record
+    bin_vector : t_new_bin_vector(0 to C_MAX_NUM_BINS-1); --Q: possible to not constrain here?
+    vector_len : natural;
+    --proc_call  : string;
+  end record;
+  type t_new_bin_array is array (natural range <>) of t_new_cov_bin;
 
   type t_bin is record
     contains       : t_cov_bin_type;
@@ -64,7 +71,6 @@ package funct_cov_pkg is
     name           : string(1 to C_MAX_BIN_NAME_LENGTH);
   end record;
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
-
 
   ------------------------------------------------------------
   -- Functions
@@ -577,10 +583,30 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
+    -- Creates a bin array from several bin vectors
+    procedure create_bin_array(
+      variable bin_array : out t_new_bin_array;
+      constant bin1      : in  t_new_bin_vector;
+      constant bin2      : in  t_new_bin_vector := C_EMPTY_NEW_BIN_VECTOR;
+      constant bin3      : in  t_new_bin_vector := C_EMPTY_NEW_BIN_VECTOR;
+      constant bin4      : in  t_new_bin_vector := C_EMPTY_NEW_BIN_VECTOR) is
+    begin
+      bin_array(0).bin_vector(0 to bin1'length-1) := bin1;
+      bin_array(0).vector_len                     := bin1'length;
+      if bin2 /= C_EMPTY_NEW_BIN_VECTOR then
+        bin_array(1).bin_vector(0 to bin2'length-1) := bin2;
+        bin_array(1).vector_len                     := bin2'length;
+      end if;
+      if bin3 /= C_EMPTY_NEW_BIN_VECTOR then
+        bin_array(2).bin_vector(0 to bin3'length-1) := bin3;
+        bin_array(2).vector_len                     := bin3'length;
+      end if;
+      -- TODO: add more bins
+    end procedure;
+
     -- Adds bins in a recursive way
     procedure add_bins_recursive(
       constant bin_array     : in    t_new_bin_array;
-      constant bin_array_len : in    integer_vector;
       constant bin_array_idx : in    integer;
       variable idx_reg       : inout integer_vector;
       constant min_cov       : in    positive;
@@ -590,23 +616,23 @@ package body funct_cov_pkg is
       variable v_bin_is_valid   : boolean := true;
     begin
       -- Iterate through the bins in the current array element
-      for i in 0 to bin_array_len(bin_array_idx)-1 loop
+      for i in 0 to bin_array(bin_array_idx).vector_len-1 loop
         -- Store the bin index for the current element of the array
         idx_reg(bin_array_idx) := i;
         -- Last element of the array has been reached, add bins
         if bin_array_idx = C_NUM_CROSS_BINS-1 then
           -- Check that all the bins being added are valid
           for j in 0 to C_NUM_CROSS_BINS-1 loop
-            v_bin_is_valid := v_bin_is_valid and (bin_array(j)(idx_reg(j)).contains = VAL or
-                                                  bin_array(j)(idx_reg(j)).contains = RAN or
-                                                  bin_array(j)(idx_reg(j)).contains = TRN);
+            v_bin_is_valid := v_bin_is_valid and (bin_array(j).bin_vector(idx_reg(j)).contains = VAL or
+                                                  bin_array(j).bin_vector(idx_reg(j)).contains = RAN or
+                                                  bin_array(j).bin_vector(idx_reg(j)).contains = TRN);
           end loop;
           -- Store valid bins
           if v_bin_is_valid then
             for j in 0 to C_NUM_CROSS_BINS-1 loop
-              priv_bins(priv_bins_idx).cross_bins(j).contains       := bin_array(j)(idx_reg(j)).contains;
-              priv_bins(priv_bins_idx).cross_bins(j).values         := bin_array(j)(idx_reg(j)).values;
-              priv_bins(priv_bins_idx).cross_bins(j).num_values     := bin_array(j)(idx_reg(j)).num_values;
+              priv_bins(priv_bins_idx).cross_bins(j).contains       := bin_array(j).bin_vector(idx_reg(j)).contains;
+              priv_bins(priv_bins_idx).cross_bins(j).values         := bin_array(j).bin_vector(idx_reg(j)).values;
+              priv_bins(priv_bins_idx).cross_bins(j).num_values     := bin_array(j).bin_vector(idx_reg(j)).num_values;
               priv_bins(priv_bins_idx).cross_bins(j).transition_idx := 0;
             end loop;
             priv_bins(priv_bins_idx).hits                         := 0;
@@ -617,9 +643,9 @@ package body funct_cov_pkg is
           -- Store ignore or illegal bins
           else
             for j in 0 to C_NUM_CROSS_BINS-1 loop
-              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).contains       := bin_array(j)(idx_reg(j)).contains;
-              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).values         := bin_array(j)(idx_reg(j)).values;
-              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).num_values     := bin_array(j)(idx_reg(j)).num_values;
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).contains       := bin_array(j).bin_vector(idx_reg(j)).contains;
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).values         := bin_array(j).bin_vector(idx_reg(j)).values;
+              priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).num_values     := bin_array(j).bin_vector(idx_reg(j)).num_values;
               priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).transition_idx := 0;
             end loop;
             priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
@@ -630,7 +656,7 @@ package body funct_cov_pkg is
           end if;
         -- Go to the next element of the array
         else
-          add_bins_recursive(bin_array, bin_array_len, bin_array_idx+1, idx_reg, min_cov, rand_weight, bin_name);
+          add_bins_recursive(bin_array, bin_array_idx+1, idx_reg, min_cov, rand_weight, bin_name);
         end if;
       end loop;
     end procedure;
@@ -665,17 +691,14 @@ package body funct_cov_pkg is
         ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 1;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
-      variable v_bin_array_len  : integer_vector(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
 
-      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
-
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      v_bin_array(0)(0 to bin'length-1) := bin;
-      v_bin_array_len(0) := bin'length;
-      add_bins_recursive(v_bin_array, v_bin_array_len, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+      create_bin_array(v_bin_array, bin);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
 
     procedure add_bins(
@@ -706,19 +729,14 @@ package body funct_cov_pkg is
         "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 2;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
-      variable v_bin_array_len  : integer_vector(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
 
-      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
-
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      v_bin_array(0)(0 to bin1'length-1) := bin1;
-      v_bin_array(1)(0 to bin2'length-1) := bin2;
-      v_bin_array_len(0) := bin1'length;
-      v_bin_array_len(1) := bin2'length;
-      add_bins_recursive(v_bin_array, v_bin_array_len, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+      create_bin_array(v_bin_array, bin1, bin2);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
 
     procedure add_cross(
@@ -733,21 +751,14 @@ package body funct_cov_pkg is
         "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 3;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
-      variable v_bin_array_len  : integer_vector(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
 
-      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
-
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      v_bin_array(0)(0 to bin1'length-1) := bin1;
-      v_bin_array(1)(0 to bin2'length-1) := bin2;
-      v_bin_array(2)(0 to bin3'length-1) := bin3;
-      v_bin_array_len(0) := bin1'length;
-      v_bin_array_len(1) := bin2'length;
-      v_bin_array_len(2) := bin3'length;
-      add_bins_recursive(v_bin_array, v_bin_array_len, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+      create_bin_array(v_bin_array, bin1, bin2, bin3);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
 
     ------------------------------------------------------------

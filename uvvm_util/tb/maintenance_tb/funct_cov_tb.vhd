@@ -88,6 +88,19 @@ begin
       v_cov_point.add_bins(illegal_bin(256), "illegal");
       v_cov_point.add_bins(bin(50) & bin((100,200,300)) & bin_range(50, 100, 2), 5, 2, "single_line");
 
+      -- test bin_range
+      --v_cov_point.add_bins(bin_range(1, 10, 1), "test1");
+      --v_cov_point.add_bins(bin_range(1, 10, 2), "test2");
+      --v_cov_point.add_bins(bin_range(1, 10, 4), "test3");
+      --v_cov_point.add_bins(bin_range(1, 10, 9), "test4");
+      --v_cov_point.add_bins(bin_range(1, 10, 10), "test5");
+      --v_cov_point.add_bins(bin_range(1, 10, 11), "test6");
+
+      --v_cov_point.add_bins(bin_range(10, 1), "test1");
+      --v_cov_point.add_bins(bin_range(10, 1, 1), "test1");
+      --v_cov_point.add_bins(bin_range(10, 1, 2), "test1");
+      --v_cov_point.add_bins(bin_range(10, 1, 11), "test1");
+
       v_cov_point.sample_coverage(0);
       v_cov_point.sample_coverage(1);
       v_cov_point.sample_coverage(3);

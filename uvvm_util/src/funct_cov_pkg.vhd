@@ -80,7 +80,6 @@ package funct_cov_pkg is
   return t_new_bin_vector;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
-  -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
   function bin_range(
     constant min_value  : integer;
     constant max_value  : integer;
@@ -251,50 +250,54 @@ package body funct_cov_pkg is
   end function;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
-  -- e.g. (0,10) -> 11 bins [0,1,2,...,10] // (0,10,1) -> 1 bin [0:10] // (0,10,2) -> 2 bins [0:5] [6:10]
-  --Q: if division has a residue, either leave it to the last bin or spread it among bins (OSSVM)
-  --   -- 1 to 2, 3 to 4, 5 to 6, 7 to 10
-  --   -- 1 to 2, 3 to 4, 5 to 7, 8 to 10
-  -- **10 /  1; = 10                -- 1 to 10
-  -- **10 /  2; = 5                 -- 1 to 5, 6 to 10
-  -- 10 /  4; = 2 (round down 2.5)  -- 1 to 2, 3 to 4, 5 to 6, 7 to 8
-  -- 10 /  9; = 1 (round down 1.1)
-  -- **10 / 10; = 1                 -- 1 to 1, 2 to 2, ...,  10 to 10
-  -- **10 / 11; = 0                 -- 1 to 1, 2 to 2, ...,  10 to 10
   function bin_range(
     constant min_value  : integer;
     constant max_value  : integer;
     constant num_bins   : natural := 0)
   return t_new_bin_vector is
-    constant C_RANGE_WIDTH : integer := (max_value - min_value + 1); --TODO: absolute value
-    variable v_div_range   : integer;
-    variable v_num_bins    : integer;
-    variable v_ret : t_new_bin_vector(0 to C_RANGE_WIDTH-1);
+    constant C_LOCAL_CALL : string := "bin_range(" & to_string(min_value) & "," & to_string(max_value) & "," & to_string(num_bins) & ")";
+    constant C_RANGE_WIDTH     : integer := abs(max_value - min_value) + 1;
+    variable v_div_range       : integer;
+    variable v_div_residue     : integer := 0;
+    variable v_div_residue_min : integer := 0;
+    variable v_div_residue_max : integer := 0;
+    variable v_num_bins        : integer := 0;
+    variable v_ret             : t_new_bin_vector(0 to C_RANGE_WIDTH-1);
   begin
-    -- Create a bin for each value in the range
-    if num_bins = 0 then
-      for i in min_value to max_value loop
-        v_ret(i-min_value to i-min_value) := bin(i);
-      end loop;
-      v_num_bins  := C_RANGE_WIDTH;
-    -- Create several bins
-    elsif min_value <= max_value then
-      if C_RANGE_WIDTH > num_bins then
-        v_div_range := C_RANGE_WIDTH / num_bins;
-        v_num_bins  := num_bins;
+    if min_value <= max_value then
+      -- Create a bin for each value in the range
+      if num_bins = 0 then
+        for i in min_value to max_value loop
+          v_ret(i-min_value to i-min_value) := bin(i);
+        end loop;
+        v_num_bins  := C_RANGE_WIDTH;
+      -- Create several bins
       else
-        v_div_range := C_RANGE_WIDTH;
-        v_num_bins  := 1;
+        if C_RANGE_WIDTH > num_bins then
+          v_div_residue := C_RANGE_WIDTH mod num_bins;
+          v_div_range   := C_RANGE_WIDTH / num_bins;
+          v_num_bins    := num_bins;
+        else
+          v_div_residue := 0;
+          v_div_range   := 1;
+          v_num_bins    := C_RANGE_WIDTH;
+        end if;
+        for i in 0 to v_num_bins-1 loop
+          -- Add the residue values to the last bins
+          if v_div_residue /= 0 and i = v_num_bins-v_div_residue then
+            v_div_residue_max := v_div_residue_max + 1;
+          elsif v_div_residue /= 0 and i > v_num_bins-v_div_residue then
+            v_div_residue_min := v_div_residue_min + 1;
+            v_div_residue_max := v_div_residue_max + 1;
+          end if;
+          v_ret(i).contains   := RAN;
+          v_ret(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
+          v_ret(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
+          v_ret(i).num_values := 2;
+        end loop;
       end if;
-      --TODO: figure out what to do with remaining values
-      for i in 0 to v_num_bins-1 loop
-        v_ret(i).contains   := RAN;
-        v_ret(i).values(0)  := min_value+v_div_range*i;
-        v_ret(i).values(1)  := min_value+v_div_range*(i+1)-1;
-        v_ret(i).num_values := 2;
-      end loop;
     else
-      --alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
+      alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. min_value must be less or equal than max_value", C_SCOPE);
     end if;
     return v_ret(0 to v_num_bins-1);
   end function;
@@ -1021,7 +1024,7 @@ package body funct_cov_pkg is
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                     timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                    "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & " out of " & to_string(priv_bins_idx) & LF &
+                    "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "(" & to_string(priv_bins_idx) & ")" & LF &
                     "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
                     "Coverage:       " & to_string(get_coverage(VOID),2) & "%" & LF &
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);

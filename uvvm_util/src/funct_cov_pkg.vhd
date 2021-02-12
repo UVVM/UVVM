@@ -28,11 +28,12 @@ use work.rand_pkg.all;
 
 package funct_cov_pkg is
 
-  constant C_MAX_NUM_CROSS_BINS  : positive := 15;
+  constant C_MAX_NUM_CROSS_BINS   : positive := 15;
   --TODO: move to adaptations_pkg?
-  constant C_MAX_NUM_BINS        : positive := 100; --Q: make it possible to grow?
-  constant C_MAX_NUM_BIN_VALUES  : positive := 10;
-  constant C_MAX_BIN_NAME_LENGTH : positive := 20;
+  constant C_MAX_NUM_BINS         : positive := 100; --Q: make it possible to grow?
+  constant C_MAX_NUM_BIN_VALUES   : positive := 10;
+  constant C_MAX_BIN_NAME_LENGTH  : positive := 20;
+  constant C_MAX_PROC_CALL_LENGTH : positive := 100;
 
   ------------------------------------------------------------
   -- Types
@@ -46,14 +47,16 @@ package funct_cov_pkg is
     num_values : natural;
   end record;
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
-  constant C_EMPTY_NEW_BIN_VECTOR : t_new_bin_vector(0 to 0) := (0 => (contains => VAL, values => (others => 0), num_values => 0));
 
   type t_new_cov_bin is record
     bin_vector : t_new_bin_vector(0 to C_MAX_NUM_BINS-1); --Q: possible to not constrain here?
-    vector_len : natural;
-    --proc_call  : string;
+    num_bins   : natural;
+    proc_call  : string(1 to C_MAX_PROC_CALL_LENGTH);
   end record;
   type t_new_bin_array is array (natural range <>) of t_new_cov_bin;
+  constant C_EMPTY_NEW_BIN_ARRAY : t_new_bin_array(0 to 0) := (0 => ((0 to C_MAX_NUM_BINS-1 => (VAL, (others => 0), 0)),
+                                                                     0,
+                                                                     (1 to C_MAX_PROC_CALL_LENGTH => ' ')));
 
   type t_bin is record
     contains       : t_cov_bin_type;
@@ -76,63 +79,63 @@ package funct_cov_pkg is
   -- Functions
   ------------------------------------------------------------
   -- Creates a bin with a single value
-  function bin(
+  impure function bin(
     constant value      : integer)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates a bin with multiple values
-  function bin(
+  impure function bin(
     constant set_values : integer_vector)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
-  function bin_range(
+  impure function bin_range(
     constant min_value  : integer;
     constant max_value  : integer;
     constant num_bins   : natural := 0)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates a bin for each value in the vector's range
-  function bin_vector(
+  impure function bin_vector(
     constant vector     : std_logic_vector)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates a bin a transition of values
-  function bin_transition(
+  impure function bin_transition(
     constant set_values : integer_vector)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates an ignore bin with a single value
-  function ignore_bin(
+  impure function ignore_bin(
     constant value      : integer)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates an ignore bin with a range of values
-  function ignore_bin_range(
+  impure function ignore_bin_range(
     constant min_value  : integer;
     constant max_value  : integer)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates an ignore bin with a transition of values
-  function ignore_bin_transition(
+  impure function ignore_bin_transition(
     constant set_values : integer_vector)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates an illegal bin with a single value
-  function illegal_bin(
+  impure function illegal_bin(
     constant value      : integer)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates an illegal bin with a range of values
-  function illegal_bin_range(
+  impure function illegal_bin_range(
     constant min_value  : integer;
     constant max_value  : integer)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   -- Creates an illegal bin with a transition of values
-  function illegal_bin_transition(
+  impure function illegal_bin_transition(
     constant set_values : integer_vector)
-  return t_new_bin_vector;
+  return t_new_bin_array;
 
   ------------------------------------------------------------
   -- Protected type
@@ -153,35 +156,35 @@ package funct_cov_pkg is
     -- Bins
     ------------------------------------------------------------
     procedure add_bins(
-      constant bin           : in t_new_bin_vector;
+      constant bin           : in t_new_bin_array;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_bins(
-      constant bin           : in t_new_bin_vector;
+      constant bin           : in t_new_bin_array;
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_bins(
-      constant bin           : in t_new_bin_vector;
+      constant bin           : in t_new_bin_array;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_cross(
-      constant bin1          : in t_new_bin_vector;
-      constant bin2          : in t_new_bin_vector;
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_cross(
-      constant bin1          : in t_new_bin_vector;
-      constant bin2          : in t_new_bin_vector;
-      constant bin3          : in t_new_bin_vector;
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
@@ -232,35 +235,41 @@ package body funct_cov_pkg is
   -- Functions
   ------------------------------------------------------------
   -- Creates a bin with a single value
-  function bin(
+  impure function bin(
     constant value      : integer)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "bin(" & to_string(value) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := VAL;
-    v_ret(0).values(0)  := value;
-    v_ret(0).num_values := 1;
+    v_ret(0).bin_vector(0).contains   := VAL;
+    v_ret(0).bin_vector(0).values(0)  := value;
+    v_ret(0).bin_vector(0).num_values := 1;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates a bin with multiple values
-  function bin(
+  impure function bin(
     constant set_values : integer_vector)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "bin(" & to_string(set_values) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := VAL;
-    v_ret(0).values(0 to set_values'length-1) := set_values;
-    v_ret(0).num_values := set_values'length;
+    v_ret(0).bin_vector(0).contains   := VAL;
+    v_ret(0).bin_vector(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).bin_vector(0).num_values := set_values'length;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
-  function bin_range(
+  impure function bin_range(
     constant min_value  : integer;
     constant max_value  : integer;
     constant num_bins   : natural := 0)
-  return t_new_bin_vector is
+  return t_new_bin_array is
     constant C_LOCAL_CALL : string := "bin_range(" & to_string(min_value) & "," & to_string(max_value) & "," & to_string(num_bins) & ")";
     constant C_RANGE_WIDTH     : integer := abs(max_value - min_value) + 1;
     variable v_div_range       : integer;
@@ -268,13 +277,15 @@ package body funct_cov_pkg is
     variable v_div_residue_min : integer := 0;
     variable v_div_residue_max : integer := 0;
     variable v_num_bins        : integer := 0;
-    variable v_ret             : t_new_bin_vector(0 to C_RANGE_WIDTH-1);
+    variable v_ret             : t_new_bin_array(0 to 0);
   begin
     if min_value <= max_value then
       -- Create a bin for each value in the range
       if num_bins = 0 then
         for i in min_value to max_value loop
-          v_ret(i-min_value to i-min_value) := bin(i);
+          v_ret(0).bin_vector(i-min_value).contains   := VAL;
+          v_ret(0).bin_vector(i-min_value).values(0)  := i;
+          v_ret(0).bin_vector(i-min_value).num_values := 1;
         end loop;
         v_num_bins  := C_RANGE_WIDTH;
       -- Create several bins
@@ -296,115 +307,143 @@ package body funct_cov_pkg is
             v_div_residue_min := v_div_residue_min + 1;
             v_div_residue_max := v_div_residue_max + 1;
           end if;
-          v_ret(i).contains   := RAN;
-          v_ret(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
-          v_ret(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
-          v_ret(i).num_values := 2;
+          v_ret(0).bin_vector(i).contains   := RAN;
+          v_ret(0).bin_vector(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
+          v_ret(0).bin_vector(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
+          v_ret(0).bin_vector(i).num_values := 2;
         end loop;
       end if;
     else
       alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. min_value must be less or equal than max_value", C_SCOPE);
     end if;
-    return v_ret(0 to v_num_bins-1);
+    v_ret(0).num_bins := v_num_bins;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
+    return v_ret;
   end function;
 
   -- Creates a bin for each value in the vector's range
-  function bin_vector(
+  impure function bin_vector(
     constant vector     : std_logic_vector)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 2**vector'length-1);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "bin_vector(LEN:" & to_string(vector'length) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    for i in v_ret'range loop
-      v_ret(i to i) := bin(i);
+    for i in 0 to 2**vector'length-1 loop
+      v_ret(0).bin_vector(i).contains   := VAL;
+      v_ret(0).bin_vector(i).values(0)  := i;
+      v_ret(0).bin_vector(i).num_values := 1;
     end loop;
+    v_ret(0).num_bins := 2**vector'length;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates a bin a transition of values
-  function bin_transition(
+  impure function bin_transition(
     constant set_values : integer_vector)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "bin_transition(" & to_string(set_values) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := TRN;
-    v_ret(0).values(0 to set_values'length-1) := set_values;
-    v_ret(0).num_values := set_values'length;
+    v_ret(0).bin_vector(0).contains   := TRN;
+    v_ret(0).bin_vector(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).bin_vector(0).num_values := set_values'length;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates an ignore bin with a single value
-  function ignore_bin(
+  impure function ignore_bin(
     constant value      : integer)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "ignore_bin(" & to_string(value) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := VAL_IGNORE;
-    v_ret(0).values(0)  := value;
-    v_ret(0).num_values := 1;
+    v_ret(0).bin_vector(0).contains   := VAL_IGNORE;
+    v_ret(0).bin_vector(0).values(0)  := value;
+    v_ret(0).bin_vector(0).num_values := 1;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates an ignore bin with a range of values
-  function ignore_bin_range(
+  impure function ignore_bin_range(
     constant min_value  : integer;
     constant max_value  : integer)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "ignore_bin_range(" & to_string(min_value) & "," & to_string(max_value) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := RAN_IGNORE;
-    v_ret(0).values(0)  := min_value;
-    v_ret(0).values(1)  := max_value;
-    v_ret(0).num_values := 2;
+    v_ret(0).bin_vector(0).contains   := RAN_IGNORE;
+    v_ret(0).bin_vector(0).values(0)  := min_value;
+    v_ret(0).bin_vector(0).values(1)  := max_value;
+    v_ret(0).bin_vector(0).num_values := 2;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates an ignore bin with a transition of values
-  function ignore_bin_transition(
+  impure function ignore_bin_transition(
     constant set_values : integer_vector)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "ignore_bin_transition(" & to_string(set_values) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := TRN_IGNORE;
-    v_ret(0).values(0 to set_values'length-1) := set_values;
-    v_ret(0).num_values := set_values'length;
+    v_ret(0).bin_vector(0).contains   := TRN_IGNORE;
+    v_ret(0).bin_vector(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).bin_vector(0).num_values := set_values'length;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates an illegal bin with a single value
-  function illegal_bin(
+  impure function illegal_bin(
     constant value      : integer)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "illegal_bin(" & to_string(value) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := VAL_ILLEGAL;
-    v_ret(0).values(0)  := value;
-    v_ret(0).num_values := 1;
+    v_ret(0).bin_vector(0).contains   := VAL_ILLEGAL;
+    v_ret(0).bin_vector(0).values(0)  := value;
+    v_ret(0).bin_vector(0).num_values := 1;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates an illegal bin with a range of values
-  function illegal_bin_range(
+  impure function illegal_bin_range(
     constant min_value  : integer;
     constant max_value  : integer)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "illegal_bin_range(" & to_string(min_value) & "," & to_string(max_value) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := RAN_ILLEGAL;
-    v_ret(0).values(0)  := min_value;
-    v_ret(0).values(1)  := max_value;
-    v_ret(0).num_values := 2;
+    v_ret(0).bin_vector(0).contains   := RAN_ILLEGAL;
+    v_ret(0).bin_vector(0).values(0)  := min_value;
+    v_ret(0).bin_vector(0).values(1)  := max_value;
+    v_ret(0).bin_vector(0).num_values := 2;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
   -- Creates an illegal bin with a transition of values
-  function illegal_bin_transition(
+  impure function illegal_bin_transition(
     constant set_values : integer_vector)
-  return t_new_bin_vector is
-    variable v_ret : t_new_bin_vector(0 to 0);
+  return t_new_bin_array is
+    constant C_LOCAL_CALL : string := "illegal_bin_transition(" & to_string(set_values) & ")";
+    variable v_ret : t_new_bin_array(0 to 0);
   begin
-    v_ret(0).contains   := TRN_ILLEGAL;
-    v_ret(0).values(0 to set_values'length-1) := set_values;
-    v_ret(0).num_values := set_values'length;
+    v_ret(0).bin_vector(0).contains   := TRN_ILLEGAL;
+    v_ret(0).bin_vector(0).values(0 to set_values'length-1) := set_values;
+    v_ret(0).bin_vector(0).num_values := set_values'length;
+    v_ret(0).num_bins := 1;
+    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
     return v_ret;
   end function;
 
@@ -425,60 +464,18 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Internal functions and procedures
     ------------------------------------------------------------
-    -- Returns the string representation of the bin vector
-    impure function to_string(
-      bins           : t_new_bin_vector;
-      use_in_summary : boolean := false)
+    -- Returns a string with all the procedure calls in the array
+    impure function get_proc_calls(
+      bin_array : t_new_bin_array)
     return string is
       variable v_line   : line;
       variable v_result : string(1 to 500);
       variable v_width  : natural;
     begin
-      for i in bins'range loop
-        case bins(i).contains is
-          when VAL | VAL_IGNORE | VAL_ILLEGAL =>
-            if bins(i).contains = VAL then
-              write(v_line, string'(return_string1_if_true_otherwise_string2("", "bin", use_in_summary)));
-            elsif bins(i).contains = VAL_IGNORE then
-              write(v_line, string'(return_string1_if_true_otherwise_string2("IGN", "ignore_bin", use_in_summary)));
-            else
-              write(v_line, string'(return_string1_if_true_otherwise_string2("ILL", "illegal_bin", use_in_summary)));
-            end if;
-            if bins(i).num_values = 1 then
-              write(v_line, '(');
-              write(v_line, to_string(bins(i).values(0)));
-              write(v_line, ')');
-            else
-              write(v_line, to_string(bins(i).values(0 to bins(i).num_values-1)));
-            end if;
-          when RAN | RAN_IGNORE | RAN_ILLEGAL =>
-            if bins(i).contains = RAN then
-              write(v_line, string'(return_string1_if_true_otherwise_string2("", "bin_range", use_in_summary)));
-            elsif bins(i).contains = RAN_IGNORE then
-              write(v_line, string'(return_string1_if_true_otherwise_string2("IGN", "ignore_bin_range", use_in_summary)));
-            else
-              write(v_line, string'(return_string1_if_true_otherwise_string2("ILL", "illegal_bin_range", use_in_summary)));
-            end if;
-            write(v_line, "(" & to_string(bins(i).values(0)) & " to " & to_string(bins(i).values(1)) & ")");
-          when TRN | TRN_IGNORE | TRN_ILLEGAL =>
-            if bins(i).contains = TRN then
-              write(v_line, string'(return_string1_if_true_otherwise_string2("", "bin_transition", use_in_summary)));
-            elsif bins(i).contains = TRN_IGNORE then
-              write(v_line, string'(return_string1_if_true_otherwise_string2("IGN", "ignore_bin_transition", use_in_summary)));
-            else
-              write(v_line, string'(return_string1_if_true_otherwise_string2("ILL", "illegal_bin_transition", use_in_summary)));
-            end if;
-            write(v_line, '(');
-            for j in 0 to bins(i).num_values-1 loop
-              write(v_line, to_string(bins(i).values(j)));
-              if j < bins(i).num_values-1 then
-                write(v_line, string'("->"));
-              end if;
-            end loop;
-            write(v_line, ')');
-        end case;
-        if i < bins'length-1 then
-          write(v_line, string'(return_string1_if_true_otherwise_string2("x", ",", use_in_summary)));
+      for i in bin_array'range loop
+        write(v_line, bin_array(i).proc_call);
+        if i < bin_array'length-1 then
+          write(v_line, ',');
         end if;
       end loop;
 
@@ -488,19 +485,99 @@ package body funct_cov_pkg is
       return v_result(1 to v_width);
     end function;
 
-    -- Overload
-    impure function to_string(
-      bins           : t_bin_vector;
-      use_in_summary : boolean := false)
+    -- Returns a string with all the bins values in the array
+    impure function get_bin_array_values(
+      bin_array     : t_new_bin_array;
+      use_full_name : boolean := false;
+      bin_delimiter : character := ',')
     return string is
-      variable v_new_bin_vector : t_new_bin_vector(bins'range);
+      variable v_line   : line;
+      variable v_result : string(1 to 500);
+      variable v_width  : natural;
     begin
-      for i in v_new_bin_vector'range loop
-        v_new_bin_vector(i).contains   := bins(i).contains;
-        v_new_bin_vector(i).values     := bins(i).values;
-        v_new_bin_vector(i).num_values := bins(i).num_values;
+      for i in bin_array'range loop
+        for j in 0 to bin_array(i).num_bins-1 loop
+          case bin_array(i).bin_vector(j).contains is
+            when VAL | VAL_IGNORE | VAL_ILLEGAL =>
+              if bin_array(i).bin_vector(j).contains = VAL then
+                write(v_line, string'(return_string1_if_true_otherwise_string2("bin", "", use_full_name)));
+              elsif bin_array(i).bin_vector(j).contains = VAL_IGNORE then
+                write(v_line, string'(return_string1_if_true_otherwise_string2("ignore_bin", "IGN", use_full_name)));
+              else
+                write(v_line, string'(return_string1_if_true_otherwise_string2("illegal_bin", "ILL", use_full_name)));
+              end if;
+              if bin_array(i).bin_vector(j).num_values = 1 then
+                write(v_line, '(');
+                write(v_line, to_string(bin_array(i).bin_vector(j).values(0)));
+                write(v_line, ')');
+              else
+                write(v_line, to_string(bin_array(i).bin_vector(j).values(0 to bin_array(i).bin_vector(j).num_values-1)));
+              end if;
+            when RAN | RAN_IGNORE | RAN_ILLEGAL =>
+              if bin_array(i).bin_vector(j).contains = RAN then
+                write(v_line, string'(return_string1_if_true_otherwise_string2("bin_range", "", use_full_name)));
+              elsif bin_array(i).bin_vector(j).contains = RAN_IGNORE then
+                write(v_line, string'(return_string1_if_true_otherwise_string2("ignore_bin_range", "IGN", use_full_name)));
+              else
+                write(v_line, string'(return_string1_if_true_otherwise_string2("illegal_bin_range", "ILL", use_full_name)));
+              end if;
+              write(v_line, "(" & to_string(bin_array(i).bin_vector(j).values(0)) & " to " & to_string(bin_array(i).bin_vector(j).values(1)) & ")");
+            when TRN | TRN_IGNORE | TRN_ILLEGAL =>
+              if bin_array(i).bin_vector(j).contains = TRN then
+                write(v_line, string'(return_string1_if_true_otherwise_string2("bin_transition", "", use_full_name)));
+              elsif bin_array(i).bin_vector(j).contains = TRN_IGNORE then
+                write(v_line, string'(return_string1_if_true_otherwise_string2("ignore_bin_transition", "IGN", use_full_name)));
+              else
+                write(v_line, string'(return_string1_if_true_otherwise_string2("illegal_bin_transition", "ILL", use_full_name)));
+              end if;
+              write(v_line, '(');
+              for k in 0 to bin_array(i).bin_vector(j).num_values-1 loop
+                write(v_line, to_string(bin_array(i).bin_vector(j).values(k)));
+                if k < bin_array(i).bin_vector(j).num_values-1 then
+                  write(v_line, string'("->"));
+                end if;
+              end loop;
+              write(v_line, ')');
+          end case;
+          if i < bin_array'length-1 or j < bin_array(i).num_bins-1 then
+            write(v_line, bin_delimiter);
+          end if;
+        end loop;
       end loop;
-      return to_string(v_new_bin_vector, use_in_summary);
+
+      v_width := v_line'length;
+      v_result(1 to v_width) := v_line.all;
+      deallocate(v_line);
+      return v_result(1 to v_width);
+    end function;
+
+    -- Returns a string with all the bins values in the vector
+    -- Used in the report, so the bins in the vector are crossed
+    impure function get_bin_vector_values(
+      bins : t_bin_vector)
+    return string is
+      variable v_new_bin_array : t_new_bin_array(0 to 0);
+    begin
+      for i in 0 to bins'length-1 loop
+        v_new_bin_array(0).bin_vector(i).contains   := bins(i).contains;
+        v_new_bin_array(0).bin_vector(i).values     := bins(i).values;
+        v_new_bin_array(0).bin_vector(i).num_values := bins(i).num_values;
+      end loop;
+      v_new_bin_array(0).num_bins := bins'length;
+      return get_bin_array_values(v_new_bin_array, false, 'x');
+    end function;
+
+    -- Returns a string with the bin content
+    impure function get_bin_info(
+      bin : t_bin)
+    return string is
+      variable v_new_bin_array : t_new_bin_array(0 to 0);
+    begin
+      v_new_bin_array(0).bin_vector(0).contains   := bin.contains;
+      v_new_bin_array(0).bin_vector(0).values     := bin.values;
+      v_new_bin_array(0).bin_vector(0).num_values := bin.num_values;
+      v_new_bin_array(0).num_bins := 1;
+      return get_bin_array_values(v_new_bin_array, true);
     end function;
 
     -- Returns true if the bin is ignored
@@ -586,20 +663,43 @@ package body funct_cov_pkg is
     -- Creates a bin array from several bin vectors
     procedure create_bin_array(
       variable bin_array : out t_new_bin_array;
-      constant bin1      : in  t_new_bin_vector;
-      constant bin2      : in  t_new_bin_vector := C_EMPTY_NEW_BIN_VECTOR;
-      constant bin3      : in  t_new_bin_vector := C_EMPTY_NEW_BIN_VECTOR;
-      constant bin4      : in  t_new_bin_vector := C_EMPTY_NEW_BIN_VECTOR) is
+      constant bin1      : in  t_new_bin_array;
+      constant bin2      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
+      constant bin3      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
+      constant bin4      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY) is
+      variable v_num_bins : natural := 0;
     begin
-      bin_array(0).bin_vector(0 to bin1'length-1) := bin1;
-      bin_array(0).vector_len                     := bin1'length;
-      if bin2 /= C_EMPTY_NEW_BIN_VECTOR then
-        bin_array(1).bin_vector(0 to bin2'length-1) := bin2;
-        bin_array(1).vector_len                     := bin2'length;
+      for i in bin1'range loop
+        bin_array(0).bin_vector(v_num_bins to v_num_bins+bin1(i).num_bins-1) := bin1(i).bin_vector(0 to bin1(i).num_bins-1);
+        v_num_bins := v_num_bins + bin1(i).num_bins;
+      end loop;
+      bin_array(0).num_bins := v_num_bins;
+
+      if bin2 /= C_EMPTY_NEW_BIN_ARRAY then
+        v_num_bins := 0;
+        for i in bin2'range loop
+          bin_array(1).bin_vector(v_num_bins to v_num_bins+bin2(i).num_bins-1) := bin2(i).bin_vector(0 to bin2(i).num_bins-1);
+          v_num_bins := v_num_bins + bin2(i).num_bins;
+        end loop;
+        bin_array(1).num_bins := v_num_bins;
       end if;
-      if bin3 /= C_EMPTY_NEW_BIN_VECTOR then
-        bin_array(2).bin_vector(0 to bin3'length-1) := bin3;
-        bin_array(2).vector_len                     := bin3'length;
+
+      if bin3 /= C_EMPTY_NEW_BIN_ARRAY then
+        v_num_bins := 0;
+        for i in bin3'range loop
+          bin_array(2).bin_vector(v_num_bins to v_num_bins+bin3(i).num_bins-1) := bin3(i).bin_vector(0 to bin3(i).num_bins-1);
+          v_num_bins := v_num_bins + bin3(i).num_bins;
+        end loop;
+        bin_array(2).num_bins := v_num_bins;
+      end if;
+
+      if bin4 /= C_EMPTY_NEW_BIN_ARRAY then
+        v_num_bins := 0;
+        for i in bin4'range loop
+          bin_array(3).bin_vector(v_num_bins to v_num_bins+bin4(i).num_bins-1) := bin4(i).bin_vector(0 to bin4(i).num_bins-1);
+          v_num_bins := v_num_bins + bin4(i).num_bins;
+        end loop;
+        bin_array(3).num_bins := v_num_bins;
       end if;
       -- TODO: add more bins
     end procedure;
@@ -616,7 +716,7 @@ package body funct_cov_pkg is
       variable v_bin_is_valid   : boolean := true;
     begin
       -- Iterate through the bins in the current array element
-      for i in 0 to bin_array(bin_array_idx).vector_len-1 loop
+      for i in 0 to bin_array(bin_array_idx).num_bins-1 loop
         -- Store the bin index for the current element of the array
         idx_reg(bin_array_idx) := i;
         -- Last element of the array has been reached, add bins
@@ -682,12 +782,12 @@ package body funct_cov_pkg is
     -- Bins
     ------------------------------------------------------------
     procedure add_bins(
-      constant bin           : in t_new_bin_vector;
+      constant bin           : in t_new_bin_array;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_bins(" & to_string(bin) & ", min_cov:" & to_string(min_cov) &
+      constant C_LOCAL_CALL : string := "add_bins(" & get_proc_calls(bin) & ", min_cov:" & to_string(min_cov) &
         ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 1;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
@@ -702,7 +802,7 @@ package body funct_cov_pkg is
     end procedure;
 
     procedure add_bins(
-      constant bin           : in t_new_bin_vector;
+      constant bin           : in t_new_bin_array;
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
@@ -711,7 +811,7 @@ package body funct_cov_pkg is
     end procedure;
 
     procedure add_bins(
-      constant bin           : in t_new_bin_vector;
+      constant bin           : in t_new_bin_array;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
     begin
@@ -719,13 +819,13 @@ package body funct_cov_pkg is
     end procedure;
 
     procedure add_cross(
-      constant bin1          : in t_new_bin_vector;
-      constant bin2          : in t_new_bin_vector;
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & to_string(bin1) & "),(" & to_string(bin2) &
+      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) &
         "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 2;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
@@ -740,14 +840,14 @@ package body funct_cov_pkg is
     end procedure;
 
     procedure add_cross(
-      constant bin1          : in t_new_bin_vector;
-      constant bin2          : in t_new_bin_vector;
-      constant bin3          : in t_new_bin_vector;
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & to_string(bin1) & "),(" & to_string(bin2) & "),(" & to_string(bin3) &
+      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) & "),(" & get_proc_calls(bin3) &
         "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 3;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
@@ -923,7 +1023,7 @@ package body funct_cov_pkg is
           v_invalid_sample := true;
           priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
           if v_illegal_match_idx /= -1 then
-            alert(TB_WARNING, v_proc_call.all & "=> Sampled " & to_string(priv_invalid_bins(i).cross_bins(v_illegal_match_idx to v_illegal_match_idx)), priv_scope.all);
+            alert(TB_WARNING, v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope.all);
             exit l_bin_loop;
           end if;
         end if;
@@ -1056,7 +1156,7 @@ package body funct_cov_pkg is
         if is_bin_illegal(priv_invalid_bins(i)) then
           write(v_line, justify(
             fill_string(' ', 5) &
-            justify(to_string(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_vector_values(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1071,7 +1171,7 @@ package body funct_cov_pkg is
         if is_bin_ignore(priv_invalid_bins(i)) then
           write(v_line, justify(
             fill_string(' ', 5) &
-            justify(to_string(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_vector_values(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1086,7 +1186,7 @@ package body funct_cov_pkg is
         if priv_bins(i).hits < priv_bins(i).min_hits then
           write(v_line, justify(
             fill_string(' ', 5) &
-            justify(to_string(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_vector_values(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -1101,7 +1201,7 @@ package body funct_cov_pkg is
         if priv_bins(i).hits >= priv_bins(i).min_hits then
           write(v_line, justify(
             fill_string(' ', 5) &
-            justify(to_string(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1), use_in_summary => true), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_vector_values(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &

@@ -152,6 +152,13 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return string;
 
+    procedure set_name(
+      constant name : in string);
+
+    impure function get_name(
+      constant VOID : t_void)
+    return string;
+
     ------------------------------------------------------------
     -- Bins
     ------------------------------------------------------------
@@ -455,6 +462,7 @@ package body funct_cov_pkg is
   ------------------------------------------------------------
   type t_cov_point is protected body
     variable priv_scope                         : line    := new string'(C_SCOPE);
+    variable priv_name                          : line    := new string'("");
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bins_idx                      : natural := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
@@ -779,6 +787,20 @@ package body funct_cov_pkg is
     return string is
     begin
       return priv_scope.all;
+    end function;
+
+    procedure set_name(
+      constant name : in string) is
+    begin
+      DEALLOCATE(priv_name);
+      priv_name := new string'(name);
+    end procedure;
+
+    impure function get_name(
+      constant VOID : t_void)
+    return string is
+    begin
+      return priv_name.all;
     end function;
 
     ------------------------------------------------------------
@@ -1156,6 +1178,7 @@ package body funct_cov_pkg is
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                     timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+                    "Coverpoint:     " & priv_name.all & LF &
                     "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "(" & to_string(priv_bins_idx) & ")" & LF &
                     "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
                     "Coverage:       " & to_string(get_coverage(VOID),2) & "%" & LF &

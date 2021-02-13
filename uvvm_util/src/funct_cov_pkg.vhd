@@ -100,7 +100,7 @@ package funct_cov_pkg is
     constant vector     : std_logic_vector)
   return t_new_bin_array;
 
-  -- Creates a bin a transition of values
+  -- Creates a bin with a transition of values
   impure function bin_transition(
     constant set_values : integer_vector)
   return t_new_bin_array;
@@ -224,10 +224,6 @@ package funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
 
-    impure function get_coverage(
-      constant VOID : t_void)
-    return real;
-
     impure function coverage_complete(
       constant VOID : t_void)
     return boolean;
@@ -348,7 +344,7 @@ package body funct_cov_pkg is
     return v_ret;
   end function;
 
-  -- Creates a bin a transition of values
+  -- Creates a bin with a transition of values
   impure function bin_transition(
     constant set_values : integer_vector)
   return t_new_bin_array is
@@ -641,6 +637,38 @@ package body funct_cov_pkg is
         v_cnt := v_cnt + 1 when is_bin_illegal(priv_invalid_bins(i));
       end loop;
       return v_cnt;
+    end function;
+
+    -- Returns the percentage of hits/min_hits in a bin
+    impure function get_bin_coverage(
+      constant bin : t_cov_bin)
+    return real is
+    begin
+      return real(bin.hits)*100.0/real(bin.min_hits);
+    end function;
+
+    -- Returns the percentage of bins_covered/total_bins in the coverpoint
+    impure function get_covpoint_coverage(
+      constant VOID : t_void)
+    return real is
+      variable v_num_cov_bins : integer := 0;
+    begin
+      v_num_cov_bins := get_num_covered_bins(VOID);
+      return real(v_num_cov_bins)*100.0/real(priv_bins_idx);
+    end function;
+
+    -- Returns the percentage of hits/min_hits for all the bins in the coverpoint
+    impure function get_covpoint_coverage_accumulated(
+      constant VOID : t_void)
+    return real is
+      variable v_hits     : natural := 0;
+      variable v_min_hits : natural := 0;
+    begin
+      for i in 0 to priv_bins_idx-1 loop
+        v_hits     := v_hits + priv_bins(i).hits;
+        v_min_hits := v_min_hits + priv_bins(i).min_hits;
+      end loop;
+      return real(v_hits)*100.0/real(v_min_hits);
     end function;
 
     -- Generates the correct procedure call to be used for logging or alerts
@@ -1113,19 +1141,6 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
-    impure function get_coverage(
-      constant VOID : t_void)
-    return real is
-      variable v_num_cov_bins : integer := 0;
-    begin
-      if priv_bins_idx > 0 then
-        v_num_cov_bins := get_num_covered_bins(VOID);
-        return real(v_num_cov_bins)*100.0/real(priv_bins_idx);
-      else
-        return 0.0;
-      end if;
-    end function;
-
     --Q: is_covered/covered/coverage_complete
     impure function coverage_complete(
       constant VOID : t_void)
@@ -1169,7 +1184,7 @@ package body funct_cov_pkg is
 
     begin
       -- Calculate how much space we can insert between the columns of the report
-      v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*4 - C_MAX_BIN_NAME_LENGTH - 20)/6;
+      v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_MAX_BIN_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
         alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_MAX_BIN_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope.all);
         v_log_extra_space := 1;
@@ -1181,7 +1196,7 @@ package body funct_cov_pkg is
                     "Coverpoint:     " & priv_name.all & LF &
                     "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "(" & to_string(priv_bins_idx) & ")" & LF &
                     "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
-                    "Coverage:       " & to_string(get_coverage(VOID),2) & "%" & LF &
+                    "Coverage:       " & to_string(get_covpoint_coverage(VOID),2) & "% (accumulated: " & to_string(get_covpoint_coverage_accumulated(VOID),2) & "%)" & LF &
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers
@@ -1190,6 +1205,7 @@ package body funct_cov_pkg is
         justify("BINS"       , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("HITS"       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("MIN_HITS"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERAGE"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("RAND_WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("NAME"       , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("STATUS"     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
@@ -1201,11 +1217,12 @@ package body funct_cov_pkg is
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_vector_values(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_invalid_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_invalid_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_bin_coverage(priv_invalid_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_invalid_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -1216,11 +1233,12 @@ package body funct_cov_pkg is
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_vector_values(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_invalid_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_invalid_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_bin_coverage(priv_invalid_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_invalid_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -1231,11 +1249,12 @@ package body funct_cov_pkg is
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_vector_values(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -1246,11 +1265,12 @@ package body funct_cov_pkg is
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_vector_values(priv_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(get_bin_status(priv_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;

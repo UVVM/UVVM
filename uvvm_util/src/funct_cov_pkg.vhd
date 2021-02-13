@@ -160,7 +160,8 @@ package funct_cov_pkg is
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "");
 
     procedure add_bins(
       constant bin           : in t_new_bin_array;
@@ -179,7 +180,8 @@ package funct_cov_pkg is
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "");
 
     procedure add_cross(
       constant bin1          : in t_new_bin_array;
@@ -188,7 +190,8 @@ package funct_cov_pkg is
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "");
 
     ------------------------------------------------------------
     -- Randomization
@@ -786,17 +789,22 @@ package body funct_cov_pkg is
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL : string := "add_bins(" & get_proc_calls(bin) & ", min_cov:" & to_string(min_cov) &
         ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 1;
+      variable v_proc_call      : line;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV_BINS, "Adding bins: " &  get_bin_array_values(bin) & ", min_cov:" & to_string(min_cov) &
+        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       create_bin_array(v_bin_array, bin);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
@@ -806,16 +814,19 @@ package body funct_cov_pkg is
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_bins(" & get_proc_calls(bin) & ", min_cov:" & to_string(min_cov) &
+        ", """ & bin_name & """)";
     begin
-      add_bins(bin, min_cov, 1, bin_name, msg_id_panel);
+      add_bins(bin, min_cov, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
     procedure add_bins(
       constant bin           : in t_new_bin_array;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_bins(" & get_proc_calls(bin) & ", """ & bin_name & """)";
     begin
-      add_bins(bin, 1, 1, bin_name, msg_id_panel);
+      add_bins(bin, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
     procedure add_cross(
@@ -824,17 +835,22 @@ package body funct_cov_pkg is
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) &
         "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 2;
+      variable v_proc_call      : line;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV_BINS, "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       create_bin_array(v_bin_array, bin1, bin2);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
@@ -846,17 +862,22 @@ package body funct_cov_pkg is
       constant min_cov       : in positive;
       constant rand_weight   : in natural;
       constant bin_name      : in string         := "";
-      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "") is
       constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) & "),(" & get_proc_calls(bin3) &
         "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 3;
+      variable v_proc_call      : line;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV_BINS, "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      check_num_bins_crossed(C_NUM_CROSS_BINS, C_LOCAL_CALL);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       create_bin_array(v_bin_array, bin1, bin2, bin3);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
     end procedure;
@@ -1160,7 +1181,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_invalid_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_invalid_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
@@ -1175,7 +1196,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_invalid_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_invalid_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
@@ -1190,7 +1211,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
@@ -1205,7 +1226,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_bins(i).hits)       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).min_hits)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)       , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_bins(i))       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;

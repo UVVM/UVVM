@@ -92,6 +92,7 @@ package adaptations_pkg is
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     ID_RAND_GEN,              -- Used for logging the randomization functions
     ID_FUNCT_COV,             -- Used for logging functional coverage
+    ID_FUNCT_COV_BINS,        -- Used for logging functional coverage
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
     -- Directly inside test sequencers
@@ -202,6 +203,7 @@ package adaptations_pkg is
     ID_NEW_HVVC_CMD_SEQ      => "  "   & NUL & NUL,
     ID_AWAIT_COMPLETION_WAIT => ".."   & NUL & NUL,
     ID_AWAIT_COMPLETION_END  => "  "   & NUL & NUL,
+    ID_FUNCT_COV_BINS        => "  "   & NUL & NUL,
     others                   => ""     & NUL & NUL & NUL & NUL
   );
 

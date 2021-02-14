@@ -76,7 +76,7 @@ package funct_cov_pkg is
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
 
   ------------------------------------------------------------
-  -- Functions
+  -- Bin functions
   ------------------------------------------------------------
   -- Creates a bin with a single value
   impure function bin(
@@ -238,7 +238,7 @@ end package funct_cov_pkg;
 package body funct_cov_pkg is
 
   ------------------------------------------------------------
-  -- Functions
+  -- Bin functions
   ------------------------------------------------------------
   -- Creates a bin with a single value
   impure function bin(
@@ -643,8 +643,10 @@ package body funct_cov_pkg is
     impure function get_bin_coverage(
       constant bin : t_cov_bin)
     return real is
+      variable v_coverage : real;
     begin
-      return real(bin.hits)*100.0/real(bin.min_hits);
+      v_coverage := real(bin.hits)*100.0/real(bin.min_hits) when bin.min_hits > 0 else 0.0;
+      return v_coverage;
     end function;
 
     -- Returns the percentage of bins_covered/total_bins in the coverpoint
@@ -652,9 +654,11 @@ package body funct_cov_pkg is
       constant VOID : t_void)
     return real is
       variable v_num_cov_bins : integer := 0;
+      variable v_coverage     : real;
     begin
       v_num_cov_bins := get_num_covered_bins(VOID);
-      return real(v_num_cov_bins)*100.0/real(priv_bins_idx);
+      v_coverage := real(v_num_cov_bins)*100.0/real(priv_bins_idx) when priv_bins_idx > 0 else 0.0;
+      return v_coverage;
     end function;
 
     -- Returns the percentage of hits/min_hits for all the bins in the coverpoint
@@ -663,12 +667,14 @@ package body funct_cov_pkg is
     return real is
       variable v_hits     : natural := 0;
       variable v_min_hits : natural := 0;
+      variable v_coverage : real;
     begin
       for i in 0 to priv_bins_idx-1 loop
         v_hits     := v_hits + priv_bins(i).hits;
         v_min_hits := v_min_hits + priv_bins(i).min_hits;
       end loop;
-      return real(v_hits)*100.0/real(v_min_hits);
+      v_coverage := real(v_hits)*100.0/real(v_min_hits) when v_min_hits > 0 else 0.0;
+      return v_coverage;
     end function;
 
     -- Generates the correct procedure call to be used for logging or alerts
@@ -1193,11 +1199,14 @@ package body funct_cov_pkg is
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                     timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                    "Coverpoint:     " & priv_name.all & LF &
-                    "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "(" & to_string(priv_bins_idx) & ")" & LF &
+                    fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+
+      -- Print summary
+      write(v_line, "Coverpoint:     " & priv_name.all & LF &
+                    "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "/" & to_string(priv_bins_idx) & LF &
                     "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
                     "Coverage:       " & to_string(get_covpoint_coverage(VOID),2) & "% (accumulated: " & to_string(get_covpoint_coverage_accumulated(VOID),2) & "%)" & LF &
-                    fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+                    fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers
       write(v_line, justify(
@@ -1277,10 +1286,10 @@ package body funct_cov_pkg is
 
       -- Print report bottom line
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
-      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
-      prefix_lines(v_line, C_PREFIX);
 
       -- Write the info string to transcript
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
       write (v_line_copy, v_line.all);  -- copy line
       writeline(OUTPUT, v_line);
       writeline(LOG_FILE, v_line_copy);

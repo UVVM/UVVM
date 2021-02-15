@@ -620,7 +620,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps);
         check_rand_value(v_time_vec, -2 ps, 2 ps);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -631,7 +631,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, UNIQUE);
         check_rand_value(v_time_vec, -2 ps, 2 ps);
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -642,7 +642,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(-2 ps,-1 ps,0 ps,1 ps,2 ps));
         check_rand_value(v_time_vec, (-2 ps,-1 ps,0 ps,1 ps,2 ps));
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -653,7 +653,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(-2 ps,-1 ps,0 ps,1 ps,2 ps), UNIQUE);
         check_rand_value(v_time_vec, (-2 ps,-1 ps,0 ps,1 ps,2 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -669,7 +669,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps));
         check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,-15 ps)); -- use vector to save overload
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -680,7 +680,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps,16 ps), UNIQUE);
         check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,16 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -691,7 +691,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -4 ps, 4 ps, EXCL,(-1 ps,0 ps,1 ps), UNIQUE);
         check_rand_value(v_time_vec, -4 ps, 4 ps, EXCL,(-1 ps,0 ps,1 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -702,7 +702,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-15 ps), EXCL,(1 ps));
         check_rand_value(v_time_vec, -2 ps, 2 ps, INCL,(-15 ps,-15 ps), EXCL,(1 ps,1 ps)); -- use vector to save overload
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -713,7 +713,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,1 ps), UNIQUE);
         check_rand_value(v_time_vec, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,1 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -724,7 +724,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,1 ps), INCL,(-15 ps,16 ps,17 ps), UNIQUE);
         check_rand_value(v_time_vec, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,1 ps), INCL,(-15 ps,16 ps,17 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -735,7 +735,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps), INCL,(17 ps,18 ps), UNIQUE);
         check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,17 ps,18 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;
@@ -746,7 +746,7 @@ begin
         v_time_vec := v_rand.rand(v_time_vec'length, -4 ps, 4 ps, EXCL,(-2 ps,-1 ps), EXCL,(1 ps,2 ps), UNIQUE);
         check_rand_value(v_time_vec, -4 ps, 4 ps, EXCL,(-2 ps,-1 ps,1 ps,2 ps));
         check_uniqueness(v_time_vec);
-        for j in v_real_vec'range loop
+        for j in v_time_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
       end loop;

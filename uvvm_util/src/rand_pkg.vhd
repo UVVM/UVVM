@@ -2354,7 +2354,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (max_value - min_value + 1) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
@@ -2372,8 +2372,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2418,7 +2416,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(set_type, set_values, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
@@ -2436,8 +2434,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2501,7 +2497,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type, set_values, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
@@ -2520,8 +2516,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2609,7 +2603,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
@@ -2629,8 +2623,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2672,7 +2664,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to size-1 loop
           v_gen_new_random := true;
@@ -2685,8 +2677,6 @@ package body rand_pkg is
             end if;
           end loop;
         end loop;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2725,7 +2715,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(set_type, set_values, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
@@ -2743,8 +2733,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2800,7 +2788,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type, set_values, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
           v_gen_new_random := true;
@@ -2813,8 +2801,6 @@ package body rand_pkg is
             end if;
           end loop;
         end loop;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2893,7 +2879,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
           v_gen_new_random := true;
@@ -2906,8 +2892,6 @@ package body rand_pkg is
             end if;
           end loop;
         end loop;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       -- Restore previous distribution
@@ -2943,7 +2927,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if ((max_value - min_value)/C_TIME_UNIT + 1) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
@@ -2961,8 +2945,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2991,7 +2973,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(set_type, set_values, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
           alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
@@ -3009,8 +2991,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -3058,7 +3038,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type, set_values, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
@@ -3077,8 +3057,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -3149,7 +3127,7 @@ package body rand_pkg is
         for i in 0 to size-1 loop
           v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, msg_id_panel, v_proc_call.all);
         end loop;
-      elsif uniqueness = UNIQUE then
+      else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
@@ -3169,8 +3147,6 @@ package body rand_pkg is
             end loop;
           end loop;
         end if;
-      else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(uniqueness)), priv_scope.all);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);

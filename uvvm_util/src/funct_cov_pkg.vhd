@@ -224,6 +224,10 @@ package funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
 
+    procedure set_coverage_goal(
+      constant percentage   : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     impure function coverage_complete(
       constant VOID : t_void)
     return boolean;
@@ -467,6 +471,7 @@ package body funct_cov_pkg is
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer := -1;
     variable priv_rand_transition_bin_value_idx : natural := 0;
+    variable priv_cov_goal                      : positive := 100;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1147,19 +1152,23 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
+    procedure set_coverage_goal(
+      constant percentage   : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
+    begin
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+      priv_cov_goal := percentage;
+    end procedure;
+
     --Q: is_covered/covered/coverage_complete
     impure function coverage_complete(
       constant VOID : t_void)
     return boolean is
       variable v_cov_complete : boolean := true;
     begin
-      for i in 0 to priv_bins_idx-1 loop
-        if priv_bins(i).hits < priv_bins(i).min_hits then
-          v_cov_complete := false;
-          exit;
-        end if;
-      end loop;
-      return v_cov_complete;
+      --TODO: this only covers if goal is 1-100, but not if >100 (extended simulation)
+      return get_covpoint_coverage(VOID) >= real(priv_cov_goal);
     end function;
 
     --Q: always write to log and file? do like log and have a generic name and possible to modify?

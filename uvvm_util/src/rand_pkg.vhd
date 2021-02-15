@@ -2333,7 +2333,8 @@ package body rand_pkg is
         ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
-      variable v_gen_new_random  : boolean := true;
+      variable v_gen_new_random  : boolean     := true;
+      variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -2343,11 +2344,15 @@ package body rand_pkg is
           to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
         priv_rand_dist := UNIFORM;
       end if;
+      if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        v_cyclic_mode := NON_CYCLIC;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
@@ -2358,7 +2363,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
+              v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, v_proc_call.all);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -2392,7 +2397,8 @@ package body rand_pkg is
         ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
-      variable v_gen_new_random  : boolean := true;
+      variable v_gen_new_random  : boolean     := true;
+      variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -2402,11 +2408,15 @@ package body rand_pkg is
           to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
         priv_rand_dist := UNIFORM;
       end if;
+      if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        v_cyclic_mode := NON_CYCLIC;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(set_type, set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret(i) := rand(set_type, set_values, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
@@ -2417,7 +2427,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(set_type, set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
+              v_ret(i) := rand(set_type, set_values, v_cyclic_mode, msg_id_panel, v_proc_call.all);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -2469,8 +2479,9 @@ package body rand_pkg is
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
-      variable v_set_values_len  : integer := 0;
-      variable v_gen_new_random  : boolean := true;
+      variable v_set_values_len  : integer     := 0;
+      variable v_gen_new_random  : boolean     := true;
+      variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -2480,11 +2491,15 @@ package body rand_pkg is
           to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
         priv_rand_dist := UNIFORM;
       end if;
+      if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        v_cyclic_mode := NON_CYCLIC;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type, set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret(i) := rand(min_value, max_value, set_type, set_values, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
@@ -2496,7 +2511,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, set_type, set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
+              v_ret(i) := rand(min_value, max_value, set_type, set_values, v_cyclic_mode, msg_id_panel, v_proc_call.all);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -2572,8 +2587,9 @@ package body rand_pkg is
         to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
-      variable v_set_values_len  : integer := 0;
-      variable v_gen_new_random  : boolean := true;
+      variable v_set_values_len  : integer     := 0;
+      variable v_gen_new_random  : boolean     := true;
+      variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -2583,11 +2599,15 @@ package body rand_pkg is
           to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
         priv_rand_dist := UNIFORM;
       end if;
+      if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        v_cyclic_mode := NON_CYCLIC;
+      end if;
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, v_cyclic_mode, msg_id_panel, v_proc_call.all);
         end loop;
       elsif uniqueness = UNIQUE then
         -- Check if it is possible to generate unique values for the complete vector
@@ -2600,7 +2620,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
+              v_ret(i) := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, v_cyclic_mode, msg_id_panel, v_proc_call.all);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else

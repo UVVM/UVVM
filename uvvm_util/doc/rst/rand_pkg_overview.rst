@@ -18,6 +18,17 @@ type *t_rand* and call the ``rand()`` function from the variable.
       addr := my_rand.rand(0, 255);
       ...
 
+Seeds
+-----
+
+Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They 
+can be initialized using any string or two positive values.
+
+.. code-block::
+
+    my_rand.set_rand_seeds("STRING");
+    my_rand.set_rand_seeds(10, 100);
+
 Constraints
 -----------
 
@@ -52,23 +63,15 @@ The ``rand()`` function can return the following types:
     * std_logic
     * boolean
 
+Uniqueness
+----------
+
 When returning a vector type (integer, real or time) it is possible to generate unique random values for each element of the vector 
 by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function:
 
 .. code-block::
 
     addr_vec := my_rand.rand(addr_vec'length, 0, 50, UNIQUE);
-
-Seeds
------
-
-Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They 
-can be initialized using any string or two positive values.
-
-.. code-block::
-
-    my_rand.set_rand_seeds("STRING");
-    my_rand.set_rand_seeds(10, 100);
 
 Cyclic generation
 -----------------
@@ -77,6 +80,7 @@ By setting the parameter *cyclic_mode = CYCLIC* in the ``rand()`` function, it i
 not repeat until all the values within the constraints have been generated. Once this happens, the process starts over.
 
 * The supported types are integer, integer_vector, unsigned, signed and std_logic_vector.
+* Cyclic generation cannot be combined with the Uniqueness parameter in the vector types.
 * Note that the state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function with different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
 * Also note that when using a large range of values it might slow down the simulation as it requires more iterations to find the missing values.
 

@@ -1607,15 +1607,14 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
+      increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -2, 2);
-        for j in v_int_vec'range loop
-          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
-        end loop;
-        check_cyclic_distribution(v_value_cnt, v_num_values);
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -2, 2);
+      for j in v_int_vec'range loop
+        v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
       end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing integer_vector (set of values)");
       v_num_values := 5; -- same as v_int_vec'length
@@ -1628,15 +1627,14 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
+      increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, (-2,-1,0,1,2));
-        for j in v_int_vec'range loop
-          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
-        end loop;
-        check_cyclic_distribution(v_value_cnt, v_num_values);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, (-2,-1,0,1,2));
+      for j in v_int_vec'range loop
+        v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
       end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
       v_num_values := 5; -- same as v_int_vec'length
@@ -1649,15 +1647,14 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
+      increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-5,6), UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -1, 1, INCL,(-5,6));
-        for j in v_int_vec'range loop
-          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
-        end loop;
-        check_cyclic_distribution(v_value_cnt, v_num_values);
+      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-5,6), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -1, 1, INCL,(-5,6));
+      for j in v_int_vec'range loop
+        v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
       end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
@@ -1669,15 +1666,14 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
+      increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -3, 4, EXCL,(-1,0,1));
-        for j in v_int_vec'range loop
-          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
-        end loop;
-        check_cyclic_distribution(v_value_cnt, v_num_values);
+      v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -3, 4, EXCL,(-1,0,1));
+      for j in v_int_vec'range loop
+        v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
       end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing integer_vector (min/max + 2 sets of values)");
       v_num_values := 5; -- same as v_int_vec'length
@@ -1690,25 +1686,23 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
+      increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
-        for j in v_int_vec'range loop
-          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
-        end loop;
-        check_cyclic_distribution(v_value_cnt, v_num_values);
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
+      for j in v_int_vec'range loop
+        v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
       end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
 
+      increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, EXCL,(-1), INCL,(-5,6,8), UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -1, 1, EXCL,(-1,-1), INCL,(-5,6,8)); -- use vector to save overload
-        for j in v_int_vec'range loop
-          v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
-        end loop;
-        check_cyclic_distribution(v_value_cnt, v_num_values);
+      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, EXCL,(-1), INCL,(-5,6,8), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -1, 1, EXCL,(-1,-1), INCL,(-5,6,8)); -- use vector to save overload
+      for j in v_int_vec'range loop
+        v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
       end loop;
+      check_cyclic_distribution(v_value_cnt, v_num_values);
 
       ------------------------------------------------------------
       -- Random cyclic unsigned

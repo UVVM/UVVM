@@ -401,6 +401,45 @@ package rand_tb_pkg is
     constant set_values2 : in t_natural_vector);
 
   ------------------------------------------------------------
+  -- Count the generated random value(s)
+  ------------------------------------------------------------
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    integer);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant values    : in    integer_vector);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    real);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant values    : in    real_vector);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    time);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant values    : in    time_vector);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    unsigned);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    signed);
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    std_logic_vector);
+
+  ------------------------------------------------------------
   -- Check uniqueness
   ------------------------------------------------------------
   procedure check_uniqueness(
@@ -1250,6 +1289,78 @@ package body rand_tb_pkg is
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     end if;
+  end procedure;
+
+  ------------------------------------------------------------
+  -- Count the generated random value(s)
+  ------------------------------------------------------------
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    integer) is
+  begin
+    value_cnt(value) := value_cnt(value) + 1;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant values    : in    integer_vector) is
+  begin
+    for i in values'range loop
+      value_cnt(values(i)) := value_cnt(values(i)) + 1;
+    end loop;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    real) is
+  begin
+    value_cnt(integer(value)) := value_cnt(integer(value)) + 1;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant values    : in    real_vector) is
+  begin
+    for i in values'range loop
+      value_cnt(integer(values(i))) := value_cnt(integer(values(i))) + 1;
+    end loop;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    time) is
+  begin
+    value_cnt(value/1 ps) := value_cnt(value/1 ps) + 1;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant values    : in    time_vector) is
+  begin
+    for i in values'range loop
+      value_cnt(values(i)/1 ps) := value_cnt(values(i)/1 ps) + 1;
+    end loop;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    unsigned) is
+  begin
+    value_cnt(to_integer(value)) := value_cnt(to_integer(value)) + 1;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    signed) is
+  begin
+    value_cnt(to_integer(value)) := value_cnt(to_integer(value)) + 1;
+  end procedure;
+
+  procedure count_rand_value(
+    variable value_cnt : inout t_integer_cnt;
+    constant value     : in    std_logic_vector) is
+  begin
+    value_cnt(to_integer(unsigned(value))) := value_cnt(to_integer(unsigned(value))) + 1;
   end procedure;
 
   ------------------------------------------------------------

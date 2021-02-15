@@ -202,6 +202,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE);
         check_rand_value(v_int_vec, -2, 2);
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -223,6 +224,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE);
         check_rand_value(v_int_vec, (-2,-1,0,1,2));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -244,6 +246,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10,15), UNIQUE);
         check_rand_value(v_int_vec, -1, 1, INCL,(-10,15));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -254,6 +257,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE);
         check_rand_value(v_int_vec, -3, 4, EXCL,(-1,0,1));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -275,6 +279,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-10,15,16), EXCL,(-1,0,1), UNIQUE);
         check_rand_value(v_int_vec, -2, 2, INCL,(-10,15,16), EXCL,(-1,0,1));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -285,6 +290,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, EXCL,(-1,0,1), INCL,(-10,15,16), UNIQUE);
         check_rand_value(v_int_vec, -2, 2, EXCL,(-1,0,1), INCL,(-10,15,16));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -295,6 +301,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10), INCL,(15,16), UNIQUE);
         check_rand_value(v_int_vec, -1, 1, INCL,(-10,15,16));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -305,6 +312,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -4, 4, EXCL,(-2,-1), EXCL,(1,2), UNIQUE);
         check_rand_value(v_int_vec, -4, 4, EXCL,(-2,-1,1,2));
+        check_uniqueness(v_int_vec);
         for j in v_int_vec'range loop
           v_value_cnt(v_int_vec(j)) := v_value_cnt(v_int_vec(j)) + 1;
         end loop;
@@ -407,6 +415,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, UNIQUE);
         check_rand_value(v_real_vec, -2.0, 2.0);
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -428,6 +437,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.1,0.25,1.1,2.0), UNIQUE);
         check_rand_value(v_real_vec, (-2.0,-1.1,0.25,1.1,2.0));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -449,6 +459,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), UNIQUE);
         check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -459,6 +470,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), UNIQUE);
         check_rand_value(v_real_vec, -1.0, 1.0, EXCL,(-1.0,0.0,1.0));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -480,6 +492,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,0.0,1.0), UNIQUE);
         check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,0.0,1.0));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -490,6 +503,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), INCL,(15.5,16.6), UNIQUE);
         check_rand_value(v_real_vec, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), INCL,(15.5,16.6));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -500,6 +514,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5), INCL,(16.6,17.7), UNIQUE);
         check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6,17.7));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -510,6 +525,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,-0.5), EXCL,(0.5,1.0), UNIQUE);
         check_rand_value(v_real_vec, -1.0, 1.0, EXCL,(-1.0,-0.5,0.5,1.0));
+        check_uniqueness(v_real_vec);
         for j in v_real_vec'range loop
           v_value_cnt(integer(v_real_vec(j))) := v_value_cnt(integer(v_real_vec(j))) + 1;
         end loop;
@@ -614,6 +630,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, UNIQUE);
         check_rand_value(v_time_vec, -2 ps, 2 ps);
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -635,6 +652,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(-2 ps,-1 ps,0 ps,1 ps,2 ps), UNIQUE);
         check_rand_value(v_time_vec, (-2 ps,-1 ps,0 ps,1 ps,2 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -661,6 +679,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps,16 ps), UNIQUE);
         check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,16 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -671,6 +690,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -4 ps, 4 ps, EXCL,(-1 ps,0 ps,1 ps), UNIQUE);
         check_rand_value(v_time_vec, -4 ps, 4 ps, EXCL,(-1 ps,0 ps,1 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -692,6 +712,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,1 ps), UNIQUE);
         check_rand_value(v_time_vec, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,1 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -702,6 +723,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,1 ps), INCL,(-15 ps,16 ps,17 ps), UNIQUE);
         check_rand_value(v_time_vec, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,1 ps), INCL,(-15 ps,16 ps,17 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -712,6 +734,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps), INCL,(17 ps,18 ps), UNIQUE);
         check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,17 ps,18 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;
@@ -722,6 +745,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -4 ps, 4 ps, EXCL,(-2 ps,-1 ps), EXCL,(1 ps,2 ps), UNIQUE);
         check_rand_value(v_time_vec, -4 ps, 4 ps, EXCL,(-2 ps,-1 ps,1 ps,2 ps));
+        check_uniqueness(v_time_vec);
         for j in v_real_vec'range loop
           v_value_cnt(v_time_vec(j)/1 ps) := v_value_cnt(v_time_vec(j)/1 ps) + 1;
         end loop;

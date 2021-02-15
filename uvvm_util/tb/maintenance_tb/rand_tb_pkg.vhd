@@ -401,6 +401,18 @@ package rand_tb_pkg is
     constant set_values2 : in t_natural_vector);
 
   ------------------------------------------------------------
+  -- Check uniqueness
+  ------------------------------------------------------------
+  procedure check_uniqueness(
+    constant vector : in integer_vector);
+
+  procedure check_uniqueness(
+    constant vector : in real_vector);
+
+  procedure check_uniqueness(
+    constant vector : in time_vector);
+
+  ------------------------------------------------------------
   -- Generate distributions
   ------------------------------------------------------------
   -- Generates a number of random values of a certain type using the Gaussian distribution
@@ -1237,6 +1249,74 @@ package body rand_tb_pkg is
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
+    end if;
+  end procedure;
+
+  ------------------------------------------------------------
+  -- Check uniqueness
+  ------------------------------------------------------------
+  procedure check_uniqueness(
+    constant vector : in integer_vector) is
+    constant C_PROC_NAME : string := "check_uniqueness";
+    variable v_unique    : boolean := true;
+  begin
+    -- Check that values in the vector are not repeated
+    for i in 0 to vector'length-2 loop
+      for j in i+1 to vector'length-1 loop
+        if vector(i) = vector(j) then
+          v_unique := false;
+        end if;
+      end loop;
+    end loop;
+
+    if v_unique then
+      log(ID_POS_ACK, C_PROC_NAME & " => OK.");
+    else
+      alert(ERROR, C_PROC_NAME & " => Failed, values in the vector are not unique.");
+    end if;
+  end procedure;
+
+  -- Overload (real_vector)
+  procedure check_uniqueness(
+    constant vector : in real_vector) is
+    constant C_PROC_NAME : string := "check_uniqueness";
+    variable v_unique    : boolean := true;
+  begin
+    -- Check that values in the vector are not repeated
+    for i in 0 to vector'length-2 loop
+      for j in i+1 to vector'length-1 loop
+        if vector(i) = vector(j) then
+          v_unique := false;
+        end if;
+      end loop;
+    end loop;
+
+    if v_unique then
+      log(ID_POS_ACK, C_PROC_NAME & " => OK.");
+    else
+      alert(ERROR, C_PROC_NAME & " => Failed, values in the vector are not unique.");
+    end if;
+  end procedure;
+
+  -- Overload (time_vector)
+  procedure check_uniqueness(
+    constant vector : in time_vector) is
+    constant C_PROC_NAME : string := "check_uniqueness";
+    variable v_unique    : boolean := true;
+  begin
+    -- Check that values in the vector are not repeated
+    for i in 0 to vector'length-2 loop
+      for j in i+1 to vector'length-1 loop
+        if vector(i) = vector(j) then
+          v_unique := false;
+        end if;
+      end loop;
+    end loop;
+
+    if v_unique then
+      log(ID_POS_ACK, C_PROC_NAME & " => OK.");
+    else
+      alert(ERROR, C_PROC_NAME & " => Failed, values in the vector are not unique.");
     end if;
   end procedure;
 

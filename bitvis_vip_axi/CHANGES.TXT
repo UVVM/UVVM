@@ -5,6 +5,7 @@ v0.1.1
 ----------
 Released: xxxx-xx-xx
 -Fixed "bad handle or reference" fatal error that happened in some versions of Modelsim
+-Fixed bug in the log message in the axi_read BFM procedure
 
 v0.1.0
 ----------

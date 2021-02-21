@@ -1,6 +1,6 @@
 Advanced randomization
 ======================
-The functionality for advanced randomization can be found in *uvvm_util/src/rand_pkg.vhd*.
+The features for advanced randomization can be found in *uvvm_util/src/rand_pkg.vhd*.
 
 To generate a random value using this package it is necessary to import the utility library, create a variable with the protected 
 type *t_rand* and call the ``rand()`` function from the variable.

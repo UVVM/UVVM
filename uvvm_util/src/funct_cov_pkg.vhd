@@ -181,6 +181,7 @@ package funct_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
+    -- TODO: max 5 dimensions
     ------------------------------------------------------------
     -- Add cross (2 bins)
     ------------------------------------------------------------
@@ -234,6 +235,60 @@ package funct_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
+    -- TODO: max 16 dimensions
+    ------------------------------------------------------------
+    -- Add cross (2 coverpoints)
+    ------------------------------------------------------------
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant rand_weight   : in    natural;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in    string         := "");
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Add cross (3 coverpoints)
+    ------------------------------------------------------------
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      variable cov_point3    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant rand_weight   : in    natural;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in    string         := "");
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      variable cov_point3    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      variable cov_point3    : inout t_cov_point;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel);
+
     ------------------------------------------------------------
     -- Randomization
     ------------------------------------------------------------
@@ -268,6 +323,39 @@ package funct_cov_pkg is
 
     procedure print_summary(
       constant VOID : in t_void);
+
+    ------------------------------------------------------------
+    -- Get functions
+    ------------------------------------------------------------
+    -- Returns the number of bins crossed in the coverpoint
+    impure function get_num_bins_crossed(
+      constant VOID : in t_void)
+    return integer;
+
+    -- Returns the number of bins in the coverpoint
+    impure function get_num_bins(
+      constant VOID : in t_void)
+    return natural;
+
+    -- Returns the number of illegal and ignore bins in the coverpoint
+    impure function get_num_invalid_bins(
+      constant VOID : in t_void)
+    return natural;
+
+    -- Returns a vector with the bins in the coverpoint
+    impure function get_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector;
+
+    -- Returns a vector with the illegal and ignore bins in the coverpoint
+    impure function get_invalid_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector;
+
+    -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
+    impure function get_all_bins_string(
+      constant VOID : in t_void)
+    return string;
 
   end protected t_cov_point;
 
@@ -512,7 +600,7 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Returns a string with all the procedure calls in the array
     impure function get_proc_calls(
-      bin_array : t_new_bin_array)
+      constant bin_array : t_new_bin_array)
     return string is
       variable v_line   : line;
       variable v_result : string(1 to 500);
@@ -533,9 +621,9 @@ package body funct_cov_pkg is
 
     -- Returns a string with all the bins values in the array
     impure function get_bin_array_values(
-      bin_array     : t_new_bin_array;
-      use_full_name : boolean := false;
-      bin_delimiter : character := ',')
+      constant bin_array     : t_new_bin_array;
+      constant use_full_name : boolean := false;
+      constant bin_delimiter : character := ',')
     return string is
       variable v_line   : line;
       variable v_result : string(1 to 500);
@@ -600,7 +688,7 @@ package body funct_cov_pkg is
     -- Returns a string with all the bins values in the vector
     -- Used in the report, so the bins in the vector are crossed
     impure function get_bin_vector_values(
-      bins : t_bin_vector)
+      constant bins : t_bin_vector)
     return string is
       variable v_new_bin_array : t_new_bin_array(0 to 0);
     begin
@@ -615,7 +703,7 @@ package body funct_cov_pkg is
 
     -- Returns a string with the bin content
     impure function get_bin_info(
-      bin : t_bin)
+      constant bin : t_bin)
     return string is
       variable v_new_bin_array : t_new_bin_array(0 to 0);
     begin
@@ -731,61 +819,118 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
-    -- Checks that the number of bins used does not change
+    -- Checks that the number of crossed bins does not change.
+    -- If the extra parameters are given, it checks that the coverpoints are not empty.
     procedure check_num_bins_crossed(
-      constant num_bins_crossed : in natural;
-      constant local_call       : in string) is
+      constant num_bins_crossed             : in natural;
+      constant local_call                   : in string;
+      constant coverpoint1_num_bins_crossed : in integer := 0;
+      constant coverpoint2_num_bins_crossed : in integer := 0;
+      constant coverpoint3_num_bins_crossed : in integer := 0) is
     begin
+      check_value(coverpoint1_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 1 is uninitialized", priv_scope.all, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+      check_value(coverpoint2_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 2 is uninitialized", priv_scope.all, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+      check_value(coverpoint3_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 3 is uninitialized", priv_scope.all, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+
       -- The number of bins crossed is set on the first call and can't be changed
-      if priv_num_bins_crossed = -1 then
+      if priv_num_bins_crossed = -1 and num_bins_crossed /= 0 then
         priv_num_bins_crossed := num_bins_crossed;
       elsif priv_num_bins_crossed /= num_bins_crossed then
         alert(TB_FAILURE, local_call & "=> Failed. Cannot mix different number of crossed bins.", priv_scope.all);
       end if;
     end procedure;
 
-    -- Creates a bin array from several bin vectors
+    -- Copies all the bins in a bin array to a bin_vector
+    procedure copy_bins_in_bin_array(
+      constant bin       : in  t_new_bin_array;
+      variable cov_bin   : out t_new_cov_bin) is
+      variable v_num_bins : natural := 0;
+    begin
+      for i in bin'range loop
+        cov_bin.bin_vector(v_num_bins to v_num_bins+bin(i).num_bins-1) := bin(i).bin_vector(0 to bin(i).num_bins-1);
+        v_num_bins := v_num_bins + bin(i).num_bins;
+      end loop;
+      cov_bin.num_bins := v_num_bins;
+    end procedure;
+
+    -- Copies all the bins in a coverpoint to a bin_vector
+    procedure copy_bins_in_cov_point(
+      variable cov_point : inout t_cov_point;
+      variable cov_bin   : out   t_new_cov_bin) is
+      constant C_COV_POINT_NUM_BINS         : natural := cov_point.get_num_bins(VOID);
+      constant C_COV_POINT_NUM_INVALID_BINS : natural := cov_point.get_num_invalid_bins(VOID);
+      variable v_cov_point_bins             : t_cov_bin_vector(0 to C_COV_POINT_NUM_BINS-1);
+      variable v_cov_point_invalid_bins     : t_cov_bin_vector(0 to C_COV_POINT_NUM_INVALID_BINS-1);
+      variable v_num_bins                   : natural := 0;
+    begin
+      v_cov_point_bins         := cov_point.get_bins(VOID);
+      v_cov_point_invalid_bins := cov_point.get_invalid_bins(VOID);
+
+      for i in v_cov_point_bins'range loop
+        cov_bin.bin_vector(v_num_bins+i).contains   := v_cov_point_bins(i).cross_bins(0).contains;
+        cov_bin.bin_vector(v_num_bins+i).values     := v_cov_point_bins(i).cross_bins(0).values;
+        cov_bin.bin_vector(v_num_bins+i).num_values := v_cov_point_bins(i).cross_bins(0).num_values;
+      end loop;
+      v_num_bins := v_num_bins + v_cov_point_bins'length;
+      for i in v_cov_point_invalid_bins'range loop
+        cov_bin.bin_vector(v_num_bins+i).contains   := v_cov_point_invalid_bins(i).cross_bins(0).contains;
+        cov_bin.bin_vector(v_num_bins+i).values     := v_cov_point_invalid_bins(i).cross_bins(0).values;
+        cov_bin.bin_vector(v_num_bins+i).num_values := v_cov_point_invalid_bins(i).cross_bins(0).num_values;
+      end loop;
+      v_num_bins := v_num_bins + v_cov_point_invalid_bins'length;
+
+      cov_bin.num_bins := v_num_bins;
+    end procedure;
+
+    -- Creates a bin array from several bin arrays
     procedure create_bin_array(
       variable bin_array : out t_new_bin_array;
       constant bin1      : in  t_new_bin_array;
       constant bin2      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
       constant bin3      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
-      constant bin4      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY) is
-      variable v_num_bins : natural := 0;
+      constant bin4      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
+      constant bin5      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY) is
     begin
-      for i in bin1'range loop
-        bin_array(0).bin_vector(v_num_bins to v_num_bins+bin1(i).num_bins-1) := bin1(i).bin_vector(0 to bin1(i).num_bins-1);
-        v_num_bins := v_num_bins + bin1(i).num_bins;
-      end loop;
-      bin_array(0).num_bins := v_num_bins;
+      copy_bins_in_bin_array(bin1, bin_array(0));
 
       if bin2 /= C_EMPTY_NEW_BIN_ARRAY then
-        v_num_bins := 0;
-        for i in bin2'range loop
-          bin_array(1).bin_vector(v_num_bins to v_num_bins+bin2(i).num_bins-1) := bin2(i).bin_vector(0 to bin2(i).num_bins-1);
-          v_num_bins := v_num_bins + bin2(i).num_bins;
-        end loop;
-        bin_array(1).num_bins := v_num_bins;
+        copy_bins_in_bin_array(bin2, bin_array(1));
       end if;
 
       if bin3 /= C_EMPTY_NEW_BIN_ARRAY then
-        v_num_bins := 0;
-        for i in bin3'range loop
-          bin_array(2).bin_vector(v_num_bins to v_num_bins+bin3(i).num_bins-1) := bin3(i).bin_vector(0 to bin3(i).num_bins-1);
-          v_num_bins := v_num_bins + bin3(i).num_bins;
-        end loop;
-        bin_array(2).num_bins := v_num_bins;
+        copy_bins_in_bin_array(bin3, bin_array(2));
       end if;
 
       if bin4 /= C_EMPTY_NEW_BIN_ARRAY then
-        v_num_bins := 0;
-        for i in bin4'range loop
-          bin_array(3).bin_vector(v_num_bins to v_num_bins+bin4(i).num_bins-1) := bin4(i).bin_vector(0 to bin4(i).num_bins-1);
-          v_num_bins := v_num_bins + bin4(i).num_bins;
-        end loop;
-        bin_array(3).num_bins := v_num_bins;
+        copy_bins_in_bin_array(bin4, bin_array(3));
       end if;
-      -- TODO: add more bins
+
+      if bin5 /= C_EMPTY_NEW_BIN_ARRAY then
+        copy_bins_in_bin_array(bin5, bin_array(4));
+      end if;
+    end procedure;
+
+    -- Creates a bin array from several coverpoints
+    procedure create_bin_array(
+      variable bin_array  : out   t_new_bin_array;
+      variable cov_point1 : inout t_cov_point;
+      variable cov_point2 : inout t_cov_point) is
+    begin
+      copy_bins_in_cov_point(covpoint1, bin_array(0));
+      copy_bins_in_cov_point(covpoint2, bin_array(1));
+    end procedure;
+
+    -- TODO: create more overloads (16)
+    -- Overload
+    procedure create_bin_array(
+      variable bin_array  : out   t_new_bin_array;
+      variable cov_point1 : inout t_cov_point;
+      variable cov_point2 : inout t_cov_point;
+      variable cov_point3 : inout t_cov_point) is
+    begin
+      copy_bins_in_cov_point(covpoint1, bin_array(0));
+      copy_bins_in_cov_point(covpoint2, bin_array(1));
+      copy_bins_in_cov_point(covpoint3, bin_array(2));
     end procedure;
 
     -- Adds bins in a recursive way
@@ -1029,6 +1174,115 @@ package body funct_cov_pkg is
         "), """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Add cross (2 coverpoints)
+    ------------------------------------------------------------
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant rand_weight   : in    natural;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in    string         := "") is
+      constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS : natural := 2;
+      variable v_proc_call      : line;
+      variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
+    begin
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV_BINS, "Adding cross: " &  cov_point1.get_all_bins_string(VOID) & " x "  &  cov_point2.get_all_bins_string(VOID) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, cov_point1.get_num_bins_crossed(VOID), cov_point2.get_num_bins_crossed(VOID));
+      create_bin_array(v_bin_array, cov_point1, cov_point2);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+    end procedure;
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) &
+        ", min_cov:" & to_string(min_cov) & ", """ & bin_name & """)";
+    begin
+      add_cross(cov_point1, cov_point2, min_cov, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) &
+        ", """ & bin_name & """)";
+    begin
+      add_cross(cov_point1, cov_point2, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Add cross (3 coverpoints)
+    ------------------------------------------------------------
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      variable cov_point3    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant rand_weight   : in    natural;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in    string         := "") is
+      constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) & ", " &
+        cov_point3.get_name(VOID) & ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS : natural := 2;
+      variable v_proc_call      : line;
+      variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
+    begin
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV_BINS, "Adding cross: " &  cov_point1.get_all_bins_string(VOID) & " x "  &  cov_point2.get_all_bins_string(VOID) &
+        " x "  &  cov_point3.get_all_bins_string(VOID) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, cov_point1.get_num_bins_crossed(VOID), cov_point2.get_num_bins_crossed(VOID),
+        cov_point3.get_num_bins_crossed(VOID));
+      create_bin_array(v_bin_array, cov_point1, cov_point2, cov_point3);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+    end procedure;
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      variable cov_point3    : inout t_cov_point;
+      constant min_cov       : in    positive;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) & ", " &
+        cov_point3.get_name(VOID) & ", min_cov:" & to_string(min_cov) & ", """ & bin_name & """)";
+    begin
+      add_cross(cov_point1, cov_point2, cov_point3, min_cov, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    procedure add_cross(
+      variable cov_point1    : inout t_cov_point;
+      variable cov_point2    : inout t_cov_point;
+      variable cov_point3    : inout t_cov_point;
+      constant bin_name      : in    string         := "";
+      constant msg_id_panel  : in    t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) & ", " &
+        cov_point3.get_name(VOID) & ", """ & bin_name & """)";
+    begin
+      add_cross(cov_point1, cov_point2, cov_point3, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
     ------------------------------------------------------------
@@ -1393,6 +1647,74 @@ package body funct_cov_pkg is
       deallocate(v_line);
       deallocate(v_line_copy);
     end procedure;
+
+    ------------------------------------------------------------
+    -- Get functions
+    ------------------------------------------------------------
+    -- Returns the number of bins crossed in the coverpoint
+    impure function get_num_bins_crossed(
+      constant VOID : in t_void)
+    return integer is
+    begin
+      return priv_num_bins_crossed;
+    end function;
+
+    -- Returns the number of bins in the coverpoint
+    impure function get_num_bins(
+      constant VOID : in t_void)
+    return natural is
+    begin
+      return priv_bins_idx;
+    end function;
+
+    -- Returns the number of illegal and ignore bins in the coverpoint
+    impure function get_num_invalid_bins(
+      constant VOID : in t_void)
+    return natural is
+    begin
+      return priv_invalid_bins_idx;
+    end function;
+
+    -- Returns a vector with the bins in the coverpoint
+    impure function get_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector is
+    begin
+      return priv_bins(0 to priv_bins_idx-1);
+    end function;
+
+    -- Returns a vector with the illegal and ignore bins in the coverpoint
+    impure function get_invalid_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector is
+    begin
+      return priv_invalid_bins(0 to priv_invalid_bins_idx-1);
+    end function;
+
+    -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
+    impure function get_all_bins_string(
+      constant VOID : in t_void)
+    return string is
+      variable v_new_bin_array : t_new_bin_array(0 to 0);
+    begin
+      for i in 0 to priv_bins_idx-1 loop
+        v_new_bin_array(0).bin_vector(i).contains   := priv_bins(i).cross_bins(0).contains;
+        v_new_bin_array(0).bin_vector(i).values     := priv_bins(i).cross_bins(0).values;
+        v_new_bin_array(0).bin_vector(i).num_values := priv_bins(i).cross_bins(0).num_values;
+        v_new_bin_array(0).num_bins := priv_bins_idx;
+      end loop;
+      for i in 0 to priv_invalid_bins_idx-1 loop
+        v_new_bin_array(0).bin_vector(priv_bins_idx+i).contains   := priv_bins(i).cross_bins(0).contains;
+        v_new_bin_array(0).bin_vector(priv_bins_idx+i).values     := priv_bins(i).cross_bins(0).values;
+        v_new_bin_array(0).bin_vector(priv_bins_idx+i).num_values := priv_bins(i).cross_bins(0).num_values;
+        v_new_bin_array(0).num_bins := priv_bins_idx + priv_invalid_bins_idx;
+      end loop;
+      if v_new_bin_array(0).num_bins > 0 then
+        return get_bin_array_values(v_new_bin_array);
+      else
+        return "";
+      end if;
+    end function;
 
   end protected body t_cov_point;
 

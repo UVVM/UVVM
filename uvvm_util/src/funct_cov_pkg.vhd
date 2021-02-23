@@ -917,7 +917,7 @@ package body funct_cov_pkg is
       variable cov_point2 : inout t_cov_point) is
     begin
       copy_bins_in_cov_point(cov_point1, bin_array(0));
-      copy_bins_in_cov_point(cov_point1, bin_array(1));
+      copy_bins_in_cov_point(cov_point2, bin_array(1));
     end procedure;
 
     -- TODO: create more overloads (16)
@@ -1080,8 +1080,8 @@ package body funct_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) &
-        "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 2;
       variable v_proc_call      : line;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
@@ -1104,8 +1104,8 @@ package body funct_cov_pkg is
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) &
-        "), min_cov:" & to_string(min_cov) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) &
+        ", min_cov:" & to_string(min_cov) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, min_cov, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -1115,8 +1115,8 @@ package body funct_cov_pkg is
       constant bin2          : in t_new_bin_array;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) &
-        "), """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) &
+        ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -1133,8 +1133,8 @@ package body funct_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) & "),(" & get_proc_calls(bin3) &
-        "), min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS : natural := 3;
       variable v_proc_call      : line;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
@@ -1158,8 +1158,8 @@ package body funct_cov_pkg is
       constant min_cov       : in positive;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) & "),(" & get_proc_calls(bin3) &
-        "), min_cov:" & to_string(min_cov) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", min_cov:" & to_string(min_cov) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, min_cov, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -1170,8 +1170,8 @@ package body funct_cov_pkg is
       constant bin3          : in t_new_bin_array;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross((" & get_proc_calls(bin1) & "),(" & get_proc_calls(bin2) & "),(" & get_proc_calls(bin3) &
-        "), """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;

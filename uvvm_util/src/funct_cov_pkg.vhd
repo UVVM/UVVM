@@ -766,13 +766,17 @@ package body funct_cov_pkg is
       return v_cnt;
     end function;
 
-    -- Returns the percentage of hits/min_hits in a bin
+    -- Returns the percentage of hits/min_hits in a bin. Note that it saturates at 100%
     impure function get_bin_coverage(
       constant bin : t_cov_bin)
     return real is
       variable v_coverage : real;
     begin
-      v_coverage := real(bin.hits)*100.0/real(bin.min_hits) when bin.min_hits > 0 else 0.0;
+      if bin.hits < bin.min_hits then
+        v_coverage := real(bin.hits)*100.0/real(bin.min_hits);
+      else
+        v_coverage := 100.0;
+      end if;
       return v_coverage;
     end function;
 
@@ -1509,8 +1513,7 @@ package body funct_cov_pkg is
     return boolean is
       variable v_cov_complete : boolean := true;
     begin
-      --TODO: this only covers if goal is 1-100, but not if >100 (extended simulation)
-      return get_covpoint_coverage(VOID) >= real(priv_cov_goal);
+      return get_covpoint_coverage_accumulated(VOID) >= real(priv_cov_goal);
     end function;
 
     --Q: always write to log and file? do like log and have a generic name and possible to modify?

@@ -916,8 +916,8 @@ package body funct_cov_pkg is
       variable cov_point1 : inout t_cov_point;
       variable cov_point2 : inout t_cov_point) is
     begin
-      copy_bins_in_cov_point(covpoint1, bin_array(0));
-      copy_bins_in_cov_point(covpoint2, bin_array(1));
+      copy_bins_in_cov_point(cov_point1, bin_array(0));
+      copy_bins_in_cov_point(cov_point1, bin_array(1));
     end procedure;
 
     -- TODO: create more overloads (16)
@@ -928,9 +928,9 @@ package body funct_cov_pkg is
       variable cov_point2 : inout t_cov_point;
       variable cov_point3 : inout t_cov_point) is
     begin
-      copy_bins_in_cov_point(covpoint1, bin_array(0));
-      copy_bins_in_cov_point(covpoint2, bin_array(1));
-      copy_bins_in_cov_point(covpoint3, bin_array(2));
+      copy_bins_in_cov_point(cov_point1, bin_array(0));
+      copy_bins_in_cov_point(cov_point2, bin_array(1));
+      copy_bins_in_cov_point(cov_point3, bin_array(2));
     end procedure;
 
     -- Adds bins in a recursive way

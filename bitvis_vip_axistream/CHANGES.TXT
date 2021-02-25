@@ -6,6 +6,7 @@ v4.x.x
 ----------
 Released: 2021-xx-xx
 - Improved log message from axistream_expect_bytes() BFM procedure.
+- Removed commented log message in BFM procedures.
 
 v4.7.2
 ----------

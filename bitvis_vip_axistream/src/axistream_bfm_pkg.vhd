@@ -1905,7 +1905,7 @@ package body axistream_bfm_pkg is
         ". Was " & to_string(v_rx_dest_array(v_first_errored_byte)(c_num_dest_bits_per_word-1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " &
         to_string(exp_dest_array(v_first_errored_byte)(c_num_dest_bits_per_word-1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "B. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "Bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure axistream_expect_bytes;

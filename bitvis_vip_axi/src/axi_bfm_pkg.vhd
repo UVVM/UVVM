@@ -222,11 +222,11 @@ package axi_bfm_pkg is
   ) return std_logic_vector;
 
   function bytes_to_axsize(
-    bytes : positive
+    constant bytes : positive
   ) return std_logic_vector;
 
   function axlock_to_sl(
-    axlock : t_axlock
+    constant axlock : t_axlock
   ) return std_logic;
 
   ------------------------------------------

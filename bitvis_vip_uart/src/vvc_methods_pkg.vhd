@@ -498,7 +498,7 @@ package body vvc_methods_pkg is
   ) is
   begin
     if probability /= -1.0 then
-      check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0.", scope);
+      check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0.", scope, ID_NEVER);
 
       -- Raise a TB_WARNING only once if there is a conflict between VVC and BFM setting
       if not(has_raised_warning_if_vvc_bfm_conflict) and bfm_configured_error_injection_setting and probability < 1.0 then

@@ -3,6 +3,12 @@ UVVM VVC Framework - Overview on Versions and Changes
 ----------------------------------------------------------------------
 
 
+v2.xx.x
+----------
+Released: 2021-xx-xx
+- vvc_generator now includes activity watchdog by default.
+
+
 v2.11.1
 ----------
 Released: 2020-08-18

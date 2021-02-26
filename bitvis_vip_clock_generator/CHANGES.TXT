@@ -4,7 +4,8 @@ Bitvis VIP Clock Generator - Overview on Versions and Changes
 v1.x.x
 ----------
 Released: 202x-xx-xx
-- Improved log messages from VVC
+- Improved log messages from VVC.
+- Improved set_clock_period() method description in the QR.
 
 v1.4.0
 ----------

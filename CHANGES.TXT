@@ -25,6 +25,7 @@ Released: 2021-xx-xx
 - Improved log message from axistream_expect_bytes() BFM procedure.
 - vvc_generator now includes activity watchdog by default.
 - Improved log messages from Clock Generator VVC.
+- Improved Clock Generator VVC set_clock_period() method description in the QR.
 
 
 v2 2020.12.21

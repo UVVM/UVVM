@@ -85,7 +85,7 @@ def get_user_input(txt = "\rPlease select 'Y' or 'N': "):
 # Get the basic or advanced VVC generation.
 def get_generating_level():
     print("\n\rThe VVC is generated with basic code for running with UVVM as default, but can be")
-    print("generated with extended UVVM features such as Scoreboard, transaction info and activity watchdog.")
+    print("generated with extended UVVM features such as Scoreboard and transaction info.")
     selected_features = extended_features.copy()
     extended_selection = None
     while extended_selection == None:

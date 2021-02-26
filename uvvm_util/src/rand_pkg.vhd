@@ -1174,21 +1174,21 @@ package body rand_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_rand is protected body
-    variable priv_scope                   : line              := new string'(C_SCOPE);
-    variable priv_seed1                   : positive          := C_INIT_SEED_1;
-    variable priv_seed2                   : positive          := C_INIT_SEED_2;
-    variable priv_rand_dist               : t_rand_dist       := UNIFORM;
-    variable priv_weight_mode             : t_weight_mode     := COMBINED_WEIGHT;
-    variable priv_warned_same_set_type    : boolean           := false;
-    variable priv_cyclic_current_function : line              := new string'("");
+    variable priv_scope                   : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
+    variable priv_seed1                   : positive                       := C_INIT_SEED_1;
+    variable priv_seed2                   : positive                       := C_INIT_SEED_2;
+    variable priv_rand_dist               : t_rand_dist                    := UNIFORM;
+    variable priv_weight_mode             : t_weight_mode                  := COMBINED_WEIGHT;
+    variable priv_warned_same_set_type    : boolean                        := false;
+    variable priv_cyclic_current_function : line                           := new string'("");
     variable priv_cyclic_list             : t_cyclic_list_ptr;
-    variable priv_cyclic_list_num_items   : natural           := 0;
+    variable priv_cyclic_list_num_items   : natural                        := 0;
     variable priv_cyclic_queue            : t_generic_queue;
-    variable priv_mean_configured         : boolean           := false;
-    variable priv_std_dev_configured      : boolean           := false;
+    variable priv_mean_configured         : boolean                        := false;
+    variable priv_std_dev_configured      : boolean                        := false;
     -- Default values for the mean and standard deviation are relative to the given range, i.e. default values below are ignored
-    variable priv_mean                    : real              := 0.0;
-    variable priv_std_dev                 : real              := 0.0;
+    variable priv_mean                    : real                           := 0.0;
+    variable priv_std_dev                 : real                           := 0.0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1389,7 +1389,7 @@ package body rand_pkg is
     begin
       -- Called directly from sequencer/VVC
       if ext_proc_call = "" then
-        log(msg_id, proc_call, priv_scope.all, msg_id_panel);
+        log(msg_id, proc_call, priv_scope, msg_id_panel);
         write(new_proc_call, proc_call);
       -- Called from another procedure
       else
@@ -1420,11 +1420,11 @@ package body rand_pkg is
       v_len := length when length < 32 else
                31 when not(signed_values) else 32; -- Length is limited by integer size
       if signed_values then
-        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
       else
-        check_value_in_range(min_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(min_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        check_value_in_range(max_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
       end if;
     end procedure;
 
@@ -1441,9 +1441,9 @@ package body rand_pkg is
                31 when not(signed_values) else 32; -- Length is limited by integer size
       for i in set_values'range loop
         if signed_values then
-          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
         else
-          check_value_in_range(set_values(i), 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope.all, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          check_value_in_range(set_values(i), 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
         end if;
       end loop;
     end procedure;
@@ -1454,7 +1454,7 @@ package body rand_pkg is
       constant proc_call : in string) is
     begin
       if not(priv_warned_same_set_type) then
-        alert(TB_WARNING, proc_call & "=> Used same type for both set of values: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_WARNING, proc_call & "=> Used same type for both set of values: " & to_upper(to_string(set_type)), priv_scope);
         priv_warned_same_set_type := true;
       end if;
     end procedure;
@@ -1487,7 +1487,7 @@ package body rand_pkg is
     return real is
     begin
       if not(priv_mean_configured) then
-        alert(TB_NOTE, "get_rand_dist_mean()=> mean has not been configured, using default", priv_scope.all);
+        alert(TB_NOTE, "get_rand_dist_mean()=> mean has not been configured, using default", priv_scope);
       end if;
       return priv_mean;
     end function;
@@ -1506,7 +1506,7 @@ package body rand_pkg is
         priv_std_dev := std_deviation;
         priv_std_dev_configured := true;
       else
-        alert(TB_ERROR, "set_rand_dist_std_deviation(" & to_string(std_deviation) & ")=> Failed. Must use positive values", priv_scope.all);
+        alert(TB_ERROR, "set_rand_dist_std_deviation(" & to_string(std_deviation) & ")=> Failed. Must use positive values", priv_scope);
       end if;
     end procedure;
 
@@ -1515,7 +1515,7 @@ package body rand_pkg is
     return real is
     begin
       if not(priv_std_dev_configured) then
-        alert(TB_NOTE, "get_rand_dist_std_deviation()=> std_deviation has not been configured, using default", priv_scope.all);
+        alert(TB_NOTE, "get_rand_dist_std_deviation()=> std_deviation has not been configured, using default", priv_scope);
       end if;
       return priv_std_dev;
     end function;
@@ -1533,7 +1533,7 @@ package body rand_pkg is
       if mode = COMBINED_WEIGHT or mode = INDIVIDUAL_WEIGHT then
         priv_weight_mode := mode;
       else
-        alert(TB_ERROR, "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")=> Failed. Mode not supported", priv_scope.all);
+        alert(TB_ERROR, "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")=> Failed. Mode not supported", priv_scope);
       end if;
     end procedure;
 
@@ -1547,8 +1547,11 @@ package body rand_pkg is
     procedure set_scope(
       constant scope : in string) is
     begin
-      DEALLOCATE(priv_scope);
-      priv_scope := new string'(scope);
+      if scope'length > C_LOG_SCOPE_WIDTH then
+        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
+      else
+        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
+      end if;
       priv_cyclic_queue.set_scope(scope);
     end procedure;
 
@@ -1556,7 +1559,7 @@ package body rand_pkg is
       constant VOID : t_void)
     return string is
     begin
-      return priv_scope.all;
+      return to_string(priv_scope);
     end function;
 
     procedure clear_rand_cyclic(
@@ -1642,12 +1645,12 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope);
         return 0;
       end if;
       if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -1734,10 +1737,10 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -1786,7 +1789,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -1811,7 +1814,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       -- Restore previous distribution
@@ -1910,9 +1913,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
 
@@ -1939,7 +1942,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope);
         return 0.0;
       end if;
 
@@ -1974,10 +1977,10 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2024,7 +2027,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2041,7 +2044,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       -- Restore previous distribution
@@ -2137,9 +2140,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
 
@@ -2164,7 +2167,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope);
         return 0 ns;
       end if;
 
@@ -2173,7 +2176,7 @@ package body rand_pkg is
         when UNIFORM =>
           random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
           return 0 ns;
       end case;
 
@@ -2196,7 +2199,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       -- Generate a random value within the set of values
@@ -2251,7 +2254,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2345,9 +2348,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
 
@@ -2380,11 +2383,11 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2396,7 +2399,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (max_value - min_value + 1) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -2442,11 +2445,11 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2458,7 +2461,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2523,11 +2526,11 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2540,7 +2543,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2629,11 +2632,11 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2647,7 +2650,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2694,7 +2697,7 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2745,7 +2748,7 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2757,7 +2760,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2818,7 +2821,7 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2909,7 +2912,7 @@ package body rand_pkg is
 
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2969,7 +2972,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if ((max_value - min_value)/C_TIME_UNIT + 1) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -3015,7 +3018,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -3081,7 +3084,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -3171,7 +3174,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -3209,7 +3212,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -3276,14 +3279,14 @@ package body rand_pkg is
         v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
-        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
           v_ret_int  := to_integer(v_unsigned);
           v_gen_new_random := check_value_in_vector(v_ret_int, integer_vector(set_values));
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       v_ret := to_unsigned(v_ret_int,length);
 
@@ -3420,7 +3423,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -3484,14 +3487,14 @@ package body rand_pkg is
         v_ret := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
-        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope.all, ID_NEVER, msg_id_panel, v_proc_call.all);
+        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_signed := rand(length, msg_id_panel, v_proc_call.all);
           v_ret := to_integer(v_signed);
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -3848,7 +3851,7 @@ package body rand_pkg is
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
         if weight_vector(i).min_value > weight_vector(i).max_value then
-          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
           return 0;
         end if;
         v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -3863,13 +3866,13 @@ package body rand_pkg is
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
-        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
         return 0;
       end if;
 
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope.all);
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -3964,7 +3967,7 @@ package body rand_pkg is
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
         if weight_vector(i).min_value > weight_vector(i).max_value then
-          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
           return 0.0;
         end if;
         v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -3973,18 +3976,18 @@ package body rand_pkg is
           v_acc_weight := v_acc_weight + weight_vector(i).weight;
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
-          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for real type", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for real type", priv_scope);
           return 0.0;
         end if;
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
-        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
         return 0.0;
       end if;
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -4079,7 +4082,7 @@ package body rand_pkg is
       -- Create a new vector with the accumulated weights
       for i in weight_vector'range loop
         if weight_vector(i).min_value > weight_vector(i).max_value then
-          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
           return std.env.resolution_limit;
         end if;
         v_mode := weight_vector(i).mode when weight_vector(i).mode /= NA else COMBINED_WEIGHT;
@@ -4088,18 +4091,18 @@ package body rand_pkg is
           v_acc_weight := v_acc_weight + weight_vector(i).weight;
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
-          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for time type", priv_scope.all);
+          alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for time type", priv_scope);
           return std.env.resolution_limit;
         end if;
         v_acc_weight_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
-        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope.all);
+        alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
         return std.env.resolution_limit;
       end if;
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope.all);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 

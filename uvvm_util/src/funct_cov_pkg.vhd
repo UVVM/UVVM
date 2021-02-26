@@ -583,8 +583,8 @@ package body funct_cov_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected body
-    variable priv_scope                         : line    := new string'(C_SCOPE);
-    variable priv_name                          : line    := new string'("");
+    variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
+    variable priv_name                          : string(1 to C_MAX_BIN_NAME_LENGTH);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bins_idx                      : natural := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
@@ -615,7 +615,7 @@ package body funct_cov_pkg is
 
       v_width := v_line'length;
       v_result(1 to v_width) := v_line.all;
-      deallocate(v_line);
+      DEALLOCATE(v_line);
       return v_result(1 to v_width);
     end function;
 
@@ -681,7 +681,7 @@ package body funct_cov_pkg is
 
       v_width := v_line'length;
       v_result(1 to v_width) := v_line.all;
-      deallocate(v_line);
+      DEALLOCATE(v_line);
       return v_result(1 to v_width);
     end function;
 
@@ -832,15 +832,15 @@ package body funct_cov_pkg is
       constant coverpoint2_num_bins_crossed : in integer := 0;
       constant coverpoint3_num_bins_crossed : in integer := 0) is
     begin
-      check_value(coverpoint1_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 1 is uninitialized", priv_scope.all, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
-      check_value(coverpoint2_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 2 is uninitialized", priv_scope.all, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
-      check_value(coverpoint3_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 3 is uninitialized", priv_scope.all, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+      check_value(coverpoint1_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 1 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+      check_value(coverpoint2_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 2 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+      check_value(coverpoint3_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 3 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
 
       -- The number of bins crossed is set on the first call and can't be changed
       if priv_num_bins_crossed = -1 and num_bins_crossed /= 0 then
         priv_num_bins_crossed := num_bins_crossed;
       elsif priv_num_bins_crossed /= num_bins_crossed then
-        alert(TB_FAILURE, local_call & "=> Failed. Cannot mix different number of crossed bins.", priv_scope.all);
+        alert(TB_FAILURE, local_call & "=> Failed. Cannot mix different number of crossed bins.", priv_scope);
       end if;
     end procedure;
 
@@ -1000,29 +1000,35 @@ package body funct_cov_pkg is
     procedure set_scope(
       constant scope : in string) is
     begin
-      DEALLOCATE(priv_scope);
-      priv_scope := new string'(scope);
+      if scope'length > C_LOG_SCOPE_WIDTH then
+        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
+      else
+        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
+      end if;
     end procedure;
 
     impure function get_scope(
       constant VOID : t_void)
     return string is
     begin
-      return priv_scope.all;
+      return to_string(priv_scope);
     end function;
 
     procedure set_name(
       constant name : in string) is
     begin
-      DEALLOCATE(priv_name);
-      priv_name := new string'(name);
+      if name'length > C_MAX_BIN_NAME_LENGTH then
+        priv_name := name(1 to C_MAX_BIN_NAME_LENGTH);
+      else
+        priv_name := name & fill_string(NUL, C_MAX_BIN_NAME_LENGTH-name'length);
+      end if;
     end procedure;
 
     impure function get_name(
       constant VOID : t_void)
     return string is
     begin
-      return priv_name.all;
+      return to_string(priv_name);
     end function;
 
     ------------------------------------------------------------
@@ -1043,14 +1049,15 @@ package body funct_cov_pkg is
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
       log(ID_FUNCT_COV_BINS, "Adding bins: " &  get_bin_array_values(bin) & ", min_cov:" & to_string(min_cov) &
-        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       create_bin_array(v_bin_array, bin);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      DEALLOCATE(v_proc_call);
     end procedure;
 
     procedure add_bins(
@@ -1092,14 +1099,15 @@ package body funct_cov_pkg is
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
       log(ID_FUNCT_COV_BINS, "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) &
-        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       create_bin_array(v_bin_array, bin1, bin2);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      DEALLOCATE(v_proc_call);
     end procedure;
 
     procedure add_cross(
@@ -1145,14 +1153,15 @@ package body funct_cov_pkg is
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
       log(ID_FUNCT_COV_BINS, "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
-        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       create_bin_array(v_bin_array, bin1, bin2, bin3);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      DEALLOCATE(v_proc_call);
     end procedure;
 
     procedure add_cross(
@@ -1199,14 +1208,15 @@ package body funct_cov_pkg is
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
       log(ID_FUNCT_COV_BINS, "Adding cross: " &  cov_point1.get_all_bins_string(VOID) & " x "  &  cov_point2.get_all_bins_string(VOID) &
-        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, cov_point1.get_num_bins_crossed(VOID), cov_point2.get_num_bins_crossed(VOID));
       create_bin_array(v_bin_array, cov_point1, cov_point2);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      DEALLOCATE(v_proc_call);
     end procedure;
 
     procedure add_cross(
@@ -1252,16 +1262,17 @@ package body funct_cov_pkg is
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
       log(ID_FUNCT_COV_BINS, "Adding cross: " &  cov_point1.get_all_bins_string(VOID) & " x "  &  cov_point2.get_all_bins_string(VOID) &
         " x "  &  cov_point3.get_all_bins_string(VOID) &
-        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope.all, msg_id_panel);
+        ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, cov_point1.get_num_bins_crossed(VOID), cov_point2.get_num_bins_crossed(VOID),
         cov_point3.get_num_bins_crossed(VOID));
       create_bin_array(v_bin_array, cov_point1, cov_point2, cov_point3);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_cov, rand_weight, bin_name);
+      DEALLOCATE(v_proc_call);
     end procedure;
 
     procedure add_cross(
@@ -1299,7 +1310,7 @@ package body funct_cov_pkg is
       variable v_ret         : integer_vector(0 to 0);
     begin
       v_ret := rand(msg_id_panel, C_LOCAL_CALL);
-      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
       return v_ret(0);
     end function;
 
@@ -1315,7 +1326,7 @@ package body funct_cov_pkg is
       variable v_ret             : integer_vector(0 to priv_num_bins_crossed-1);
     begin
       if priv_num_bins_crossed = -1 then
-        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Coverage point has not been initialized", priv_scope.all);
+        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Coverage point has not been initialized", priv_scope);
       end if;
 
       -- A transition bin returns all the transition values before allowing to select a different bin value
@@ -1372,13 +1383,13 @@ package body funct_cov_pkg is
             end if;
           end if;
         else
-          alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).cross_bins(i).contains)), priv_scope.all);
+          alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).cross_bins(i).contains)), priv_scope);
         end if;
       end loop;
 
       -- Do not print log message when being called from another function
       if ext_proc_call = "" then
-        log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope.all, msg_id_panel);
+        log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       end if;
       return v_ret;
     end function;
@@ -1406,12 +1417,12 @@ package body funct_cov_pkg is
       variable v_illegal_match_idx : integer := -1;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
 
       if priv_num_bins_crossed = -1 then
-        alert(TB_FAILURE, v_proc_call.all & "=> Failed. Coverage point has not been initialized", priv_scope.all);
+        alert(TB_FAILURE, v_proc_call.all & "=> Failed. Coverage point has not been initialized", priv_scope);
       elsif priv_num_bins_crossed /= values'length then
-        alert(TB_FAILURE, v_proc_call.all & "=> Failed. Number of values does not match the number of crossed bins", priv_scope.all);
+        alert(TB_FAILURE, v_proc_call.all & "=> Failed. Number of values does not match the number of crossed bins", priv_scope);
       end if;
 
       -- Check if the values should be ignored or are illegal
@@ -1443,7 +1454,7 @@ package body funct_cov_pkg is
                 priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
               end if;
             when others =>
-              alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope.all);
+              alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope);
           end case;
         end loop;
 
@@ -1451,7 +1462,7 @@ package body funct_cov_pkg is
           v_invalid_sample := true;
           priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
           if v_illegal_match_idx /= -1 then
-            alert(TB_WARNING, v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope.all);
+            alert(TB_WARNING, v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope);
             exit l_bin_loop;
           end if;
         end if;
@@ -1486,7 +1497,7 @@ package body funct_cov_pkg is
                   priv_bins(i).cross_bins(j).transition_idx := 0;
                 end if;
               when others =>
-                alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope.all);
+                alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope);
             end case;
           end loop;
 
@@ -1496,6 +1507,7 @@ package body funct_cov_pkg is
           v_value_match := (others => '0');
         end loop;
       end if;
+      DEALLOCATE(v_proc_call);
     end procedure;
 
     procedure set_coverage_goal(
@@ -1503,7 +1515,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope.all, msg_id_panel);
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_cov_goal := percentage;
     end procedure;
 
@@ -1520,7 +1532,7 @@ package body funct_cov_pkg is
     procedure print_summary(
       constant VOID : in t_void) is
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
-      constant C_HEADER           : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope.all) & " ***";
+      constant C_HEADER           : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope) & " ***";
       constant C_BIN_COLUMN_WIDTH : positive := 40; --Q: how to handle when bins overflow the column? trucante and "..."? currently shifts everything
       constant C_COLUMN_WIDTH     : positive := 15;
       variable v_line             : line;
@@ -1546,7 +1558,7 @@ package body funct_cov_pkg is
       -- Calculate how much space we can insert between the columns of the report
       v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_MAX_BIN_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
-        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_MAX_BIN_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope.all);
+        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_MAX_BIN_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope);
         v_log_extra_space := 1;
       end if;
 
@@ -1556,7 +1568,7 @@ package body funct_cov_pkg is
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print summary
-      write(v_line, "Coverpoint:     " & priv_name.all & LF &
+      write(v_line, "Coverpoint:     " & to_string(priv_name) & LF &
                     "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "/" & to_string(priv_bins_idx) & LF &
                     "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
                     "Coverage:       " & to_string(get_covpoint_coverage(VOID),2) & "% (accumulated: " & to_string(get_covpoint_coverage_accumulated(VOID),2) & "%)" & LF &
@@ -1647,8 +1659,8 @@ package body funct_cov_pkg is
       write (v_line_copy, v_line.all);  -- copy line
       writeline(OUTPUT, v_line);
       writeline(LOG_FILE, v_line_copy);
-      deallocate(v_line);
-      deallocate(v_line_copy);
+      DEALLOCATE(v_line);
+      DEALLOCATE(v_line_copy);
     end procedure;
 
     ------------------------------------------------------------

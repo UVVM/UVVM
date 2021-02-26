@@ -1099,6 +1099,15 @@ end package rand_pkg;
 
 package body rand_pkg is
 
+  -- This package is used by the random cyclic queue
+  package cyclic_queue_pkg is new work.generic_queue_pkg
+    generic map (
+      t_generic_element        => integer,
+      GC_QUEUE_COUNT_MAX       => natural'right,
+      GC_QUEUE_COUNT_THRESHOLD => 0);
+
+  use cyclic_queue_pkg.all;
+
   ------------------------------------------------------------
   -- Base procedures
   ------------------------------------------------------------
@@ -1174,6 +1183,7 @@ package body rand_pkg is
     variable priv_cyclic_current_function : line              := new string'("");
     variable priv_cyclic_list             : t_cyclic_list_ptr;
     variable priv_cyclic_list_num_items   : natural           := 0;
+    variable priv_cyclic_queue            : t_generic_queue;
     variable priv_mean_configured         : boolean           := false;
     variable priv_std_dev_configured      : boolean           := false;
     -- Default values for the mean and standard deviation are relative to the given range, i.e. default values below are ignored
@@ -1539,6 +1549,7 @@ package body rand_pkg is
     begin
       DEALLOCATE(priv_scope);
       priv_scope := new string'(scope);
+      priv_cyclic_queue.set_scope(scope);
     end procedure;
 
     impure function get_scope(
@@ -1620,6 +1631,8 @@ package body rand_pkg is
     return integer is
       constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(cyclic_mode)) & ")";
+      constant C_NUM_VALUES    : unsigned(32 downto 0) := unsigned(to_signed(max_value,33) - to_signed(min_value,33) + to_signed(1,33));
+      constant C_USE_LIST      : boolean := C_NUM_VALUES <= 2**30; --TODO: Create constant in adaptations_pkg to choose limit
       variable v_proc_call     : line;
       variable v_previous_dist : t_rand_dist := priv_rand_dist;
       variable v_mean          : real;
@@ -1642,24 +1655,50 @@ package body rand_pkg is
       case priv_rand_dist is
         when UNIFORM =>
           random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+
+          -- The cyclic implementation uses a dynamic list with the size of the range (min/max)
+          -- and marks each element after it is randomly generated. This approach is fast but
+          -- requires a lot of memory for very big ranges which can cause problems for the simulator.
+          -- Therefore, a secondary approach is also used which stores the generated random values
+          -- in a queue so that the size of the range (min/max) doesn't affect its performance.
+          -- However the search algorithm for this approach will slow down considerably after a
+          -- certain number of iterations.
           if cyclic_mode = CYCLIC then
-            -- If a different function in cyclic mode is called, regenerate the list
+            -- If a different function in cyclic mode is called, regenerate the list/queue
             if v_proc_call.all /= priv_cyclic_current_function.all then
               DEALLOCATE(priv_cyclic_current_function);
-              DEALLOCATE(priv_cyclic_list);
               priv_cyclic_current_function := new string'(v_proc_call.all);
-              priv_cyclic_list             := new t_cyclic_list(min_value to max_value);
-              priv_cyclic_list_num_items   := 0;
+              if C_USE_LIST then
+                DEALLOCATE(priv_cyclic_list);
+                priv_cyclic_list           := new t_cyclic_list(min_value to max_value);
+                priv_cyclic_list_num_items := 0;
+              else
+                priv_cyclic_queue.reset(VOID);
+              end if;
             end if;
-            -- Generate unique values within the constraints before repeating
-            while priv_cyclic_list(v_ret) = '1' loop
-              random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
-            end loop;
-            priv_cyclic_list(v_ret)    := '1';
-            priv_cyclic_list_num_items := priv_cyclic_list_num_items + 1;
-            if priv_cyclic_list_num_items >= priv_cyclic_list'length then
-              priv_cyclic_list.all       := (priv_cyclic_list'range => '0');
-              priv_cyclic_list_num_items := 0;
+            -- Generate unique values within the constraints
+            if C_USE_LIST then
+              while priv_cyclic_list(v_ret) = '1' loop
+                random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+              end loop;
+              priv_cyclic_list(v_ret) := '1';
+            else
+              while priv_cyclic_queue.exists(v_ret) loop
+                random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+              end loop;
+              priv_cyclic_queue.add(v_ret);
+            end if;
+            -- Reset the list/queue after generating all possible values
+            if C_USE_LIST then
+              priv_cyclic_list_num_items := priv_cyclic_list_num_items + 1;
+              if priv_cyclic_list_num_items >= priv_cyclic_list'length then
+                priv_cyclic_list.all       := (priv_cyclic_list'range => '0');
+                priv_cyclic_list_num_items := 0;
+              end if;
+            else
+              if priv_cyclic_queue.get_count(VOID) >= C_NUM_VALUES then
+                priv_cyclic_queue.reset(VOID);
+              end if;
             end if;
           end if;
 

@@ -52,10 +52,13 @@ begin
     variable v_time_vec      : time_vector(0 to 4);
     variable v_uns           : unsigned(3 downto 0);
     variable v_uns_long      : unsigned(39 downto 0);
+    variable v_prev_uns_long : unsigned(39 downto 0) := (others => '0');
     variable v_sig           : signed(3 downto 0);
     variable v_sig_long      : signed(39 downto 0);
+    variable v_prev_sig_long : signed(39 downto 0) := (others => '0');
     variable v_slv           : std_logic_vector(3 downto 0);
     variable v_slv_long      : std_logic_vector(39 downto 0);
+    variable v_prev_slv_long : std_logic_vector(39 downto 0) := (others => '0');
     variable v_std           : std_logic;
     variable v_bln           : boolean;
     variable v_value_cnt     : t_integer_cnt(-20 to 20) := (others => 0);
@@ -684,16 +687,13 @@ begin
       -- Unsigned
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing unsigned (length)");
-      v_num_values := 3; -- only need to check that it doesn't generate the same value
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_num_values := 2**v_uns'length;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length);
+        check_rand_value(v_uns, 0, 2**v_uns'length-1);
         count_rand_value(v_value_cnt, v_uns);
       end loop;
-      check_uniform_distribution(v_value_cnt, v_num_values, match_num_values => false);
-
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length);
-      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing unsigned (min/max)");
       v_num_values := 4;
@@ -704,16 +704,6 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length, 0, 3);
-        check_rand_value(v_uns_long, 0, 3);
-      end loop;
-
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length, 0, integer'right);
-        check_rand_value(v_uns_long, 0, integer'right);
-      end loop;
-
       log(ID_LOG_HDR, "Testing unsigned (set of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -723,10 +713,10 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      v_num_values := 6;
+      v_num_values := 2**v_uns'length-10;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, EXCL,(0,1,2,3,4,5,6,7,8,9));
-        check_rand_value(v_uns, 0, (2**v_uns'length)-1, EXCL,(0,1,2,3,4,5,6,7,8,9));
+        check_rand_value(v_uns, 0, 2**v_uns'length-1, EXCL,(0,1,2,3,4,5,6,7,8,9));
         count_rand_value(v_value_cnt, v_uns);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -789,19 +779,110 @@ begin
       v_uns := v_rand.rand(v_uns'length, ONLY,(2**17, 2**18));
 
       ------------------------------------------------------------
+      -- Unsigned long
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing unsigned (length)");
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length);
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_uns_long /= v_prev_uns_long, TB_ERROR, "Checking value is different than previous one");
+        v_prev_uns_long := v_uns_long;
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing unsigned (min/max)");
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 3);
+        check_rand_value(v_uns_long, 0, 3);
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, integer'right);
+        check_rand_value(v_uns_long, 0, integer'right);
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing unsigned (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, ONLY,(0,1,2));
+        check_rand_value(v_uns_long, (0,1,2));
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, EXCL,(0,1,2,3,4,5,6,7,8,9));
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_uns_long /= v_prev_uns_long, TB_ERROR, "Checking value is different than previous one");
+        v_prev_uns_long := v_uns_long;
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, INCL,(7));
+        check_rand_value(v_uns_long, 0, 2, INCL,(7,7)); -- use vector to save overload
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 3, EXCL,(1,2));
+        check_rand_value(v_uns_long, 0, 3, EXCL,(1,2));
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, INCL,(7), EXCL,(1));
+        check_rand_value(v_uns_long, 0, 2, INCL,(7,7), EXCL,(1,1)); -- use vector to save overload
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, EXCL,(1,2), INCL,(7,8,9));
+        check_rand_value(v_uns_long, 0, 2, EXCL,(1,2), INCL,(7,8,9));
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 6;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, INCL,(7), INCL,(8,9));
+        check_rand_value(v_uns_long, 0, 2, INCL,(7,8,9));
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 5, EXCL,(0,1), EXCL,(2,3));
+        check_rand_value(v_uns_long, 0, 5, EXCL,(0,1,2,3));
+        count_rand_value(v_value_cnt, v_uns_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      ------------------------------------------------------------
       -- Signed
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing signed (length)");
-      v_num_values := 3; -- only need to check that it doesn't generate the same value
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_num_values := 2**v_sig'length;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length);
+        check_rand_value(v_sig, -2**(v_sig'length-1), 2**(v_sig'length-1)-1);
         count_rand_value(v_value_cnt, v_sig);
       end loop;
-      check_uniform_distribution(v_value_cnt, v_num_values, match_num_values => false);
-
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length);
-      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing signed (min/max)");
       v_num_values := 5;
@@ -812,16 +893,6 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2);
-        check_rand_value(v_sig_long, -2, 2);
-      end loop;
-
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length, integer'left, integer'right);
-        check_rand_value(v_sig_long, integer'left, integer'right);
-      end loop;
-
       log(ID_LOG_HDR, "Testing signed (set of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -831,7 +902,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      v_num_values := 6;
+      v_num_values := 2**v_sig'length-10;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, EXCL,(-5,-4,-3,-2,-1,0,1,2,3,4));
         check_rand_value(v_sig, -2**(v_sig'length-1), 2**(v_sig'length-1)-1, EXCL,(-5,-4,-3,-2,-1,0,1,2,3,4));
@@ -897,19 +968,110 @@ begin
       v_sig := v_rand.rand(v_sig'length, ONLY,(2**17, 2**18));
 
       ------------------------------------------------------------
+      -- Signed long
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing signed (length)");
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length);
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_sig_long /= v_prev_sig_long, TB_ERROR, "Checking value is different than previous one");
+        v_prev_sig_long := v_sig_long;
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing signed (min/max)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2);
+        check_rand_value(v_sig_long, -2, 2);
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, integer'left, integer'right);
+        check_rand_value(v_sig_long, integer'left, integer'right);
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing signed (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, ONLY,(-2,0,2));
+        check_rand_value(v_sig_long, (-2,0,2));
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, EXCL,(-5,-4,-3,-2,-1,0,1,2,3,4));
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_sig_long /= v_prev_sig_long, TB_ERROR, "Checking value is different than previous one");
+        v_prev_sig_long := v_sig_long;
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, INCL,(-8));
+        check_rand_value(v_sig_long, -1, 1, INCL,(-8,-8)); -- use vector to save overload
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, EXCL,(-1,0,1));
+        check_rand_value(v_sig_long, -2, 2, EXCL,(-1,0,1));
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
+      v_num_values := 5;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, INCL,(-8), EXCL,(1));
+        check_rand_value(v_sig_long, -2, 2, INCL,(-8,-8), EXCL,(1,1)); -- use vector to save overload
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, EXCL,(-1,0,1), INCL,(-8,7));
+        check_rand_value(v_sig_long, -2, 2, EXCL,(-1,0,1), INCL,(-8,7));
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 6;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, INCL,(-8), INCL,(6,7));
+        check_rand_value(v_sig_long, -1, 1, INCL,(-8,6,7));
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, -3, 3, EXCL,(-2,-1), EXCL,(1,2));
+        check_rand_value(v_sig_long, -3, 3, EXCL,(-2,-1,1,2));
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      ------------------------------------------------------------
       -- Std_logic_vector
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing std_logic_vector (length)");
-      v_num_values := 3; -- only need to check that it doesn't generate the same value
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_num_values := 2**v_slv'length;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length);
+        check_rand_value(v_slv, 0, (2**v_slv'length)-1);
         count_rand_value(v_value_cnt, v_slv);
       end loop;
-      check_uniform_distribution(v_value_cnt, v_num_values, match_num_values => false);
-
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length);
-      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
       v_num_values := 4;
@@ -920,16 +1082,6 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length, 0, 3);
-        check_rand_value(v_slv_long, 0, 3);
-      end loop;
-
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length, 0, integer'right);
-        check_rand_value(v_slv_long, 0, integer'right);
-      end loop;
-
       log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -939,7 +1091,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      v_num_values := 6;
+      v_num_values := 2**v_slv'length-10;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, EXCL,(0,1,2,3,4,5,6,7,8,9));
         check_rand_value(v_slv, 0, 2**v_slv'length-1, EXCL,(0,1,2,3,4,5,6,7,8,9));
@@ -1003,6 +1155,100 @@ begin
       increment_expected_alerts(TB_WARNING, 3);
       v_slv := v_rand.rand(v_slv'length, 0, 2**16);
       v_slv := v_rand.rand(v_slv'length, ONLY,(2**17, 2**18));
+
+      ------------------------------------------------------------
+      -- Std_logic_vector long
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing std_logic_vector (length)");
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length);
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_slv_long /= v_prev_slv_long, TB_ERROR, "Checking value is different than previous one");
+        v_prev_slv_long := v_slv_long;
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 3);
+        check_rand_value(v_slv_long, 0, 3);
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, integer'right);
+        check_rand_value(v_slv_long, 0, integer'right);
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, ONLY,(0,1,2));
+        check_rand_value(v_slv_long, (0,1,2));
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, EXCL,(0,1,2,3,4,5,6,7,8,9));
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_slv_long /= v_prev_slv_long, TB_ERROR, "Checking value is different than previous one");
+        v_prev_slv_long := v_slv_long;
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, INCL,(7));
+        check_rand_value(v_slv_long, 0, 2, INCL,(7,7)); -- use vector to save overload
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 3, EXCL,(1,2));
+        check_rand_value(v_slv_long, 0, 3, EXCL,(1,2));
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, INCL,(7), EXCL,(1));
+        check_rand_value(v_slv_long, 0, 2, INCL,(7,7), EXCL,(1,1)); -- use vector to save overload
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 4;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, EXCL,(1,2), INCL,(7,8,9));
+        check_rand_value(v_slv_long, 0, 2, EXCL,(1,2), INCL,(7,8,9));
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 6;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, INCL,(7), INCL,(9,10));
+        check_rand_value(v_slv_long, 0, 2, INCL,(7,9,10));
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 2;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 5, EXCL,(0,1), EXCL,(2,3));
+        check_rand_value(v_slv_long, 0, 5, EXCL,(0,1,2,3));
+        count_rand_value(v_value_cnt, v_slv_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       ------------------------------------------------------------
       -- Std_logic & boolean

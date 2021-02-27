@@ -3277,18 +3277,23 @@ package body rand_pkg is
       -- Generate a random value within the set of values
       if set_type = ONLY then
         v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret     := to_unsigned(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
         check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
-          v_ret_int  := to_integer(v_unsigned);
-          v_gen_new_random := check_value_in_vector(v_ret_int, integer_vector(set_values));
+          -- If the random value is outside the integer range it cannot be in the exclude list
+          if v_unsigned > integer'right then
+            v_gen_new_random := false;
+          else
+            v_gen_new_random := check_value_in_vector(to_integer(v_unsigned), integer_vector(set_values));
+          end if;
         end loop;
+        v_ret := v_unsigned;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
-      v_ret := to_unsigned(v_ret_int,length);
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3477,29 +3482,36 @@ package body rand_pkg is
       variable v_proc_call       : line;
       variable v_gen_new_random  : boolean := true;
       variable v_signed          : signed(length-1 downto 0);
-      variable v_ret             : integer;
+      variable v_ret_int         : integer;
+      variable v_ret             : signed(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
       -- Generate a random value within the set of values
       if set_type = ONLY then
-        v_ret := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret     := to_signed(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
         check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope, ID_NEVER, msg_id_panel, v_proc_call.all);
         while v_gen_new_random loop
           v_signed := rand(length, msg_id_panel, v_proc_call.all);
-          v_ret := to_integer(v_signed);
-          v_gen_new_random := check_value_in_vector(v_ret, set_values);
+          -- If the random value is outside the integer range it cannot be in the exclude list
+          if v_signed > integer'right or v_signed < integer'left then
+            v_gen_new_random := false;
+          else
+            v_gen_new_random := check_value_in_vector(to_integer(v_signed), set_values);
+          end if;
         end loop;
+        v_ret := v_signed;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
-      return to_signed(v_ret,length);
+      return v_ret;
     end function;
 
     impure function rand(

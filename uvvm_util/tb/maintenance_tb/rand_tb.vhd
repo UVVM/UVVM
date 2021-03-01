@@ -2299,6 +2299,20 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing random cyclic performance");
       ------------------------------------------------------------
+      log(ID_SEQUENCER, "Testing with big ranges");
+      for i in 1 to 10 loop
+        v_int := v_rand.rand(0, 2**29, CYCLIC);
+      end loop;
+      for i in 1 to 10 loop
+        v_int := v_rand.rand(0, 2**30, CYCLIC);
+      end loop;
+      for i in 1 to 10 loop
+        v_int := v_rand.rand(0, integer'right, CYCLIC);
+      end loop;
+      for i in 1 to 10 loop
+        v_int := v_rand.rand(integer'left, integer'right, CYCLIC);
+      end loop;
+
       disable_log_msg(ID_RAND_GEN);
 
       v_num_values := 100;

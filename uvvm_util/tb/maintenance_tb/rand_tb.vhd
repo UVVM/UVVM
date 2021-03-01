@@ -73,13 +73,13 @@ begin
     log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package - " & GC_TESTCASE);
     -------------------------------------------------------------------------------------
     enable_log_msg(ID_RAND_GEN);
+    v_rand.set_scope("MY SCOPE");
 
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
     --===================================================================================
       increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
 
-      v_rand.set_scope("MY SCOPE");
       check_value("MY SCOPE", v_rand.get_scope(VOID), ERROR, "Checking scope");
 
       ------------------------------------------------------------
@@ -1905,9 +1905,15 @@ begin
         end if;
       end loop;
 
-      increment_expected_alerts(TB_WARNING, 1);
-      v_uns := v_rand.rand(v_uns'length, EXCL,(0,1,2), CYCLIC);
-      check_rand_value(v_uns, 0, 2**v_uns'length-1, EXCL,(0,1,2));
+      v_num_values := 2**v_uns'length-3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.rand(v_uns'length, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_uns, 0, 2**v_uns'length-1, EXCL,(0,1,2));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
 
       log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
       v_num_values := 6;
@@ -1962,6 +1968,29 @@ begin
       end loop;
 
       ------------------------------------------------------------
+      -- Random cyclic unsigned long
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing unsigned (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, ONLY,(0,2,4), CYCLIC);
+        check_rand_value(v_uns_long, (0,2,4));
+        count_rand_value(v_value_cnt, v_uns_long);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_uns_long(30 downto 0) := v_rand.rand(31, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_uns_long(30 downto 0), 0, integer'right);
+        -- Since the range of values is too big it would take too long to verify the distribution
+      end loop;
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_uns_long(31 downto 0) := v_rand.rand(32, EXCL,(0,1,2), CYCLIC);
+
+      ------------------------------------------------------------
       -- Random cyclic signed
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing signed (min/max)");
@@ -1986,9 +2015,15 @@ begin
         end if;
       end loop;
 
-      increment_expected_alerts(TB_WARNING, 1);
-      v_sig := v_rand.rand(v_sig'length, EXCL,(-1,0,1), CYCLIC);
-      check_rand_value(v_sig, -2**(v_sig'length-1), 2**(v_sig'length-1)-1, EXCL,(-1,0,1));
+      v_num_values := 2**v_sig'length-3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.rand(v_sig'length, EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_sig, -2**(v_sig'length-1), 2**(v_sig'length-1)-1, EXCL,(-1,0,1));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
 
       log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
       v_num_values := 6;
@@ -2043,6 +2078,29 @@ begin
       end loop;
 
       ------------------------------------------------------------
+      -- Random cyclic signed long
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing signed (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, ONLY,(-2,0,2), CYCLIC);
+        check_rand_value(v_sig_long, (-2,0,2));
+        count_rand_value(v_value_cnt, v_sig_long);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_sig_long(31 downto 0) := v_rand.rand(32, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_sig_long(31 downto 0), integer'left, integer'right);
+        -- Since the range of values is too big it would take too long to verify the distribution
+      end loop;
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_sig_long(32 downto 0) := v_rand.rand(33, EXCL,(0,1,2), CYCLIC);
+
+      ------------------------------------------------------------
       -- Random cyclic std_logic_vector
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
@@ -2067,9 +2125,15 @@ begin
         end if;
       end loop;
 
-      increment_expected_alerts(TB_WARNING, 1);
-      v_slv := v_rand.rand(v_slv'length, EXCL,(0,1,2), CYCLIC);
-      check_rand_value(v_slv, 0, 2**v_slv'length-1, EXCL,(0,1,2));
+      v_num_values := 2**v_slv'length-3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.rand(v_slv'length, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_slv, 0, 2**v_slv'length-1, EXCL,(0,1,2));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
 
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
       v_num_values := 6;
@@ -2122,6 +2186,29 @@ begin
           check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
+
+      ------------------------------------------------------------
+      -- Random cyclic std_logic_vector long
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
+      v_num_values := 3;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, ONLY,(0,2,4), CYCLIC);
+        check_rand_value(v_slv_long, (0,2,4));
+        count_rand_value(v_value_cnt, v_slv_long);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_slv_long(30 downto 0) := v_rand.rand(31, EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_slv_long(30 downto 0), 0, integer'right);
+        -- Since the range of values is too big it would take too long to verify the distribution
+      end loop;
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_slv_long(31 downto 0) := v_rand.rand(32, EXCL,(0,1,2), CYCLIC);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing clear_rand_cyclic");

@@ -3280,17 +3280,25 @@ package body rand_pkg is
         v_ret     := to_unsigned(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
-        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-        while v_gen_new_random loop
-          v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
-          -- If the random value is outside the integer range it cannot be in the exclude list
-          if v_unsigned > integer'right then
-            v_gen_new_random := false;
-          else
-            v_gen_new_random := check_value_in_vector(to_integer(v_unsigned), integer_vector(set_values));
+        -- Check whether the vector's range can handle cyclic mode
+        if length < 32 then
+          v_ret_int := rand(0, 2**length-1, EXCL, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret     := to_unsigned(v_ret_int,length);
+        else
+          if cyclic_mode = CYCLIC then
+            alert(TB_WARNING, v_proc_call.all & "=> Range is too big for cyclic mode (min: 0, max: 2**" & to_string(length) & "-1)", priv_scope);
           end if;
-        end loop;
-        v_ret := v_unsigned;
+          while v_gen_new_random loop
+            v_unsigned := rand(length, msg_id_panel, v_proc_call.all);
+            -- If the random value is outside the integer range it cannot be in the exclude list
+            if v_unsigned > integer'right then
+              v_gen_new_random := false;
+            else
+              v_gen_new_random := check_value_in_vector(to_integer(v_unsigned), integer_vector(set_values));
+            end if;
+          end loop;
+          v_ret := v_unsigned;
+        end if;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
@@ -3494,17 +3502,25 @@ package body rand_pkg is
         v_ret     := to_signed(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
-        check_value(cyclic_mode = NON_CYCLIC, TB_WARNING, "Cyclic mode won't have any effect in this function", priv_scope, ID_NEVER, msg_id_panel, v_proc_call.all);
-        while v_gen_new_random loop
-          v_signed := rand(length, msg_id_panel, v_proc_call.all);
-          -- If the random value is outside the integer range it cannot be in the exclude list
-          if v_signed > integer'right or v_signed < integer'left then
-            v_gen_new_random := false;
-          else
-            v_gen_new_random := check_value_in_vector(to_integer(v_signed), set_values);
+        -- Check whether the vector's range can handle cyclic mode
+        if length < 33 then
+          v_ret_int := rand(-2**(length-1), 2**(length-1)-1, EXCL, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret     := to_signed(v_ret_int,length);
+        else
+          if cyclic_mode = CYCLIC then
+            alert(TB_WARNING, v_proc_call.all & "=> Range is too big for cyclic mode (min: -2**" & to_string(length-1) & ", max: 2**" & to_string(length-1) & "-1)", priv_scope);
           end if;
-        end loop;
-        v_ret := v_signed;
+          while v_gen_new_random loop
+            v_signed := rand(length, msg_id_panel, v_proc_call.all);
+            -- If the random value is outside the integer range it cannot be in the exclude list
+            if v_signed > integer'right or v_signed < integer'left then
+              v_gen_new_random := false;
+            else
+              v_gen_new_random := check_value_in_vector(to_integer(v_signed), set_values);
+            end if;
+          end loop;
+          v_ret := v_signed;
+        end if;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;

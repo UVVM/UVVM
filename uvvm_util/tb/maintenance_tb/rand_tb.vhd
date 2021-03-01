@@ -45,6 +45,7 @@ begin
     variable v_rand          : t_rand;
     variable v_seeds         : t_positive_vector(0 to 1);
     variable v_int           : integer;
+    variable v_prev_int      : integer := 0;
     variable v_real          : real;
     variable v_time          : time;
     variable v_int_vec       : integer_vector(0 to 4);
@@ -66,6 +67,7 @@ begin
     variable v_bit_check     : std_logic_vector(1 downto 0);
     variable v_mean          : real;
     variable v_std_deviation : real;
+    variable v_found         : boolean := false;
 
   begin
 
@@ -183,9 +185,69 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
+      log(ID_LOG_HDR, "Testing integer (full range)");
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'left, integer'right);
+        check_rand_value(v_int, integer'left, integer'right);
+        -- Since range of values is too big, we only check that the value is different than the previous one
+        check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int := v_int;
+      end loop;
+
+      v_found := false;
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'right-1, integer'right, INCL,(-10));
+        check_rand_value(v_int, integer'right-1, integer'right, INCL,(-10,-10)); -- use vector to save overload
+        v_found := true when v_int = -10;
+      end loop;
+      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+
+      v_found := false;
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'left, integer'left+1, INCL,(10));
+        check_rand_value(v_int, integer'left, integer'left+1, INCL,(10,10)); -- use vector to save overload
+        v_found := true when v_int = 10;
+      end loop;
+      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+
+      v_found := false;
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'right-1, integer'right, INCL,(-10), EXCL,(integer'right));
+        check_rand_value(v_int, integer'right-1, integer'right, INCL,(-10,-10), EXCL,(integer'right,0)); -- use vector to save overload
+        v_found := true when v_int = -10;
+      end loop;
+      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+
+      v_found := false;
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'left, integer'left+1, INCL,(10), EXCL,(integer'left));
+        check_rand_value(v_int, integer'left, integer'left+1, INCL,(10,10), EXCL,(integer'left,0)); -- use vector to save overload
+        v_found := true when v_int = 10;
+      end loop;
+      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+
+      v_found := false;
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'right-1, integer'right, EXCL,(integer'right), INCL,(-10));
+        check_rand_value(v_int, integer'right-1, integer'right, EXCL,(integer'right,0), INCL,(-10,-10)); -- use vector to save overload
+        v_found := true when v_int = -10;
+      end loop;
+      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+
+      v_found := false;
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(integer'left, integer'left+1, EXCL,(integer'left), INCL,(10));
+        check_rand_value(v_int, integer'left, integer'left+1, EXCL,(integer'left,0), INCL,(10,10)); -- use vector to save overload
+        v_found := true when v_int = 10;
+      end loop;
+      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+
       log(ID_LOG_HDR, "Testing integer (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 4);
       v_int := v_rand.rand(10, 0);
+      v_int := v_rand.rand(integer'left, integer'right, INCL,(0));
+      v_int := v_rand.rand(integer'left, integer'right, INCL,(0), EXCL,(1));
+      v_int := v_rand.rand(integer'left, integer'right, EXCL,(-1), INCL,(0));
 
       ------------------------------------------------------------
       -- Integer Vector

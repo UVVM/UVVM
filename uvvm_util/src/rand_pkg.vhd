@@ -1801,11 +1801,13 @@ package body rand_pkg is
           if v_ret > max_value then
             v_ret := normalized_set_values(v_ret-max_value-1);
           end if;
-        else
+        elsif min_value >= integer'left+set_values'length then
           v_ret := rand(min_value-set_values'length, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
           if v_ret < min_value then
             v_ret := normalized_set_values(min_value-v_ret-1);
           end if;
+        else
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Range plus set of values overflows integer range", priv_scope);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif set_type = EXCL then
@@ -1901,15 +1903,35 @@ package body rand_pkg is
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
       elsif set_type1 = INCL and set_type2 = EXCL then
-        v_ret := rand(min_value, max_value+set_values1'length, EXCL, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
-        if v_ret > max_value then
-          v_ret := normalized_set_values1(v_ret-max_value-1);
+        -- Avoid an integer overflow by adding the set_values to the max_value or subtracting them from the min_value
+        if max_value <= integer'right-set_values1'length then
+          v_ret := rand(min_value, max_value+set_values1'length, EXCL, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
+          if v_ret > max_value then
+            v_ret := normalized_set_values1(v_ret-max_value-1);
+          end if;
+        elsif min_value >= integer'left+set_values1'length then
+          v_ret := rand(min_value-set_values1'length, max_value, EXCL, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
+          if v_ret < min_value then
+            v_ret := normalized_set_values1(min_value-v_ret-1);
+          end if;
+        else
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Range plus set of values overflows integer range", priv_scope);
         end if;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif set_type1 = EXCL and set_type2 = INCL then
-        v_ret := rand(min_value, max_value+set_values2'length, EXCL, set_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
-        if v_ret > max_value then
-          v_ret := normalized_set_values2(v_ret-max_value-1);
+        -- Avoid an integer overflow by adding the set_values to the max_value or subtracting them from the min_value
+        if max_value <= integer'right-set_values2'length then
+          v_ret := rand(min_value, max_value+set_values2'length, EXCL, set_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
+          if v_ret > max_value then
+            v_ret := normalized_set_values2(v_ret-max_value-1);
+          end if;
+        elsif min_value >= integer'left+set_values2'length then
+          v_ret := rand(min_value-set_values2'length, max_value, EXCL, set_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
+          if v_ret < min_value then
+            v_ret := normalized_set_values2(min_value-v_ret-1);
+          end if;
+        else
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. Range plus set of values overflows integer range", priv_scope);
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then

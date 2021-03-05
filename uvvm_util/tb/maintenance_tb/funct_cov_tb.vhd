@@ -78,7 +78,10 @@ begin
       v_cov_point.add_bins(bin_range(0, 10), "range3");
       v_cov_point.add_bins(bin_vector(v_slv), 5, 2, "addr1");
       v_cov_point.add_bins(bin_vector(v_slv), 5, "addr2");
-      v_cov_point.add_bins(bin_vector(v_slv), "addr3");
+      v_cov_point.add_bins(bin_vector(v_slv), "addr3"); -- 4 bins
+      v_cov_point.add_bins(bin_vector(v_slv,2), "addr3"); -- 2 bins
+      v_cov_point.add_bins(bin_range(0,2**v_slv'length-1), "addr3"); -- 4 bins
+      v_cov_point.add_bins(bin_range(0,2**v_slv'length-1,2), "addr3"); -- 2 bins
       v_cov_point.add_bins(bin_transition((1,3,5,7)), 1, 1, "transition_odd");
       v_cov_point.add_bins(bin_transition((2,4,6,8)), 1, 1, "transition_even");
       v_cov_point.add_bins(ignore_bin_transition((200,201)), 1, 1, "transition_ignore");

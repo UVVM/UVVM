@@ -90,14 +90,16 @@ package funct_cov_pkg is
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer;
-    constant num_bins   : natural := 0)
+    constant min_value     : integer;
+    constant max_value     : integer;
+    constant num_bins      : natural := 0;
+    constant ext_proc_call : string  := "")
   return t_new_bin_array;
 
-  -- Creates a bin for each value in the vector's range
+  -- Divides a vector's range into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_vector(
-    constant vector     : std_logic_vector)
+    constant vector     : std_logic_vector;
+    constant num_bins   : natural := 0)
   return t_new_bin_array;
 
   -- Creates a bin with a transition of values
@@ -363,6 +365,21 @@ end package funct_cov_pkg;
 
 package body funct_cov_pkg is
 
+  -- Generates the correct procedure call to be used for logging or alerts
+  procedure create_proc_call(
+    constant proc_call     : in    string;
+    constant ext_proc_call : in    string;
+    variable new_proc_call : inout line) is
+  begin
+    -- Called directly from sequencer/VVC
+    if ext_proc_call = "" then
+      write(new_proc_call, proc_call);
+    -- Called from another procedure
+    else
+      write(new_proc_call, ext_proc_call);
+    end if;
+  end procedure;
+
   ------------------------------------------------------------
   -- Bin functions
   ------------------------------------------------------------
@@ -398,12 +415,15 @@ package body funct_cov_pkg is
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer;
-    constant num_bins   : natural := 0)
+    constant min_value     : integer;
+    constant max_value     : integer;
+    constant num_bins      : natural := 0;
+    constant ext_proc_call : string  := "")
   return t_new_bin_array is
-    constant C_LOCAL_CALL : string := "bin_range(" & to_string(min_value) & "," & to_string(max_value) & "," & to_string(num_bins) & ")";
+    constant C_LOCAL_CALL : string := "bin_range(" & to_string(min_value) & ", " & to_string(max_value) &
+      return_string_if_true(", num_bins:" & to_string(num_bins), num_bins > 0) & ")";
     constant C_RANGE_WIDTH     : integer := abs(max_value - min_value) + 1;
+    variable v_proc_call       : line;
     variable v_div_range       : integer;
     variable v_div_residue     : integer := 0;
     variable v_div_residue_min : integer := 0;
@@ -411,6 +431,8 @@ package body funct_cov_pkg is
     variable v_num_bins        : integer := 0;
     variable v_ret             : t_new_bin_array(0 to 0);
   begin
+    create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
     if min_value <= max_value then
       -- Create a bin for each value in the range
       if num_bins = 0 then
@@ -419,55 +441,54 @@ package body funct_cov_pkg is
           v_ret(0).bin_vector(i-min_value).values(0)  := i;
           v_ret(0).bin_vector(i-min_value).num_values := 1;
         end loop;
-        v_num_bins  := C_RANGE_WIDTH;
+        v_num_bins := C_RANGE_WIDTH;
       -- Create several bins
       else
+        -- Range is divided into a number of bins
         if C_RANGE_WIDTH > num_bins then
           v_div_residue := C_RANGE_WIDTH mod num_bins;
           v_div_range   := C_RANGE_WIDTH / num_bins;
           v_num_bins    := num_bins;
+          for i in 0 to v_num_bins-1 loop
+            -- Add the residue values to the last bins
+            if v_div_residue /= 0 and i = v_num_bins-v_div_residue then
+              v_div_residue_max := v_div_residue_max + 1;
+            elsif v_div_residue /= 0 and i > v_num_bins-v_div_residue then
+              v_div_residue_min := v_div_residue_min + 1;
+              v_div_residue_max := v_div_residue_max + 1;
+            end if;
+            v_ret(0).bin_vector(i).contains   := RAN;
+            v_ret(0).bin_vector(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
+            v_ret(0).bin_vector(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
+            v_ret(0).bin_vector(i).num_values := 2;
+          end loop;
+        -- Range is smaller than the number of bins, create a bin for each value in the range
         else
-          v_div_residue := 0;
-          v_div_range   := 1;
-          v_num_bins    := C_RANGE_WIDTH;
+          for i in min_value to max_value loop
+            v_ret(0).bin_vector(i-min_value).contains   := VAL;
+            v_ret(0).bin_vector(i-min_value).values(0)  := i;
+            v_ret(0).bin_vector(i-min_value).num_values := 1;
+          end loop;
+          v_num_bins := C_RANGE_WIDTH;
         end if;
-        for i in 0 to v_num_bins-1 loop
-          -- Add the residue values to the last bins
-          if v_div_residue /= 0 and i = v_num_bins-v_div_residue then
-            v_div_residue_max := v_div_residue_max + 1;
-          elsif v_div_residue /= 0 and i > v_num_bins-v_div_residue then
-            v_div_residue_min := v_div_residue_min + 1;
-            v_div_residue_max := v_div_residue_max + 1;
-          end if;
-          v_ret(0).bin_vector(i).contains   := RAN;
-          v_ret(0).bin_vector(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
-          v_ret(0).bin_vector(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
-          v_ret(0).bin_vector(i).num_values := 2;
-        end loop;
       end if;
     else
-      alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. min_value must be less or equal than max_value", C_SCOPE);
+      alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less or equal than max_value", C_SCOPE);
     end if;
     v_ret(0).num_bins := v_num_bins;
-    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
+    v_ret(0).proc_call(1 to v_proc_call'length) := v_proc_call.all;
+    DEALLOCATE(v_proc_call);
     return v_ret;
   end function;
 
-  -- Creates a bin for each value in the vector's range
+  -- Divides a vector's range into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_vector(
-    constant vector     : std_logic_vector)
+    constant vector     : std_logic_vector;
+    constant num_bins   : natural := 0)
   return t_new_bin_array is
-    constant C_LOCAL_CALL : string := "bin_vector(LEN:" & to_string(vector'length) & ")";
-    variable v_ret : t_new_bin_array(0 to 0);
+    constant C_LOCAL_CALL : string := "bin_vector(LEN:" & to_string(vector'length) & return_string_if_true(", num_bins:" & to_string(num_bins), num_bins > 0) & ")";
   begin
-    for i in 0 to 2**vector'length-1 loop
-      v_ret(0).bin_vector(i).contains   := VAL;
-      v_ret(0).bin_vector(i).values(0)  := i;
-      v_ret(0).bin_vector(i).num_values := 1;
-    end loop;
-    v_ret(0).num_bins := 2**vector'length;
-    v_ret(0).proc_call(1 to C_LOCAL_CALL'length) := C_LOCAL_CALL;
-    return v_ret;
+    return bin_range(0, 2**vector'length-1, num_bins, C_LOCAL_CALL);
   end function;
 
   -- Creates a bin with a transition of values
@@ -807,21 +828,6 @@ package body funct_cov_pkg is
       v_coverage := real(v_hits)*100.0/real(v_min_hits) when v_min_hits > 0 else 0.0;
       return v_coverage;
     end function;
-
-    -- Generates the correct procedure call to be used for logging or alerts
-    procedure create_proc_call(
-      constant proc_call     : in    string;
-      constant ext_proc_call : in    string;
-      variable new_proc_call : inout line) is
-    begin
-      -- Called directly from sequencer/VVC
-      if ext_proc_call = "" then
-        write(new_proc_call, proc_call);
-      -- Called from another procedure
-      else
-        write(new_proc_call, ext_proc_call);
-      end if;
-    end procedure;
 
     -- Checks that the number of crossed bins does not change.
     -- If the extra parameters are given, it checks that the coverpoints are not empty.

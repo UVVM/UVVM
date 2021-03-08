@@ -32,7 +32,6 @@ package funct_cov_pkg is
   --TODO: move to adaptations_pkg?
   constant C_MAX_NUM_BINS         : positive := 100; --Q: make it possible to grow?
   constant C_MAX_NUM_BIN_VALUES   : positive := 10;
-  constant C_MAX_BIN_NAME_LENGTH  : positive := 20;
   constant C_MAX_PROC_CALL_LENGTH : positive := 100;
 
   ------------------------------------------------------------
@@ -71,7 +70,7 @@ package funct_cov_pkg is
     hits           : natural;
     min_hits       : natural;
     rand_weight    : natural;
-    name           : string(1 to C_MAX_BIN_NAME_LENGTH);
+    name           : string(1 to C_FC_MAX_NAME_LENGTH);
   end record;
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
 
@@ -605,7 +604,7 @@ package body funct_cov_pkg is
   ------------------------------------------------------------
   type t_cov_point is protected body
     variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
-    variable priv_name                          : string(1 to C_MAX_BIN_NAME_LENGTH);
+    variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bins_idx                      : natural := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
@@ -647,7 +646,7 @@ package body funct_cov_pkg is
       constant bin_delimiter : character := ',')
     return string is
       variable v_line   : line;
-      variable v_result : string(1 to 500);
+      variable v_result : string(1 to 1000);
       variable v_width  : natural;
     begin
       for i in bin_array'range loop
@@ -838,9 +837,9 @@ package body funct_cov_pkg is
       constant coverpoint2_num_bins_crossed : in integer := 0;
       constant coverpoint3_num_bins_crossed : in integer := 0) is
     begin
-      check_value(coverpoint1_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 1 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
-      check_value(coverpoint2_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 2 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
-      check_value(coverpoint3_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 3 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => "check_num_bins_crossed");
+      check_value(coverpoint1_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 1 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => local_call);
+      check_value(coverpoint2_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 2 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => local_call);
+      check_value(coverpoint3_num_bins_crossed /= -1, TB_ERROR, "Coverpoint 3 is uninitialized", priv_scope, msg_id => ID_NEVER, caller_name => local_call);
 
       -- The number of bins crossed is set on the first call and can't be changed
       if priv_num_bins_crossed = -1 and num_bins_crossed /= 0 then
@@ -988,8 +987,8 @@ package body funct_cov_pkg is
               priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).transition_idx := 0;
             end loop;
             priv_invalid_bins(priv_invalid_bins_idx).hits                         := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := min_cov;
-            priv_invalid_bins(priv_invalid_bins_idx).rand_weight                  := rand_weight;
+            priv_invalid_bins(priv_invalid_bins_idx).min_hits                     := 0;
+            priv_invalid_bins(priv_invalid_bins_idx).rand_weight                  := 0;
             priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
             priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
           end if;
@@ -1023,10 +1022,10 @@ package body funct_cov_pkg is
     procedure set_name(
       constant name : in string) is
     begin
-      if name'length > C_MAX_BIN_NAME_LENGTH then
-        priv_name := name(1 to C_MAX_BIN_NAME_LENGTH);
+      if name'length > C_FC_MAX_NAME_LENGTH then
+        priv_name := name(1 to C_FC_MAX_NAME_LENGTH);
       else
-        priv_name := name & fill_string(NUL, C_MAX_BIN_NAME_LENGTH-name'length);
+        priv_name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
       end if;
     end procedure;
 
@@ -1262,7 +1261,7 @@ package body funct_cov_pkg is
       constant ext_proc_call : in    string         := "") is
       constant C_LOCAL_CALL : string := "add_cross(" & cov_point1.get_name(VOID) & ", " & cov_point2.get_name(VOID) & ", " &
         cov_point3.get_name(VOID) & ", min_cov:" & to_string(min_cov) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
-      constant C_NUM_CROSS_BINS : natural := 2;
+      constant C_NUM_CROSS_BINS : natural := 3;
       variable v_proc_call      : line;
       variable v_bin_array      : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
       variable v_idx_reg        : integer_vector(0 to C_NUM_CROSS_BINS-1);
@@ -1562,9 +1561,9 @@ package body funct_cov_pkg is
 
     begin
       -- Calculate how much space we can insert between the columns of the report
-      v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_MAX_BIN_NAME_LENGTH - 20)/6;
+      v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_FC_MAX_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
-        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_MAX_BIN_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope);
+        alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_FC_MAX_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope);
         v_log_extra_space := 1;
       end if;
 
@@ -1588,7 +1587,7 @@ package body funct_cov_pkg is
         justify("MIN_HITS"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("COVERAGE"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("RAND_WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("NAME"       , center, C_MAX_BIN_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("NAME"       , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("STATUS"     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
@@ -1602,7 +1601,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_invalid_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_bin_coverage(priv_invalid_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_invalid_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
@@ -1618,7 +1617,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_invalid_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_bin_coverage(priv_invalid_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_invalid_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_invalid_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
@@ -1634,7 +1633,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
@@ -1650,7 +1649,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)                     , center, C_MAX_BIN_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(get_bin_status(priv_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;

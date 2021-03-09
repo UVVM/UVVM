@@ -351,6 +351,10 @@ package funct_cov_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
 
+    procedure set_coverage_weight(
+      constant weight       : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure set_coverage_goal(
       constant percentage   : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -622,10 +626,11 @@ package body funct_cov_pkg is
 
     -- Print coverpoints summaries
     for i in 0 to protected_coverpoints_status.get_num_coverpoints(VOID)-1 loop
-      write(v_line, "Coverpoint:     " & protected_coverpoints_status.get_name(i) & LF &
-                    "Uncovered bins: " & to_string(protected_coverpoints_status.get_num_uncovered_bins(i)) & "/" & to_string(protected_coverpoints_status.get_num_valid_bins(i)) & LF &
-                    "Illegal bins:   " & to_string(protected_coverpoints_status.get_num_illegal_bins(i)) & LF &
-                    "Coverage:       bins: " & to_string(protected_coverpoints_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(i),2) & "%" & LF &
+      write(v_line, "Coverpoint:      " & protected_coverpoints_status.get_name(i) & LF &
+                    "Uncovered bins:  " & to_string(protected_coverpoints_status.get_num_uncovered_bins(i)) & "/" & to_string(protected_coverpoints_status.get_num_valid_bins(i)) & LF &
+                    "Illegal bins:    " & to_string(protected_coverpoints_status.get_num_illegal_bins(i)) & LF &
+                    "Coverage:        bins: " & to_string(protected_coverpoints_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(i),2) & "%" & LF &
+                    "Coverage weight: " & to_string(protected_coverpoints_status.get_coverage_weight(i)) & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     end loop;
 
@@ -1660,6 +1665,17 @@ package body funct_cov_pkg is
         end loop;
       end if;
       DEALLOCATE(v_proc_call);
+    end procedure;
+
+    procedure set_coverage_weight(
+      constant weight       : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
+    begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      -- Update coverpoint status register
+      protected_coverpoints_status.set_coverage_weight(priv_id, weight);
     end procedure;
 
     procedure set_coverage_goal(

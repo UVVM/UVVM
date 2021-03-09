@@ -811,30 +811,6 @@ package body funct_cov_pkg is
       return v_is_illegal;
     end function;
 
-    -- Returns the number of covered bins
-    impure function get_num_covered_bins(
-      constant VOID : t_void)
-    return integer is
-      variable v_cnt : integer := 0;
-    begin
-      for i in 0 to priv_bins_idx-1 loop
-        v_cnt := v_cnt + 1 when priv_bins(i).hits >= priv_bins(i).min_hits;
-      end loop;
-      return v_cnt;
-    end function;
-
-    -- Returns the number of illegal bins
-    impure function get_num_illegal_bins(
-      constant VOID : t_void)
-    return integer is
-      variable v_cnt : integer := 0;
-    begin
-      for i in 0 to priv_invalid_bins_idx-1 loop
-        v_cnt := v_cnt + 1 when is_bin_illegal(priv_invalid_bins(i));
-      end loop;
-      return v_cnt;
-    end function;
-
     -- Returns the percentage of hits/min_hits in a bin. Note that it saturates at 100%
     impure function get_bin_coverage(
       constant bin : t_cov_bin)
@@ -846,34 +822,6 @@ package body funct_cov_pkg is
       else
         v_coverage := 100.0;
       end if;
-      return v_coverage;
-    end function;
-
-    -- Returns the percentage of bins_covered/total_bins in the coverpoint
-    impure function get_covpoint_bins_coverage(
-      constant VOID : t_void)
-    return real is
-      variable v_num_cov_bins : integer := 0;
-      variable v_coverage     : real;
-    begin
-      v_num_cov_bins := get_num_covered_bins(VOID);
-      v_coverage := real(v_num_cov_bins)*100.0/real(priv_bins_idx) when priv_bins_idx > 0 else 0.0;
-      return v_coverage;
-    end function;
-
-    -- Returns the percentage of hits/min_hits for all the bins in the coverpoint
-    impure function get_covpoint_hits_coverage(
-      constant VOID : t_void)
-    return real is
-      variable v_hits     : natural := 0;
-      variable v_min_hits : natural := 0;
-      variable v_coverage : real;
-    begin
-      for i in 0 to priv_bins_idx-1 loop
-        v_hits     := v_hits + priv_bins(i).hits;
-        v_min_hits := v_min_hits + priv_bins(i).min_hits;
-      end loop;
-      v_coverage := real(v_hits)*100.0/real(v_min_hits) when v_min_hits > 0 else 0.0;
       return v_coverage;
     end function;
 
@@ -1691,9 +1639,9 @@ package body funct_cov_pkg is
     impure function coverage_complete(
       constant VOID : t_void)
     return boolean is
-      variable v_cov_complete : boolean := true;
     begin
-      return get_covpoint_hits_coverage(VOID) >= real(priv_cov_goal);
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
+      return protected_coverpoints_status.get_hits_coverage(priv_id) >= real(priv_cov_goal);
     end function;
 
     --Q: always write to log and file? do like log and have a generic name and possible to modify?
@@ -1723,6 +1671,8 @@ package body funct_cov_pkg is
       end function;
 
     begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
+
       -- Calculate how much space we can insert between the columns of the report
       v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_FC_MAX_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
@@ -1737,9 +1687,9 @@ package body funct_cov_pkg is
 
       -- Print summary
       write(v_line, "Coverpoint:     " & to_string(priv_name) & LF &
-                    "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "/" & to_string(priv_bins_idx) & LF &
-                    "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
-                    "Coverage:       bins: " & to_string(get_covpoint_bins_coverage(VOID),2) & "% hits: " & to_string(get_covpoint_hits_coverage(VOID),2) & "%" & LF &
+                    "Uncovered bins: " & to_string(protected_coverpoints_status.get_num_uncovered_bins(priv_id)) & "/" & to_string(priv_bins_idx) & LF &
+                    "Illegal bins:   " & to_string(protected_coverpoints_status.get_num_illegal_bins(priv_id)) & LF &
+                    "Coverage:       bins: " & to_string(protected_coverpoints_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(priv_id),2) & "%" & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers

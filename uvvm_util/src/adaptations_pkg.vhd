@@ -239,7 +239,9 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Functional Coverage adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_FC_MAX_NAME_LENGTH    : positive := 20; -- Maximum length used for coverpoint and bin names
+  constant C_FC_MAX_NAME_LENGTH     : positive := 20; -- Maximum length used for coverpoint and bin names
+  constant C_FC_MAX_NUM_COVERPOINTS : positive := 20; -- Maximum number of coverpoints
+
   --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations
   --------------------------------------------------------------------------------------------------------------------------------
@@ -327,7 +329,7 @@ package adaptations_pkg is
   );
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- VVC Adaptions
+  -- VVC Adaptations
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_SPI_VVC_DATA_ARRAY_WIDTH : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
 

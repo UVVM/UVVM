@@ -146,17 +146,18 @@ package funct_cov_pkg is
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
+    procedure init(
+      constant name  : in string := "";
+      constant scope : in string := "");
+
+    impure function get_name(
+      constant VOID : t_void)
+    return string;
+
     procedure set_scope(
       constant scope : in string);
 
     impure function get_scope(
-      constant VOID : t_void)
-    return string;
-
-    procedure set_name(
-      constant name : in string);
-
-    impure function get_name(
       constant VOID : t_void)
     return string;
 
@@ -603,6 +604,7 @@ package body funct_cov_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected body
+    variable priv_id                            : integer := -1;
     variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
@@ -952,7 +954,9 @@ package body funct_cov_pkg is
       constant bin_name      : in    string) is
       constant C_NUM_CROSS_BINS : natural := bin_array'length;
       variable v_bin_is_valid   : boolean := true;
+      variable v_bin_is_illegal : boolean := false;
     begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
       -- Iterate through the bins in the current array element
       for i in 0 to bin_array(bin_array_idx).num_bins-1 loop
         -- Store the bin index for the current element of the array
@@ -964,6 +968,9 @@ package body funct_cov_pkg is
             v_bin_is_valid := v_bin_is_valid and (bin_array(j).bin_vector(idx_reg(j)).contains = VAL or
                                                   bin_array(j).bin_vector(idx_reg(j)).contains = RAN or
                                                   bin_array(j).bin_vector(idx_reg(j)).contains = TRN);
+            v_bin_is_illegal := v_bin_is_illegal or (bin_array(j).bin_vector(idx_reg(j)).contains = VAL_ILLEGAL or
+                                                     bin_array(j).bin_vector(idx_reg(j)).contains = RAN_ILLEGAL or
+                                                     bin_array(j).bin_vector(idx_reg(j)).contains = TRN_ILLEGAL);
           end loop;
           -- Store valid bins
           if v_bin_is_valid then
@@ -978,6 +985,9 @@ package body funct_cov_pkg is
             priv_bins(priv_bins_idx).rand_weight                  := rand_weight;
             priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
             priv_bins_idx := priv_bins_idx + 1;
+            -- Update coverpoint status register
+            protected_coverpoints_status.increment_valid_bin_count(priv_id);
+            protected_coverpoints_status.increment_min_hits_count(priv_id, min_cov);
           -- Store ignore or illegal bins
           else
             for j in 0 to C_NUM_CROSS_BINS-1 loop
@@ -991,6 +1001,10 @@ package body funct_cov_pkg is
             priv_invalid_bins(priv_invalid_bins_idx).rand_weight                  := 0;
             priv_invalid_bins(priv_invalid_bins_idx).name(1 to bin_name'length)   := bin_name;
             priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
+            -- Update coverpoint status register
+            if v_bin_is_illegal then
+              protected_coverpoints_status.increment_illegal_bin_count(priv_id);
+            end if;
           end if;
         -- Go to the next element of the array
         else
@@ -1002,6 +1016,43 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
+    procedure init(
+      constant name  : in string := "";
+      constant scope : in string := "") is
+      constant C_LOCAL_CALL : string := "init(" & name & ", " & scope & ")";
+      variable v_line : line;
+    begin
+      -- Register the coverpoint in the status register
+      priv_id := protected_coverpoints_status.add_coverpoint(name);
+      check_value(priv_id /= -1, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
+        priv_scope, msg_id => ID_NEVER, caller_name => C_LOCAL_CALL);
+
+      -- Set the name of the coverpoint
+      write(v_line, protected_coverpoints_status.get_name(priv_id));
+      priv_name(1 to v_line'length) := v_line.all;
+      DEALLOCATE(v_line);
+
+      -- Set the scope of the coverpoint
+      if scope /= "" then
+        set_scope(scope);
+      -- If no scope is given, use the name as scope
+      elsif name /= "" then
+        set_scope(name);
+      else
+        set_scope(priv_name);
+      end if;
+
+      -- Initialize the seed of the random generator
+      priv_rand_gen.set_rand_seeds(name);
+    end procedure;
+
+    impure function get_name(
+      constant VOID : t_void)
+    return string is
+    begin
+      return to_string(priv_name);
+    end function;
+
     procedure set_scope(
       constant scope : in string) is
     begin
@@ -1017,23 +1068,6 @@ package body funct_cov_pkg is
     return string is
     begin
       return to_string(priv_scope);
-    end function;
-
-    procedure set_name(
-      constant name : in string) is
-    begin
-      if name'length > C_FC_MAX_NAME_LENGTH then
-        priv_name := name(1 to C_FC_MAX_NAME_LENGTH);
-      else
-        priv_name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
-      end if;
-    end procedure;
-
-    impure function get_name(
-      constant VOID : t_void)
-    return string is
-    begin
-      return to_string(priv_name);
     end function;
 
     ------------------------------------------------------------
@@ -1421,6 +1455,7 @@ package body funct_cov_pkg is
       variable v_value_match       : std_logic_vector(0 to priv_num_bins_crossed-1) := (others => '0');
       variable v_illegal_match_idx : integer := -1;
     begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
 
@@ -1508,6 +1543,11 @@ package body funct_cov_pkg is
 
           if and(v_value_match) = '1' then
             priv_bins(i).hits := priv_bins(i).hits + 1;
+            -- Update coverpoint status register
+            protected_coverpoints_status.increment_hits_count(priv_id);
+            if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
+              protected_coverpoints_status.increment_covered_bin_count(priv_id);
+            end if;
           end if;
           v_value_match := (others => '0');
         end loop;

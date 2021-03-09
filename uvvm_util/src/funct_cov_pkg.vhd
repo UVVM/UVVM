@@ -139,6 +139,12 @@ package funct_cov_pkg is
   return t_new_bin_array;
 
   ------------------------------------------------------------
+  -- Simulation coverage
+  ------------------------------------------------------------
+  procedure print_coverage_summary(
+    constant scope : in string := C_SCOPE);
+
+  ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected
@@ -598,6 +604,45 @@ package body funct_cov_pkg is
   end function;
 
   ------------------------------------------------------------
+  -- Simulation coverage
+  ------------------------------------------------------------
+  procedure print_coverage_summary(
+    constant scope : in string := C_SCOPE) is
+    constant C_PREFIX    : string := C_LOG_PREFIX & "     ";
+    constant C_HEADER    : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(scope) & " ***";
+    variable v_line      : line;
+    variable v_line_copy : line;
+
+  begin
+    -- Print report header
+    write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+                  timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
+                  "Total Hits Coverage: " & to_string(protected_coverpoints_status.get_total_hits_coverage(VOID),2) & "%" & LF &
+                  fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
+
+    -- Print coverpoints summaries
+    for i in 0 to protected_coverpoints_status.get_num_coverpoints(VOID)-1 loop
+      write(v_line, "Coverpoint:     " & protected_coverpoints_status.get_name(i) & LF &
+                    "Uncovered bins: " & to_string(protected_coverpoints_status.get_num_uncovered_bins(i)) & "/" & to_string(protected_coverpoints_status.get_num_valid_bins(i)) & LF &
+                    "Illegal bins:   " & to_string(protected_coverpoints_status.get_num_illegal_bins(i)) & LF &
+                    "Coverage:       bins: " & to_string(protected_coverpoints_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(i),2) & "%" & LF &
+                    fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    end loop;
+
+    -- Print report bottom line
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+
+    -- Write the info string to transcript
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
+    write (v_line_copy, v_line.all);  -- copy line
+    writeline(OUTPUT, v_line);
+    writeline(LOG_FILE, v_line_copy);
+    deallocate(v_line);
+    deallocate(v_line_copy);
+  end procedure;
+
+  ------------------------------------------------------------
   -- Protected type
   ------------------------------------------------------------
   type t_cov_point is protected body
@@ -800,7 +845,7 @@ package body funct_cov_pkg is
     end function;
 
     -- Returns the percentage of bins_covered/total_bins in the coverpoint
-    impure function get_covpoint_coverage(
+    impure function get_covpoint_bins_coverage(
       constant VOID : t_void)
     return real is
       variable v_num_cov_bins : integer := 0;
@@ -812,7 +857,7 @@ package body funct_cov_pkg is
     end function;
 
     -- Returns the percentage of hits/min_hits for all the bins in the coverpoint
-    impure function get_covpoint_coverage_accumulated(
+    impure function get_covpoint_hits_coverage(
       constant VOID : t_void)
     return real is
       variable v_hits     : natural := 0;
@@ -1632,7 +1677,7 @@ package body funct_cov_pkg is
     return boolean is
       variable v_cov_complete : boolean := true;
     begin
-      return get_covpoint_coverage_accumulated(VOID) >= real(priv_cov_goal);
+      return get_covpoint_hits_coverage(VOID) >= real(priv_cov_goal);
     end function;
 
     --Q: always write to log and file? do like log and have a generic name and possible to modify?
@@ -1678,7 +1723,7 @@ package body funct_cov_pkg is
       write(v_line, "Coverpoint:     " & to_string(priv_name) & LF &
                     "Uncovered bins: " & to_string(priv_bins_idx-get_num_covered_bins(VOID)) & "/" & to_string(priv_bins_idx) & LF &
                     "Illegal bins:   " & to_string(get_num_illegal_bins(VOID)) & LF &
-                    "Coverage:       " & to_string(get_covpoint_coverage(VOID),2) & "% (accumulated: " & to_string(get_covpoint_coverage_accumulated(VOID),2) & "%)" & LF &
+                    "Coverage:       bins: " & to_string(get_covpoint_bins_coverage(VOID),2) & "% hits: " & to_string(get_covpoint_hits_coverage(VOID),2) & "%" & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers

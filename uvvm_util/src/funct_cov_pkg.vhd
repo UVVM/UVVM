@@ -161,6 +161,36 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return string;
 
+    -- Returns the number of bins crossed in the coverpoint
+    impure function get_num_bins_crossed(
+      constant VOID : in t_void)
+    return integer;
+
+    -- Returns the number of bins in the coverpoint
+    impure function get_num_bins(
+      constant VOID : in t_void)
+    return natural;
+
+    -- Returns the number of illegal and ignore bins in the coverpoint
+    impure function get_num_invalid_bins(
+      constant VOID : in t_void)
+    return natural;
+
+    -- Returns a vector with the bins in the coverpoint
+    impure function get_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector;
+
+    -- Returns a vector with the illegal and ignore bins in the coverpoint
+    impure function get_invalid_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector;
+
+    -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
+    impure function get_all_bins_string(
+      constant VOID : in t_void)
+    return string;
+
     ------------------------------------------------------------
     -- Add bins
     ------------------------------------------------------------
@@ -325,39 +355,6 @@ package funct_cov_pkg is
 
     procedure print_summary(
       constant VOID : in t_void);
-
-    ------------------------------------------------------------
-    -- Get functions
-    ------------------------------------------------------------
-    -- Returns the number of bins crossed in the coverpoint
-    impure function get_num_bins_crossed(
-      constant VOID : in t_void)
-    return integer;
-
-    -- Returns the number of bins in the coverpoint
-    impure function get_num_bins(
-      constant VOID : in t_void)
-    return natural;
-
-    -- Returns the number of illegal and ignore bins in the coverpoint
-    impure function get_num_invalid_bins(
-      constant VOID : in t_void)
-    return natural;
-
-    -- Returns a vector with the bins in the coverpoint
-    impure function get_bins(
-      constant VOID : in t_void)
-    return t_cov_bin_vector;
-
-    -- Returns a vector with the illegal and ignore bins in the coverpoint
-    impure function get_invalid_bins(
-      constant VOID : in t_void)
-    return t_cov_bin_vector;
-
-    -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
-    impure function get_all_bins_string(
-      constant VOID : in t_void)
-    return string;
 
   end protected t_cov_point;
 
@@ -1070,6 +1067,71 @@ package body funct_cov_pkg is
       return to_string(priv_scope);
     end function;
 
+    -- Returns the number of bins crossed in the coverpoint
+    impure function get_num_bins_crossed(
+      constant VOID : in t_void)
+    return integer is
+    begin
+      return priv_num_bins_crossed;
+    end function;
+
+    -- Returns the number of bins in the coverpoint
+    impure function get_num_bins(
+      constant VOID : in t_void)
+    return natural is
+    begin
+      return priv_bins_idx;
+    end function;
+
+    -- Returns the number of illegal and ignore bins in the coverpoint
+    impure function get_num_invalid_bins(
+      constant VOID : in t_void)
+    return natural is
+    begin
+      return priv_invalid_bins_idx;
+    end function;
+
+    -- Returns a vector with the bins in the coverpoint
+    impure function get_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector is
+    begin
+      return priv_bins(0 to priv_bins_idx-1);
+    end function;
+
+    -- Returns a vector with the illegal and ignore bins in the coverpoint
+    impure function get_invalid_bins(
+      constant VOID : in t_void)
+    return t_cov_bin_vector is
+    begin
+      return priv_invalid_bins(0 to priv_invalid_bins_idx-1);
+    end function;
+
+    -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
+    impure function get_all_bins_string(
+      constant VOID : in t_void)
+    return string is
+      variable v_new_bin_array : t_new_bin_array(0 to 0);
+    begin
+      for i in 0 to priv_bins_idx-1 loop
+        v_new_bin_array(0).bin_vector(i).contains   := priv_bins(i).cross_bins(0).contains;
+        v_new_bin_array(0).bin_vector(i).values     := priv_bins(i).cross_bins(0).values;
+        v_new_bin_array(0).bin_vector(i).num_values := priv_bins(i).cross_bins(0).num_values;
+        v_new_bin_array(0).num_bins := priv_bins_idx;
+      end loop;
+      for i in 0 to priv_invalid_bins_idx-1 loop
+        v_new_bin_array(0).bin_vector(priv_bins_idx+i).contains   := priv_bins(i).cross_bins(0).contains;
+        v_new_bin_array(0).bin_vector(priv_bins_idx+i).values     := priv_bins(i).cross_bins(0).values;
+        v_new_bin_array(0).bin_vector(priv_bins_idx+i).num_values := priv_bins(i).cross_bins(0).num_values;
+        v_new_bin_array(0).num_bins := priv_bins_idx + priv_invalid_bins_idx;
+      end loop;
+      if v_new_bin_array(0).num_bins > 0 then
+        return get_bin_array_values(v_new_bin_array);
+      else
+        return "";
+      end if;
+    end function;
+
     ------------------------------------------------------------
     -- Add bins
     ------------------------------------------------------------
@@ -1707,74 +1769,6 @@ package body funct_cov_pkg is
       DEALLOCATE(v_line);
       DEALLOCATE(v_line_copy);
     end procedure;
-
-    ------------------------------------------------------------
-    -- Get functions
-    ------------------------------------------------------------
-    -- Returns the number of bins crossed in the coverpoint
-    impure function get_num_bins_crossed(
-      constant VOID : in t_void)
-    return integer is
-    begin
-      return priv_num_bins_crossed;
-    end function;
-
-    -- Returns the number of bins in the coverpoint
-    impure function get_num_bins(
-      constant VOID : in t_void)
-    return natural is
-    begin
-      return priv_bins_idx;
-    end function;
-
-    -- Returns the number of illegal and ignore bins in the coverpoint
-    impure function get_num_invalid_bins(
-      constant VOID : in t_void)
-    return natural is
-    begin
-      return priv_invalid_bins_idx;
-    end function;
-
-    -- Returns a vector with the bins in the coverpoint
-    impure function get_bins(
-      constant VOID : in t_void)
-    return t_cov_bin_vector is
-    begin
-      return priv_bins(0 to priv_bins_idx-1);
-    end function;
-
-    -- Returns a vector with the illegal and ignore bins in the coverpoint
-    impure function get_invalid_bins(
-      constant VOID : in t_void)
-    return t_cov_bin_vector is
-    begin
-      return priv_invalid_bins(0 to priv_invalid_bins_idx-1);
-    end function;
-
-    -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
-    impure function get_all_bins_string(
-      constant VOID : in t_void)
-    return string is
-      variable v_new_bin_array : t_new_bin_array(0 to 0);
-    begin
-      for i in 0 to priv_bins_idx-1 loop
-        v_new_bin_array(0).bin_vector(i).contains   := priv_bins(i).cross_bins(0).contains;
-        v_new_bin_array(0).bin_vector(i).values     := priv_bins(i).cross_bins(0).values;
-        v_new_bin_array(0).bin_vector(i).num_values := priv_bins(i).cross_bins(0).num_values;
-        v_new_bin_array(0).num_bins := priv_bins_idx;
-      end loop;
-      for i in 0 to priv_invalid_bins_idx-1 loop
-        v_new_bin_array(0).bin_vector(priv_bins_idx+i).contains   := priv_bins(i).cross_bins(0).contains;
-        v_new_bin_array(0).bin_vector(priv_bins_idx+i).values     := priv_bins(i).cross_bins(0).values;
-        v_new_bin_array(0).bin_vector(priv_bins_idx+i).num_values := priv_bins(i).cross_bins(0).num_values;
-        v_new_bin_array(0).num_bins := priv_bins_idx + priv_invalid_bins_idx;
-      end loop;
-      if v_new_bin_array(0).num_bins > 0 then
-        return get_bin_array_values(v_new_bin_array);
-      else
-        return "";
-      end if;
-    end function;
 
   end protected body t_cov_point;
 

@@ -1604,7 +1604,9 @@ package body funct_cov_pkg is
           if and(v_value_match) = '1' then
             priv_bins(i).hits := priv_bins(i).hits + 1;
             -- Update coverpoint status register
-            protected_coverpoints_status.increment_hits_count(priv_id);
+            if priv_bins(i).hits <= priv_bins(i).min_hits then
+              protected_coverpoints_status.increment_hits_count(priv_id);
+            end if;
             if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
               protected_coverpoints_status.increment_covered_bin_count(priv_id);
             end if;

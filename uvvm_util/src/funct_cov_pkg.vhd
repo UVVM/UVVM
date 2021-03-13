@@ -1604,7 +1604,8 @@ package body funct_cov_pkg is
           if and(v_value_match) = '1' then
             priv_bins(i).hits := priv_bins(i).hits + 1;
             -- Update coverpoint status register
-            if priv_bins(i).hits <= priv_bins(i).min_hits then
+            -- Stop accumulating the coverage contribution of the bin when the goal has been reached
+            if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(priv_cov_goal)/100.0) then
               protected_coverpoints_status.increment_hits_count(priv_id);
             end if;
             if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
@@ -1691,7 +1692,7 @@ package body funct_cov_pkg is
       write(v_line, "Coverpoint:     " & to_string(priv_name) & LF &
                     "Uncovered bins: " & to_string(protected_coverpoints_status.get_num_uncovered_bins(priv_id)) & "/" & to_string(priv_bins_idx) & LF &
                     "Illegal bins:   " & to_string(protected_coverpoints_status.get_num_illegal_bins(priv_id)) & LF &
-                    "Coverage:       bins: " & to_string(protected_coverpoints_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(priv_id),2) & "%" & LF &
+                    "Coverage:       bins: " & to_string(protected_coverpoints_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(priv_id),2) & "% (goal: " & to_string(priv_cov_goal) & "%)" & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers

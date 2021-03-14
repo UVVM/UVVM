@@ -40,7 +40,7 @@ package global_signals_and_shared_variables_pkg is
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
   shared variable shared_uvvm_status             : t_uvvm_status := C_UVVM_STATUS_DEFAULT;
-  shared variable protected_coverpoints_status   : t_protected_coverpoints_status;
+  shared variable protected_covergroup_status    : t_protected_covergroup_status;
 
   -- Global signals
   signal global_trigger : std_logic := 'L';

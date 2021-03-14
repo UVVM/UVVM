@@ -621,16 +621,16 @@ package body funct_cov_pkg is
     -- Print report header
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                   timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                  "Total Hits Coverage: " & to_string(protected_coverpoints_status.get_total_hits_coverage(VOID),2) & "%" & LF &
+                  "Total Hits Coverage: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID),2) & "%" & LF &
                   fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
 
     -- Print coverpoints summaries
-    for i in 0 to protected_coverpoints_status.get_num_coverpoints(VOID)-1 loop
-      write(v_line, "Coverpoint:      " & protected_coverpoints_status.get_name(i) & LF &
-                    "Uncovered bins:  " & to_string(protected_coverpoints_status.get_num_uncovered_bins(i)) & "/" & to_string(protected_coverpoints_status.get_num_valid_bins(i)) & LF &
-                    "Illegal bins:    " & to_string(protected_coverpoints_status.get_num_illegal_bins(i)) & LF &
-                    "Coverage:        bins: " & to_string(protected_coverpoints_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(i),2) & "%" & LF &
-                    "Coverage weight: " & to_string(protected_coverpoints_status.get_coverage_weight(i)) & LF &
+    for i in 0 to protected_covergroup_status.get_num_coverpoints(VOID)-1 loop
+      write(v_line, "Coverpoint:      " & protected_covergroup_status.get_name(i) & LF &
+                    "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & "/" & to_string(protected_covergroup_status.get_num_valid_bins(i)) & LF &
+                    "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
+                    "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2) & "%" & LF &
+                    "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     end loop;
 
@@ -981,8 +981,8 @@ package body funct_cov_pkg is
             priv_bins(priv_bins_idx).name(1 to bin_name'length)   := bin_name;
             priv_bins_idx := priv_bins_idx + 1;
             -- Update coverpoint status register
-            protected_coverpoints_status.increment_valid_bin_count(priv_id);
-            protected_coverpoints_status.increment_min_hits_count(priv_id, min_cov);
+            protected_covergroup_status.increment_valid_bin_count(priv_id);
+            protected_covergroup_status.increment_min_hits_count(priv_id, min_cov);
           -- Store ignore or illegal bins
           else
             for j in 0 to C_NUM_CROSS_BINS-1 loop
@@ -998,7 +998,7 @@ package body funct_cov_pkg is
             priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
             -- Update coverpoint status register
             if v_bin_is_illegal then
-              protected_coverpoints_status.increment_illegal_bin_count(priv_id);
+              protected_covergroup_status.increment_illegal_bin_count(priv_id);
             end if;
           end if;
         -- Go to the next element of the array
@@ -1018,12 +1018,12 @@ package body funct_cov_pkg is
       variable v_line : line;
     begin
       -- Register the coverpoint in the status register
-      priv_id := protected_coverpoints_status.add_coverpoint(name);
+      priv_id := protected_covergroup_status.add_coverpoint(name);
       check_value(priv_id /= -1, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
         priv_scope, msg_id => ID_NEVER, caller_name => C_LOCAL_CALL);
 
       -- Set the name of the coverpoint
-      write(v_line, protected_coverpoints_status.get_name(priv_id));
+      write(v_line, protected_covergroup_status.get_name(priv_id));
       priv_name(1 to v_line'length) := v_line.all;
       DEALLOCATE(v_line);
 
@@ -1606,10 +1606,10 @@ package body funct_cov_pkg is
             -- Update coverpoint status register
             -- Stop accumulating the coverage contribution of the bin when the goal has been reached
             if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(priv_cov_goal)/100.0) then
-              protected_coverpoints_status.increment_hits_count(priv_id);
+              protected_covergroup_status.increment_hits_count(priv_id);
             end if;
             if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
-              protected_coverpoints_status.increment_covered_bin_count(priv_id);
+              protected_covergroup_status.increment_covered_bin_count(priv_id);
             end if;
           end if;
           v_value_match := (others => '0');
@@ -1626,7 +1626,7 @@ package body funct_cov_pkg is
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
       -- Update coverpoint status register
-      protected_coverpoints_status.set_coverage_weight(priv_id, weight);
+      protected_covergroup_status.set_coverage_weight(priv_id, weight);
     end procedure;
 
     procedure set_coverage_goal(
@@ -1644,7 +1644,7 @@ package body funct_cov_pkg is
     return boolean is
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
-      return protected_coverpoints_status.get_hits_coverage(priv_id) >= real(priv_cov_goal);
+      return protected_covergroup_status.get_hits_coverage(priv_id) >= real(priv_cov_goal);
     end function;
 
     --Q: always write to log and file? do like log and have a generic name and possible to modify?
@@ -1690,9 +1690,9 @@ package body funct_cov_pkg is
 
       -- Print summary
       write(v_line, "Coverpoint:     " & to_string(priv_name) & LF &
-                    "Uncovered bins: " & to_string(protected_coverpoints_status.get_num_uncovered_bins(priv_id)) & "/" & to_string(priv_bins_idx) & LF &
-                    "Illegal bins:   " & to_string(protected_coverpoints_status.get_num_illegal_bins(priv_id)) & LF &
-                    "Coverage:       bins: " & to_string(protected_coverpoints_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_coverpoints_status.get_hits_coverage(priv_id),2) & "% (goal: " & to_string(priv_cov_goal) & "%)" & LF &
+                    "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & "/" & to_string(priv_bins_idx) & LF &
+                    "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
+                    "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2) & "% (goal: " & to_string(priv_cov_goal) & "%)" & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers

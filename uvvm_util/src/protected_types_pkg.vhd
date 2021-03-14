@@ -74,7 +74,7 @@ package protected_types_pkg is
   end protected t_protected_check_counters;
 
 
-  type t_protected_coverpoints_status is protected
+  type t_protected_covergroup_status is protected
     impure function add_coverpoint(name : string) return integer;
     procedure increment_valid_bin_count(coverpoint_idx : in integer);
     procedure increment_illegal_bin_count(coverpoint_idx : in integer);
@@ -93,7 +93,7 @@ package protected_types_pkg is
     impure function get_bins_coverage(coverpoint_idx : in integer) return real;
     impure function get_hits_coverage(coverpoint_idx : in integer) return real;
     impure function get_total_hits_coverage(VOID : t_void) return real;
-  end protected t_protected_coverpoints_status;
+  end protected t_protected_covergroup_status;
 
 
 end package protected_types_pkg;
@@ -221,7 +221,7 @@ package body protected_types_pkg is
   end protected body t_protected_check_counters;
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
-  type t_protected_coverpoints_status is protected body
+  type t_protected_covergroup_status is protected body
     type t_coverpoint_status is record
       name               : string(1 to C_FC_MAX_NAME_LENGTH);
       num_valid_bins     : natural;
@@ -399,7 +399,7 @@ package body protected_types_pkg is
       return v_coverage;
     end function;
 
-  end protected body t_protected_coverpoints_status;
+  end protected body t_protected_covergroup_status;
   --------------------------------------------------------------------------------
 
 end package body protected_types_pkg;

@@ -82,7 +82,8 @@ package protected_types_pkg is
     procedure increment_hits_count(coverpoint_idx : in integer);
     procedure increment_min_hits_count(coverpoint_idx : in integer; min_hits : in natural);
     procedure set_coverage_weight(coverpoint_idx : in integer; weight : in positive);
-    impure function get_num_coverpoints(VOID : t_void) return natural;
+    procedure set_coverage_goal(coverpoint_idx : in integer; percentage : in positive);
+    impure function get_num_coverpoints(VOID : in t_void) return natural;
     impure function get_name(coverpoint_idx : in integer) return string;
     impure function get_num_valid_bins(coverpoint_idx : in integer) return natural;
     impure function get_num_illegal_bins(coverpoint_idx : in integer) return natural;
@@ -90,9 +91,10 @@ package protected_types_pkg is
     impure function get_total_bin_hits(coverpoint_idx : in integer) return natural;
     impure function get_total_bin_min_hits(coverpoint_idx : in integer) return natural;
     impure function get_coverage_weight(coverpoint_idx : in integer) return positive;
+    impure function get_coverage_goal(coverpoint_idx : in integer) return positive;
     impure function get_bins_coverage(coverpoint_idx : in integer) return real;
     impure function get_hits_coverage(coverpoint_idx : in integer) return real;
-    impure function get_total_hits_coverage(VOID : t_void) return real;
+    impure function get_total_hits_coverage(VOID : in t_void) return real;
   end protected t_protected_covergroup_status;
 
 
@@ -230,6 +232,7 @@ package body protected_types_pkg is
       total_bin_hits     : natural;
       total_bin_min_hits : natural;
       coverage_weight    : positive;
+      coverage_goal      : positive;
     end record;
     constant C_COVERPOINT_STATUS_DEFAULT : t_coverpoint_status := (
       name               => (others => NUL),
@@ -238,7 +241,8 @@ package body protected_types_pkg is
       num_covered_bins   => 0,
       total_bin_hits     => 0,
       total_bin_min_hits => 0,
-      coverage_weight    => 1
+      coverage_weight    => 1,
+      coverage_goal      => 100
     );
     type t_coverpoint_status_array is array (natural range <>) of t_coverpoint_status;
 
@@ -303,6 +307,13 @@ package body protected_types_pkg is
       priv_coverpoint_status_list(coverpoint_idx).coverage_weight := weight;
     end procedure;
 
+    procedure set_coverage_goal(
+      constant coverpoint_idx : in integer; 
+      constant percentage     : in positive) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).coverage_goal := percentage;
+    end procedure;
+
     impure function get_num_coverpoints(
       constant VOID : t_void)
     return natural is
@@ -357,6 +368,13 @@ package body protected_types_pkg is
     return positive is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).coverage_weight;
+    end function;
+
+    impure function get_coverage_goal(
+      constant coverpoint_idx : in integer)
+    return positive is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).coverage_goal;
     end function;
 
     -- Returns the percentage of covered_bins/valid_bins in the coverpoint

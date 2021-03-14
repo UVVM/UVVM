@@ -665,7 +665,6 @@ package body funct_cov_pkg is
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer := -1;
     variable priv_rand_transition_bin_value_idx : natural := 0;
-    variable priv_cov_goal                      : positive := 100;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1603,7 +1602,7 @@ package body funct_cov_pkg is
             priv_bins(i).hits := priv_bins(i).hits + 1;
             -- Update coverpoint status register
             -- Stop accumulating the coverage contribution of the bin when the goal has been reached
-            if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(priv_cov_goal)/100.0) then
+            if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(protected_covergroup_status.get_coverage_goal(priv_id))/100.0) then
               protected_covergroup_status.increment_hits_count(priv_id);
             end if;
             if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
@@ -1632,8 +1631,9 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
     begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
-      priv_cov_goal := percentage;
+      protected_covergroup_status.set_coverage_goal(priv_id, percentage);
     end procedure;
 
     impure function get_coverage(
@@ -1650,7 +1650,7 @@ package body funct_cov_pkg is
     return boolean is
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
-      return protected_covergroup_status.get_hits_coverage(priv_id) >= real(priv_cov_goal);
+      return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_coverage_goal(priv_id));
     end function;
 
     --Q: always write to log and file? do like log and have a generic name and possible to modify?
@@ -1698,7 +1698,8 @@ package body funct_cov_pkg is
       write(v_line, "Coverpoint:     " & to_string(protected_covergroup_status.get_name(priv_id)) & LF &
                     "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & LF &
                     "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
-                    "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2) & "% (goal: " & to_string(priv_cov_goal) & "%)" & LF &
+                    "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2)
+                      & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(priv_id)) & "%)" & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print column headers

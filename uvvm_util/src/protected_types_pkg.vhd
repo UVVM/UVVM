@@ -248,12 +248,12 @@ package body protected_types_pkg is
     impure function add_coverpoint(
       constant name : string)
     return integer is
-      constant C_CURRENT_IDX : string := to_string(priv_last_added_coverpoint_idx + 1);
+      constant C_COVERPOINT_NUM : string := to_string(priv_last_added_coverpoint_idx + 2);
     begin
       if priv_last_added_coverpoint_idx < C_FC_MAX_NUM_COVERPOINTS-1 then
         priv_last_added_coverpoint_idx := priv_last_added_coverpoint_idx + 1;
         if name'length = 0 then
-          priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := "COVERPOINT_" & C_CURRENT_IDX & fill_string(NUL, C_FC_MAX_NAME_LENGTH-9-C_CURRENT_IDX'length);
+          priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := "COVERPOINT_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-11-C_COVERPOINT_NUM'length);
         elsif name'length > C_FC_MAX_NAME_LENGTH then
           priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := name(1 to C_FC_MAX_NAME_LENGTH);
         else

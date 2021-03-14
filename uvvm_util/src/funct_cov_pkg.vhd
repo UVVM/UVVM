@@ -631,7 +631,7 @@ package body funct_cov_pkg is
     -- Print coverpoints summaries
     for i in 0 to protected_covergroup_status.get_num_coverpoints(VOID)-1 loop
       write(v_line, "Coverpoint:      " & protected_covergroup_status.get_name(i) & LF &
-                    "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & "/" & to_string(protected_covergroup_status.get_num_valid_bins(i)) & LF &
+                    "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & LF &
                     "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
                     "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2) & "%" & LF &
                     "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
@@ -657,7 +657,6 @@ package body funct_cov_pkg is
   type t_coverpoint is protected body
     variable priv_id                            : integer := -1;
     variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
-    variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bins_idx                      : natural := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
@@ -1019,17 +1018,11 @@ package body funct_cov_pkg is
       constant name  : in string := "";
       constant scope : in string := "") is
       constant C_LOCAL_CALL : string := "init(" & name & ", " & scope & ")";
-      variable v_line : line;
     begin
       -- Register the coverpoint in the status register
       priv_id := protected_covergroup_status.add_coverpoint(name);
       check_value(priv_id /= -1, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
         priv_scope, msg_id => ID_NEVER, caller_name => C_LOCAL_CALL);
-
-      -- Set the name of the coverpoint
-      write(v_line, protected_covergroup_status.get_name(priv_id));
-      priv_name(1 to v_line'length) := v_line.all;
-      DEALLOCATE(v_line);
 
       -- Set the scope of the coverpoint
       if scope /= "" then
@@ -1038,7 +1031,7 @@ package body funct_cov_pkg is
       elsif name /= "" then
         set_scope(name);
       else
-        set_scope(priv_name);
+        set_scope(protected_covergroup_status.get_name(priv_id));
       end if;
 
       -- Initialize the seed of the random generator
@@ -1049,7 +1042,8 @@ package body funct_cov_pkg is
       constant VOID : t_void)
     return string is
     begin
-      return to_string(priv_name);
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
+      return protected_covergroup_status.get_name(priv_id);
     end function;
 
     procedure set_scope(
@@ -1701,8 +1695,8 @@ package body funct_cov_pkg is
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print summary
-      write(v_line, "Coverpoint:     " & to_string(priv_name) & LF &
-                    "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & "/" & to_string(priv_bins_idx) & LF &
+      write(v_line, "Coverpoint:     " & to_string(protected_covergroup_status.get_name(priv_id)) & LF &
+                    "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & LF &
                     "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
                     "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2) & "% (goal: " & to_string(priv_cov_goal) & "%)" & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);

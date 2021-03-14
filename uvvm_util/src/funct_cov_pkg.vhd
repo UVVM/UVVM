@@ -359,6 +359,10 @@ package funct_cov_pkg is
       constant percentage   : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
+    impure function get_coverage(
+      constant VOID : t_void)
+    return real;
+
     impure function coverage_complete(
       constant VOID : t_void)
     return boolean;
@@ -1637,6 +1641,14 @@ package body funct_cov_pkg is
       log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_cov_goal := percentage;
     end procedure;
+
+    impure function get_coverage(
+      constant VOID : t_void)
+    return real is
+    begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
+      return protected_covergroup_status.get_hits_coverage(priv_id);
+    end function;
 
     --Q: is_covered/covered/coverage_complete
     impure function coverage_complete(

@@ -141,7 +141,11 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Simulation coverage
   ------------------------------------------------------------
-  procedure print_coverage_summary(
+  impure function get_sim_coverage(
+    constant VOID : t_void)
+  return real;
+
+  procedure print_sim_coverage_summary(
     constant scope : in string := C_SCOPE);
 
   ------------------------------------------------------------
@@ -614,7 +618,14 @@ package body funct_cov_pkg is
   ------------------------------------------------------------
   -- Simulation coverage
   ------------------------------------------------------------
-  procedure print_coverage_summary(
+  impure function get_sim_coverage(
+    constant VOID : t_void)
+  return real is
+  begin
+    return protected_covergroup_status.get_total_hits_coverage(VOID);
+  end function;
+
+  procedure print_sim_coverage_summary(
     constant scope : in string := C_SCOPE) is
     constant C_PREFIX    : string := C_LOG_PREFIX & "     ";
     constant C_HEADER    : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(scope) & " ***";

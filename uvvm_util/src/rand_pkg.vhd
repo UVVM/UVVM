@@ -1181,7 +1181,7 @@ package body rand_pkg is
     variable priv_weight_mode             : t_weight_mode                  := COMBINED_WEIGHT;
     variable priv_warned_same_set_type    : boolean                        := false;
     variable priv_cyclic_current_function : line                           := new string'("");
-    variable priv_cyclic_list             : t_cyclic_list_ptr;
+    variable priv_cyclic_list             : t_cyclic_list_ptr              := NULL;
     variable priv_cyclic_list_num_items   : natural                        := 0;
     variable priv_cyclic_queue            : t_generic_queue;
     variable priv_mean_configured         : boolean                        := false;
@@ -1611,8 +1611,11 @@ package body rand_pkg is
     procedure clear_rand_cyclic(
       constant VOID : t_void) is
     begin
+      log(ID_RAND_GEN, "clear_rand_cyclic()=> Deallocating cyclic list/queue", priv_scope);
       DEALLOCATE(priv_cyclic_current_function);
       priv_cyclic_current_function := new string'("");
+      DEALLOCATE(priv_cyclic_list);
+      priv_cyclic_queue.reset(VOID);
     end procedure;
 
     ------------------------------------------------------------

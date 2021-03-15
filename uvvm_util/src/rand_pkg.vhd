@@ -1599,7 +1599,6 @@ package body rand_pkg is
       else
         priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
       end if;
-      priv_cyclic_queue.set_scope(scope);
     end procedure;
 
     impure function get_scope(
@@ -1723,6 +1722,9 @@ package body rand_pkg is
                 priv_cyclic_list           := new t_cyclic_list(min_value to max_value);
                 priv_cyclic_list_num_items := 0;
               else
+                if priv_cyclic_queue.get_scope(VOID) = "" then
+                  priv_cyclic_queue.set_scope("RAND_CYCLIC_QUEUE");
+                end if;
                 priv_cyclic_queue.reset(VOID);
               end if;
             end if;

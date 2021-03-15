@@ -75,13 +75,13 @@ begin
     log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package - " & GC_TESTCASE);
     -------------------------------------------------------------------------------------
     enable_log_msg(ID_RAND_GEN);
-    v_rand.set_scope("MY SCOPE");
 
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
     --===================================================================================
       increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
 
+      v_rand.set_scope("MY SCOPE");
       check_value("MY SCOPE", v_rand.get_scope(VOID), ERROR, "Checking scope");
 
       ------------------------------------------------------------

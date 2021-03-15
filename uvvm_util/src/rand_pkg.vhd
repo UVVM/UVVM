@@ -1193,6 +1193,53 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Internal functions and procedures
     ------------------------------------------------------------
+    -- Returns the string representation of a real value with the number of
+    -- decimals configured in C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
+    -- If there are not any significant digits within the integer part or the
+    -- number of decimals, the scientific representation is returned.
+    function format_real(
+      constant value : real)
+    return string is
+      constant C_SIGNIFICANT_VALUE : real := abs(value * (10.0**C_RAND_REAL_NUM_DECIMAL_DIGITS));
+    begin
+      if integer(C_SIGNIFICANT_VALUE) > 0 or value = 0.0 then
+        return to_string(value, C_RAND_REAL_NUM_DECIMAL_DIGITS);
+      else
+        return to_string(value);
+      end if;
+    end function;
+
+    -- Overload
+    function format_real(
+      constant values : real_vector)
+    return string is
+      variable v_line   : line;
+      variable v_width  : natural;
+      variable v_result : string(1 to 2 +                -- parentheses
+                                 2*(values'length - 1) + -- commas
+                                 32*values'length);      -- values
+    begin
+      if values'length = 0 then
+        return "";
+      else
+        write(v_line, '(');
+        for i in values'range loop
+          write(v_line, format_real(values(i)));
+          if (i < values'right) and (values'ascending) then
+            write(v_line, string'(", "));
+          elsif (i > values'right) and not(values'ascending) then
+            write(v_line, string'(", "));
+          end if;
+        end loop;
+        write(v_line, ')');
+
+        v_width := v_line'length;
+        v_result(1 to v_width) := v_line.all;
+        DEALLOCATE(v_line);
+        return v_result(1 to v_width);
+      end if;
+    end function;
+
     -- Returns the string representation of the weight vector, e.g.
     --   (10,30),([20:30],30,COMBINED),(40,50)
     impure function to_string(
@@ -1251,15 +1298,15 @@ package body rand_pkg is
       for i in normalized_weight_vector'range loop
         if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
           write(v_line, '(');
-          write(v_line, to_string(normalized_weight_vector(i).min_value));
+          write(v_line, format_real(normalized_weight_vector(i).min_value));
           write(v_line, ',');
           write(v_line, to_string(normalized_weight_vector(i).weight));
           write(v_line, ')');
         else
           write(v_line, string'("(["));
-          write(v_line, to_string(normalized_weight_vector(i).min_value));
+          write(v_line, format_real(normalized_weight_vector(i).min_value));
           write(v_line, ':');
-          write(v_line, to_string(normalized_weight_vector(i).max_value));
+          write(v_line, format_real(normalized_weight_vector(i).max_value));
           write(v_line, string'("],"));
           write(v_line, to_string(normalized_weight_vector(i).weight));
           if normalized_weight_vector(i).mode = INDIVIDUAL_WEIGHT then
@@ -1327,53 +1374,6 @@ package body rand_pkg is
       v_str(1 to v_str_len) := v_line.all;
       DEALLOCATE(v_line);
       return v_str(1 to v_str_len);
-    end function;
-
-    -- Returns the string representation of a real value with the number of
-    -- decimals configured in C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
-    -- If there are not any significant digits within the integer part or the
-    -- number of decimals, the scientific representation is returned.
-    function format_real(
-      constant value : real)
-    return string is
-      constant C_SIGNIFICANT_VALUE : real := abs(value * (10.0**C_RAND_REAL_NUM_DECIMAL_DIGITS));
-    begin
-      if integer(C_SIGNIFICANT_VALUE) > 0 or value = 0.0 then
-        return to_string(value, C_RAND_REAL_NUM_DECIMAL_DIGITS);
-      else
-        return to_string(value);
-      end if;
-    end function;
-
-    -- Overload
-    function format_real(
-      constant values : real_vector)
-    return string is
-      variable v_line   : line;
-      variable v_width  : natural;
-      variable v_result : string(1 to 2 +                -- parentheses
-                                 2*(values'length - 1) + -- commas
-                                 32*values'length);      -- values
-    begin
-      if values'length = 0 then
-        return "";
-      else
-        write(v_line, '(');
-        for i in values'range loop
-          write(v_line, format_real(values(i)));
-          if (i < values'right) and (values'ascending) then
-            write(v_line, string'(", "));
-          elsif (i > values'right) and not(values'ascending) then
-            write(v_line, string'(", "));
-          end if;
-        end loop;
-        write(v_line, ')');
-
-        v_width := v_line'length;
-        v_result(1 to v_width) := v_line.all;
-        DEALLOCATE(v_line);
-        return v_result(1 to v_width);
-      end if;
     end function;
 
     -- Returns true if a value is contained in a vector

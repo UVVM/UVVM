@@ -1459,7 +1459,7 @@ package body rand_tb_pkg is
         ", max: " & to_string(max_value) & ", default mean & std_deviation");
     else
       log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) &
-        ", max: " & to_string(max_value) & ", mean: " & to_string(mean) & ", std_deviation: " & to_string(std_deviation));
+        ", max: " & to_string(max_value) & ", mean: " & to_string(mean,2) & ", std_deviation: " & to_string(std_deviation,2));
       rand_gen.set_rand_dist_mean(mean);
       check_value(mean, rand_gen.get_rand_dist_mean(VOID), ERROR, "Checking mean");
       rand_gen.set_rand_dist_std_deviation(std_deviation);

@@ -1329,6 +1329,53 @@ package body rand_pkg is
       return v_str(1 to v_str_len);
     end function;
 
+    -- Returns the string representation of a real value with the number of
+    -- decimals configured in C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
+    -- If there are not any significant digits within the integer part or the
+    -- number of decimals, the scientific representation is returned.
+    function format_real(
+      constant value : real)
+    return string is
+      constant C_SIGNIFICANT_VALUE : real := abs(value * (10.0**C_RAND_REAL_NUM_DECIMAL_DIGITS));
+    begin
+      if integer(C_SIGNIFICANT_VALUE) > 0 or value = 0.0 then
+        return to_string(value, C_RAND_REAL_NUM_DECIMAL_DIGITS);
+      else
+        return to_string(value);
+      end if;
+    end function;
+
+    -- Overload
+    function format_real(
+      constant values : real_vector)
+    return string is
+      variable v_line   : line;
+      variable v_width  : natural;
+      variable v_result : string(1 to 2 +                -- parentheses
+                                 2*(values'length - 1) + -- commas
+                                 32*values'length);      -- values
+    begin
+      if values'length = 0 then
+        return "";
+      else
+        write(v_line, '(');
+        for i in values'range loop
+          write(v_line, format_real(values(i)));
+          if (i < values'right) and (values'ascending) then
+            write(v_line, string'(", "));
+          elsif (i > values'right) and not(values'ascending) then
+            write(v_line, string'(", "));
+          end if;
+        end loop;
+        write(v_line, ')');
+
+        v_width := v_line'length;
+        v_result(1 to v_width) := v_line.all;
+        DEALLOCATE(v_line);
+        return v_result(1 to v_width);
+      end if;
+    end function;
+
     -- Returns true if a value is contained in a vector
     function check_value_in_vector(
       constant value  : integer;
@@ -1955,7 +2002,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ")";
+      constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ")";
       variable v_proc_call : line;
       variable v_mean      : real;
       variable v_std_dev   : real;
@@ -1990,7 +2037,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
+      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & format_real(set_values) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
       variable v_previous_dist    : t_rand_dist := priv_rand_dist;
@@ -2038,8 +2085,8 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
+      constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+        to_upper(to_string(set_type)) & ":" & format_real(set_values) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
       variable v_previous_dist    : t_rand_dist := priv_rand_dist;
@@ -2118,9 +2165,9 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ")";
+      constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+        to_upper(to_string(set_type1)) & ":" & format_real(set_values1) & ", " &
+        to_upper(to_string(set_type2)) & ":" & format_real(set_values2) & ")";
       variable v_proc_call           : line;
       alias normalized_set_values1   : real_vector(0 to set_values1'length-1) is set_values1;
       alias normalized_set_values2   : real_vector(0 to set_values2'length-1) is set_values2;
@@ -2708,7 +2755,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) &
         ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
@@ -2759,7 +2806,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & format_real(set_values) &
         ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
@@ -2832,8 +2879,8 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+        to_upper(to_string(set_type)) & ":" & format_real(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
@@ -2922,9 +2969,9 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+        to_upper(to_string(set_type1)) & ":" & format_real(set_values1) & ", " &
+        to_upper(to_string(set_type2)) & ":" & format_real(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
       variable v_proc_call       : line;
       variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;

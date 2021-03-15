@@ -141,9 +141,18 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Simulation coverage
   ------------------------------------------------------------
+  procedure set_sim_coverage_goal(
+    constant percentage   : in positive;
+    constant scope        : in string         := C_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
   impure function get_sim_coverage(
     constant VOID : t_void)
   return real;
+
+  impure function sim_coverage_complete(
+    constant VOID : t_void)
+  return boolean;
 
   procedure print_sim_coverage_summary(
     constant scope : in string := C_SCOPE);
@@ -618,11 +627,29 @@ package body funct_cov_pkg is
   ------------------------------------------------------------
   -- Simulation coverage
   ------------------------------------------------------------
+  procedure set_sim_coverage_goal(
+    constant percentage   : in positive;
+    constant scope        : in string         := C_SCOPE;
+    constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    constant C_LOCAL_CALL : string := "set_sim_coverage_goal(" & to_string(percentage) & ")";
+  begin
+    log(ID_FUNCT_COV, C_LOCAL_CALL, scope, msg_id_panel);
+    protected_covergroup_status.set_covergroup_coverage_goal(percentage);
+  end procedure;
+
   impure function get_sim_coverage(
     constant VOID : t_void)
   return real is
   begin
     return protected_covergroup_status.get_total_hits_coverage(VOID);
+  end function;
+
+  --Q: is_covered/covered/coverage_complete
+  impure function sim_coverage_complete(
+    constant VOID : t_void)
+  return boolean is
+  begin
+    return protected_covergroup_status.get_total_hits_coverage(VOID) >= real(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
   end function;
 
   procedure print_sim_coverage_summary(
@@ -636,7 +663,7 @@ package body funct_cov_pkg is
     -- Print report header
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                   timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                  "Total Hits Coverage: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID),2) & "%" & LF &
+                  "Total Hits Coverage: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID),2) & "% (goal: " & to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)) & "%)" & LF &
                   fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
 
     -- Print coverpoints summaries
@@ -644,7 +671,8 @@ package body funct_cov_pkg is
       write(v_line, "Coverpoint:      " & protected_covergroup_status.get_name(i) & LF &
                     "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & LF &
                     "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
-                    "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2) & "%" & LF &
+                    "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2)
+                      & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(i)) & "%)" & LF &
                     "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
                     fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     end loop;
@@ -1613,7 +1641,7 @@ package body funct_cov_pkg is
             priv_bins(i).hits := priv_bins(i).hits + 1;
             -- Update coverpoint status register
             -- Stop accumulating the coverage contribution of the bin when the goal has been reached
-            if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(protected_covergroup_status.get_coverage_goal(priv_id))/100.0) then
+            if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(protected_covergroup_status.get_combined_coverage_goal(priv_id))/100.0) then
               protected_covergroup_status.increment_hits_count(priv_id);
             end if;
             if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
@@ -1706,7 +1734,7 @@ package body funct_cov_pkg is
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print summary
-      write(v_line, "Coverpoint:     " & to_string(protected_covergroup_status.get_name(priv_id)) & LF &
+      write(v_line, "Coverpoint:     " & protected_covergroup_status.get_name(priv_id) & LF &
                     "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & LF &
                     "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
                     "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2)

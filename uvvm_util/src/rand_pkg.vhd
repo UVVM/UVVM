@@ -1681,7 +1681,7 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(cyclic_mode)) & ")";
       constant C_NUM_VALUES    : unsigned(32 downto 0) := unsigned(to_signed(max_value,33) - to_signed(min_value,33) + to_signed(1,33));
-      constant C_USE_LIST      : boolean := C_NUM_VALUES <= 2**30; --TODO: Create constant in adaptations_pkg to choose limit
+      constant C_USE_LIST      : boolean := C_NUM_VALUES <= C_RAND_CYCLIC_LIST_MAX_NUM_VALUES;
       variable v_proc_call     : line;
       variable v_previous_dist : t_rand_dist := priv_rand_dist;
       variable v_mean          : real;
@@ -1735,7 +1735,7 @@ package body rand_pkg is
               end loop;
               priv_cyclic_list(v_ret) := '1';
             else
-              while priv_cyclic_queue.exists(v_ret) loop
+              while priv_cyclic_queue.exists(v_ret) loop -- Each call iterates through the whole queue which will be innefficient for many elements
                 random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
               end loop;
               priv_cyclic_queue.add(v_ret);

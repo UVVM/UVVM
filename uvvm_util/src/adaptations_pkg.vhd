@@ -239,7 +239,11 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Randomization adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_RAND_REAL_NUM_DECIMAL_DIGITS : positive := 2;
+  constant C_RAND_REAL_NUM_DECIMAL_DIGITS    : positive := 2; -- Number of decimal digits displayed in randomization logs
+  -- Maximum number of possible values to be stored in the cyclic list. This limit is due to memory restrictions since some
+  -- simulators cannot handle more than 2**30 values. When a higher number of values is used, a generic queue is used instead
+  -- which only stores the generated values. The queue will use less memory, but will be slower than the list.
+  constant C_RAND_CYCLIC_LIST_MAX_NUM_VALUES : natural  := 2**30;
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Functional Coverage adaptations

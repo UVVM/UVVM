@@ -2293,13 +2293,15 @@ begin
       end loop;
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
+      v_rand.clear_rand_cyclic(VOID);
+
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic_performance" then
     --===================================================================================
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing random cyclic performance");
       ------------------------------------------------------------
-      log(ID_SEQUENCER, "Testing with big ranges");
+      log(ID_SEQUENCER, "Testing large ranges");
       for i in 1 to 10 loop
         v_int := v_rand.rand(0, 2**29, CYCLIC);
       end loop;
@@ -2339,12 +2341,8 @@ begin
         v_int := v_rand.rand(1, v_num_values, CYCLIC);
       end loop;
 
-      -- Note that this test already slows down simulation considerably.
-      v_num_values := 1000000;
-      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
-      for i in 1 to v_num_values loop
-        v_int := v_rand.rand(1, v_num_values, CYCLIC);
-      end loop;
+      enable_log_msg(ID_RAND_GEN);
+      v_rand.clear_rand_cyclic(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then

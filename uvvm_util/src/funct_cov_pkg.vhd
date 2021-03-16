@@ -38,7 +38,6 @@ package funct_cov_pkg is
   -- Types
   ------------------------------------------------------------
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
-  type t_overlap_action is (ALERT, COUNT_ALL, COUNT_ONE); --TODO: use
 
   type t_new_bin is record
     contains   : t_cov_bin_type;
@@ -179,6 +178,10 @@ package funct_cov_pkg is
     impure function get_scope(
       constant VOID : t_void)
     return string;
+
+    procedure detect_bin_overlap(
+      constant enable       : in boolean;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
@@ -704,6 +707,7 @@ package body funct_cov_pkg is
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer := -1;
     variable priv_rand_transition_bin_value_idx : natural := 0;
+    variable priv_detect_bin_overlap            : boolean := false;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1100,6 +1104,15 @@ package body funct_cov_pkg is
     begin
       return to_string(priv_scope);
     end function;
+
+    procedure detect_bin_overlap(
+      constant enable       : in boolean;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "detect_bin_overlap(" & to_string(enable) & ")";
+    begin
+      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      priv_detect_bin_overlap := enable;
+    end procedure;
 
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
@@ -1550,6 +1563,7 @@ package body funct_cov_pkg is
       variable v_invalid_sample    : boolean := false;
       variable v_value_match       : std_logic_vector(0 to priv_num_bins_crossed-1) := (others => '0');
       variable v_illegal_match_idx : integer := -1;
+      variable v_num_occurrences   : natural := 0;
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -1639,6 +1653,7 @@ package body funct_cov_pkg is
 
           if and(v_value_match) = '1' then
             priv_bins(i).hits := priv_bins(i).hits + 1;
+            v_num_occurrences := v_num_occurrences + 1;
             -- Update coverpoint status register
             -- Stop accumulating the coverage contribution of the bin when the goal has been reached
             if priv_bins(i).hits <= integer(real(priv_bins(i).min_hits)*real(protected_covergroup_status.get_combined_coverage_goal(priv_id))/100.0) then
@@ -1650,6 +1665,10 @@ package body funct_cov_pkg is
           end if;
           v_value_match := (others => '0');
         end loop;
+
+        if priv_detect_bin_overlap and v_num_occurrences > 1 then
+          alert(TB_WARNING, "There is an overlap between " & to_string(v_num_occurrences) & " bins.", priv_scope);
+        end if;
       end if;
       DEALLOCATE(v_proc_call);
     end procedure;

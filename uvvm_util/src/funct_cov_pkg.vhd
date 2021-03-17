@@ -1062,6 +1062,11 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "init(" & name & return_string_if_true(", " & scope, scope /= "") & ")";
     begin
+      if priv_id /= -1 then
+        alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Coverpoint has already been initialized", priv_scope);
+        return;
+      end if;
+
       -- Register the coverpoint in the status register
       priv_id := protected_covergroup_status.add_coverpoint(name);
       check_value(priv_id /= -1, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",

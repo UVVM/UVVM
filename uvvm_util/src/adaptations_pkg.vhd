@@ -91,8 +91,11 @@ package adaptations_pkg is
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     ID_RAND_GEN,              -- Used for logging the randomization functions
-    ID_FUNCT_COV,             -- Used for logging functional coverage
-    ID_FUNCT_COV_BINS,        -- Used for logging functional coverage
+    ID_FUNCT_COV,             -- Used for logging functional coverage add_bins and add_cross
+    ID_FUNCT_COV_BINS,        -- Used for logging functional coverage add_bins and add_cross detailed information
+    ID_FUNCT_COV_RAND,        -- Used for logging functional coverage randomization
+    ID_FUNCT_COV_SAMPLE,      -- Used for logging functional coverage sampling
+    ID_FUNCT_COV_CONFIG,      -- Used for logging functional coverage configuration
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
     -- Directly inside test sequencers
@@ -188,6 +191,10 @@ package adaptations_pkg is
     ID_COVERAGE_ICOVER  => DISABLED,
     ID_RAND_GEN         => DISABLED,
     ID_FUNCT_COV        => DISABLED,
+    ID_FUNCT_COV_BINS   => DISABLED,
+    ID_FUNCT_COV_RAND   => DISABLED,
+    ID_FUNCT_COV_SAMPLE => DISABLED,
+    ID_FUNCT_COV_CONFIG => DISABLED,
     others              => ENABLED
   );
 
@@ -248,8 +255,9 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Functional Coverage adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_FC_MAX_NAME_LENGTH     : positive := 20; -- Maximum length used for coverpoint and bin names
-  constant C_FC_MAX_NUM_COVERPOINTS : positive := 20; -- Maximum number of coverpoints
+  constant C_FC_MAX_NAME_LENGTH      : positive := 20;  -- Maximum length used for coverpoint and bin names
+  constant C_FC_MAX_PROC_CALL_LENGTH : positive := 100; -- Maximum length used for procedure calls of the bin functions
+  constant C_FC_MAX_NUM_COVERPOINTS  : positive := 20;  -- Maximum number of coverpoints
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations

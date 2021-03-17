@@ -32,7 +32,6 @@ package funct_cov_pkg is
   --TODO: move to adaptations_pkg?
   constant C_MAX_NUM_BINS         : positive := 100; --Q: make it possible to grow?
   constant C_MAX_NUM_BIN_VALUES   : positive := 10;
-  constant C_MAX_PROC_CALL_LENGTH : positive := 100;
 
   ------------------------------------------------------------
   -- Types
@@ -47,14 +46,14 @@ package funct_cov_pkg is
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
   type t_new_cov_bin is record
-    bin_vector : t_new_bin_vector(0 to C_MAX_NUM_BINS-1); --Q: possible to not constrain here?
+    bin_vector : t_new_bin_vector(0 to C_MAX_NUM_BINS-1);
     num_bins   : natural;
-    proc_call  : string(1 to C_MAX_PROC_CALL_LENGTH);
+    proc_call  : string(1 to C_FC_MAX_PROC_CALL_LENGTH);
   end record;
   type t_new_bin_array is array (natural range <>) of t_new_cov_bin;
   constant C_EMPTY_NEW_BIN_ARRAY : t_new_bin_array(0 to 0) := (0 => ((0 to C_MAX_NUM_BINS-1 => (VAL, (others => 0), 0)),
                                                                      0,
-                                                                     (1 to C_MAX_PROC_CALL_LENGTH => ' ')));
+                                                                     (1 to C_FC_MAX_PROC_CALL_LENGTH => ' ')));
 
   type t_bin is record
     contains       : t_cov_bin_type;
@@ -165,8 +164,9 @@ package funct_cov_pkg is
     -- Configuration
     ------------------------------------------------------------
     procedure init(
-      constant name  : in string := "";
-      constant scope : in string := "");
+      constant name         : in string         := "";
+      constant scope        : in string         := "";
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_name(
       constant VOID : t_void)
@@ -636,7 +636,7 @@ package body funct_cov_pkg is
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     constant C_LOCAL_CALL : string := "set_sim_coverage_goal(" & to_string(percentage) & ")";
   begin
-    log(ID_FUNCT_COV, C_LOCAL_CALL, scope, msg_id_panel);
+    log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, scope, msg_id_panel);
     protected_covergroup_status.set_covergroup_coverage_goal(percentage);
   end procedure;
 
@@ -717,7 +717,7 @@ package body funct_cov_pkg is
       constant bin_array : t_new_bin_array)
     return string is
       variable v_line   : line;
-      variable v_result : string(1 to 500);
+      variable v_result : string(1 to 1000);
       variable v_width  : natural;
     begin
       for i in bin_array'range loop
@@ -1057,9 +1057,10 @@ package body funct_cov_pkg is
     -- Configuration
     ------------------------------------------------------------
     procedure init(
-      constant name  : in string := "";
-      constant scope : in string := "") is
-      constant C_LOCAL_CALL : string := "init(" & name & ", " & scope & ")";
+      constant name         : in string         := "";
+      constant scope        : in string         := "";
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "init(" & name & return_string_if_true(", " & scope, scope /= "") & ")";
     begin
       -- Register the coverpoint in the status register
       priv_id := protected_covergroup_status.add_coverpoint(name);
@@ -1078,6 +1079,8 @@ package body funct_cov_pkg is
 
       -- Initialize the seed of the random generator
       priv_rand_gen.set_rand_seeds(name);
+
+      log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL & "=> name: " & protected_covergroup_status.get_name(priv_id) & ", scope: " & priv_scope, priv_scope, msg_id_panel);
     end procedure;
 
     impure function get_name(
@@ -1110,7 +1113,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "detect_bin_overlap(" & to_string(enable) & ")";
     begin
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_detect_bin_overlap := enable;
     end procedure;
 
@@ -1458,7 +1461,7 @@ package body funct_cov_pkg is
       variable v_ret         : integer_vector(0 to 0);
     begin
       v_ret := rand(msg_id_panel, C_LOCAL_CALL);
-      log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
+      log(ID_FUNCT_COV_RAND, C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
       return v_ret(0);
     end function;
 
@@ -1537,7 +1540,7 @@ package body funct_cov_pkg is
 
       -- Do not print log message when being called from another function
       if ext_proc_call = "" then
-        log(ID_FUNCT_COV, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        log(ID_FUNCT_COV_RAND, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       end if;
       return v_ret;
     end function;
@@ -1567,7 +1570,7 @@ package body funct_cov_pkg is
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      log(ID_FUNCT_COV, v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNCT_COV_SAMPLE, v_proc_call.all, priv_scope, msg_id_panel);
 
       if priv_num_bins_crossed = -1 then
         alert(TB_FAILURE, v_proc_call.all & "=> Failed. Coverpoint has not been initialized", priv_scope);
@@ -1679,7 +1682,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, priv_scope, msg_id_panel);
       -- Update coverpoint status register
       protected_covergroup_status.set_coverage_weight(priv_id, weight);
     end procedure;
@@ -1690,7 +1693,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint not initialized. Call init() procedure.", priv_scope, msg_id => ID_NEVER);
-      log(ID_FUNCT_COV, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, priv_scope, msg_id_panel);
       protected_covergroup_status.set_coverage_goal(priv_id, percentage);
     end procedure;
 

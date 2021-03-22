@@ -148,7 +148,7 @@ package funct_cov_pkg is
     constant VOID : t_void)
   return real;
 
-  impure function sim_coverage_complete(
+  impure function sim_coverage_completed(
     constant VOID : t_void)
   return boolean;
 
@@ -379,7 +379,7 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return real;
 
-    impure function coverage_complete(
+    impure function coverage_completed(
       constant VOID : t_void)
     return boolean;
 
@@ -647,8 +647,7 @@ package body funct_cov_pkg is
     return protected_covergroup_status.get_total_hits_coverage(VOID);
   end function;
 
-  --Q: is_covered/covered/coverage_complete
-  impure function sim_coverage_complete(
+  impure function sim_coverage_completed(
     constant VOID : t_void)
   return boolean is
   begin
@@ -1765,8 +1764,7 @@ package body funct_cov_pkg is
       return protected_covergroup_status.get_hits_coverage(priv_id);
     end function;
 
-    --Q: is_covered/covered/coverage_complete
-    impure function coverage_complete(
+    impure function coverage_completed(
       constant VOID : t_void)
     return boolean is
     begin

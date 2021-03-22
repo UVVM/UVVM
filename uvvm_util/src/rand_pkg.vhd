@@ -1682,8 +1682,8 @@ package body rand_pkg is
         to_upper(to_string(cyclic_mode)) & ")";
       constant C_NUM_VALUES    : unsigned(32 downto 0) := unsigned(to_signed(max_value,33) - to_signed(min_value,33) + to_signed(1,33));
       constant C_USE_LIST      : boolean := C_NUM_VALUES <= C_RAND_CYCLIC_LIST_MAX_NUM_VALUES;
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
       variable v_proc_call     : line;
-      variable v_previous_dist : t_rand_dist := priv_rand_dist;
       variable v_mean          : real;
       variable v_std_dev       : real;
       variable v_ret           : integer;
@@ -1767,7 +1767,7 @@ package body rand_pkg is
       end case;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -1783,9 +1783,9 @@ package body rand_pkg is
     return integer is
       constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " &
         to_upper(to_string(cyclic_mode)) & ")";
+      constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : integer_vector(0 to set_values'length-1) is set_values;
-      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_ret              : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -1802,7 +1802,7 @@ package body rand_pkg is
       v_ret := rand(0, set_values'length-1, cyclic_mode, msg_id_panel, v_proc_call.all);
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -1834,9 +1834,9 @@ package body rand_pkg is
     return integer is
       constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : integer_vector(0 to set_values'length-1) is set_values;
-      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : integer;
     begin
@@ -1874,7 +1874,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2045,9 +2045,9 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return real is
       constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & format_real(set_values) & ")";
+      constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
-      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_ret              : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -2064,7 +2064,7 @@ package body rand_pkg is
       v_ret := rand(0, set_values'length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(normalized_set_values(v_ret)), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2094,9 +2094,9 @@ package body rand_pkg is
     return real is
       constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
         to_upper(to_string(set_type)) & ":" & format_real(set_values) & ")";
+      constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
-      variable v_previous_dist    : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : real;
     begin
@@ -2124,7 +2124,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2449,8 +2449,8 @@ package body rand_pkg is
     return integer_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
         ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
@@ -2493,7 +2493,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2511,8 +2511,8 @@ package body rand_pkg is
     return integer_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) &
         ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
@@ -2555,7 +2555,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2591,8 +2591,8 @@ package body rand_pkg is
     return integer_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
@@ -2637,7 +2637,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2697,8 +2697,8 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " &
         to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
@@ -2744,7 +2744,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2764,8 +2764,8 @@ package body rand_pkg is
     return real_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) &
         ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
@@ -2798,7 +2798,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2815,8 +2815,8 @@ package body rand_pkg is
     return real_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & format_real(set_values) &
         ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
@@ -2854,7 +2854,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2888,8 +2888,8 @@ package body rand_pkg is
     return real_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
         to_upper(to_string(set_type)) & ":" & format_real(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
@@ -2922,7 +2922,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2979,8 +2979,8 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
         to_upper(to_string(set_type1)) & ":" & format_real(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & format_real(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_proc_call       : line;
-      variable v_previous_dist   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
@@ -3013,7 +3013,7 @@ package body rand_pkg is
       end if;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3281,8 +3281,8 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
       variable v_proc_call     : line;
-      variable v_previous_dist : t_rand_dist := priv_rand_dist;
       variable v_ret           : unsigned(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3298,7 +3298,7 @@ package body rand_pkg is
       end loop;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3505,8 +3505,8 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
       variable v_proc_call     : line;
-      variable v_previous_dist : t_rand_dist := priv_rand_dist;
       variable v_ret           : signed(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3522,7 +3522,7 @@ package body rand_pkg is
       end loop;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3941,13 +3941,13 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return integer is
       constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weight_vector) & ")";
+      constant C_PREVIOUS_DIST     : t_rand_dist := priv_rand_dist;
       variable v_proc_call         : line;
       variable v_mode              : t_weight_mode;
       variable v_acc_weight        : natural := 0;
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
-      variable v_previous_dist     : t_rand_dist := priv_rand_dist;
       variable v_ret               : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3991,7 +3991,7 @@ package body rand_pkg is
       end loop;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -4057,13 +4057,13 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return real is
       constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weight_vector) & ")";
+      constant C_PREVIOUS_DIST     : t_rand_dist := priv_rand_dist;
       variable v_proc_call         : line;
       variable v_mode              : t_weight_mode;
       variable v_acc_weight        : natural := 0;
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
-      variable v_previous_dist     : t_rand_dist := priv_rand_dist;
       variable v_ret               : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -4106,7 +4106,7 @@ package body rand_pkg is
       end loop;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -4172,13 +4172,13 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return time is
       constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weight_vector) & ")";
+      constant C_PREVIOUS_DIST     : t_rand_dist := priv_rand_dist;
       variable v_proc_call         : line;
       variable v_mode              : t_weight_mode;
       variable v_acc_weight        : natural := 0;
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
       variable v_values_in_range   : natural := 0;
-      variable v_previous_dist     : t_rand_dist := priv_rand_dist;
       variable v_ret               : time;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -4221,7 +4221,7 @@ package body rand_pkg is
       end loop;
 
       -- Restore previous distribution
-      priv_rand_dist := v_previous_dist;
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);

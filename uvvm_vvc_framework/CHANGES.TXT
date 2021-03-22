@@ -7,6 +7,7 @@ v2.xx.x
 ----------
 Released: 2021-xx-xx
 - vvc_generator now includes activity watchdog by default.
+- Added missing result in log message for fetch_result() method.
 
 
 v2.11.1

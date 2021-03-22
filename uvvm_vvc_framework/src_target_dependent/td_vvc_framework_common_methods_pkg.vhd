@@ -891,7 +891,7 @@ package body td_vvc_framework_common_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     if v_fetch_is_accepted then
-      log(ID_UVVM_CMD_RESULT, proc_call & ": Legal=>" & to_string(v_fetch_is_accepted) & ", Result=>" & format_command_idx(shared_cmd_idx), scope, v_msg_id_panel);    -- Get and ack the new command
+      log(ID_UVVM_CMD_RESULT, proc_call & ": Legal=>" & to_string(v_fetch_is_accepted) & ", Result=>" & to_string(result) & format_command_idx(shared_cmd_idx), scope, v_msg_id_panel);    -- Get and ack the new command
     else
       alert(alert_level, "fetch_result(" & to_string(wanted_idx) &  "): " & add_msg_delimiter(msg) & "." &
           " Failed. Trying to fetch result from not yet executed command or from command with no result stored.  " & format_command_idx(shared_cmd_idx), scope);

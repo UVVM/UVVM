@@ -26,6 +26,7 @@ Released: 2021-xx-xx
 - vvc_generator now includes activity watchdog by default.
 - Improved log messages from Clock Generator VVC.
 - Improved Clock Generator VVC set_clock_period() method description in the QR.
+- Added missing result in log message for fetch_result() method.
 
 
 v2 2020.12.21

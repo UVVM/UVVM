@@ -2299,9 +2299,8 @@ begin
     elsif GC_TESTCASE = "rand_cyclic_performance" then
     --===================================================================================
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing random cyclic performance");
+      log(ID_LOG_HDR, "Testing random cyclic large ranges");
       ------------------------------------------------------------
-      log(ID_SEQUENCER, "Testing large ranges");
       for i in 1 to 10 loop
         v_int := v_rand.rand(0, 2**29, CYCLIC);
       end loop;
@@ -2315,28 +2314,36 @@ begin
         v_int := v_rand.rand(integer'left, integer'right, CYCLIC);
       end loop;
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing random cyclic list and queue performance");
+      ------------------------------------------------------------
       disable_log_msg(ID_RAND_GEN);
 
       v_num_values := 100;
-      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      log(ID_SEQUENCER, "Testing cyclic list with " & to_string(v_num_values) & " values");
       for i in 1 to v_num_values loop
         v_int := v_rand.rand(1, v_num_values, CYCLIC);
       end loop;
 
       v_num_values := 1000;
-      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      log(ID_SEQUENCER, "Testing cyclic list with " & to_string(v_num_values) & " values");
       for i in 1 to v_num_values loop
         v_int := v_rand.rand(1, v_num_values, CYCLIC);
       end loop;
 
-      v_num_values := 10000;
-      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      v_num_values := 11000;
+      log(ID_SEQUENCER, "Testing cyclic list with " & to_string(v_num_values) & " values");
       for i in 1 to v_num_values loop
-        v_int := v_rand.rand(1, v_num_values, CYCLIC);
+        v_int := v_rand.rand(1, 2**30, CYCLIC);
+      end loop;
+      increment_expected_alerts(TB_WARNING, 1);
+      log(ID_SEQUENCER, "Testing cyclic queue with " & to_string(v_num_values) & " values");
+      for i in 1 to v_num_values loop
+        v_int := v_rand.rand(1, integer'right, CYCLIC);
       end loop;
 
       v_num_values := 100000;
-      log(ID_SEQUENCER, "Testing with " & to_string(v_num_values) & " values");
+      log(ID_SEQUENCER, "Testing cyclic list with " & to_string(v_num_values) & " values");
       for i in 1 to v_num_values loop
         v_int := v_rand.rand(1, v_num_values, CYCLIC);
       end loop;

@@ -246,13 +246,17 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Randomization adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_RAND_INIT_SEED_1                : positive := 10;  -- Initial randomizaton seed 1
-  constant C_RAND_INIT_SEED_2                : positive := 100; -- Initial randomizaton seed 2
-  constant C_RAND_REAL_NUM_DECIMAL_DIGITS    : positive := 2;   -- Number of decimal digits displayed in randomization logs
+  constant C_RAND_INIT_SEED_1                    : positive := 10;  -- Initial randomizaton seed 1
+  constant C_RAND_INIT_SEED_2                    : positive := 100; -- Initial randomizaton seed 2
+  constant C_RAND_REAL_NUM_DECIMAL_DIGITS        : positive := 2;   -- Number of decimal digits displayed in randomization logs
   -- Maximum number of possible values to be stored in the cyclic list. This limit is due to memory restrictions since some
   -- simulators cannot handle more than 2**30 values. When a higher number of values is used, a generic queue is used instead
   -- which only stores the generated values. The queue will use less memory, but will be slower than the list.
-  constant C_RAND_CYCLIC_LIST_MAX_NUM_VALUES : natural  := 2**30;
+  constant C_RAND_CYCLIC_LIST_MAX_NUM_VALUES     : natural  := 2**30;
+  -- When using the generic queue and the number of (different) generated cyclic values reaches this limit, an alert is generated
+  -- to indicate that simulation might slow down due to the large queue that needs to be parsed.
+  constant C_RAND_CYCLIC_QUEUE_MAX_ALERT         : natural  := 10000; 
+  constant C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE : boolean  := false; -- Set to true to disable the alert above
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Functional Coverage adaptations

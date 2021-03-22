@@ -1176,6 +1176,7 @@ package body rand_pkg is
     variable priv_rand_dist               : t_rand_dist                    := UNIFORM;
     variable priv_weight_mode             : t_weight_mode                  := COMBINED_WEIGHT;
     variable priv_warned_same_set_type    : boolean                        := false;
+    variable priv_warned_simulation_slow  : boolean                        := false;
     variable priv_cyclic_current_function : line                           := new string'("");
     variable priv_cyclic_list             : t_cyclic_list_ptr              := NULL;
     variable priv_cyclic_list_num_items   : natural                        := 0;
@@ -1716,6 +1717,7 @@ package body rand_pkg is
             if v_proc_call.all /= priv_cyclic_current_function.all then
               DEALLOCATE(priv_cyclic_current_function);
               priv_cyclic_current_function := new string'(v_proc_call.all);
+              priv_warned_simulation_slow  := false;
               if C_USE_LIST then
                 DEALLOCATE(priv_cyclic_list);
                 priv_cyclic_list           := new t_cyclic_list(min_value to max_value);
@@ -1738,6 +1740,10 @@ package body rand_pkg is
                 random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
               end loop;
               priv_cyclic_queue.add(v_ret);
+              if priv_cyclic_queue.get_count(VOID) > C_RAND_CYCLIC_QUEUE_MAX_ALERT and not(priv_warned_simulation_slow) and not(C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE) then
+                alert(TB_WARNING, v_proc_call.all & "=> Simulation might slow down due to the use of the queue combined with a large number of cyclic iterations", priv_scope);
+                priv_warned_simulation_slow := true;
+              end if;
             end if;
             -- Reset the list/queue after generating all possible values
             if C_USE_LIST then

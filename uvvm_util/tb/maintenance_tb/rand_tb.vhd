@@ -89,8 +89,8 @@ begin
       ------------------------------------------------------------
       log(ID_SEQUENCER, "Check default seed values");
       v_seeds := v_rand.get_rand_seeds(VOID);
-      check_value(v_seeds(0), C_INIT_SEED_1, ERROR, "Checking initial seed 1");
-      check_value(v_seeds(1), C_INIT_SEED_2, ERROR, "Checking initial seed 2");
+      check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking initial seed 1");
+      check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking initial seed 2");
 
       log(ID_SEQUENCER, "Set and get seeds with vector value");
       v_seeds(0) := 500;

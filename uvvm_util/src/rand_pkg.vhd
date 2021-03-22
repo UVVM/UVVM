@@ -28,10 +28,6 @@ use work.methods_pkg.all;
 
 package rand_pkg is
 
-  --Q: move to adaptations_pkg?
-  constant C_INIT_SEED_1 : positive := 10;
-  constant C_INIT_SEED_2 : positive := 100;
-
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
@@ -1175,8 +1171,8 @@ package body rand_pkg is
   ------------------------------------------------------------
   type t_rand is protected body
     variable priv_scope                   : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
-    variable priv_seed1                   : positive                       := C_INIT_SEED_1;
-    variable priv_seed2                   : positive                       := C_INIT_SEED_2;
+    variable priv_seed1                   : positive                       := C_RAND_INIT_SEED_1;
+    variable priv_seed2                   : positive                       := C_RAND_INIT_SEED_2;
     variable priv_rand_dist               : t_rand_dist                    := UNIFORM;
     variable priv_weight_mode             : t_weight_mode                  := COMBINED_WEIGHT;
     variable priv_warned_same_set_type    : boolean                        := false;

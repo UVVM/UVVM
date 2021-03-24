@@ -50,13 +50,35 @@ architecture func of sbi_tb is
   constant C_ADDR_FIFO_MAX_COUNT      : unsigned := "101";
   constant C_DATA_DONTCARE            : std_logic_vector(7 downto 0) := x"00";
 
+  --------------------------------
+  -- SBI config
+  --------------------------------
+  constant C_ADDR_WIDTH_1 : integer := 8;
+  constant C_DATA_WIDTH_1 : integer := 8;
+  constant C_ADDR_WIDTH_2 : integer := 8;
+  constant C_DATA_WIDTH_2 : integer := 8;
+
+  signal sbi1_if      : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
+  signal sbi2_if      : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
+  signal clk          : std_logic;
+
 
 begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness generic map(GC_CLK_PERIOD => C_CLK_PERIOD);
+  i_test_harness : entity work.test_harness 
+    generic map(GC_CLK_PERIOD => C_CLK_PERIOD,
+                GC_ADDR_WIDTH_1 => C_ADDR_WIDTH_1,
+                GC_DATA_WIDTH_1 => C_DATA_WIDTH_1,
+                GC_ADDR_WIDTH_2 => C_ADDR_WIDTH_2,
+                GC_DATA_WIDTH_2 => C_DATA_WIDTH_2
+              )
+    port map( sbi_if_1 => sbi1_if, 
+              sbi_if_2 => sbi2_if,
+              clk      => clk
+            );
 
   i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 
@@ -74,8 +96,6 @@ begin
       variable v_is_ok              : boolean := false;
       variable v_timestamp          : time;
 
-      alias clk     is << signal i_test_harness.clk      : std_logic >>;
-      alias sbi1_if is << signal i_test_harness.sbi_if_1 : t_sbi_if >>;
 
   begin
 

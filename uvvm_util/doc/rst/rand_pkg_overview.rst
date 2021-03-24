@@ -81,8 +81,15 @@ not repeat until all the values within the constraints have been generated. Once
 
 * The supported types are integer, integer_vector, unsigned, signed and std_logic_vector.
 * Cyclic generation cannot be combined with the Uniqueness parameter in the vector types.
-* Note that the state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function with different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
-* Also note that when using a large range of values it might slow down the simulation as it requires more iterations to find the missing values.
+* Note that the state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function 
+  with different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
+* By default, a list is created to store the state of all the possible values to be generated. This list can require a lot of memory 
+  for big ranges or even cause problems for the simulator. To avoid this, a different implementation using a dynamic queue will be 
+  used instead when the range of values is greater than C_RAND_CYCLIC_LIST_MAX_NUM_VALUES defined in adaptations_pkg.
+* Note that when using the dynamic queue implementation, the simulation might slow down after a few thousand iterations due to the 
+  parsing of the growing queue.
+* IMPORTANT: It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to deallocate 
+  the list/queue.
 
 Distributions
 -------------
@@ -92,7 +99,7 @@ with the procedure ``set_rand_dist()``.
 
 Gaussian (Normal)
 ^^^^^^^^^^^^^^^^^
-* Only the min/max constraints are supported when using this distribution.
+* Only the min/max constraints are supported when using this distribution, i.e. no set_of_values are supported.
 * Cannot be combined with cyclic or unique parameters.
 * Cannot be combined with weighted randomization functions.
 * The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
@@ -117,9 +124,11 @@ it is possible to explicitly define the mode in the ``rand_range_weight_mode()``
     -- 1. value, weight
     my_rand.rand_val_weight(((-5,10),(0,30),(5,60))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
     -- 2. range(min/max), weight
-    my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with their corresponding weights and default mode
+    my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with 
+    their corresponding weights and default mode
     -- 3. range(min/max), weight, weight mode
-    my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with their corresponding weights and explicit modes
+    my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value between 
+    -5 and -3, 0 and between 1 and 5 with their corresponding weights and explicit modes
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 

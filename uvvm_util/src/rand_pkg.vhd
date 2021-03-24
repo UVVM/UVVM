@@ -36,8 +36,6 @@ package rand_pkg is
   type t_uniqueness is (UNIQUE, NON_UNIQUE);
   type t_weight_mode is (NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT);
   type t_cyclic is (CYCLIC, NON_CYCLIC);
-  type t_cyclic_list is array (integer range <>) of std_logic;
-  type t_cyclic_list_ptr is access t_cyclic_list;
 
   type t_val_weight_int is record
     value     : integer;
@@ -98,6 +96,9 @@ package rand_pkg is
   type t_val_weight_time_vec         is array (natural range <>) of t_val_weight_time;
   type t_range_weight_time_vec       is array (natural range <>) of t_range_weight_time;
   type t_range_weight_mode_time_vec  is array (natural range <>) of t_range_weight_mode_time;
+
+  type t_cyclic_list is array (integer range <>) of std_logic;
+  type t_cyclic_list_ptr is access t_cyclic_list;
 
   ------------------------------------------------------------
   -- Base procedures

@@ -36,8 +36,206 @@ t_cyclic
 CYCLIC, NON_CYCLIC
 
 
+.. _t_val_weight_int:
+
+t_val_weight_int
+----------------
++----------------+---------+
+| Record element | Type    |
++================+=========+
+| value          | integer |
++----------------+---------+
+| weight         | natural |
++----------------+---------+
+
+
+.. _t_range_weight_int:
+
+t_range_weight_int
+------------------
++----------------+---------+
+| Record element | Type    |
++================+=========+
+| min_value      | integer |
++----------------+---------+
+| max_value      | integer |
++----------------+---------+
+| weight         | natural |
++----------------+---------+
+
+
+.. _t_range_weight_mode_int:
+
+t_range_weight_mode_int
+-----------------------
++----------------+----------------------+
+| Record element | Type                 |
++================+======================+
+| min_value      | integer              |
++----------------+----------------------+
+| max_value      | integer              |
++----------------+----------------------+
+| weight         | natural              |
++----------------+----------------------+
+| mode           | :ref:`t_weight_mode` |
++----------------+----------------------+
+
+
+.. _t_val_weight_real:
+
+t_val_weight_real
+-----------------
++----------------+---------+
+| Record element | Type    |
++================+=========+
+| value          | real    |
++----------------+---------+
+| weight         | natural |
++----------------+---------+
+
+
+.. _t_range_weight_real:
+
+t_range_weight_real
+-------------------
++----------------+---------+
+| Record element | Type    |
++================+=========+
+| min_value      | real    |
++----------------+---------+
+| max_value      | real    |
++----------------+---------+
+| weight         | natural |
++----------------+---------+
+
+
+.. _t_range_weight_mode_real:
+
+t_range_weight_mode_real
+------------------------
++----------------+----------------------+
+| Record element | Type                 |
++================+======================+
+| min_value      | real                 |
++----------------+----------------------+
+| max_value      | real                 |
++----------------+----------------------+
+| weight         | natural              |
++----------------+----------------------+
+| mode           | :ref:`t_weight_mode` |
++----------------+----------------------+
+
+
+.. _t_val_weight_time:
+
+t_val_weight_time
+-----------------
++----------------+---------+
+| Record element | Type    |
++================+=========+
+| value          | time    |
++----------------+---------+
+| weight         | natural |
++----------------+---------+
+
+
+.. _t_range_weight_time:
+
+t_range_weight_time
+-------------------
++----------------+---------+
+| Record element | Type    |
++================+=========+
+| min_value      | time    |
++----------------+---------+
+| max_value      | time    |
++----------------+---------+
+| weight         | natural |
++----------------+---------+
+
+
+.. _t_range_weight_mode_time:
+
+t_range_weight_mode_time
+------------------------
++----------------+----------------------+
+| Record element | Type                 |
++================+======================+
+| min_value      | time                 |
++----------------+----------------------+
+| max_value      | time                 |
++----------------+----------------------+
+| weight         | natural              |
++----------------+----------------------+
+| mode           | :ref:`t_weight_mode` |
++----------------+----------------------+
+
+
+.. _t_val_weight_int_vec:
+
+t_val_weight_int_vec
+--------------------
+array (natural range <>) of :ref:`t_val_weight_int`
+
+
+.. _t_range_weight_int_vec:
+
+t_range_weight_int_vec
+----------------------
+array (natural range <>) of :ref:`t_range_weight_int`
+
+
+.. _t_range_weight_mode_int_vec:
+
+t_range_weight_mode_int_vec
+---------------------------
+array (natural range <>) of :ref:`t_range_weight_mode_int`
+
+
+.. _t_val_weight_real_vec:
+
+t_val_weight_real_vec
+---------------------
+array (natural range <>) of :ref:`t_val_weight_real`
+
+
+.. _t_range_weight_real_vec:
+
+t_range_weight_real_vec
+-----------------------
+array (natural range <>) of :ref:`t_range_weight_real`
+
+
+.. _t_range_weight_mode_real_vec:
+
+t_range_weight_mode_real_vec
+----------------------------
+array (natural range <>) of :ref:`t_range_weight_mode_real`
+
+
+.. _t_val_weight_time_vec:
+
+t_val_weight_time_vec
+---------------------
+array (natural range <>) of :ref:`t_val_weight_time`
+
+
+.. _t_range_weight_time_vec:
+
+t_range_weight_time_vec
+-----------------------
+array (natural range <>) of :ref:`t_range_weight_time`
+
+
+.. _t_range_weight_mode_time_vec:
+
+t_range_weight_mode_time_vec
+----------------------------
+array (natural range <>) of :ref:`t_range_weight_mode_time`
+
+
 .. _t_positive_vector:
 
 t_positive_vector
 -----------------
-array (natural range <>) of positive;
+array (natural range <>) of positive

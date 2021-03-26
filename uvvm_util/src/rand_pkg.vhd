@@ -146,34 +146,38 @@ package rand_pkg is
     -- Configuration
     ------------------------------------------------------------
     procedure set_rand_dist(
-      constant rand_dist : in t_rand_dist);
+      constant rand_dist    : in t_rand_dist;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_rand_dist(
       constant VOID : t_void)
     return t_rand_dist;
 
     procedure set_rand_dist_mean(
-      constant mean : in real);
+      constant mean         : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_rand_dist_mean(
       constant VOID : t_void)
     return real;
 
     procedure clear_rand_dist_mean(
-      constant VOID : t_void);
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure set_rand_dist_std_deviation(
-      constant std_deviation : in real);
+      constant std_deviation : in real;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_rand_dist_std_deviation(
       constant VOID : t_void)
     return real;
 
     procedure clear_rand_dist_std_deviation(
-      constant VOID : t_void);
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure set_range_weight_default_mode(
-      constant mode : in t_weight_mode);
+      constant mode         : in t_weight_mode;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_range_weight_default_mode(
       constant VOID : t_void)
@@ -187,7 +191,7 @@ package rand_pkg is
     return string;
 
     procedure clear_rand_cyclic(
-      constant VOID : t_void);
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
     -- Randomization seeds
@@ -1508,8 +1512,11 @@ package body rand_pkg is
     -- Configuration
     ------------------------------------------------------------
     procedure set_rand_dist(
-      constant rand_dist : in t_rand_dist) is
+      constant rand_dist    : in t_rand_dist;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_rand_dist(" & to_upper(to_string(rand_dist)) & ")";
     begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_rand_dist := rand_dist;
     end procedure;
 
@@ -1521,8 +1528,11 @@ package body rand_pkg is
     end function;
 
     procedure set_rand_dist_mean(
-      constant mean : in real) is
+      constant mean         : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_rand_dist_mean(" & to_string(mean,2) & ")";
     begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_mean := mean;
       priv_mean_configured := true;
     end procedure;
@@ -1538,20 +1548,25 @@ package body rand_pkg is
     end function;
 
     procedure clear_rand_dist_mean(
-      constant VOID : t_void) is
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_rand_dist_mean()";
     begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_mean := 0.0;
       priv_mean_configured := false;
     end procedure;
 
     procedure set_rand_dist_std_deviation(
-      constant std_deviation : in real) is
+      constant std_deviation : in real;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_rand_dist_std_deviation(" & to_string(std_deviation,2) & ")";
     begin
       if std_deviation > 0.0 then
+        log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
         priv_std_dev := std_deviation;
         priv_std_dev_configured := true;
       else
-        alert(TB_ERROR, "set_rand_dist_std_deviation(" & to_string(std_deviation) & ")=> Failed. Must use positive values", priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. Must use positive values", priv_scope);
       end if;
     end procedure;
 
@@ -1566,19 +1581,24 @@ package body rand_pkg is
     end function;
 
     procedure clear_rand_dist_std_deviation(
-      constant VOID : t_void) is
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_rand_dist_std_deviation()";
     begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_std_dev := 0.0;
       priv_std_dev_configured := false;
     end procedure;
 
     procedure set_range_weight_default_mode(
-      constant mode : in t_weight_mode) is
+      constant mode         : in t_weight_mode;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")";
     begin
       if mode = COMBINED_WEIGHT or mode = INDIVIDUAL_WEIGHT then
+        log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
         priv_weight_mode := mode;
       else
-        alert(TB_ERROR, "set_range_weight_default_mode(" & to_upper(to_string(mode)) & ")=> Failed. Mode not supported", priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. Mode not supported", priv_scope);
       end if;
     end procedure;
 
@@ -1607,9 +1627,10 @@ package body rand_pkg is
     end function;
 
     procedure clear_rand_cyclic(
-      constant VOID : t_void) is
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_rand_cyclic()";
     begin
-      log(ID_RAND_GEN, "clear_rand_cyclic()=> Deallocating cyclic list/queue", priv_scope);
+      log(ID_RAND_CONF, C_LOCAL_CALL & "=> Deallocating cyclic list/queue", priv_scope, msg_id_panel);
       DEALLOCATE(priv_cyclic_current_function);
       priv_cyclic_current_function := new string'("");
       DEALLOCATE(priv_cyclic_list);
@@ -1742,7 +1763,8 @@ package body rand_pkg is
               end loop;
               priv_cyclic_queue.add(v_ret);
               if priv_cyclic_queue.get_count(VOID) > C_RAND_CYCLIC_QUEUE_MAX_ALERT and not(priv_warned_simulation_slow) and not(C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE) then
-                alert(TB_WARNING, v_proc_call.all & "=> Simulation might slow down due to the use of the queue combined with a large number of cyclic iterations", priv_scope);
+                alert(TB_WARNING, v_proc_call.all & "=> Simulation might slow down due to the cyclic queue and the large number of cyclic iterations.\n" &
+                  "To disable this alert set C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE to true in adaptations_pkg.", priv_scope);
                 priv_warned_simulation_slow := true;
               end if;
             end if;
@@ -2476,7 +2498,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (max_value - min_value + 1) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -2538,7 +2560,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2620,7 +2642,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2727,7 +2749,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2837,7 +2859,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -3049,7 +3071,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if ((max_value - min_value)/C_TIME_UNIT + 1) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -3095,7 +3117,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -3161,7 +3183,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -3251,7 +3273,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Vector size is not big enough to generate unique values with the given constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop

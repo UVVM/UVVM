@@ -75,6 +75,7 @@ begin
     log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package - " & GC_TESTCASE);
     -------------------------------------------------------------------------------------
     enable_log_msg(ID_RAND_GEN);
+    enable_log_msg(ID_RAND_CONF);
 
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
@@ -1372,7 +1373,6 @@ begin
 
 
       log(ID_LOG_HDR, "Testing weighted integer (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1385,7 +1385,6 @@ begin
       check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1446,7 +1445,6 @@ begin
 
 
       log(ID_LOG_HDR, "Testing weighted real (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1459,7 +1457,6 @@ begin
       check_weight_distribution(v_value_cnt, ((-5,-3,30),(0,0,20),(9,10,50)));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
@@ -1513,7 +1510,6 @@ begin
 
 
       log(ID_LOG_HDR, "Testing weighted time (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1526,7 +1522,6 @@ begin
       check_weight_distribution(v_value_cnt, ((-5,-3,30),(0,0,20),(9,10,50)));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
@@ -1580,7 +1575,6 @@ begin
 
 
       log(ID_LOG_HDR, "Testing weighted unsigned (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1593,7 +1587,6 @@ begin
       check_weight_distribution(v_value_cnt, ((0,10),(1,10),(2,10),(5,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1654,7 +1647,6 @@ begin
 
 
       log(ID_LOG_HDR, "Testing weighted signed (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1667,7 +1659,6 @@ begin
       check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(6,25),(7,25)));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1728,7 +1719,6 @@ begin
 
 
       log(ID_LOG_HDR, "Testing weighted std_logic_vector (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(COMBINED_WEIGHT)));
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
       check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -1741,7 +1731,6 @@ begin
       check_weight_distribution(v_value_cnt, ((0,10),(1,10),(2,10),(5,20),(9,25),(10,25)));
       enable_log_msg(ID_RAND_GEN);
 
-      log(ID_SEQUENCER, "Set range weight default mode to " & to_upper(to_string(INDIVIDUAL_WEIGHT)));
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
@@ -2282,8 +2271,7 @@ begin
         check_rand_value(v_int, -3, 3);
       end loop;
 
-      log(ID_SEQUENCER, "Clear the random cyclic list");
-      v_rand.clear_rand_cyclic(VOID);
+      v_rand.clear_rand_cyclic;
 
       log(ID_SEQUENCER, "Generate whole range of values");
       for i in 1 to v_num_values loop
@@ -2293,7 +2281,7 @@ begin
       end loop;
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
-      v_rand.clear_rand_cyclic(VOID);
+      v_rand.clear_rand_cyclic;
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic_performance" then
@@ -2349,7 +2337,7 @@ begin
       end loop;
 
       enable_log_msg(ID_RAND_GEN);
-      v_rand.clear_rand_cyclic(VOID);
+      v_rand.clear_rand_cyclic;
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then
@@ -2365,9 +2353,9 @@ begin
       check_value(1.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
 
       increment_expected_alerts(TB_NOTE, 2);
-      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_mean;
       check_value(0.0, v_rand.get_rand_dist_mean(VOID), ERROR, "Checking mean config was cleared");
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_std_deviation;
       check_value(0.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation config was cleared");
 
       disable_log_msg(ID_POS_ACK);
@@ -2408,8 +2396,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       -- Integer Vector
@@ -2445,8 +2433,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       -- Real
@@ -2482,8 +2470,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       -- Real Vector
@@ -2519,8 +2507,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       -- Unsigned
@@ -2556,8 +2544,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       -- Signed
@@ -2593,8 +2581,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       -- Std_logic_vector
@@ -2630,8 +2618,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean(VOID);
-      v_rand.clear_rand_dist_std_deviation(VOID);
+      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_std_deviation;
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing invalid parameters");

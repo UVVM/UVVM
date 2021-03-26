@@ -8,7 +8,6 @@ Utility library documentation
    rand_pkg_overview.rst
    funct_cov_pkg_overview.rst
    rand_pkg.rst
-   types.rst
 
 UVVM
 ----

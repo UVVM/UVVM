@@ -26,6 +26,8 @@ library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 library bitvis_uart;
+library bitvis_vip_sbi;
+library bitvis_vip_uart;
 library bitvis_vip_clock_generator;
 
 

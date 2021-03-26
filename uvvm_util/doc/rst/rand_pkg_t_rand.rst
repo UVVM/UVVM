@@ -1,5 +1,5 @@
-t_rand
-======
+t_rand (protected)
+==================
 
 Protected type containing all the randomization functionality.
 
@@ -288,7 +288,7 @@ and C_RAND_INIT_SEED_2 in adaptations_pkg. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | seed2              | in     | positive                     | A positive number representing seed 2                 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | seeds              | in     | :ref:`t_positive_vector`     | A 2-dimensional vector containing both seeds          |
+| constant | seeds              | in     | t_positive_vector            | A 2-dimensional vector containing both seeds          |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::

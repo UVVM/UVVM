@@ -176,3 +176,12 @@ The default scope for log messages in the *rand_pkg* is C_SCOPE defined in adapt
 ``set_scope()``.
 
 The number of decimal digits displayed in the real values logs can be adjusted with C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
+
+rand_pkg
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   rand_pkg_types.rst
+   rand_pkg_t_rand.rst

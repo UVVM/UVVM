@@ -232,10 +232,3 @@ array (natural range <>) of :ref:`t_range_weight_time`
 t_range_weight_mode_time_vec
 ----------------------------
 array (natural range <>) of :ref:`t_range_weight_mode_time`
-
-
-.. _t_positive_vector:
-
-t_positive_vector
------------------
-array (natural range <>) of positive

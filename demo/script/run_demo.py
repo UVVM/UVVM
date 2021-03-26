@@ -26,8 +26,12 @@ hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis
 # Add DUT files
 hdlunit.add_files("../../bitvis_uart/src/*.vhd", "bitvis_uart")
 
-# Add demo files
+# Add demo testbench files
 hdlunit.add_files("../*.vhd", "uvvm_demo")
+
+# Add generics
+hdlunit.add_generics("uvvm_demo_tb", ["GC_TEST", "test_randomise"])
+hdlunit.add_generics("uvvm_demo_tb", ["GC_TEST", "test_functional_coverage"])
 
 # ------------ USER CONFIG END ---------------
 hdlunit.start()

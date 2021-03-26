@@ -14,11 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -27,15 +25,14 @@ library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_sbi;
-use bitvis_vip_sbi.vvc_methods_pkg.all;
-use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_sbi.vvc_context;
 
 library bitvis_vip_uart;
-use bitvis_vip_uart.vvc_methods_pkg.all;
-use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
+context bitvis_vip_uart.vvc_context;
 
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
+
 
 --hdlunit:tb
 entity uvvm_demo_tb is
@@ -46,7 +43,7 @@ entity uvvm_demo_tb is
     );  
 end entity;
 
--- Test bench architecture
+-- Testbench architecture
 architecture func of uvvm_demo_tb is
 
   constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
@@ -61,8 +58,6 @@ architecture func of uvvm_demo_tb is
   constant C_ADDR_TX_DATA       : unsigned(2 downto 0) := "010";
   constant C_ADDR_TX_READY      : unsigned(2 downto 0) := "011";
 
-
-
 begin
 
 
@@ -71,21 +66,22 @@ begin
   --
   --   Map timing constants and DUT addresses for VIPs and Model
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.uvvm_demo_th generic map(
-    GC_CLK_PERIOD                 => C_CLK_PERIOD,
-    GC_BIT_PERIOD                 => C_BIT_PERIOD,
-    GC_ADDR_RX_DATA               => C_ADDR_RX_DATA,
-    GC_ADDR_RX_DATA_VALID         => C_ADDR_RX_DATA_VALID,
-    GC_ADDR_TX_DATA               => C_ADDR_TX_DATA,
-    GC_ADDR_TX_READY              => C_ADDR_TX_READY
-  );
+  i_test_harness : entity work.uvvm_demo_th
+    generic map(
+      GC_CLK_PERIOD         => C_CLK_PERIOD,
+      GC_BIT_PERIOD         => C_BIT_PERIOD,
+      GC_ADDR_RX_DATA       => C_ADDR_RX_DATA,
+      GC_ADDR_RX_DATA_VALID => C_ADDR_RX_DATA_VALID,
+      GC_ADDR_TX_DATA       => C_ADDR_TX_DATA,
+      GC_ADDR_TX_READY      => C_ADDR_TX_READY
+    );
 
 
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
   p_main: process
-    variable v_data       : std_logic_vector(7 downto 0);
+    variable v_data : std_logic_vector(7 downto 0);
 
 
     -- Description:
@@ -117,7 +113,6 @@ begin
     begin
 
     end procedure test_functional_coverage;
-
 
 
 

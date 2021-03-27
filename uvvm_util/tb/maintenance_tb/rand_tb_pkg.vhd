@@ -1561,7 +1561,6 @@ package body rand_tb_pkg is
     constant C_WEIGHT_IDX     : natural := (weight_dist(weight_dist'low)'right);
     constant C_MARGIN         : natural := 40; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
     variable v_line           : line;
-    variable v_line_copy      : line;
     variable v_tot_weight     : natural := 0;
     variable v_val_size       : natural := 0;
     variable v_percentage     : natural := 0;
@@ -1627,11 +1626,8 @@ package body rand_tb_pkg is
     prefix_lines(v_line, C_PREFIX);
 
     -- Write the info string to transcript
-    write (v_line_copy, v_line.all);  -- copy line
-    writeline(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line_copy);
+    write_line_to_log_destination(v_line);
     deallocate(v_line);
-    deallocate(v_line_copy);
 
     -- Check that all the expected weight counts were reset, meaning that no unexpected random values were generated
     for i in value_cnt'range loop

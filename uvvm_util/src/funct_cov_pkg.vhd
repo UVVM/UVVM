@@ -659,8 +659,6 @@ package body funct_cov_pkg is
     constant C_PREFIX    : string := C_LOG_PREFIX & "     ";
     constant C_HEADER    : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(scope) & " ***";
     variable v_line      : line;
-    variable v_line_copy : line;
-
   begin
     -- Print report header
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
@@ -685,11 +683,8 @@ package body funct_cov_pkg is
     -- Write the info string to transcript
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
-    write (v_line_copy, v_line.all);  -- copy line
-    writeline(OUTPUT, v_line);
-    writeline(LOG_FILE, v_line_copy);
+    write_line_to_log_destination(v_line);
     deallocate(v_line);
-    deallocate(v_line_copy);
   end procedure;
 
   ------------------------------------------------------------
@@ -1780,7 +1775,6 @@ package body funct_cov_pkg is
       constant C_BIN_COLUMN_WIDTH : positive := 40; --Q: how to handle when bins overflow the column? trucante and "..."? currently shifts everything
       constant C_COLUMN_WIDTH     : positive := 15;
       variable v_line             : line;
-      variable v_line_copy        : line;
       variable v_log_extra_space  : integer := 0;
 
       impure function get_bin_status(cov_bin : t_cov_bin) return string is
@@ -1903,11 +1897,8 @@ package body funct_cov_pkg is
       -- Write the info string to transcript
       wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
       prefix_lines(v_line, C_PREFIX);
-      write (v_line_copy, v_line.all);  -- copy line
-      writeline(OUTPUT, v_line);
-      writeline(LOG_FILE, v_line_copy);
+      write_line_to_log_destination(v_line);
       DEALLOCATE(v_line);
-      DEALLOCATE(v_line_copy);
     end procedure;
 
   end protected body t_coverpoint;

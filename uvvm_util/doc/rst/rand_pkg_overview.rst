@@ -139,7 +139,13 @@ Gaussian (Normal)
 Weighted
 ^^^^^^^^
 This distribution does NOT use the ``set_rand_dist()`` procedure, but instead uses different randomization functions with parameters
-of (value + weight) or (range of values + weight). Note that the sum of all weights need not be 100 since the probability = weight/sum_of_weights.
+of (value + weight) or (range of values + weight). The function names contain the order of the parameters for better readability.
+
+    * :ref:`rand_val_weight`
+    * :ref:`rand_range_weight`
+    * :ref:`rand_range_weight_mode`
+
+Note that the sum of all weights need not be 100 since the probability is equal to weight/sum_of_weights.
 
 When specifying a weight for a range of values there are two possible scenarios:
 

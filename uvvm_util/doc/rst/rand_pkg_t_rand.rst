@@ -3,18 +3,18 @@ t_rand (protected)
 
 Protected type containing all the randomization functionality.
 
-.. _set_rand_dist:
-
 set_rand_dist()
 ----------------------------------------------------------------------------------------------------
 Configures the randomization distribution to be used with the rand() functions. Default value is UNIFORM. ::
 
-    set_rand_dist(rand_dist)
+    set_rand_dist(rand_dist, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | rand_dist          | in     | :ref:`t_rand_dist`           | Randomization distribution, e.g. UNIFORM, GAUSSIAN    |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -22,8 +22,6 @@ Configures the randomization distribution to be used with the rand() functions. 
     Examples:
     my_rand.set_rand_dist(GAUSSIAN);
 
-
-.. _get_rand_dist:
 
 get_rand_dist()
 ----------------------------------------------------------------------------------------------------
@@ -43,19 +41,19 @@ Returns the configured randomization distribution. ::
     log(ID_SEQUENCER, to_string(my_rand.get_rand_dist(VOID)));
 
 
-.. _set_rand_dist_mean:
-
 set_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------
 Configures the mean value for the randomization distribution. Default value depends on the parameters of each rand() call: 
 (max_range-min_range)/2 ::
 
-    set_rand_dist_mean(mean)
+    set_rand_dist_mean(mean, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | mean               | in     | real                         | Mean value for the distribution                       |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -63,8 +61,6 @@ Configures the mean value for the randomization distribution. Default value depe
     Examples:
     my_rand.set_rand_dist_mean(5.0);
 
-
-.. _get_rand_dist_mean:
 
 get_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------
@@ -85,34 +81,30 @@ default value is being used. ::
     log(ID_SEQUENCER, to_string(my_rand.get_rand_dist_mean(VOID)));
 
 
-.. _clear_rand_dist_mean:
-
 clear_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------
 Clears the configured mean value. Default value will be (max_range-min_range)/2 ::
 
-    clear_rand_dist_mean(VOID)
+    clear_rand_dist_mean([msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_rand.clear_rand_dist_mean(VOID);
+    my_rand.clear_rand_dist_mean;
 
-
-.. _set_rand_dist_std_deviation:
 
 set_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------
 Configures the standard deviation value for the randomization distribution. Default value depends on the parameters of each rand() 
 call: (max_range-min_range)/6 ::
 
-    set_rand_dist_std_deviation(std_deviation)
+    set_rand_dist_std_deviation(std_deviation, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
@@ -120,14 +112,14 @@ call: (max_range-min_range)/6 ::
 | constant | std_deviation      | in     | real                         | Standard deviation value for the distribution.        |
 |          |                    |        |                              | Must be a positive value                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
     my_rand.set_rand_dist_std_deviation(1.0);
 
-
-.. _get_rand_dist_std_deviation:
 
 get_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------
@@ -148,38 +140,36 @@ that the default value is being used. ::
     log(ID_SEQUENCER, to_string(my_rand.get_rand_dist_std_deviation(VOID)));
 
 
-.. _clear_rand_dist_std_deviation:
-
 clear_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------
 Clears the configured standard deviation value. Default value will be (max_range-min_range)/6 ::
 
-    clear_rand_dist_std_deviation(VOID)
+    clear_rand_dist_std_deviation([msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_rand.clear_rand_dist_std_deviation(VOID);
+    my_rand.clear_rand_dist_std_deviation;
 
-
-.. _set_range_weight_default_mode:
 
 set_range_weight_default_mode()
 ----------------------------------------------------------------------------------------------------
 Configures the default range weight mode for the weighted randomization distribution. ::
 
-    set_range_weight_default_mode(mode)
+    set_range_weight_default_mode(mode, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | mode               | in     | :ref:`t_weight_mode`         | How to divide the weight among a range of values      |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -187,8 +177,6 @@ Configures the default range weight mode for the weighted randomization distribu
     Examples:
     my_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
 
-
-.. _get_range_weight_default_mode:
 
 get_range_weight_default_mode()
 ----------------------------------------------------------------------------------------------------
@@ -208,11 +196,9 @@ Returns the default range weight mode. ::
     log(ID_SEQUENCER, to_string(my_rand.get_range_weight_default_mode(VOID)));
 
 
-.. _set_scope:
-
 set_scope()
 ----------------------------------------------------------------------------------------------------
-Configures the scope used in the log messages. Default is C_SCOPE defined in adaptations_pkg ::
+Configures the scope used in the log messages. Default is C_SCOPE defined in adaptations_pkg. ::
 
     set_scope(scope)
 
@@ -227,8 +213,6 @@ Configures the scope used in the log messages. Default is C_SCOPE defined in ada
     Examples:
     my_rand.set_scope("MY_SCOPE");
 
-
-.. _get_scope:
 
 get_scope()
 ----------------------------------------------------------------------------------------------------
@@ -248,27 +232,23 @@ Returns the configured scope. ::
     scope := my_rand.get_scope(VOID);
 
 
-.. _clear_rand_cyclic:
-
 clear_rand_cyclic()
 ----------------------------------------------------------------------------------------------------
 Clears the state of the cyclic generation. Deallocates the list/queue used to store the generated numbers. ::
 
-    clear_rand_cyclic(VOID)
+    clear_rand_cyclic([msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_rand.clear_rand_cyclic(VOID);
+    my_rand.clear_rand_cyclic;
 
-
-.. _set_rand_seeds:
 
 set_rand_seeds()
 ----------------------------------------------------------------------------------------------------
@@ -298,8 +278,6 @@ and C_RAND_INIT_SEED_2 in adaptations_pkg. ::
     my_rand.set_rand_seeds(10, 100);
     my_rand.set_rand_seeds(seed_vector);
 
-
-.. _get_rand_seeds:
 
 get_rand_seeds()
 ----------------------------------------------------------------------------------------------------

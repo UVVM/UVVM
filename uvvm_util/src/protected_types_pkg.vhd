@@ -75,7 +75,8 @@ package protected_types_pkg is
 
 
   type t_protected_covergroup_status is protected
-    impure function add_coverpoint(name : string) return integer;
+    impure function add_coverpoint(VOID : in t_void) return integer;
+    procedure set_name(coverpoint_idx : in integer; name : in string);
     procedure increment_valid_bin_count(coverpoint_idx : in integer);
     procedure increment_illegal_bin_count(coverpoint_idx : in integer);
     procedure increment_covered_bin_count(coverpoint_idx : in integer);
@@ -254,24 +255,29 @@ package body protected_types_pkg is
     variable priv_coverage_goal             : positive := 100;
 
     impure function add_coverpoint(
-      constant name : string)
+      constant VOID : in t_void)
     return integer is
       constant C_COVERPOINT_NUM : string := to_string(priv_last_added_coverpoint_idx + 2);
     begin
       if priv_last_added_coverpoint_idx < C_FC_MAX_NUM_COVERPOINTS-1 then
         priv_last_added_coverpoint_idx := priv_last_added_coverpoint_idx + 1;
-        if name'length = 0 then
-          priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := "COVERPOINT_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-11-C_COVERPOINT_NUM'length);
-        elsif name'length > C_FC_MAX_NAME_LENGTH then
-          priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := name(1 to C_FC_MAX_NAME_LENGTH);
-        else
-          priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
-        end if;
+        priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := "COVERPOINT_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-11-C_COVERPOINT_NUM'length);
         return priv_last_added_coverpoint_idx;
       else
         return -1; -- Error: no more space in the list
       end if;
     end function;
+
+    procedure set_name(
+      constant coverpoint_idx : in integer;
+      constant name           : in string) is
+    begin
+      if name'length > C_FC_MAX_NAME_LENGTH then
+        priv_coverpoint_status_list(coverpoint_idx).name := name(1 to C_FC_MAX_NAME_LENGTH);
+      else
+        priv_coverpoint_status_list(coverpoint_idx).name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
+      end if;
+    end procedure;
 
     procedure increment_valid_bin_count(
       constant coverpoint_idx : in integer) is

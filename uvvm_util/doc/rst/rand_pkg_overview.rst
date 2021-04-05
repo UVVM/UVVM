@@ -20,7 +20,6 @@ type *t_rand* and call the ``rand()`` function from the variable.
 
 Seeds
 -----
-
 Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They 
 can be initialized using any string or two positive values.
 
@@ -33,7 +32,6 @@ The current seeds can be printed out, in case there is a need to recreate a cert
 
 Constraints
 -----------
-
 There are different ways of constraining the random value in a clear and consistent manner.
 
 .. code-block::
@@ -53,7 +51,6 @@ There are different ways of constraining the random value in a clear and consist
 
 Types
 -----
-
 The ``rand()`` function can return the following types:
 
     * :ref:`integer <rand_int>`
@@ -82,7 +79,6 @@ The ``rand()`` function can return the following types:
 
 Uniqueness
 ----------
-
 When returning a vector type (integer, real or time) it is possible to generate unique random values for each element of the vector 
 by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function.
 
@@ -94,7 +90,6 @@ Note that if the constraints are not enough to generate unique values for the wh
 
 Cyclic generation
 -----------------
-
 By setting the parameter *cyclic_mode = CYCLIC* in the ``rand()`` function, it is possible to generate random values which will
 not repeat until all the values within the constraints have been generated. Once this happens, the process starts over.
 
@@ -116,7 +111,6 @@ not repeat until all the values within the constraints have been generated. Once
 
 Distributions
 -------------
-
 By default, the Uniform distribution is used with the ``rand()`` function, however it is also possible to select other distributions
 with the procedure ``set_rand_dist()``.
 
@@ -127,7 +121,9 @@ Gaussian (Normal)
 * Cannot be combined with weighted randomization functions.
 * The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
 * To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures respectively.
-* If not configured, the mean will be (max-min)/2 and the std_deviation will be (max-min)/6.
+* If not configured, the default mean will be (max-min)/2 and the default std_deviation will be (max-min)/6.
+* To clear the configured mean and std_deviation and go back to the default, use ``clear_rand_dist_mean()`` and ``clear_rand_dist_std_deviation()`` 
+  procedures respectively.
 
 .. code-block::
 
@@ -172,7 +168,6 @@ The supported types are integer, real, time, unsigned, signed and std_logic_vect
 
 Additional info
 ---------------
-
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
 * ID_RAND_GEN: Used for logging random generated values
@@ -185,7 +180,6 @@ The number of decimal digits displayed in the real values logs can be adjusted w
 
 rand_pkg
 --------
-
 .. toctree::
    :maxdepth: 1
 

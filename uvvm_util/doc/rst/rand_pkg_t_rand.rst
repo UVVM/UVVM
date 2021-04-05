@@ -1,6 +1,5 @@
 t_rand (protected)
 ==================
-
 Protected type containing all the randomization functionality.
 
 set_rand_dist()

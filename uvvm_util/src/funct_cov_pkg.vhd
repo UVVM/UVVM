@@ -702,6 +702,8 @@ package body funct_cov_pkg is
     variable priv_rand_transition_bin_value_idx : natural := 0;
     variable priv_detect_bin_overlap            : boolean := false;
 
+    type t_bin_type_verbosity is (LONG, SHORT, NONE);
+
     ------------------------------------------------------------
     -- Internal functions and procedures
     ------------------------------------------------------------
@@ -729,23 +731,39 @@ package body funct_cov_pkg is
     -- Returns a string with all the bins values in the array
     impure function get_bin_array_values(
       constant bin_array     : t_new_bin_array;
-      constant use_full_name : boolean := false;
+      constant bin_verbosity : t_bin_type_verbosity := SHORT;
       constant bin_delimiter : character := ',')
     return string is
       variable v_line   : line;
       variable v_result : string(1 to 1000);
       variable v_width  : natural;
+
+      impure function return_bin_type(
+        constant full_name     : string;
+        constant short_name    : string;
+        constant bin_verbosity : t_bin_type_verbosity)
+      return string is
+      begin
+        if bin_verbosity = LONG then
+          return full_name;
+        elsif bin_verbosity = SHORT then
+          return short_name;
+        else
+          return "";
+        end if;
+      end function;
+
     begin
       for i in bin_array'range loop
         for j in 0 to bin_array(i).num_bins-1 loop
           case bin_array(i).bin_vector(j).contains is
             when VAL | VAL_IGNORE | VAL_ILLEGAL =>
               if bin_array(i).bin_vector(j).contains = VAL then
-                write(v_line, string'(return_string1_if_true_otherwise_string2("bin", "", use_full_name)));
+                write(v_line, string'(return_bin_type("bin", "", bin_verbosity)));
               elsif bin_array(i).bin_vector(j).contains = VAL_IGNORE then
-                write(v_line, string'(return_string1_if_true_otherwise_string2("ignore_bin", "IGN", use_full_name)));
+                write(v_line, string'(return_bin_type("ignore_bin", "IGN", bin_verbosity)));
               else
-                write(v_line, string'(return_string1_if_true_otherwise_string2("illegal_bin", "ILL", use_full_name)));
+                write(v_line, string'(return_bin_type("illegal_bin", "ILL", bin_verbosity)));
               end if;
               if bin_array(i).bin_vector(j).num_values = 1 then
                 write(v_line, '(');
@@ -756,20 +774,20 @@ package body funct_cov_pkg is
               end if;
             when RAN | RAN_IGNORE | RAN_ILLEGAL =>
               if bin_array(i).bin_vector(j).contains = RAN then
-                write(v_line, string'(return_string1_if_true_otherwise_string2("bin_range", "", use_full_name)));
+                write(v_line, string'(return_bin_type("bin_range", "", bin_verbosity)));
               elsif bin_array(i).bin_vector(j).contains = RAN_IGNORE then
-                write(v_line, string'(return_string1_if_true_otherwise_string2("ignore_bin_range", "IGN", use_full_name)));
+                write(v_line, string'(return_bin_type("ignore_bin_range", "IGN", bin_verbosity)));
               else
-                write(v_line, string'(return_string1_if_true_otherwise_string2("illegal_bin_range", "ILL", use_full_name)));
+                write(v_line, string'(return_bin_type("illegal_bin_range", "ILL", bin_verbosity)));
               end if;
               write(v_line, "(" & to_string(bin_array(i).bin_vector(j).values(0)) & " to " & to_string(bin_array(i).bin_vector(j).values(1)) & ")");
             when TRN | TRN_IGNORE | TRN_ILLEGAL =>
               if bin_array(i).bin_vector(j).contains = TRN then
-                write(v_line, string'(return_string1_if_true_otherwise_string2("bin_transition", "", use_full_name)));
+                write(v_line, string'(return_bin_type("bin_transition", "", bin_verbosity)));
               elsif bin_array(i).bin_vector(j).contains = TRN_IGNORE then
-                write(v_line, string'(return_string1_if_true_otherwise_string2("ignore_bin_transition", "IGN", use_full_name)));
+                write(v_line, string'(return_bin_type("ignore_bin_transition", "IGN", bin_verbosity)));
               else
-                write(v_line, string'(return_string1_if_true_otherwise_string2("illegal_bin_transition", "ILL", use_full_name)));
+                write(v_line, string'(return_bin_type("illegal_bin_transition", "ILL", bin_verbosity)));
               end if;
               write(v_line, '(');
               for k in 0 to bin_array(i).bin_vector(j).num_values-1 loop
@@ -805,7 +823,7 @@ package body funct_cov_pkg is
         v_new_bin_array(0).bin_vector(i).num_values := bins(i).num_values;
       end loop;
       v_new_bin_array(0).num_bins := bins'length;
-      return get_bin_array_values(v_new_bin_array, false, 'x');
+      return get_bin_array_values(v_new_bin_array, NONE, 'x');
     end function;
 
     -- Returns a string with the bin content
@@ -818,7 +836,7 @@ package body funct_cov_pkg is
       v_new_bin_array(0).bin_vector(0).values     := bin.values;
       v_new_bin_array(0).bin_vector(0).num_values := bin.num_values;
       v_new_bin_array(0).num_bins := 1;
-      return get_bin_array_values(v_new_bin_array, true);
+      return get_bin_array_values(v_new_bin_array, LONG);
     end function;
 
     -- Returns true if the bin is ignored
@@ -1770,22 +1788,6 @@ package body funct_cov_pkg is
       constant C_COLUMN_WIDTH     : positive := 15;
       variable v_line             : line;
       variable v_log_extra_space  : integer := 0;
-
-      impure function get_bin_status(cov_bin : t_cov_bin) return string is
-      begin
-        if is_bin_illegal(cov_bin) then
-          return "ILLEGAL";
-        elsif is_bin_ignore(cov_bin) then
-          return "IGNORE";
-        else
-          if cov_bin.hits >= cov_bin.min_hits then
-            return "COVERED";
-          else
-            return "UNCOVERED";
-          end if;
-        end if;
-      end function;
-
     begin
       check_value(priv_id /= -1, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, msg_id => ID_NEVER, caller_name => C_LOCAL_CALL);
 
@@ -1827,12 +1829,12 @@ package body funct_cov_pkg is
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_vector_values(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(get_bin_coverage(priv_invalid_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_invalid_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_invalid_bins(i).hits)        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A"                                       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A"                                       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A"                                       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)        , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("ILLEGAL"                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -1843,12 +1845,12 @@ package body funct_cov_pkg is
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_vector_values(priv_invalid_bins(i).cross_bins(0 to priv_num_bins_crossed-1)), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(get_bin_coverage(priv_invalid_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_invalid_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify(to_string(priv_invalid_bins(i).hits)        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A"                                       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A"                                       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A"                                       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).name)        , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("IGNORE"                                    , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -1864,7 +1866,7 @@ package body funct_cov_pkg is
             justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify("UNCOVERED"                                      , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -1880,7 +1882,7 @@ package body funct_cov_pkg is
             justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).rand_weight)              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(get_bin_status(priv_bins(i))                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            justify("COVERED"                                        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;

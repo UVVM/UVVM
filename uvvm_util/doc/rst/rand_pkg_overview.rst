@@ -10,7 +10,7 @@ type *t_rand* and call the ``rand()`` function from the variable.
 
     library uvvm_util;
     context uvvm_util.uvvm_util_context;
-
+    ...
     p_main : process
       variable my_rand : t_rand;
     begin

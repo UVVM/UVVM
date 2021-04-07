@@ -25,7 +25,7 @@ Released: 2021-04-08
 - Improved log message from axistream_expect_bytes() BFM procedure.
 - vvc_generator now includes activity watchdog by default.
 - Improved log messages from Clock Generator VVC.
-- Bug fix and improved compability with some Modelsim version in AXI VIP.
+- Bug fix and improved compability with some Modelsim version in AXI and AXI-Lite VIPs.
 - Improved Clock Generator VVC set_clock_period() method description in the QR.
 - Added missing result in log message for fetch_result() method.
 

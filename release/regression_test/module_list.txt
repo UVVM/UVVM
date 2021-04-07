@@ -4,6 +4,7 @@ bitvis_irqc
 bitvis_uart
 bitvis_vip_avalon_mm
 bitvis_vip_avalon_st
+bitvis_vip_axi
 bitvis_vip_axilite
 bitvis_vip_axistream
 bitvis_vip_clock_generator

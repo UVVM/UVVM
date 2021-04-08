@@ -46,16 +46,16 @@ package axilite_channel_handler_pkg is
   -- This procedure writes adress on the write address channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure write_address_channel_write (
-    constant awaddr_value : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   awaddr       : out std_logic_vector;
-    signal   awvalid      : out std_logic;
-    signal   awprot       : out std_logic_vector(2 downto 0); -- [0: '0' - unpriviliged access, '1' - priviliged access; 1: '0' - secure access, '1' - non-secure access, 2: '0' - Data access, '1' - Instruction accesss]
-    signal   awready      : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant awaddr_value : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   awaddr       : inout std_logic_vector;
+    signal   awvalid      : inout std_logic;
+    signal   awprot       : inout std_logic_vector(2 downto 0); -- [0: '0' - unpriviliged access, '1' - priviliged access; 1: '0' - secure access, '1' - non-secure access, 2: '0' - Data access, '1' - Instruction accesss]
+    signal   awready      : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -64,17 +64,17 @@ package axilite_channel_handler_pkg is
   -- This procedure writes data on the write data channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure write_data_channel_write (
-    constant wdata_value  : in  std_logic_vector;
-    constant wstrb_value  : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   wdata        : out std_logic_vector;
-    signal   wstrb        : out std_logic_vector;
-    signal   wvalid       : out std_logic;
-    signal   wready       : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant wdata_value  : in    std_logic_vector;
+    constant wstrb_value  : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   wdata        : inout std_logic_vector;
+    signal   wstrb        : inout std_logic_vector;
+    signal   wvalid       : inout std_logic;
+    signal   wready       : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -85,15 +85,15 @@ package axilite_channel_handler_pkg is
   --   an alert with severity config.expected_response_severity is issued.
   -- - When completed, a log message with ID id_for_bfm is issued.
   procedure write_response_channel_check (
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   bready       : out std_logic;
-    signal   bresp        : in  std_logic_vector(1 downto 0);
-    signal   bvalid       : in  std_logic;
-    constant alert_level  : in  t_alert_level         := error;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   bready       : inout std_logic;
+    signal   bresp        : in    std_logic_vector(1 downto 0);
+    signal   bvalid       : in    std_logic;
+    constant alert_level  : in    t_alert_level         := error;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -102,16 +102,16 @@ package axilite_channel_handler_pkg is
   -- This procedure writes adress on the read address channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure read_address_channel_write (
-    constant araddr_value : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   araddr       : out std_logic_vector;
-    signal   arvalid      : out std_logic;
-    signal   arprot       : out std_logic_vector(2 downto 0);
-    signal   arready      : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant araddr_value : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   araddr       : inout std_logic_vector;
+    signal   arvalid      : inout std_logic;
+    signal   arprot       : inout std_logic_vector(2 downto 0);
+    signal   arready      : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   );
   
   ------------------------------------------
@@ -122,17 +122,17 @@ package axilite_channel_handler_pkg is
   -- - If the received response was inconsistent with config.expected_response, 
   --   an alert with severity config.expected_response_severity is issued.
   procedure read_data_channel_receive (
-    variable rdata_value    : out std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   rready         : out std_logic;
-    signal   rdata          : in  std_logic_vector;
-    signal   rresp          : in  std_logic_vector(1 downto 0);
-    signal   rvalid         : in  std_logic;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call  : in  string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable rdata_value    : out   std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   rready         : inout std_logic;
+    signal   rdata          : in    std_logic_vector;
+    signal   rresp          : in    std_logic_vector(1 downto 0);
+    signal   rvalid         : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call  : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ------------------------------------------
@@ -144,17 +144,17 @@ package axilite_channel_handler_pkg is
   --   an alert with severity alert_level is issued.
   -- - If the received data is correct, a log message with ID id_for_bfm is issued.
   procedure read_data_channel_check (
-    constant rdata_exp    : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   rready       : out std_logic;
-    signal   rdata        : in  std_logic_vector;
-    signal   rresp        : in  std_logic_vector(1 downto 0);
-    signal   rvalid       : in  std_logic;
-    constant alert_level  : in  t_alert_level         := error;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant rdata_exp    : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   rready       : inout std_logic;
+    signal   rdata        : in    std_logic_vector;
+    signal   rresp        : in    std_logic_vector(1 downto 0);
+    signal   rvalid       : in    std_logic;
+    constant alert_level  : in    t_alert_level         := error;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   );
 
 end package axilite_channel_handler_pkg;
@@ -166,16 +166,16 @@ package body axilite_channel_handler_pkg is
   ----------------------------------------------------
 
   procedure write_address_channel_write (
-    constant awaddr_value : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   awaddr       : out std_logic_vector;
-    signal   awvalid      : out std_logic;
-    signal   awprot       : out std_logic_vector(2 downto 0); -- [0: '0' - unpriviliged access, '1' - priviliged access; 1: '0' - secure access, '1' - non-secure access, 2: '0' - Data access, '1' - Instruction accesss]
-    signal   awready      : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant awaddr_value : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   awaddr       : inout std_logic_vector;
+    signal   awvalid      : inout std_logic;
+    signal   awprot       : inout std_logic_vector(2 downto 0); -- [0: '0' - unpriviliged access, '1' - priviliged access; 1: '0' - secure access, '1' - non-secure access, 2: '0' - Data access, '1' - Instruction accesss]
+    signal   awready      : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_awready     : boolean := true;
@@ -215,17 +215,17 @@ package body axilite_channel_handler_pkg is
   end procedure write_address_channel_write;
 
   procedure write_data_channel_write (
-    constant wdata_value  : in  std_logic_vector;
-    constant wstrb_value  : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   wdata        : out std_logic_vector;
-    signal   wstrb        : out std_logic_vector;
-    signal   wvalid       : out std_logic;
-    signal   wready       : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant wdata_value  : in    std_logic_vector;
+    constant wstrb_value  : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   wdata        : inout std_logic_vector;
+    signal   wstrb        : inout std_logic_vector;
+    signal   wvalid       : inout std_logic;
+    signal   wready       : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "write_data_channel_write(" & to_string(wdata_value, HEX, AS_IS, INCL_RADIX) &
                                    ", " & to_string(wstrb_value, HEX, AS_IS, INCL_RADIX) & ")";
@@ -268,15 +268,15 @@ package body axilite_channel_handler_pkg is
   end procedure write_data_channel_write;
 
   procedure write_response_channel_check (
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   bready       : out std_logic;
-    signal   bresp        : in  std_logic_vector(1 downto 0);
-    signal   bvalid       : in  std_logic;
-    constant alert_level  : in  t_alert_level         := error;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   bready       : inout std_logic;
+    signal   bresp        : in    std_logic_vector(1 downto 0);
+    signal   bvalid       : in    std_logic;
+    constant alert_level  : in    t_alert_level         := error;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
     constant proc_name              : string := "write_response_channel_check";
     constant proc_call              : string := proc_name & "()";
@@ -320,16 +320,16 @@ package body axilite_channel_handler_pkg is
   end procedure write_response_channel_check;
 
   procedure read_address_channel_write (
-    constant araddr_value : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   araddr       : out std_logic_vector;
-    signal   arvalid      : out std_logic;
-    signal   arprot       : out std_logic_vector(2 downto 0);
-    signal   arready      : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant araddr_value : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   araddr       : inout std_logic_vector;
+    signal   arvalid      : inout std_logic;
+    signal   arprot       : inout std_logic_vector(2 downto 0);
+    signal   arready      : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_arready     : boolean := true;
@@ -369,17 +369,17 @@ package body axilite_channel_handler_pkg is
   end procedure read_address_channel_write;
 
   procedure read_data_channel_receive (
-    variable rdata_value    : out std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   rready         : out std_logic;
-    signal   rdata          : in  std_logic_vector;
-    signal   rresp          : in  std_logic_vector(1 downto 0);
-    signal   rvalid         : in  std_logic;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call  : in  string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable rdata_value    : out   std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   rready         : inout std_logic;
+    signal   rdata          : in    std_logic_vector;
+    signal   rresp          : in    std_logic_vector(1 downto 0);
+    signal   rvalid         : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call  : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     constant local_proc_name        : string := "read_data_channel_receive"; -- Local proc_name; used if called from sequncer or VVC
     constant local_proc_call        : string := local_proc_name & "()"; -- Local proc_call; used if called from sequncer or VVC
@@ -439,17 +439,17 @@ package body axilite_channel_handler_pkg is
   end procedure read_data_channel_receive;
 
   procedure read_data_channel_check (
-    constant rdata_exp    : in  std_logic_vector;
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   rready       : out std_logic;
-    signal   rdata        : in  std_logic_vector;
-    signal   rresp        : in  std_logic_vector(1 downto 0);
-    signal   rvalid       : in  std_logic;
-    constant alert_level  : in  t_alert_level         := error;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
+    constant rdata_exp    : in    std_logic_vector;
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   rready       : inout std_logic;
+    signal   rdata        : in    std_logic_vector;
+    signal   rresp        : in    std_logic_vector(1 downto 0);
+    signal   rvalid       : in    std_logic;
+    constant alert_level  : in    t_alert_level         := error;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axilite_bfm_config  := C_AXILITE_BFM_CONFIG_DEFAULT
   ) is
     constant proc_name     : string := "read_data_channel_check";
     constant proc_call     : string := proc_name & "(" & to_string(rdata_exp, HEX, AS_IS, INCL_RADIX) & ")";

@@ -26,10 +26,10 @@ library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
 use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
-
+--hdlunit:tb
 entity spec_cov_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity spec_cov_tb;
 
@@ -57,15 +57,15 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     shared_spec_cov_config := C_SPEC_COV_CONFIG_DEFAULT;
     set_alert_stop_limit(TB_ERROR, 2);
 
 
 
-    if GC_TEST = "test_init_with_no_requirement_file" then
+    if GC_TESTCASE = "test_init_with_no_requirement_file" then
       --
       -- This test will test initialize_req_cov() without a 
       -- requirement input file
@@ -79,7 +79,7 @@ begin
 
 
 
-    elsif GC_TEST = "test_init_with_requirement_file" then
+    elsif GC_TESTCASE = "test_init_with_requirement_file" then
       --
       -- This test will test initialize_req_cov() with a requirement input file
       --
@@ -92,7 +92,7 @@ begin
 
 
 
-    elsif GC_TEST = "test_log_listed_and_not_listed_requirements" then
+    elsif GC_TESTCASE = "test_log_listed_and_not_listed_requirements" then
       --
       -- This test will test tick_off_req_cov() with listed and not listed requirements.
       --
@@ -110,7 +110,7 @@ begin
       
 
 
-    elsif GC_TEST = "test_log_testcase_pass_and_fail" then
+    elsif GC_TESTCASE = "test_log_testcase_pass_and_fail" then
       --
       -- This test will test tick_off_req_cov() with default (NA, i.e. PASS) and explicit FAIL.
       --
@@ -124,7 +124,7 @@ begin
 
 
 
-    elsif GC_TEST = "test_uvvm_status_error_before_log" then
+    elsif GC_TESTCASE = "test_uvvm_status_error_before_log" then
       --
       -- This test will test Spec Cov with an UVVM status error set prior to testcase.
       --
@@ -141,7 +141,7 @@ begin
 
 
         
-    elsif GC_TEST = "test_uvvm_status_error_after_log" then
+    elsif GC_TESTCASE = "test_uvvm_status_error_after_log" then
       --
       -- This test will test Spec Cov with an UVVM status error set during testcase.
       --
@@ -158,7 +158,7 @@ begin
 
 
 
-    elsif GC_TEST = "test_open_no_existing_req_file" then
+    elsif GC_TESTCASE = "test_open_no_existing_req_file" then
       --
       -- This test will test Spec Cov with an non-existing requirement file.
       --
@@ -170,7 +170,7 @@ begin
       finalize_req_cov(VOID);         
 
 
-    elsif GC_TEST = "test_requirement_name_match" then
+    elsif GC_TESTCASE = "test_requirement_name_match" then
       --
       -- This test check if partial requirement names, and that don't exist, will trigger an alert.
       --
@@ -192,7 +192,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-    elsif GC_TEST = "test_list_single_tick_off" then
+    elsif GC_TESTCASE = "test_list_single_tick_off" then
       --
       -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter
       --
@@ -208,7 +208,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-    elsif GC_TEST = "test_list_single_tick_off_pass_then_fail" then
+    elsif GC_TESTCASE = "test_list_single_tick_off_pass_then_fail" then
       --
       -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter as PASS,
       -- followed by LIST_SINGLE_TICK_OFF parameter as FAIL.
@@ -228,7 +228,7 @@ begin
       finalize_req_cov(VOID);
 
 
-    elsif GC_TEST = "test_list_tick_off_disable" then
+    elsif GC_TESTCASE = "test_list_tick_off_disable" then
       --
       -- This test ........
       --
@@ -275,7 +275,7 @@ begin
     -- processing script, and will not explicitly test the spec_cov_pkg.
     --
     ---==========================================================================
-    elsif GC_TEST = "test_sub_requirement_pass" then
+    elsif GC_TESTCASE = "test_sub_requirement_pass" then
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
@@ -289,7 +289,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
       
-    elsif GC_TEST = "test_sub_requirement_fail" then
+    elsif GC_TESTCASE = "test_sub_requirement_fail" then
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
@@ -303,7 +303,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-    elsif GC_TEST = "test_sub_requirement_incomplete" then
+    elsif GC_TESTCASE = "test_sub_requirement_incomplete" then
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
@@ -321,7 +321,7 @@ begin
       finalize_req_cov(VOID);
 
 
-    elsif GC_TEST = "test_sub_requirement_omitted" then
+    elsif GC_TESTCASE = "test_sub_requirement_omitted" then
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
@@ -335,7 +335,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-      elsif GC_TEST = "test_sub_requirement_omitted_check_pass" then
+      elsif GC_TESTCASE = "test_sub_requirement_omitted_check_pass" then
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
@@ -350,7 +350,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-      elsif GC_TEST = "test_sub_requirement_omitted_check_fail" then
+      elsif GC_TESTCASE = "test_sub_requirement_omitted_check_fail" then
         --
         -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
         --
@@ -365,7 +365,7 @@ begin
         -- End testcase
         finalize_req_cov(VOID);
 
-    elsif GC_TEST = "test_incomplete_testcase" then
+    elsif GC_TESTCASE = "test_incomplete_testcase" then
       --
       -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
       --
@@ -380,7 +380,7 @@ begin
       -- End testcase
       finalize_req_cov(VOID);
 
-    elsif GC_TEST = "test_testcase_with_multiple_reqs" then
+    elsif GC_TESTCASE = "test_testcase_with_multiple_reqs" then
       --
       -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
       --

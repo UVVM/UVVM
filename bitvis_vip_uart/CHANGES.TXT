@@ -2,6 +2,11 @@ Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
 
+v2.8.2
+----------
+Released: 2020-04-08
+- Minor update in uart_receive example in VVC QuickRef.
+
 v2.8.1
 ----------
 Released: 2020-12-08

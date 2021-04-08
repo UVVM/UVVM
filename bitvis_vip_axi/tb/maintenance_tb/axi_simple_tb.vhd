@@ -9,9 +9,10 @@ library bitvis_vip_axi;
 use bitvis_vip_axi.axi_bfm_pkg.all;
 use bitvis_vip_axi.axi_slave_model_pkg.all;
 
+--hdlunit:tb
 entity axi_simple_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
   );
 end entity axi_simple_tb;
 
@@ -150,8 +151,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     axi_bfm_config.clock_period := C_CLK_PERIOD;
     axi_bfm_config.num_aw_pipe_stages := 0;

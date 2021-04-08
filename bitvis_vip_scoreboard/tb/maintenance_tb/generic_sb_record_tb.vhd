@@ -25,10 +25,11 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
+--hdlunit:tb
 -- Test case entity
 entity generic_sb_record_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity generic_sb_record_tb;
 
@@ -2002,8 +2003,8 @@ architecture func of generic_sb_record_tb is
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);

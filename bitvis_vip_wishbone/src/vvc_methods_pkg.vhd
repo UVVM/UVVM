@@ -257,7 +257,6 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, READ);
-    shared_vvc_cmd.operation           := READ;
     shared_vvc_cmd.addr                := v_normalised_addr;
     shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;

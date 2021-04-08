@@ -37,11 +37,11 @@ use bitvis_vip_uart.uart_bfm_pkg.all;
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
 
-
+--hdlunit:tb
 -- Test bench entity
 entity vvc_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
@@ -190,8 +190,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     set_alert_stop_limit(ERROR, 0);
 
@@ -214,31 +214,31 @@ begin
     --------------------------------------------------------------------------------------
     -- Verifying
     --------------------------------------------------------------------------------------
-    if GC_TEST = "Testing_2_Sequencer_Parallel_using_different_types_of_VVCs" then
+    if GC_TESTCASE = "Testing_2_Sequencer_Parallel_using_different_types_of_VVCs" then
       unblock_flag(C_FLAG_A, "Unblocking Flag_A -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_a, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_2_Sequencer_Parallel_using_same_types_of_VVCs_but_different_instances" then
+    elsif GC_TESTCASE = "Testing_2_Sequencer_Parallel_using_same_types_of_VVCs_but_different_instances" then
       unblock_flag(C_FLAG_B, "Unblocking Flag_B -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_b, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_but_not_at_the_same_time" then
+    elsif GC_TESTCASE = "Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_but_not_at_the_same_time" then
       unblock_flag(C_FLAG_C, "Unblocking Flag_C -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_c, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_get_last_received_cmd_idx" then
+    elsif GC_TESTCASE = "Testing_get_last_received_cmd_idx" then
       unblock_flag(C_FLAG_D, "Unblocking Flag_D -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_d, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_different_accesses_between_two_sequencer" then
+    elsif GC_TESTCASE = "Testing_different_accesses_between_two_sequencer" then
       unblock_flag(C_FLAG_E, "Unblocking Flag_E -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_e, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_different_single_sequencer_access" then
+    elsif GC_TESTCASE = "Testing_different_single_sequencer_access" then
       unblock_flag(C_FLAG_F, "Unblocking Flag_F -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_f, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_shared_uvvm_status_await_any_completion_info" then
+    elsif GC_TESTCASE = "Testing_shared_uvvm_status_await_any_completion_info" then
       unblock_flag(C_FLAG_G, "Unblocking Flag_G -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_g, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_await_completion_from_different_sequencers" then
+    elsif GC_TESTCASE = "Testing_await_completion_from_different_sequencers" then
       unblock_flag(C_FLAG_H, "Unblocking Flag_H -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_h, 200 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
-    elsif GC_TEST = "Testing_await_any_completion_from_different_sequencers" then
+    elsif GC_TESTCASE = "Testing_await_any_completion_from_different_sequencers" then
       unblock_flag(C_FLAG_I, "Unblocking Flag_I -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_i, 200 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
     else

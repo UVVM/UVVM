@@ -36,10 +36,11 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
+--hdlunit:tb
 -- Test bench entity
 entity uart_vvc_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -78,8 +79,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
@@ -117,7 +118,7 @@ begin
     wait for (10 * C_CLK_PERIOD);       -- for reset to be turned off
 
 
-    if GC_TEST = "check_register_defaults" then
+    if GC_TESTCASE = "check_register_defaults" then
       log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
       ------------------------------------------------------------
       -- This test will send three sbi_check commands to the SBI VVC, and then
@@ -127,7 +128,7 @@ begin
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default");
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
 
-    elsif GC_TEST = "check_simple_transmit" then
+    elsif GC_TESTCASE = "check_simple_transmit" then
       log(ID_LOG_HDR, "Check simple transmit", C_SCOPE);
       ------------------------------------------------------------
       -- This test case will instruct the SBI VVC to send the data x"55" to the DUT C_ADDR_TX_DATA address.
@@ -140,7 +141,7 @@ begin
       wait for 200 ns;                  -- margin
 
 
-    elsif GC_TEST = "check_simple_receive" then
+    elsif GC_TESTCASE = "check_simple_receive" then
       log(ID_LOG_HDR, "Check simple receive", C_SCOPE);
       ------------------------------------------------------------
       -- In this test case the UART VVC (TX channel) is instructed to send the data x"AA" to the DUT.
@@ -154,7 +155,7 @@ begin
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"AA", "RX_DATA");
       await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
-    elsif GC_TEST = "check_single_simultaneous_transmit_and_receive" then
+    elsif GC_TESTCASE = "check_single_simultaneous_transmit_and_receive" then
 
       log(ID_LOG_HDR, "Check single simultaneous transmit and receive", C_SCOPE);
       ------------------------------------------------------------
@@ -174,7 +175,7 @@ begin
       await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
 
-    elsif GC_TEST = "check_multiple_simultaneous_receive_and_read" then
+    elsif GC_TESTCASE = "check_multiple_simultaneous_receive_and_read" then
       log(ID_LOG_HDR, "Check multiple simultaneous receive and read", C_SCOPE);
       ------------------------------------------------------------
       -- This test case will instruct the UART VVC to transmit three messages to the DUT. These UART VVC (TX channel)
@@ -194,7 +195,7 @@ begin
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
 
 
-    elsif GC_TEST = "skew_sbi_read_over_uart_receive" then
+    elsif GC_TESTCASE = "skew_sbi_read_over_uart_receive" then
       log(ID_LOG_HDR, "Skew SBI read over UART receive ", C_SCOPE);
       ------------------------------------------------------------
       -- This test case will show how using VVCs in UVVM can be used for simultaneous UART and SBI operation,
@@ -236,7 +237,7 @@ begin
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
 
 
-    elsif GC_TEST = "skew_sbi_read_over_uart_receive_with_delay_functionality" then
+    elsif GC_TESTCASE = "skew_sbi_read_over_uart_receive_with_delay_functionality" then
       log(ID_LOG_HDR, "Skew SBI read over UART receive with delay functionality", C_SCOPE);
       ------------------------------------------------------------
       -- This test case will test the same as the test case above, but using the built in delay functionality in the SBI VVC
@@ -272,8 +273,8 @@ begin
       await_completion(SBI_VVCT, 1, 2*C_TIME_OF_ONE_UART_TX);
 
     else
-      if GC_TEST /= "ALL" then
-        alert(tb_error, "Unsupported test");
+      if GC_TESTCASE /= "ALL" then
+        alert(tb_error, "Unsupported test: " & GC_TESTCASE);
       end if;
     end if;
 

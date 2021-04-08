@@ -27,6 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_error_injection;
 use bitvis_vip_error_injection.error_injection_pkg.all;
 
+--hdlunit:tb
 entity ei_demo_tb is
   generic (GC_TESTCASE : natural := 0);
 end entity ei_demo_tb;

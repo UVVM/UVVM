@@ -29,10 +29,10 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-
+--hdlunit:tb
 entity methods_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -557,8 +557,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     randomise(12, 14);
     randomize(14, 12);
@@ -570,7 +570,7 @@ begin
     wait for 1 ns;
 
 
-    if GC_TEST = "basic_log_alert" then
+    if GC_TESTCASE = "basic_log_alert" then
       --------------------------------------------------------------------------------------
       -- Verifying logging and alerts
       --------------------------------------------------------------------------------------
@@ -612,7 +612,7 @@ begin
       end loop;
 
 
-    elsif GC_TEST = "enable_disable_log_msg" then
+    elsif GC_TESTCASE = "enable_disable_log_msg" then
       --------------------------------------------------------------------------------------
       -- Verifying disable_log_msg and enable_log_msg
       --------------------------------------------------------------------------------------
@@ -650,7 +650,7 @@ begin
       enable_log_msg(ID_SEQUENCER, QUIET);
       log(ID_SEQUENCER, "This should be visible (and enabling of ID_SEQUENCER should not be visible)");
 
-    elsif GC_TEST = "check_value" then
+    elsif GC_TESTCASE = "check_value" then
       --------------------------------------------------------------------------------------
       -- Verifying check_value
       --------------------------------------------------------------------------------------
@@ -829,7 +829,7 @@ begin
 
       report_check_counters(VOID);
 
-    elsif GC_TEST = "check_stable" then
+    elsif GC_TESTCASE = "check_stable" then
       --------------------------------------------------------------------------------------
       -- Verifying check_stable
       --------------------------------------------------------------------------------------
@@ -867,7 +867,7 @@ begin
 
       report_check_counters(VOID);
 
-    elsif GC_TEST = "await_stable" then
+    elsif GC_TESTCASE = "await_stable" then
       --------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying await_stable");
       --------------------------------------------------------------------------------------
@@ -1346,7 +1346,7 @@ begin
       increment_expected_alerts(error, 1);
 
 
-    elsif GC_TEST = "await_change" then
+    elsif GC_TESTCASE = "await_change" then
       --------------------------------------------------------------------------------------
       -- Verifying await_change
       --------------------------------------------------------------------------------------
@@ -1446,7 +1446,7 @@ begin
       -- await_stable(sl, 20 ns, 9 ns, ERROR, "Stable timeout, Fail", C_SCOPE);
       -- increment_expected_alerts(ERROR);
 
-    elsif GC_TEST = "await_value" then
+    elsif GC_TESTCASE = "await_value" then
       --------------------------------------------------------------------------------------
       -- Verifying await_value
       --------------------------------------------------------------------------------------
@@ -1613,7 +1613,7 @@ begin
 
       
 
-    elsif GC_TEST = "byte_and_slv_arrays" then
+    elsif GC_TESTCASE = "byte_and_slv_arrays" then
       -------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Testing and verifying convert_byte_array_to_slv_array");
       -------------------------------------------------------------------------------------
@@ -1832,7 +1832,7 @@ begin
         check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
       end loop;
 
-    elsif GC_TEST = "random_functions" then
+    elsif GC_TESTCASE = "random_functions" then
       --------------------------------------------------------------------------
       -- Random functions
       --------------------------------------------------------------------------
@@ -1943,7 +1943,7 @@ begin
       end loop;
 
 
-    elsif GC_TEST = "check_value_in_range" then
+    elsif GC_TESTCASE = "check_value_in_range" then
       --------------------------------------------------------------------------
       -- Check_value_in_range
       --------------------------------------------------------------------------
@@ -1983,7 +1983,7 @@ begin
 
       report_check_counters(VOID);
       
-    elsif GC_TEST = "string_methods" then
+    elsif GC_TESTCASE = "string_methods" then
       --------------------------------------------------------------------------
       -- Checking some details of string_methods
       --------------------------------------------------------------------------
@@ -2219,7 +2219,7 @@ begin
       log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
       log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
 
-    elsif GC_TEST = "clock_generators" then
+    elsif GC_TESTCASE = "clock_generators" then
       --
       -- Test clock_generators
       --
@@ -2443,7 +2443,7 @@ begin
       --wait for C_CLK500M_PERIOD + 1 ns;
       --check_value(clk500M_cnt, 1, error, "Verifying increment after wrap");
 
-    elsif GC_TEST = "normalise" then
+    elsif GC_TESTCASE = "normalise" then
       --==================================================================================================
       -- BFM common pkg
       --------------------------------------------------------------------------------------
@@ -2639,7 +2639,7 @@ begin
       check_value(v_unsigned_array_32(2 downto 0), v_unsigned_array, error, "", C_SCOPE);
 
 
-    elsif GC_TEST = "normalize_and_check" then
+    elsif GC_TESTCASE = "normalize_and_check" then
       log(ID_LOG_HDR, "Verifying normalize_and_check", "");
 
       set_alert_stop_limit(TB_ERROR, 51);
@@ -2803,7 +2803,7 @@ begin
       increment_expected_alerts(TB_ERROR);
       v_s5b(-1 downto 0) := normalize_and_check(v_s8, v_s5a(-1 downto 0), ALLOW_WIDER_NARROWER, "v_s5a", "v_s8", "");
 
-    elsif GC_TEST = "log_text_block" then
+    elsif GC_TESTCASE = "log_text_block" then
       log(ID_LOG_HDR, "Verifying log with text block input", "");
       -- Setting up a preformated string
       write(v_line, "TEST OF MULTILINE LOG without formatting" & LF & "First line " & LF & "Second line " & LF &
@@ -2856,17 +2856,17 @@ begin
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "header", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, CONSOLE_ONLY);
 
 
-    elsif GC_TEST = "log_to_file" then
+    elsif GC_TESTCASE = "log_to_file" then
       log(ID_LOG_HDR, "Test of log with specified destination");
       -- Test of log function with output destination specified
       log(ID_SEQUENCER, "Line to console and log", C_SCOPE, shared_msg_id_panel, CONSOLE_AND_LOG);
       log(ID_SEQUENCER, "Line to log only ", C_SCOPE, shared_msg_id_panel, LOG_ONLY);
       log(ID_SEQUENCER, "Line to console only", C_SCOPE, shared_msg_id_panel, CONSOLE_ONLY);
-      log(ID_SEQUENCER, "Line to specified file only", C_SCOPE, shared_msg_id_panel, LOG_ONLY, GC_TEST & "_file1.txt", write_mode);
+      log(ID_SEQUENCER, "Line to specified file only", C_SCOPE, shared_msg_id_panel, LOG_ONLY, GC_TESTCASE & "_file1.txt", write_mode);
       --join(output_path(runner_cfg), "file1.txt"), write_mode);
-      log(ID_SEQUENCER, "Line to specified file and console", C_SCOPE, shared_msg_id_panel, CONSOLE_AND_LOG, GC_TEST & "_file2.txt", write_mode);
+      log(ID_SEQUENCER, "Line to specified file and console", C_SCOPE, shared_msg_id_panel, CONSOLE_AND_LOG, GC_TESTCASE & "_file2.txt", write_mode);
       --join(output_path(runner_cfg), "file2.txt"), write_mode);
-      log(ID_SEQUENCER, "Line to specified file and console, append", C_SCOPE, shared_msg_id_panel, CONSOLE_AND_LOG, GC_TEST & "_file2.txt", append_mode);
+      log(ID_SEQUENCER, "Line to specified file and console, append", C_SCOPE, shared_msg_id_panel, CONSOLE_AND_LOG, GC_TESTCASE & "_file2.txt", append_mode);
       --join(output_path(runner_cfg), "file2.txt"), append_mode);
       set_log_destination(CONSOLE_ONLY);
       log(ID_SEQUENCER, "Line to console only", C_SCOPE);
@@ -2882,7 +2882,7 @@ begin
       increment_expected_alerts(TB_ERROR, 2);
 
 
-    elsif GC_TEST = "log_header_formatting" then
+    elsif GC_TESTCASE = "log_header_formatting" then
       -- Test of log headers
       log(ID_SEQUENCER, "Normal line");
       log(ID_SEQUENCER, "Normal line");
@@ -2897,7 +2897,7 @@ begin
       log(ID_SEQUENCER, "Normal line");
 
 
-    elsif GC_TEST = "ignored_alerts" then
+    elsif GC_TESTCASE = "ignored_alerts" then
       -- Test of ignored alert
       log(ID_LOG_HDR, "Testing alert_level NO_ALERT and related functions");
       alert(NO_ALERT, "This alert shall not cause simulation stop, nor be visible in the transcript", C_SCOPE);
@@ -2918,7 +2918,7 @@ begin
       check_value(get_alert_stop_limit(TB_FAILURE) = (v_alert_stop_limit+1), TB_ERROR, "Verifying that TB_WARNING alert stop limit was incremented", C_SCOPE);
       check_value(true = false, TB_FAILURE, "Cause TB_FAILURE trigger", C_SCOPE);
 
-    elsif GC_TEST = "hierarchical_alerts" then
+    elsif GC_TESTCASE = "hierarchical_alerts" then
       -- Hierarchy linked list pkg
       --------------------------------------------------------------------------------------
 
@@ -3393,7 +3393,7 @@ begin
       --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
       --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-    elsif GC_TEST = "setting_output_file_name" then
+    elsif GC_TESTCASE = "setting_output_file_name" then
       log(ID_LOG_HDR, "Testing runtime setting of output file", C_SCOPE);
 
       log("Setting output file");
@@ -3401,8 +3401,8 @@ begin
         increment_expected_alerts(warning, 2);
       end if;
 
-      set_log_file_name(GC_TEST & "_testLog2.txt");
-      set_alert_file_name(GC_TEST & "_alertLog2.txt");
+      set_log_file_name(GC_TESTCASE & "_testLog2.txt");
+      set_alert_file_name(GC_TESTCASE & "_alertLog2.txt");
       --set_log_file_name(join(output_path(runner_cfg), "testLog2.txt"));
       --set_alert_file_name(join(output_path(runner_cfg), "alertLog2.txt"));
 
@@ -3411,15 +3411,15 @@ begin
       increment_expected_alerts(TB_WARNING);
       alert(TB_WARNING, "This alert should be written to alertLog2.txt");
 
-      set_log_file_name(GC_TEST & "_testLog3.txt", ID_SEQUENCER);
-      set_alert_file_name(GC_TEST & "_alertLog3.txt", ID_SEQUENCER);
+      set_log_file_name(GC_TESTCASE & "_testLog3.txt", ID_SEQUENCER);
+      set_alert_file_name(GC_TESTCASE & "_alertLog3.txt", ID_SEQUENCER);
       --set_log_file_name(join(output_path(runner_cfg), "testLog3.txt"), ID_SEQUENCER);
       --set_alert_file_name(join(output_path(runner_cfg), "alertLog3.txt"), ID_SEQUENCER);
 
-      set_log_file_name(GC_TEST & "_Log.txt");
-      set_alert_file_name(GC_TEST & "_Alert.txt"); 
+      set_log_file_name(GC_TESTCASE & "_Log.txt");
+      set_alert_file_name(GC_TESTCASE & "_Alert.txt"); 
 
-    elsif GC_TEST = "synchronization_methods" then
+    elsif GC_TESTCASE = "synchronization_methods" then
       log(ID_LOG_HDR, "Testing await_unblock_flag with KEEP_UNBLOCKED.", C_SCOPE);
       --1. Enable process p_sync_test and wait for flag to be blocked
       p_sync_test_ena <= true;
@@ -3449,7 +3449,7 @@ begin
         block_flag("FLAG_" & to_string(i), "");
       end loop;
 
-    elsif GC_TEST = "watchdog_timer" then
+    elsif GC_TESTCASE = "watchdog_timer" then
       wait for 7999 ns;
       log(ID_LOG_HDR, "Testing watchdog timer A (8100 ns) - terminate command", C_SCOPE);
       terminate_watchdog(watchdog_ctrl_terminate);
@@ -3489,14 +3489,14 @@ begin
       log(ID_SEQUENCER, "Watchdog D still running", C_SCOPE);
       increment_expected_alerts(error);
       wait for 1 ns;
-    elsif GC_TEST = "optional_alert_level" then
-        -- This GC_TEST contains duplicates of the testcases for:
-        --      GC_TEST = check_value
-        --      GC_TEST = check_value_in_range 
-        --      GC_TEST = check_stable 
-        --      GC_TEST = await_change 
-        --      GC_TEST = await_value 
-        --      GC_TEST = await_stable 
+    elsif GC_TESTCASE = "optional_alert_level" then
+        -- This GC_TESTCASE contains duplicates of the testcases for:
+        --      GC_TESTCASE = check_value
+        --      GC_TESTCASE = check_value_in_range 
+        --      GC_TESTCASE = check_stable 
+        --      GC_TESTCASE = await_change 
+        --      GC_TESTCASE = await_value 
+        --      GC_TESTCASE = await_stable 
         -- with all testcases called without alert_level parameter. 
         -- Update date (20/03/20). 
 

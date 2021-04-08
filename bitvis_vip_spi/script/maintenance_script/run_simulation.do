@@ -51,7 +51,7 @@ if { [info exists 6] } {
 }
 
 
-echo "vsim -gGC_TEST=$run_test $library.$testbench"
-vsim -gGC_TEST=$run_test -gGC_SPI_MODE=$spi_mode -gGC_DATA_WIDTH=$data_width -gGC_DATA_ARRAY_WIDTH=$data_array_width $library.$testbench
+echo "vsim -gGC_TESTCASE=$run_test $library.$testbench"
+vsim -gGC_TESTCASE=$run_test -gGC_SPI_MODE=$spi_mode -gGC_DATA_WIDTH=$data_width -gGC_DATA_ARRAY_WIDTH=$data_array_width $library.$testbench
 
 run -all

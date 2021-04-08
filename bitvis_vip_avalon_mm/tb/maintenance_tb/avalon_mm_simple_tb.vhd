@@ -25,10 +25,11 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
+--hdlunit:tb
 -- Test case entity
 entity avalon_mm_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -137,8 +138,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
                                                                 -- set up our avalon_mm config - could be different than default config in BFM
     avalon_mm_bfm_config.clock_period             := C_CLK_PERIOD;  -- same clock period for BFM as

@@ -74,6 +74,6 @@ if { [info exists 9] } {
 }
 
 
-vsim -gGC_TEST=$run_test -gGC_DATA_WIDTH=$data_width -gGC_USER_WIDTH=$user_width -gGC_ID_WIDTH=$id_width -gGC_DEST_WIDTH=$dest_width -gGC_INCLUDE_TUSER=$include_tuser -gGC_USE_SETUP_AND_HOLD=$use_setup_and_hold $library.$testbench
+vsim -gGC_TESTCASE=$run_test -gGC_DATA_WIDTH=$data_width -gGC_USER_WIDTH=$user_width -gGC_ID_WIDTH=$id_width -gGC_DEST_WIDTH=$dest_width -gGC_INCLUDE_TUSER=$include_tuser -gGC_USE_SETUP_AND_HOLD=$use_setup_and_hold $library.$testbench
 
 run -all

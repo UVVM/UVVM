@@ -37,6 +37,7 @@ use bitvis_vip_uart.td_vvc_framework_common_methods_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
+-- hdlunit:tb
 -- Test bench entity
 entity uart_vvc_demo_tb is
 end entity uart_vvc_demo_tb;

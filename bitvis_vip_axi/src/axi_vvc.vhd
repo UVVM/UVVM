@@ -499,23 +499,35 @@ begin
       -- Set vvc transaction info
       set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      read_address_channel_write(arid_value         => v_normalized_arid,
-                                  araddr_value       => v_normalized_araddr,
-                                  arlen_value        => v_cmd.len,
-                                  arsize_value       => v_cmd.size,
-                                  arburst_value      => v_cmd.burst,
-                                  arlock_value       => v_cmd.lock,
-                                  arcache_value      => v_cmd.cache,
-                                  arprot_value       => v_cmd.prot,
-                                  arqos_value        => v_cmd.qos,
-                                  arregion_value     => v_cmd.region,
-                                  aruser_value       => v_cmd.auser,
-                                  msg                => format_msg(v_cmd),
-                                  clk                => clk,
-                                  read_addr_channel  => axi_vvc_master_if.read_address_channel,
-                                  scope              => C_CHANNEL_SCOPE,
-                                  msg_id_panel       => v_msg_id_panel,
-                                  config             => vvc_config.bfm_config);
+      read_address_channel_write(arid_value     => v_normalized_arid,
+                                 araddr_value   => v_normalized_araddr,
+                                 arlen_value    => v_cmd.len,
+                                 arsize_value   => v_cmd.size,
+                                 arburst_value  => v_cmd.burst,
+                                 arlock_value   => v_cmd.lock,
+                                 arcache_value  => v_cmd.cache,
+                                 arprot_value   => v_cmd.prot,
+                                 arqos_value    => v_cmd.qos,
+                                 arregion_value => v_cmd.region,
+                                 aruser_value   => v_cmd.auser,
+                                 msg            => format_msg(v_cmd),
+                                 clk            => clk,
+                                 arid           => axi_vvc_master_if.read_address_channel.arid,
+                                 araddr         => axi_vvc_master_if.read_address_channel.araddr,
+                                 arlen          => axi_vvc_master_if.read_address_channel.arlen,
+                                 arsize         => axi_vvc_master_if.read_address_channel.arsize,
+                                 arburst        => axi_vvc_master_if.read_address_channel.arburst,
+                                 arlock         => axi_vvc_master_if.read_address_channel.arlock,
+                                 arcache        => axi_vvc_master_if.read_address_channel.arcache,
+                                 arprot         => axi_vvc_master_if.read_address_channel.arprot,
+                                 arqos          => axi_vvc_master_if.read_address_channel.arqos,
+                                 arregion       => axi_vvc_master_if.read_address_channel.arregion,
+                                 aruser         => axi_vvc_master_if.read_address_channel.aruser,
+                                 arvalid        => axi_vvc_master_if.read_address_channel.arvalid,
+                                 arready        => axi_vvc_master_if.read_address_channel.arready,
+                                 scope          => C_CHANNEL_SCOPE,
+                                 msg_id_panel   => v_msg_id_panel,
+                                 config         => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -569,14 +581,20 @@ begin
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_data_channel_receive(read_result             => v_result,
-                                    read_data_queue         => v_read_data_queue,
-                                    msg                     => format_msg(v_cmd),
-                                    clk                     => clk,
-                                    read_data_channel       => axi_vvc_master_if.read_data_channel,
-                                    scope                   => C_CHANNEL_SCOPE,
-                                    msg_id_panel            => v_msg_id_panel,
-                                    config                  => vvc_config.bfm_config);
+          read_data_channel_receive(read_result     => v_result,
+                                    read_data_queue => v_read_data_queue,
+                                    msg             => format_msg(v_cmd),
+                                    clk             => clk,
+                                    rid             => axi_vvc_master_if.read_data_channel.rid,
+                                    rdata           => axi_vvc_master_if.read_data_channel.rdata,
+                                    rresp           => axi_vvc_master_if.read_data_channel.rresp,
+                                    rlast           => axi_vvc_master_if.read_data_channel.rlast,
+                                    ruser           => axi_vvc_master_if.read_data_channel.ruser,
+                                    rvalid          => axi_vvc_master_if.read_data_channel.rvalid,
+                                    rready          => axi_vvc_master_if.read_data_channel.rready,
+                                    scope           => C_CHANNEL_SCOPE,
+                                    msg_id_panel    => v_msg_id_panel,
+                                    config          => vvc_config.bfm_config);
 
           -- Looking for the correct response in the queue
           if v_normalized_rid'length > 0 then
@@ -613,15 +631,21 @@ begin
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_data_channel_receive(read_result             => v_result,
-                                    read_data_queue         => v_read_data_queue,
-                                    msg                     => format_msg(v_cmd),
-                                    clk                     => clk,
-                                    read_data_channel       => axi_vvc_master_if.read_data_channel,
-                                    scope                   => C_CHANNEL_SCOPE,
-                                    msg_id_panel            => v_msg_id_panel,
-                                    config                  => vvc_config.bfm_config,
-                                    ext_proc_call           => "read_data_channel_check");
+          read_data_channel_receive(read_result     => v_result,
+                                    read_data_queue => v_read_data_queue,
+                                    msg             => format_msg(v_cmd),
+                                    clk             => clk,
+                                    rid             => axi_vvc_master_if.read_data_channel.rid,
+                                    rdata           => axi_vvc_master_if.read_data_channel.rdata,
+                                    rresp           => axi_vvc_master_if.read_data_channel.rresp,
+                                    rlast           => axi_vvc_master_if.read_data_channel.rlast,
+                                    ruser           => axi_vvc_master_if.read_data_channel.ruser,
+                                    rvalid          => axi_vvc_master_if.read_data_channel.rvalid,
+                                    rready          => axi_vvc_master_if.read_data_channel.rready,
+                                    scope           => C_CHANNEL_SCOPE,
+                                    msg_id_panel    => v_msg_id_panel,
+                                    config          => vvc_config.bfm_config,
+                                    ext_proc_call   => "read_data_channel_check");
 
           -- Looking for the correct response in the queue
           if v_normalized_rid'length > 0 then
@@ -714,23 +738,35 @@ begin
       -- Set vvc transaction info
       set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      write_address_channel_write(awid_value         => v_normalized_awid,
-                                  awaddr_value       => v_normalized_awaddr,
-                                  awlen_value        => v_cmd.len,
-                                  awsize_value       => v_cmd.size,
-                                  awburst_value      => v_cmd.burst,
-                                  awlock_value       => v_cmd.lock,
-                                  awcache_value      => v_cmd.cache,
-                                  awprot_value       => v_cmd.prot,
-                                  awqos_value        => v_cmd.qos,
-                                  awregion_value     => v_cmd.region,
-                                  awuser_value       => v_cmd.auser,
-                                  msg                => format_msg(v_cmd),
-                                  clk                => clk,
-                                  write_addr_channel => axi_vvc_master_if.write_address_channel,
-                                  scope              => C_CHANNEL_SCOPE,
-                                  msg_id_panel       => v_msg_id_panel,
-                                  config             => vvc_config.bfm_config);
+      write_address_channel_write(awid_value      => v_normalized_awid,
+                                  awaddr_value    => v_normalized_awaddr,
+                                  awlen_value     => v_cmd.len,
+                                  awsize_value    => v_cmd.size,
+                                  awburst_value   => v_cmd.burst,
+                                  awlock_value    => v_cmd.lock,
+                                  awcache_value   => v_cmd.cache,
+                                  awprot_value    => v_cmd.prot,
+                                  awqos_value     => v_cmd.qos,
+                                  awregion_value  => v_cmd.region,
+                                  awuser_value    => v_cmd.auser,
+                                  msg             => format_msg(v_cmd),
+                                  clk             => clk,
+                                  awid            => axi_vvc_master_if.write_address_channel.awid,
+                                  awaddr          => axi_vvc_master_if.write_address_channel.awaddr,
+                                  awlen           => axi_vvc_master_if.write_address_channel.awlen,
+                                  awsize          => axi_vvc_master_if.write_address_channel.awsize,
+                                  awburst         => axi_vvc_master_if.write_address_channel.awburst,
+                                  awlock          => axi_vvc_master_if.write_address_channel.awlock,
+                                  awcache         => axi_vvc_master_if.write_address_channel.awcache,
+                                  awprot          => axi_vvc_master_if.write_address_channel.awprot,
+                                  awqos           => axi_vvc_master_if.write_address_channel.awqos,
+                                  awregion        => axi_vvc_master_if.write_address_channel.awregion,
+                                  awuser          => axi_vvc_master_if.write_address_channel.awuser,
+                                  awvalid         => axi_vvc_master_if.write_address_channel.awvalid,
+                                  awready         => axi_vvc_master_if.write_address_channel.awready,
+                                  scope           => C_CHANNEL_SCOPE,
+                                  msg_id_panel    => v_msg_id_panel,
+                                  config          => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -779,16 +815,21 @@ begin
       -- Set vvc transaction info
       set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      write_data_channel_write(wdata_value        => v_wdata_array_ptr.all,
-                               wstrb_value        => v_wstrb_array_ptr.all,
-                               wuser_value        => v_wuser_array_ptr.all,
-                               awlen_value        => v_cmd.len,
-                               msg                => format_msg(v_cmd),
-                               clk                => clk,
-                               write_data_channel => axi_vvc_master_if.write_data_channel,
-                               scope              => C_CHANNEL_SCOPE,
-                               msg_id_panel       => v_msg_id_panel,
-                               config             => vvc_config.bfm_config);
+      write_data_channel_write(wdata_value  => v_wdata_array_ptr.all,
+                               wstrb_value  => v_wstrb_array_ptr.all,
+                               wuser_value  => v_wuser_array_ptr.all,
+                               awlen_value  => v_cmd.len,
+                               msg          => format_msg(v_cmd),
+                               clk          => clk,
+                               wdata        => axi_vvc_master_if.write_data_channel.wdata,
+                               wstrb        => axi_vvc_master_if.write_data_channel.wstrb,
+                               wlast        => axi_vvc_master_if.write_data_channel.wlast,
+                               wuser        => axi_vvc_master_if.write_data_channel.wuser,
+                               wvalid       => axi_vvc_master_if.write_data_channel.wvalid,
+                               wready       => axi_vvc_master_if.write_data_channel.wready,
+                               scope        => C_CHANNEL_SCOPE,
+                               msg_id_panel => v_msg_id_panel,
+                               config       => vvc_config.bfm_config);
 
       deallocate(v_wdata_array_ptr);
       deallocate(v_wstrb_array_ptr);
@@ -840,16 +881,20 @@ begin
       -- Set vvc transaction info
       set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Receiving a write response
-      write_response_channel_receive(bid_value          => v_bid_value,
-                                     bresp_value        => v_bresp_value,
-                                     buser_value        => v_buser_value,
-                                     msg                => format_msg(v_cmd),
-                                     clk                => clk,
-                                     write_resp_channel => axi_vvc_master_if.write_response_channel,
-                                     alert_level        => error,
-                                     scope              => C_CHANNEL_SCOPE,
-                                     msg_id_panel       => v_msg_id_panel,
-                                     config             => vvc_config.bfm_config);
+      write_response_channel_receive(bid_value    => v_bid_value,
+                                     bresp_value  => v_bresp_value,
+                                     buser_value  => v_buser_value,
+                                     msg          => format_msg(v_cmd),
+                                     clk          => clk,
+                                     bid          => axi_vvc_master_if.write_response_channel.bid,
+                                     bresp        => axi_vvc_master_if.write_response_channel.bresp,
+                                     buser        => axi_vvc_master_if.write_response_channel.buser,
+                                     bvalid       => axi_vvc_master_if.write_response_channel.bvalid,
+                                     bready       => axi_vvc_master_if.write_response_channel.bready,
+                                     alert_level  => error,
+                                     scope        => C_CHANNEL_SCOPE,
+                                     msg_id_panel => v_msg_id_panel,
+                                     config       => vvc_config.bfm_config);
 
       -- Looking for the correct response in the queue
       if v_normalized_bid'length > 0 then

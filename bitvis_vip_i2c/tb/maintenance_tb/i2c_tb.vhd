@@ -42,9 +42,10 @@ context bitvis_vip_sbi.vvc_context;
 
 -------------------------------------------------------------------------------
 
+--hdlunit:tb
 entity i2c_vvc_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity i2c_vvc_tb;
 
@@ -735,8 +736,8 @@ begin  -- architecture behav
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- increment_expected_alerts(TB_WARNING, 1); -- Expecting truncated timestamp warning
 
@@ -788,7 +789,7 @@ begin  -- architecture behav
     end loop;
 
 
-    if GC_TEST = "master_to_slave_VVC-to-VVC_7_bit_addressing" then
+    if GC_TESTCASE = "master_to_slave_VVC-to-VVC_7_bit_addressing" then
       -- Test await_any_completion (just to check that VVC handles the call)
       await_any_completion(WISHBONE_VVCT, 0, NOT_LAST, 1 ms);
       await_any_completion(I2C_VVCT, 0, NOT_LAST, 1 ms);
@@ -817,7 +818,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 1, 50 ms);
 
 
-    elsif GC_TEST = "slave_to_master_VVC-to-VVC_7_bit_addressing" then
+    elsif GC_TESTCASE = "slave_to_master_VVC-to-VVC_7_bit_addressing" then
       for iteration in 0 to 100 loop
         v_rx_byte := random(C_I2C_DATA_WIDTH);
         -- Master needs to act first to avoid problem with master pulling down SDA
@@ -828,7 +829,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 1, 50 ms);
       await_completion(I2C_VVCT, 0, 50 ms);
 
-    elsif GC_TEST = "master_to_slave_VVC-to-VVC_10_bit_addressing" then
+    elsif GC_TESTCASE = "master_to_slave_VVC-to-VVC_10_bit_addressing" then
       -- There is only one interface, so transmission goes from Master to Slave or Slave to Master
       for iteration in 0 to 100 loop
         v_tx_byte := random(C_I2C_DATA_WIDTH);
@@ -840,7 +841,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 5, 50 ms);
       await_completion(I2C_VVCT, 4, 50 ms);
 
-    elsif GC_TEST = "slave_to_master_VVC-to-VVC_10_bit_addressing" then
+    elsif GC_TESTCASE = "slave_to_master_VVC-to-VVC_10_bit_addressing" then
       for iteration in 0 to 100 loop
         v_rx_byte := random(C_I2C_DATA_WIDTH);
         -- Master needs to act first to avoid problem with master pulling down SDA
@@ -851,7 +852,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 1, 50 ms);
       await_completion(I2C_VVCT, 0, 50 ms);
 
-    elsif GC_TEST = "single-byte_communication_with_master_dut" then
+    elsif GC_TESTCASE = "single-byte_communication_with_master_dut" then
       -- -- **************** Simulation using an OpenCores I2C master **************************
       transmit_single_byte_from_i2c_master_dut_to_vvc(WISHBONE_VVCT, I2C_VVCT, x"55");
 
@@ -871,7 +872,7 @@ begin  -- architecture behav
         transmit_single_byte_from_vvc_to_i2c_master_dut(WISHBONE_VVCT, I2C_VVCT, v_tx_byte);
       end loop;
 
-    elsif GC_TEST = "single-byte_communication_with_single_slave_dut" then
+    elsif GC_TESTCASE = "single-byte_communication_with_single_slave_dut" then
       -- **************** Simulation using a GitHub I2C slave ***************************
       transmit_single_byte_from_i2c_slave_dut_to_vvc(SBI_VVCT, I2C_VVCT, x"55");
       transmit_single_byte_from_i2c_slave_dut_to_vvc(SBI_VVCT, I2C_VVCT, x"AA");
@@ -891,7 +892,7 @@ begin  -- architecture behav
         transmit_single_byte_from_vvc_to_i2c_slave_dut(SBI_VVCT, I2C_VVCT, v_tx_byte);
       end loop;
 
-    elsif GC_TEST = "single-byte_communication_with_multiple_slave_duts" then
+    elsif GC_TESTCASE = "single-byte_communication_with_multiple_slave_duts" then
       -- -- *************** Simulation with multiple slaves *******************************
       -- Increment expected warnings by 60 since we are using reserved addresses for the
       -- DUTs
@@ -900,19 +901,19 @@ begin  -- architecture behav
       transmit_random_data_from_vvc_master_to_multiple_slave_duts(SBI_VVCT, I2C_VVCT);
       transmit_random_data_from_multiple_slave_duts_to_vvc_master(SBI_VVCT, I2C_VVCT);
 
-    elsif GC_TEST = "multi-byte_transmit_to_i2c_master_dut" then
+    elsif GC_TESTCASE = "multi-byte_transmit_to_i2c_master_dut" then
       transmit_multi_byte_from_vvc_to_i2c_master_dut(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "multi-byte_receive_from_i2c_master_dut" then
+    elsif GC_TESTCASE = "multi-byte_receive_from_i2c_master_dut" then
       transmit_multi_byte_from_i2c_master_dut_to_vvc(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "multi-byte_transmit_to_i2c_slave_dut" then
+    elsif GC_TESTCASE = "multi-byte_transmit_to_i2c_slave_dut" then
       transmit_multi_byte_from_vvc_to_i2c_slave_dut(SBI_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "multi-byte_receive_from_i2c_slave_dut" then
+    elsif GC_TESTCASE = "multi-byte_receive_from_i2c_slave_dut" then
       transmit_multi_byte_from_i2c_slave_dut_to_vvc(SBI_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "multi-byte_receive_from_i2c_slave_VVC-to-VVC" then
+    elsif GC_TESTCASE = "multi-byte_receive_from_i2c_slave_VVC-to-VVC" then
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type    := TIME_START2START;
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_in_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time * 11 * (v_byte_array'length + 1);
@@ -924,7 +925,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 1, 50 ms);
       await_completion(I2C_VVCT, 0, 50 ms);
 
-    elsif GC_TEST = "multi-byte_transaction_with_i2c_master_dut_with_repeated_start_conditions" then
+    elsif GC_TESTCASE = "multi-byte_transaction_with_i2c_master_dut_with_repeated_start_conditions" then
       -- master dut writes to a slave with a data byte. We pretend that the data byte is an address for a register inside our virtual slave.
       -- no stop condition is generated.
       -- The master then requests data from the slave at that same address.
@@ -932,20 +933,20 @@ begin  -- architecture behav
       -- the master generates a stop condition
       master_dut_to_vvc_read_virtual_memory_location(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "single-byte_communication_with_multiple_slave_duts_without_stop_condition_in_between" then
+    elsif GC_TESTCASE = "single-byte_communication_with_multiple_slave_duts_without_stop_condition_in_between" then
       -- Increment expected warnings by 30 since we are using reserved addresses for the
       -- DUTs
       increment_expected_alerts(warning, 36);
       transmit_random_data_from_vvc_master_to_multiple_slave_duts_without_stop_in_between(SBI_VVCT, I2C_VVCT);
       vvc_to_slave_dut_read_virtual_memory_location(SBI_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "multi-byte_transmit_to_i2c_master_dut_10_bit_addressing" then
+    elsif GC_TESTCASE = "multi-byte_transmit_to_i2c_master_dut_10_bit_addressing" then
       transmit_multi_byte_from_vvc_to_i2c_master_dut_10_bit_addressing(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "multi-byte_receive_from_i2c_master_dut_10_bit_addressing" then
+    elsif GC_TESTCASE = "multi-byte_receive_from_i2c_master_dut_10_bit_addressing" then
       transmit_multi_byte_from_i2c_master_dut_to_vvc_10_bit_addressing(WISHBONE_VVCT, I2C_VVCT, v_byte_array);
 
-    elsif GC_TEST = "receive_and_fetch_result" then
+    elsif GC_TESTCASE = "receive_and_fetch_result" then
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type    := TIME_START2START;
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_in_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time * 11 * (v_byte_array'length + 1);
@@ -966,7 +967,7 @@ begin  -- architecture behav
       fetch_result(I2C_VVCT, 0, NA, 14, v_result_from_fetch, v_fetch_is_accepted);  -- will trigger tb_warning since cmd_idx has not been executed yet
       check_value(not v_fetch_is_accepted, error, "Verifying fetch is not accepted", C_TB_SCOPE_DEFAULT);
 
-    elsif GC_TEST = "multi-byte-send-and-receive-with-restart" then
+    elsif GC_TESTCASE = "multi-byte-send-and-receive-with-restart" then
       log(ID_LOG_HDR, "Checking multi-byte read/write between master and slave with restart condition", C_TB_SCOPE_DEFAULT);
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type := NO_DELAY;
@@ -989,7 +990,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 0, 50 ms);
       await_completion(I2C_VVCT, 1, 50 ms);
 
-    elsif GC_TEST = "master-slave-vvc-quick-command" then
+    elsif GC_TESTCASE = "master-slave-vvc-quick-command" then
       log(ID_LOG_HDR, "Checking Quick Command between VVCs", C_TB_SCOPE_DEFAULT);
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type := NO_DELAY;
@@ -1005,7 +1006,7 @@ begin  -- architecture behav
       await_completion(I2C_VVCT, 0, 50 ms);
       await_completion(I2C_VVCT, 1, 50 ms);
 
-    elsif GC_TEST = "master_quick_cmd_I2C_7bit_dut_test" then
+    elsif GC_TESTCASE = "master_quick_cmd_I2C_7bit_dut_test" then
       log(ID_LOG_HDR, "Checking Quick Command as pinging of slave", C_TB_SCOPE_DEFAULT);
 
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type := NO_DELAY;
@@ -1031,7 +1032,7 @@ begin  -- architecture behav
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '1');
       await_completion(I2C_VVCT, 3, 50 ms);
 
-    elsif GC_TEST = "scoreboard_test" then
+    elsif GC_TESTCASE = "scoreboard_test" then
       log(ID_LOG_HDR, "Checking internal scoreboard", C_TB_SCOPE_DEFAULT);
       -- Need higher inter-bfm delay for multi-byte
       shared_i2c_vvc_config(0).inter_bfm_delay.delay_type    := TIME_START2START;
@@ -1057,7 +1058,7 @@ begin  -- architecture behav
       I2C_VVC_SB.report_counters(ALL_INSTANCES);
 
     else
-      alert(tb_error, "Unsupported test " & GC_TEST);
+      alert(tb_error, "Unsupported test " & GC_TESTCASE);
     end if;
 
     -- ****************** Simulation with multiple slave DUTs and a SLAVE VVC. *************

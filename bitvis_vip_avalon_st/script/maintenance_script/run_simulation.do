@@ -49,6 +49,6 @@ if { [info exists 6] } {
 
 
 
-vsim -gGC_TEST=$run_test -gGC_CHANNEL_WIDTH=$channel_width -gGC_DATA_WIDTH=$data_width -gGC_ERROR_WIDTH=$error_width $library.$testbench
+vsim -gGC_TESTCASE=$run_test -gGC_CHANNEL_WIDTH=$channel_width -gGC_DATA_WIDTH=$data_width -gGC_ERROR_WIDTH=$error_width $library.$testbench
 
 run -all

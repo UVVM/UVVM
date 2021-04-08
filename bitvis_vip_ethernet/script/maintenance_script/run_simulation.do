@@ -35,6 +35,6 @@ if { [info exists 4] } {
   unset 4
 }
 
-vsim -gGC_TEST=$run_test -gGC_DATA_WIDTH=$data_width $library.$testbench
+vsim -gGC_TESTCASE=$run_test -gGC_DATA_WIDTH=$data_width $library.$testbench
 
 run -all

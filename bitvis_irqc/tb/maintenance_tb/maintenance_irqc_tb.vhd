@@ -29,11 +29,11 @@ use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 use work.irqc_pif_pkg.all;
 
-
+--hdlunit:tb
 -- Test case entity
 entity irqc_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -165,8 +165,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);

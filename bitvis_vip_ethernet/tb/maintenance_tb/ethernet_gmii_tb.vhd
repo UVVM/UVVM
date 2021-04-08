@@ -30,11 +30,11 @@ context bitvis_vip_gmii.vvc_context;
 library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.vvc_context;
 
-
+--hdlunit:tb
 -- Test case entity
 entity ethernet_gmii_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
   );
 end entity ethernet_gmii_tb;
 
@@ -109,8 +109,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);

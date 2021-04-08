@@ -24,11 +24,11 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_st;
 use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 
-
+--hdlunit:tb
 -- Test case entity
 entity avalon_st_bfm_tb is
   generic(
-    GC_TEST          : string  := "UVVM";
+    GC_TESTCASE      : string  := "UVVM";
     GC_DATA_WIDTH    : natural := 32;
     GC_CHANNEL_WIDTH : natural := 8;
     GC_ERROR_WIDTH   : natural := 1
@@ -152,8 +152,8 @@ begin
   begin
 
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Override default config with settings for this testbench
     v_avl_st_bfm_config.symbol_width := C_SYMBOL_WIDTH;
@@ -175,7 +175,7 @@ begin
     wait for 10*C_CLK_PERIOD;
 
 
-    if GC_TEST = "test_packet_data" then
+    if GC_TESTCASE = "test_packet_data" then
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR_LARGE, "Simulating packet-based data");
       ----------------------------------------------------------------------------------------------------------------------------
@@ -276,7 +276,7 @@ begin
       avalon_st_transmit(v_data_packet, 1);
       avalon_st_expect(v_data_packet, 5);
 
-    elsif GC_TEST = "test_stream_data" then
+    elsif GC_TESTCASE = "test_stream_data" then
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet)");
       ----------------------------------------------------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ begin
       avalon_st_transmit(v_data_stream, 1);
       avalon_st_expect(v_data_stream, 5);
 
-    elsif GC_TEST = "test_setup_and_hold_times" then
+    elsif GC_TESTCASE = "test_setup_and_hold_times" then
       v_avl_st_bfm_config.clock_period        := C_CLK_PERIOD;
       v_avl_st_bfm_config.setup_time          := C_CLK_PERIOD/4;
       v_avl_st_bfm_config.hold_time           := C_CLK_PERIOD/4;

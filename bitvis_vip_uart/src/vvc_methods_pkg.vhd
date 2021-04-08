@@ -285,7 +285,6 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.operation           := TRANSMIT;
     shared_vvc_cmd.data                := v_normalised_data;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
@@ -313,7 +312,6 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.operation           := TRANSMIT;
     -- Randomisation specific
     shared_vvc_cmd.randomisation       := randomisation;
     shared_vvc_cmd.num_words           := num_words;
@@ -344,7 +342,6 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, RECEIVE);
-    shared_vvc_cmd.operation           := RECEIVE;
     shared_vvc_cmd.alert_level         := alert_level;
     shared_vvc_cmd.data_routing        := data_routing;
     shared_vvc_cmd.parent_msg_id_panel := parent_msg_id_panel;
@@ -390,7 +387,6 @@ package body vvc_methods_pkg is
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
-    shared_vvc_cmd.operation      := EXPECT;
     shared_vvc_cmd.data           := v_normalised_data;
     shared_vvc_cmd.alert_level    := alert_level;
     shared_vvc_cmd.max_receptions := max_receptions;
@@ -502,7 +498,7 @@ package body vvc_methods_pkg is
   ) is
   begin
     if probability /= -1.0 then
-      check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0.", scope);
+      check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0.", scope, ID_NEVER);
 
       -- Raise a TB_WARNING only once if there is a conflict between VVC and BFM setting
       if not(has_raised_warning_if_vvc_bfm_conflict) and bfm_configured_error_injection_setting and probability < 1.0 then

@@ -454,13 +454,16 @@ begin
           -- Set vvc transaction info
           set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_address_channel_write(araddr_value       => std_logic_vector(v_normalised_addr),
-                                     msg                => format_msg(v_cmd),
-                                     clk                => clk,
-                                     read_addr_channel  => axilite_vvc_master_if.read_address_channel,
-                                     scope              => C_CHANNEL_SCOPE,
-                                     msg_id_panel       => v_msg_id_panel,
-                                     config             => vvc_config.bfm_config);
+          read_address_channel_write(araddr_value => std_logic_vector(v_normalised_addr),
+                                     msg          => format_msg(v_cmd),
+                                     clk          => clk,
+                                     araddr       => axilite_vvc_master_if.read_address_channel.araddr,
+                                     arvalid      => axilite_vvc_master_if.read_address_channel.arvalid,
+                                     arprot       => axilite_vvc_master_if.read_address_channel.arprot,
+                                     arready      => axilite_vvc_master_if.read_address_channel.arready,
+                                     scope        => C_CHANNEL_SCOPE,
+                                     msg_id_panel => v_msg_id_panel,
+                                     config       => vvc_config.bfm_config);
 
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
@@ -512,13 +515,16 @@ begin
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_data_channel_receive(rdata_value       => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                                    msg               => format_msg(v_cmd),
-                                    clk               => clk,
-                                    read_data_channel => axilite_vvc_master_if.read_data_channel,
-                                    scope             => C_CHANNEL_SCOPE,
-                                    msg_id_panel      => v_msg_id_panel,
-                                    config            => vvc_config.bfm_config);
+          read_data_channel_receive(rdata_value  => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                                    msg          => format_msg(v_cmd),
+                                    clk          => clk,
+                                    rready       => axilite_vvc_master_if.read_data_channel.rready,
+                                    rdata        => axilite_vvc_master_if.read_data_channel.rdata,
+                                    rresp        => axilite_vvc_master_if.read_data_channel.rresp,
+                                    rvalid       => axilite_vvc_master_if.read_data_channel.rvalid,
+                                    scope        => C_CHANNEL_SCOPE,
+                                    msg_id_panel => v_msg_id_panel,
+                                    config       => vvc_config.bfm_config);
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
@@ -534,14 +540,17 @@ begin
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_data_channel_check(rdata_exp           => v_normalised_data,
-                                  msg                 => format_msg(v_cmd),
-                                  clk                 => clk,
-                                  read_data_channel   => axilite_vvc_master_if.read_data_channel,
-                                  alert_level         => v_cmd.alert_level,
-                                  scope               => C_CHANNEL_SCOPE,
-                                  msg_id_panel        => v_msg_id_panel,
-                                  config              => vvc_config.bfm_config);
+          read_data_channel_check(rdata_exp    => v_normalised_data,
+                                  msg          => format_msg(v_cmd),
+                                  clk          => clk,
+                                  rready       => axilite_vvc_master_if.read_data_channel.rready,
+                                  rdata        => axilite_vvc_master_if.read_data_channel.rdata,
+                                  rresp        => axilite_vvc_master_if.read_data_channel.rresp,
+                                  rvalid       => axilite_vvc_master_if.read_data_channel.rvalid,
+                                  alert_level  => v_cmd.alert_level,
+                                  scope        => C_CHANNEL_SCOPE,
+                                  msg_id_panel => v_msg_id_panel,
+                                  config       => vvc_config.bfm_config);
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
@@ -585,13 +594,16 @@ begin
       -- Set vvc transaction info
       set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      write_address_channel_write(awaddr_value      => std_logic_vector(v_normalised_addr),
-                                  msg                => format_msg(v_cmd),
-                                  clk                => clk,
-                                  write_addr_channel => axilite_vvc_master_if.write_address_channel,
-                                  scope              => C_CHANNEL_SCOPE,
-                                  msg_id_panel       => v_msg_id_panel,
-                                  config             => vvc_config.bfm_config);
+      write_address_channel_write(awaddr_value  => std_logic_vector(v_normalised_addr),
+                                  msg           => format_msg(v_cmd),
+                                  clk           => clk,
+                                  awaddr        => axilite_vvc_master_if.write_address_channel.awaddr,
+                                  awvalid       => axilite_vvc_master_if.write_address_channel.awvalid,
+                                  awprot        => axilite_vvc_master_if.write_address_channel.awprot,
+                                  awready       => axilite_vvc_master_if.write_address_channel.awready,
+                                  scope         => C_CHANNEL_SCOPE,
+                                  msg_id_panel  => v_msg_id_panel,
+                                  config        => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -631,14 +643,17 @@ begin
       -- Set vvc transaction info
       set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      write_data_channel_write(wdata_value        => v_normalised_data,
-                               wstrb_value        => v_cmd.byte_enable((GC_DATA_WIDTH/8-1) downto 0),
-                               msg                => format_msg(v_cmd),
-                               clk                => clk,
-                               write_data_channel => axilite_vvc_master_if.write_data_channel,
-                               scope              => C_CHANNEL_SCOPE,
-                               msg_id_panel       => v_msg_id_panel,
-                               config             => vvc_config.bfm_config);
+      write_data_channel_write(wdata_value  => v_normalised_data,
+                               wstrb_value  => v_cmd.byte_enable((GC_DATA_WIDTH/8-1) downto 0),
+                               msg          => format_msg(v_cmd),
+                               clk          => clk,
+                               wdata        => axilite_vvc_master_if.write_data_channel.wdata,
+                               wstrb        => axilite_vvc_master_if.write_data_channel.wstrb,
+                               wvalid       => axilite_vvc_master_if.write_data_channel.wvalid,
+                               wready       => axilite_vvc_master_if.write_data_channel.wready,
+                               scope        => C_CHANNEL_SCOPE,
+                               msg_id_panel => v_msg_id_panel,
+                               config       => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
       reset_w_vvc_transaction_info(vvc_transaction_info);
@@ -682,13 +697,15 @@ begin
       -- Set vvc transaction info
       set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Receiving a write response
-      write_response_channel_check(msg                => format_msg(v_cmd),
-                                    clk                => clk,
-                                    write_resp_channel => axilite_vvc_master_if.write_response_channel,
-                                    alert_level        => error,
-                                    scope              => C_CHANNEL_SCOPE,
-                                    msg_id_panel       => v_msg_id_panel,
-                                    config             => vvc_config.bfm_config);
+      write_response_channel_check(msg          => format_msg(v_cmd),
+                                   clk          => clk,
+                                   bready       => axilite_vvc_master_if.write_response_channel.bready,
+                                   bresp        => axilite_vvc_master_if.write_response_channel.bresp,
+                                   bvalid       => axilite_vvc_master_if.write_response_channel.bvalid,
+                                   alert_level  => error,
+                                   scope        => C_CHANNEL_SCOPE,
+                                   msg_id_panel => v_msg_id_panel,
+                                   config       => vvc_config.bfm_config);
 
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
       -- Set vvc transaction info back to default values

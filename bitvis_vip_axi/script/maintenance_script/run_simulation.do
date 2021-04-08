@@ -36,6 +36,6 @@ if { [info exists 4] } {
 }
 
 
-vsim -gGC_TEST=$run_test -gGC_DELTA_DELAYED_VVC_CLK=$generic1 $library.$testbench
+vsim -gGC_TESTCASE=$run_test -gGC_DELTA_DELAYED_VVC_CLK=$generic1 $library.$testbench
 
 run -all

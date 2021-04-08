@@ -37,10 +37,10 @@ context bitvis_vip_spi.vvc_context;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
-
+--hdlunit:tb
 entity spi_vvc_tb is
   generic (
-    GC_TEST             : string               := "UVVM";
+    GC_TESTCASE         : string               := "UVVM";
     GC_SPI_MODE         : natural range 0 to 3 := 0;
     GC_DATA_WIDTH       : positive             := 32;
     GC_DATA_ARRAY_WIDTH : positive             := 8
@@ -711,8 +711,8 @@ begin  -- architecture behav
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
 
@@ -736,7 +736,7 @@ begin  -- architecture behav
     powerup;
     randomize(GC_DATA_WIDTH, GC_DATA_WIDTH+10, "Setting global seeds");
 
-    if GC_TEST = "VVC-to-VVC" then
+    if GC_TESTCASE = "VVC-to-VVC" then
       -- configure single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -933,7 +933,7 @@ begin  -- architecture behav
 
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 0 ns;
 
-    elsif GC_TEST = "spi_master_dut_to_slave_VVC" then
+    elsif GC_TESTCASE = "spi_master_dut_to_slave_VVC" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1099,7 +1099,7 @@ begin  -- architecture behav
         end loop;
       end loop;
 
-    elsif GC_TEST = "spi_slave_vvc_to_master_dut" then
+    elsif GC_TESTCASE = "spi_slave_vvc_to_master_dut" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1147,7 +1147,7 @@ begin  -- architecture behav
         sbi_await_completion(50 ms);
       end if;
 
-    elsif GC_TEST = "spi_master_vvc_to_slave_dut" then
+    elsif GC_TESTCASE = "spi_master_vvc_to_slave_dut" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1187,7 +1187,7 @@ begin  -- architecture behav
         sbi_await_completion(50 ms);
       end if;
 
-    elsif GC_TEST = "spi_slave_dut_to_master_vvc" then
+    elsif GC_TESTCASE = "spi_slave_dut_to_master_vvc" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1256,7 +1256,7 @@ begin  -- architecture behav
       --
       -- Not posible with DUT
 
-    elsif GC_TEST = "scoreboard_test" then
+    elsif GC_TESTCASE = "scoreboard_test" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 

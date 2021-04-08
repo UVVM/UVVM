@@ -43,8 +43,11 @@ package types_pkg is
   subtype t_byte_array  is t_slv_array(open)(7 downto 0);
 
   -- Additions to predefined vector types
-  type natural_vector  is array (natural range <>) of natural;
-  type positive_vector is array (natural range <>) of positive;
+  type t_natural_vector is array (natural range <>) of natural;
+  type t_positive_vector is array (natural range <>) of positive;
+
+  alias natural_vector is t_natural_vector;
+  alias positive_vector is t_positive_vector;
 
   -- Note: Most types below have a matching to_string() in 'string_methods_pkg.vhd'
   type t_info_target is (LOG_INFO, ALERT_INFO, USER_INFO);

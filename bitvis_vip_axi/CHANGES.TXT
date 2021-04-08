@@ -1,6 +1,13 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
+v0.1.1
+----------
+Released: 2021-04-08
+- Fixed "bad handle or reference" fatal error that happened in some versions of Modelsim
+- Fixed bug in the log message in the axi_read BFM procedure
+- Fixed compilation error in Riviera Pro
+
 v0.1.0
 ----------
 Released: 2020-10-06

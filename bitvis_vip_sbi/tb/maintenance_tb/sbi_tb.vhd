@@ -27,10 +27,11 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
+--hdlunit:tb
 -- Test case entity
 entity sbi_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -49,13 +50,35 @@ architecture func of sbi_tb is
   constant C_ADDR_FIFO_MAX_COUNT      : unsigned := "101";
   constant C_DATA_DONTCARE            : std_logic_vector(7 downto 0) := x"00";
 
+  --------------------------------
+  -- SBI config
+  --------------------------------
+  constant C_ADDR_WIDTH_1 : integer := 8;
+  constant C_DATA_WIDTH_1 : integer := 8;
+  constant C_ADDR_WIDTH_2 : integer := 8;
+  constant C_DATA_WIDTH_2 : integer := 8;
+
+  signal sbi1_if      : t_sbi_if(addr(C_ADDR_WIDTH_1-1 downto 0), wdata(C_DATA_WIDTH_1-1 downto 0), rdata(C_DATA_WIDTH_1-1 downto 0));
+  signal sbi2_if      : t_sbi_if(addr(C_ADDR_WIDTH_2-1 downto 0), wdata(C_DATA_WIDTH_2-1 downto 0), rdata(C_DATA_WIDTH_2-1 downto 0));
+  signal clk          : std_logic;
+
 
 begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness generic map(GC_CLK_PERIOD => C_CLK_PERIOD);
+  i_test_harness : entity work.test_harness 
+    generic map(GC_CLK_PERIOD => C_CLK_PERIOD,
+                GC_ADDR_WIDTH_1 => C_ADDR_WIDTH_1,
+                GC_DATA_WIDTH_1 => C_DATA_WIDTH_1,
+                GC_ADDR_WIDTH_2 => C_ADDR_WIDTH_2,
+                GC_DATA_WIDTH_2 => C_DATA_WIDTH_2
+              )
+    port map( sbi_if_1 => sbi1_if, 
+              sbi_if_2 => sbi2_if,
+              clk      => clk
+            );
 
   i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
 
@@ -73,15 +96,13 @@ begin
       variable v_is_ok              : boolean := false;
       variable v_timestamp          : time;
 
-      alias clk     is << signal i_test_harness.clk      : std_logic >>;
-      alias sbi1_if is << signal i_test_harness.sbi_if_1 : t_sbi_if >>;
 
   begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
 
     await_uvvm_initialization(VOID);
@@ -122,7 +143,7 @@ begin
       --------------------------------------------------------------------------------------
       -- Verifying
       --------------------------------------------------------------------------------------
-    if GC_TEST = "simple_write_and_check" then
+    if GC_TESTCASE = "simple_write_and_check" then
       log(ID_LOG_HDR, "Test of simple write and check", C_SCOPE);
       --==========================================================================
 
@@ -136,7 +157,7 @@ begin
       sbi_check(SBI_VVCT,2, C_ADDR_FIFO_GET, x"AA", "Check GET data on FIFO 1", ERROR);
       await_completion(SBI_VVCT,1, 16 ns, "Await execution");
 
-    elsif GC_TEST = "simple_write_and_read" then
+    elsif GC_TESTCASE = "simple_write_and_read" then
       log(ID_LOG_HDR, "Test of simple write and read", C_SCOPE);
       --==========================================================================
       -- Write to FIFO
@@ -165,7 +186,7 @@ begin
 
       await_completion(SBI_VVCT,2, 100 ns, "Await execution");
 
-    elsif GC_TEST = "scoreboard_test" then
+    elsif GC_TESTCASE = "scoreboard_test" then
       log(ID_LOG_HDR, "Scoreboard test", C_SCOPE);
       --==========================================================================
       log("Write with both interfaces");
@@ -185,7 +206,7 @@ begin
 
       SBI_VVC_SB.report_counters(ALL_INSTANCES);
 
-    elsif GC_TEST = "test_of_poll_until" then
+    elsif GC_TESTCASE = "test_of_poll_until" then
       log(ID_LOG_HDR, "Test of poll until", C_SCOPE);
       --==========================================================================
 
@@ -216,7 +237,7 @@ begin
       await_completion(SBI_VVCT,1, 1000 ns, "Await execution");
       await_completion(SBI_VVCT,2, 1000 ns, "Await execution");
 
-    elsif GC_TEST = "extended_write_and_read" then
+    elsif GC_TESTCASE = "extended_write_and_read" then
       log(ID_LOG_HDR, "Test of write and read from other addresses on both VVCs", C_SCOPE);
       --==========================================================================
 
@@ -250,7 +271,7 @@ begin
       await_completion(SBI_VVCT,1, 1000 ns, "Await execution");
       await_completion(SBI_VVCT,2, 1000 ns, "Await execution");
 
-    elsif GC_TEST = "read_of_previous_value" then
+    elsif GC_TESTCASE = "read_of_previous_value" then
       -- Configure BFM clock_period for insert_delay() command in this test
       shared_sbi_vvc_config(1).bfm_config.clock_period      := C_CLK_PERIOD;
       shared_sbi_vvc_config(2).bfm_config.clock_period      := C_CLK_PERIOD;
@@ -296,7 +317,7 @@ begin
       shared_sbi_vvc_config(1).bfm_config.clock_period      := -1 ns;
       shared_sbi_vvc_config(2).bfm_config.clock_period      := -1 ns;
 
-    elsif GC_TEST = "read_of_executor_status_and_inter_bfm_delay" then
+    elsif GC_TESTCASE = "read_of_executor_status_and_inter_bfm_delay" then
       log(ID_LOG_HDR, "Test of reading executor status");
 
       log("current_cmd_idx: " & to_string(shared_sbi_vvc_status(1).current_cmd_idx));
@@ -367,7 +388,7 @@ begin
       shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
       shared_sbi_vvc_config(1).inter_bfm_delay.inter_bfm_delay_violation_severity := WARNING;
 
-    elsif GC_TEST = "distribution_of_vvc_commands" then
+    elsif GC_TESTCASE = "distribution_of_vvc_commands" then
       log(ID_LOG_HDR, "Check that commands are distributed to the correct VVC channel");
       -- Calling an invalid channel will yield a TB_WARNING from each of the UART channels
       -- We will also get another TB_WARNING from the timeout, related to having more decimals in the log time than we can display
@@ -379,7 +400,7 @@ begin
       insert_delay(SBI_VVCT, 42, C_CLK_PERIOD, "Inserting delay on SBI VVC 42, expecting tb error");
       log("Logging a message to provoke the tb warning due to truncated timestamp");
 
-    elsif GC_TEST = "vvc_broadcast_test" then
+    elsif GC_TESTCASE = "vvc_broadcast_test" then
       log(ID_LOG_HDR, "Check that commands are distributed to the correct VVC channel");
 
       enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
@@ -428,7 +449,7 @@ begin
 
       await_completion(SBI_VVCT,2, 1000 ns, "Await execution");
 
-    elsif GC_TEST = "vvc_setup_and_hold_time_test" then
+    elsif GC_TESTCASE = "vvc_setup_and_hold_time_test" then
       log(ID_LOG_HDR, "Checking setup and hold time");
 
       -- Set setup and hold times

@@ -1,6 +1,11 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.8.1
+----------
+Released: 2020-04-08
+- Updated the VVC QR with information on how to use the VVC as input, output or inout.
+
 v1.8.0
 ----------
 Released: 2020-10-06

@@ -47,35 +47,35 @@ package axi_channel_handler_pkg is
   -- This procedure writes adress on the write address channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure write_address_channel_write (
-    constant awid_value     : in  std_logic_vector;
-    constant awaddr_value   : in  unsigned;
-    constant awlen_value    : in  unsigned(7 downto 0);
-    constant awsize_value   : in  integer range 1 to 128;
-    constant awburst_value  : in  t_axburst;
-    constant awlock_value   : in  t_axlock;
-    constant awcache_value  : in  std_logic_vector(3 downto 0);
-    constant awprot_value   : in  t_axprot;
-    constant awqos_value    : in  std_logic_vector(3 downto 0);
-    constant awregion_value : in  std_logic_vector(3 downto 0);
-    constant awuser_value   : in  std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   awid           : out std_logic_vector;
-    signal   awaddr         : out std_logic_vector;
-    signal   awlen          : out std_logic_vector(7 downto 0);
-    signal   awsize         : out std_logic_vector(2 downto 0);
-    signal   awburst        : out std_logic_vector(1 downto 0);
-    signal   awlock         : out std_logic;
-    signal   awcache        : out std_logic_vector(3 downto 0);
-    signal   awprot         : out std_logic_vector(2 downto 0);
-    signal   awqos          : out std_logic_vector(3 downto 0);
-    signal   awregion       : out std_logic_vector(3 downto 0);
-    signal   awuser         : out std_logic_vector;
-    signal   awvalid        : out std_logic;
-    signal   awready        : in  std_logic;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant awid_value     : in    std_logic_vector;
+    constant awaddr_value   : in    unsigned;
+    constant awlen_value    : in    unsigned(7 downto 0);
+    constant awsize_value   : in    integer range 1 to 128;
+    constant awburst_value  : in    t_axburst;
+    constant awlock_value   : in    t_axlock;
+    constant awcache_value  : in    std_logic_vector(3 downto 0);
+    constant awprot_value   : in    t_axprot;
+    constant awqos_value    : in    std_logic_vector(3 downto 0);
+    constant awregion_value : in    std_logic_vector(3 downto 0);
+    constant awuser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   awid           : inout std_logic_vector;
+    signal   awaddr         : inout std_logic_vector;
+    signal   awlen          : inout std_logic_vector(7 downto 0);
+    signal   awsize         : inout std_logic_vector(2 downto 0);
+    signal   awburst        : inout std_logic_vector(1 downto 0);
+    signal   awlock         : inout std_logic;
+    signal   awcache        : inout std_logic_vector(3 downto 0);
+    signal   awprot         : inout std_logic_vector(2 downto 0);
+    signal   awqos          : inout std_logic_vector(3 downto 0);
+    signal   awregion       : inout std_logic_vector(3 downto 0);
+    signal   awuser         : inout std_logic_vector;
+    signal   awvalid        : inout std_logic;
+    signal   awready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -84,21 +84,21 @@ package axi_channel_handler_pkg is
   -- This procedure writes data on the write data channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure write_data_channel_write (
-    constant wdata_value  : in  t_slv_array;
-    constant wstrb_value  : in  t_slv_array;
-    constant wuser_value  : in  t_slv_array;
-    constant awlen_value  : in  unsigned(7 downto 0);
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   wdata        : out std_logic_vector;
-    signal   wstrb        : out std_logic_vector;
-    signal   wlast        : out std_logic;
-    signal   wuser        : out std_logic_vector;
-    signal   wvalid       : out std_logic;
-    signal   wready       : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant wdata_value  : in    t_slv_array;
+    constant wstrb_value  : in    t_slv_array;
+    constant wuser_value  : in    t_slv_array;
+    constant awlen_value  : in    unsigned(7 downto 0);
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   wdata        : inout std_logic_vector;
+    signal   wstrb        : inout std_logic_vector;
+    signal   wlast        : inout std_logic;
+    signal   wuser        : inout std_logic_vector;
+    signal   wvalid       : inout std_logic;
+    signal   wready       : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -108,21 +108,21 @@ package axi_channel_handler_pkg is
   -- and returns the response data
   -- - When completed, a log message with ID id_for_bfm is issued.
   procedure write_response_channel_receive (
-    variable bid_value      : out std_logic_vector;
-    variable bresp_value    : out t_xresp;
-    variable buser_value    : out std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   bid            : in  std_logic_vector;
-    signal   bresp          : in  std_logic_vector(1 downto 0);
-    signal   buser          : in  std_logic_vector;
-    signal   bvalid         : in  std_logic;
-    signal   bready         : out std_logic;
-    constant alert_level    : in  t_alert_level         := error;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call  : in  string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable bid_value      : out   std_logic_vector;
+    variable bresp_value    : out   t_xresp;
+    variable buser_value    : out   std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   bid            : in    std_logic_vector;
+    signal   bresp          : in    std_logic_vector(1 downto 0);
+    signal   buser          : in    std_logic_vector;
+    signal   bvalid         : in    std_logic;
+    signal   bready         : inout std_logic;
+    constant alert_level    : in    t_alert_level         := error;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call  : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ------------------------------------------
@@ -131,35 +131,35 @@ package axi_channel_handler_pkg is
   -- This procedure writes adress on the read address channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure read_address_channel_write (
-    constant arid_value     : in  std_logic_vector;
-    constant araddr_value   : in  unsigned;
-    constant arlen_value    : in  unsigned(7 downto 0);
-    constant arsize_value   : in  integer range 1 to 128;
-    constant arburst_value  : in  t_axburst;
-    constant arlock_value   : in  t_axlock;
-    constant arcache_value  : in  std_logic_vector(3 downto 0);
-    constant arprot_value   : in  t_axprot;
-    constant arqos_value    : in  std_logic_vector(3 downto 0);
-    constant arregion_value : in  std_logic_vector(3 downto 0);
-    constant aruser_value   : in  std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   arid           : out std_logic_vector;
-    signal   araddr         : out std_logic_vector;
-    signal   arlen          : out std_logic_vector(7 downto 0);
-    signal   arsize         : out std_logic_vector(2 downto 0);
-    signal   arburst        : out std_logic_vector(1 downto 0);
-    signal   arlock         : out std_logic;
-    signal   arcache        : out std_logic_vector(3 downto 0);
-    signal   arprot         : out std_logic_vector(2 downto 0);
-    signal   arqos          : out std_logic_vector(3 downto 0);
-    signal   arregion       : out std_logic_vector(3 downto 0);
-    signal   aruser         : out std_logic_vector;
-    signal   arvalid        : out std_logic;
-    signal   arready        : in  std_logic;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
+    constant arid_value     : in    std_logic_vector;
+    constant araddr_value   : in    unsigned;
+    constant arlen_value    : in    unsigned(7 downto 0);
+    constant arsize_value   : in    integer range 1 to 128;
+    constant arburst_value  : in    t_axburst;
+    constant arlock_value   : in    t_axlock;
+    constant arcache_value  : in    std_logic_vector(3 downto 0);
+    constant arprot_value   : in    t_axprot;
+    constant arqos_value    : in    std_logic_vector(3 downto 0);
+    constant arregion_value : in    std_logic_vector(3 downto 0);
+    constant aruser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   arid           : inout std_logic_vector;
+    signal   araddr         : inout std_logic_vector;
+    signal   arlen          : inout std_logic_vector(7 downto 0);
+    signal   arsize         : inout std_logic_vector(2 downto 0);
+    signal   arburst        : inout std_logic_vector(1 downto 0);
+    signal   arlock         : inout std_logic;
+    signal   arcache        : inout std_logic_vector(3 downto 0);
+    signal   arprot         : inout std_logic_vector(2 downto 0);
+    signal   arqos          : inout std_logic_vector(3 downto 0);
+    signal   arregion       : inout std_logic_vector(3 downto 0);
+    signal   aruser         : inout std_logic_vector;
+    signal   arvalid        : inout std_logic;
+    signal   arready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -179,7 +179,7 @@ package axi_channel_handler_pkg is
     signal   rlast            : in    std_logic;
     signal   ruser            : in    std_logic_vector;
     signal   rvalid           : in    std_logic;
-    signal   rready           : out   std_logic;
+    signal   rready           : inout std_logic;
     constant scope            : in    string                := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel        := shared_msg_id_panel;
     constant config           : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT;
@@ -195,35 +195,35 @@ package body axi_channel_handler_pkg is
   ----------------------------------------------------
 
   procedure write_address_channel_write (
-    constant awid_value     : in  std_logic_vector;
-    constant awaddr_value   : in  unsigned;
-    constant awlen_value    : in  unsigned(7 downto 0);
-    constant awsize_value   : in  integer range 1 to 128;
-    constant awburst_value  : in  t_axburst;
-    constant awlock_value   : in  t_axlock;
-    constant awcache_value  : in  std_logic_vector(3 downto 0);
-    constant awprot_value   : in  t_axprot;
-    constant awqos_value    : in  std_logic_vector(3 downto 0);
-    constant awregion_value : in  std_logic_vector(3 downto 0);
-    constant awuser_value   : in  std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   awid           : out std_logic_vector;
-    signal   awaddr         : out std_logic_vector;
-    signal   awlen          : out std_logic_vector(7 downto 0);
-    signal   awsize         : out std_logic_vector(2 downto 0);
-    signal   awburst        : out std_logic_vector(1 downto 0);
-    signal   awlock         : out std_logic;
-    signal   awcache        : out std_logic_vector(3 downto 0);
-    signal   awprot         : out std_logic_vector(2 downto 0);
-    signal   awqos          : out std_logic_vector(3 downto 0);
-    signal   awregion       : out std_logic_vector(3 downto 0);
-    signal   awuser         : out std_logic_vector;
-    signal   awvalid        : out std_logic;
-    signal   awready        : in  std_logic;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant awid_value     : in    std_logic_vector;
+    constant awaddr_value   : in    unsigned;
+    constant awlen_value    : in    unsigned(7 downto 0);
+    constant awsize_value   : in    integer range 1 to 128;
+    constant awburst_value  : in    t_axburst;
+    constant awlock_value   : in    t_axlock;
+    constant awcache_value  : in    std_logic_vector(3 downto 0);
+    constant awprot_value   : in    t_axprot;
+    constant awqos_value    : in    std_logic_vector(3 downto 0);
+    constant awregion_value : in    std_logic_vector(3 downto 0);
+    constant awuser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   awid           : inout std_logic_vector;
+    signal   awaddr         : inout std_logic_vector;
+    signal   awlen          : inout std_logic_vector(7 downto 0);
+    signal   awsize         : inout std_logic_vector(2 downto 0);
+    signal   awburst        : inout std_logic_vector(1 downto 0);
+    signal   awlock         : inout std_logic;
+    signal   awcache        : inout std_logic_vector(3 downto 0);
+    signal   awprot         : inout std_logic_vector(2 downto 0);
+    signal   awqos          : inout std_logic_vector(3 downto 0);
+    signal   awregion       : inout std_logic_vector(3 downto 0);
+    signal   awuser         : inout std_logic_vector;
+    signal   awvalid        : inout std_logic;
+    signal   awready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_awready     : boolean := true;
@@ -292,21 +292,21 @@ package body axi_channel_handler_pkg is
   end procedure write_address_channel_write;
 
   procedure write_data_channel_write (
-    constant wdata_value  : in  t_slv_array;
-    constant wstrb_value  : in  t_slv_array;
-    constant wuser_value  : in  t_slv_array;
-    constant awlen_value  : in  unsigned(7 downto 0);
-    constant msg          : in  string;
-    signal   clk          : in  std_logic;
-    signal   wdata        : out std_logic_vector;
-    signal   wstrb        : out std_logic_vector;
-    signal   wlast        : out std_logic;
-    signal   wuser        : out std_logic_vector;
-    signal   wvalid       : out std_logic;
-    signal   wready       : in  std_logic;
-    constant scope        : in  string                := C_SCOPE;
-    constant msg_id_panel : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config       : in  t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant wdata_value  : in    t_slv_array;
+    constant wstrb_value  : in    t_slv_array;
+    constant wuser_value  : in    t_slv_array;
+    constant awlen_value  : in    unsigned(7 downto 0);
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   wdata        : inout std_logic_vector;
+    signal   wstrb        : inout std_logic_vector;
+    signal   wlast        : inout std_logic;
+    signal   wuser        : inout std_logic_vector;
+    signal   wvalid       : inout std_logic;
+    signal   wready       : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "write_data_channel_write(" & to_string(wdata_value, HEX, AS_IS, INCL_RADIX) &
                                    ", " & to_string(wstrb_value, HEX, AS_IS, INCL_RADIX) & ")";
@@ -368,21 +368,21 @@ package body axi_channel_handler_pkg is
   end procedure write_data_channel_write;
 
   procedure write_response_channel_receive (
-    variable bid_value      : out std_logic_vector;
-    variable bresp_value    : out t_xresp;
-    variable buser_value    : out std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   bid            : in  std_logic_vector;
-    signal   bresp          : in  std_logic_vector(1 downto 0);
-    signal   buser          : in  std_logic_vector;
-    signal   bvalid         : in  std_logic;
-    signal   bready         : out std_logic;
-    constant alert_level    : in  t_alert_level         := error;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call  : in  string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable bid_value      : out   std_logic_vector;
+    variable bresp_value    : out   t_xresp;
+    variable buser_value    : out   std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   bid            : in    std_logic_vector;
+    signal   bresp          : in    std_logic_vector(1 downto 0);
+    signal   buser          : in    std_logic_vector;
+    signal   bvalid         : in    std_logic;
+    signal   bready         : inout std_logic;
+    constant alert_level    : in    t_alert_level         := error;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call  : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     constant local_proc_name        : string := "write_response_channel_receive";
     constant local_proc_call        : string := local_proc_name & "()";
@@ -444,35 +444,35 @@ package body axi_channel_handler_pkg is
   end procedure write_response_channel_receive;
 
   procedure read_address_channel_write (
-    constant arid_value     : in  std_logic_vector;
-    constant araddr_value   : in  unsigned;
-    constant arlen_value    : in  unsigned(7 downto 0);
-    constant arsize_value   : in  integer range 1 to 128;
-    constant arburst_value  : in  t_axburst;
-    constant arlock_value   : in  t_axlock;
-    constant arcache_value  : in  std_logic_vector(3 downto 0);
-    constant arprot_value   : in  t_axprot;
-    constant arqos_value    : in  std_logic_vector(3 downto 0);
-    constant arregion_value : in  std_logic_vector(3 downto 0);
-    constant aruser_value   : in  std_logic_vector;
-    constant msg            : in  string;
-    signal   clk            : in  std_logic;
-    signal   arid           : out std_logic_vector;
-    signal   araddr         : out std_logic_vector;
-    signal   arlen          : out std_logic_vector(7 downto 0);
-    signal   arsize         : out std_logic_vector(2 downto 0);
-    signal   arburst        : out std_logic_vector(1 downto 0);
-    signal   arlock         : out std_logic;
-    signal   arcache        : out std_logic_vector(3 downto 0);
-    signal   arprot         : out std_logic_vector(2 downto 0);
-    signal   arqos          : out std_logic_vector(3 downto 0);
-    signal   arregion       : out std_logic_vector(3 downto 0);
-    signal   aruser         : out std_logic_vector;
-    signal   arvalid        : out std_logic;
-    signal   arready        : in  std_logic;
-    constant scope          : in  string                := C_SCOPE;
-    constant msg_id_panel   : in  t_msg_id_panel        := shared_msg_id_panel;
-    constant config         : in  t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
+    constant arid_value     : in    std_logic_vector;
+    constant araddr_value   : in    unsigned;
+    constant arlen_value    : in    unsigned(7 downto 0);
+    constant arsize_value   : in    integer range 1 to 128;
+    constant arburst_value  : in    t_axburst;
+    constant arlock_value   : in    t_axlock;
+    constant arcache_value  : in    std_logic_vector(3 downto 0);
+    constant arprot_value   : in    t_axprot;
+    constant arqos_value    : in    std_logic_vector(3 downto 0);
+    constant arregion_value : in    std_logic_vector(3 downto 0);
+    constant aruser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   arid           : inout std_logic_vector;
+    signal   araddr         : inout std_logic_vector;
+    signal   arlen          : inout std_logic_vector(7 downto 0);
+    signal   arsize         : inout std_logic_vector(2 downto 0);
+    signal   arburst        : inout std_logic_vector(1 downto 0);
+    signal   arlock         : inout std_logic;
+    signal   arcache        : inout std_logic_vector(3 downto 0);
+    signal   arprot         : inout std_logic_vector(2 downto 0);
+    signal   arqos          : inout std_logic_vector(3 downto 0);
+    signal   arregion       : inout std_logic_vector(3 downto 0);
+    signal   aruser         : inout std_logic_vector;
+    signal   arvalid        : inout std_logic;
+    signal   arready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_arready     : boolean := true;
@@ -551,7 +551,7 @@ package body axi_channel_handler_pkg is
     signal   rlast            : in    std_logic;
     signal   ruser            : in    std_logic_vector;
     signal   rvalid           : in    std_logic;
-    signal   rready           : out   std_logic;
+    signal   rready           : inout std_logic;
     constant scope            : in    string                := C_SCOPE;
     constant msg_id_panel     : in    t_msg_id_panel        := shared_msg_id_panel;
     constant config           : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT;

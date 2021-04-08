@@ -28,7 +28,7 @@ Released: 2021-04-08
 - Bug fix and improved compability with some Modelsim version in AXI and AXI-Lite VIPs.
 - Improved Clock Generator VVC set_clock_period() method description in the QR.
 - Added missing result in log message for fetch_result() method.
-- Fixed compilation error for the AXI VIP in Riviera Pro.
+- Fixed compilation error for the AXI and AXI-Lite VIPs in Riviera Pro.
 
 
 v2 2020.12.21

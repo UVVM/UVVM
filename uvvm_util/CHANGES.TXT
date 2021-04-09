@@ -3,6 +3,16 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+
+v2.16.0
+----------
+Released: 2021-04-08
+- Fixed width detection method for to_string() functions that would make
+  GHDL simulator fail or create null arrays.
+- Moved timestamp_header() function from generic_sb_pkg to string_methods_pkg.
+- Added t_natural_vector and t_positive_vector types to types_pkg.
+- Added to_string() overloads for t_natural_vector, integer_vector, real_vector and time_vector types.
+
 v2.15.1
 ----------
 Released: 2020-12-08

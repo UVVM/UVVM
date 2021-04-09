@@ -1815,7 +1815,6 @@ package body axistream_bfm_pkg is
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_user_array(word)(i) = '-' or check_value(v_rx_user_array(word)(i), exp_user_array(word)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
-          -- log(ID_PACKET_COMPLETE, proc_call & "=> OK(word="&to_string(word)&"), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
         else
           log(ID_PACKET_DATA, proc_call & "=> NOK(word="&to_string(word)&"), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
           -- Received tuser word does not match the expected word
@@ -1831,7 +1830,6 @@ package body axistream_bfm_pkg is
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_strb_array(word)(i) = '-' or check_value(v_rx_strb_array(word)(i), exp_strb_array(word)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
-          -- log(ID_PACKET_COMPLETE, proc_call & "=> OK(word="&to_string(word)&"), checked " & to_string(v_rx_strb_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_strb_array(word), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
         else
           log(ID_PACKET_DATA, proc_call & "=> NOK(word="&to_string(word)&"), checked " & to_string(v_rx_strb_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_strb_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
           -- Received tstrb word does not match the expected word
@@ -1847,7 +1845,6 @@ package body axistream_bfm_pkg is
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_id_array(word)(i) = '-' or check_value(v_rx_id_array(word)(i), exp_id_array(word)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
-          -- log(ID_PACKET_COMPLETE, proc_call & "=> OK(word="&to_string(word)&"), checked " & to_string(v_rx_id_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_id_array(word), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
         else
           log(ID_PACKET_DATA, proc_call & "=> NOK(word="&to_string(word)&"), checked " & to_string(v_rx_id_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_id_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
           -- Received tid word does not match the expected word
@@ -1863,7 +1860,6 @@ package body axistream_bfm_pkg is
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_dest_array(word)(i) = '-' or check_value(v_rx_dest_array(word)(i), exp_dest_array(word)(i), config.match_strictness, NO_ALERT, msg) then
           -- Check is OK
-          -- log(ID_PACKET_COMPLETE, proc_call & "=> OK(word="&to_string(word)&"), checked " & to_string(v_rx_dest_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_dest_array(word), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
         else
           log(ID_PACKET_DATA, proc_call & "=> NOK(word="&to_string(word)&"), checked " & to_string(v_rx_dest_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_dest_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
           -- Received tdest word does not match the expected word
@@ -1905,7 +1901,7 @@ package body axistream_bfm_pkg is
         ". Was " & to_string(v_rx_dest_array(v_first_errored_byte)(c_num_dest_bits_per_word-1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " &
         to_string(exp_dest_array(v_first_errored_byte)(c_num_dest_bits_per_word-1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "B. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "Bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure axistream_expect_bytes;

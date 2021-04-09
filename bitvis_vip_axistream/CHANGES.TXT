@@ -2,6 +2,12 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v4.7.3
+----------
+Released: 2021-04-08
+- Improved log message from axistream_expect_bytes() BFM procedure.
+- Removed commented log message in BFM procedures.
+
 v4.7.2
 ----------
 Released: 2020-12-08

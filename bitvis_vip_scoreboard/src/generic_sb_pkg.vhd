@@ -1630,40 +1630,6 @@ package body generic_sb_pkg is
       constant C_MAX_SB_INSTANCE_IDX_STRING      : string    := to_string(C_MAX_SB_INSTANCE_IDX);
       constant C_MAX_SB_INSTANCE_IDX_STRING_LEN  : natural   := C_MAX_SB_INSTANCE_IDX_STRING'length;
 
-
-        -- add simulation time stamp to scoreboard report header
-        impure function timestamp_header(value : time; txt : string) return string is
-            variable v_line             : line;
-            variable v_delimiter_pos    : natural;
-            variable v_timestamp_width  : natural;
-            variable v_result           : string(1 to 50);
-            variable v_return           : string(1 to txt'length) := txt;
-          begin
-            -- get a time stamp
-            write(v_line, value, LEFT, 0, C_LOG_TIME_BASE);
-            v_timestamp_width := v_line'length;
-            v_result(1 to v_timestamp_width) := v_line.all;
-            deallocate(v_line);
-            v_delimiter_pos := pos_of_leftmost('.', v_result(1 to v_timestamp_width), 0);
-
-            -- truncate decimals and add units
-            if v_delimiter_pos > 0 then
-              if C_LOG_TIME_BASE = ns then
-                v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ns";
-              else
-                v_result(v_delimiter_pos+2 to v_delimiter_pos+4) := " ps";
-              end if;
-              v_timestamp_width := v_delimiter_pos + 4;
-            end if;
-            -- add a space after the timestamp
-            v_timestamp_width := v_timestamp_width + 1;
-            v_result(v_timestamp_width to v_timestamp_width) := " ";
-
-            -- add time string to return string
-            v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length-v_timestamp_width);
-            return v_return(1 to txt'length);
-          end function timestamp_header;
-
     begin
       -- Calculate how much space we can insert between the columns of the report
       v_log_extra_space := (C_LOG_LINE_WIDTH - prefix'length - 20 - log_counter_width*6 - 15 - 13)/8;

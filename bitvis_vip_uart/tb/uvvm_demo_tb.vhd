@@ -37,7 +37,7 @@ library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
 
-
+--hdlunit:tb
 -- Test bench entity
 entity uvvm_demo_tb is
 end entity uvvm_demo_tb;

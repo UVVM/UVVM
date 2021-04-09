@@ -33,7 +33,7 @@ use std.env.all;
 package methods_pkg is
 
 
-  constant C_UVVM_VERSION : string := "v2 2020.12.21";
+  constant C_UVVM_VERSION : string := "v2 2020.04.08";
 
 
 -- -- ============================================================================
@@ -113,6 +113,13 @@ package methods_pkg is
     file_name        :       string;
     open_mode        :       file_open_kind;
     variable my_line : inout line
+    );
+
+  procedure write_line_to_log_destination(
+    variable log_line        : inout line;
+    constant log_destination : in    t_log_destination := shared_default_log_destination;
+    constant log_file_name   : in    string            := C_LOG_FILE_NAME;
+    constant open_mode       : in    file_open_kind    := append_mode
     );
 
   procedure enable_log_msg(
@@ -3167,6 +3174,42 @@ package body methods_pkg is
     writeline(v_specified_file_pointer, my_line);
     file_close(v_specified_file_pointer);
   end procedure write_to_file;
+
+  procedure write_line_to_log_destination(
+    variable log_line        : inout line;
+    constant log_destination : in    t_log_destination := shared_default_log_destination;
+    constant log_file_name   : in    string            := C_LOG_FILE_NAME;
+    constant open_mode       : in    file_open_kind    := append_mode) is
+  begin
+    -- Write the info string to the target file
+    if log_file_name = "" and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
+      -- Output file specified, but file name was invalid.
+      alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
+    else
+      case log_destination is
+        when CONSOLE_AND_LOG =>
+          tee(OUTPUT, log_line);  -- write to transcript, while keeping the line contents
+          -- write to file
+          if log_file_name = C_LOG_FILE_NAME then
+            -- If the log file is the default file, it is not necessary to open and close it again
+            writeline(LOG_FILE, log_line);
+          else
+            -- If the log file is a custom file name, the file will have to be opened.
+            write_to_file(log_file_name, open_mode, log_line);
+          end if;
+        when CONSOLE_ONLY =>
+          writeline(OUTPUT, log_line);  -- Write to console and deallocate line
+        when LOG_ONLY =>
+          if log_file_name = C_LOG_FILE_NAME then
+            -- If the log file is the default file, it is not necessary to open and close it again
+            writeline(LOG_FILE, log_line);
+          else
+            -- If the log file is a custom file name, the file will have to be opened.
+            write_to_file(log_file_name, open_mode, log_line);
+          end if;
+      end case;
+    end if;
+  end procedure;
 
   procedure log(
     msg_id          : t_msg_id;

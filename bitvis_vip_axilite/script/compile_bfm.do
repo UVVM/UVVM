@@ -74,7 +74,7 @@ if { [info exists 1] } {
 #------------------------------------------------------
 # Set lib_name
 #------------------------------------------------------
-quietly set lib_name bitvis_vip_axistream
+quietly set lib_name bitvis_vip_axilite
 
 
 #------------------------------------------------------
@@ -118,5 +118,5 @@ if { [string equal -nocase $simulator "modelsim"] } {
 # Compile BFM file
 #------------------------------------------------------
 echo "\nCompiling $lib_name BFM source\n"
-echo "eval vcom  $compdirectives  $source_path/src/axistream_bfm_pkg.vhd"
-eval vcom  $compdirectives  $source_path/src/axistream_bfm_pkg.vhd
+echo "eval vcom  $compdirectives  $source_path/src/axilite_bfm_pkg.vhd"
+eval vcom  $compdirectives  $source_path/src/axilite_bfm_pkg.vhd

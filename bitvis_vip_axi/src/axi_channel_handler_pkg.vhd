@@ -47,23 +47,35 @@ package axi_channel_handler_pkg is
   -- This procedure writes adress on the write address channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure write_address_channel_write (
-    constant awid_value         : in    std_logic_vector;
-    constant awaddr_value       : in    unsigned;
-    constant awlen_value        : in    unsigned(7 downto 0);
-    constant awsize_value       : in    integer range 1 to 128;
-    constant awburst_value      : in    t_axburst;
-    constant awlock_value       : in    t_axlock;
-    constant awcache_value      : in    std_logic_vector(3 downto 0);
-    constant awprot_value       : in    t_axprot;
-    constant awqos_value        : in    std_logic_vector(3 downto 0);
-    constant awregion_value     : in    std_logic_vector(3 downto 0);
-    constant awuser_value       : in    std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_addr_channel : inout t_axi_write_address_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant awid_value     : in    std_logic_vector;
+    constant awaddr_value   : in    unsigned;
+    constant awlen_value    : in    unsigned(7 downto 0);
+    constant awsize_value   : in    integer range 1 to 128;
+    constant awburst_value  : in    t_axburst;
+    constant awlock_value   : in    t_axlock;
+    constant awcache_value  : in    std_logic_vector(3 downto 0);
+    constant awprot_value   : in    t_axprot;
+    constant awqos_value    : in    std_logic_vector(3 downto 0);
+    constant awregion_value : in    std_logic_vector(3 downto 0);
+    constant awuser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   awid           : inout std_logic_vector;
+    signal   awaddr         : inout std_logic_vector;
+    signal   awlen          : inout std_logic_vector(7 downto 0);
+    signal   awsize         : inout std_logic_vector(2 downto 0);
+    signal   awburst        : inout std_logic_vector(1 downto 0);
+    signal   awlock         : inout std_logic;
+    signal   awcache        : inout std_logic_vector(3 downto 0);
+    signal   awprot         : inout std_logic_vector(2 downto 0);
+    signal   awqos          : inout std_logic_vector(3 downto 0);
+    signal   awregion       : inout std_logic_vector(3 downto 0);
+    signal   awuser         : inout std_logic_vector;
+    signal   awvalid        : inout std_logic;
+    signal   awready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -72,16 +84,21 @@ package axi_channel_handler_pkg is
   -- This procedure writes data on the write data channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure write_data_channel_write (
-    constant wdata_value        : in    t_slv_array;
-    constant wstrb_value        : in    t_slv_array;
-    constant wuser_value        : in    t_slv_array;
-    constant awlen_value        : in    unsigned(7 downto 0);
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_data_channel : inout t_axi_write_data_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant wdata_value  : in    t_slv_array;
+    constant wstrb_value  : in    t_slv_array;
+    constant wuser_value  : in    t_slv_array;
+    constant awlen_value  : in    unsigned(7 downto 0);
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   wdata        : inout std_logic_vector;
+    signal   wstrb        : inout std_logic_vector;
+    signal   wlast        : inout std_logic;
+    signal   wuser        : inout std_logic_vector;
+    signal   wvalid       : inout std_logic;
+    signal   wready       : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -91,17 +108,21 @@ package axi_channel_handler_pkg is
   -- and returns the response data
   -- - When completed, a log message with ID id_for_bfm is issued.
   procedure write_response_channel_receive (
-    variable bid_value          : out   std_logic_vector;
-    variable bresp_value        : out   t_xresp;
-    variable buser_value        : out   std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_resp_channel : inout t_axi_write_response_channel;
-    constant alert_level        : in    t_alert_level         := error;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call      : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable bid_value      : out   std_logic_vector;
+    variable bresp_value    : out   t_xresp;
+    variable buser_value    : out   std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   bid            : in    std_logic_vector;
+    signal   bresp          : in    std_logic_vector(1 downto 0);
+    signal   buser          : in    std_logic_vector;
+    signal   bvalid         : in    std_logic;
+    signal   bready         : inout std_logic;
+    constant alert_level    : in    t_alert_level         := error;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call  : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
   ------------------------------------------
@@ -110,23 +131,35 @@ package axi_channel_handler_pkg is
   -- This procedure writes adress on the read address channel
   -- - When the write is completed, a log message is issued with ID_CHANNEL_BFM
   procedure read_address_channel_write (
-    constant arid_value         : in    std_logic_vector;
-    constant araddr_value       : in    unsigned;
-    constant arlen_value        : in    unsigned(7 downto 0);
-    constant arsize_value       : in    integer range 1 to 128;
-    constant arburst_value      : in    t_axburst;
-    constant arlock_value       : in    t_axlock;
-    constant arcache_value      : in    std_logic_vector(3 downto 0);
-    constant arprot_value       : in    t_axprot;
-    constant arqos_value        : in    std_logic_vector(3 downto 0);
-    constant arregion_value     : in    std_logic_vector(3 downto 0);
-    constant aruser_value       : in    std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   read_addr_channel  : inout t_axi_read_address_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
+    constant arid_value     : in    std_logic_vector;
+    constant araddr_value   : in    unsigned;
+    constant arlen_value    : in    unsigned(7 downto 0);
+    constant arsize_value   : in    integer range 1 to 128;
+    constant arburst_value  : in    t_axburst;
+    constant arlock_value   : in    t_axlock;
+    constant arcache_value  : in    std_logic_vector(3 downto 0);
+    constant arprot_value   : in    t_axprot;
+    constant arqos_value    : in    std_logic_vector(3 downto 0);
+    constant arregion_value : in    std_logic_vector(3 downto 0);
+    constant aruser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   arid           : inout std_logic_vector;
+    signal   araddr         : inout std_logic_vector;
+    signal   arlen          : inout std_logic_vector(7 downto 0);
+    signal   arsize         : inout std_logic_vector(2 downto 0);
+    signal   arburst        : inout std_logic_vector(1 downto 0);
+    signal   arlock         : inout std_logic;
+    signal   arcache        : inout std_logic_vector(3 downto 0);
+    signal   arprot         : inout std_logic_vector(2 downto 0);
+    signal   arqos          : inout std_logic_vector(3 downto 0);
+    signal   arregion       : inout std_logic_vector(3 downto 0);
+    signal   aruser         : inout std_logic_vector;
+    signal   arvalid        : inout std_logic;
+    signal   arready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
   );
 
   ------------------------------------------
@@ -136,15 +169,21 @@ package axi_channel_handler_pkg is
   -- and returns the read data
   -- - When completed, a log message with ID id_for_bfm is issued.
   procedure read_data_channel_receive (
-    variable read_result              : out   t_vvc_result;
-    variable read_data_queue          : inout t_axi_read_data_queue;
-    constant msg                      : in    string;
-    signal   clk                      : in    std_logic;
-    signal   read_data_channel        : inout t_axi_read_data_channel;
-    constant scope                    : in    string                := C_SCOPE;
-    constant msg_id_panel             : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config                   : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call            : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable read_result      : out   t_vvc_result;
+    variable read_data_queue  : inout t_axi_read_data_queue;
+    constant msg              : in    string;
+    signal   clk              : in    std_logic;
+    signal   rid              : in    std_logic_vector;
+    signal   rdata            : in    std_logic_vector;
+    signal   rresp            : in    std_logic_vector(1 downto 0);
+    signal   rlast            : in    std_logic;
+    signal   ruser            : in    std_logic_vector;
+    signal   rvalid           : in    std_logic;
+    signal   rready           : inout std_logic;
+    constant scope            : in    string                := C_SCOPE;
+    constant msg_id_panel     : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config           : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call    : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   );
 
 end package axi_channel_handler_pkg;
@@ -156,58 +195,70 @@ package body axi_channel_handler_pkg is
   ----------------------------------------------------
 
   procedure write_address_channel_write (
-    constant awid_value         : in    std_logic_vector;
-    constant awaddr_value       : in    unsigned;
-    constant awlen_value        : in    unsigned(7 downto 0);
-    constant awsize_value       : in    integer range 1 to 128;
-    constant awburst_value      : in    t_axburst;
-    constant awlock_value       : in    t_axlock;
-    constant awcache_value      : in    std_logic_vector(3 downto 0);
-    constant awprot_value       : in    t_axprot;
-    constant awqos_value        : in    std_logic_vector(3 downto 0);
-    constant awregion_value     : in    std_logic_vector(3 downto 0);
-    constant awuser_value       : in    std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_addr_channel : inout t_axi_write_address_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant awid_value     : in    std_logic_vector;
+    constant awaddr_value   : in    unsigned;
+    constant awlen_value    : in    unsigned(7 downto 0);
+    constant awsize_value   : in    integer range 1 to 128;
+    constant awburst_value  : in    t_axburst;
+    constant awlock_value   : in    t_axlock;
+    constant awcache_value  : in    std_logic_vector(3 downto 0);
+    constant awprot_value   : in    t_axprot;
+    constant awqos_value    : in    std_logic_vector(3 downto 0);
+    constant awregion_value : in    std_logic_vector(3 downto 0);
+    constant awuser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   awid           : inout std_logic_vector;
+    signal   awaddr         : inout std_logic_vector;
+    signal   awlen          : inout std_logic_vector(7 downto 0);
+    signal   awsize         : inout std_logic_vector(2 downto 0);
+    signal   awburst        : inout std_logic_vector(1 downto 0);
+    signal   awlock         : inout std_logic;
+    signal   awcache        : inout std_logic_vector(3 downto 0);
+    signal   awprot         : inout std_logic_vector(2 downto 0);
+    signal   awqos          : inout std_logic_vector(3 downto 0);
+    signal   awregion       : inout std_logic_vector(3 downto 0);
+    signal   awuser         : inout std_logic_vector;
+    signal   awvalid        : inout std_logic;
+    signal   awready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "write_address_channel_write(" & to_string(awaddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_awready     : boolean := true;
     -- Normalizing unconstrained inputs
-    variable v_normalized_awid : std_logic_vector(write_addr_channel.awid'length-1 downto 0);
-    variable v_normalized_awaddr : std_logic_vector(write_addr_channel.awaddr'length-1 downto 0) :=
-      normalize_and_check(std_logic_vector(awaddr_value), write_addr_channel.awaddr, ALLOW_WIDER, "awaddr_value", "write_addr_channel.awaddr", msg);
-    variable v_normalized_awuser : std_logic_vector(write_addr_channel.awuser'length-1 downto 0);
+    variable v_normalized_awid : std_logic_vector(awid'length-1 downto 0);
+    variable v_normalized_awaddr : std_logic_vector(awaddr'length-1 downto 0) :=
+      normalize_and_check(std_logic_vector(awaddr_value), awaddr, ALLOW_WIDER, "awaddr_value", "awaddr", msg);
+    variable v_normalized_awuser : std_logic_vector(awuser'length-1 downto 0);
     -- Helper variables
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
   begin
-    if write_addr_channel.awid'length > 0 then
-      v_normalized_awid := normalize_and_check(awid_value, write_addr_channel.awid, ALLOW_WIDER, "awid_value", "write_addr_channel.awid", msg);
+    if awid'length > 0 then
+      v_normalized_awid := normalize_and_check(awid_value, awid, ALLOW_WIDER, "awid_value", "awid", msg);
     end if;
-    if write_addr_channel.awuser'length > 0 then
-      v_normalized_awuser := normalize_and_check(awuser_value, write_addr_channel.awuser, ALLOW_WIDER, "awuser_value", "write_addr_channel.awuser", msg);
+    if awuser'length > 0 then
+      v_normalized_awuser := normalize_and_check(awuser_value, awuser, ALLOW_WIDER, "awuser_value", "awuser", msg);
     end if;
     for cycle in 0 to config.max_wait_cycles loop
       -- Wait according to config.bfm_sync setup
       wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
       -- Assigning the write data channel outputs
       if cycle = config.num_aw_pipe_stages then
-        write_addr_channel.awid     <= v_normalized_awid;
-        write_addr_channel.awaddr   <= v_normalized_awaddr;
-        write_addr_channel.awlen    <= std_logic_vector(awlen_value);
-        write_addr_channel.awsize   <= bytes_to_axsize(awsize_value);
-        write_addr_channel.awburst  <= axburst_to_slv(awburst_value);
-        write_addr_channel.awlock   <= axlock_to_sl(awlock_value);
-        write_addr_channel.awcache  <= awcache_value;
-        write_addr_channel.awprot   <= axprot_to_slv(awprot_value);
-        write_addr_channel.awqos    <= awqos_value;
-        write_addr_channel.awregion <= awregion_value;
-        write_addr_channel.awuser   <= v_normalized_awuser;
-        write_addr_channel.awvalid  <= '1';
+        awid     <= v_normalized_awid;
+        awaddr   <= v_normalized_awaddr;
+        awlen    <= std_logic_vector(awlen_value);
+        awsize   <= bytes_to_axsize(awsize_value);
+        awburst  <= axburst_to_slv(awburst_value);
+        awlock   <= axlock_to_sl(awlock_value);
+        awcache  <= awcache_value;
+        awprot   <= axprot_to_slv(awprot_value);
+        awqos    <= awqos_value;
+        awregion <= awregion_value;
+        awuser   <= v_normalized_awuser;
+        awvalid  <= '1';
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
@@ -217,21 +268,21 @@ package body axi_channel_handler_pkg is
       check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                 config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write address channel access is done
-      if write_addr_channel.awready = '1' and cycle >= config.num_aw_pipe_stages then
+      if awready = '1' and cycle >= config.num_aw_pipe_stages then
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
-        write_addr_channel.awid     <= (write_addr_channel.awid'range => '0');
-        write_addr_channel.awaddr   <= (write_addr_channel.awaddr'range => '0');
-        write_addr_channel.awlen    <= (others=>'0');
-        write_addr_channel.awsize   <= (others=>'0');
-        write_addr_channel.awburst  <= (others=>'0');
-        write_addr_channel.awlock   <= '0';
-        write_addr_channel.awcache  <= (others=>'0');
-        write_addr_channel.awprot   <= (others=>'0');
-        write_addr_channel.awqos    <= (others=>'0');
-        write_addr_channel.awregion <= (others=>'0');
-        write_addr_channel.awuser   <= (write_addr_channel.awuser'range => '0');
-        write_addr_channel.awvalid  <= '0';
+        awid     <= (awid'range => '0');
+        awaddr   <= (awaddr'range => '0');
+        awlen    <= (others=>'0');
+        awsize   <= (others=>'0');
+        awburst  <= (others=>'0');
+        awlock   <= '0';
+        awcache  <= (others=>'0');
+        awprot   <= (others=>'0');
+        awqos    <= (others=>'0');
+        awregion <= (others=>'0');
+        awuser   <= (awuser'range => '0');
+        awvalid  <= '0';
         v_await_awready := false;
         exit;
       end if;
@@ -241,31 +292,36 @@ package body axi_channel_handler_pkg is
   end procedure write_address_channel_write;
 
   procedure write_data_channel_write (
-    constant wdata_value        : in    t_slv_array;
-    constant wstrb_value        : in    t_slv_array;
-    constant wuser_value        : in    t_slv_array;
-    constant awlen_value        : in    unsigned(7 downto 0);
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_data_channel : inout t_axi_write_data_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant wdata_value  : in    t_slv_array;
+    constant wstrb_value  : in    t_slv_array;
+    constant wuser_value  : in    t_slv_array;
+    constant awlen_value  : in    unsigned(7 downto 0);
+    constant msg          : in    string;
+    signal   clk          : in    std_logic;
+    signal   wdata        : inout std_logic_vector;
+    signal   wstrb        : inout std_logic_vector;
+    signal   wlast        : inout std_logic;
+    signal   wuser        : inout std_logic_vector;
+    signal   wvalid       : inout std_logic;
+    signal   wready       : in    std_logic;
+    constant scope        : in    string                := C_SCOPE;
+    constant msg_id_panel : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config       : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "write_data_channel_write(" & to_string(wdata_value, HEX, AS_IS, INCL_RADIX) &
                                    ", " & to_string(wstrb_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_wready      : boolean := true;
-    variable v_normalized_wdata  : std_logic_vector(write_data_channel.wdata'length-1 downto 0) :=
-      normalize_and_check(wdata_value(0), write_data_channel.wdata, ALLOW_NARROWER, "WDATA", "write_data_channel.wdata", msg);
-    variable v_normalized_wstrb  : std_logic_vector(write_data_channel.wstrb'length-1 downto 0) :=
-      normalize_and_check(wstrb_value(0), write_data_channel.wstrb, ALLOW_EXACT_ONLY, "WSTRB", "write_data_channel.wstrb", msg);
-    variable v_normalized_wuser  : std_logic_vector(write_data_channel.wuser'length-1 downto 0);
+    variable v_normalized_wdata  : std_logic_vector(wdata'length-1 downto 0) :=
+      normalize_and_check(wdata_value(0), wdata, ALLOW_NARROWER, "WDATA", "wdata", msg);
+    variable v_normalized_wstrb  : std_logic_vector(wstrb'length-1 downto 0) :=
+      normalize_and_check(wstrb_value(0), wstrb, ALLOW_EXACT_ONLY, "WSTRB", "wstrb", msg);
+    variable v_normalized_wuser  : std_logic_vector(wuser'length-1 downto 0);
     -- Helper variables
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
   begin
-    if write_data_channel.wuser'length > 0 then
-      v_normalized_wuser := normalize_and_check(wuser_value(0), write_data_channel.wuser, ALLOW_NARROWER, "WSTRB", "write_data_channel.wstrb", msg);
+    if wuser'length > 0 then
+      v_normalized_wuser := normalize_and_check(wuser_value(0), wuser, ALLOW_NARROWER, "WSTRB", "wstrb", msg);
     end if;
     for write_transfer_num in 0 to to_integer(unsigned(awlen_value)) loop
       for cycle in 0 to config.max_wait_cycles loop
@@ -273,17 +329,17 @@ package body axi_channel_handler_pkg is
         wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
         -- Assigning the write data channel outputs
         if cycle = config.num_w_pipe_stages then
-          v_normalized_wdata := normalize_and_check(wdata_value(write_transfer_num), write_data_channel.wdata, ALLOW_NARROWER, "wdata_value", "axi_if.write_data_channel.wdata", msg);
-          v_normalized_wstrb := normalize_and_check(wstrb_value(write_transfer_num), write_data_channel.wstrb, ALLOW_EXACT_ONLY, "wstrb_value", "write_data_channel.wstrb", msg);
-          if write_data_channel.wuser'length > 0 then
-            v_normalized_wuser := normalize_and_check(wuser_value(write_transfer_num), write_data_channel.wuser, ALLOW_NARROWER, "wuser_value", "write_data_channel.wuser", msg);
+          v_normalized_wdata := normalize_and_check(wdata_value(write_transfer_num), wdata, ALLOW_NARROWER, "wdata_value", "axi_if.wdata", msg);
+          v_normalized_wstrb := normalize_and_check(wstrb_value(write_transfer_num), wstrb, ALLOW_EXACT_ONLY, "wstrb_value", "wstrb", msg);
+          if wuser'length > 0 then
+            v_normalized_wuser := normalize_and_check(wuser_value(write_transfer_num), wuser, ALLOW_NARROWER, "wuser_value", "wuser", msg);
           end if;
-          write_data_channel.wdata  <= v_normalized_wdata;
-          write_data_channel.wstrb  <= v_normalized_wstrb;
-          write_data_channel.wuser  <= v_normalized_wuser;
-          write_data_channel.wvalid <= '1';
+          wdata  <= v_normalized_wdata;
+          wstrb  <= v_normalized_wstrb;
+          wuser  <= v_normalized_wuser;
+          wvalid <= '1';
           if write_transfer_num = unsigned(awlen_value) then
-            write_data_channel.wlast <= '1';
+            wlast <= '1';
           end if;
         end if;
         wait until rising_edge(clk);
@@ -294,14 +350,14 @@ package body axi_channel_handler_pkg is
         check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                   config.clock_period, config.clock_period_margin, config.clock_margin_severity);
         -- Checking if the write data channel access is done
-        if write_data_channel.wready = '1' and cycle >= config.num_w_pipe_stages then
+        if wready = '1' and cycle >= config.num_w_pipe_stages then
           -- Wait according to config.bfm_sync setup
           wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
-          write_data_channel.wdata  <= (write_data_channel.wdata'range => '0');
-          write_data_channel.wstrb  <= (write_data_channel.wstrb'range => '0');
-          write_data_channel.wuser  <= (write_data_channel.wuser'range => '0');
-          write_data_channel.wlast  <= '0';
-          write_data_channel.wvalid <= '0';
+          wdata  <= (wdata'range => '0');
+          wstrb  <= (wstrb'range => '0');
+          wuser  <= (wuser'range => '0');
+          wlast  <= '0';
+          wvalid <= '0';
           v_await_wready := false;
           exit;
         end if;
@@ -312,17 +368,21 @@ package body axi_channel_handler_pkg is
   end procedure write_data_channel_write;
 
   procedure write_response_channel_receive (
-    variable bid_value          : out   std_logic_vector;
-    variable bresp_value        : out   t_xresp;
-    variable buser_value        : out   std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   write_resp_channel : inout t_axi_write_response_channel;
-    constant alert_level        : in    t_alert_level         := error;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call      : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable bid_value      : out   std_logic_vector;
+    variable bresp_value    : out   t_xresp;
+    variable buser_value    : out   std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   bid            : in    std_logic_vector;
+    signal   bresp          : in    std_logic_vector(1 downto 0);
+    signal   buser          : in    std_logic_vector;
+    signal   bvalid         : in    std_logic;
+    signal   bready         : inout std_logic;
+    constant alert_level    : in    t_alert_level         := error;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call  : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     constant local_proc_name        : string := "write_response_channel_receive";
     constant local_proc_call        : string := local_proc_name & "()";
@@ -346,7 +406,7 @@ package body axi_channel_handler_pkg is
       wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
       -- Assigning the write response channel ready signal
       if cycle = config.num_b_pipe_stages then
-        write_resp_channel.bready <= '1';
+        bready <= '1';
       end if;
       wait until rising_edge(clk);
       if v_time_of_rising_edge = -1 ns then
@@ -355,18 +415,18 @@ package body axi_channel_handler_pkg is
       check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                 config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write response channel access is done
-      if write_resp_channel.bvalid = '1' and cycle >= config.num_b_pipe_stages then
+      if bvalid = '1' and cycle >= config.num_b_pipe_stages then
         -- Receiving response
-        if write_resp_channel.bid'length > 0 then
-          bid_value   := normalize_and_check(write_resp_channel.bid, bid_value, ALLOW_EXACT_ONLY, "write_resp_channel.bid", "bid_value", msg);
+        if bid'length > 0 then
+          bid_value   := normalize_and_check(bid, bid_value, ALLOW_EXACT_ONLY, "bid", "bid_value", msg);
         end if;
-        if write_resp_channel.buser'length > 0 then
-          buser_value := normalize_and_check(write_resp_channel.buser, buser_value, ALLOW_EXACT_ONLY, "write_resp_channel.buser", "buser_value", msg);
+        if buser'length > 0 then
+          buser_value := normalize_and_check(buser, buser_value, ALLOW_EXACT_ONLY, "buser", "buser_value", msg);
         end if;
-        bresp_value := slv_to_xresp(write_resp_channel.bresp);
+        bresp_value := slv_to_xresp(bresp);
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
-        write_resp_channel.bready <= '0';
+        bready <= '0';
         v_await_bvalid := false;
       end if;
       if not v_await_bvalid then
@@ -384,58 +444,70 @@ package body axi_channel_handler_pkg is
   end procedure write_response_channel_receive;
 
   procedure read_address_channel_write (
-    constant arid_value         : in    std_logic_vector;
-    constant araddr_value       : in    unsigned;
-    constant arlen_value        : in    unsigned(7 downto 0);
-    constant arsize_value       : in    integer range 1 to 128;
-    constant arburst_value      : in    t_axburst;
-    constant arlock_value       : in    t_axlock;
-    constant arcache_value      : in    std_logic_vector(3 downto 0);
-    constant arprot_value       : in    t_axprot;
-    constant arqos_value        : in    std_logic_vector(3 downto 0);
-    constant arregion_value     : in    std_logic_vector(3 downto 0);
-    constant aruser_value       : in    std_logic_vector;
-    constant msg                : in    string;
-    signal   clk                : in    std_logic;
-    signal   read_addr_channel  : inout t_axi_read_address_channel;
-    constant scope              : in    string                := C_SCOPE;
-    constant msg_id_panel       : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config             : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT
+    constant arid_value     : in    std_logic_vector;
+    constant araddr_value   : in    unsigned;
+    constant arlen_value    : in    unsigned(7 downto 0);
+    constant arsize_value   : in    integer range 1 to 128;
+    constant arburst_value  : in    t_axburst;
+    constant arlock_value   : in    t_axlock;
+    constant arcache_value  : in    std_logic_vector(3 downto 0);
+    constant arprot_value   : in    t_axprot;
+    constant arqos_value    : in    std_logic_vector(3 downto 0);
+    constant arregion_value : in    std_logic_vector(3 downto 0);
+    constant aruser_value   : in    std_logic_vector;
+    constant msg            : in    string;
+    signal   clk            : in    std_logic;
+    signal   arid           : inout std_logic_vector;
+    signal   araddr         : inout std_logic_vector;
+    signal   arlen          : inout std_logic_vector(7 downto 0);
+    signal   arsize         : inout std_logic_vector(2 downto 0);
+    signal   arburst        : inout std_logic_vector(1 downto 0);
+    signal   arlock         : inout std_logic;
+    signal   arcache        : inout std_logic_vector(3 downto 0);
+    signal   arprot         : inout std_logic_vector(2 downto 0);
+    signal   arqos          : inout std_logic_vector(3 downto 0);
+    signal   arregion       : inout std_logic_vector(3 downto 0);
+    signal   aruser         : inout std_logic_vector;
+    signal   arvalid        : inout std_logic;
+    signal   arready        : in    std_logic;
+    constant scope          : in    string                := C_SCOPE;
+    constant msg_id_panel   : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config         : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT
   ) is
     constant proc_call : string := "read_address_channel_write(" & to_string(araddr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable v_await_arready     : boolean := true;
     -- Normalizing unconstrained inputs
-    variable v_normalized_arid : std_logic_vector(read_addr_channel.arid'length-1 downto 0);
-    variable v_normalized_araddr : std_logic_vector(read_addr_channel.araddr'length-1 downto 0) :=
-      normalize_and_check(std_logic_vector(araddr_value), read_addr_channel.araddr, ALLOW_WIDER, "araddr_value", "read_addr_channel.araddr", msg);
-    variable v_normalized_aruser : std_logic_vector(read_addr_channel.aruser'length-1 downto 0);
+    variable v_normalized_arid : std_logic_vector(arid'length-1 downto 0);
+    variable v_normalized_araddr : std_logic_vector(araddr'length-1 downto 0) :=
+      normalize_and_check(std_logic_vector(araddr_value), araddr, ALLOW_WIDER, "araddr_value", "araddr", msg);
+    variable v_normalized_aruser : std_logic_vector(aruser'length-1 downto 0);
     -- Helper variables
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
   begin
-    if read_addr_channel.arid'length > 0 then
-      v_normalized_arid := normalize_and_check(arid_value, read_addr_channel.arid, ALLOW_WIDER, "arid_value", "read_addr_channel.arid", msg);
+    if arid'length > 0 then
+      v_normalized_arid := normalize_and_check(arid_value, arid, ALLOW_WIDER, "arid_value", "arid", msg);
     end if;
-    if read_addr_channel.aruser'length > 0 then
-      v_normalized_aruser := normalize_and_check(aruser_value, read_addr_channel.aruser, ALLOW_WIDER, "aruser_value", "read_addr_channel.awuser", msg);
+    if aruser'length > 0 then
+      v_normalized_aruser := normalize_and_check(aruser_value, aruser, ALLOW_WIDER, "aruser_value", "awuser", msg);
     end if;
     for cycle in 0 to config.max_wait_cycles loop
       -- Wait according to config.bfm_sync setup
       wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
       -- Assigning the write data channel outputs
       if cycle = config.num_ar_pipe_stages then
-        read_addr_channel.arid     <= v_normalized_arid;
-        read_addr_channel.araddr   <= v_normalized_araddr;
-        read_addr_channel.arlen    <= std_logic_vector(arlen_value);
-        read_addr_channel.arsize   <= bytes_to_axsize(arsize_value);
-        read_addr_channel.arburst  <= axburst_to_slv(arburst_value);
-        read_addr_channel.arlock   <= axlock_to_sl(arlock_value);
-        read_addr_channel.arcache  <= arcache_value;
-        read_addr_channel.arprot   <= axprot_to_slv(arprot_value);
-        read_addr_channel.arqos    <= arqos_value;
-        read_addr_channel.arregion <= arregion_value;
-        read_addr_channel.aruser   <= v_normalized_aruser;
-        read_addr_channel.arvalid <= '1';
+        arid     <= v_normalized_arid;
+        araddr   <= v_normalized_araddr;
+        arlen    <= std_logic_vector(arlen_value);
+        arsize   <= bytes_to_axsize(arsize_value);
+        arburst  <= axburst_to_slv(arburst_value);
+        arlock   <= axlock_to_sl(arlock_value);
+        arcache  <= arcache_value;
+        arprot   <= axprot_to_slv(arprot_value);
+        arqos    <= arqos_value;
+        arregion <= arregion_value;
+        aruser   <= v_normalized_aruser;
+        arvalid <= '1';
       end if;
       wait until rising_edge(clk);
       -- Checking clock behavior
@@ -445,21 +517,21 @@ package body axi_channel_handler_pkg is
       check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                 config.clock_period, config.clock_period_margin, config.clock_margin_severity);
       -- Checking if the write address channel access is done
-      if read_addr_channel.arready = '1' and cycle >= config.num_ar_pipe_stages then
+      if arready = '1' and cycle >= config.num_ar_pipe_stages then
         -- Wait according to config.bfm_sync setup
         wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
-        read_addr_channel.arid     <= (read_addr_channel.arid'range => '0');
-        read_addr_channel.araddr   <= (read_addr_channel.araddr'range => '0');
-        read_addr_channel.arlen    <= (others=>'0');
-        read_addr_channel.arsize   <= (others=>'0');
-        read_addr_channel.arburst  <= (others=>'0');
-        read_addr_channel.arlock   <= '0';
-        read_addr_channel.arcache  <= (others=>'0');
-        read_addr_channel.arprot   <= (others=>'0');
-        read_addr_channel.arqos    <= (others=>'0');
-        read_addr_channel.arregion <= (others=>'0');
-        read_addr_channel.aruser   <= (read_addr_channel.aruser'range => '0');
-        read_addr_channel.arvalid  <= '0';
+        arid     <= (arid'range => '0');
+        araddr   <= (araddr'range => '0');
+        arlen    <= (others=>'0');
+        arsize   <= (others=>'0');
+        arburst  <= (others=>'0');
+        arlock   <= '0';
+        arcache  <= (others=>'0');
+        arprot   <= (others=>'0');
+        arqos    <= (others=>'0');
+        arregion <= (others=>'0');
+        aruser   <= (aruser'range => '0');
+        arvalid  <= '0';
         v_await_arready := false;
         exit;
       end if;
@@ -469,15 +541,21 @@ package body axi_channel_handler_pkg is
   end procedure read_address_channel_write;
 
   procedure read_data_channel_receive (
-    variable read_result              : out   t_vvc_result;
-    variable read_data_queue          : inout t_axi_read_data_queue;
-    constant msg                      : in    string;
-    signal   clk                      : in    std_logic;
-    signal   read_data_channel        : inout t_axi_read_data_channel;
-    constant scope                    : in    string                := C_SCOPE;
-    constant msg_id_panel             : in    t_msg_id_panel        := shared_msg_id_panel;
-    constant config                   : in    t_axi_bfm_config      := C_AXI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call            : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
+    variable read_result      : out   t_vvc_result;
+    variable read_data_queue  : inout t_axi_read_data_queue;
+    constant msg              : in    string;
+    signal   clk              : in    std_logic;
+    signal   rid              : in    std_logic_vector;
+    signal   rdata            : in    std_logic_vector;
+    signal   rresp            : in    std_logic_vector(1 downto 0);
+    signal   rlast            : in    std_logic;
+    signal   ruser            : in    std_logic_vector;
+    signal   rvalid           : in    std_logic;
+    signal   rready           : inout std_logic;
+    constant scope            : in    string                := C_SCOPE;
+    constant msg_id_panel     : in    t_msg_id_panel        := shared_msg_id_panel;
+    constant config           : in    t_axi_bfm_config  := C_AXI_BFM_CONFIG_DEFAULT;
+    constant ext_proc_call    : in    string                := ""  -- External proc_call. Overwrite if called from another BFM procedure
   ) is
     constant local_proc_name        : string := "read_data_channel_receive"; -- Local proc_name; used if called from sequncer or VVC
     constant local_proc_call        : string := local_proc_name & "()"; -- Local proc_call; used if called from sequncer or VVC
@@ -486,7 +564,7 @@ package body axi_channel_handler_pkg is
     variable v_time_of_rising_edge  : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge : time := -1 ns;  -- time stamp for clk period checking
     variable v_rlast_detected       : boolean := false;
-    variable v_returning_rid        : std_logic_vector(read_data_channel.rid'length-1 downto 0);
+    variable v_returning_rid        : std_logic_vector(rid'length-1 downto 0);
     variable v_read_data            : t_vvc_result;
   begin
 
@@ -504,7 +582,7 @@ package body axi_channel_handler_pkg is
         wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
         -- Assigning the read data channel ready signal
         if cycle = config.num_r_pipe_stages then
-          read_data_channel.rready  <= '1';
+          rready  <= '1';
         end if;
         wait until rising_edge(clk);
         -- Checking clock behavior
@@ -514,18 +592,18 @@ package body axi_channel_handler_pkg is
         check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, 
                                   config.clock_period, config.clock_period_margin, config.clock_margin_severity);
         -- Checking if the read data channel access is done
-        if read_data_channel.rvalid = '1' and cycle >= config.num_r_pipe_stages then
+        if rvalid = '1' and cycle >= config.num_r_pipe_stages then
           v_await_rvalid := false;
           -- Storing response
-          read_data_queue.add_to_queue(read_data_channel.rid, read_data_channel.rdata, slv_to_xresp(read_data_channel.rresp), read_data_channel.ruser);
+          read_data_queue.add_to_queue(rid, rdata, slv_to_xresp(rresp), ruser);
           -- Checking if the transfer is done
-          if read_data_channel.rlast = '1' then
+          if rlast = '1' then
             v_rlast_detected := true;
-            v_returning_rid := read_data_channel.rid;
+            v_returning_rid := rid;
           end if;
           -- Wait according to config.bfm_sync setup
           wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
-          read_data_channel.rready  <= '0';
+          rready  <= '0';
         end if;
         if not v_await_rvalid then
           exit;

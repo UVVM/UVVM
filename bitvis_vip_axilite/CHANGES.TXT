@@ -1,6 +1,13 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+v2.8.2
+----------
+Released: 2021-04-08
+- Fixed "bad handle or reference" fatal error that happened in some versions of Modelsim
+- Fixed wrong file and library names in compile_bfm.do
+- Fixed compilation error in Riviera Pro
+
 v2.8.1
 ----------
 Released: 2020-12-08

@@ -12,9 +12,9 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
     context uvvm_util.uvvm_util_context;
     ...
     signal dut_size : natural;
+    shared variable my_coverpoint : t_coverpoint;
     ...
     p_main : process
-      variable my_coverpoint : t_coverpoint;
     begin
       -- Add bins to the coverpoint
       my_coverpoint.add_bins(bin(0), "bin_zero");

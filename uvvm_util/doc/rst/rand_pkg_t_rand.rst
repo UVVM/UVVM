@@ -302,10 +302,13 @@ Returns the randomization seeds. ::
     seed_vector := my_rand.get_rand_seeds(VOID);
 
 
+rand()
+----------------------------------------------------------------------------------------------------
+
 .. _rand_int:
 
-rand() {integer}
-----------------------------------------------------------------------------------------------------
+return integer
+^^^^^^^^^^^^^^
 Returns a random integer value. ::
 
     integer := rand(min_value, max_value, [cyclic_mode, [msg_id_panel]])
@@ -348,8 +351,8 @@ Returns a random integer value. ::
 
 .. _rand_real:
 
-rand() {real}
-----------------------------------------------------------------------------------------------------
+return real
+^^^^^^^^^^^
 Returns a random real value. ::
 
     real := rand(min_value, max_value, [msg_id_panel])
@@ -390,8 +393,8 @@ Returns a random real value. ::
 
 .. _rand_time:
 
-rand() {time}
-----------------------------------------------------------------------------------------------------
+return time
+^^^^^^^^^^^
 Returns a random time value. ::
 
     time := rand(min_value, max_value, [msg_id_panel])
@@ -432,8 +435,8 @@ Returns a random time value. ::
 
 .. _rand_int_vec:
 
-rand() {integer_vector}
-----------------------------------------------------------------------------------------------------
+return integer_vector
+^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random integer values. ::
 
     integer_vector := rand(size, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
@@ -480,8 +483,8 @@ Returns a vector of random integer values. ::
 
 .. _rand_real_vec:
 
-rand() {real_vector}
-----------------------------------------------------------------------------------------------------
+return real_vector
+^^^^^^^^^^^^^^^^^^
 Returns a vector of random real values. ::
 
     real_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
@@ -526,8 +529,8 @@ Returns a vector of random real values. ::
 
 .. _rand_time_vec:
 
-rand() {time_vector}
-----------------------------------------------------------------------------------------------------
+return time_vector
+^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values. ::
 
     time_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
@@ -572,8 +575,8 @@ Returns a vector of random time values. ::
 
 .. _rand_uns:
 
-rand() {unsigned}
-----------------------------------------------------------------------------------------------------
+return unsigned
+^^^^^^^^^^^^^^^
 Returns a random unsigned value. ::
 
     unsigned := rand(length, [msg_id_panel])
@@ -620,8 +623,8 @@ Returns a random unsigned value. ::
 
 .. _rand_sig:
 
-rand() {signed}
-----------------------------------------------------------------------------------------------------
+return signed
+^^^^^^^^^^^^^^
 Returns a random signed value. ::
 
     signed := rand(length, [msg_id_panel])
@@ -668,8 +671,8 @@ Returns a random signed value. ::
 
 .. _rand_slv:
 
-rand() {std_logic_vector}
-----------------------------------------------------------------------------------------------------
+return std_logic_vector
+^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value. Values are interpreted as unsigned and therefore constrained by the natural type. ::
 
     std_logic_vector := rand(length, [msg_id_panel])
@@ -716,8 +719,8 @@ Returns a random std_logic_vector value. Values are interpreted as unsigned and 
 
 .. _rand_sl:
 
-rand() {std_logic}
-----------------------------------------------------------------------------------------------------
+return std_logic
+^^^^^^^^^^^^^^^^
 Returns a random std_logic value. ::
 
     std_logic := rand(VOID, [msg_id_panel])
@@ -738,8 +741,8 @@ Returns a random std_logic value. ::
 
 .. _rand_bool:
 
-rand() {boolean}
-----------------------------------------------------------------------------------------------------
+return boolean
+^^^^^^^^^^^^^^
 Returns a random boolean value. ::
 
     boolean := rand(VOID, [msg_id_panel])

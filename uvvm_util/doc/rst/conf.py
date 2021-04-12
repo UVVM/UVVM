@@ -51,7 +51,7 @@ highlight_language = 'VHDL'
 html_theme = 'sphinx_rtd_theme'
 
 html_theme_options = {
-    'navigation_depth': '4',
+    'navigation_depth': '5',
     'style_nav_header_background': '#F5F5F5',
     'logo_only': 'True'
 }

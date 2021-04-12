@@ -84,18 +84,22 @@ clear_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------
 Clears the configured mean value. Default value will be (max_range-min_range)/2 ::
 
-    clear_rand_dist_mean([msg_id_panel])
+    clear_rand_dist_mean(VOID)
+    clear_rand_dist_mean(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_rand.clear_rand_dist_mean;
+    my_rand.clear_rand_dist_mean(VOID);
+    my_rand.clear_rand_dist_mean(my_msg_id_panel);
 
 
 set_rand_dist_std_deviation()
@@ -143,18 +147,22 @@ clear_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------
 Clears the configured standard deviation value. Default value will be (max_range-min_range)/6 ::
 
-    clear_rand_dist_std_deviation([msg_id_panel])
+    clear_rand_dist_std_deviation(VOID)
+    clear_rand_dist_std_deviation(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_rand.clear_rand_dist_std_deviation;
+    my_rand.clear_rand_dist_std_deviation(VOID);
+    my_rand.clear_rand_dist_std_deviation(my_msg_id_panel);
 
 
 set_range_weight_default_mode()
@@ -235,18 +243,22 @@ clear_rand_cyclic()
 ----------------------------------------------------------------------------------------------------
 Clears the state of the cyclic generation. Deallocates the list/queue used to store the generated numbers. ::
 
-    clear_rand_cyclic([msg_id_panel])
+    clear_rand_cyclic(VOID)
+    clear_rand_cyclic(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_rand.clear_rand_cyclic;
+    my_rand.clear_rand_cyclic(VOID);
+    my_rand.clear_rand_cyclic(my_msg_id_panel);
 
 
 set_rand_seeds()
@@ -723,7 +735,8 @@ return std_logic
 ^^^^^^^^^^^^^^^^
 Returns a random std_logic value. ::
 
-    std_logic := rand(VOID, [msg_id_panel])
+    std_logic := rand(VOID)
+    std_logic := rand(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                                   |
@@ -737,6 +750,7 @@ Returns a random std_logic value. ::
 
     Examples:
     rand_sl := my_rand.rand(VOID);
+    rand_sl := my_rand.rand(my_msg_id_panel);
 
 
 .. _rand_bool:
@@ -745,7 +759,8 @@ return boolean
 ^^^^^^^^^^^^^^
 Returns a random boolean value. ::
 
-    boolean := rand(VOID, [msg_id_panel])
+    boolean := rand(VOID)
+    boolean := rand(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                                   |
@@ -759,6 +774,7 @@ Returns a random boolean value. ::
 
     Examples:
     rand_bool := my_rand.rand(VOID);
+    rand_bool := my_rand.rand(my_msg_id_panel);
 
 
 .. _rand_val_weight:

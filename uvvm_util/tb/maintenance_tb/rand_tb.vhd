@@ -2271,7 +2271,7 @@ begin
         check_rand_value(v_int, -3, 3);
       end loop;
 
-      v_rand.clear_rand_cyclic;
+      v_rand.clear_rand_cyclic(VOID);
 
       log(ID_SEQUENCER, "Generate whole range of values");
       for i in 1 to v_num_values loop
@@ -2281,7 +2281,7 @@ begin
       end loop;
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
-      v_rand.clear_rand_cyclic;
+      v_rand.clear_rand_cyclic(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic_performance" then
@@ -2337,7 +2337,7 @@ begin
       end loop;
 
       enable_log_msg(ID_RAND_GEN);
-      v_rand.clear_rand_cyclic;
+      v_rand.clear_rand_cyclic(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then
@@ -2353,9 +2353,9 @@ begin
       check_value(1.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
 
       increment_expected_alerts(TB_NOTE, 2);
-      v_rand.clear_rand_dist_mean;
+      v_rand.clear_rand_dist_mean(VOID);
       check_value(0.0, v_rand.get_rand_dist_mean(VOID), ERROR, "Checking mean config was cleared");
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_std_deviation(VOID);
       check_value(0.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation config was cleared");
 
       disable_log_msg(ID_POS_ACK);
@@ -2396,8 +2396,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       -- Integer Vector
@@ -2433,8 +2433,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       -- Real
@@ -2470,8 +2470,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       -- Real Vector
@@ -2507,8 +2507,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "REAL_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       -- Unsigned
@@ -2544,8 +2544,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       -- Signed
@@ -2581,8 +2581,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       -- Std_logic_vector
@@ -2618,8 +2618,8 @@ begin
       generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
 
       wait for 200 ns;
-      v_rand.clear_rand_dist_mean;
-      v_rand.clear_rand_dist_std_deviation;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing invalid parameters");

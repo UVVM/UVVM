@@ -153,7 +153,10 @@ package funct_cov_pkg is
   return boolean;
 
   procedure print_sim_coverage_summary(
-    constant scope : in string := C_SCOPE);
+    constant VOID : in t_void);
+
+  procedure print_sim_coverage_summary(
+    constant scope : in string);
 
   ------------------------------------------------------------
   -- Protected type
@@ -183,32 +186,32 @@ package funct_cov_pkg is
 
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return integer;
 
     -- Returns the number of bins in the coverpoint
     impure function get_num_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return natural;
 
     -- Returns the number of illegal and ignore bins in the coverpoint
     impure function get_num_invalid_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return natural;
 
     -- Returns a vector with the bins in the coverpoint
     impure function get_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return t_cov_bin_vector;
 
     -- Returns a vector with the illegal and ignore bins in the coverpoint
     impure function get_invalid_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return t_cov_bin_vector;
 
     -- Returns a string with all the bins, including illegal and ignore, in the coverpoint
     impure function get_all_bins_string(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return string;
 
     ------------------------------------------------------------
@@ -345,12 +348,20 @@ package funct_cov_pkg is
     -- Randomization
     ------------------------------------------------------------
     impure function rand(
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant VOID : t_void)
     return integer;
 
     impure function rand(
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant msg_id_panel : t_msg_id_panel)
+    return integer;
+
+    impure function rand(
+      constant VOID : t_void)
+    return integer_vector;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
     return integer_vector;
 
     ------------------------------------------------------------
@@ -653,7 +664,13 @@ package body funct_cov_pkg is
   end function;
 
   procedure print_sim_coverage_summary(
-    constant scope : in string := C_SCOPE) is
+    constant VOID : in t_void) is
+  begin
+    print_sim_coverage_summary(C_SCOPE);
+  end procedure;
+
+  procedure print_sim_coverage_summary(
+    constant scope : in string) is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
     constant C_HEADER : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(scope) & " ***";
     variable v_line   : line;
@@ -1165,7 +1182,7 @@ package body funct_cov_pkg is
 
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return integer is
     begin
       return priv_num_bins_crossed;
@@ -1173,7 +1190,7 @@ package body funct_cov_pkg is
 
     -- Returns the number of bins in the coverpoint
     impure function get_num_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return natural is
     begin
       return priv_bins_idx;
@@ -1181,7 +1198,7 @@ package body funct_cov_pkg is
 
     -- Returns the number of illegal and ignore bins in the coverpoint
     impure function get_num_invalid_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return natural is
     begin
       return priv_invalid_bins_idx;
@@ -1189,7 +1206,7 @@ package body funct_cov_pkg is
 
     -- Returns a vector with the bins in the coverpoint
     impure function get_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return t_cov_bin_vector is
     begin
       return priv_bins(0 to priv_bins_idx-1);
@@ -1197,7 +1214,7 @@ package body funct_cov_pkg is
 
     -- Returns a vector with the illegal and ignore bins in the coverpoint
     impure function get_invalid_bins(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return t_cov_bin_vector is
     begin
       return priv_invalid_bins(0 to priv_invalid_bins_idx-1);
@@ -1206,7 +1223,7 @@ package body funct_cov_pkg is
     -- Returns a string with all the bins in the coverpoint including illegal, ignore and cross
     -- Duplicate bins are not printed since they are assumed to be the result of a cross
     impure function get_all_bins_string(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return string is
       variable v_new_bin_array : t_new_bin_array(0 to priv_num_bins_crossed-1);
       variable v_line          : line;
@@ -1523,7 +1540,16 @@ package body funct_cov_pkg is
     -- Randomization
     ------------------------------------------------------------
     impure function rand(
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant VOID : t_void)
+    return integer is
+      variable v_ret : integer;
+    begin
+      v_ret := rand(shared_msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel)
     return integer is
       constant C_LOCAL_CALL  : string := "rand()";
       variable v_ret         : integer_vector(0 to 0);
@@ -1534,8 +1560,17 @@ package body funct_cov_pkg is
     end function;
 
     impure function rand(
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant VOID : t_void)
+    return integer_vector is
+      variable v_ret : integer_vector(0 to priv_num_bins_crossed-1);
+    begin
+      v_ret := rand(shared_msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
     return integer_vector is
       constant C_LOCAL_CALL      : string := "rand()";
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);

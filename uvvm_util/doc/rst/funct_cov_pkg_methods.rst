@@ -271,15 +271,19 @@ print_sim_coverage_summary()
 Prints the simulation coverage summary containing the main information of all the coverpoints, however it does not print the bins. 
 The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg.::
 
-    print_sim_coverage_summary([scope])
+    print_sim_coverage_summary(VOID)
+    print_sim_coverage_summary(scope)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    print_sim_coverage_summary;
+    print_sim_coverage_summary(VOID);
+    print_sim_coverage_summary(my_scope);

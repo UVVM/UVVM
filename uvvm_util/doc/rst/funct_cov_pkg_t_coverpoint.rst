@@ -264,20 +264,26 @@ rand()
 Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
 it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. ::
 
-    integer := rand([msg_id_panel])
-    integer_vector := rand([msg_id_panel])
+    integer        := rand(VOID)
+    integer        := rand(msg_id_panel)
+    integer_vector := rand(VOID)
+    integer_vector := rand(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    addr := my_coverpoint.rand;
-    addr_vec := my_coverpoint.rand;
+    addr := my_coverpoint.rand(VOID);
+    addr := my_coverpoint.rand(my_msg_id_panel);
+    addr_vec := my_coverpoint.rand(VOID);
+    addr_vec := my_coverpoint.rand(my_msg_id_panel);
 
 
 sample_coverage()

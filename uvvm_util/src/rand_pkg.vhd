@@ -162,7 +162,10 @@ package rand_pkg is
     return real;
 
     procedure clear_rand_dist_mean(
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+      constant VOID : in t_void);
+
+    procedure clear_rand_dist_mean(
+      constant msg_id_panel : in t_msg_id_panel);
 
     procedure set_rand_dist_std_deviation(
       constant std_deviation : in real;
@@ -173,7 +176,10 @@ package rand_pkg is
     return real;
 
     procedure clear_rand_dist_std_deviation(
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+      constant VOID : in t_void);
+
+    procedure clear_rand_dist_std_deviation(
+      constant msg_id_panel : in t_msg_id_panel);
 
     procedure set_range_weight_default_mode(
       constant mode         : in t_weight_mode;
@@ -191,7 +197,10 @@ package rand_pkg is
     return string;
 
     procedure clear_rand_cyclic(
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+      constant VOID : in t_void);
+
+    procedure clear_rand_cyclic(
+      constant msg_id_panel : in t_msg_id_panel);
 
     ------------------------------------------------------------
     -- Randomization seeds
@@ -947,15 +956,21 @@ package rand_pkg is
     -- Random std_logic & boolean
     ------------------------------------------------------------
     impure function rand(
-      constant VOID          : t_void;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant VOID          : t_void)
     return std_logic;
 
     impure function rand(
-      constant VOID          : t_void;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return std_logic;
+
+    impure function rand(
+      constant VOID          : t_void)
+    return boolean;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
     return boolean;
 
     ------------------------------------------------------------
@@ -1548,7 +1563,13 @@ package body rand_pkg is
     end function;
 
     procedure clear_rand_dist_mean(
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant VOID : in t_void) is
+    begin
+      clear_rand_dist_mean(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_rand_dist_mean(
+      constant msg_id_panel : in t_msg_id_panel) is
       constant C_LOCAL_CALL : string := "clear_rand_dist_mean()";
     begin
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
@@ -1581,7 +1602,13 @@ package body rand_pkg is
     end function;
 
     procedure clear_rand_dist_std_deviation(
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant VOID : in t_void) is
+    begin
+      clear_rand_dist_std_deviation(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_rand_dist_std_deviation(
+      constant msg_id_panel : in t_msg_id_panel) is
       constant C_LOCAL_CALL : string := "clear_rand_dist_std_deviation()";
     begin
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
@@ -1627,7 +1654,13 @@ package body rand_pkg is
     end function;
 
     procedure clear_rand_cyclic(
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant VOID : in t_void) is
+    begin
+      clear_rand_cyclic(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_rand_cyclic(
+      constant msg_id_panel : in t_msg_id_panel) is
       constant C_LOCAL_CALL : string := "clear_rand_cyclic()";
     begin
       log(ID_RAND_CONF, C_LOCAL_CALL & "=> Deallocating cyclic list/queue", priv_scope, msg_id_panel);
@@ -3868,9 +3901,17 @@ package body rand_pkg is
     -- Random std_logic & boolean
     ------------------------------------------------------------
     impure function rand(
-      constant VOID          : t_void;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant VOID          : t_void)
+    return std_logic is
+      variable v_ret : std_logic;
+    begin
+      v_ret := rand(shared_msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
     return std_logic is
       constant C_LOCAL_CALL : string := "rand(STD_LOGIC)";
       variable v_proc_call : line;
@@ -3887,9 +3928,17 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant VOID          : t_void;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
-      constant ext_proc_call : string         := "")
+      constant VOID          : t_void)
+    return boolean is
+      variable v_ret : boolean;
+    begin
+      v_ret := rand(shared_msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
     return boolean is
       constant C_LOCAL_CALL : string := "rand(BOOL)";
       variable v_proc_call : line;

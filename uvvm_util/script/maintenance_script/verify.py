@@ -7,30 +7,12 @@ from pathlib import Path
 
 
 
-def get_golden_file_list(path = "."):
+def get_file_list(path = "."):
     filelist = []
     for filename in os.listdir(path):
       if filename.endswith(".txt"):
         filelist.append(filename)
     return filelist
-
-
-def get_test_file_list():
-  filelist = []
-  output_folder = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'hdlunit/test/'))
-
-  for subdir, dirs, files in os.walk(output_folder):
-
-      for file in files:
-          if 'test' in subdir:
-              print(subdir)
-              filepath = subdir + os.sep + file
-
-              if '.txt' in filepath:
-                  test_run_path = os.path.abspath(os.path.join(subdir, '../../sim'))  
-
-
-  return filelist
 
 
 def compare(modelsim=False, riviera=False):
@@ -43,8 +25,8 @@ def compare(modelsim=False, riviera=False):
     golden_path = sim_path + '/../script/maintenance_script/golden_riviera_pro'
 
   # Get file lists
-  filelist = get_test_file_list(".")
-  golden_file_list = get_golden_file_list(golden_path)
+  filelist = get_file_list(".")
+  golden_file_list = get_file_list(golden_path)
 
   failing_verify_file = []
 

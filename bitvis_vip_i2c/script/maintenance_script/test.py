@@ -22,34 +22,34 @@ def cleanup(msg='Cleaning up...'):
             shutil.rmtree(path)
         except:
             os.remove(path)
-    
-print('Verify Bitvis UART DUT')
+
+print('Verify Bitvis VIP I2C')
 
 cleanup('Removing any previous runs.')
 
 hdlunit = HDLUnit(simulator='modelsim')
-
 # Add util, fw and VIP Scoreboard
 hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
 hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
 hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
-# Add other VIPs in the TB
-#  - SBI VIP
-hdlunit.add_files("../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
-#  - UART VIP
-hdlunit.add_files("../../bitvis_vip_uart/src/*.vhd", "bitvis_vip_uart")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_uart")
-#  - Clock Generator VVC
-hdlunit.add_files("../../bitvis_vip_clock_generator/src/*.vhd", "bitvis_vip_clock_generator")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_clock_generator")
-# Add DUT
-hdlunit.add_files("../../bitvis_uart/src/*.vhd", "bitvis_uart")
+# Add I2C VIP
+hdlunit.add_files("../src/*.vhd", "bitvis_vip_i2c")
+hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_i2c")
 
 # Add TB/TH
-hdlunit.add_files("../../bitvis_uart/tb/maintenance_tb/*.vhd", "bitvis_uart")
-hdlunit.add_files("../../bitvis_uart/tb/*.vhd", "bitvis_uart")
+hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_i2c")
+# Add TB dependencies
+hdlunit.add_files("../../tb/maintenance_tb/fpga_i2c_slave_github/*.vhd", "bitvis_vip_i2c")
+hdlunit.add_files("../../tb/maintenance_tb/i2c_opencores/trunk/rtl/vhdl/*.vhd", "bitvis_vip_i2c")
+
+# Add SBI VIP
+hdlunit.add_files("../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
+hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
+
+# Add Wishbone VIP
+hdlunit.add_files("../../bitvis_vip_wishbone/src/*.vhd", "bitvis_vip_wishbone")
+hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_wishbone")
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

@@ -23,33 +23,42 @@ def cleanup(msg='Cleaning up...'):
         except:
             os.remove(path)
 
-    
-print('Verify Bitvis VIP AXI')
+print('Verify UVVM Util')
 
 cleanup('Removing any previous runs.')
 
 hdlunit = HDLUnit(simulator='modelsim')
 
-# Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+# Add Util src
+hdlunit.add_files("../src/*.vhd", "uvvm_util")
 
-# Add Avalon AXI VIP
-hdlunit.add_files("../src/*.vhd", "bitvis_vip_axi")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_axi")
+# Add Util TB
+hdlunit.add_files("../tb/maintenance_tb/*.vhd", "uvvm_util")
 
-# Add TB/TH
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_axi")
+# Define testcase names with generics for GC_TESTCASE
+hdlunit.add_generics("generic_queue_array_tb", ["GC_TESTCASE", "generic_queue_array_tb"])
+hdlunit.add_generics("generic_queue_record_tb", ["GC_TESTCASE", "generic_queue_record_tb"])
+hdlunit.add_generics("generic_queue_tb", ["GC_TESTCASE", "generic_queue_tb"])
+hdlunit.add_generics("simplified_data_queue_tb", ["GC_TESTCASE", "simplified_data_queue_tb"])
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 
 num_failing_tests = hdlunit.get_num_fail_tests()
 num_passing_tests = hdlunit.get_num_pass_tests()
 
+# Check with golden reference
+(ret_txt, ret_code) = hdlunit.run_command("py ../script/maintenance_script/verify_with_golden.py -modelsim")
+
+print(ret_txt)
+
+if ret_code > 0:
+    num_failing_tests += 1
+    #sys.exit(1)
+
 # No tests run error
 if num_passing_tests == 0:
     sys.exit(1)
+
 # Remove output only if OK
 if hdlunit.check_run_results(exp_fail=0) is True:
     cleanup('Removing simulation output')

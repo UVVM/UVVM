@@ -22,8 +22,15 @@ def cleanup(msg='Cleaning up...'):
             shutil.rmtree(path)
         except:
             os.remove(path)
-    
-print('Verify Bitvis UART DUT')
+
+
+def create_config(spi_modes, data_widths, data_array_widths):
+    config = []
+    for spi_mode, data_width, data_array_width in product(spi_modes, data_widths, data_array_widths):
+      config.append([str(spi_mode), str(data_width), str(data_array_width)])
+    return config
+
+print('Verify Bitvis VIP SPI')
 
 cleanup('Removing any previous runs.')
 
@@ -34,22 +41,24 @@ hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
 hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
 hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
-# Add other VIPs in the TB
-#  - SBI VIP
+# Add testcase configurations
+configs = create_config(spi_modes=range(0,4), data_widths=[8, 14, 23, 32], data_array_widths=[2, 4, 6, 8])
+for config in configs:
+    hdlunit.add_generics("spi_vvc_tb", ["GC_SPI_MODE", config[0],"GC_DATA_WIDTH", config[1], "GC_DATA_ARRAY_WIDTH", config[2]])
+
+# Add SPI VIP
+hdlunit.add_files("../src/*.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_spi")
+
+# Add TB/TH and dependencies
+hdlunit.add_files("../tb/maintenance_tb//spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_common_pkg.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../tb/maintenance_tb/spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_master.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../tb/maintenance_tb/spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_slave.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../tb/maintenance_tb/spi_pif.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_spi")
+
 hdlunit.add_files("../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
 hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
-#  - UART VIP
-hdlunit.add_files("../../bitvis_vip_uart/src/*.vhd", "bitvis_vip_uart")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_uart")
-#  - Clock Generator VVC
-hdlunit.add_files("../../bitvis_vip_clock_generator/src/*.vhd", "bitvis_vip_clock_generator")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_clock_generator")
-# Add DUT
-hdlunit.add_files("../../bitvis_uart/src/*.vhd", "bitvis_uart")
-
-# Add TB/TH
-hdlunit.add_files("../../bitvis_uart/tb/maintenance_tb/*.vhd", "bitvis_uart")
-hdlunit.add_files("../../bitvis_uart/tb/*.vhd", "bitvis_uart")
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

@@ -1,4 +1,6 @@
 import sys
+import os
+import shutil
 from itertools import product
 
 
@@ -8,6 +10,18 @@ except:
     print('Unable to import HDLUnit module. See HDLUnit documentation for installation instructions.')
     sys.exit(1)
 
+
+def cleanup(msg='Cleaning up...'):
+    print(msg)
+
+    sim_path = os.getcwd()
+
+    for files in os.listdir(sim_path):
+        path = os.path.join(sim_path, files)
+        try:
+            shutil.rmtree(path)
+        except:
+            os.remove(path)
 
 
 # Create testbench configuration with TB generics
@@ -22,6 +36,8 @@ def create_config(channel_widths, data_widths, error_widths):
 
     
 print('Verify Bitvis VIP Avalon ST')
+
+cleanup('Removing any previous runs.')
 
 hdlunit = HDLUnit(simulator='modelsim')
 
@@ -55,7 +71,13 @@ hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_st")
 hdlunit.start(regression_mode=True, gui_mode=False)
 
 num_failing_tests = hdlunit.get_num_fail_tests()
+num_passing_tests = hdlunit.get_num_pass_tests()
 
-hdlunit.check_run_results(exp_fail=0)
-
+# No tests run error
+if num_passing_tests == 0:
+    sys.exit(1)
+# Remove output only if OK
+if hdlunit.check_run_results(exp_fail=0) is True:
+    cleanup('Removing simulation output')
+# Return number of failing tests
 sys.exit(num_failing_tests)

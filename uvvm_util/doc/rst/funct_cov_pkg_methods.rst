@@ -1,11 +1,12 @@
+**********************************************************************************************************************************
 Methods
-=======
+**********************************************************************************************************************************
 Procedures and functions complementing the t_coverpoint functionality.
 
 .. _bin_functions:
 
 bin()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a bin with a single value or multiple values. When having multiple values in a bin, only one 
 of them needs to be sampled for the bin to collect coverage. ::
 
@@ -28,7 +29,7 @@ of them needs to be sampled for the bin to collect coverage. ::
 
 
 bin_range()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a range of values divided into a number of bins. If the number of bins is 0 then a bin is 
 created for each value. If the division has a residue, it is spread equally starting from the last bins. ::
 
@@ -53,7 +54,7 @@ created for each value. If the division has a residue, it is spread equally star
 
 
 bin_vector()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a vector's range divided into a number of bins. If the number of bins is 0 then a bin is 
 created for each value. If the division has a residue, it is spread equally starting from the last bins. ::
 
@@ -76,7 +77,7 @@ created for each value. If the division has a residue, it is spread equally star
 
 
 bin_transition()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a bin with a transition of values. ::
 
     t_new_bin_array := bin_transition(set_values)
@@ -94,7 +95,7 @@ Returns a t_new_bin_array containing a bin with a transition of values. ::
 
 
 ignore_bin()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing an ignore bin with a single value. ::
 
     t_new_bin_array := ignore_bin(value)
@@ -112,7 +113,7 @@ Returns a t_new_bin_array containing an ignore bin with a single value. ::
 
 
 ignore_bin_range()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing an ignore bin with a range of values. ::
 
     t_new_bin_array := ignore_bin_range(min_value, max_value)
@@ -132,7 +133,7 @@ Returns a t_new_bin_array containing an ignore bin with a range of values. ::
 
 
 ignore_bin_transition()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing an ignore bin with a transition of values. ::
 
     t_new_bin_array := ignore_bin_transition(set_values)
@@ -150,7 +151,7 @@ Returns a t_new_bin_array containing an ignore bin with a transition of values. 
 
 
 illegal_bin()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing an illegal bin with a single value. ::
 
     t_new_bin_array := illegal_bin(value)
@@ -168,7 +169,7 @@ Returns a t_new_bin_array containing an illegal bin with a single value. ::
 
 
 illegal_bin_range()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing an illegal bin with a range of values. ::
 
     t_new_bin_array := illegal_bin_range(min_value, max_value)
@@ -188,7 +189,7 @@ Returns a t_new_bin_array containing an illegal bin with a range of values. ::
 
 
 illegal_bin_transition()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing an illegal bin with a transition of values. ::
 
     t_new_bin_array := illegal_bin_transition(set_values)
@@ -206,7 +207,7 @@ Returns a t_new_bin_array containing an illegal bin with a transition of values.
 
 
 set_sim_coverage_goal()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the simulation coverage goal. This is an easy way to apply the same goal to all the coverpoints. If a coverpoint's goal 
 has also been modified by ``set_coverage_goal()``, they will be multiplied for the given coverpoint. Default value is 100. ::
 
@@ -229,7 +230,7 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
 
 
 get_sim_coverage()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the accumulated coverage for all the coverpoints in the simulation. ::
 
     real := get_sim_coverage(VOID)
@@ -247,7 +248,7 @@ Returns the accumulated coverage for all the coverpoints in the simulation. ::
 
 
 sim_coverage_completed()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns true if the accumulated coverage for all the coverpoints in the simulation has reached the goal. Default goal is 100. ::
 
     boolean := sim_coverage_completed(VOID)
@@ -267,7 +268,7 @@ Returns true if the accumulated coverage for all the coverpoints in the simulati
 
 
 print_sim_coverage_summary()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Prints the simulation coverage summary containing the main information of all the coverpoints, however it does not print the bins. 
 The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg.::
 

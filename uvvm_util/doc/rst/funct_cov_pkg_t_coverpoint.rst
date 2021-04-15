@@ -1,9 +1,10 @@
+**********************************************************************************************************************************
 t_coverpoint (protected)
-========================
+**********************************************************************************************************************************
 Protected type containing all the coverage functionality.
 
 set_name()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the name of the coverpoint. ::
 
     set_name(name)
@@ -21,7 +22,7 @@ Configures the name of the coverpoint. ::
 
 
 get_name()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the coverpoint's name. ::
 
     string := get_name(VOID)
@@ -39,7 +40,7 @@ Returns the coverpoint's name. ::
 
 
 set_scope()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the scope used in the log messages. ::
 
     set_scope(scope)
@@ -57,7 +58,7 @@ Configures the scope used in the log messages. ::
 
 
 get_scope()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured scope. ::
 
     string := get_scope(VOID)
@@ -75,7 +76,7 @@ Returns the configured scope. ::
 
 
 detect_bin_overlap()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures if a TB_WARNING alert should be generated when overlapping bins are sampled (not including ignore or invalid bins). ::
 
     detect_bin_overlap(enable, [msg_id_panel])
@@ -95,7 +96,7 @@ Configures if a TB_WARNING alert should be generated when overlapping bins are s
 
 
 write_coverage_db()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Writes the coverpoint model to a file. ::
 
     write_coverage_db(file_name, [msg_id_panel])
@@ -115,7 +116,7 @@ Writes the coverpoint model to a file. ::
 
 
 load_coverage_db()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Loads the coverpoint model from a file. ::
 
     load_coverage_db(file_name, [msg_id_panel])
@@ -135,7 +136,7 @@ Loads the coverpoint model from a file. ::
 
 
 add_bins()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Adds bins to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` which return a t_new_bin_array. 
 Bin functions may be concatenated to add several bins at once. Default values for min_hits and rand_weight are both 1. ::
 
@@ -166,7 +167,7 @@ Bin functions may be concatenated to add several bins at once. Default values fo
 
 
 add_cross() {bin_array}
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Adds a cross between two t_new_bin_array elements to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` 
 which return a t_new_bin_array. Bin functions may be concatenated to add several bins at once. Default values for min_hits and 
 rand_weight are both 1. ::
@@ -213,7 +214,7 @@ This procedure has overloads which support crossing up to 5 t_new_bin_array elem
 
 
 add_cross() {coverpoint}
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Adds a cross between two coverpoints to the coverpoint. Note that the coverpoints being crossed must contain at least one bin. 
 Default values for min_hits and rand_weight are both 1. ::
 
@@ -260,7 +261,7 @@ This procedure has overloads which support crossing up to 16 coverpoints. ::
 
 
 rand()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
 it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. ::
 
@@ -287,7 +288,7 @@ it will return a random value among all the valid bins. Note that ignore and ill
 
 
 sample_coverage()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Samples a value (or values for crossed bins) in a coverpoint. If the value matches a bin, it will increase its number of hits and 
 once the bin has reached its minimum number of hits, which is by default 1, it will be marked as covered. ::
 
@@ -312,7 +313,7 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
 
 
 set_coverage_weight()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the weight of the coverpoint used for calculating the simulation coverage. Default value is 1. ::
 
     set_coverage_weight(weight, [msg_id_panel])
@@ -332,7 +333,7 @@ Configures the weight of the coverpoint used for calculating the simulation cove
 
 
 set_coverage_goal()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the coverpoint coverage goal. Default value is 100. ::
 
     set_coverage_goal(percentage, [msg_id_panel])
@@ -352,7 +353,7 @@ Configures the coverpoint coverage goal. Default value is 100. ::
 
 
 get_coverage()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the accumulated coverage for all the bins in the coverpoint. ::
 
     real := get_coverage(VOID)
@@ -370,7 +371,7 @@ Returns the accumulated coverage for all the bins in the coverpoint. ::
 
 
 coverage_completed()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns true if the accumulated coverage for all the bins in the coverpoint has reached the goal. Default goal is 100. ::
 
     boolean := coverage_completed(VOID)
@@ -390,7 +391,7 @@ Returns true if the accumulated coverage for all the bins in the coverpoint has 
 
 
 print_summary()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Prints the coverpoint coverage summary containing all the bins, including illegal and ignored. The printing destination can be 
 log and/or console and is defined by shared_default_log_destination in adaptations_pkg. ::
 

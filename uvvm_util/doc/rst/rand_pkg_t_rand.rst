@@ -1,9 +1,10 @@
+**********************************************************************************************************************************
 t_rand (protected)
-==================
+**********************************************************************************************************************************
 Protected type containing all the randomization functionality.
 
 set_rand_dist()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the randomization distribution to be used with the rand() functions. Default value is UNIFORM. ::
 
     set_rand_dist(rand_dist, [msg_id_panel])
@@ -23,7 +24,7 @@ Configures the randomization distribution to be used with the rand() functions. 
 
 
 get_rand_dist()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured randomization distribution. ::
 
     t_rand_dist := get_rand_dist(VOID)
@@ -41,7 +42,7 @@ Returns the configured randomization distribution. ::
 
 
 set_rand_dist_mean()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the mean value for the randomization distribution. Default value depends on the parameters of each rand() call: 
 (max_range-min_range)/2 ::
 
@@ -62,7 +63,7 @@ Configures the mean value for the randomization distribution. Default value depe
 
 
 get_rand_dist_mean()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured mean value. If a value hasn't been configured it will return 0.0 and print a TB_NOTE mentioning that the 
 default value is being used. ::
 
@@ -81,7 +82,7 @@ default value is being used. ::
 
 
 clear_rand_dist_mean()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Clears the configured mean value. Default value will be (max_range-min_range)/2 ::
 
     clear_rand_dist_mean(VOID)
@@ -103,7 +104,7 @@ Clears the configured mean value. Default value will be (max_range-min_range)/2 
 
 
 set_rand_dist_std_deviation()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the standard deviation value for the randomization distribution. Default value depends on the parameters of each rand() 
 call: (max_range-min_range)/6 ::
 
@@ -125,7 +126,7 @@ call: (max_range-min_range)/6 ::
 
 
 get_rand_dist_std_deviation()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured standard deviation value. If a value hasn't been configured it will return 0.0 and print a TB_NOTE mentioning 
 that the default value is being used. ::
 
@@ -144,7 +145,7 @@ that the default value is being used. ::
 
 
 clear_rand_dist_std_deviation()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Clears the configured standard deviation value. Default value will be (max_range-min_range)/6 ::
 
     clear_rand_dist_std_deviation(VOID)
@@ -166,7 +167,7 @@ Clears the configured standard deviation value. Default value will be (max_range
 
 
 set_range_weight_default_mode()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the default range weight mode for the weighted randomization distribution. ::
 
     set_range_weight_default_mode(mode, [msg_id_panel])
@@ -186,7 +187,7 @@ Configures the default range weight mode for the weighted randomization distribu
 
 
 get_range_weight_default_mode()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the default range weight mode. ::
 
     t_weight_mode := get_range_weight_default_mode(VOID)
@@ -204,7 +205,7 @@ Returns the default range weight mode. ::
 
 
 set_scope()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the scope used in the log messages. Default is C_SCOPE defined in adaptations_pkg. ::
 
     set_scope(scope)
@@ -222,7 +223,7 @@ Configures the scope used in the log messages. Default is C_SCOPE defined in ada
 
 
 get_scope()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured scope. ::
 
     string := get_scope(VOID)
@@ -240,7 +241,7 @@ Returns the configured scope. ::
 
 
 clear_rand_cyclic()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Clears the state of the cyclic generation. Deallocates the list/queue used to store the generated numbers. ::
 
     clear_rand_cyclic(VOID)
@@ -262,7 +263,7 @@ Clears the state of the cyclic generation. Deallocates the list/queue used to st
 
 
 set_rand_seeds()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Configures the randomization seeds by using a string or the actual seed values. Default values are defined by C_RAND_INIT_SEED_1 
 and C_RAND_INIT_SEED_2 in adaptations_pkg. ::
 
@@ -291,7 +292,7 @@ and C_RAND_INIT_SEED_2 in adaptations_pkg. ::
 
 
 get_rand_seeds()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns the randomization seeds. ::
 
     get_rand_seeds(seed1, seed2)
@@ -315,12 +316,12 @@ Returns the randomization seeds. ::
 
 
 rand()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 
 .. _rand_int:
 
 return integer
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random integer value. ::
 
     integer := rand(min_value, max_value, [cyclic_mode, [msg_id_panel]])
@@ -364,7 +365,7 @@ Returns a random integer value. ::
 .. _rand_real:
 
 return real
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random real value. ::
 
     real := rand(min_value, max_value, [msg_id_panel])
@@ -406,7 +407,7 @@ Returns a random real value. ::
 .. _rand_time:
 
 return time
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random time value. ::
 
     time := rand(min_value, max_value, [msg_id_panel])
@@ -448,7 +449,7 @@ Returns a random time value. ::
 .. _rand_int_vec:
 
 return integer_vector
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random integer values. ::
 
     integer_vector := rand(size, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
@@ -496,7 +497,7 @@ Returns a vector of random integer values. ::
 .. _rand_real_vec:
 
 return real_vector
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random real values. ::
 
     real_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
@@ -542,7 +543,7 @@ Returns a vector of random real values. ::
 .. _rand_time_vec:
 
 return time_vector
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values. ::
 
     time_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
@@ -588,7 +589,7 @@ Returns a vector of random time values. ::
 .. _rand_uns:
 
 return unsigned
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random unsigned value. ::
 
     unsigned := rand(length, [msg_id_panel])
@@ -636,7 +637,7 @@ Returns a random unsigned value. ::
 .. _rand_sig:
 
 return signed
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value. ::
 
     signed := rand(length, [msg_id_panel])
@@ -684,7 +685,7 @@ Returns a random signed value. ::
 .. _rand_slv:
 
 return std_logic_vector
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value. Values are interpreted as unsigned and therefore constrained by the natural type. ::
 
     std_logic_vector := rand(length, [msg_id_panel])
@@ -732,7 +733,7 @@ Returns a random std_logic_vector value. Values are interpreted as unsigned and 
 .. _rand_sl:
 
 return std_logic
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic value. ::
 
     std_logic := rand(VOID)
@@ -756,7 +757,7 @@ Returns a random std_logic value. ::
 .. _rand_bool:
 
 return boolean
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random boolean value. ::
 
     boolean := rand(VOID)
@@ -780,7 +781,7 @@ Returns a random boolean value. ::
 .. _rand_val_weight:
 
 rand_val_weight()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value using a weighted distribution. Each given value has a weight which determines how often it is chosen during 
 randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. ::
 
@@ -819,7 +820,7 @@ randomization. The sum of all weights need not be 100 since the probability is w
 .. _rand_range_weight:
 
 rand_range_weight()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value using a weighted distribution. Each given range (min/max) has a weight which determines how often it is 
 chosen during randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. 
 
@@ -860,7 +861,7 @@ can be changed to assigning the given weight equally to each value within the ra
 .. _rand_range_weight_mode:
 
 rand_range_weight_mode()
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value using a weighted distribution. Each given range (min/max) has a weight which determines how often it is 
 chosen during randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. 
 

@@ -1,5 +1,6 @@
+##################################################################################################################################
 Advanced randomization
-======================
+##################################################################################################################################
 All the functionality for advanced randomization can be found in *uvvm_util/src/rand_pkg.vhd*.
 
 To generate a random value using this package it is necessary to import the utility library, create a variable with the protected 
@@ -18,8 +19,9 @@ type *t_rand* and call the ``rand()`` function from the variable.
       addr := my_rand.rand(0, 255);
       ...
 
+**********************************************************************************************************************************
 Seeds
------
+**********************************************************************************************************************************
 Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They 
 can be initialized using any string or two positive values.
 
@@ -30,8 +32,9 @@ can be initialized using any string or two positive values.
 
 The current seeds can be printed out, in case there is a need to recreate a certain random sequence, by using ``get_rand_seeds()``.
 
+**********************************************************************************************************************************
 Constraints
------------
+**********************************************************************************************************************************
 There are different ways of constraining the random value in a clear and consistent manner.
 
 .. code-block::
@@ -49,8 +52,9 @@ There are different ways of constraining the random value in a clear and consist
     -- 4. min & max + two sets of values
     addr := my_rand.rand(0, 50, INCL,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
 
+**********************************************************************************************************************************
 Types
------
+**********************************************************************************************************************************
 The ``rand()`` function can return the following types:
 
     * :ref:`integer <rand_int>`
@@ -77,8 +81,9 @@ The ``rand()`` function can return the following types:
     rand_sig      := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
     rand_slv      := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25,35));
 
+**********************************************************************************************************************************
 Uniqueness
-----------
+**********************************************************************************************************************************
 When returning a vector type (integer, real or time) it is possible to generate unique random values for each element of the vector 
 by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function.
 
@@ -88,8 +93,9 @@ by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function.
 
 Note that if the constraints are not enough to generate unique values for the whole vector, an error will be reported.
 
+**********************************************************************************************************************************
 Cyclic generation
------------------
+**********************************************************************************************************************************
 By setting the parameter *cyclic_mode = CYCLIC* in the ``rand()`` function, it is possible to generate random values which will
 not repeat until all the values within the constraints have been generated. Once this happens, the process starts over.
 
@@ -109,13 +115,14 @@ not repeat until all the values within the constraints have been generated. Once
 * IMPORTANT: It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to deallocate 
   the list/queue.
 
+**********************************************************************************************************************************
 Distributions
--------------
+**********************************************************************************************************************************
 By default, the Uniform distribution is used with the ``rand()`` function, however it is also possible to select other distributions
 with the procedure ``set_rand_dist()``.
 
 Gaussian (Normal)
-^^^^^^^^^^^^^^^^^
+==================================================================================================================================
 * Only the min/max constraints are supported when using this distribution, i.e. no set_of_values are supported.
 * Cannot be combined with cyclic or uniqueness parameters.
 * Cannot be combined with weighted randomization functions.
@@ -133,7 +140,7 @@ Gaussian (Normal)
     end loop;
 
 Weighted
-^^^^^^^^
+==================================================================================================================================
 This distribution does NOT use the ``set_rand_dist()`` procedure, but instead uses different randomization functions with parameters
 of (value + weight) or (range of values + weight). The function names contain the order of the parameters for better readability.
 
@@ -166,8 +173,9 @@ it is possible to explicitly define the mode in the ``rand_range_weight_mode()``
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 
+**********************************************************************************************************************************
 Additional info
----------------
+**********************************************************************************************************************************
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
 * ID_RAND_GEN: Used for logging random generated values
@@ -178,8 +186,9 @@ The default scope for log messages in the *rand_pkg* is C_SCOPE defined in adapt
 
 The number of decimal digits displayed in the real values logs can be adjusted with C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
 
+**********************************************************************************************************************************
 rand_pkg
---------
+**********************************************************************************************************************************
 .. toctree::
    :maxdepth: 1
 

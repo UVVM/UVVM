@@ -10,19 +10,22 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'util_doc'
-copyright = '2021, Inventas AS'
-author = 'Inventas AS'
+project = 'Advanced Randomization and Functional Coverage'
+copyright = '2021, UVVM'
+author = 'UVVM'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+release = read('version.txt')
 
 
 # -- General configuration ---------------------------------------------------
@@ -56,10 +59,10 @@ html_theme_options = {
     'logo_only': 'True'
 }
 
-html_logo = '_static/uvvm.png'
+html_logo = 'images/uvvm.png'
 
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']

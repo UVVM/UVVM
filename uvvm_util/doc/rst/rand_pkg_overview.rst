@@ -7,7 +7,6 @@ To generate a random value using this package it is necessary to import the util
 type *t_rand* and call the ``rand()`` function from the variable.
 
 .. code-block::
-    :linenos:
 
     library uvvm_util;
     context uvvm_util.uvvm_util_context;

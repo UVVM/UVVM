@@ -7,7 +7,6 @@ To start using functional coverage it is necessary to import the utility library
 type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
 
 .. code-block::
-    :linenos:
 
     library uvvm_util;
     context uvvm_util.uvvm_util_context;
@@ -203,13 +202,13 @@ to 5 crossed elements.
 
 .. code-block:: none
 
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:                             BINS                         HITS          MIN_HITS        COVERAGE      RAND_WEIGHT           NAME              STATUS                      
-    # UVVM:                   (10, 20, 30)x(64 to 127)                0              N/A             N/A             N/A                                ILLEGAL                      
-    # UVVM:                        (10)x(0 to 15)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (20)x(16 to 31)                    0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (30)x(32 to 63)                    0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:      ====================================================================================================================================================================
+    # UVVM:  --------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS     MIN_HITS     COVERAGE     RAND_WEIGHT     NAME       STATUS    
+    # UVVM:     (10, 20, 30)x(64 to 127)      0         N/A          N/A            N/A                   ILLEGAL    
+    # UVVM:          (10)x(0 to 15)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (20)x(16 to 31)          0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (30)x(32 to 63)          0          1          0.00%            1                   UNCOVERED   
+    # UVVM:  ========================================================================================================
 
 The bin functions may also be concatenated to add several bins at once.
 
@@ -222,17 +221,17 @@ The bin functions may also be concatenated to add several bins at once.
 
 .. code-block:: none
 
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:                             BINS                         HITS          MIN_HITS        COVERAGE      RAND_WEIGHT           NAME              STATUS                      
-    # UVVM:                    (10, 20, 30)x(64 to 95)                0              N/A             N/A             N/A                                ILLEGAL                      
-    # UVVM:                   (10, 20, 30)x(96 to 127)                0              N/A             N/A             N/A                                ILLEGAL                      
-    # UVVM:                         (10)x(0 to 7)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (10)x(8 to 15)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (20)x(16 to 23)                    0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (20)x(24 to 31)                    0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (30)x(32 to 47)                    0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (30)x(48 to 63)                    0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:      ====================================================================================================================================================================
+    # UVVM:  --------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS     MIN_HITS     COVERAGE     RAND_WEIGHT     NAME       STATUS    
+    # UVVM:      (10, 20, 30)x(64 to 95)      0         N/A          N/A            N/A                   ILLEGAL    
+    # UVVM:     (10, 20, 30)x(96 to 127)      0         N/A          N/A            N/A                   ILLEGAL    
+    # UVVM:           (10)x(0 to 7)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (10)x(8 to 15)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (20)x(16 to 23)          0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (20)x(24 to 31)          0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (30)x(32 to 47)          0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (30)x(48 to 63)          0          1          0.00%            1                   UNCOVERED   
+    # UVVM:  ========================================================================================================
 
 Using coverpoints
 ==================================================================================================================================
@@ -247,13 +246,13 @@ This alternative is useful when the coverpoints are already created and we don't
 
 .. code-block:: none
 
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:                             BINS                         HITS          MIN_HITS        COVERAGE      RAND_WEIGHT           NAME              STATUS                      
-    # UVVM:                        (0)x(0 to 127)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (1)x(0 to 127)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (2)x(0 to 127)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                        (3)x(0 to 127)                     0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:      ====================================================================================================================================================================
+    # UVVM:  --------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS     MIN_HITS     COVERAGE     RAND_WEIGHT     NAME       STATUS    
+    # UVVM:          (0)x(0 to 127)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (1)x(0 to 127)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (2)x(0 to 127)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:          (3)x(0 to 127)           0          1          0.00%            1                   UNCOVERED   
+    # UVVM:  ========================================================================================================
 
 Another benefit of this alternative is that we can cross already crossed coverpoints.
 
@@ -268,21 +267,21 @@ Another benefit of this alternative is that we can cross already crossed coverpo
 
 .. code-block:: none
 
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:                             BINS                         HITS          MIN_HITS        COVERAGE      RAND_WEIGHT           NAME              STATUS                      
-    # UVVM:                     (0)x(0 to 127)x(1000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (0)x(0 to 127)x(2000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (0)x(0 to 127)x(3000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (1)x(0 to 127)x(1000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (1)x(0 to 127)x(2000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (1)x(0 to 127)x(3000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (2)x(0 to 127)x(1000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (2)x(0 to 127)x(2000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (2)x(0 to 127)x(3000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (3)x(0 to 127)x(1000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (3)x(0 to 127)x(2000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:                     (3)x(0 to 127)x(3000)                 0               1             0.00%             1                                UNCOVERED                     
-    # UVVM:      ====================================================================================================================================================================
+    # UVVM:  --------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS     MIN_HITS     COVERAGE     RAND_WEIGHT     NAME       STATUS    
+    # UVVM:       (0)x(0 to 127)x(1000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (0)x(0 to 127)x(2000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (0)x(0 to 127)x(3000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (1)x(0 to 127)x(1000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (1)x(0 to 127)x(2000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (1)x(0 to 127)x(3000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (2)x(0 to 127)x(1000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (2)x(0 to 127)x(2000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (2)x(0 to 127)x(3000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (3)x(0 to 127)x(1000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (3)x(0 to 127)x(2000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:       (3)x(0 to 127)x(3000)       0          1          0.00%            1                   UNCOVERED   
+    # UVVM:  ========================================================================================================
 
 * Note that once the number of crossed elements has been set it cannot be changed.
 * Crossing of valid, ignore, illegal and transition bins is supported.
@@ -374,22 +373,22 @@ A detailed report for the coverage and the bins in the coverpoint/cross can be p
 
 .. code-block:: none
 
-    # UVVM:      ====================================================================================================================================================================
-    # UVVM:      0 ns *** FUNCTIONAL COVERAGE SUMMARY: COVERPOINT_1 ***                                                                                                              
-    # UVVM:      ====================================================================================================================================================================
-    # UVVM:      Coverpoint:     COVERPOINT_1
-    # UVVM:      Uncovered bins: 1
-    # UVVM:      Illegal bins:   1
-    # UVVM:      Coverage:       bins: 75.00% hits: 66.67% (goal: 100%)
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:                             BINS                         HITS          MIN_HITS        COVERAGE      RAND_WEIGHT           NAME              STATUS                      
-    # UVVM:                        ILL(80 to 100)                     0              N/A             N/A             N/A           illegal_addr         ILLEGAL                      
-    # UVVM:                            IGN(50)                        0              N/A             N/A             N/A            ignore_addr          IGNORE                      
-    # UVVM:                             (40)                          0               2             0.00%             1            mem_addr_high       UNCOVERED                     
-    # UVVM:                             (10)                          1               1            100.00%            1            mem_addr_low         COVERED                      
-    # UVVM:                             (20)                          1               1            100.00%            1            mem_addr_low         COVERED                      
-    # UVVM:                             (30)                          2               2            100.00%            1            mem_addr_high        COVERED                      
-    # UVVM:      ====================================================================================================================================================================
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: COVERPOINT_1 ***                                                           
+    # UVVM:  =================================================================================================================
+    # UVVM:  Coverpoint:     COVERPOINT_1
+    # UVVM:  Uncovered bins: 1
+    # UVVM:  Illegal bins:   1
+    # UVVM:  Coverage:       bins: 75.00% hits: 66.67% (goal: 100%)
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS     MIN_HITS     COVERAGE     RAND_WEIGHT         NAME            STATUS    
+    # UVVM:          ILL(80 to 100)           0         N/A          N/A            N/A         illegal_addr       ILLEGAL    
+    # UVVM:              IGN(50)              0         N/A          N/A            N/A          ignore_addr        IGNORE    
+    # UVVM:               (40)                0          2          0.00%            1          mem_addr_high     UNCOVERED   
+    # UVVM:               (10)                1          1         100.00%           1          mem_addr_low       COVERED    
+    # UVVM:               (20)                1          1         100.00%           1          mem_addr_low       COVERED    
+    # UVVM:               (30)                2          2         100.00%           1          mem_addr_high      COVERED    
+    # UVVM:  =================================================================================================================
 
 A summary report for the covergroup can be printed using the ``print_sim_coverage_summary()`` procedure.
 
@@ -401,23 +400,23 @@ A summary report for the covergroup can be printed using the ``print_sim_coverag
 
 .. code-block:: none
 
-    # UVVM:      ====================================================================================================================================================================
-    # UVVM:      0 ns *** FUNCTIONAL COVERAGE SUMMARY: TB seq.(uvvm) ***                                                                                                             
-    # UVVM:      Total Hits Coverage: 44.44% (goal: 100%)
-    # UVVM:      ====================================================================================================================================================================
-    # UVVM:      Coverpoint:      COVERPOINT_1
-    # UVVM:      Uncovered bins:  1
-    # UVVM:      Illegal bins:    1
-    # UVVM:      Coverage:        bins: 75.00% hits: 66.67% (goal: 100%)
-    # UVVM:      Coverage weight: 1
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:      Coverpoint:      COVERPOINT_2
-    # UVVM:      Uncovered bins:  3
-    # UVVM:      Illegal bins:    0
-    # UVVM:      Coverage:        bins: 0.00% hits: 0.00% (goal: 100%)
-    # UVVM:      Coverage weight: 1
-    # UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # UVVM:      ====================================================================================================================================================================
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: TB seq.(uvvm) ***                                                          
+    # UVVM:  Total Hits Coverage: 44.44% (goal: 100%)
+    # UVVM:  =================================================================================================================
+    # UVVM:  Coverpoint:      COVERPOINT_1
+    # UVVM:  Uncovered bins:  1
+    # UVVM:  Illegal bins:    1
+    # UVVM:  Coverage:        bins: 75.00% hits: 66.67% (goal: 100%)
+    # UVVM:  Coverage weight: 1
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:  Coverpoint:      COVERPOINT_2
+    # UVVM:  Uncovered bins:  3
+    # UVVM:  Illegal bins:    0
+    # UVVM:  Coverage:        bins: 0.00% hits: 0.00% (goal: 100%)
+    # UVVM:  Coverage weight: 1
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:  =================================================================================================================
 
 **********************************************************************************************************************************
 Coverage database

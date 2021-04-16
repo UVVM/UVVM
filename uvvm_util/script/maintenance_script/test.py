@@ -53,7 +53,7 @@ print(ret_txt)
 
 if ret_code > 0:
     num_failing_tests += 1
-    #sys.exit(1)
+    sys.exit(1)
 
 # No tests run error
 if num_passing_tests == 0:
@@ -62,5 +62,6 @@ if num_passing_tests == 0:
 # Remove output only if OK
 if hdlunit.check_run_results(exp_fail=0) is True:
     cleanup('Removing simulation output')
+
 # Return number of failing tests
 sys.exit(num_failing_tests)

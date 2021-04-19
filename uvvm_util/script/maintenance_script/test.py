@@ -51,11 +51,11 @@ num_passing_tests = hdlunit.get_num_pass_tests()
 
 print(ret_txt)
 
+# Golden compare ok?
 if ret_code > 0:
-    num_failing_tests += 1
     sys.exit(1)
 
-# No tests run error
+# Tests have been run?
 if num_passing_tests == 0:
     sys.exit(1)
 

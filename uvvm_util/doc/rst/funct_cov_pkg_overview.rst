@@ -421,7 +421,9 @@ A summary report for the covergroup can be printed using the ``print_sim_coverag
 **********************************************************************************************************************************
 Coverage database
 **********************************************************************************************************************************
-TODO: ``write_coverage_db()`` ``load_coverage_db()``
+In order to accumulate coverage by running several testcases we need to store the coverpoint model at the end of one testcase and 
+load it at the beginning of the next. This can be done with ``write_coverage_db()`` which writes all the necessary information to 
+a file and ``load_coverage_db()`` which reads it back into a new coverpoint.
 
 **********************************************************************************************************************************
 Additional info

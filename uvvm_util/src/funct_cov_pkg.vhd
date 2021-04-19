@@ -184,6 +184,14 @@ package funct_cov_pkg is
       constant enable       : in boolean;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
+    procedure write_coverage_db(
+      constant file_name    : in string;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure load_coverage_db(
+      constant file_name    : in string;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
       constant VOID : t_void)
@@ -1191,6 +1199,216 @@ package body funct_cov_pkg is
     begin
       log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_detect_bin_overlap := enable;
+    end procedure;
+
+    procedure write_coverage_db(
+      constant file_name    : in string;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "write_coverage_db(" & file_name & ")";
+      file fileHandler      : text open write_mode is file_name;
+      variable v_line       : line;
+      variable v_rand_seeds : t_positive_vector(0 to 1);
+
+      procedure write_value(
+        constant value : in integer) is
+      begin
+        write(v_line, value);
+        writeline(fileHandler, v_line);
+      end procedure;
+
+      procedure write_value(
+        constant value : in string) is
+      begin
+        write(v_line, value);
+        writeline(fileHandler, v_line);
+      end procedure;
+
+      procedure write_value(
+        constant value : in boolean) is
+      begin
+        write(v_line, value);
+        writeline(fileHandler, v_line);
+      end procedure;
+
+      procedure write_bins(
+        constant bin_idx    : in natural;
+        constant bin_vector : in t_cov_bin_vector) is
+      begin
+        write(v_line, bin_idx);
+        writeline(fileHandler, v_line);
+        for i in 0 to bin_idx-1 loop
+          write(v_line, bin_vector(i).hits);
+          writeline(fileHandler, v_line);
+          write(v_line, bin_vector(i).min_hits);
+          writeline(fileHandler, v_line);
+          write(v_line, bin_vector(i).rand_weight);
+          writeline(fileHandler, v_line);
+          write(v_line, bin_vector(i).name);
+          writeline(fileHandler, v_line);
+          for j in 0 to priv_num_bins_crossed-1 loop
+            write(v_line, t_cov_bin_type'pos(bin_vector(i).cross_bins(j).contains));
+            writeline(fileHandler, v_line);
+            write(v_line, bin_vector(i).cross_bins(j).num_values);
+            writeline(fileHandler, v_line);
+            write(v_line, bin_vector(i).cross_bins(j).transition_idx);
+            writeline(fileHandler, v_line);
+            for k in 0 to bin_vector(i).cross_bins(j).num_values-1 loop
+              write(v_line, bin_vector(i).cross_bins(j).values(k));
+              writeline(fileHandler, v_line);
+            end loop;
+          end loop;
+        end loop;
+      end procedure;
+
+    begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, priv_scope, msg_id_panel);
+
+      -- Coverpoint config
+      write_value(priv_name);
+      write_value(priv_scope);
+      write_value(priv_num_bins_crossed);
+      v_rand_seeds := priv_rand_gen.get_rand_seeds(VOID);
+      write_value(v_rand_seeds(0));
+      write_value(v_rand_seeds(1));
+      write_value(priv_rand_transition_bin_idx);
+      write_value(priv_rand_transition_bin_value_idx);
+      write_value(priv_detect_bin_overlap);
+      -- Covergroup config
+      write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
+      write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
+      write_value(protected_covergroup_status.get_num_uncovered_bins(priv_id));
+      write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
+      write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
+      write_value(protected_covergroup_status.get_coverage_weight(priv_id));
+      write_value(protected_covergroup_status.get_coverage_goal(priv_id));
+      write_value(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
+      -- Bin structure
+      write_bins(priv_bins_idx, priv_bins);
+      write_bins(priv_invalid_bins_idx, priv_invalid_bins);
+
+      file_close(fileHandler);
+      DEALLOCATE(v_line);
+    end procedure;
+
+    procedure load_coverage_db(
+      constant file_name    : in string;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "load_coverage_db(" & file_name & ")";
+      file fileHandler      : text open read_mode is file_name;
+      variable v_line       : line;
+      variable v_rand_seeds : t_positive_vector(0 to 1);
+      variable v_value      : integer;
+
+      procedure read_value(
+        variable value : out integer) is
+      begin
+        readline(fileHandler, v_line);
+        read(v_line, value);
+      end procedure;
+
+      procedure read_value(
+        variable value : out string) is
+      begin
+        readline(fileHandler, v_line);
+        read(v_line, value);
+      end procedure;
+
+      procedure read_value(
+        variable value : out boolean) is
+      begin
+        readline(fileHandler, v_line);
+        read(v_line, value);
+      end procedure;
+
+      procedure read_bins(
+        constant bin_idx    : in  natural;
+        variable bin_vector : out t_cov_bin_vector) is
+        variable v_contains   : integer;
+        variable v_num_values : integer;
+      begin
+        for i in 0 to bin_idx-1 loop
+          readline(fileHandler, v_line);
+          read(v_line, bin_vector(i).hits);
+          readline(fileHandler, v_line);
+          read(v_line, bin_vector(i).min_hits);
+          readline(fileHandler, v_line);
+          read(v_line, bin_vector(i).rand_weight);
+          readline(fileHandler, v_line);
+          read(v_line, bin_vector(i).name);  -- read() crops the string
+          for j in 0 to priv_num_bins_crossed-1 loop
+            readline(fileHandler, v_line);
+            read(v_line, v_contains);
+            bin_vector(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
+            readline(fileHandler, v_line);
+            read(v_line, v_num_values);
+            bin_vector(i).cross_bins(j).num_values := v_num_values;
+            check_value(v_num_values <= C_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_MAX_NUM_BIN_VALUES",
+              priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+            readline(fileHandler, v_line);
+            read(v_line, bin_vector(i).cross_bins(j).transition_idx);
+            for k in 0 to v_num_values-1 loop
+              readline(fileHandler, v_line);
+              read(v_line, bin_vector(i).cross_bins(j).values(k));
+            end loop;
+          end loop;
+        end loop;
+      end procedure;
+
+    begin
+      log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, priv_scope, msg_id_panel);
+
+      -- Add coverpoint to covergroup status
+      if priv_id = -1 then
+        priv_id := protected_covergroup_status.add_coverpoint(VOID);
+        check_value(priv_id /= -1, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      else
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Coverpoint model will be overwritten.", priv_scope);
+      end if;
+      -- Coverpoint config
+      read_value(priv_name);  -- read() crops the string
+      set_name(priv_name);
+      read_value(priv_scope); -- read() crops the string
+      set_scope(priv_scope);
+      read_value(priv_num_bins_crossed);
+      check_value(priv_num_bins_crossed <= C_MAX_NUM_CROSS_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_num_bins_crossed) & " crossed bins. Increase C_MAX_NUM_CROSS_BINS",
+        priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      read_value(v_rand_seeds(0));
+      read_value(v_rand_seeds(1));
+      priv_rand_gen.set_rand_seeds(v_rand_seeds);
+      read_value(priv_rand_transition_bin_idx);
+      read_value(priv_rand_transition_bin_value_idx);
+      read_value(priv_detect_bin_overlap);
+      -- Covergroup config
+      read_value(v_value);
+      protected_covergroup_status.set_num_valid_bins(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_num_illegal_bins(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_num_uncovered_bins(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_total_bin_hits(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_total_bin_min_hits(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_coverage_weight(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_coverage_goal(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_covergroup_coverage_goal(v_value);
+      -- Bin structure
+      read_value(priv_bins_idx);
+      check_value(priv_bins_idx <= C_MAX_NUM_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_bins_idx) & " bins. Increase C_MAX_NUM_BINS",
+        priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      read_bins(priv_bins_idx, priv_bins);
+      read_value(priv_invalid_bins_idx);
+      check_value(priv_invalid_bins_idx <= C_MAX_NUM_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_invalid_bins_idx) & " bins. Increase C_MAX_NUM_BINS",
+        priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      read_bins(priv_invalid_bins_idx, priv_invalid_bins);
+
+      file_close(fileHandler);
+      DEALLOCATE(v_line);
     end procedure;
 
     -- Returns the number of bins crossed in the coverpoint

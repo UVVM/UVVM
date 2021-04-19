@@ -1518,7 +1518,7 @@ package body rand_pkg is
         priv_std_dev := std_deviation;
         priv_std_dev_configured := true;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. Must use positive values", priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Must use positive values", priv_scope);
       end if;
     end procedure;
 
@@ -1556,7 +1556,7 @@ package body rand_pkg is
         log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
         priv_weight_mode := mode;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. Mode not supported", priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Mode not supported", priv_scope);
       end if;
     end procedure;
 
@@ -1677,7 +1677,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         return 0;
       end if;
       if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
@@ -1778,7 +1778,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
@@ -1847,7 +1847,7 @@ package body rand_pkg is
             v_ret := normalized_set_values(min_value-v_ret-1);
           end if;
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Range plus set of values overflows integer range", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Range plus set of values overflows integer range", priv_scope);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif set_type = EXCL then
@@ -1856,7 +1856,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       -- Restore previous distribution
@@ -1953,7 +1953,7 @@ package body rand_pkg is
             v_ret := normalized_set_values1(min_value-v_ret-1);
           end if;
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Range plus set of values overflows integer range", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Range plus set of values overflows integer range", priv_scope);
         end if;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif set_type1 = EXCL and set_type2 = INCL then
@@ -1969,13 +1969,13 @@ package body rand_pkg is
             v_ret := normalized_set_values2(min_value-v_ret-1);
           end if;
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Range plus set of values overflows integer range", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Range plus set of values overflows integer range", priv_scope);
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
 
@@ -2002,7 +2002,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         return 0.0;
       end if;
 
@@ -2037,7 +2037,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
@@ -2103,7 +2103,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       -- Restore previous distribution
@@ -2197,9 +2197,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
 
@@ -2224,7 +2224,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less than max_value", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         return 0 ns;
       end if;
 
@@ -2233,7 +2233,7 @@ package body rand_pkg is
         when UNIFORM =>
           random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
           return 0 ns;
       end case;
 
@@ -2256,7 +2256,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       -- Generate a random value within the set of values
@@ -2310,7 +2310,7 @@ package body rand_pkg is
           v_gen_new_random := check_value_in_vector(v_ret, set_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2402,9 +2402,9 @@ package body rand_pkg is
         end if;
       else
         if not(set_type1 = INCL or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
 
@@ -2449,7 +2449,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (max_value - min_value + 1) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -2506,7 +2506,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2582,7 +2582,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2682,7 +2682,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -2782,7 +2782,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -2976,7 +2976,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if ((max_value - min_value)/C_TIME_UNIT + 1) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
@@ -3017,7 +3017,7 @@ package body rand_pkg is
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if (set_values'length) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
           for i in 0 to size-1 loop
@@ -3077,7 +3077,7 @@ package body rand_pkg is
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_values'length) when set_type = EXCL else set_values'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -3160,7 +3160,7 @@ package body rand_pkg is
         v_set_values_len := (0-set_values1'length) when set_type1 = EXCL else set_values1'length;
         v_set_values_len := (v_set_values_len-set_values2'length) when set_type2 = EXCL else v_set_values_len+set_values2'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
           for i in 0 to size-1 loop
@@ -3276,7 +3276,7 @@ package body rand_pkg is
           v_ret := v_unsigned;
         end if;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
@@ -3475,7 +3475,7 @@ package body rand_pkg is
           v_ret := v_signed;
         end if;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Failed. Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);

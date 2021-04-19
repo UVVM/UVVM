@@ -927,11 +927,16 @@ package body funct_cov_pkg is
       check_value(coverpoint2_num_bins_crossed /= -1, TB_FAILURE, "Coverpoint 2 is empty", priv_scope, msg_id => ID_NEVER, caller_name => local_call);
       check_value(coverpoint3_num_bins_crossed /= -1, TB_FAILURE, "Coverpoint 3 is empty", priv_scope, msg_id => ID_NEVER, caller_name => local_call);
 
+      check_value(priv_bins_idx < C_MAX_NUM_BINS-1, TB_FAILURE, "Cannot add more bins. Number of bins in the coverpoint has reached C_MAX_NUM_BINS",
+        priv_scope, msg_id => ID_NEVER, caller_name => local_call);
+      check_value(priv_invalid_bins_idx < C_MAX_NUM_BINS-1, TB_FAILURE, "Cannot add more bins. Number of bins in the coverpoint has reached C_MAX_NUM_BINS",
+        priv_scope, msg_id => ID_NEVER, caller_name => local_call);
+
       -- The number of bins crossed is set on the first call and can't be changed
       if priv_num_bins_crossed = -1 and num_bins_crossed > 0 then
         priv_num_bins_crossed := num_bins_crossed;
       elsif priv_num_bins_crossed /= num_bins_crossed and num_bins_crossed > 0 then
-        alert(TB_FAILURE, local_call & "=> Failed. Cannot mix different number of crossed bins.", priv_scope);
+        alert(TB_FAILURE, local_call & "=> Cannot mix different number of crossed bins.", priv_scope);
       end if;
     end procedure;
 
@@ -1635,7 +1640,7 @@ package body funct_cov_pkg is
             end if;
           end if;
         else
-          alert(TB_FAILURE, C_LOCAL_CALL & "=> Failed. Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).cross_bins(i).contains)), priv_scope);
+          alert(TB_FAILURE, C_LOCAL_CALL & "=> Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).cross_bins(i).contains)), priv_scope);
         end if;
       end loop;
 
@@ -1706,7 +1711,7 @@ package body funct_cov_pkg is
                 priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
               end if;
             when others =>
-              alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope);
+              alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope);
           end case;
         end loop;
 
@@ -1714,7 +1719,7 @@ package body funct_cov_pkg is
           v_invalid_sample := true;
           priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
           if v_illegal_match_idx /= -1 then
-            alert(TB_WARNING, v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope);
+            alert(WARNING, v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope);
             exit l_bin_loop;
           end if;
         end if;
@@ -1749,7 +1754,7 @@ package body funct_cov_pkg is
                   priv_bins(i).cross_bins(j).transition_idx := 0;
                 end if;
               when others =>
-                alert(TB_FAILURE, v_proc_call.all & "=> Failed. Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope);
+                alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope);
             end case;
           end loop;
 

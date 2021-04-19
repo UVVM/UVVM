@@ -1,6 +1,10 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.8.3
+----------
+Released: 2020-xx-xx
+- Corrected message ID for check_value() in BFM.
 
 v2.8.2
 ----------

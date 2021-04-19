@@ -10,6 +10,12 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2021.xx.xx
+--------------------
+Released: 2021-xx-xx
+- Corrected message ID for check_value() methods in BFM packages.
+
+
 v2 2021.04.08
 --------------------
 Released: 2021-04-08

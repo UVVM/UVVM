@@ -7306,6 +7306,15 @@ package body methods_pkg is
       if (target = exp) then
         success := true;
       end if;
+  
+    elsif match_strictness = MATCH_STD_INCL_Z then
+      if not(std_match(target, exp) or (target = 'Z' and exp = 'Z')) then
+        wait until (std_match(target, exp) or (target = 'Z' and exp = 'Z')) for max_time;
+      end if;
+      if std_match(target, exp) or (target = 'Z' and exp = 'Z') then
+        success := true;
+      end if;
+
     else
       if ((exp = '1' or exp = 'H') and (target /= '1') and (target /= 'H')) then
         wait until (target = '1' or target = 'H') for max_time;
@@ -7382,6 +7391,11 @@ package body methods_pkg is
           wait until matching_values(target, exp) for max_time;
         end if;
         check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
+      elsif match_strictness = MATCH_STD_INCL_Z then
+        if not matching_values(target, exp, MATCH_STD_INCL_Z) then
+          wait until matching_values(target, exp, MATCH_STD_INCL_Z) for max_time;
+        end if;
+        check_time_window(matching_values(target, exp, MATCH_STD_INCL_Z), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
       else
         if (target /= exp) then
           wait until (target = exp) for max_time;

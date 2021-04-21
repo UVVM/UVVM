@@ -4,6 +4,12 @@ UVVM Utility Library - Overview on Versions and Changes
 ----------------------------------------------------------------------
 
 
+v2.xx.x
+----------
+Released: 2021-xx-xx
+- Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
+
+
 v2.16.0
 ----------
 Released: 2021-04-08

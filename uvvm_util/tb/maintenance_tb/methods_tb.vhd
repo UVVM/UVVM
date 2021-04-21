@@ -1488,7 +1488,14 @@ begin
       slv8 <= transport "10110001" after 4 ns;
       await_value(slv8, "10--0001", MATCH_STD, 3 ns, 5 ns, error, "Change within time window 2, STD match, OK", C_SCOPE);
 
-      increment_expected_alerts(error, 4);
+      wait for 10 ns;
+      slv8 <= transport "1011000Z" after 4 ns;
+      await_value(slv8, "1011000Z", MATCH_STD_INCL_Z, 3 ns, 5 ns, error, "Change within time window 3, STD match including Z, OK", C_SCOPE);
+      wait for 10 ns;
+      slv8 <= transport "Z011000Z" after 4 ns;
+      await_value(slv8, "1011000Z", MATCH_STD_INCL_Z, 3 ns, 5 ns, error, "Different values, STD match including Z, Fail", C_SCOPE);
+
+      increment_expected_alerts(error, 5);
 
       -- await_value : unsigned
       u8 <= "00000000";
@@ -1571,7 +1578,16 @@ begin
       sl <= transport 'H' after 3 ns;
       await_value(sl, '1', MATCH_EXACT, 3 ns, 5 ns, error, "Change within time window to weak, expecting forced, FAIL", C_SCOPE);
       wait for 10 ns;
-      increment_expected_alerts(error, 5);
+
+      sl <= '1';
+      wait for 1 ns;
+      sl <= transport 'Z' after 3 ns;
+      await_value(sl, 'Z', MATCH_STD_INCL_Z , 3 ns, 5 ns, error, "Change within time window, STD match including Z, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 3 ns;
+      await_value(sl, 'Z', MATCH_STD_INCL_Z , 3 ns, 5 ns, error, "Different values, STD match including Z, Fail", C_SCOPE);
+
+      increment_expected_alerts(error, 6);
 
       -- await_value : integer
       i <= 0;

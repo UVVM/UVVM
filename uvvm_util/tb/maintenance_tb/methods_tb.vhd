@@ -2913,6 +2913,43 @@ begin
       log(ID_SEQUENCER, "Normal line");
 
 
+    elsif GC_TESTCASE = "alert_summary_report" then
+      -- NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK
+
+      -- Test of ignored alert
+      log(ID_LOG_HDR, "Testing alert summary report");
+
+      log("Testing without any major or minor alerts");
+      report_alert_counters(FINAL);
+
+      log("Testing NOTE");
+      alert(NOTE, "This alert shall set mismatch in minor alerts report", C_SCOPE);
+      report_alert_counters(FINAL);
+      increment_expected_alerts(NOTE);
+
+      log("Testing TB_NOTE");
+      alert(TB_NOTE, "This alert shall set mismatch in minor alerts report", C_SCOPE);
+      report_alert_counters(FINAL);
+      increment_expected_alerts(TB_NOTE);
+
+      log("Testing WARNING");
+      alert(WARNING, "This alert shall set mismatch in minor alerts report", C_SCOPE);
+      report_alert_counters(FINAL);
+      increment_expected_alerts(WARNING);
+
+      log("Testing TB_WARNING");
+      alert(TB_WARNING, "This alert shall set mismatch in minor alerts report", C_SCOPE);
+      report_alert_counters(FINAL);
+      increment_expected_alerts(TB_WARNING);
+
+      log("Testing MANUAL_CHECK");
+      alert(MANUAL_CHECK, "This alert shall set mismatch in minor alerts report", C_SCOPE);
+      report_alert_counters(FINAL);
+      increment_expected_alerts(MANUAL_CHECK);
+
+      log("Testing final summeray, all OK");
+
+
     elsif GC_TESTCASE = "ignored_alerts" then
       -- Test of ignored alert
       log(ID_LOG_HDR, "Testing alert_level NO_ALERT and related functions");
@@ -2933,6 +2970,68 @@ begin
       increment_expected_alerts_and_stop_limit(TB_FAILURE);
       check_value(get_alert_stop_limit(TB_FAILURE) = (v_alert_stop_limit+1), TB_ERROR, "Verifying that TB_WARNING alert stop limit was incremented", C_SCOPE);
       check_value(true = false, TB_FAILURE, "Cause TB_FAILURE trigger", C_SCOPE);
+
+    elsif GC_TESTCASE = "hierarchical_alerts_report" then
+      -- NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK
+
+      log(ID_LOG_HDR, "Verifying hierarchy linked list minor alerts report summary", "");
+
+      v_local_hierarchy_tree.initialize_hierarchy(justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH), (others => 0));
+
+      v_local_hierarchy_tree.insert_in_tree((justify("first_node", left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH));
+      check_value(v_local_hierarchy_tree.get_parent_scope((justify("first_node", left, C_HIERARCHY_NODE_NAME_LENGTH))) = justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH), error, "Verifying parent scope!");
+
+      v_local_hierarchy_tree.insert_in_tree((justify("second_node", left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), justify("first_node", left, C_HIERARCHY_NODE_NAME_LENGTH));
+      check_value(v_local_hierarchy_tree.get_parent_scope((justify("second_node", left, C_HIERARCHY_NODE_NAME_LENGTH))) = justify("first_node", left, C_HIERARCHY_NODE_NAME_LENGTH), error, "Verifying parent scope!");
+
+      v_local_hierarchy_tree.insert_in_tree((justify("third_node", left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH));
+      check_value(v_local_hierarchy_tree.get_parent_scope((justify("third_node", left, C_HIERARCHY_NODE_NAME_LENGTH))) = justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH), error, "Verifying parent scope!");
+
+      v_local_hierarchy_tree.insert_in_tree((justify("fourth_node", left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), justify("third_node", left, C_HIERARCHY_NODE_NAME_LENGTH));
+      check_value(v_local_hierarchy_tree.get_parent_scope((justify("fourth_node", left, C_HIERARCHY_NODE_NAME_LENGTH))) = justify("third_node", left, C_HIERARCHY_NODE_NAME_LENGTH), error, "Verifying parent scope!");
+
+      v_local_hierarchy_tree.print_hierarchical_log;
+      
+
+
+      log("Enabling all alert levels in entire hierarchy. Minor alerts for alle nodes triggered.");
+      v_local_hierarchy_tree.enable_all_alert_levels("TB seq");
+
+      log("Testing NOTE with fourth_node");
+      v_local_hierarchy_tree.alert("fourth_node", NOTE);
+      v_local_hierarchy_tree.print_hierarchical_log;
+      v_local_hierarchy_tree.increment_expected_alerts("fourth_node", NOTE);
+      log("Expecting no major or minor alerts");
+      v_local_hierarchy_tree.print_hierarchical_log;
+
+      log("Testing TB_NOTE with third_node");
+      v_local_hierarchy_tree.alert("third_node", TB_NOTE);
+      v_local_hierarchy_tree.print_hierarchical_log;
+      v_local_hierarchy_tree.increment_expected_alerts("third_node", TB_NOTE);
+      log("Expecting no major or minor alerts");
+      v_local_hierarchy_tree.print_hierarchical_log;
+
+      log("Testing WARNING with second_node");
+      v_local_hierarchy_tree.alert("second_node", WARNING);
+      v_local_hierarchy_tree.print_hierarchical_log;
+      v_local_hierarchy_tree.increment_expected_alerts("second_node", WARNING);
+      log("Expecting no major or minor alerts");
+      v_local_hierarchy_tree.print_hierarchical_log;
+
+      log("Testing TB_WARNING with first_node");
+      v_local_hierarchy_tree.alert("first_node", TB_WARNING);
+      v_local_hierarchy_tree.print_hierarchical_log;
+      v_local_hierarchy_tree.increment_expected_alerts("first_node", TB_WARNING);
+      log("Expecting no major or minor alerts");
+      v_local_hierarchy_tree.print_hierarchical_log;
+
+      log("Testing MANUAL_CHECK with TB seq");
+      v_local_hierarchy_tree.alert("TB seq", MANUAL_CHECK);
+      v_local_hierarchy_tree.print_hierarchical_log;
+      v_local_hierarchy_tree.increment_expected_alerts("TB seq", MANUAL_CHECK);
+      log("Expecting no major or minor alerts");
+      v_local_hierarchy_tree.print_hierarchical_log;
+
 
     elsif GC_TESTCASE = "hierarchical_alerts" then
       -- Hierarchy linked list pkg

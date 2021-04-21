@@ -850,7 +850,9 @@ type t_hierarchy_linked_list is protected body
   procedure print_node(
     variable starting_node_ptr : in t_element_ptr;
     variable v_status_ok       : inout boolean;
+    variable v_minor_status_ok : inout boolean;
     variable v_mismatch        : inout boolean;
+    variable v_minor_mismatch  : inout boolean;
     variable v_line            : inout line
   ) is
     variable v_current_ptr : t_element_ptr;
@@ -898,6 +900,13 @@ type t_hierarchy_linked_list is protected body
               else
                 v_status_ok := false;
               end if;
+            else
+              if starting_node_ptr.element_data.alert_attention_counters(alert_level)(REGARD) <
+                 starting_node_ptr.element_data.alert_attention_counters(alert_level)(EXPECT) then
+                 v_minor_mismatch := true;
+              else
+                v_minor_status_ok := false;
+              end if;
             end if;
           end if;
         end if;
@@ -906,11 +915,11 @@ type t_hierarchy_linked_list is protected body
     write(v_line, LF);
 
     if starting_node_ptr.first_child /= null then
-      print_node(starting_node_ptr.first_child, v_status_ok, v_mismatch, v_line);
+      print_node(starting_node_ptr.first_child, v_status_ok, v_minor_status_ok, v_mismatch, v_minor_mismatch, v_line);
     end if;
 
     if starting_node_ptr.next_sibling /= null then
-      print_node(starting_node_ptr.next_sibling, v_status_ok, v_mismatch, v_line);
+      print_node(starting_node_ptr.next_sibling, v_status_ok, v_minor_status_ok, v_mismatch, v_minor_mismatch, v_line);
     end if;
 
   end procedure;
@@ -918,12 +927,15 @@ type t_hierarchy_linked_list is protected body
   procedure print_hierarchical_log(
     order : t_order := FINAL
   ) is
-    variable v_header        : string(1 to 80);
-    variable v_line          : line;
-    variable v_line_copy     : line;
-    constant prefix          : string := C_LOG_PREFIX & "     ";
-    variable v_status_ok : boolean := true;
-    variable v_mismatch      : boolean := false;
+    variable v_header         : string(1 to 80);
+    variable v_line           : line;
+    variable v_line_copy      : line;
+    constant prefix           : string := C_LOG_PREFIX & "     ";
+    variable v_status_ok      : boolean := true;
+    variable v_minor_status_ok: boolean := true;
+    variable v_mismatch       : boolean := false;
+    variable v_minor_mismatch : boolean := false;
+
   begin
     if order = INTERMEDIATE then
       v_header := "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***     Format: REGARDED/EXPECTED/IGNORED";
@@ -941,7 +953,7 @@ type t_hierarchy_linked_list is protected body
 
     -- Print all nodes
     if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
-      print_node(vr_top_element_ptr, v_status_ok, v_mismatch, v_line);
+      print_node(vr_top_element_ptr, v_status_ok, v_minor_status_ok, v_mismatch, v_minor_mismatch, v_line);
     end if;
 
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
@@ -953,6 +965,8 @@ type t_hierarchy_linked_list is protected body
         write(v_line, ">> Simulation FAILED, with unexpected serious alert(s)" & LF);
       elsif v_mismatch then
         write(v_line, ">> Simulation FAILED: Mismatch between counted and expected serious alerts" & LF);
+      elsif (v_minor_status_ok = false) or (v_minor_mismatch = true) then
+        write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts" & LF);
       else
         write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
       end if;

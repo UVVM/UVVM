@@ -1621,11 +1621,15 @@ package body string_methods_pkg is
     val   : t_alert_attention_counters;
     order : t_order := FINAL
     ) is
-    variable v_line          : line;
-    variable v_line_copy     : line;
-    variable v_more_than_expected_alerts : boolean := false;
-    variable v_less_than_expected_alerts      : boolean := false;
-    constant prefix          : string := C_LOG_PREFIX & "     ";
+    variable v_line                             : line;
+    variable v_line_copy                        : line;
+    variable v_more_than_expected_alerts        : boolean := false;
+    variable v_less_than_expected_alerts        : boolean := false;
+    variable v_more_than_expected_minor_alerts  : boolean := false;
+    variable v_less_than_expected_minor_alerts  : boolean := false;
+    constant prefix                             : string := C_LOG_PREFIX & "     ";
+
+    -- NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK
   begin
     if order = INTERMEDIATE then
       write(v_line,
@@ -1658,6 +1662,12 @@ package body string_methods_pkg is
           else
             v_more_than_expected_alerts  := true;
           end if;
+        else
+          if (val(i)(REGARD) < val(i)(EXPECT)) then
+            v_less_than_expected_minor_alerts := true;
+          else
+            v_more_than_expected_minor_alerts := true;
+          end if;
         end if;
       end if;
     end loop;
@@ -1669,6 +1679,8 @@ package body string_methods_pkg is
         write(v_line, ">> Simulation FAILED, with unexpected serious alert(s)" & LF);
       elsif v_less_than_expected_alerts then
         write(v_line, ">> Simulation FAILED: Mismatch between counted and expected serious alerts" & LF);
+      elsif v_more_than_expected_minor_alerts or v_less_than_expected_minor_alerts then
+        write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts" & LF);
       else
         write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
       end if;

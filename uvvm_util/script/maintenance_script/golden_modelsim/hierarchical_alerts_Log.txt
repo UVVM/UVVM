@@ -476,7 +476,7 @@ UVVM:         |- second_node                      :      0/0/0       0/0/0      
 UVVM:         `- third_node                       :     0/15/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0 
 UVVM:            `- fourth_node                   :     0/15/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0       0/0/0 
 UVVM:      ====================================================================================================================================================================
-UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      

@@ -18,6 +18,9 @@ Released: 2021-xx-xx
 - Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
 - Summary alert report and hierarchical alerts report updated to 
   warn for minor alert mismatch.
+- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occure if a requirement 
+  and testcase were listed in combination multiple times.
+
 
 
 v2 2021.04.08

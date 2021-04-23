@@ -1063,7 +1063,7 @@ package body rand_tb_pkg is
   return boolean is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = INCL then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
@@ -1088,7 +1088,7 @@ package body rand_tb_pkg is
   return boolean is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = INCL then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
@@ -1113,7 +1113,7 @@ package body rand_tb_pkg is
   return boolean is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = INCL then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
@@ -1567,7 +1567,7 @@ package body rand_tb_pkg is
     variable v_count          : natural := 0;
     variable v_count_vec      : integer_vector(0 to weight_dist'length-1);
   begin
-    check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values).", C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values).", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
 
     -- Calculate the total weight
     for i in weight_dist'range loop
@@ -1641,7 +1641,7 @@ package body rand_tb_pkg is
     for i in v_count_vec'range loop
       v_percentage := (weight_dist(i)(C_WEIGHT_IDX)*100/v_tot_weight)*10; -- Multiply by 10 since there are 1000 samples
       check_value_in_range(v_count_vec(i), v_percentage-C_MARGIN, v_percentage+C_MARGIN, WARNING, "Counter is outside expected margin.",
-        C_SCOPE, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+        C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     end loop;
   end procedure;
 

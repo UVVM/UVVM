@@ -180,8 +180,8 @@ Log messages within the procedures and functions in the *rand_pkg* use the follo
 * ID_RAND_GEN: Used for logging random generated values
 * ID_RAND_CONF: Used for logging randomization configuration
 
-The default scope for log messages in the *rand_pkg* is C_SCOPE defined in adaptations_pkg, it can be updated using the procedure
-``set_scope()``.
+The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT defined in adaptations_pkg, it can be updated using the 
+procedure ``set_scope()``.
 
 The number of decimal digits displayed in the real values logs can be adjusted with C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
 

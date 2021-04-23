@@ -141,7 +141,7 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   procedure set_sim_coverage_goal(
     constant percentage   : in positive;
-    constant scope        : in string         := C_SCOPE;
+    constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
   impure function get_sim_coverage(
@@ -517,7 +517,7 @@ package body funct_cov_pkg is
         end if;
       end if;
     else
-      alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less or equal than max_value", C_SCOPE);
+      alert(TB_ERROR, v_proc_call.all & "=> Failed. min_value must be less or equal than max_value", C_TB_SCOPE_DEFAULT);
     end if;
     v_ret(0).num_bins := v_num_bins;
     v_ret(0).proc_call(1 to v_proc_call'length) := v_proc_call.all;
@@ -649,7 +649,7 @@ package body funct_cov_pkg is
   ------------------------------------------------------------
   procedure set_sim_coverage_goal(
     constant percentage   : in positive;
-    constant scope        : in string         := C_SCOPE;
+    constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     constant C_LOCAL_CALL : string := "set_sim_coverage_goal(" & to_string(percentage) & ")";
   begin
@@ -674,7 +674,7 @@ package body funct_cov_pkg is
   procedure print_sim_coverage_summary(
     constant VOID : in t_void) is
   begin
-    print_sim_coverage_summary(C_SCOPE);
+    print_sim_coverage_summary(C_TB_SCOPE_DEFAULT);
   end procedure;
 
   procedure print_sim_coverage_summary(
@@ -716,7 +716,7 @@ package body funct_cov_pkg is
   type t_coverpoint is protected body
     variable priv_id                            : integer := -1;
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
-    variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length);
+    variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_bins_idx                      : natural := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
@@ -921,7 +921,7 @@ package body funct_cov_pkg is
           -- In case the name was set before the coverpoint was registered, we need to update the name in the covergroup
           protected_covergroup_status.set_name(priv_id, priv_name);
         end if;
-        if priv_scope = C_SCOPE & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_SCOPE'length) then
+        if priv_scope = C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length) then
           set_scope(priv_name);
         end if;
         priv_rand_gen.set_rand_seeds(priv_name);

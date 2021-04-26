@@ -1176,6 +1176,12 @@ package body rand_pkg is
     variable v_rand  : real;
     variable v_valid : boolean := false;
   begin
+    if mean < real(min_value) or mean > real(max_value) then
+      alert(TB_ERROR, "random_gaussian()=> Mean: " & to_string(mean,2) & " must be inside min/max range: " &
+        to_string(min_value) & "," & to_string(max_value));
+      target := 0;
+      return;
+    end if;
     while not(v_valid) loop
       gaussian(mean, std_deviation, seed1, seed2, v_rand);
       target  := integer(round(v_rand));
@@ -1194,6 +1200,12 @@ package body rand_pkg is
     variable target        : inout real) is
     variable v_valid : boolean := false;
   begin
+    if mean < min_value or mean > max_value then
+      alert(TB_ERROR, "random_gaussian()=> Mean: " & to_string(mean,2) & " must be inside min/max range: " &
+        to_string(min_value, 2) & "," & to_string(max_value, 2));
+      target := 0.0;
+      return;
+    end if;
     while not(v_valid) loop
       gaussian(mean, std_deviation, seed1, seed2, target);
       v_valid := target >= min_value and target <= max_value;
@@ -1232,6 +1244,12 @@ package body rand_pkg is
     variable v_rand_sfixed : sfixed(target'length-1 downto 0);
     variable v_valid       : boolean := false;
   begin
+    if mean < to_real(to_sfixed(min_value)) or mean > to_real(to_sfixed(max_value)) then
+      alert(TB_ERROR, "random_gaussian()=> Mean: " & to_string(mean,2) & " must be inside min/max range: " &
+        to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "," & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX));
+      target := (target'length-1 downto 0 => '0');
+      return;
+    end if;
     while not(v_valid) loop
       gaussian(mean, std_deviation, seed1, seed2, v_rand);
       v_rand_sfixed := to_sfixed(v_rand,v_rand_sfixed);
@@ -3845,10 +3863,17 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel)
     return std_logic is
       constant C_LOCAL_CALL : string := "rand(STD_LOGIC)";
-      variable v_ret : unsigned(0 downto 0);
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
+      variable v_ret           : unsigned(0 downto 0);
     begin
+      -- Always use Uniform distribution
+      priv_rand_dist := UNIFORM;
+
       -- Generate a random bit
       v_ret := rand(1, msg_id_panel, C_LOCAL_CALL);
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret(0);
@@ -3867,10 +3892,17 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel)
     return boolean is
       constant C_LOCAL_CALL : string := "rand(BOOL)";
-      variable v_ret : unsigned(0 downto 0);
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
+      variable v_ret           : unsigned(0 downto 0);
     begin
+      -- Always use Uniform distribution
+      priv_rand_dist := UNIFORM;
+
       -- Generate a random bit
       v_ret := rand(1, msg_id_panel, C_LOCAL_CALL);
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret(0) = '1';

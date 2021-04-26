@@ -708,6 +708,20 @@ package rand_pkg is
     return unsigned;
 
     impure function rand(
+      constant min_value     : unsigned;
+      constant max_value     : unsigned;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return unsigned;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : unsigned;
+      constant max_value     : unsigned;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned;
+
+    impure function rand(
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
@@ -784,6 +798,20 @@ package rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed;
+
+    impure function rand(
+      constant min_value     : signed;
+      constant max_value     : signed;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return signed;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : signed;
+      constant max_value     : signed;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return signed;
@@ -867,6 +895,20 @@ package rand_pkg is
     impure function rand(
       constant length        : positive;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector;
+
+    impure function rand(
+      constant min_value     : std_logic_vector;
+      constant max_value     : std_logic_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : std_logic_vector;
+      constant max_value     : std_logic_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
     return std_logic_vector;
 
     impure function rand(
@@ -3341,24 +3383,65 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
-      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
-      variable v_proc_call     : line;
-      variable v_ret           : unsigned(length-1 downto 0);
+      constant C_MIN_VALUE : unsigned(length-1 downto 0) := (others => '0');
+      constant C_MAX_VALUE : unsigned(length-1 downto 0) := (others => '1');
+      variable v_ret       : unsigned(length-1 downto 0);
+    begin
+      -- Generate a random value in the range [min_value:max_value]
+      v_ret := rand(v_ret'length, C_MIN_VALUE, C_MAX_VALUE, msg_id_panel, C_LOCAL_CALL);
+
+      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant min_value     : unsigned;
+      constant max_value     : unsigned;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return unsigned is
+      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      variable v_ret : unsigned(max_value'length-1 downto 0);
+    begin
+      -- Generate a random value in the range [min_value:max_value]
+      v_ret := rand(v_ret'length, min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+
+      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : unsigned;
+      constant max_value     : unsigned;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return unsigned is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      variable v_proc_call : line;
+      variable v_mean      : real;
+      variable v_std_dev   : real;
+      variable v_ret       : unsigned(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
-        priv_rand_dist := UNIFORM;
+      if min_value > max_value then
+        alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
       end if;
 
-      -- Generate a random value for each bit of the vector
-      for i in 0 to length-1 loop
-        v_ret(i downto i) := to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1);
-      end loop;
-
-      -- Restore previous distribution
-      priv_rand_dist := C_PREVIOUS_DIST;
+      -- Generate a random value in the range [min_value:max_value]
+      case priv_rand_dist is
+        when UNIFORM =>
+          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+        when GAUSSIAN =>
+          -- Default values for the mean and standard deviation are relative to the given range
+          v_mean    := priv_mean when priv_mean_configured else to_real(to_ufixed(min_value + (max_value - min_value)/2));
+          v_std_dev := priv_std_dev when priv_std_dev_configured else to_real(to_ufixed((max_value - min_value)/6));
+          random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
+        when others =>
+          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+      end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3542,24 +3625,65 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
-      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
-      variable v_proc_call     : line;
-      variable v_ret           : signed(length-1 downto 0);
+      constant C_MIN_VALUE : signed(length-1 downto 0) := '1' & (length-2 downto 0 => '0');
+      constant C_MAX_VALUE : signed(length-1 downto 0) := '0' & (length-2 downto 0 => '1');
+      variable v_ret       : signed(length-1 downto 0);
+    begin
+      -- Generate a random value in the range [min_value:max_value]
+      v_ret := rand(v_ret'length, C_MIN_VALUE, C_MAX_VALUE, msg_id_panel, C_LOCAL_CALL);
+
+      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant min_value     : signed;
+      constant max_value     : signed;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      variable v_ret : signed(max_value'length-1 downto 0);
+    begin
+      -- Generate a random value in the range [min_value:max_value]
+      v_ret := rand(v_ret'length, min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+
+      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : signed;
+      constant max_value     : signed;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return signed is
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      variable v_proc_call : line;
+      variable v_mean      : real;
+      variable v_std_dev   : real;
+      variable v_ret       : signed(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
-        priv_rand_dist := UNIFORM;
+      if min_value > max_value then
+        alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
       end if;
 
-      -- Generate a random value for each bit of the vector
-      for i in 0 to length-1 loop
-        v_ret(i downto i) := signed(to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1));
-      end loop;
-
-      -- Restore previous distribution
-      priv_rand_dist := C_PREVIOUS_DIST;
+      -- Generate a random value in the range [min_value:max_value]
+      case priv_rand_dist is
+        when UNIFORM =>
+          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
+        when GAUSSIAN =>
+          -- Default values for the mean and standard deviation are relative to the given range
+          v_mean    := priv_mean when priv_mean_configured else to_real(to_sfixed(min_value + (max_value - min_value)/2));
+          v_std_dev := priv_std_dev when priv_std_dev_configured else to_real(to_sfixed((max_value - min_value)/6));
+          random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
+        when others =>
+          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+      end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3739,6 +3863,30 @@ package body rand_pkg is
       variable v_ret : unsigned(length-1 downto 0);
     begin
       v_ret := rand(length, msg_id_panel);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand(
+      constant min_value     : std_logic_vector;
+      constant max_value     : std_logic_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector is
+      variable v_ret : unsigned(max_value'length-1 downto 0);
+    begin
+      v_ret := rand(unsigned(min_value), unsigned(max_value), msg_id_panel);
+      return std_logic_vector(v_ret);
+    end function;
+
+    impure function rand(
+      constant length        : positive;
+      constant min_value     : std_logic_vector;
+      constant max_value     : std_logic_vector;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := rand(length, unsigned(min_value), unsigned(max_value), msg_id_panel, ext_proc_call);
       return std_logic_vector(v_ret);
     end function;
 

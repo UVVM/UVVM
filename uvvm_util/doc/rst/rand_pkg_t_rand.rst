@@ -634,6 +634,35 @@ Returns a random unsigned value. ::
     rand_uns := my_rand.rand(rand_uns'length, 0, 50, INCL,(60,70,80), EXCL,(25,35), CYCLIC);
 
 
+.. _rand_uns_long:
+
+return unsigned (long range)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random unsigned value. The unsigned constraints can be used for min and max values bigger than the integer's 32-bit range. 
+The overload without the length parameter uses the max_value length for the return value. ::
+
+    unsigned := rand(min_value, max_value, [msg_id_panel])
+    unsigned := rand(length, min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | min_value          | in     | unsigned                     | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | unsigned                     | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    rand_uns := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_uns := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
+
+
 .. _rand_sig:
 
 return signed
@@ -682,6 +711,35 @@ Returns a random signed value. ::
     rand_sig := my_rand.rand(rand_sig'length, -50, 50, INCL,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
 
 
+.. _rand_sig_long:
+
+return signed (long range)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random signed value. The signed constraints can be used for min and max values bigger than the integer's 32-bit range. 
+The overload without the length parameter uses the max_value length for the return value. ::
+
+    signed := rand(min_value, max_value, [msg_id_panel])
+    signed := rand(length, min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | min_value          | in     | signed                       | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | signed                       | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    rand_sig := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_sig := my_rand.rand(rand_sig'length, C_MIN_RANGE, v_max_range);
+
+
 .. _rand_slv:
 
 return std_logic_vector
@@ -728,6 +786,35 @@ Returns a random std_logic_vector value. Values are interpreted as unsigned and 
     rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25));
     rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25,35));
     rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60,70,80), EXCL,(25,35), CYCLIC);
+
+
+.. _rand_slv_long:
+
+return std_logic_vector (long range)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random std_logic_vector value. The std_logic_vector constraints can be used for min and max values bigger than the integer's 
+32-bit range. The overload without the length parameter uses the max_value length for the return value. ::
+
+    std_logic_vector := rand(min_value, max_value, [msg_id_panel])
+    std_logic_vector := rand(length, min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | min_value          | in     | std_logic_vector             | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | std_logic_vector             | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    rand_slv := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_slv := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);
 
 
 .. _rand_sl:

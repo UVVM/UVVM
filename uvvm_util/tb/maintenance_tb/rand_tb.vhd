@@ -53,12 +53,18 @@ begin
     variable v_time_vec      : time_vector(0 to 4);
     variable v_uns           : unsigned(3 downto 0);
     variable v_uns_long      : unsigned(39 downto 0);
+    variable v_uns_long_min  : unsigned(39 downto 0);
+    variable v_uns_long_max  : unsigned(39 downto 0);
     variable v_prev_uns_long : unsigned(39 downto 0) := (others => '0');
     variable v_sig           : signed(3 downto 0);
     variable v_sig_long      : signed(39 downto 0);
+    variable v_sig_long_min  : signed(39 downto 0);
+    variable v_sig_long_max  : signed(39 downto 0);
     variable v_prev_sig_long : signed(39 downto 0) := (others => '0');
     variable v_slv           : std_logic_vector(3 downto 0);
     variable v_slv_long      : std_logic_vector(39 downto 0);
+    variable v_slv_long_min  : std_logic_vector(39 downto 0);
+    variable v_slv_long_max  : std_logic_vector(39 downto 0);
     variable v_prev_slv_long : std_logic_vector(39 downto 0) := (others => '0');
     variable v_std           : std_logic;
     variable v_bln           : boolean;
@@ -853,6 +859,23 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
+      log(ID_LOG_HDR, "Testing unsigned (min/max long vectors)");
+      v_uns_long_min := x"0F00000000";
+      v_uns_long_max := x"0FFFFFFFFF";
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long'length, v_uns_long_min, v_uns_long_max);
+        check_value_in_range(v_uns_long, v_uns_long_min, v_uns_long_max, TB_ERROR, "");
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      v_uns_long_min := x"00F0000000";
+      v_uns_long_max := x"00FFFFFFFF";
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.rand(v_uns_long_min, v_uns_long_max);
+        check_value_in_range(v_uns_long, v_uns_long_min, v_uns_long_max, TB_ERROR, "");
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
       log(ID_LOG_HDR, "Testing unsigned (min/max)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -934,6 +957,11 @@ begin
         count_rand_value(v_value_cnt, v_uns_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_uns_long := v_rand.rand(v_uns_long'length, v_uns_long_max, v_uns_long_min);
+      v_uns_long := v_rand.rand(v_uns_long_max, v_uns_long_min);
 
       ------------------------------------------------------------
       -- Signed
@@ -1042,6 +1070,23 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
+      log(ID_LOG_HDR, "Testing signed (min/max long vectors)");
+      v_sig_long_min := x"8F00000000";
+      v_sig_long_max := x"8FFFFFFFFF";
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long'length, v_sig_long_min, v_sig_long_max);
+        check_value_in_range(v_sig_long, v_sig_long_min, v_sig_long_max, TB_ERROR, "");
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      v_sig_long_min := x"00F0000000";
+      v_sig_long_max := x"00FFFFFFFF";
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.rand(v_sig_long_min, v_sig_long_max);
+        check_value_in_range(v_sig_long, v_sig_long_min, v_sig_long_max, TB_ERROR, "");
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
       log(ID_LOG_HDR, "Testing signed (min/max)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -1123,6 +1168,11 @@ begin
         count_rand_value(v_value_cnt, v_sig_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing signed (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_sig_long := v_rand.rand(v_sig_long'length, v_sig_long_max, v_sig_long_min);
+      v_sig_long := v_rand.rand(v_sig_long_max, v_sig_long_min);
 
       ------------------------------------------------------------
       -- Std_logic_vector
@@ -1231,6 +1281,23 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
+      log(ID_LOG_HDR, "Testing std_logic_vector (min/max long vectors)");
+      v_slv_long_min := x"0F00000000";
+      v_slv_long_max := x"0FFFFFFFFF";
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long'length, v_slv_long_min, v_slv_long_max);
+        check_value_in_range(unsigned(v_slv_long), unsigned(v_slv_long_min), unsigned(v_slv_long_max), TB_ERROR, "");
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
+      v_slv_long_min := x"00F0000000";
+      v_slv_long_max := x"00FFFFFFFF";
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.rand(v_slv_long_min, v_slv_long_max);
+        check_value_in_range(unsigned(v_slv_long), unsigned(v_slv_long_min), unsigned(v_slv_long_max), TB_ERROR, "");
+      end loop;
+      -- Since the range of values is bigger than the integer range we can't verify the distribution
+
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -1312,6 +1379,11 @@ begin
         count_rand_value(v_value_cnt, v_slv_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_slv_long := v_rand.rand(v_slv_long'length, v_slv_long_max, v_slv_long_min);
+      v_slv_long := v_rand.rand(v_slv_long_max, v_slv_long_min);
 
       ------------------------------------------------------------
       -- Std_logic & boolean
@@ -2548,6 +2620,43 @@ begin
       v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Gaussian distribution (unsigned long)");
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"));
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"100000000A"), unsigned'(x"1000000014"));
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"100000000A"));
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0+5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution (signed)");
       ------------------------------------------------------------
       generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, -10, 10);
@@ -2585,6 +2694,43 @@ begin
       v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Gaussian distribution (signed long)");
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"));
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F00000000A"), signed'(x"F000000014"));
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F00000000A"));
+
+      v_mean          := -68719476736.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := -68719476736.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := -68719476736.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := -68719476736.0+5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := -68719476736.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := -68719476736.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_LONG", v_num_values, signed'(x"F000000000"), signed'(x"F000000014"), false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution (std_logic_vector)");
       ------------------------------------------------------------
       generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, 20);
@@ -2616,6 +2762,43 @@ begin
       v_mean          := 0.0;
       v_std_deviation := 6.0;
       generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Gaussian distribution (std_logic_vector long)");
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"));
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"100000000A"), unsigned'(x"1000000014"));
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"100000000A"));
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0+5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
+
+      v_mean          := 68719476736.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_LONG", v_num_values, unsigned'(x"1000000000"), unsigned'(x"1000000014"), false, v_mean, v_std_deviation);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);
@@ -2680,9 +2863,8 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_time := v_rand.rand(-2 ps, 2 ps);
 
-      increment_expected_alerts(TB_WARNING, 7);
+      increment_expected_alerts(TB_WARNING, 6);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_uns := v_rand.rand(v_uns'length);
       v_uns := v_rand.rand(v_uns'length, ONLY,(0,1,2));
       v_uns := v_rand.rand(v_uns'length, EXCL,(0,1));
       v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7));
@@ -2691,9 +2873,8 @@ begin
       v_uns := v_rand.rand(v_uns'length, 0, 3, CYCLIC);
       v_uns := v_rand.rand(v_uns'length, 10, 15);
 
-      increment_expected_alerts(TB_WARNING, 7);
+      increment_expected_alerts(TB_WARNING, 6);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_sig := v_rand.rand(v_sig'length);
       v_sig := v_rand.rand(v_sig'length, ONLY,(-2,0,2));
       v_sig := v_rand.rand(v_sig'length, EXCL,(0,1));
       v_sig := v_rand.rand(v_sig'length, -1, 1, INCL,(-8));
@@ -2702,9 +2883,8 @@ begin
       v_sig := v_rand.rand(v_sig'length, -2, 2, CYCLIC);
       v_sig := v_rand.rand(v_sig'length, 6, 7);
 
-      increment_expected_alerts(TB_WARNING, 7);
+      increment_expected_alerts(TB_WARNING, 6);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_slv := v_rand.rand(v_slv'length);
       v_slv := v_rand.rand(v_slv'length, ONLY,(0,1,2));
       v_slv := v_rand.rand(v_slv'length, EXCL,(0,1));
       v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7));

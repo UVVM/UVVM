@@ -80,6 +80,23 @@ The ``rand()`` function can return the following types:
     rand_sig      := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
     rand_slv      := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25,35));
 
+The unsigned, signed and std_logic_vector functions can return any size vector, however the min and max constraints are limited 
+by the integer's 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding min and 
+max constraints are provided as well.
+
+    * :ref:`unsigned <rand_uns_long>`
+    * :ref:`signed <rand_sig_long>`
+    * :ref:`std_logic_vector <rand_slv_long>`
+
+.. code-block::
+
+    rand_uns := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_uns := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
+    rand_sig := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_sig := my_rand.rand(rand_sig'length, C_MIN_RANGE, v_max_range);
+    rand_slv := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_slv := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);
+
 **********************************************************************************************************************************
 Uniqueness
 **********************************************************************************************************************************
@@ -122,10 +139,11 @@ with the procedure ``set_rand_dist()``.
 
 Gaussian (Normal)
 ==================================================================================================================================
+* The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector.
+* The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
 * Only the min/max constraints are supported when using this distribution, i.e. no set_of_values are supported.
 * Cannot be combined with cyclic or uniqueness parameters.
 * Cannot be combined with weighted randomization functions.
-* The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
 * To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures respectively.
 * If not configured, the default mean will be (max-min)/2 and the default std_deviation will be (max-min)/6.
 * To clear the configured mean and std_deviation and go back to the default, use ``clear_rand_dist_mean()`` and ``clear_rand_dist_std_deviation()`` 

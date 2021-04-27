@@ -3254,14 +3254,36 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
-      constant C_MIN_VALUE : unsigned(length-1 downto 0) := (others => '0');
-      constant C_MAX_VALUE : unsigned(length-1 downto 0) := (others => '1');
-      variable v_ret       : unsigned(length-1 downto 0);
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
+      variable v_proc_call     : line;
+      variable v_ret_int       : integer;
+      variable v_ret           : unsigned(length-1 downto 0);
     begin
-      -- Generate a random value in the range [min_value:max_value]
-      v_ret := rand(v_ret'length, C_MIN_VALUE, C_MAX_VALUE, msg_id_panel, C_LOCAL_CALL);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      if length <= 31 then
+        -- Generate a random value in the range [min_value:max_value]
+        v_ret_int := rand(0, 2**length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
+        v_ret     := to_unsigned(v_ret_int,length);
+
+      -- Long vectors use different randomization (does not support distributions or cyclic)
+      else
+        if priv_rand_dist = GAUSSIAN then
+          alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for long vectors. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        end if;
+
+        -- Generate a random value for each bit of the vector
+        for i in 0 to length-1 loop
+          v_ret(i downto i) := to_unsigned(rand(0, 1, NON_CYCLIC, msg_id_panel, v_proc_call.all), 1);
+        end loop;
+
+        -- Restore previous distribution
+        priv_rand_dist := C_PREVIOUS_DIST;
+      end if;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
@@ -3290,29 +3312,35 @@ package body rand_pkg is
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
         ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-      variable v_proc_call : line;
-      variable v_mean      : real;
-      variable v_std_dev   : real;
-      variable v_ret       : unsigned(length-1 downto 0);
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
+      constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1');
+      variable v_proc_call     : line;
+      variable v_valid         : boolean := false;
+      variable v_ret           : unsigned(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
+        return v_ret;
+      end if;
+      if max_value'length > length then
+        alert(TB_ERROR, v_proc_call.all & "=> max_value length must be less than length", priv_scope);
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for long vectors. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
-      case priv_rand_dist is
-        when UNIFORM =>
-          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
-        when GAUSSIAN =>
-          -- Default values for the mean and standard deviation are relative to the given range
-          v_mean    := priv_mean when priv_mean_configured else to_real(to_ufixed(min_value + (max_value - min_value)/2));
-          v_std_dev := priv_std_dev when priv_std_dev_configured else to_real(to_ufixed((max_value - min_value)/6));
-          random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-      end case;
+      while not(v_valid) loop
+        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, msg_id_panel, v_proc_call.all), length);
+        v_valid := v_ret >= min_value and v_ret <= max_value;
+      end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -3496,14 +3524,26 @@ package body rand_pkg is
       constant ext_proc_call : string         := "")
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
-      constant C_MIN_VALUE : signed(length-1 downto 0) := '1' & (length-2 downto 0 => '0');
-      constant C_MAX_VALUE : signed(length-1 downto 0) := '0' & (length-2 downto 0 => '1');
+      variable v_proc_call : line;
+      variable v_ret_int   : integer;
+      variable v_ret_uns   : unsigned(length-1 downto 0);
       variable v_ret       : signed(length-1 downto 0);
     begin
-      -- Generate a random value in the range [min_value:max_value]
-      v_ret := rand(v_ret'length, C_MIN_VALUE, C_MAX_VALUE, msg_id_panel, C_LOCAL_CALL);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      if length <= 32 then
+        -- Generate a random value in the range [min_value:max_value]
+        v_ret_int := rand(-2**(length-1), 2**(length-1)-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
+        v_ret     := to_signed(v_ret_int,length);
+
+      -- Long vectors use different randomization (does not support distributions or cyclic)
+      else
+        v_ret_uns := rand(length, msg_id_panel, v_proc_call.all);
+        v_ret     := signed(v_ret_uns);
+      end if;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
@@ -3532,29 +3572,35 @@ package body rand_pkg is
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
         ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
-      variable v_proc_call : line;
-      variable v_mean      : real;
-      variable v_std_dev   : real;
-      variable v_ret       : signed(length-1 downto 0);
+      constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
+      constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1');
+      variable v_proc_call     : line;
+      variable v_valid         : boolean := false;
+      variable v_ret           : signed(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
+        return v_ret;
+      end if;
+      if max_value'length > length then
+        alert(TB_ERROR, v_proc_call.all & "=> max_value length must be less than length", priv_scope);
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for long vectors. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
-      case priv_rand_dist is
-        when UNIFORM =>
-          random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
-        when GAUSSIAN =>
-          -- Default values for the mean and standard deviation are relative to the given range
-          v_mean    := priv_mean when priv_mean_configured else to_real(to_sfixed(min_value + (max_value - min_value)/2));
-          v_std_dev := priv_std_dev when priv_std_dev_configured else to_real(to_sfixed((max_value - min_value)/6));
-          random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
-        when others =>
-          alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-      end case;
+      while not(v_valid) loop
+        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, msg_id_panel, v_proc_call.all), length);
+        v_valid := v_ret >= min_value and v_ret <= max_value;
+      end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);

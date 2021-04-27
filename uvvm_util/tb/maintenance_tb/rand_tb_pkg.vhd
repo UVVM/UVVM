@@ -466,30 +466,6 @@ package rand_tb_pkg is
     constant mean               : in    real := 0.0;
     constant std_deviation      : in    real := 0.0);
 
-  -- Generates a number of random values of a certain type using the Gaussian distribution
-  procedure generate_gaussian_distribution(
-    variable rand_gen           : inout t_rand;
-    variable value_cnt          : inout t_integer_cnt;
-    constant value_type         : in    string;
-    constant num_values         : in    natural;
-    constant min_value          : in    unsigned;
-    constant max_value          : in    unsigned;
-    constant use_default_config : in    boolean := true;
-    constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0);
-
-  -- Generates a number of random values of a certain type using the Gaussian distribution
-  procedure generate_gaussian_distribution(
-    variable rand_gen           : inout t_rand;
-    variable value_cnt          : inout t_integer_cnt;
-    constant value_type         : in    string;
-    constant num_values         : in    natural;
-    constant min_value          : in    signed;
-    constant max_value          : in    signed;
-    constant use_default_config : in    boolean := true;
-    constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0);
-
   ------------------------------------------------------------
   -- Check distributions
   ------------------------------------------------------------
@@ -1519,8 +1495,20 @@ package body rand_tb_pkg is
         check_rand_value(v_int, min_value, max_value);
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
+      elsif value_type = "UNS_VEC" then
+        v_uns := rand_gen.rand(v_uns'length);
+        v_int := to_integer(v_uns);
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
       elsif value_type = "SIG" then
         v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
+        v_int := to_integer(v_sig);
+        check_rand_value(v_int, min_value, max_value);
+        value_cnt(v_int) := value_cnt(v_int) + 1;
+
+      elsif value_type = "SIG_VEC" then
+        v_sig := rand_gen.rand(v_sig'length);
         v_int := to_integer(v_sig);
         check_rand_value(v_int, min_value, max_value);
         value_cnt(v_int) := value_cnt(v_int) + 1;
@@ -1531,105 +1519,10 @@ package body rand_tb_pkg is
         check_rand_value(v_int, min_value, max_value);
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
-      else
-        alert(TB_ERROR, C_PROC_NAME & " => Failed, " & to_string(value_type) & " not supported.");
-      end if;
-    end loop;
-
-    -- Wait before clearing the counters so that the distribution can be seen in the waveform
-    wait for 100 ns;
-    for i in value_cnt'range loop
-      value_cnt(i) := 0;
-    end loop;
-  end procedure;
-
-  procedure generate_gaussian_distribution(
-    variable rand_gen           : inout t_rand;
-    variable value_cnt          : inout t_integer_cnt;
-    constant value_type         : in    string;
-    constant num_values         : in    natural;
-    constant min_value          : in    unsigned;
-    constant max_value          : in    unsigned;
-    constant use_default_config : in    boolean := true;
-    constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0) is
-    constant C_PROC_NAME : string := "generate_gaussian_distribution";
-    variable v_int       : integer;
-    variable v_uns       : unsigned(39 downto 0);
-    variable v_slv       : std_logic_vector(39 downto 0);
-  begin
-    check_value(max_value - min_value <= value_cnt'length, TB_ERROR, "The number of values within the range must be less or equal than value_cnt length", msg_id => ID_NEVER, caller_name => C_PROC_NAME);
-
-    if use_default_config then
-      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", max: " & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", default mean & std_deviation");
-    else
-      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", max: " & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", mean: " & to_string(mean,2) & ", std_deviation: " & to_string(std_deviation,2));
-      rand_gen.set_rand_dist_mean(mean);
-      check_value(mean, rand_gen.get_rand_dist_mean(VOID), ERROR, "Checking mean");
-      rand_gen.set_rand_dist_std_deviation(std_deviation);
-      check_value(std_deviation, rand_gen.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
-    end if;
-
-    for i in 1 to num_values loop
-      if value_type = "UNS_LONG" then
-        v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
-        check_value_in_range(v_uns, min_value, max_value, TB_ERROR, "");
-        v_int := to_integer(v_uns-min_value); -- Shift values so that we can see them in the waveform
-        value_cnt(v_int) := value_cnt(v_int) + 1;
-
-      elsif value_type = "SLV_LONG" then
-        v_slv := rand_gen.rand(v_slv'length, std_logic_vector(min_value), std_logic_vector(max_value));
-        check_value_in_range(unsigned(v_slv), min_value, max_value, TB_ERROR, "");
-        v_int := to_integer(unsigned(v_slv)-min_value); -- Shift values so that we can see them in the waveform
-        value_cnt(v_int) := value_cnt(v_int) + 1;
-
-      else
-        alert(TB_ERROR, C_PROC_NAME & " => Failed, " & to_string(value_type) & " not supported.");
-      end if;
-    end loop;
-
-    -- Wait before clearing the counters so that the distribution can be seen in the waveform
-    wait for 100 ns;
-    for i in value_cnt'range loop
-      value_cnt(i) := 0;
-    end loop;
-  end procedure;
-
-  procedure generate_gaussian_distribution(
-    variable rand_gen           : inout t_rand;
-    variable value_cnt          : inout t_integer_cnt;
-    constant value_type         : in    string;
-    constant num_values         : in    natural;
-    constant min_value          : in    signed;
-    constant max_value          : in    signed;
-    constant use_default_config : in    boolean := true;
-    constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0) is
-    constant C_PROC_NAME : string := "generate_gaussian_distribution";
-    variable v_int       : integer;
-    variable v_sig       : signed(40 downto 0);
-  begin
-    check_value(max_value - min_value <= value_cnt'length, TB_ERROR, "The number of values within the range must be less or equal than value_cnt length", msg_id => ID_NEVER, caller_name => C_PROC_NAME);
-
-    if use_default_config then
-      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", max: " & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", default mean & std_deviation");
-    else
-      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", max: " & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ", mean: " & to_string(mean,2) & ", std_deviation: " & to_string(std_deviation,2));
-      rand_gen.set_rand_dist_mean(mean);
-      check_value(mean, rand_gen.get_rand_dist_mean(VOID), ERROR, "Checking mean");
-      rand_gen.set_rand_dist_std_deviation(std_deviation);
-      check_value(std_deviation, rand_gen.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
-    end if;
-
-    for i in 1 to num_values loop
-      if value_type = "SIG_LONG" then
-        v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
-        check_value_in_range(v_sig, min_value, max_value, TB_ERROR, "");
-        v_int := to_integer(v_sig-min_value); -- Shift values so that we can see them in the waveform
+      elsif value_type = "SLV_VEC" then
+        v_slv := rand_gen.rand(v_slv'length);
+        v_int := to_integer(unsigned(v_slv));
+        check_rand_value(v_int, min_value, max_value);
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       else

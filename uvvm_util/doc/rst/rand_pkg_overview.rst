@@ -119,7 +119,8 @@ not repeat until all the values within the constraints have been generated. Once
 
     addr := my_rand.rand(0, 63, CYCLIC);
 
-* The supported types are integer, integer_vector, unsigned, signed and std_logic_vector.
+* The supported types are integer, integer_vector, unsigned, signed and std_logic_vector. Note that unsigned, signed and 
+  std_logic_vector lengths bigger than 32 bits are not supported however.
 * Cyclic generation cannot be combined with the uniqueness parameter in the vector types.
 * Note that the state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function 
   with different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
@@ -139,7 +140,8 @@ with the procedure ``set_rand_dist()``.
 
 Gaussian (Normal)
 ==================================================================================================================================
-* The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector.
+* The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
+  signed and std_logic_vector lengths bigger than 32 bits are not supported however.
 * The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
 * Only the min/max constraints are supported when using this distribution, i.e. no set_of_values are supported.
 * Cannot be combined with cyclic or uniqueness parameters.

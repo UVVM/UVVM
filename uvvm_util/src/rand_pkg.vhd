@@ -662,6 +662,7 @@ package rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return unsigned;
@@ -757,6 +758,7 @@ package rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return signed;
@@ -853,6 +855,7 @@ package rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector;
 
@@ -3250,10 +3253,11 @@ package body rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
       variable v_proc_call     : line;
       variable v_ret_int       : integer;
@@ -3263,7 +3267,7 @@ package body rand_pkg is
 
       if length <= 31 then
         -- Generate a random value in the range [min_value:max_value]
-        v_ret_int := rand(0, 2**length-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
+        v_ret_int := rand(0, 2**length-1, cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_unsigned(v_ret_int,length);
 
       -- Long vectors use different randomization (does not support distributions or cyclic)
@@ -3271,6 +3275,9 @@ package body rand_pkg is
         if priv_rand_dist = GAUSSIAN then
           alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for long vectors. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
+        end if;
+        if cyclic_mode = CYCLIC then
+          alert(TB_WARNING, v_proc_call.all & "=> Vector is too big for cyclic mode", priv_scope);
         end if;
 
         -- Generate a random value for each bit of the vector
@@ -3335,7 +3342,7 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value]
       while not(v_valid) loop
-        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, msg_id_panel, v_proc_call.all), length);
+        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, NON_CYCLIC, msg_id_panel, v_proc_call.all), length);
         v_valid := v_ret >= min_value and v_ret <= max_value;
       end loop;
 
@@ -3398,7 +3405,7 @@ package body rand_pkg is
             alert(TB_WARNING, C_LOCAL_CALL & "=> Range is too big for cyclic mode (min: 0, max: 2**" & to_string(length) & "-1)", priv_scope);
           end if;
           while v_gen_new_random loop
-            v_unsigned := rand(length, msg_id_panel, C_LOCAL_CALL);
+            v_unsigned := rand(length, NON_CYCLIC, msg_id_panel, C_LOCAL_CALL);
             -- If the random value is outside the integer range it cannot be in the exclude list
             if v_unsigned > integer'right then
               v_gen_new_random := false;
@@ -3520,10 +3527,11 @@ package body rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return signed is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call : line;
       variable v_ret_int   : integer;
       variable v_ret_uns   : unsigned(length-1 downto 0);
@@ -3533,12 +3541,12 @@ package body rand_pkg is
 
       if length <= 32 then
         -- Generate a random value in the range [min_value:max_value]
-        v_ret_int := rand(-2**(length-1), 2**(length-1)-1, NON_CYCLIC, msg_id_panel, v_proc_call.all);
+        v_ret_int := rand(-2**(length-1), 2**(length-1)-1, cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_signed(v_ret_int,length);
 
       -- Long vectors use different randomization (does not support distributions or cyclic)
       else
-        v_ret_uns := rand(length, msg_id_panel, v_proc_call.all);
+        v_ret_uns := rand(length, cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := signed(v_ret_uns);
       end if;
 
@@ -3595,7 +3603,7 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value]
       while not(v_valid) loop
-        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, msg_id_panel, v_proc_call.all), length);
+        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, NON_CYCLIC, msg_id_panel, v_proc_call.all), length);
         v_valid := v_ret >= min_value and v_ret <= max_value;
       end loop;
 
@@ -3656,7 +3664,7 @@ package body rand_pkg is
             alert(TB_WARNING, C_LOCAL_CALL & "=> Range is too big for cyclic mode (min: -2**" & to_string(length-1) & ", max: 2**" & to_string(length-1) & "-1)", priv_scope);
           end if;
           while v_gen_new_random loop
-            v_signed := rand(length, msg_id_panel, C_LOCAL_CALL);
+            v_signed := rand(length, NON_CYCLIC, msg_id_panel, C_LOCAL_CALL);
             -- If the random value is outside the integer range it cannot be in the exclude list
             if v_signed > integer'right or v_signed < integer'left then
               v_gen_new_random := false;
@@ -3775,11 +3783,12 @@ package body rand_pkg is
     ------------------------------------------------------------
     impure function rand(
       constant length        : positive;
+      constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_ret : unsigned(length-1 downto 0);
     begin
-      v_ret := rand(length, msg_id_panel);
+      v_ret := rand(length, cyclic_mode, msg_id_panel);
       return std_logic_vector(v_ret);
     end function;
 
@@ -3935,7 +3944,7 @@ package body rand_pkg is
       priv_rand_dist := UNIFORM;
 
       -- Generate a random bit
-      v_ret := rand(1, msg_id_panel, C_LOCAL_CALL);
+      v_ret := rand(1, NON_CYCLIC, msg_id_panel, C_LOCAL_CALL);
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
@@ -3964,7 +3973,7 @@ package body rand_pkg is
       priv_rand_dist := UNIFORM;
 
       -- Generate a random bit
-      v_ret := rand(1, msg_id_panel, C_LOCAL_CALL);
+      v_ret := rand(1, NON_CYCLIC, msg_id_panel, C_LOCAL_CALL);
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;

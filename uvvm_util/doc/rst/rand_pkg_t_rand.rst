@@ -592,7 +592,7 @@ return unsigned
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random unsigned value. ::
 
-    unsigned := rand(length, [msg_id_panel])
+    unsigned := rand(length, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, set_type, set_values, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, min_value, max_value, set_type, set_value, [cyclic_mode, [msg_id_panel]])
@@ -669,7 +669,7 @@ return signed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value. ::
 
-    signed := rand(length, [msg_id_panel])
+    signed := rand(length, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, set_type, set_values, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, min_value, max_value, set_type, set_value, [cyclic_mode, [msg_id_panel]])
@@ -746,7 +746,7 @@ return std_logic_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value. Values are interpreted as unsigned and therefore constrained by the natural type. ::
 
-    std_logic_vector := rand(length, [msg_id_panel])
+    std_logic_vector := rand(length, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, set_type, set_values, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, set_type, set_value, [cyclic_mode, [msg_id_panel]])

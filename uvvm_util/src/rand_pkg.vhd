@@ -1805,8 +1805,8 @@ package body rand_pkg is
 
         when GAUSSIAN =>
           -- Default values for the mean and standard deviation are relative to the given range
-          v_mean    := priv_mean when priv_mean_configured else real(min_value + (max_value - min_value)/2);
-          v_std_dev := priv_std_dev when priv_std_dev_configured else real((max_value - min_value)/6);
+          v_mean    := priv_mean when priv_mean_configured else (real(min_value) + (real(max_value) - real(min_value))/2.0);
+          v_std_dev := priv_std_dev when priv_std_dev_configured else ((real(max_value) - real(min_value))/6.0);
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
 
         when others =>

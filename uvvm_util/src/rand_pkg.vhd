@@ -17,7 +17,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.fixed_pkg.all;
 use ieee.math_real.all;
 use std.textio.all;
 
@@ -108,24 +107,6 @@ package rand_pkg is
   alias random_uniform is random[real, real, positive, positive, real];
   alias random_uniform is random[time, time, positive, positive, time];
 
-  -- Returns an unsigned pseudo-random number with Uniform distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_uniform(
-    constant min_value : in    unsigned;
-    constant max_value : in    unsigned;
-    variable v_seed1   : inout positive;
-    variable v_seed2   : inout positive;
-    variable v_target  : inout unsigned);
-
-  -- Returns a signed pseudo-random number with Uniform distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_uniform(
-    constant min_value : in    signed;
-    constant max_value : in    signed;
-    variable v_seed1   : inout positive;
-    variable v_seed2   : inout positive;
-    variable v_target  : inout signed);
-
   -- Returns a real pseudo-random number with Gaussian distribution.
   -- It uses the Marsaglia polar method to generate a normally distributed
   -- random number from uniformly distributed random numbers.
@@ -155,28 +136,6 @@ package rand_pkg is
     variable seed1         : inout positive;
     variable seed2         : inout positive;
     variable target        : inout real);
-
-  -- Returns an unsigned pseudo-random number with Gaussian distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_gaussian(
-    constant min_value     : in    unsigned;
-    constant max_value     : in    unsigned;
-    constant mean          : in    real;
-    constant std_deviation : in    real;
-    variable seed1         : inout positive;
-    variable seed2         : inout positive;
-    variable target        : inout unsigned);
-
-  -- Returns a signed pseudo-random number with Gaussian distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_gaussian(
-    constant min_value     : in    signed;
-    constant max_value     : in    signed;
-    constant mean          : in    real;
-    constant std_deviation : in    real;
-    variable seed1         : inout positive;
-    variable seed2         : inout positive;
-    variable target        : inout signed);
 
   ------------------------------------------------------------
   -- Protected type
@@ -1141,48 +1100,6 @@ package body rand_pkg is
   ------------------------------------------------------------
   -- Base procedures
   ------------------------------------------------------------
-  -- Returns an unsigned pseudo-random number with Uniform distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_uniform(
-    constant min_value : in    unsigned;
-    constant max_value : in    unsigned;
-    variable v_seed1   : inout positive;
-    variable v_seed2   : inout positive;
-    variable v_target  : inout unsigned
-    ) is
-    constant C_MIN_VALUE   : real := to_real(to_ufixed(min_value));
-    constant C_MAX_VALUE   : real := to_real(to_ufixed(max_value));
-    variable v_rand        : real;
-    variable v_rand_ufixed : ufixed(v_target'length-1 downto 0);
-  begin
-    -- Generate a random real value in range 0 to 1.0
-    uniform(v_seed1, v_seed2, v_rand);
-    -- Scale between min_value and max_value
-    v_rand_ufixed := to_ufixed(C_MIN_VALUE + trunc(v_rand*(1.0+C_MAX_VALUE-C_MIN_VALUE)),v_rand_ufixed);
-    v_target      := to_unsigned(v_rand_ufixed,v_target'length);
-  end procedure;
-
-  -- Returns a signed pseudo-random number with Uniform distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_uniform(
-    constant min_value : in    signed;
-    constant max_value : in    signed;
-    variable v_seed1   : inout positive;
-    variable v_seed2   : inout positive;
-    variable v_target  : inout signed
-    ) is
-    constant C_MIN_VALUE   : real := to_real(to_sfixed(min_value));
-    constant C_MAX_VALUE   : real := to_real(to_sfixed(max_value));
-    variable v_rand        : real;
-    variable v_rand_sfixed : sfixed(v_target'length-1 downto 0);
-  begin
-    -- Generate a random real value in range 0 to 1.0
-    uniform(v_seed1, v_seed2, v_rand);
-    -- Scale between min_value and max_value
-    v_rand_sfixed := to_sfixed(C_MIN_VALUE + trunc(v_rand*(1.0+C_MAX_VALUE-C_MIN_VALUE)),v_rand_sfixed);
-    v_target      := to_signed(v_rand_sfixed,v_target'length);
-  end procedure;
-
   -- Returns a real pseudo-random number with Gaussian distribution.
   -- It uses the Marsaglia polar method to generate a normally distributed
   -- random number from uniformly distributed random numbers.
@@ -1251,52 +1168,6 @@ package body rand_pkg is
     while not(v_valid) loop
       gaussian(mean, std_deviation, seed1, seed2, target);
       v_valid := target >= min_value and target <= max_value;
-    end loop;
-  end procedure;
-
-  -- Returns an unsigned pseudo-random number with Gaussian distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_gaussian(
-    constant min_value     : in    unsigned;
-    constant max_value     : in    unsigned;
-    constant mean          : in    real;
-    constant std_deviation : in    real;
-    variable seed1         : inout positive;
-    variable seed2         : inout positive;
-    variable target        : inout unsigned) is
-    variable v_min_value : signed(min_value'length downto 0) := signed('0' & min_value);
-    variable v_max_value : signed(max_value'length downto 0) := signed('0' & max_value);
-    variable v_target    : signed(target'length downto 0)    := signed('0' & target);
-  begin
-    random_gaussian(v_min_value, v_max_value, mean, std_deviation, seed1, seed2, v_target);
-    target := unsigned(v_target(target'length-1 downto 0));
-  end procedure;
-
-  -- Returns a signed pseudo-random number with Gaussian distribution within a specified range.
-  -- Used for vectors bigger than the integer's range
-  procedure random_gaussian(
-    constant min_value     : in    signed;
-    constant max_value     : in    signed;
-    constant mean          : in    real;
-    constant std_deviation : in    real;
-    variable seed1         : inout positive;
-    variable seed2         : inout positive;
-    variable target        : inout signed) is
-    variable v_rand        : real;
-    variable v_rand_sfixed : sfixed(target'length-1 downto 0);
-    variable v_valid       : boolean := false;
-  begin
-    if mean < to_real(to_sfixed(min_value)) or mean > to_real(to_sfixed(max_value)) then
-      alert(TB_ERROR, "random_gaussian()=> Mean: " & to_string(mean,2) & " must be inside min/max range: " &
-        to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "," & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX));
-      target := (target'length-1 downto 0 => '0');
-      return;
-    end if;
-    while not(v_valid) loop
-      gaussian(mean, std_deviation, seed1, seed2, v_rand);
-      v_rand_sfixed := to_sfixed(v_rand,v_rand_sfixed);
-      target        := to_signed(v_rand_sfixed,target'length);
-      v_valid       := target >= min_value and target <= max_value;
     end loop;
   end procedure;
 

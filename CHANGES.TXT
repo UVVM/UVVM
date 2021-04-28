@@ -22,6 +22,8 @@ Released: 2021-xx-xx
   and testcase were listed in combination multiple times.
 - Generic queue allow to insert to an empty queue with identifier position
   set to POSITION and position set to 1.
+- Insert_expected() to an empty Scoreboard using identifier_position=POSITION
+  and identifier=1 is now allowed.
 
 
 

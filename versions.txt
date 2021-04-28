@@ -21,3 +21,4 @@ This project uses the following versions:
   bitvis_vip_hvvc_to_vvc_bridge, version v0.1.1
   bitvis_vip_ethernet, version v0.2.0
   bitvis_vip_axi, version v0.1.1
+  bitvis_vip_wishbone, version v.0.1.0 BETA

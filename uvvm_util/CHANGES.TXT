@@ -10,6 +10,8 @@ Released: 2021-xx-xx
 - Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
 - Summary alert report and hierarchical alerts report updated to 
   warn for minor alert mismatch.
+- Generic queue allow to insert to an empty queue with identifier position
+  set to POSITION and position set to 1.
 
 v2.16.0
 ----------

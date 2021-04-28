@@ -194,6 +194,29 @@ UVVM:
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing insert with POSITION and identifier = 1 and identifier /=1
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Insert at position 2 to an empty queue - expecting a TB_ERROR
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    check_value() => Failed. Boolean was false. 'insert() into position larger than number of elements in queue. Use add() instead when inserting at the
+UVVM:                    back of the queue'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Insert at position 1 to an empty queue - expecting add() OK
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Printing queue
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
+UVVM:                                                                           Verify queue content
+UVVM: 
+UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
@@ -1189,7 +1212,7 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 9
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  TB_ERROR #3  ***
+UVVM: ***  TB_ERROR #4  ***
 UVVM:             0 ns   TB seq.(uvvm)
 UVVM:                    peek() did not match an element in queue. It was called with the following parameters: instance=1, identifier_option=position, identifier=123456
 UVVM: =========================================================================================================================================================================
@@ -1198,7 +1221,7 @@ UVVM:
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  TB_ERROR #4  ***
+UVVM: ***  TB_ERROR #5  ***
 UVVM:             0 ns   TB seq.(uvvm)
 UVVM:                    fetch() did not match an element in queue. It was called with the following parameters: instance=1, identifier_option=position, identifier=123456
 UVVM: =========================================================================================================================================================================
@@ -1243,7 +1266,7 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  TB_ERROR #5  ***
+UVVM: ***  TB_ERROR #6  ***
 UVVM:             0 ns   queue_scope
 UVVM:                    check_value() => Failed. Boolean was false. 'add() into generic queue (of size 1000) when full'
 UVVM: =========================================================================================================================================================================
@@ -1256,7 +1279,7 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  TB_ERROR #6  ***
+UVVM: ***  TB_ERROR #7  ***
 UVVM:             0 ns   queue_scope
 UVVM:                    check_value() => Failed. Boolean was false. 'fetch() from generic queue when empty'
 UVVM: =========================================================================================================================================================================
@@ -1284,7 +1307,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  TB_ERROR #7  ***
+UVVM: ***  TB_ERROR #8  ***
 UVVM:             0 ns   queue_scope
 UVVM:                    check_value() => Failed. Boolean was false. 'set_queue_count_max() new queue max count (5) is less than current queue count(20).'
 UVVM: =========================================================================================================================================================================
@@ -1309,7 +1332,7 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling the queue up from 80% to 90% and expecting TB_ERROR
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  TB_ERROR #8  ***
+UVVM: ***  TB_ERROR #9  ***
 UVVM:             0 ns   queue_scope
 UVVM:                    Queue is now at 85 of 100 elements.
 UVVM: =========================================================================================================================================================================
@@ -1328,7 +1351,7 @@ UVVM:                WARNING      :      0         0         0         ok
 UVVM:                TB_WARNING   :      4         4         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
-UVVM:                TB_ERROR     :      8         8         0         ok
+UVVM:                TB_ERROR     :      9         9         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================

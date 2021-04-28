@@ -20,6 +20,8 @@ Released: 2021-xx-xx
   warn for minor alert mismatch.
 - Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occure if a requirement 
   and testcase were listed in combination multiple times.
+- Generic queue allow to insert to an empty queue with identifier position
+  set to POSITION and position set to 1.
 
 
 

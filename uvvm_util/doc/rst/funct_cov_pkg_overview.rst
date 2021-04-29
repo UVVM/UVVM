@@ -122,7 +122,7 @@ or many bins automatically and want to discard one or several values.
 Illegal bins
 ==================================================================================================================================
 Specific values or transitions can be marked as illegal which will exclude them from the coverage and generate an alert if they are 
-sampled.
+sampled. The default severity of the alert is ERROR and can be configured using the ``set_illegal_bin_alert_level()`` procedure.
 
 .. code-block::
 

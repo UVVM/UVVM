@@ -180,6 +180,10 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return string;
 
+    procedure set_illegal_bin_alert_level(
+      constant alert_level  : in t_alert_level;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure detect_bin_overlap(
       constant enable       : in boolean;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -714,18 +718,19 @@ package body funct_cov_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_coverpoint is protected body
-    variable priv_id                            : integer := -1;
+    variable priv_id                            : integer       := -1;
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
     variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH) := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_bins_idx                      : natural := 0;
+    variable priv_bins_idx                      : natural       := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_invalid_bins_idx              : natural := 0;
-    variable priv_num_bins_crossed              : integer := -1;
+    variable priv_invalid_bins_idx              : natural       := 0;
+    variable priv_num_bins_crossed              : integer       := -1;
     variable priv_rand_gen                      : t_rand;
-    variable priv_rand_transition_bin_idx       : integer := -1;
-    variable priv_rand_transition_bin_value_idx : natural := 0;
-    variable priv_detect_bin_overlap            : boolean := false;
+    variable priv_rand_transition_bin_idx       : integer       := -1;
+    variable priv_rand_transition_bin_value_idx : natural       := 0;
+    variable priv_illegal_bin_alert_level       : t_alert_level := ERROR;
+    variable priv_detect_bin_overlap            : boolean       := false;
 
     type t_bin_type_verbosity is (LONG, SHORT, NONE);
 
@@ -1197,6 +1202,15 @@ package body funct_cov_pkg is
       return to_string(priv_scope);
     end function;
 
+    procedure set_illegal_bin_alert_level(
+      constant alert_level  : in t_alert_level;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_illegal_bin_alert_level(" & to_upper(to_string(alert_level)) & ")";
+    begin
+      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      priv_illegal_bin_alert_level := alert_level;
+    end procedure;
+
     procedure detect_bin_overlap(
       constant enable       : in boolean;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -1278,6 +1292,7 @@ package body funct_cov_pkg is
       write_value(v_rand_seeds(1));
       write_value(priv_rand_transition_bin_idx);
       write_value(priv_rand_transition_bin_value_idx);
+      write_value(t_alert_level'pos(priv_illegal_bin_alert_level));
       write_value(priv_detect_bin_overlap);
       -- Covergroup config
       write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
@@ -1384,6 +1399,8 @@ package body funct_cov_pkg is
       priv_rand_gen.set_rand_seeds(v_rand_seeds);
       read_value(priv_rand_transition_bin_idx);
       read_value(priv_rand_transition_bin_value_idx);
+      read_value(v_value);
+      priv_illegal_bin_alert_level := t_alert_level'val(v_value);
       read_value(priv_detect_bin_overlap);
       -- Covergroup config
       read_value(v_value);
@@ -1950,7 +1967,7 @@ package body funct_cov_pkg is
           v_invalid_sample := true;
           priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
           if v_illegal_match_idx /= -1 then
-            alert(WARNING, get_name_prefix(VOID) & v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope);
+            alert(priv_illegal_bin_alert_level, get_name_prefix(VOID) & v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope);
             exit l_bin_loop;
           end if;
         end if;

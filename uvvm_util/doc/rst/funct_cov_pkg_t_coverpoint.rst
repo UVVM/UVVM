@@ -75,6 +75,26 @@ Returns the configured scope. ::
     scope := my_coverpoint.get_scope(VOID);
 
 
+set_illegal_bin_alert_level()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures the alert level when an illegal bin is sampled. ::
+
+    set_illegal_bin_alert_level(alert_level, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.set_illegal_bin_alert_level(WARNING);
+
+
 detect_bin_overlap()
 ----------------------------------------------------------------------------------------------------------------------------------
 Configures if a TB_WARNING alert should be generated when overlapping bins are sampled (not including ignore or invalid bins). ::

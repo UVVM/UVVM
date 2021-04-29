@@ -18,7 +18,7 @@ Configures the name of the coverpoint. ::
 .. code-block::
 
     Examples:
-    my_coverpoint.set_name("MEM_ADDR");
+    my_coverpoint.set_name("ADDR_COVPT");
 
 
 get_name()
@@ -54,7 +54,7 @@ Configures the scope used in the log messages. ::
 .. code-block::
 
     Examples:
-    my_coverpoint.set_scope("MEM_ADDR_COVERPOINT");
+    my_coverpoint.set_scope("MY_VVC");
 
 
 get_scope()

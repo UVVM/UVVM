@@ -351,10 +351,10 @@ coverage is completed with ``coverage_completed()``.
 Similar functions for the covergroup are ``get_sim_coverage()`` and ``sim_coverage_completed()``.
 
 **********************************************************************************************************************************
-Coverpoint name and scope
+Coverpoint name
 **********************************************************************************************************************************
-A default name and scope are generated based on the index the coverpoint has in the covergroup. Both the name and scope can be 
-modified by calling the ``set_name()`` and ``set_scope`` procedures respectively.
+A default name is generated based on the index which the coverpoint has in the covergroup. The name can be modified by calling the 
+``set_name()`` procedure.
 
 The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
 
@@ -374,7 +374,7 @@ A detailed report for the coverage and the bins in the coverpoint/cross can be p
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: COVERPOINT_1 ***                                                           
+    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: TB seq. ***                                                           
     # UVVM:  =================================================================================================================
     # UVVM:  Coverpoint:     COVERPOINT_1
     # UVVM:  Uncovered bins: 1
@@ -401,7 +401,7 @@ A summary report for the covergroup can be printed using the ``print_sim_coverag
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: TB seq.(uvvm) ***                                                          
+    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: TB seq. ***                                                          
     # UVVM:  Total Hits Coverage: 44.44% (goal: 100%)
     # UVVM:  =================================================================================================================
     # UVVM:  Coverpoint:      COVERPOINT_1
@@ -435,6 +435,9 @@ Log messages within the procedures and functions in the *funct_cov_pkg* use the 
 * ID_FUNCT_COV_RAND:  Used for logging functional coverage randomization
 * ID_FUNCT_COV_SAMPLE: Used for logging functional coverage sampling
 * ID_FUNCT_COV_CONFIG: Used for logging functional coverage configuration
+
+The default scope for log messages in the *funct_cov_pkg* is C_TB_SCOPE_DEFAULT defined in adaptations_pkg, it can be updated using 
+the procedure ``set_scope()``.
 
 The maximum number of coverpoints that can be created is determined by C_FC_MAX_NUM_COVERPOINTS defined in adaptations_pkg.
 

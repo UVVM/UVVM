@@ -75,6 +75,46 @@ Returns the configured scope. ::
     scope := my_coverpoint.get_scope(VOID);
 
 
+set_coverage_weight()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures the weight of the coverpoint used for calculating the simulation coverage. Default value is 1. ::
+
+    set_coverage_weight(weight, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | weight             | in     | positive                     | Weight of the coverpoint                              |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.set_coverage_weight(3);
+
+
+set_coverage_goal()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures the coverpoint coverage goal. Default value is 100. ::
+
+    set_coverage_goal(percentage, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | percentage         | in     | positive                     | Goal percentage of the coverpoint to cover            |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.set_coverage_goal(150);
+
+
 set_illegal_bin_alert_level()
 ----------------------------------------------------------------------------------------------------------------------------------
 Configures the alert level when an illegal bin is sampled. ::
@@ -350,46 +390,6 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
     Examples:
     my_coverpoint.sample_coverage(10);
     my_coverpoint.sample_coverage((10,50));
-
-
-set_coverage_weight()
-----------------------------------------------------------------------------------------------------------------------------------
-Configures the weight of the coverpoint used for calculating the simulation coverage. Default value is 1. ::
-
-    set_coverage_weight(weight, [msg_id_panel])
-
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | weight             | in     | positive                     | Weight of the coverpoint                              |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-
-.. code-block::
-
-    Examples:
-    my_coverpoint.set_coverage_weight(3);
-
-
-set_coverage_goal()
-----------------------------------------------------------------------------------------------------------------------------------
-Configures the coverpoint coverage goal. Default value is 100. ::
-
-    set_coverage_goal(percentage, [msg_id_panel])
-
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | percentage         | in     | positive                     | Goal percentage of the coverpoint to cover            |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-
-.. code-block::
-
-    Examples:
-    my_coverpoint.set_coverage_goal(150);
 
 
 get_coverage()

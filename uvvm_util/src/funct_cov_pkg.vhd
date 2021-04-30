@@ -180,6 +180,14 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return string;
 
+    procedure set_coverage_weight(
+      constant weight       : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure set_coverage_goal(
+      constant percentage   : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure set_illegal_bin_alert_level(
       constant alert_level  : in t_alert_level;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -391,14 +399,6 @@ package funct_cov_pkg is
       constant values        : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "");
-
-    procedure set_coverage_weight(
-      constant weight       : in positive;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
-
-    procedure set_coverage_goal(
-      constant percentage   : in positive;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_coverage(
       constant VOID : t_void)
@@ -1205,6 +1205,27 @@ package body funct_cov_pkg is
     begin
       return to_string(priv_scope);
     end function;
+
+    procedure set_coverage_weight(
+      constant weight       : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
+    begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      -- Update covergroup status register
+      protected_covergroup_status.set_coverage_weight(priv_id, weight);
+    end procedure;
+
+    procedure set_coverage_goal(
+      constant percentage   : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
+    begin
+      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      protected_covergroup_status.set_coverage_goal(priv_id, percentage);
+    end procedure;
 
     procedure set_illegal_bin_alert_level(
       constant alert_level  : in t_alert_level;
@@ -2037,27 +2058,6 @@ package body funct_cov_pkg is
         end if;
       end if;
       DEALLOCATE(v_proc_call);
-    end procedure;
-
-    procedure set_coverage_weight(
-      constant weight       : in positive;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
-    begin
-      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
-      -- Update covergroup status register
-      protected_covergroup_status.set_coverage_weight(priv_id, weight);
-    end procedure;
-
-    procedure set_coverage_goal(
-      constant percentage   : in positive;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
-    begin
-      check_value(priv_id /= -1, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
-      protected_covergroup_status.set_coverage_goal(priv_id, percentage);
     end procedure;
 
     impure function get_coverage(

@@ -130,6 +130,13 @@ sampled. The default severity of the alert is ERROR and can be configured using 
     my_coverpoint.add_bins(illegal_bin_range(220, 250));
     my_coverpoint.add_bins(illegal_bin_transition((200,100,0)));
 
+Adding bins from separate process
+==================================================================================================================================
+In some cases there is one process that creates the coverpoint model and another process that samples the data, e.g. a sequencer 
+adds the bins to the coverpoint and a VVC samples the data from the DUT. If for some reason the VVC receives some data before the 
+sequencer has added the bins, the testbench will fail. In cases like this we can use the function ``is_defined()`` to check if the 
+coverpoint has any bins before sampling the data.
+
 **********************************************************************************************************************************
 Bin name
 **********************************************************************************************************************************
@@ -190,8 +197,8 @@ different ways using the ``add_cross()`` procedure and :ref:`bin functions <bin_
 
 Using bins
 ==================================================================================================================================
-This is a "faster" way of doing it and useful when we need specific combinations of values. The ``add_cross`` overloads support up 
-to 5 crossed elements.
+This is a "faster" way of doing it and useful when we need specific combinations of values. The ``add_cross()`` overloads support 
+up to 5 crossed elements.
 
 .. code-block::
 
@@ -236,7 +243,7 @@ The bin functions may also be concatenated to add several bins at once.
 Using coverpoints
 ==================================================================================================================================
 This alternative is useful when the coverpoints are already created and we don't want to repeat the declaration of the bins. The 
-``add_cross`` overloads support up to 16 crossed elements.
+``add_cross()`` overloads support up to 16 crossed elements.
 
 .. code-block::
 

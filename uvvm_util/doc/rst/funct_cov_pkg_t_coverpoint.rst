@@ -307,6 +307,26 @@ it will return a random value among all the valid bins. Note that ignore and ill
     addr_vec := my_coverpoint.rand(my_msg_id_panel);
 
 
+is_defined()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns true if the coverpoint contains at least one bin. ::
+
+    boolean := is_defined(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    if my_coverpoint.is_defined(VOID) then
+    ...
+    end if;
+
+
 sample_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Samples a value (or values for crossed bins) in a coverpoint. If the value matches a bin, it will increase its number of hits and 

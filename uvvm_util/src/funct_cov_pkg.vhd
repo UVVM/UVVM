@@ -379,6 +379,10 @@ package funct_cov_pkg is
     ------------------------------------------------------------
     -- Coverage
     ------------------------------------------------------------
+    impure function is_defined(
+      constant VOID : t_void)
+    return boolean;
+
     procedure sample_coverage(
       constant value         : in integer;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
@@ -1902,6 +1906,13 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     -- Coverage
     ------------------------------------------------------------
+    impure function is_defined(
+      constant VOID : t_void)
+    return boolean is
+    begin
+      return priv_id /= -1;
+    end function;
+
     procedure sample_coverage(
       constant value         : in integer;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is

@@ -266,6 +266,7 @@ package adaptations_pkg is
   constant C_FC_MAX_NAME_LENGTH      : positive := 20;  -- Maximum length used for coverpoint and bin names
   constant C_FC_MAX_PROC_CALL_LENGTH : positive := 100; -- Maximum length used for procedure calls of the bin functions
   constant C_FC_MAX_NUM_COVERPOINTS  : positive := 20;  -- Maximum number of coverpoints
+  constant C_FC_MAX_NUM_BIN_VALUES   : positive := 10;  -- Maximum number of values that can be given in bin() and bin_transition()
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations

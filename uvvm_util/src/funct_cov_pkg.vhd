@@ -31,7 +31,6 @@ package funct_cov_pkg is
   constant C_MAX_NUM_CROSS_BINS   : positive := 16;
   --TODO: move to adaptations_pkg?
   constant C_MAX_NUM_BINS         : positive := 100; --Q: make it possible to grow?
-  constant C_MAX_NUM_BIN_VALUES   : positive := 10;
 
   ------------------------------------------------------------
   -- Types
@@ -40,14 +39,14 @@ package funct_cov_pkg is
 
   type t_new_bin is record
     contains   : t_cov_bin_type;
-    values     : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
-    num_values : natural;
+    values     : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
+    num_values : natural range 0 to C_FC_MAX_NUM_BIN_VALUES;
   end record;
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
   type t_new_cov_bin is record
     bin_vector : t_new_bin_vector(0 to C_MAX_NUM_BINS-1);
-    num_bins   : natural;
+    num_bins   : natural range 0 to C_MAX_NUM_BINS;
     proc_call  : string(1 to C_FC_MAX_PROC_CALL_LENGTH);
   end record;
   type t_new_bin_array is array (natural range <>) of t_new_cov_bin;
@@ -57,8 +56,8 @@ package funct_cov_pkg is
 
   type t_bin is record
     contains       : t_cov_bin_type;
-    values         : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
-    num_values     : natural;
+    values         : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
+    num_values     : natural range 0 to C_FC_MAX_NUM_BIN_VALUES;
     transition_idx : natural;
   end record;
   type t_bin_vector is array (natural range <>) of t_bin;
@@ -1388,7 +1387,7 @@ package body funct_cov_pkg is
             readline(fileHandler, v_line);
             read(v_line, v_num_values);
             bin_vector(i).cross_bins(j).num_values := v_num_values;
-            check_value(v_num_values <= C_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_MAX_NUM_BIN_VALUES",
+            check_value(v_num_values <= C_FC_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_FC_MAX_NUM_BIN_VALUES",
               priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
             readline(fileHandler, v_line);
             read(v_line, bin_vector(i).cross_bins(j).transition_idx);
@@ -1853,7 +1852,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL      : string := "rand()";
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);
       variable v_acc_weight      : integer := 0;
-      variable v_values_vec      : integer_vector(0 to C_MAX_NUM_BIN_VALUES-1);
+      variable v_values_vec      : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
       variable v_bin_idx         : integer;
       variable v_ret             : integer_vector(0 to priv_num_bins_crossed-1);
     begin

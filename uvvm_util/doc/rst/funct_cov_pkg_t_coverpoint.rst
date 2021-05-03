@@ -5,7 +5,7 @@ Protected type containing all the coverage functionality.
 
 set_name()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the name of the coverpoint. ::
+Configures the name of the coverpoint. The maximum length is C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. ::
 
     set_name(name)
 
@@ -214,7 +214,7 @@ Bin functions may be concatenated to add several bins at once. Default values fo
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | bin_name           | in     | string                       | Name of the bin (optional)                            |
+| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -246,7 +246,7 @@ rand_weight are both 1. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | bin_name           | in     | string                       | Name of the bin (optional)                            |
+| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -292,7 +292,7 @@ Default values for min_hits and rand_weight are both 1. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | bin_name           | in     | string                       | Name of the bin (optional)                            |
+| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+

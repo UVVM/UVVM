@@ -41,7 +41,8 @@ Returns the coverpoint's name. ::
 
 set_scope()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the scope used in the log messages. ::
+Configures the scope used in the log messages. Default is C_TB_SCOPE_DEFAULT and maximum length is C_LOG_SCOPE_WIDTH defined in 
+adaptations_pkg. ::
 
     set_scope(scope)
 
@@ -54,7 +55,7 @@ Configures the scope used in the log messages. ::
 .. code-block::
 
     Examples:
-    my_coverpoint.set_scope("MY_VVC");
+    my_coverpoint.set_scope("MY_SCOPE");
 
 
 get_scope()

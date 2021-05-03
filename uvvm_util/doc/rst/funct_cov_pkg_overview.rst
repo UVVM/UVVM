@@ -443,8 +443,8 @@ Log messages within the procedures and functions in the *funct_cov_pkg* use the 
 * ID_FUNCT_COV_SAMPLE: Used for logging functional coverage sampling
 * ID_FUNCT_COV_CONFIG: Used for logging functional coverage configuration
 
-The default scope for log messages in the *funct_cov_pkg* is C_TB_SCOPE_DEFAULT defined in adaptations_pkg, it can be updated using 
-the procedure ``set_scope()``.
+The default scope for log messages in the *funct_cov_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure 
+``set_scope()``. The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
 
 The maximum number of coverpoints that can be created is determined by C_FC_MAX_NUM_COVERPOINTS defined in adaptations_pkg.
 

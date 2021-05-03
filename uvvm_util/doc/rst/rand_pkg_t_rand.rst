@@ -206,7 +206,8 @@ Returns the default range weight mode. ::
 
 set_scope()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the scope used in the log messages. Default is C_TB_SCOPE_DEFAULT defined in adaptations_pkg. ::
+Configures the scope used in the log messages. Default is C_TB_SCOPE_DEFAULT and maximum length is C_LOG_SCOPE_WIDTH defined in 
+adaptations_pkg. ::
 
     set_scope(scope)
 

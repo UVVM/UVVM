@@ -30,197 +30,109 @@ end entity;
 
 architecture func of funct_cov_tb is
 
+  shared variable v_coverpoint : t_coverpoint;
+
 begin
 
   --------------------------------------------------------------------------------
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
-    variable v_coverpoint    : t_coverpoint;
-    variable v_coverpoint_x2 : t_coverpoint;
-    variable v_coverpoint_x3 : t_coverpoint;
-    variable v_value         : integer;
-    variable v_values_x2     : integer_vector(0 to 1);
-    variable v_values_x3     : integer_vector(0 to 2);
-    variable v_slv           : std_logic_vector(1 downto 0);
+    variable v_value  : integer;
+    variable v_vector : std_logic_vector(1 downto 0);
 
   begin
-
-    set_alert_stop_limit(TB_ERROR,0); --TODO: remove
 
     -------------------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Functional Coverage package - " & GC_TESTCASE);
     -------------------------------------------------------------------------------------------
     enable_log_msg(ID_FUNCT_COV);
+    enable_log_msg(ID_FUNCT_COV_BINS);
+    enable_log_msg(ID_FUNCT_COV_RAND);
+    enable_log_msg(ID_FUNCT_COV_SAMPLE);
+    enable_log_msg(ID_FUNCT_COV_CONFIG);
 
     --===================================================================================
-    if GC_TESTCASE = "test" then
+    if GC_TESTCASE = "basic" then
     --===================================================================================
-      --log(ID_LOG_HDR, "Testing uninitialized cov_point");
-      --v_value := v_coverpoint.rand;
-      --v_coverpoint.sample_coverage(5);
-      --v_coverpoint.print_summary(VOID);
+      v_coverpoint.set_name("MY_COVERPOINT");
+      check_value("MY_COVERPOINT", v_coverpoint.get_name(VOID), ERROR, "Checking name");
+      v_coverpoint.set_scope("MY_SCOPE");
+      check_value("MY_SCOPE", v_coverpoint.get_scope(VOID), ERROR, "Checking scope");
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing add_bin()");
+      log(ID_LOG_HDR, "Testing bin functions");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin(1), 5, 2, "val1");
-      v_coverpoint.add_bins(bin(2), 5, "val2");
-      v_coverpoint.add_bins(bin(3), "val3");
-      v_coverpoint.add_bins(bin((0,2,4,6)), 5, 2, "set1");
-      v_coverpoint.add_bins(bin((1,3,5,7)), 5, "set2");
-      v_coverpoint.add_bins(bin((8,9,10)), "set3");
-      v_coverpoint.add_bins(bin_range(0, 5, 1), 5, 2, "split_range1");
-      v_coverpoint.add_bins(bin_range(6, 10, 1), 5, "split_range2");
-      v_coverpoint.add_bins(bin_range(0, 10, 2), "split_range3");
-      v_coverpoint.add_bins(bin_range(0, 5), 5, 2, "range1");
-      v_coverpoint.add_bins(bin_range(6, 10), 5, "range2");
-      v_coverpoint.add_bins(bin_range(0, 10), "range3");
-      v_coverpoint.add_bins(bin_vector(v_slv), 5, 2, "addr1");
-      v_coverpoint.add_bins(bin_vector(v_slv), 5, "addr2");
-      v_coverpoint.add_bins(bin_vector(v_slv), "addr3"); -- 4 bins
-      v_coverpoint.add_bins(bin_vector(v_slv,2), "addr3"); -- 2 bins
-      v_coverpoint.add_bins(bin_range(0,2**v_slv'length-1), "addr3"); -- 4 bins
-      v_coverpoint.add_bins(bin_range(0,2**v_slv'length-1,2), "addr3"); -- 2 bins
-      v_coverpoint.add_bins(bin_transition((1,3,5,7)), 1, 1, "transition_odd");
-      v_coverpoint.add_bins(bin_transition((2,4,6,8)), 1, 1, "transition_even");
-      v_coverpoint.add_bins(ignore_bin_transition((200,201)), 1, 1, "transition_ignore");
-      v_coverpoint.add_bins(illegal_bin_transition((300,301)), 1, 1, "transition_illegal");
-      v_coverpoint.add_bins(ignore_bin(0), "ignore1");
-      v_coverpoint.add_bins(ignore_bin(255), "ignore2");
-      v_coverpoint.add_bins(illegal_bin(256), "illegal");
-      v_coverpoint.add_bins(bin(50) & bin((100,200,300)) & bin_range(50, 100, 2), 5, 2, "single_line");
+      v_coverpoint.add_bins(bin(-1));
+      v_coverpoint.add_bins(bin(0));
+      v_coverpoint.add_bins(bin(1));
 
-      -- test bin_range
-      --v_coverpoint.add_bins(bin_range(1, 10, 1), "test1");
-      --v_coverpoint.add_bins(bin_range(1, 10, 2), "test2");
-      --v_coverpoint.add_bins(bin_range(1, 10, 4), "test3");
-      --v_coverpoint.add_bins(bin_range(1, 10, 9), "test4");
-      --v_coverpoint.add_bins(bin_range(1, 10, 10), "test5");
-      --v_coverpoint.add_bins(bin_range(1, 10, 11), "test6");
+      v_coverpoint.add_bins(bin((2,4,6,8)));
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint.add_bins(bin((10,11,12,13,14,15,16,17,18,19,20)));
 
-      --v_coverpoint.add_bins(bin_range(10, 1), "test1");
-      --v_coverpoint.add_bins(bin_range(10, 1, 1), "test1");
-      --v_coverpoint.add_bins(bin_range(10, 1, 2), "test1");
-      --v_coverpoint.add_bins(bin_range(10, 1, 11), "test1");
+      v_coverpoint.add_bins(bin_range(21,30,1));
+      v_coverpoint.add_bins(bin_range(31,35,2));
+      v_coverpoint.add_bins(bin_range(36,40,20));
+      v_coverpoint.add_bins(bin_range(41,43));
+      v_coverpoint.add_bins(bin_range(45,45));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_coverpoint.add_bins(bin_range(43,41));
 
-      v_coverpoint.sample_coverage(0);
-      v_coverpoint.sample_coverage(1);
-      v_coverpoint.sample_coverage(3);
-      v_coverpoint.sample_coverage(5);
-      v_coverpoint.sample_coverage(7);
-      v_coverpoint.sample_coverage(2);
-      v_coverpoint.sample_coverage(4);
-      v_coverpoint.sample_coverage(6);
-      v_coverpoint.sample_coverage(8);
-      v_coverpoint.sample_coverage(200);
-      v_coverpoint.sample_coverage(201);
-      increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint.sample_coverage(300);
-      v_coverpoint.sample_coverage(301);
-      v_coverpoint.sample_coverage(255);
-      increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint.sample_coverage(256);
+      v_coverpoint.add_bins(bin_vector(v_vector,1));
+      v_coverpoint.add_bins(bin_vector(v_vector,2));
+      v_coverpoint.add_bins(bin_vector(v_vector,20));
+      v_coverpoint.add_bins(bin_vector(v_vector));
+
+      v_coverpoint.add_bins(bin_transition((51,53,55,59)));
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint.add_bins(bin_transition((60,61,62,63,64,65,66,67,68,69,70)));
+
+      v_coverpoint.add_bins(ignore_bin(-101));
+      v_coverpoint.add_bins(ignore_bin(100));
+      v_coverpoint.add_bins(ignore_bin(101));
+
+      v_coverpoint.add_bins(ignore_bin_range(110,120));
+      v_coverpoint.add_bins(ignore_bin_range(125,125));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_coverpoint.add_bins(ignore_bin_range(129,126));
+
+      v_coverpoint.add_bins(ignore_bin_transition((131,133,135,139)));
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint.add_bins(ignore_bin_transition((140,141,142,143,144,145,146,147,148,149,150)));
+
+      v_coverpoint.add_bins(illegal_bin(-201));
+      v_coverpoint.add_bins(illegal_bin(200));
+      v_coverpoint.add_bins(illegal_bin(201));
+
+      v_coverpoint.add_bins(illegal_bin_range(210,220));
+      v_coverpoint.add_bins(illegal_bin_range(225,225));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_coverpoint.add_bins(illegal_bin_range(229,226));
+
+      v_coverpoint.add_bins(illegal_bin_transition((231,233,235,239)));
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint.add_bins(illegal_bin_transition((240,241,242,243,244,245,246,247,248,249,250)));
+
       v_coverpoint.print_summary(VOID);
 
       --------------------------------------------------------------
-      --log(ID_LOG_HDR, "Testing rand()");
+      --log(ID_LOG_HDR, "Testing uninitialized coverpoint");
       --------------------------------------------------------------
-      ----enable_log_msg(ID_RAND_GEN);
-
-      --v_coverpoint.add_bins(bin(5), 5, 2, "val1");
-      --v_coverpoint.add_bins(bin((10,12,14)), 5, 1, "val2");
-      --v_coverpoint.add_bins(bin_range(15,20,1), 5, 1, "val3");
-      --for i in 0 to 99 loop
-      --  v_value := v_coverpoint.rand;
-      --  v_coverpoint.sample_coverage(v_value);
-      --end loop;
-
-      ---- one bin stops generating values
-      --v_coverpoint.add_bins(bin(5), 20, 1, "val1");
-      --v_coverpoint.add_bins(bin((10,12,14)), 50, 1, "val2");
-      --v_coverpoint.add_bins(bin_range(15,20,1), 50, 1, "val3");
-      --for i in 0 to 99 loop
-      --  v_value := v_coverpoint.rand;
-      --  v_coverpoint.sample_coverage(v_value);
-      --end loop;
-
-      ---- one bin stops generating values then resumes when others reach their goal
-      --v_coverpoint.add_bins(bin(5), 20, 1, "val1");
-      --v_coverpoint.add_bins(bin((10,12,14)), 30, 1, "val2");
-      --v_coverpoint.add_bins(bin_range(15,20,1), 30, 1, "val3");
-      --for i in 0 to 99 loop
-      --  v_value := v_coverpoint.rand;
-      --  v_coverpoint.sample_coverage(v_value);
-      --end loop;
-
-      ---- ignore and illegal
-      --v_coverpoint.add_bins(bin(5), 20, 1, "val1");
-      --v_coverpoint.add_bins(bin((10,12,14)), 30, 1, "val2");
-      --v_coverpoint.add_bins(bin_range(15,20,1), 30, 1, "val3");
-      --v_coverpoint.add_bins(ignore_bin(100), 20, 1, "val1");
-      --v_coverpoint.add_bins(illegal_bin(200), 20, 1, "val1");
-      --for i in 0 to 99 loop
-      --  v_value := v_coverpoint.rand;
-      --  v_coverpoint.sample_coverage(v_value);
-      --end loop;
-
-      ---- transition
-      --v_coverpoint.add_bins(bin(5), 10, 1, "val1");
-      --v_coverpoint.add_bins(bin_transition((10,12,14)), 30, 1, "val2");
-      --v_coverpoint.add_bins(bin_range(15,20,1), 30, 1, "val3");
-      --for i in 0 to 99 loop
-      --  v_value := v_coverpoint.rand;
-      --  v_coverpoint.sample_coverage(v_value);
-      --end loop;
-
+      --increment_expected_alerts_and_stop_limit(TB_FAILURE,10);
+      --v_coverpoint.set_name("MY_COVERPOINT");
+      --v_coverpoint.set_scope("MY_SCOPE");
+      --v_coverpoint.set_coverage_weight(5);
+      --v_coverpoint.set_coverage_goal(5);
+      --v_coverpoint.set_illegal_bin_alert_level(FAILURE);
+      --v_coverpoint.detect_bin_overlap(true);
+      --v_coverpoint.write_coverage_db("file.txt");
+      --v_value := v_coverpoint.rand(VOID);
+      --log(to_string(v_coverpoint.is_defined(VOID)));
+      --v_coverpoint.sample_coverage(5);
+      --log(to_string(v_coverpoint.get_coverage(VOID)));
+      --log(to_string(v_coverpoint.coverage_completed(VOID)));
       --v_coverpoint.print_summary(VOID);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing cross x2");
-      ------------------------------------------------------------
-      v_coverpoint_x2.add_cross(bin_range(253, 254), bin_range(50, 100, 2), 2, 10, "crossbin1");
-      v_coverpoint_x2.sample_coverage((253,50));
-
-      for i in 0 to 9 loop
-        v_values_x2 := v_coverpoint_x2.rand;
-        v_coverpoint_x2.sample_coverage(v_values_x2);
-      end loop;
-
-      v_coverpoint_x2.add_cross(bin(100), bin_transition((1, 5, 10)), 2, 10, "crossbin2");
-      v_coverpoint_x2.sample_coverage((100,1));
-      v_coverpoint_x2.sample_coverage((100,5));
-      v_coverpoint_x2.sample_coverage((100,10));
-
-      for i in 0 to 9 loop
-        v_values_x2 := v_coverpoint_x2.rand;
-        v_coverpoint_x2.sample_coverage(v_values_x2);
-      end loop;
-
-      v_coverpoint_x2.add_cross(illegal_bin(500) & bin(100), bin_range(2, 3), 2, 10, "crossbin3");
-      increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint_x2.sample_coverage((500,3));
-
-      v_coverpoint_x2.add_cross(bin(100), illegal_bin_transition((12, 13, 14)), 2, 10, "crossbin4");
-      increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint_x2.sample_coverage((100,12));
-      v_coverpoint_x2.sample_coverage((100,13));
-      v_coverpoint_x2.sample_coverage((100,14));
-
-      v_coverpoint_x2.print_summary(VOID);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing cross x3");
-      ------------------------------------------------------------
-      v_coverpoint_x3.add_cross(illegal_bin(5), bin((20,30)), bin_range(50,52), 4, 10, "crossbin1");
-      v_coverpoint_x3.add_cross(bin_range(253, 254), bin_range(50, 100, 2), bin_range(500, 501), 2, 10, "crossbin1");
-      v_coverpoint_x3.add_cross(bin(10), bin((20,30)), bin_range(50,52), 4, 10, "crossbin1");
-      for i in 0 to 9 loop
-        v_values_x3 := v_coverpoint_x3.rand;
-        v_coverpoint_x3.sample_coverage(v_values_x3);
-      end loop;
-
-      v_coverpoint_x3.print_summary(VOID);
 
     end if;
 

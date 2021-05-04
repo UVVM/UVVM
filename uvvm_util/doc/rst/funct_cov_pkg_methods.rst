@@ -8,7 +8,8 @@ Procedures and functions complementing the t_coverpoint functionality.
 bin()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a t_new_bin_array containing a bin with a single value or multiple values. When having multiple values in a bin, only one 
-of them needs to be sampled for the bin to collect coverage. ::
+of them needs to be sampled for the bin to collect coverage. The maximum number of multiple values is C_FC_MAX_NUM_BIN_VALUES 
+defined in adaptations_pkg. ::
 
     t_new_bin_array := bin(value)
     t_new_bin_array := bin(set_values)
@@ -78,7 +79,8 @@ created for each value. If the division has a residue, it is spread equally star
 
 bin_transition()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns a t_new_bin_array containing a bin with a transition of values. ::
+Returns a t_new_bin_array containing a bin with a transition of values. The maximum number of transition values is 
+C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
     t_new_bin_array := bin_transition(set_values)
 
@@ -134,7 +136,8 @@ Returns a t_new_bin_array containing an ignore bin with a range of values. ::
 
 ignore_bin_transition()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns a t_new_bin_array containing an ignore bin with a transition of values. ::
+Returns a t_new_bin_array containing an ignore bin with a transition of values. The maximum number of transition values is 
+C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
     t_new_bin_array := ignore_bin_transition(set_values)
 
@@ -190,7 +193,8 @@ Returns a t_new_bin_array containing an illegal bin with a range of values. ::
 
 illegal_bin_transition()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns a t_new_bin_array containing an illegal bin with a transition of values. ::
+Returns a t_new_bin_array containing an illegal bin with a transition of values. The maximum number of transition values is 
+C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
     t_new_bin_array := illegal_bin_transition(set_values)
 

@@ -935,6 +935,7 @@ package body vvc_methods_pkg is
       when TRANSMIT | RECEIVE | EXPECT =>
         vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
         vvc_transaction_info_group.bt.data_array                            := vvc_cmd.data_array;
+        vvc_transaction_info_group.bt.data_length                           := vvc_cmd.data_array_length;
         vvc_transaction_info_group.bt.user_array                            := vvc_cmd.user_array;
         vvc_transaction_info_group.bt.strb_array                            := vvc_cmd.strb_array;
         vvc_transaction_info_group.bt.id_array                              := vvc_cmd.id_array;

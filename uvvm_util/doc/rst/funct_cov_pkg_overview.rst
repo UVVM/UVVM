@@ -178,16 +178,31 @@ is no check to avoid this.
 **********************************************************************************************************************************
 Randomization weights
 **********************************************************************************************************************************
-This parameter in the ``add_bins()`` procedure specifies the relative number of times a bin will be selected during randomization, 
-it is not applicable for ignore or illegal bins since they are never selected for randomization. Default is 1.
+The parameter *rand_weight* in the ``add_bins()`` procedure specifies the relative number of times a bin will be selected during 
+randomization. It is not applicable for ignore or illegal bins since they are never selected for randomization.
 
 Note that when a bin has been covered it will no longer be selected for randomization until all the bins have been covered.
 
 .. code-block::
 
+    add_bins(bin, min_hits, rand_weight)
+
     my_coverpoint.add_bins(bin(0), 1, 1); -- Selected 10% of the time
     my_coverpoint.add_bins(bin(2), 1, 3); -- Selected 30% of the time
     my_coverpoint.add_bins(bin(4), 1, 6); -- Selected 60% of the time
+
+If a randomization weight is not specified, the bin will have a default weight equal to the minimum coverage. Moreover, this weight 
+will be reduced by 1 every time the bin is sampled, thus balancing the randomization of the bins in an "adaptive" way. When all the 
+bins have been covered, their respective randomization weights will be reset to their default value equal to the minimum coverage.
+
+.. code-block::
+
+    my_coverpoint.add_bins(bin(0), 10); -- Selected 50% of the time (rand_weight = 10)
+    my_coverpoint.add_bins(bin(2), 5);  -- Selected 25% of the time (rand_weight = 5)
+    my_coverpoint.add_bins(bin(4), 5);  -- Selected 25% of the time (rand_weight = 5)
+    my_coverpoint.sample_coverage(0);   -- bin(0) Selected 47% of the time (rand_weight = 9)
+    my_coverpoint.sample_coverage(0);   -- bin(0) Selected 44% of the time (rand_weight = 8)
+    my_coverpoint.sample_coverage(0);   -- bin(0) Selected 41% of the time (rand_weight = 7)
 
 **********************************************************************************************************************************
 Cross coverage

@@ -24,6 +24,9 @@ Released: 2021-xx-xx
   set to POSITION and position set to 1.
 - Insert_expected() to an empty Scoreboard using identifier_position=POSITION
   and identifier=1 is now allowed.
+- Fixed bug in check_counters that would cause the counter value to
+  increase to quickly.
+- Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
 
 
 

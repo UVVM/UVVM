@@ -12,6 +12,9 @@ Released: 2021-xx-xx
   warn for minor alert mismatch.
 - Generic queue allow to insert to an empty queue with identifier position
   set to POSITION and position set to 1.
+- Fixed bug in check_counters that would cause the counter value to
+  increase to quickly.
+- Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
 
 v2.16.0
 ----------

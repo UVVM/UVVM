@@ -67,6 +67,8 @@ package adaptations_pkg is
 
   constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true; -- true: break using std.env.stop, false: break using failure
 
+  constant C_ENABLE_CHECK_COUNTER : boolean := False; -- enable/disable check_counter to count number of check calls.
+ 
   shared variable shared_default_log_destination : t_log_destination := CONSOLE_AND_LOG;
 
   --------------------------------------------------------------------------------------------------------------------------------

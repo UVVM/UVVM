@@ -727,6 +727,8 @@ package body funct_cov_pkg is
     constant C_USE_ADAPTIVE_WEIGHT : integer := -1;
     -- Indicates that the coverpoint hasn't been initialized
     constant C_DEALLOCATED_ID      : integer := -1;
+    -- Indicates an uninitialized natural value
+    constant C_UNINITIALIZED       : integer := -1;
 
     variable priv_id                            : integer                            := C_DEALLOCATED_ID;
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
@@ -735,9 +737,9 @@ package body funct_cov_pkg is
     variable priv_bins_idx                      : natural                            := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
     variable priv_invalid_bins_idx              : natural                            := 0;
-    variable priv_num_bins_crossed              : integer                            := -1;
+    variable priv_num_bins_crossed              : integer                            := C_UNINITIALIZED;
     variable priv_rand_gen                      : t_rand;
-    variable priv_rand_transition_bin_idx       : integer                            := -1;
+    variable priv_rand_transition_bin_idx       : integer                            := C_UNINITIALIZED;
     variable priv_rand_transition_bin_value_idx : natural                            := 0;
     variable priv_illegal_bin_alert_level       : t_alert_level                      := ERROR;
     variable priv_detect_bin_overlap            : boolean                            := false;
@@ -967,9 +969,9 @@ package body funct_cov_pkg is
     begin
       initialize_coverpoint(local_call);
 
-      check_value(coverpoint1_num_bins_crossed /= -1, TB_FAILURE, "Coverpoint 1 is empty", priv_scope, ID_NEVER, caller_name => local_call);
-      check_value(coverpoint2_num_bins_crossed /= -1, TB_FAILURE, "Coverpoint 2 is empty", priv_scope, ID_NEVER, caller_name => local_call);
-      check_value(coverpoint3_num_bins_crossed /= -1, TB_FAILURE, "Coverpoint 3 is empty", priv_scope, ID_NEVER, caller_name => local_call);
+      check_value(coverpoint1_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 1 is empty", priv_scope, ID_NEVER, caller_name => local_call);
+      check_value(coverpoint2_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 2 is empty", priv_scope, ID_NEVER, caller_name => local_call);
+      check_value(coverpoint3_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 3 is empty", priv_scope, ID_NEVER, caller_name => local_call);
 
       check_value(priv_bins_idx < C_MAX_NUM_BINS-1, TB_FAILURE, "Cannot add more bins. Number of bins in the coverpoint has reached C_MAX_NUM_BINS",
         priv_scope, ID_NEVER, caller_name => local_call);
@@ -977,7 +979,7 @@ package body funct_cov_pkg is
         priv_scope, ID_NEVER, caller_name => local_call);
 
       -- The number of bins crossed is set on the first call and can't be changed
-      if priv_num_bins_crossed = -1 and num_bins_crossed > 0 then
+      if priv_num_bins_crossed = C_UNINITIALIZED and num_bins_crossed > 0 then
         priv_num_bins_crossed := num_bins_crossed;
       elsif priv_num_bins_crossed /= num_bins_crossed and num_bins_crossed > 0 then
         alert(TB_FAILURE, local_call & "=> Cannot mix different number of crossed bins.", priv_scope);
@@ -1885,7 +1887,7 @@ package body funct_cov_pkg is
       check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
 
       -- A transition bin returns all the transition values before allowing to select a different bin value
-      if priv_rand_transition_bin_idx /= -1 then
+      if priv_rand_transition_bin_idx /= C_UNINITIALIZED then
         v_bin_idx := priv_rand_transition_bin_idx;
       else
         -- Assign each bin a randomization weight
@@ -1925,7 +1927,7 @@ package body funct_cov_pkg is
         elsif priv_bins(v_bin_idx).cross_bins(i).contains = RAN then
           v_ret(i) := priv_rand_gen.rand(priv_bins(v_bin_idx).cross_bins(i).values(0), priv_bins(v_bin_idx).cross_bins(i).values(1), NON_CYCLIC, msg_id_panel);
         elsif priv_bins(v_bin_idx).cross_bins(i).contains = TRN then
-          if priv_rand_transition_bin_idx = -1 then
+          if priv_rand_transition_bin_idx = C_UNINITIALIZED then
             v_ret(i) := priv_bins(v_bin_idx).cross_bins(i).values(0);
             priv_rand_transition_bin_idx       := v_bin_idx;
             priv_rand_transition_bin_value_idx := 1;
@@ -1934,7 +1936,7 @@ package body funct_cov_pkg is
             if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).cross_bins(i).num_values-1 then
               priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
             else
-              priv_rand_transition_bin_idx       := -1;
+              priv_rand_transition_bin_idx       := C_UNINITIALIZED;
               priv_rand_transition_bin_value_idx := 0;
             end if;
           end if;

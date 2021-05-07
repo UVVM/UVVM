@@ -79,6 +79,8 @@ The ``rand()`` function can return the following types:
     rand_uns      := my_rand.rand(rand_uns'length, 0, 50, INCL,(60));
     rand_sig      := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
     rand_slv      := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25,35));
+    rand_sl       := my_rand.rand(VOID);
+    rand_bool     := my_rand.rand(VOID);
 
 The unsigned, signed and std_logic_vector functions can return any size vector, however the min and max constraints are limited 
 by the integer's 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding min and 

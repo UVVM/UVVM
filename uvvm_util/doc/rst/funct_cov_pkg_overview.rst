@@ -23,7 +23,7 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
 
       -- Sample the data
       while not(my_coverpoint.coverage_completed(VOID)) loop
-        dut_size <= my_coverpoint.rand;
+        dut_size <= my_coverpoint.rand(VOID);
         wait for C_CLK_PERIOD;
         my_coverpoint.sample_coverage(dut_size);
       end loop;
@@ -140,9 +140,11 @@ coverpoint has any bins before sampling the data.
 **********************************************************************************************************************************
 Bin name
 **********************************************************************************************************************************
-Bins can be named by using the optional name parameter in the ``add_bins()`` procedure. This is useful when reading the reports.
+Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` procedure. This is useful when reading the reports.
 
 .. code-block::
+
+    add_bins(bin, [bin_name])
 
     my_coverpoint.add_bins(bin(255), "bin_max");
 
@@ -151,10 +153,12 @@ The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in 
 **********************************************************************************************************************************
 Minimum coverage
 **********************************************************************************************************************************
-By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. This parameter 
-in the ``add_bins()`` procedure specifies how many times the bin must be sampled so that it is marked as covered.
+By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. The parameter 
+*min_hits* in the ``add_bins()`` procedure specifies how many times the bin must be sampled so that it is marked as covered.
 
 .. code-block::
+
+    add_bins(bin, min_hits, [bin_name])
 
     my_coverpoint.add_bins(bin(0), 1);
     my_coverpoint.add_bins(bin(2), 5);
@@ -173,7 +177,7 @@ is no check to avoid this.
 
 .. code-block::
 
-    my_addr := my_coverpoint.rand;
+    my_addr := my_coverpoint.rand(VOID);
 
 **********************************************************************************************************************************
 Randomization weights
@@ -185,7 +189,7 @@ Note that when a bin has been covered it will no longer be selected for randomiz
 
 .. code-block::
 
-    add_bins(bin, min_hits, rand_weight)
+    add_bins(bin, min_hits, rand_weight, [bin_name])
 
     my_coverpoint.add_bins(bin(0), 1, 1); -- Selected 10% of the time
     my_coverpoint.add_bins(bin(2), 1, 3); -- Selected 30% of the time
@@ -216,6 +220,8 @@ This is a "faster" way of doing it and useful when we need specific combinations
 up to 5 crossed elements.
 
 .. code-block::
+
+    add_cross(bin1, bin2, [bin_name])
 
     my_cross.add_cross(bin(10), bin_range(0,15,1));
     my_cross.add_cross(bin(20), bin_range(16,31,1));

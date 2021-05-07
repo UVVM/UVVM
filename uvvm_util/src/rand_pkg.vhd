@@ -207,7 +207,7 @@ package rand_pkg is
     ------------------------------------------------------------
     procedure set_rand_seeds(
       constant str : in string);
-    
+
     procedure set_rand_seeds(
       constant seed1 : in positive;
       constant seed2 : in positive);
@@ -1679,7 +1679,7 @@ package body rand_pkg is
     end procedure;
 
     procedure set_rand_seeds(
-      constant seed1 : in positive; 
+      constant seed1 : in positive;
       constant seed2 : in positive) is
     begin
       priv_seed1 := seed1;

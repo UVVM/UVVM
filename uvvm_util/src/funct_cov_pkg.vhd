@@ -58,7 +58,7 @@ package funct_cov_pkg is
     contains       : t_cov_bin_type;
     values         : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
     num_values     : natural range 0 to C_FC_MAX_NUM_BIN_VALUES;
-    transition_idx : natural;
+    transition_idx : natural range 0 to C_FC_MAX_NUM_BIN_VALUES;
   end record;
   type t_bin_vector is array (natural range <>) of t_bin;
 
@@ -207,8 +207,8 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return integer;
 
-    -- Returns the number of bins in the coverpoint
-    impure function get_num_bins(
+    -- Returns the number of valid bins in the coverpoint
+    impure function get_num_valid_bins(
       constant VOID : t_void)
     return natural;
 
@@ -217,8 +217,18 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return natural;
 
-    -- Returns a vector with the bins in the coverpoint
-    impure function get_bins(
+    -- Returns a valid bin in the coverpoint
+    impure function get_valid_bin(
+      constant bin_idx : natural)
+    return t_cov_bin;
+
+    -- Returns an invalid bin in the coverpoint
+    impure function get_invalid_bin(
+      constant bin_idx : natural)
+    return t_cov_bin;
+
+    -- Returns a vector with the valid bins in the coverpoint
+    impure function get_valid_bins(
       constant VOID : t_void)
     return t_cov_bin_vector;
 
@@ -1025,11 +1035,11 @@ package body funct_cov_pkg is
     procedure copy_bins_in_coverpoint(
       variable coverpoint : inout t_coverpoint;
       variable bin_array  : out   t_new_bin_array) is
-      variable v_coverpoint_bins         : t_cov_bin_vector(0 to coverpoint.get_num_bins(VOID)-1);
+      variable v_coverpoint_bins         : t_cov_bin_vector(0 to coverpoint.get_num_valid_bins(VOID)-1);
       variable v_coverpoint_invalid_bins : t_cov_bin_vector(0 to coverpoint.get_num_invalid_bins(VOID)-1);
       variable v_num_bins                : natural := 0;
     begin
-      v_coverpoint_bins         := coverpoint.get_bins(VOID);
+      v_coverpoint_bins         := coverpoint.get_valid_bins(VOID);
       v_coverpoint_invalid_bins := coverpoint.get_invalid_bins(VOID);
 
       for cross in 0 to bin_array'length-1 loop
@@ -1483,8 +1493,8 @@ package body funct_cov_pkg is
       return priv_num_bins_crossed;
     end function;
 
-    -- Returns the number of bins in the coverpoint
-    impure function get_num_bins(
+    -- Returns the number of valid bins in the coverpoint
+    impure function get_num_valid_bins(
       constant VOID : t_void)
     return natural is
     begin
@@ -1499,8 +1509,28 @@ package body funct_cov_pkg is
       return priv_invalid_bins_idx;
     end function;
 
-    -- Returns a vector with the bins in the coverpoint
-    impure function get_bins(
+    -- Returns a valid bin in the coverpoint
+    impure function get_valid_bin(
+      constant bin_idx : natural)
+    return t_cov_bin is
+      constant C_LOCAL_CALL : string := "get_valid_bin(" & to_string(bin_idx) & ")";
+    begin
+      check_value(bin_idx < C_MAX_NUM_BINS, TB_ERROR, "bin_idx is out of range", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      return priv_bins(bin_idx);
+    end function;
+
+    -- Returns an invalid bin in the coverpoint
+    impure function get_invalid_bin(
+      constant bin_idx : natural)
+    return t_cov_bin is
+      constant C_LOCAL_CALL : string := "get_invalid_bin(" & to_string(bin_idx) & ")";
+    begin
+      check_value(bin_idx < C_MAX_NUM_BINS, TB_ERROR, "bin_idx is out of range", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      return priv_invalid_bins(bin_idx);
+    end function;
+
+    -- Returns a vector with the valid bins in the coverpoint
+    impure function get_valid_bins(
       constant VOID : t_void)
     return t_cov_bin_vector is
     begin

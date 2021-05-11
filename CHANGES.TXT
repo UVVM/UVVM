@@ -27,6 +27,7 @@ Released: 2021-xx-xx
 - Fixed bug in check_counters that would cause the counter value to
   increase to quickly.
 - Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
+- Fixed incorrect VIP name in AXI-Stream compile_bfm.do script.
 
 
 

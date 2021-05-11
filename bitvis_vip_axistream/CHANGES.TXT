@@ -6,6 +6,7 @@ v4.7.4
 ----------
 Released: 2021-xx-xx
 - Corrected message ID for check_value() in BFM.
+- Fixed incorrected VIP name in compile_bfm.do
 
 
 v4.7.3

@@ -30,7 +30,8 @@ end entity;
 
 architecture func of funct_cov_tb is
 
-  shared variable v_coverpoint : t_coverpoint;
+  shared variable v_coverpoint   : t_coverpoint;
+  shared variable v_coverpoint_2 : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
 
@@ -43,6 +44,10 @@ begin
     variable v_bin_idx          : natural := 0;
     variable v_invalid_bin_idx  : natural := 0;
     variable v_vector           : std_logic_vector(1 downto 0);
+    variable v_rand             : t_rand;
+    variable v_bin_val          : integer;
+    variable v_min_hits         : natural;
+    variable v_prev_min_hits    : natural := 0;
 
     procedure check_bin(
       variable coverpoint  : inout t_coverpoint;
@@ -53,13 +58,16 @@ begin
       constant rand_weight : in    integer := C_ADAPTIVE_WEIGHT;
       constant name        : in    string  := "";
       constant hits        : in    natural := 0) is
-      constant C_PROC_NAME : string := "check_bin";
-      variable v_bin       : t_cov_bin;
+      constant C_PROC_NAME    : string := "check_bin";
+      variable v_bin          : t_cov_bin;
+      variable v_bin_name_idx : natural;
     begin
       if contains = VAL or contains = RAN or contains = TRN then
-        v_bin := coverpoint.get_valid_bin(bin_idx);
+        v_bin          := coverpoint.get_valid_bin(bin_idx);
+        v_bin_name_idx := bin_idx;
       else
-        v_bin := coverpoint.get_invalid_bin(bin_idx);
+        v_bin          := coverpoint.get_invalid_bin(bin_idx);
+        v_bin_name_idx := bin_idx + coverpoint.get_num_valid_bins(VOID);
       end if;
       check_value(v_bin.cross_bins(0).contains = contains,       ERROR, "Checking bin type. Was: " & to_upper(to_string(v_bin.cross_bins(0).contains)) &
         ". Expected: " & to_upper(to_string(contains)), C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
@@ -70,7 +78,11 @@ begin
       check_value(v_bin.cross_bins(0).transition_idx, 0,         ERROR, "Checking bin transition index", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
       check_value(v_bin.min_hits, min_hits,                      ERROR, "Checking bin minimum hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
       check_value(v_bin.rand_weight, rand_weight,                ERROR, "Checking bin randomization weight", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
-      check_value(to_string(v_bin.name), name,                   ERROR, "Checking bin name", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
+      if name = "" then
+        check_value(to_string(v_bin.name), "bin_" & to_string(v_bin_name_idx), ERROR, "Checking bin name", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
+      else
+        check_value(to_string(v_bin.name), name,                 ERROR, "Checking bin name", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
+      end if;
       check_value(v_bin.hits, hits,                              ERROR, "Checking bin hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
       bin_idx := bin_idx + 1;
       log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_upper(to_string(contains)) & ":" & to_string(values));
@@ -139,6 +151,18 @@ begin
       constant num_samples : in    positive := 1) is
     begin
       sample_bins(coverpoint, (0 => value), num_samples);
+    end procedure;
+
+    procedure check_coverage(
+      variable coverpoint : inout t_coverpoint;
+      constant coverage   : in    real) is
+      constant C_PROC_NAME : string := "check_coverage";
+    begin
+      if coverpoint.get_coverage(VOID) = coverage then
+        log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "%");
+      else
+        alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(VOID),2) & "%, expected " & to_string(coverage,2) & "%");
+      end if;
     end procedure;
 
   begin
@@ -455,8 +479,34 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), hits => 3);
 
       check_num_bins(v_coverpoint, v_bin_idx, v_invalid_bin_idx);
-      check_value(v_coverpoint.get_coverage(VOID), 100.0, ERROR, "Checking coverage", C_TB_SCOPE_DEFAULT);
+      check_coverage(v_coverpoint, 100.0);
       v_coverpoint.print_summary(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing minimum coverage");
+      ------------------------------------------------------------
+      v_bin_idx         := 0;
+      v_invalid_bin_idx := 0;
+
+      for i in 1 to 10 loop
+        v_bin_val  := v_rand.rand(100,500);
+        v_min_hits := v_rand.rand(1,20);
+        v_coverpoint_2.add_bins(bin(v_bin_val), v_min_hits);
+
+        check_bin(v_coverpoint_2, v_bin_idx, VAL, v_bin_val, v_min_hits);
+
+        for j in 0 to v_min_hits-1 loop
+          check_coverage(v_coverpoint_2, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
+          sample_bins(v_coverpoint_2, v_bin_val, 1);
+        end loop;
+        check_coverage(v_coverpoint_2, 100.0);
+
+        v_bin_idx := v_bin_idx-1;
+        check_bin(v_coverpoint_2, v_bin_idx, VAL, v_bin_val, v_min_hits, hits => v_min_hits);
+        v_prev_min_hits := v_prev_min_hits + v_min_hits;
+      end loop;
+
+      v_coverpoint_2.print_summary(VOID);
 
     end if;
 

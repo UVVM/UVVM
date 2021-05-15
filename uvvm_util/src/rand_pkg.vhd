@@ -1251,9 +1251,13 @@ package body rand_pkg is
       constant weight_vector : t_range_weight_mode_int_vec)
     return string is
       alias normalized_weight_vector : t_range_weight_mode_int_vec(0 to weight_vector'length-1) is weight_vector;
-      variable v_line    : line;
-      variable v_str     : string(1 to 500);
-      variable v_str_len : natural;
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
       for i in normalized_weight_vector'range loop
         if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
@@ -1284,11 +1288,7 @@ package body rand_pkg is
           write(v_line, ',');
         end if;
       end loop;
-
-      v_str_len := v_line.all'length;
-      v_str(1 to v_str_len) := v_line.all;
-      DEALLOCATE(v_line);
-      return v_str(1 to v_str_len);
+      return return_and_deallocate;
     end function;
 
     -- Overload
@@ -1296,9 +1296,13 @@ package body rand_pkg is
       constant weight_vector : t_range_weight_mode_real_vec)
     return string is
       alias normalized_weight_vector : t_range_weight_mode_real_vec(0 to weight_vector'length-1) is weight_vector;
-      variable v_line    : line;
-      variable v_str     : string(1 to 500);
-      variable v_str_len : natural;
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
       for i in normalized_weight_vector'range loop
         if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
@@ -1329,11 +1333,7 @@ package body rand_pkg is
           write(v_line, ',');
         end if;
       end loop;
-
-      v_str_len := v_line.all'length;
-      v_str(1 to v_str_len) := v_line.all;
-      DEALLOCATE(v_line);
-      return v_str(1 to v_str_len);
+      return return_and_deallocate;
     end function;
 
     -- Overload
@@ -1341,9 +1341,13 @@ package body rand_pkg is
       constant weight_vector : t_range_weight_mode_time_vec)
     return string is
       alias normalized_weight_vector : t_range_weight_mode_time_vec(0 to weight_vector'length-1) is weight_vector;
-      variable v_line    : line;
-      variable v_str     : string(1 to 500);
-      variable v_str_len : natural;
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
       for i in normalized_weight_vector'range loop
         if normalized_weight_vector(i).min_value = normalized_weight_vector(i).max_value then
@@ -1374,11 +1378,7 @@ package body rand_pkg is
           write(v_line, ',');
         end if;
       end loop;
-
-      v_str_len := v_line.all'length;
-      v_str(1 to v_str_len) := v_line.all;
-      DEALLOCATE(v_line);
-      return v_str(1 to v_str_len);
+      return return_and_deallocate;
     end function;
 
     -- Returns true if a value is contained in a vector

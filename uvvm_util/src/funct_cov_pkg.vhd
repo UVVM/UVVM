@@ -761,9 +761,13 @@ package body funct_cov_pkg is
     impure function get_proc_calls(
       constant bin_array : t_new_bin_array)
     return string is
-      variable v_line   : line;
-      variable v_result : string(1 to 1000);
-      variable v_width  : natural;
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
       for i in bin_array'range loop
         write(v_line, bin_array(i).proc_call);
@@ -771,11 +775,7 @@ package body funct_cov_pkg is
           write(v_line, ',');
         end if;
       end loop;
-
-      v_width := v_line'length;
-      v_result(1 to v_width) := v_line.all;
-      DEALLOCATE(v_line);
-      return v_result(1 to v_width);
+      return return_and_deallocate;
     end function;
 
     -- Returns a string with all the bin values in the array
@@ -784,10 +784,7 @@ package body funct_cov_pkg is
       constant bin_verbosity : t_bin_type_verbosity := SHORT;
       constant bin_delimiter : character := ',')
     return string is
-      variable v_line   : line;
-      variable v_result : string(1 to 1000);
-      variable v_width  : natural := 1;
-
+      variable v_line : line;
       impure function return_bin_type(
         constant full_name     : string;
         constant short_name    : string;
@@ -802,7 +799,12 @@ package body funct_cov_pkg is
           return "";
         end if;
       end function;
-
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
       for i in bin_array'range loop
         for j in 0 to bin_array(i).num_bins-1 loop
@@ -853,13 +855,7 @@ package body funct_cov_pkg is
           end if;
         end loop;
       end loop;
-
-      if v_line /= NULL then
-        v_width := v_line'length;
-        v_result(1 to v_width) := v_line.all;
-      end if;
-      DEALLOCATE(v_line);
-      return v_result(1 to v_width);
+      return return_and_deallocate;
     end function;
 
     -- Returns a string with all the values in the bin. Since it is
@@ -1585,9 +1581,13 @@ package body funct_cov_pkg is
     return string is
       variable v_new_bin_array : t_new_bin_array(0 to priv_num_bins_crossed-1);
       variable v_line          : line;
-      variable v_result        : string(1 to 1000);
-      variable v_width         : natural;
       variable v_num_bins      : natural := 0;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
       if priv_bins_idx = 0 and priv_invalid_bins_idx = 0 then
         return "";
@@ -1617,11 +1617,7 @@ package body funct_cov_pkg is
           write(v_line, string'(" x "));
         end if;
       end loop;
-
-      v_width := v_line'length;
-      v_result(1 to v_width) := v_line.all;
-      DEALLOCATE(v_line);
-      return v_result(1 to v_width);
+      return return_and_deallocate;
     end function;
 
     ------------------------------------------------------------

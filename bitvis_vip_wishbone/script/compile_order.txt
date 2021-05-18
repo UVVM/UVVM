@@ -1,0 +1,10 @@
+# library bitvis_vip_wishbone
+../src/wishbone_bfm_pkg.vhd
+../src/vvc_cmd_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
+../src/vvc_methods_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
+../../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
+../src/wishbone_vvc.vhd
+../src/vvc_context.vhd

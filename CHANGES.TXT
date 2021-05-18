@@ -28,7 +28,7 @@ Released: 2021-xx-xx
   increase to quickly.
 - Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
 - Fixed incorrect VIP name in AXI-Stream compile_bfm.do script.
-
+- Added Bitvis VIP Wishbone BETA to the main UVVM repository.
 
 
 v2 2021.04.08

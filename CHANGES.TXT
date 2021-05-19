@@ -30,6 +30,7 @@ Released: 2021-xx-xx
 - Fixed incorrect VIP name in AXI-Stream compile_bfm.do script.
 - Added Bitvis VIP Wishbone BETA to the main UVVM repository.
 - Added data_length to AXI-Stream VVC transaction info.
+- Fixed an issue with VVC name indexing in ti_protected_types_pkg priv_get_vvc_idx().
 
 
 v2 2021.04.08

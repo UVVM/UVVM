@@ -917,8 +917,8 @@ package body string_methods_pkg is
     constant alignment_pos2  : natural;  -- Line position of first aligned character in line 2
     constant line_width      : natural
     ) is
-    variable v_string       : string(1 to text_lines'length)  := text_lines.all;
-    variable v_string_width : natural := text_lines'length;
+    constant v_string       : string(1 to text_lines'length)  := text_lines.all;
+    constant v_string_width : natural := text_lines'length;
     variable v_line_no      : natural := 0;
     variable v_last_string_wrap    : natural := 0;
     variable v_min_string_wrap     : natural;
@@ -990,8 +990,8 @@ package body string_methods_pkg is
     variable text_lines   : inout line;
     constant prefix       : string := C_LOG_PREFIX
     ) is
-    variable v_string           : string(1 to text_lines'length)  := text_lines.all;
-    variable v_string_width     : natural := text_lines'length;
+    constant v_string           : string(1 to text_lines'length)  := text_lines.all;
+    constant v_string_width     : natural := text_lines'length;
     constant prefix_width       : natural := prefix'length;
     variable v_last_string_wrap : natural := 0;
     variable i                  : natural := 0; -- for indexing v_string
@@ -1725,6 +1725,8 @@ package body string_methods_pkg is
       write (v_line_copy, v_line.all);  -- copy line
       writeline(OUTPUT, v_line);
       writeline(LOG_FILE, v_line_copy);
+      deallocate(v_line);
+      deallocate(v_line_copy);
     end;
 
 

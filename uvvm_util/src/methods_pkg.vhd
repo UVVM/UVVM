@@ -3160,6 +3160,7 @@ package body methods_pkg is
   begin
     write (v_line, my_line.all);
     writeline(file_handle, v_line);
+    deallocate(v_line);
   end procedure tee;
 
   -- Open, append/write to and close file. Also deallocates contents of the line
@@ -3347,6 +3348,7 @@ package body methods_pkg is
               write_to_file(log_file_name, open_mode, v_info_final);
             end if;
         end case;
+        deallocate_line_if_exists(v_info_final);
       end if;
     end if;
   end;
@@ -3478,6 +3480,8 @@ package body methods_pkg is
 
         -- Deallocate text block to give writeline()-like behaviour
         -- for formatted output
+        deallocate(v_header_line);
+        deallocate(v_log_body);
         deallocate(text_block);
       end if;
     end if;
@@ -3689,6 +3693,7 @@ package body methods_pkg is
           tee(OUTPUT, v_info);
           tee(ALERT_FILE, v_info);
           writeline(LOG_FILE, v_info);
+          deallocate_line_if_exists(v_info);
 
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
@@ -3848,7 +3853,7 @@ package body methods_pkg is
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
     writeline(LOG_FILE, v_line);
-
+    deallocate(v_line);
   end;
 
   procedure report_msg_id_panel(
@@ -3879,7 +3884,7 @@ package body methods_pkg is
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
     writeline(LOG_FILE, v_line);
-
+    deallocate(v_line);
   end;
 
   procedure set_alert_attention(

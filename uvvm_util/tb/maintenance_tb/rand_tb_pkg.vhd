@@ -469,7 +469,7 @@ package rand_tb_pkg is
   ------------------------------------------------------------
   -- Check distributions
   ------------------------------------------------------------
-  -- Check that each value has been generated at least once
+  -- Checks that each value has been generated at least once
   procedure check_uniform_distribution(
     variable value_cnt        : inout t_integer_cnt;
     constant num_values       : in    natural;
@@ -481,7 +481,7 @@ package rand_tb_pkg is
     variable value_cnt   : inout t_integer_cnt;
     constant weight_dist : in    t_weight_dist_vec);
 
-  -- Check that each value has been generated only once
+  -- Checks that each value has been generated only once
   procedure check_cyclic_distribution(
     variable value_cnt  : inout t_integer_cnt;
     constant num_values : in    natural);
@@ -1540,7 +1540,7 @@ package body rand_tb_pkg is
   ------------------------------------------------------------
   -- Check distributions
   ------------------------------------------------------------
-  -- Check that each value has been generated at least once
+  -- Checks that each value has been generated at least once
   procedure check_uniform_distribution(
     variable value_cnt        : inout t_integer_cnt;
     constant num_values       : in    natural;
@@ -1585,7 +1585,7 @@ package body rand_tb_pkg is
     variable v_count          : natural := 0;
     variable v_count_vec      : integer_vector(0 to weight_dist'length-1);
   begin
-    check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values).", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values.", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
 
     -- Calculate the total weight
     for i in weight_dist'range loop
@@ -1663,7 +1663,7 @@ package body rand_tb_pkg is
     end loop;
   end procedure;
 
-  -- Check that each value has been generated only once
+  -- Checks that each value has been generated only once
   procedure check_cyclic_distribution(
     variable value_cnt  : inout t_integer_cnt;
     constant num_values : in    natural) is

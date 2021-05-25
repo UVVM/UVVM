@@ -1967,7 +1967,8 @@ package body funct_cov_pkg is
         -- When all bins have reached their min_hits re-enable valid bins for selection
         if v_acc_weight = 0 then
           for i in 0 to priv_bins_idx-1 loop
-            v_bin_weight_list(i).weight := priv_bins(i).rand_weight;
+            v_bin_weight_list(i).weight := get_total_min_hits(priv_bins(i).min_hits) when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else
+                                           priv_bins(i).rand_weight;
           end loop;
         end if;
 

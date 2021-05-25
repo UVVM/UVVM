@@ -32,6 +32,8 @@ Released: 2021-xx-xx
 - Added data_length to AXI-Stream VVC transaction info.
 - Fixed an issue with VVC name indexing in ti_protected_types_pkg priv_get_vvc_idx().
 - Added some missing deallocating of lines in in methods_pkg.
+- Fixed issue where calling the same VVC at the same time from different processes 
+  could lead to a timeout.
 
 
 v2 2021.04.08

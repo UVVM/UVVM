@@ -30,38 +30,38 @@ cleanup('Removing any previous runs.')
 hdlunit = HDLUnit(simulator='modelsim')
 
 # Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hdlunit.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hdlunit.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Add Ethernet VIP
-hdlunit.add_files("../src/*.vhd", "bitvis_vip_ethernet")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_ethernet")
+hdlunit.add_files("../../src/*.vhd", "bitvis_vip_ethernet")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_ethernet")
 
 # Add HVVC Bridge VIP
-hdlunit.add_files("../../bitvis_vip_hvvc_to_vvc_bridge/src/*.vhd", "bitvis_vip_hvvc_to_vvc_bridge")
+hdlunit.add_files("../../../bitvis_vip_hvvc_to_vvc_bridge/src/*.vhd", "bitvis_vip_hvvc_to_vvc_bridge")
 
 # Add GMII VIP
-hdlunit.add_files("../../bitvis_vip_gmii/src/*.vhd", "bitvis_vip_gmii")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_gmii")
+hdlunit.add_files("../../../bitvis_vip_gmii/src/*.vhd", "bitvis_vip_gmii")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_gmii")
 
 # Add SBI VIP
-hdlunit.add_files("../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
+hdlunit.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
 
 # Add testbench and harness
-hdlunit.add_files("../tb/*.vhd", "bitvis_vip_ethernet")
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_ethernet")
+hdlunit.add_files("../../tb/*.vhd", "bitvis_vip_ethernet")
+hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_ethernet")
 
 # Add TB dependencies
 compile_directives_93 = ["-suppress", "1346,1236,1090", "-93"]
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim") # 08
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", directives=compile_directives_93) #version="93")
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master") 
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")
-hdlunit.add_files("../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim") # 08
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", directives=compile_directives_93) #version="93")
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master") 
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

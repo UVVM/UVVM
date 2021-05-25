@@ -42,9 +42,9 @@ cleanup('Removing any previous runs.')
 hdlunit = HDLUnit(simulator='modelsim')
 
 # Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hdlunit.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hdlunit.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Add testcase configurations
 configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[True, False])
@@ -79,11 +79,11 @@ for config in configs:
     hdlunit.add_generics("axistream_multiple_vvc_tb", ["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
 
 # Add src files
-hdlunit.add_files("../src/*.vhd", "bitvis_vip_axistream")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_axistream")
+hdlunit.add_files("../../src/*.vhd", "bitvis_vip_axistream")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_axistream")
 
 # Add TB/TH
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_axistream")
+hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_axistream")
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

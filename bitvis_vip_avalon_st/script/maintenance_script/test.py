@@ -42,9 +42,9 @@ cleanup('Removing any previous runs.')
 hdlunit = HDLUnit(simulator='modelsim')
 
 # Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hdlunit.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hdlunit.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Setup BFM TB test generics
 for config in create_config(channel_widths=[7], data_widths=[8], error_widths=[1]):
@@ -62,11 +62,11 @@ for config in create_config(channel_widths=[8], data_widths=[32], error_widths=[
     hdlunit.add_generics("avalon_st_vvc_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
 
 # Add Avalon ST VIP
-hdlunit.add_files("..//src/*.vhd", "bitvis_vip_avalon_st")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_avalon_st")
+hdlunit.add_files("../../src/*.vhd", "bitvis_vip_avalon_st")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_avalon_st")
 
 # Add TB/TH
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_st")
+hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_st")
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

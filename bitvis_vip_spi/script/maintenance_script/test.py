@@ -37,9 +37,9 @@ cleanup('Removing any previous runs.')
 hdlunit = HDLUnit(simulator='modelsim')
 
 # Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hdlunit.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hdlunit.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Add testcase configurations
 configs = create_config(spi_modes=range(0,4), data_widths=[8, 14, 23, 32], data_array_widths=[2, 4, 6, 8])
@@ -47,18 +47,18 @@ for config in configs:
     hdlunit.add_generics("spi_vvc_tb", ["GC_SPI_MODE", config[0],"GC_DATA_WIDTH", config[1], "GC_DATA_ARRAY_WIDTH", config[2]])
 
 # Add SPI VIP
-hdlunit.add_files("../src/*.vhd", "bitvis_vip_spi")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../src/*.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_spi")
 
 # Add TB/TH and dependencies
-hdlunit.add_files("../tb/maintenance_tb//spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_common_pkg.vhd", "bitvis_vip_spi")
-hdlunit.add_files("../tb/maintenance_tb/spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_master.vhd", "bitvis_vip_spi")
-hdlunit.add_files("../tb/maintenance_tb/spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_slave.vhd", "bitvis_vip_spi")
-hdlunit.add_files("../tb/maintenance_tb/spi_pif.vhd", "bitvis_vip_spi")
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../tb/maintenance_tb//spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_common_pkg.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../tb/maintenance_tb/spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_master.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../tb/maintenance_tb/spi_master_slave_opencores/trunk/rtl/spi_master_slave/spi_slave.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../tb/maintenance_tb/spi_pif.vhd", "bitvis_vip_spi")
+hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spi")
 
-hdlunit.add_files("../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
-hdlunit.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
+hdlunit.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
+hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

@@ -30,10 +30,10 @@ cleanup('Removing any previous runs.')
 hdlunit = HDLUnit(simulator='modelsim')
 
 # Add Util src
-hdlunit.add_files("../src/*.vhd", "uvvm_util")
+hdlunit.add_files("../../src/*.vhd", "uvvm_util")
 
 # Add Util TB
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "uvvm_util")
+hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util")
 
 # Define testcase names with generics for GC_TESTCASE
 hdlunit.add_generics("generic_queue_array_tb", ["GC_TESTCASE", "generic_queue_array_tb"])
@@ -47,7 +47,7 @@ num_failing_tests = hdlunit.get_num_fail_tests()
 num_passing_tests = hdlunit.get_num_pass_tests()
 
 # Check with golden reference
-(ret_txt, ret_code) = hdlunit.run_command("py ../script/maintenance_script/verify_with_golden.py -modelsim")
+(ret_txt, ret_code) = hdlunit.run_command("py verify_with_golden.py -modelsim")
 
 print(ret_txt)
 

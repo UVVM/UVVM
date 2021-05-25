@@ -465,7 +465,7 @@ package body funct_cov_pkg is
     variable v_ret : t_new_bin_array(0 to 0);
   begin
     v_ret(0).bin_vector(0).contains := contains;
-    if set_values'length < C_FC_MAX_NUM_BIN_VALUES then
+    if set_values'length <= C_FC_MAX_NUM_BIN_VALUES then
       v_ret(0).bin_vector(0).values(0 to set_values'length-1) := set_values;
       v_ret(0).bin_vector(0).num_values                       := set_values'length;
     else

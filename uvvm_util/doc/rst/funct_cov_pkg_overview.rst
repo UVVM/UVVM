@@ -394,7 +394,8 @@ A detailed report for the coverage and the bins in the coverpoint/cross can be p
 
 * *bins coverage* = bins_covered/num_bins (this value has a maximum of 100%)
 * *hits coverage* = tot_hits/tot_min_hits (this value increments gradually and has a maximum equal to the coverage goal)
-* The bins are printed in the following order: illegal, ignore, uncovered, covered.
+* When using NON_VERBOSE (default), the bins are printed in the following order: illegal (only when hits > 0), uncovered, covered.
+* When using VERBOSE, the bins are printed in the following order: illegal, ignore, uncovered, covered.
 * When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom of 
   the report.
 

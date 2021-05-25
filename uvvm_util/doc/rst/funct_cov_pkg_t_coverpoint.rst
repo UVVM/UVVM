@@ -433,18 +433,23 @@ Returns true if the accumulated coverage for all the bins in the coverpoint has 
 
 print_summary()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints the coverpoint coverage summary containing all the bins, including illegal and ignored. The printing destination can be 
-log and/or console and is defined by shared_default_log_destination in adaptations_pkg. ::
+Prints the coverpoint coverage summary containing all the bins. By default, illegal and ignore bins are not printed out, with the 
+exception of illegal bins that have at least one hit. Using the parameter verbosity, all illegal and ignore bins can be printed. 
+The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg. ::
 
     print_summary(VOID)
+    print_summary(verbosity)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | verbosity          | in     | t_report_verbosity           | Controls verbosity of the report                      |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
     my_coverpoint.print_summary(VOID);
+    my_coverpoint.print_summary(VERBOSE);

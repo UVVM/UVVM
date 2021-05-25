@@ -579,7 +579,7 @@ begin
 
       check_num_bins(v_coverpoint, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_coverpoint, 100.0);
-      v_coverpoint.print_summary(VOID);
+      v_coverpoint.print_summary(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -606,7 +606,7 @@ begin
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
-      v_coverpoint_2.print_summary(VOID);
+      v_coverpoint_2.print_summary(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint name and scope");
@@ -631,7 +631,7 @@ begin
       check_bin(v_coverpoint_2, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
       check_bin(v_coverpoint_2, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
 
-      v_coverpoint_2.print_summary(VOID);
+      v_coverpoint_2.print_summary(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand" then
@@ -794,7 +794,7 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109),           hits => 0, name => "bin_4");
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 0, name => "bin_5");
 
-      v_coverpoint.print_summary(VOID);
+      v_coverpoint.print_summary(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
@@ -865,7 +865,7 @@ begin
       v_coverpoint_2.add_bins(bin(30),400,1);   -- prob=0.10->0.16->0.33   iteration = 1000
       randomize_and_check_distribution(v_coverpoint_2, (250,500,750,1000));
 
-      v_coverpoint_2.print_summary(VOID);
+      v_coverpoint_2.print_summary(VERBOSE);
 
     end if;
 

@@ -35,6 +35,7 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
+  type t_report_verbosity is (NON_VERBOSE, VERBOSE);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
   type t_new_bin is record
@@ -417,7 +418,10 @@ package funct_cov_pkg is
     return boolean;
 
     procedure print_summary(
-      constant VOID : in t_void);
+      constant VOID      : in t_void);
+
+    procedure print_summary(
+      constant verbosity : in t_report_verbosity := NON_VERBOSE);
 
   end protected t_coverpoint;
 
@@ -2175,8 +2179,14 @@ package body funct_cov_pkg is
     end function;
 
     procedure print_summary(
-      constant VOID : in t_void) is
-      constant C_LOCAL_CALL       : string := "print_summary(VOID)";
+      constant VOID      : in t_void) is
+    begin
+      print_summary(NON_VERBOSE);
+    end procedure;
+
+    procedure print_summary(
+      constant verbosity : in t_report_verbosity := NON_VERBOSE) is
+      constant C_LOCAL_CALL       : string := "print_summary(" & to_upper(to_string(verbosity)) & ")";
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
       constant C_HEADER           : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope) & " ***";
       constant C_BIN_COLUMN_WIDTH : positive := 40;
@@ -2222,7 +2232,7 @@ package body funct_cov_pkg is
 
       -- Print illegal bins
       for i in 0 to priv_invalid_bins_idx-1 loop
-        if is_bin_illegal(priv_invalid_bins(i)) then
+        if is_bin_illegal(priv_invalid_bins(i)) and (verbosity = VERBOSE or (verbosity = NON_VERBOSE and priv_invalid_bins(i).hits > 0)) then
           write(v_line, justify(
             fill_string(' ', 5) &
             justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
@@ -2236,21 +2246,23 @@ package body funct_cov_pkg is
         end if;
       end loop;
 
-      -- Print ignore bins
-      for i in 0 to priv_invalid_bins_idx-1 loop
-        if is_bin_ignore(priv_invalid_bins(i)) then
-          write(v_line, justify(
-            fill_string(' ', 5) &
-            justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).hits)                    , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_invalid_bins(i).name)                    , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify("IGNORE"                                                , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        end if;
-      end loop;
+      if verbosity = VERBOSE then
+        -- Print ignore bins
+        for i in 0 to priv_invalid_bins_idx-1 loop
+          if is_bin_ignore(priv_invalid_bins(i)) then
+            write(v_line, justify(
+              fill_string(' ', 5) &
+              justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(priv_invalid_bins(i).hits)                    , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(priv_invalid_bins(i).name)                    , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("IGNORE"                                                , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          end if;
+        end loop;
+      end if;
 
       -- Print uncovered bins
       for i in 0 to priv_bins_idx-1 loop

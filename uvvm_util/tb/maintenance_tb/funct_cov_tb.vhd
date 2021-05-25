@@ -294,19 +294,23 @@ begin
       log(ID_LOG_HDR, "Testing bins with multiple values");
       ------------------------------------------------------------
       v_coverpoint.add_bins(bin((202,204,206,208)));
+      v_coverpoint.add_bins(bin((210,211,212,213,214,215,216,217,218,219)));
       increment_expected_alerts(TB_WARNING,1);
-      v_coverpoint.add_bins(bin((210,211,212,213,214,215,216,217,218,219,220))); -- C_FC_MAX_NUM_BIN_VALUES = 10
+      v_coverpoint.add_bins(bin((220,221,222,223,224,225,226,227,228,229,230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
       check_bin(v_coverpoint, v_bin_idx, VAL, (202,204,206,208));
       check_bin(v_coverpoint, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219));
+      check_bin(v_coverpoint, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229));
 
       sample_bins(v_coverpoint, (202,204,206,208), 1);
       sample_bins(v_coverpoint, (210,211,212,213,214,215,216,217,218,219), 1);
-      sample_bins(v_coverpoint, (201,203,205,207,209,220), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint, (220,221,222,223,224,225,226,227,228,229), 1);
+      sample_bins(v_coverpoint, (201,203,205,207,209,230), 1); -- Sample values outside bins
 
-      v_bin_idx := v_bin_idx-2;
+      v_bin_idx := v_bin_idx-3;
       check_bin(v_coverpoint, v_bin_idx, VAL, (202,204,206,208), hits => 4);
       check_bin(v_coverpoint, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219), hits => 10);
+      check_bin(v_coverpoint, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229), hits => 10);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with ranges of values");
@@ -409,24 +413,29 @@ begin
       ------------------------------------------------------------
       v_coverpoint.add_bins(bin_transition((401,403,405,409)));
       v_coverpoint.add_bins(bin_transition((410,410,410,418,415,415,410)));
+      v_coverpoint.add_bins(bin_transition((420,421,422,423,424,425,426,427,428,429)));
       increment_expected_alerts(TB_WARNING,1);
-      v_coverpoint.add_bins(bin_transition((420,421,422,423,424,425,426,427,428,429,430))); -- C_FC_MAX_NUM_BIN_VALUES = 10
+      v_coverpoint.add_bins(bin_transition((430,431,432,433,434,435,436,437,438,439,440))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
       check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,405,409));
       check_bin(v_coverpoint, v_bin_idx, TRN, (410,410,410,418,415,415,410));
       check_bin(v_coverpoint, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429));
+      check_bin(v_coverpoint, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439));
 
       sample_bins(v_coverpoint, (401,403,405,409), 3);
       sample_bins(v_coverpoint, (410,410,410,418,415,415,410), 3);
       sample_bins(v_coverpoint, (420,421,422,423,424,425,426,427,428,429), 3);
+      sample_bins(v_coverpoint, (430,431,432,433,434,435,436,437,438,439), 3);
       sample_bins(v_coverpoint, (401,403,405,408), 1);                         -- Sample values outside bins
       sample_bins(v_coverpoint, (410,410,410,418,415,414,410), 1);             -- Sample values outside bins
       sample_bins(v_coverpoint, (420,421,422,423,424,425,426,427,428,430), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint, (430,431,432,433,434,435,436,437,438,440), 1); -- Sample values outside bins
 
-      v_bin_idx := v_bin_idx-3;
+      v_bin_idx := v_bin_idx-4;
       check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,405,409), hits => 3);
       check_bin(v_coverpoint, v_bin_idx, TRN, (410,410,410,418,415,415,410), hits => 3);
       check_bin(v_coverpoint, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429), hits => 3);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with single values");

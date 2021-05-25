@@ -517,7 +517,7 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is registered use the new mechanism
     -- if v_vvc_idx_in_activity_register(0) /= c_index_not_found then
-    if v_vvc_idx_in_activity_register(0) /= C_VVC_INDEX_NOT_FOUND then
+    if v_num_vvc_instances > 0 then
       -- Checking if await selected (with a specified wanted_idx) is supported by this VVC
       if wanted_idx /= -1 and not shared_vvc_activity_register.priv_get_vvc_await_selected_supported(v_vvc_idx_in_activity_register(0)) then
         alert(TB_ERROR, v_proc_call.all & " await_completion with a specified wanted_idx is not supported by " & 

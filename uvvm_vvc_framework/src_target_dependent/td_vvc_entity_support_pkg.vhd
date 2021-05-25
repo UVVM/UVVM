@@ -578,7 +578,7 @@ package body td_vvc_entity_support_pkg is
     if not v_was_broadcast then
       -- VVCs registered in the VVC activity register have released the
       -- semaphore in send_command_to_vvc().
-      if v_vvc_idx_in_activity_register(0) = C_VVC_INDEX_NOT_FOUND then
+      if v_num_vvc_instances > 0 then
         -- release the semaphore if it was not a broadcast
         release_semaphore(protected_semaphore);
       end if;

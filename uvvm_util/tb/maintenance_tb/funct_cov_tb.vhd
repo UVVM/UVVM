@@ -175,7 +175,13 @@ begin
       constant C_PROC_NAME : string := "check_coverage";
     begin
       if coverpoint.get_coverage(VOID) = coverage then
-        log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "%");
+        if coverpoint.coverage_completed(VOID) and coverage = 100.0 then
+          log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "% - Coverage completed");
+        elsif not(coverpoint.coverage_completed(VOID)) and coverage < 100.0 then
+          log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "%");
+        else
+          alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value");
+        end if;
       else
         alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(VOID),2) & "%, expected " & to_string(coverage,2) & "%");
       end if;

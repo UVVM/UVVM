@@ -608,6 +608,31 @@ begin
 
       v_coverpoint_2.print_summary(VOID);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverpoint name and scope");
+      ------------------------------------------------------------
+      v_coverpoint_2.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+      check_value("MY_COVERPOINT_2_abcd", v_coverpoint_2.get_name(VOID), ERROR, "Checking name");
+      v_coverpoint_2.set_scope("MY_SCOPE_2");
+      check_value("MY_SCOPE_2", v_coverpoint_2.get_scope(VOID), ERROR, "Checking scope");
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin names");
+      ------------------------------------------------------------
+      v_coverpoint_2.add_bins(bin(1000));
+      v_coverpoint_2.add_bins(bin(1001), "my_bin_1");
+      v_coverpoint_2.add_bins(bin(1002), 5, "my_bin_2");
+      v_coverpoint_2.add_bins(bin(1003), 5, 1, "my_bin_3");
+      v_coverpoint_2.add_bins(bin(1004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+
+      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1000);
+      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1001, name => "my_bin_1");
+      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1002, 5, name => "my_bin_2");
+      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
+      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
+
+      v_coverpoint_2.print_summary(VOID);
+
     --===================================================================================
     elsif GC_TESTCASE = "rand" then
     --===================================================================================

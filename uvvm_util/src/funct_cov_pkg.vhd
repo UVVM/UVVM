@@ -920,7 +920,11 @@ package body funct_cov_pkg is
       if bin_name = "" then
         return "bin_" & bin_idx & fill_string(NUL, C_FC_MAX_NAME_LENGTH-4-bin_idx'length);
       else
-        return bin_name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-bin_name'length);
+        if bin_name'length > C_FC_MAX_NAME_LENGTH then
+          return bin_name(1 to C_FC_MAX_NAME_LENGTH);
+        else
+          return bin_name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-bin_name'length);
+        end if;
       end if;
     end function;
 

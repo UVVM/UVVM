@@ -855,7 +855,11 @@ package body funct_cov_pkg is
           end if;
         end loop;
       end loop;
-      return return_and_deallocate;
+      if v_line /= NULL then
+        return return_and_deallocate;
+      else
+        return "";
+      end if;
     end function;
 
     -- Returns a string with all the values in the bin. Since it is
@@ -1191,7 +1195,7 @@ package body funct_cov_pkg is
             priv_bins(priv_bins_idx).hits        := 0;
             priv_bins(priv_bins_idx).min_hits    := min_hits;
             priv_bins(priv_bins_idx).rand_weight := rand_weight when use_rand_weight else C_USE_ADAPTIVE_WEIGHT;
-            priv_bins(priv_bins_idx).name        := get_bin_name(bin_name, to_string(priv_bins_idx));
+            priv_bins(priv_bins_idx).name        := get_bin_name(bin_name, to_string(priv_bins_idx+priv_invalid_bins_idx));
             priv_bins_idx := priv_bins_idx + 1;
             -- Update covergroup status register
             protected_covergroup_status.increment_valid_bin_count(priv_id);
@@ -1207,7 +1211,7 @@ package body funct_cov_pkg is
             priv_invalid_bins(priv_invalid_bins_idx).hits        := 0;
             priv_invalid_bins(priv_invalid_bins_idx).min_hits    := 0;
             priv_invalid_bins(priv_invalid_bins_idx).rand_weight := 0;
-            priv_invalid_bins(priv_invalid_bins_idx).name        := get_bin_name(bin_name, to_string(priv_invalid_bins_idx+priv_bins_idx));
+            priv_invalid_bins(priv_invalid_bins_idx).name        := get_bin_name(bin_name, to_string(priv_bins_idx+priv_invalid_bins_idx));
             priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
             -- Update covergroup status register
             if v_bin_is_illegal then

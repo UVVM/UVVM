@@ -49,6 +49,14 @@ begin
     variable v_min_hits         : natural;
     variable v_prev_min_hits    : natural := 0;
 
+    ------------------------------------------------------------------------------
+    -- Procedures and functions
+    ------------------------------------------------------------------------------
+    -- Checks that the bin information matches the one stored in the coverpoint.
+    -- The bin_idx is used to fetch the correct bin from the coverpoint. Note that
+    -- there is one index for the valid bins (VAL,RAN,TRN) and another one for the
+    -- ignore/illegal bins. The bin_idx will be incremented at the end of the procedure
+    -- so that the bins can be checked sequentially.
     procedure check_bin(
       variable coverpoint  : inout t_coverpoint;
       variable bin_idx     : inout natural;
@@ -64,7 +72,7 @@ begin
     begin
       if contains = VAL or contains = RAN or contains = TRN then
         v_bin          := coverpoint.get_valid_bin(bin_idx);
-        v_bin_name_idx := bin_idx;
+        v_bin_name_idx := bin_idx + coverpoint.get_num_invalid_bins(VOID);
       else
         v_bin          := coverpoint.get_invalid_bin(bin_idx);
         v_bin_name_idx := bin_idx + coverpoint.get_num_valid_bins(VOID);
@@ -88,6 +96,7 @@ begin
       log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_upper(to_string(contains)) & ":" & to_string(values));
     end procedure;
 
+    -- Overload
     procedure check_bin(
       variable coverpoint  : inout t_coverpoint;
       variable bin_idx     : inout natural;
@@ -101,6 +110,7 @@ begin
       check_bin(coverpoint, bin_idx, contains, (0 => value), min_hits, rand_weight, name, hits);
     end procedure;
 
+    -- Overload using default values for ignore and illegal bins
     procedure check_invalid_bin(
       variable coverpoint  : inout t_coverpoint;
       variable bin_idx     : inout natural;
@@ -112,6 +122,7 @@ begin
       check_bin(coverpoint, bin_idx, contains, values, 0, 0, name, hits);
     end procedure;
 
+    -- Overload using default values for ignore and illegal bins
     procedure check_invalid_bin(
       variable coverpoint  : inout t_coverpoint;
       variable bin_idx     : inout natural;
@@ -123,6 +134,7 @@ begin
       check_bin(coverpoint, bin_idx, contains, (0 => value), 0, 0, name, hits);
     end procedure;
 
+    -- Checks the number of bins in the coverpoint
     procedure check_num_bins(
       variable coverpoint       : inout t_coverpoint;
       constant num_valid_bins   : in    natural;
@@ -133,6 +145,7 @@ begin
       check_value(coverpoint.get_num_invalid_bins(VOID), num_invalid_bins, ERROR, "Checking number of invalid bins", C_TB_SCOPE_DEFAULT, caller_name => C_PROC_NAME);
     end procedure;
 
+    -- Samples several values in the coverpoint a number of times
     procedure sample_bins(
       variable coverpoint  : inout t_coverpoint;
       constant values      : in    integer_vector;
@@ -145,6 +158,7 @@ begin
       end loop;
     end procedure;
 
+    -- Overload
     procedure sample_bins(
       variable coverpoint  : inout t_coverpoint;
       constant value       : in    integer;
@@ -153,6 +167,7 @@ begin
       sample_bins(coverpoint, (0 => value), num_samples);
     end procedure;
 
+    -- Checks the coverage in the coverpoint
     procedure check_coverage(
       variable coverpoint : inout t_coverpoint;
       constant coverage   : in    real) is
@@ -495,6 +510,7 @@ begin
 
         check_bin(v_coverpoint_2, v_bin_idx, VAL, v_bin_val, v_min_hits);
 
+        -- Check the coverage increases when the bin is sampled until it is 100%
         for j in 0 to v_min_hits-1 loop
           check_coverage(v_coverpoint_2, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
           sample_bins(v_coverpoint_2, v_bin_val, 1);

@@ -47,7 +47,7 @@ num_failing_tests = hdlunit.get_num_fail_tests()
 num_passing_tests = hdlunit.get_num_pass_tests()
 
 # Check with golden reference
-(ret_txt, ret_code) = hdlunit.run_command("py verify_with_golden.py -modelsim")
+(ret_txt, ret_code) = hdlunit.run_command("py ../script/maintenance_script/verify_with_golden.py -modelsim")
 
 print(ret_txt)
 

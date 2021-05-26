@@ -349,7 +349,7 @@ package body gmii_bfm_pkg is
     for byte in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(byte)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if v_normalized_data(byte)(i) = '-' or check_value(v_rx_data_array(byte)(i), v_normalized_data(byte)(i), config.match_strictness, NO_ALERT, msg) then
+        if v_normalized_data(byte)(i) = '-' or check_value(v_rx_data_array(byte)(i), v_normalized_data(byte)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           -- Check is OK
         else
           -- Received byte doesn't match
@@ -365,7 +365,7 @@ package body gmii_bfm_pkg is
         ". Expected " & to_string(v_normalized_data'length) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_data_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, NO_ALERT, msg) else HEX;
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " &
         to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) &
         ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);

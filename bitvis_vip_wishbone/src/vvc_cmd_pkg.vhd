@@ -9,10 +9,6 @@
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
---========================================================================================================================
--- This VVC was generated with Bitvis VVC Generator
---========================================================================================================================
-
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -50,7 +46,7 @@ package vvc_cmd_pkg is
   --<USER_INPUT> Create constants for the maximum sizes to use in this VVC.
   -- You can create VVCs with smaller sizes than these constants, but not larger.
   -- For example, given a VVC with parallel data bus and address bus, constraints should be added for maximum data length
-  -- and address length
+  -- and address length 
   -- Example:
   constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := 1024;
   constant C_VVC_CMD_ADDR_MAX_LENGTH          : natural := 64;
@@ -120,7 +116,6 @@ package vvc_cmd_pkg is
   --   It can also be defined as a record if multiple return values shall be transported from the BFM
   --===============================================================================================
   subtype  t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-
   type t_vvc_result_queue_element is record
     cmd_idx       : natural;   -- from UVVM handshake mechanism
     result        : t_vvc_result;

@@ -517,8 +517,14 @@ package body td_vvc_entity_support_pkg is
     variable output_vvc_cmd    : out   t_vvc_cmd_record;
     constant msg_id_panel      : in    t_msg_id_panel := shared_msg_id_panel --UVVM: unused, remove in v3.0
     ) is
-    variable v_was_broadcast : boolean         := false;
-    variable v_msg_id_panel  : t_msg_id_panel;
+    variable v_was_broadcast 		    : boolean         := false;
+    variable v_msg_id_panel  		    : t_msg_id_panel;
+
+    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM)  := (others => -1);
+    variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM     := 0;
+    variable v_vvc_instance_idx             : integer                                 := vvc_labels.instance_idx;
+    variable v_vvc_channel                  : t_channel                               := vvc_labels.channel;
+
   begin
     vvc_ack <= 'Z';  -- Do not contribute to the acknowledge unless selected
     -- Wait for a new command
@@ -564,14 +570,32 @@ package body td_vvc_entity_support_pkg is
     end if;
 
     wait for 0 ns;
+
+    if v_vvc_instance_idx = -1 then
+      v_vvc_instance_idx := ALL_INSTANCES;
+    end if;
+    if v_vvc_channel = NA then
+      v_vvc_channel := ALL_CHANNELS;
+    end if;
+    -- Get the corresponding index from the vvc activity register
+    get_vvc_index_in_activity_register(VVCT,
+                                       v_vvc_instance_idx,
+                                       v_vvc_channel,
+                                       v_vvc_idx_in_activity_register,
+                                       v_num_vvc_instances);
+    
     if not v_was_broadcast then
-      -- release the semaphore if it was not a broadcast
-      release_semaphore(protected_semaphore);
+      -- VVCs registered in the VVC activity register have released the
+      -- semaphore in send_command_to_vvc().
+      if v_num_vvc_instances = 0 then
+        -- release the semaphore if it was not a broadcast
+        release_semaphore(protected_semaphore);
+      end if;
     end if;
 
     v_msg_id_panel := get_msg_id_panel(output_vvc_cmd, vvc_config);
     log(ID_CMD_INTERPRETER, to_string(output_vvc_cmd.proc_call) & ". Command received " & format_command_idx(output_vvc_cmd), vvc_labels.scope, v_msg_id_panel);    -- Get and ack the new command
-  end procedure;
+  end procedure await_cmd_from_sequencer;
 
   -- Overloading procedure - DEPRECATED
   procedure await_cmd_from_sequencer(

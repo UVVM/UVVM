@@ -1772,7 +1772,10 @@ package body generic_sb_pkg is
         -- Check that instance is in valid range and enabled
         check_instance_in_range(instance);
         check_instance_enabled(instance);
-        check_queue_empty(instance);
+        -- insert_expected to POSITION 1 is allowed  
+        if identifier_option /= POSITION and identifier /= 1 then  
+            check_queue_empty(instance);
+        end if;
         -- add entry
         vr_sb_queue.insert(instance, identifier_option, identifier, v_sb_entry);
         -- increment counters

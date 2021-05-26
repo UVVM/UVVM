@@ -263,7 +263,7 @@ package body ti_protected_types_pkg is
     ) return integer is
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_id.name    = to_upper(name) and
+        if priv_registered_vvc(idx).vvc_id.name(1 to name'length) = to_upper(name) and
           priv_registered_vvc(idx).vvc_id.instance = instance and
           priv_registered_vvc(idx).vvc_id.channel  = channel then
           return idx; -- vvc was found
@@ -282,7 +282,7 @@ package body ti_protected_types_pkg is
       variable v_match_num : natural := 0;
     begin
       for idx in 0 to priv_last_registered_vvc_idx loop
-        if priv_registered_vvc(idx).vvc_id.name     = to_upper(name) and
+        if priv_registered_vvc(idx).vvc_id.name(1 to name'length) = to_upper(name) and
           (priv_registered_vvc(idx).vvc_id.instance = instance or instance = ALL_INSTANCES) and
           (priv_registered_vvc(idx).vvc_id.channel  = channel or channel = ALL_CHANNELS) then
           if v_match_num < skip_num_of_matches then

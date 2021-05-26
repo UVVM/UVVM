@@ -1653,7 +1653,7 @@ package body i2c_bfm_pkg is
     for byte in data_exp'range loop
       for i in data_exp(byte)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg) then
+        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_byte_ok := true;
         else
           v_byte_ok := false;
@@ -1663,7 +1663,7 @@ package body i2c_bfm_pkg is
 
       if not v_byte_ok then
         -- Use binary representation when mismatch is due to weak signals
-        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg) else HEX;
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
         alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         v_check_ok := false;
       end if;
@@ -1747,7 +1747,7 @@ package body i2c_bfm_pkg is
     for byte in data_exp'range loop
       for i in data_exp(byte)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg) then
+        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_byte_ok := true;
         else
           v_byte_ok := false;
@@ -1757,7 +1757,7 @@ package body i2c_bfm_pkg is
 
       if not v_byte_ok then
         -- Use binary representation when mismatch is due to weak signals
-        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg) else HEX;
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
         alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         v_check_ok := false;
       end if;

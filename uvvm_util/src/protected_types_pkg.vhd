@@ -67,7 +67,7 @@ package protected_types_pkg is
     );
     procedure decrement(
       check_type : t_check_type;
-      number     : integer := -1
+      number     : integer := 1
     );
     impure function get(
       check_type : t_check_type
@@ -170,37 +170,64 @@ package body protected_types_pkg is
 
   --------------------------------------------------------------------------------
   type t_protected_check_counters is protected body
-    variable priv_check_counters : t_check_counters_array;
+     variable priv_check_counters : t_check_counters_array;
+     variable priv_counter_limit_alert_raised : boolean := False;
 
+     -- Helper method for alerting when the maximum
+     -- value for check_counter is reached.
+     impure function priv_check_counter_limit_reached(
+      check_type : t_check_type;
+      number     : natural := 1
+      ) return boolean is
+     begin
+       if priv_check_counters(check_type) = natural'high then
+         if priv_counter_limit_alert_raised = false then
+           report "check_counter limit reached" severity warning;
+           priv_counter_limit_alert_raised := true;
+         end if;
+         return True;
+       else
+         return False;
+       end if;
+     end function priv_check_counter_limit_reached;
+                                                    
     procedure increment(
       check_type : t_check_type;
       number     : natural := 1
     ) is
     begin
-      priv_check_counters(check_type) := priv_check_counters(check_type) + number;
-    end;
+      if C_ENABLE_CHECK_COUNTER then
+        if priv_check_counter_limit_reached(check_type, number) = false then
+          priv_check_counters(check_type) := priv_check_counters(check_type) + number;
+        end if;
+      end if;
+    end procedure increment;
 
     procedure decrement(
       check_type : t_check_type;
-      number     : integer := -1
+      number     : integer := 1
     ) is
     begin
-      priv_check_counters(check_type) := priv_check_counters(check_type) - number;
-    end;
+      if C_ENABLE_CHECK_COUNTER then
+        if priv_check_counter_limit_reached(check_type, number) = false then
+          priv_check_counters(check_type) := priv_check_counters(check_type) - number;
+        end if;
+      end if;
+    end procedure decrement;
 
     impure function get(
       check_type : t_check_type
     ) return natural is
     begin
       return priv_check_counters(check_type);
-    end;
+    end function get;
 
     procedure to_string(
       order  : t_order
       ) is
     begin
       to_string(priv_check_counters, order);
-    end;
+    end procedure to_string;
 
   end protected body t_protected_check_counters;
 

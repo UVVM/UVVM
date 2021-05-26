@@ -1,6 +1,12 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.8.2
+----------
+Released: 2021-05-26
+- Corrected message ID for check_value() in BFM.
+
+
 v1.8.1
 ----------
 Released: 2020-04-08

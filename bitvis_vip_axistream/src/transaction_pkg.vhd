@@ -85,6 +85,7 @@ package transaction_pkg is
   type t_base_transaction is record
     operation           : t_operation;
     data_array          : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
+    data_length         : integer range 0 to C_VVC_CMD_DATA_MAX_BYTES;
     user_array          : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
     strb_array          : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
     id_array            : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1);
@@ -96,6 +97,7 @@ package transaction_pkg is
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation           => NO_OPERATION,
     data_array          => (others => (others => '0')),
+    data_length         => 0,
     user_array          => (others => (others => '0')),
     strb_array          => (others => (others => '0')),
     id_array            => (others => (others => '0')),

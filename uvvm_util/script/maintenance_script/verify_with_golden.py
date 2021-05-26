@@ -1,101 +1,125 @@
 # Script for comparing the UVVM-Util testbench output files for log and alert tests
-
 import os
 import sys
-import glob
-from pathlib import Path
+import ntpath
 
 
+def get_golden_file_list(simulator='modelsim'):
+  filelist = []
+  
+  golden_dir = 'golden_modelsim' if simulator == 'modelsim' else 'golden_riviera_pro'
+  golden_folder = os.path.abspath(os.path.join(os.getcwd(), '../script/maintenance_script/' + golden_dir))
 
-def get_file_list(path = "."):
-    filelist = []
-    for filename in os.listdir(path):
-      if filename.endswith(".txt"):
-        filelist.append(filename)
-    return filelist
+  for subdir, dirs, files in os.walk(golden_folder):
+    for file in files:
+      filepath = subdir + os.sep + file
+      if '.txt' in filepath:
+        filelist.append(filepath)
+  return filelist
+
+
+def get_test_file_list():
+  filelist = []
+ 
+  output_folder = os.path.abspath(os.path.join(os.getcwd(), 'hdlunit/test/'))
+  for subdir, dirs, files in os.walk(output_folder):
+    for file in files:
+      if 'test' in subdir:
+        filepath = subdir + os.sep + file
+        if '.txt' in file:
+          if not 'report.txt' in file:
+            filelist.append(filepath)
+  return filelist
 
 
 def compare(modelsim=False, riviera=False):
-  sim_path = os.getcwd()
-  num_errors = 0
-
-  if modelsim:
-    golden_path = sim_path + '/../script/maintenance_script/golden_modelsim'
-  elif riviera:
-    golden_path = sim_path + '/../script/maintenance_script/golden_riviera_pro'
-
   # Get file lists
-  filelist = get_file_list(".")
-  golden_file_list = get_file_list(golden_path)
-
-  failing_verify_file = []
-
-  for filename in filelist:
-      golden_file = golden_path + '/' + filename
-
-      if os.path.isfile(golden_file):
-          golden_file_lines = len(open(golden_file).readlines(  ))
-          check_file_lines  = len(open(filename).readlines(  ))
-            
-          # Read golden file
-          with open(golden_file, 'r') as file:
-              golden_lines = file.readlines()
-
-          # Read verify file 
-          with open(filename, 'r') as file:
-              verify_lines = file.readlines()
-
-          # Compare files
-          error_found = False
-          for idx, line in enumerate(golden_lines):
-              if golden_lines[idx] != verify_lines[idx]:
-                  failing_verify_file.append(filename)
-                  error_found = True
-                  break
-          # Check for line number mismatch
-          if not(error_found) and (golden_file_lines != check_file_lines):
-              failing_verify_file.append(filename)
-              error_found = True
-
-          # Remove OK files
-          if not(error_found):
-              os.remove(filename)   
-
-      else:
-          print("ERROR! Golden do not have file : %s" %(filename))             
-          failing_verify_file.append(filename)
-        
-
+  test_run_file_list = get_test_file_list()
+  num_test_run_files = len(test_run_file_list)
 
   if modelsim:
-    simulator = "[MODELSIM]"
-  elif riviera:
-    simulator = "[RIVIERA_PRO]"
+    golden_file_list = get_golden_file_list(simulator='modelsim')
+  if riviera:
+    golden_file_list = get_golden_file_list(simulator='riviera')
+  
+  failing_verify_file = []
+  missing_test_run_file = []
 
+  for golden_file in golden_file_list:
+    golden_file_name = ntpath.basename(golden_file)
+
+    match = False
+    # Locate matching test run file
+    for test_run_file in test_run_file_list:
+      test_run_file_name = ntpath.basename(test_run_file)
+
+      # If filenames match (ignore paths), we have the correct files
+      if test_run_file_name.lower() == golden_file_name.lower():
+        test_file = test_run_file
+        file_idx = test_run_file_list.index(test_run_file)
+        test_run_file_list.pop(file_idx)
+        match = True
+        break
+
+    if match is True:
+      # Read golden file
+      with open(golden_file, 'r') as file:
+          golden_lines = file.readlines()
+      # Read verify file 
+      with open(test_file, 'r') as file:
+          verify_lines = file.readlines()
+
+      # Compare files
+      if golden_lines != verify_lines:
+        failing_verify_file.append(test_file)
+
+      # Check for line number mismatch
+      if not test_file in failing_verify_file:
+        golden_file_lines = len(open(golden_file).readlines())
+        check_file_lines  = len(open(test_file).readlines())
+        if (golden_file_lines != check_file_lines):
+          failing_verify_file.append(test_file)
+
+    elif match is False:
+      missing_test_run_file.append(golden_file_name)
+
+
+  simulator = '[MODELSIM]' if modelsim else '[RIVIERA]'
   # Present statistics
   print("%s Number of golden files found : %d" %(simulator, len(golden_file_list)))
-  print("%s Number of verify files found : %d" %(simulator, len(filelist)))
+  print("%s Number of verify files found : %d" %(simulator, num_test_run_files))
   print("%s Number of verified files with errors : %d" %(simulator, len(failing_verify_file)))
+  print('%s Number of missing test run files: %d' % (simulator, len(missing_test_run_file)))
 
   # Check that all files have been verified
-  num_missing_files = abs(len(filelist) - len(golden_file_list))
+  num_missing_files = abs(num_test_run_files - len(golden_file_list))
   if num_missing_files > 0:
-      print("WARNING! Number of files do not match : %d != %d" %(len(filelist), len(golden_file_list)))
+    print("WARNING! Number of files do not match : %d != %d" %(num_test_run_files, len(golden_file_list)))
 
   # List files with errors
   if failing_verify_file:
-      print("Mismatch found in the following file(s) : ")
-      for file in failing_verify_file:
-          print(file)
-
+    print("Mismatch found in the following file(s) : ")
+    for file in failing_verify_file:
+      print(file)
+ 
+  # List files that are found in golden folder but not in test run folder
+  if missing_test_run_file:
+    print('Missing test run files:')
+    for file in missing_test_run_file:
+      print(file)
+ 
+  # List files that were generated by tests but not found in golden list
+  if len(test_run_file_list) > 0:
+    print('The following files were not found in golden list:')
+    for file in test_run_file_list:
+      print(file)
+ 
   # Return the number of errors to caller
   num_errors = len(failing_verify_file) + num_missing_files
   if num_errors != 0:
       print("Golden failed with %d error(s)." %(num_errors))
+
   sys.exit(num_errors)
-
-
-
 
 
 def main(argv):

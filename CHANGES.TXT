@@ -10,6 +10,32 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2021.05.26
+--------------------
+Released: 2021-05-26
+- Corrected message ID for check_value() methods in BFM packages.
+- Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
+- Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
+- Summary alert report and hierarchical alerts report updated to 
+  warn for minor alert mismatch.
+- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occure if a requirement 
+  and testcase were listed in combination multiple times.
+- Generic queue allow to insert to an empty queue with identifier position
+  set to POSITION and position set to 1.
+- Insert_expected() to an empty Scoreboard using identifier_position=POSITION
+  and identifier=1 is now allowed.
+- Fixed bug in check_counters that would cause the counter value to
+  increase to quickly.
+- Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
+- Fixed incorrect VIP name in AXI-Stream compile_bfm.do script.
+- Added Bitvis VIP Wishbone BETA to the main UVVM repository.
+- Added data_length to AXI-Stream VVC transaction info.
+- Fixed an issue with VVC name indexing in ti_protected_types_pkg priv_get_vvc_idx().
+- Added some missing deallocating of lines in in methods_pkg.
+- Fixed issue where calling the same VVC at the same time from different processes 
+  could lead to a timeout.
+
+
 v2 2021.04.08
 --------------------
 Released: 2021-04-08

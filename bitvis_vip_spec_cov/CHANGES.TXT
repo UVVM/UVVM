@@ -1,6 +1,12 @@
 Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
+v0.5.1
+----------
+Released: 2021-05-26
+- Fixed crash that could occure if a requirement and testcase were listed 
+  in combination multiple times.
+
 
 v0.5.0
 ----------

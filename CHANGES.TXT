@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2021.xx.xx
+v2 2021.05.26
 --------------------
-Released: 2021-xx-xx
+Released: 2021-05-26
 - Corrected message ID for check_value() methods in BFM packages.
 - Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
 - Corrected timeout value parameter for await_completion() in Common VVC Methods QR.

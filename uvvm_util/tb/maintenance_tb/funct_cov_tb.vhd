@@ -267,7 +267,7 @@ begin
     enable_log_msg(ID_FUNCT_COV_CONFIG);
 
     --===================================================================================
-    if GC_TESTCASE = "basic" then
+    if GC_TESTCASE = "fc_basic" then
     --===================================================================================
       v_coverpoint.set_name("MY_COVERPOINT");
       check_value("MY_COVERPOINT", v_coverpoint.get_name(VOID), ERROR, "Checking name");
@@ -633,8 +633,30 @@ begin
 
       v_coverpoint_2.print_summary(VERBOSE);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin overlap");
+      ------------------------------------------------------------
+      v_coverpoint_2.add_bins(bin(2000));
+      v_coverpoint_2.add_bins(bin(2000));
+      v_coverpoint_2.add_bins(bin(2000));
+      v_coverpoint_2.add_bins(bin((2100,2101,2102,2113,2114)));
+      v_coverpoint_2.add_bins(bin((2114,2115,2116,2117)));
+      v_coverpoint_2.add_bins(bin_range(2200,2250,1));
+      v_coverpoint_2.add_bins(bin_range(2249,2299,1));
+      sample_bins(v_coverpoint_2, (2000,2001), 1);
+      sample_bins(v_coverpoint_2, (2113,2114,2115), 1);
+      sample_bins(v_coverpoint_2, (2248,2249,2250,2251), 1);
+
+      v_coverpoint_2.detect_bin_overlap(true);
+      increment_expected_alerts(TB_WARNING, 4);
+      sample_bins(v_coverpoint_2, (2000,2001), 1);
+      sample_bins(v_coverpoint_2, (2113,2114,2115), 1);
+      sample_bins(v_coverpoint_2, (2248,2249,2250,2251), 1);
+
+      v_coverpoint_2.print_summary(VERBOSE);
+
     --===================================================================================
-    elsif GC_TESTCASE = "rand" then
+    elsif GC_TESTCASE = "fc_rand" then
     --===================================================================================
       disable_log_msg(ID_FUNCT_COV_SAMPLE);
 

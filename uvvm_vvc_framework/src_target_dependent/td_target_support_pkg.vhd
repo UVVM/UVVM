@@ -57,7 +57,8 @@ package td_target_support_pkg is
 
   subtype t_vvc_target_record is resolved t_vvc_target_record_unresolved;
 
-
+  constant C_VVC_INDEX_NOT_FOUND : integer := -1;
+  
   -------------------------------------------
   -- to_string
   -------------------------------------------
@@ -139,6 +140,18 @@ package td_target_support_pkg is
   );
 
 
+  --
+  -- Helper procedure for getting the VVC index in the VVC activity register
+  -- and the number of instances of this VVC.
+  --
+  procedure get_vvc_index_in_activity_register(
+    signal   vvc_target                	    : in t_vvc_target_record;
+    constant vvc_instance_idx          	    : in    integer;
+    constant vvc_channel               	    : in    t_channel;
+    variable vvc_idx_in_activity_register   : inout t_integer_array(0 to C_MAX_TB_VVC_NUM);
+    variable num_vvc_instances              : inout natural range 0 to C_MAX_TB_VVC_NUM
+    );
+  
 end package td_target_support_pkg;
 
 
@@ -257,6 +270,9 @@ package body td_target_support_pkg is
     shared_vvc_cmd.msg(1 to msg'length) := msg;
     shared_vvc_cmd.command_type := command_type;
     shared_vvc_cmd.operation := operation;
+
+    -- Wait a delta cycle for target signal values update
+    wait for 0 ns;
   end procedure;
 
   procedure set_general_target_and_command_fields (
@@ -284,15 +300,36 @@ package body td_target_support_pkg is
     constant scope        : in    string               := C_VVC_CMD_SCOPE_DEFAULT;
     constant msg_id_panel : in    t_msg_id_panel       := shared_msg_id_panel
   ) is
-    constant C_CMD_INFO      : string := "uvvm cmd " & format_command_idx(shared_cmd_idx+1) & ": ";
-    variable v_ack_cmd_idx   : integer := -1;
-    variable v_start_time    : time;
-    variable v_local_vvc_cmd : t_vvc_cmd_record;
-    variable v_local_cmd_idx : integer;
-    variable v_was_multicast : boolean := false;
+    constant C_CMD_INFO      		    : string := "uvvm cmd " & format_command_idx(shared_cmd_idx+1) & ": ";
+    variable v_ack_cmd_idx   		    : integer := -1;
+    variable v_start_time    		    : time;
+    variable v_local_vvc_cmd 		    : t_vvc_cmd_record;
+    variable v_local_cmd_idx 		    : integer;
+    variable v_was_multicast 		    : boolean := false;
+    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM:= 0;
+
+    variable v_vvc_instance_idx : integer   := vvc_target.vvc_instance_idx;
+    variable v_vvc_channel      : t_channel := vvc_target.vvc_channel;
+    
   begin
+
     check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", scope, ID_NEVER, msg_id_panel);
 
+    -- Default to ALL_INSTANCES and/or ALL_CHANNELS if these are not set in vvc_target
+    if v_vvc_instance_idx = -1 then
+      v_vvc_instance_idx := ALL_INSTANCES;
+    end if;
+    if v_vvc_channel = NA then
+      v_vvc_channel := ALL_CHANNELS;
+    end if;
+    -- Get the corresponding index from the vvc activity register
+    get_vvc_index_in_activity_register(vvc_target,
+                                       v_vvc_instance_idx,
+                                       v_vvc_channel,
+                                       v_vvc_idx_in_activity_register,
+                                       v_num_vvc_instances);
+    
     -- increment shared_cmd_inx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
     shared_cmd_idx := shared_cmd_idx + 1;
 
@@ -329,6 +366,7 @@ package body td_target_support_pkg is
     while v_ack_cmd_idx /= v_local_cmd_idx loop
       wait until global_vvc_ack = '1' for ((v_start_time + timeout) - now);
       v_ack_cmd_idx := protected_acknowledge_index.get_index;
+
       if not (global_vvc_ack'event) then
         tb_error("Time out for " & C_CMD_INFO & " '" & to_string(v_local_vvc_cmd.proc_call) & "' while waiting for acknowledge from VVC", scope);
         -- lock the sequencer for 5 delta cycles as it can take so long to get every VVC in normal mode again
@@ -345,6 +383,11 @@ package body td_target_support_pkg is
 
     if (v_was_multicast = true) then
       release_semaphore(protected_multicast_semaphore);
+    end if;
+
+    -- VVCs registered in the VVC activity register release semaphore now.
+    if v_num_vvc_instances > 0 then
+      release_semaphore(protected_semaphore);
     end if;
 
     log(ID_UVVM_CMD_ACK, "ACK received.  " & format_command_idx(v_local_cmd_idx), scope, msg_id_panel);
@@ -370,4 +413,38 @@ package body td_target_support_pkg is
     protected_acknowledge_index.release_index;
   end procedure;
 
+
+
+  --
+  -- Helper procedure for getting the VVC index in the VVC activity register
+  -- and the number of instances of this VVC.
+  --
+  procedure get_vvc_index_in_activity_register(
+    signal   vvc_target                	    : in t_vvc_target_record;
+    constant vvc_instance_idx          	    : in    integer;
+    constant vvc_channel               	    : in    t_channel;
+    variable vvc_idx_in_activity_register   : inout t_integer_array(0 to C_MAX_TB_VVC_NUM);
+    variable num_vvc_instances              : inout natural range 0 to C_MAX_TB_VVC_NUM
+    ) is
+  begin
+    if vvc_instance_idx = ALL_INSTANCES or vvc_channel = ALL_CHANNELS then
+  
+      -- Check how many instances or channels of this VVC are registered in the vvc activity register
+      num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_matches(vvc_target.vvc_name,
+                                                          vvc_instance_idx, vvc_channel);
+      -- Get the index for every instance or channel of this VVC
+      for j in 0 to num_vvc_instances-1 loop
+        vvc_idx_in_activity_register(j) := shared_vvc_activity_register.priv_get_vvc_idx(j, vvc_target.vvc_name,
+                                                                          vvc_instance_idx, vvc_channel);
+      end loop;
+    
+    else
+      -- Get the index for a specific VVC
+      vvc_idx_in_activity_register(0) := shared_vvc_activity_register.priv_get_vvc_idx(vvc_target.vvc_name,
+                                                                        vvc_instance_idx, vvc_channel);
+      num_vvc_instances := 0 when vvc_idx_in_activity_register(0) = C_VVC_INDEX_NOT_FOUND else 1;
+      
+    end if;
+  end procedure;
+  
 end package body td_target_support_pkg;

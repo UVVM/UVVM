@@ -480,7 +480,7 @@ package body uart_bfm_pkg is
       uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
       for i in 0 to v_config.num_data_bits-1 loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(i) = '-' or check_value(v_data_value(i), data_exp(i), config.match_strictness, NO_ALERT, msg) then
+        if data_exp(i) = '-' or check_value(v_data_value(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_check_ok := true;
         else
           v_check_ok := false;
@@ -534,7 +534,7 @@ package body uart_bfm_pkg is
       alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout,ns) & ". " & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, data_exp, MATCH_STD, NO_ALERT, msg) else HEX;
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       if max_receptions = 1 then
         alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
       else

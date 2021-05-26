@@ -86,7 +86,7 @@ class Requirement():
            self.__expected_testcase_list.append(testcase)
         # Update testcase result if testcase already exists
         else:
-            for actual_testcase in self.__actual_testcase_list():
+            for actual_testcase in self.__actual_testcase_list:
                 if actual_testcase.name.upper() == testcase.name.upper():
                     actual_testcase.result = testcase.result
 

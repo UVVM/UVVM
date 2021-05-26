@@ -1,6 +1,13 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+
+v2.8.3
+----------
+Released: 2021-05-26
+- Corrected message ID for check_value() in BFM.
+
+
 v2.8.2
 ----------
 Released: 2021-04-08

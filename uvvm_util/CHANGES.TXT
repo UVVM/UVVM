@@ -4,6 +4,20 @@ UVVM Utility Library - Overview on Versions and Changes
 ----------------------------------------------------------------------
 
 
+v2.17.0
+----------
+Released: 2021-05-26
+- Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
+- Summary alert report and hierarchical alerts report updated to 
+  warn for minor alert mismatch.
+- Generic queue allow to insert to an empty queue with identifier position
+  set to POSITION and position set to 1.
+- Fixed bug in check_counters that would cause the counter value to
+  increase to quickly.
+- Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
+- Fixed an issue with VVC name indexing in ti_protected_types_pkg priv_get_vvc_idx().
+- Added some missing deallocating of lines in in methods_pkg.
+
 v2.16.0
 ----------
 Released: 2021-04-08

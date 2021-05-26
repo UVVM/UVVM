@@ -1,6 +1,11 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.7.1
+----------
+Released: 2021-05-26
+- Corrected message ID for check_value() in BFM.
+
 v2.7.0
 ----------
 Released: 2020-10-06

@@ -486,8 +486,6 @@ package body td_vvc_framework_common_methods_pkg is
     constant proc_call_short                : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel)  -- First part common for all
                                                         & ", " & to_string(timeout, ns) & ")";
     variable v_msg_id_panel                 : t_msg_id_panel  := shared_msg_id_panel;
-    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
-    variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM:= 0;
     variable v_vvc_logged                   : std_logic_vector(0 to C_MAX_TB_VVC_NUM-1) := (others => '0');
     variable v_vvcs_completed               : natural := 0;
     variable v_local_cmd_idx                : integer;
@@ -495,6 +493,11 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_done                         : boolean := false;
     variable v_first_wait                   : boolean := true;
     variable v_proc_call                    : line;
+
+    variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
+    variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM    := 0;
+    variable v_vvc_instance_idx             : integer                                := vvc_instance_idx;
+    variable v_vvc_channel                  : t_channel                              := vvc_channel;
   begin
     -- Only log wanted_idx when it's given as a parameter
     if wanted_idx = -1 then
@@ -509,6 +512,12 @@ package body td_vvc_framework_common_methods_pkg is
     end if;
 
     -- Get the corresponding index from the vvc activity register
+    if v_vvc_instance_idx = -1 then
+      v_vvc_instance_idx := ALL_INSTANCES;
+    end if;
+    if v_vvc_channel = NA then
+      v_vvc_channel := ALL_CHANNELS;
+    end if;    
     get_vvc_index_in_activity_register(vvc_target,
                                        vvc_instance_idx,
                                        vvc_channel,
@@ -516,8 +525,7 @@ package body td_vvc_framework_common_methods_pkg is
                                        v_num_vvc_instances);
 
     -- If the VVC is registered use the new mechanism
-    -- if v_vvc_idx_in_activity_register(0) /= c_index_not_found then
-    if v_vvc_idx_in_activity_register(0) /= C_VVC_INDEX_NOT_FOUND then
+    if v_num_vvc_instances > 0 then
       -- Checking if await selected (with a specified wanted_idx) is supported by this VVC
       if wanted_idx /= -1 and not shared_vvc_activity_register.priv_get_vvc_await_selected_supported(v_vvc_idx_in_activity_register(0)) then
         alert(TB_ERROR, v_proc_call.all & " await_completion with a specified wanted_idx is not supported by " & 

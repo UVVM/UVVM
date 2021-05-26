@@ -4,9 +4,9 @@ UVVM Utility Library - Overview on Versions and Changes
 ----------------------------------------------------------------------
 
 
-v2.xx.x
+v2.17.0
 ----------
-Released: 2021-xx-xx
+Released: 2021-05-26
 - Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
 - Summary alert report and hierarchical alerts report updated to 
   warn for minor alert mismatch.

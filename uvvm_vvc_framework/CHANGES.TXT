@@ -2,10 +2,12 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.xx.x
+v2.12.1
 ----------
-Released: 2021-xx-xx
+Released: 2021-05-26
 - Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
+- Fixed issue where calling the same VVC at the same time from different processes 
+  could lead to a timeout.
 
 
 v2.12.0

@@ -825,21 +825,21 @@ begin
 
       -- The adaptive randomization weight will ensure that all bins are covered
       -- almost at the same time, i.e. around the same number of iterations.
-      v_coverpoint_2.add_bins(bin(1),100);
-      v_coverpoint_2.add_bins(bin(2),100);
-      v_coverpoint_2.add_bins(bin(3),100);
-      v_coverpoint_2.add_bins(bin(4),100);
+      v_coverpoint_2.add_bins(bin(1), 100);
+      v_coverpoint_2.add_bins(bin(2), 100);
+      v_coverpoint_2.add_bins(bin(3), 100);
+      v_coverpoint_2.add_bins(bin(4), 100);
       randomize_and_check_distribution(v_coverpoint_2, (400,400,400,400));
 
-      v_coverpoint_2.add_bins(bin(5),100);
-      v_coverpoint_2.add_bins(bin(6),200);
-      v_coverpoint_2.add_bins(bin(7),300);
-      v_coverpoint_2.add_bins(bin(8),400);
+      v_coverpoint_2.add_bins(bin(5), 100);
+      v_coverpoint_2.add_bins(bin(6), 200);
+      v_coverpoint_2.add_bins(bin(7), 300);
+      v_coverpoint_2.add_bins(bin(8), 400);
       randomize_and_check_distribution(v_coverpoint_2, (1000,1000,1000,1000));
 
-      v_coverpoint_2.add_bins(bin(9),500);
-      v_coverpoint_2.add_bins(bin(10),50);
-      v_coverpoint_2.add_bins(bin(11),50);
+      v_coverpoint_2.add_bins(bin(9), 500);
+      v_coverpoint_2.add_bins(bin(10), 50);
+      v_coverpoint_2.add_bins(bin(11), 50);
       randomize_and_check_distribution(v_coverpoint_2, (600,600,600));
 
       ------------------------------------------------------------
@@ -852,39 +852,39 @@ begin
       -- Note that when a bin has been covered it will no longer be selected
       -- for randomization, so the probability for the other bins will change,
       -- which needs to be taken into account in the formula.
-      v_coverpoint_2.add_bins(bin(12),100,1);
-      v_coverpoint_2.add_bins(bin(13),100,1);
-      v_coverpoint_2.add_bins(bin(14),100,1);
-      v_coverpoint_2.add_bins(bin(15),100,1);
+      v_coverpoint_2.add_bins(bin(12), 100, 1);
+      v_coverpoint_2.add_bins(bin(13), 100, 1);
+      v_coverpoint_2.add_bins(bin(14), 100, 1);
+      v_coverpoint_2.add_bins(bin(15), 100, 1);
       randomize_and_check_distribution(v_coverpoint_2, (400,400,400,400));
 
-      v_coverpoint_2.add_bins(bin(16),100,1);   -- prob=0.10->0.16->0.33   iteration = 400
-      v_coverpoint_2.add_bins(bin(17),100,2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
-      v_coverpoint_2.add_bins(bin(18),100,3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
-      v_coverpoint_2.add_bins(bin(19),100,4);   -- prob=0.40               iteration = 100/0.4 = 250
+      v_coverpoint_2.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
+      v_coverpoint_2.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
+      v_coverpoint_2.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
+      v_coverpoint_2.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
       randomize_and_check_distribution(v_coverpoint_2, (400,350,300,250));
 
-      v_coverpoint_2.add_bins(bin(20),100,100); -- prob=0.50               iteration = 100/0.5 = 200
-      v_coverpoint_2.add_bins(bin(21),100,50);  -- prob=0.25               iteration = 300
-      v_coverpoint_2.add_bins(bin(22),100,50);  -- prob=0.25               iteration = 300
+      v_coverpoint_2.add_bins(bin(20), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
+      v_coverpoint_2.add_bins(bin(21), 100, 50);  -- prob=0.25               iteration = 300
+      v_coverpoint_2.add_bins(bin(22), 100, 50);  -- prob=0.25               iteration = 300
       randomize_and_check_distribution(v_coverpoint_2, (200,300,300));
 
-      v_coverpoint_2.add_bins(bin(23),100,1);   -- prob=0.25               iteration = 100/0.25 = 400
-      v_coverpoint_2.add_bins(bin(24),200,1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
-      v_coverpoint_2.add_bins(bin(25),300,1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
-      v_coverpoint_2.add_bins(bin(26),400,1);   -- prob=0.25->0.33->0.50   iteration = 1000
+      v_coverpoint_2.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
+      v_coverpoint_2.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
+      v_coverpoint_2.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
+      v_coverpoint_2.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
       randomize_and_check_distribution(v_coverpoint_2, (400,700,900,1000));
 
-      v_coverpoint_2.add_bins(bin(27),100,1);
-      v_coverpoint_2.add_bins(bin(28),200,2);
-      v_coverpoint_2.add_bins(bin(29),300,3);
-      v_coverpoint_2.add_bins(bin(30),400,4);
+      v_coverpoint_2.add_bins(bin(27), 100, 1);
+      v_coverpoint_2.add_bins(bin(28), 200, 2);
+      v_coverpoint_2.add_bins(bin(29), 300, 3);
+      v_coverpoint_2.add_bins(bin(30), 400, 4);
       randomize_and_check_distribution(v_coverpoint_2, (1000,1000,1000,1000));
 
-      v_coverpoint_2.add_bins(bin(27),100,4);   -- prob=0.40               iteration = 100/0.4 = 250
-      v_coverpoint_2.add_bins(bin(28),200,3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
-      v_coverpoint_2.add_bins(bin(29),300,2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
-      v_coverpoint_2.add_bins(bin(30),400,1);   -- prob=0.10->0.16->0.33   iteration = 1000
+      v_coverpoint_2.add_bins(bin(27), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      v_coverpoint_2.add_bins(bin(28), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
+      v_coverpoint_2.add_bins(bin(29), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
+      v_coverpoint_2.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
       randomize_and_check_distribution(v_coverpoint_2, (250,500,750,1000));
 
       v_coverpoint_2.print_summary(VERBOSE);

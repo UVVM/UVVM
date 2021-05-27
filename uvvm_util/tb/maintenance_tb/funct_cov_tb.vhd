@@ -1205,6 +1205,33 @@ begin
       check_coverage(v_cross_x2, 100.0);
       v_cross_x2.print_summary(VERBOSE);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing minimum coverage");
+      ------------------------------------------------------------
+      v_bin_idx         := 0;
+      v_invalid_bin_idx := 0;
+
+      for i in 1 to 10 loop
+        v_bin_val  := v_rand.rand(100,500);
+        v_min_hits := v_rand.rand(1,20);
+        v_cross_x2_b.add_cross(bin(v_bin_val), bin(v_bin_val+100), v_min_hits);
+
+        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => v_bin_val),(0 => v_bin_val+100)), v_min_hits);
+
+        -- Check the coverage increases when the bin is sampled until it is 100%
+        for j in 0 to v_min_hits-1 loop
+          check_coverage(v_cross_x2_b, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
+          sample_cross_bins(v_cross_x2_b, (0 => (v_bin_val,v_bin_val+100)), 1);
+        end loop;
+        check_coverage(v_cross_x2_b, 100.0);
+
+        v_bin_idx := v_bin_idx-1;
+        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => v_bin_val),(0 => v_bin_val+100)), v_min_hits, hits => v_min_hits);
+        v_prev_min_hits := v_prev_min_hits + v_min_hits;
+      end loop;
+
+      v_cross_x2_b.print_summary(VERBOSE);
+
     end if;
 
     -----------------------------------------------------------------------------

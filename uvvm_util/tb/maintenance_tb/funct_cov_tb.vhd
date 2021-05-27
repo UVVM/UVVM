@@ -34,7 +34,7 @@ architecture func of funct_cov_tb is
   type t_cov_bin_type_array is array (natural range <>) of t_cov_bin_type;
 
   shared variable v_coverpoint   : t_coverpoint;
-  shared variable v_coverpoint_2 : t_coverpoint;
+  shared variable v_coverpoint_b : t_coverpoint;
   shared variable v_cross_x2     : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
@@ -666,70 +666,70 @@ begin
       for i in 1 to 10 loop
         v_bin_val  := v_rand.rand(100,500);
         v_min_hits := v_rand.rand(1,20);
-        v_coverpoint_2.add_bins(bin(v_bin_val), v_min_hits);
+        v_coverpoint_b.add_bins(bin(v_bin_val), v_min_hits);
 
-        check_bin(v_coverpoint_2, v_bin_idx, VAL, v_bin_val, v_min_hits);
+        check_bin(v_coverpoint_b, v_bin_idx, VAL, v_bin_val, v_min_hits);
 
         -- Check the coverage increases when the bin is sampled until it is 100%
         for j in 0 to v_min_hits-1 loop
-          check_coverage(v_coverpoint_2, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
-          sample_bins(v_coverpoint_2, v_bin_val, 1);
+          check_coverage(v_coverpoint_b, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
+          sample_bins(v_coverpoint_b, v_bin_val, 1);
         end loop;
-        check_coverage(v_coverpoint_2, 100.0);
+        check_coverage(v_coverpoint_b, 100.0);
 
         v_bin_idx := v_bin_idx-1;
-        check_bin(v_coverpoint_2, v_bin_idx, VAL, v_bin_val, v_min_hits, hits => v_min_hits);
+        check_bin(v_coverpoint_b, v_bin_idx, VAL, v_bin_val, v_min_hits, hits => v_min_hits);
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
-      v_coverpoint_2.print_summary(VERBOSE);
+      v_coverpoint_b.print_summary(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint name and scope");
       ------------------------------------------------------------
-      v_coverpoint_2.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
-      check_value("MY_COVERPOINT_2_abcd", v_coverpoint_2.get_name(VOID), ERROR, "Checking name");
-      v_coverpoint_2.set_scope("MY_SCOPE_2");
-      check_value("MY_SCOPE_2", v_coverpoint_2.get_scope(VOID), ERROR, "Checking scope");
+      v_coverpoint_b.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+      check_value("MY_COVERPOINT_2_abcd", v_coverpoint_b.get_name(VOID), ERROR, "Checking name");
+      v_coverpoint_b.set_scope("MY_SCOPE_2");
+      check_value("MY_SCOPE_2", v_coverpoint_b.get_scope(VOID), ERROR, "Checking scope");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
       ------------------------------------------------------------
-      v_coverpoint_2.add_bins(bin(1000));
-      v_coverpoint_2.add_bins(bin(1001), "my_bin_1");
-      v_coverpoint_2.add_bins(bin(1002), 5, "my_bin_2");
-      v_coverpoint_2.add_bins(bin(1003), 5, 1, "my_bin_3");
-      v_coverpoint_2.add_bins(bin(1004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+      v_coverpoint_b.add_bins(bin(1000));
+      v_coverpoint_b.add_bins(bin(1001), "my_bin_1");
+      v_coverpoint_b.add_bins(bin(1002), 5, "my_bin_2");
+      v_coverpoint_b.add_bins(bin(1003), 5, 1, "my_bin_3");
+      v_coverpoint_b.add_bins(bin(1004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
 
-      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1000);
-      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1001, name => "my_bin_1");
-      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1002, 5, name => "my_bin_2");
-      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
-      check_bin(v_coverpoint_2, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1000);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1001, name => "my_bin_1");
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1002, 5, name => "my_bin_2");
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
 
-      v_coverpoint_2.print_summary(VERBOSE);
+      v_coverpoint_b.print_summary(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap");
       ------------------------------------------------------------
-      v_coverpoint_2.add_bins(bin(2000));
-      v_coverpoint_2.add_bins(bin(2000));
-      v_coverpoint_2.add_bins(bin(2000));
-      v_coverpoint_2.add_bins(bin((2100,2101,2102,2113,2114)));
-      v_coverpoint_2.add_bins(bin((2114,2115,2116,2117)));
-      v_coverpoint_2.add_bins(bin_range(2200,2250,1));
-      v_coverpoint_2.add_bins(bin_range(2249,2299,1));
-      sample_bins(v_coverpoint_2, (2000,2001), 1);
-      sample_bins(v_coverpoint_2, (2113,2114,2115), 1);
-      sample_bins(v_coverpoint_2, (2248,2249,2250,2251), 1);
+      v_coverpoint_b.add_bins(bin(2000));
+      v_coverpoint_b.add_bins(bin(2000));
+      v_coverpoint_b.add_bins(bin(2000));
+      v_coverpoint_b.add_bins(bin((2100,2101,2102,2113,2114)));
+      v_coverpoint_b.add_bins(bin((2114,2115,2116,2117)));
+      v_coverpoint_b.add_bins(bin_range(2200,2250,1));
+      v_coverpoint_b.add_bins(bin_range(2249,2299,1));
+      sample_bins(v_coverpoint_b, (2000,2001), 1);
+      sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
+      sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
 
-      v_coverpoint_2.detect_bin_overlap(true);
+      v_coverpoint_b.detect_bin_overlap(true);
       increment_expected_alerts(TB_WARNING, 4);
-      sample_bins(v_coverpoint_2, (2000,2001), 1);
-      sample_bins(v_coverpoint_2, (2113,2114,2115), 1);
-      sample_bins(v_coverpoint_2, (2248,2249,2250,2251), 1);
+      sample_bins(v_coverpoint_b, (2000,2001), 1);
+      sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
+      sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
 
-      v_coverpoint_2.print_summary(VERBOSE);
+      v_coverpoint_b.print_summary(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand" then
@@ -901,22 +901,22 @@ begin
 
       -- The adaptive randomization weight will ensure that all bins are covered
       -- almost at the same time, i.e. around the same number of iterations.
-      v_coverpoint_2.add_bins(bin(1), 100);
-      v_coverpoint_2.add_bins(bin(2), 100);
-      v_coverpoint_2.add_bins(bin(3), 100);
-      v_coverpoint_2.add_bins(bin(4), 100);
-      randomize_and_check_distribution(v_coverpoint_2, (400,400,400,400));
+      v_coverpoint_b.add_bins(bin(1), 100);
+      v_coverpoint_b.add_bins(bin(2), 100);
+      v_coverpoint_b.add_bins(bin(3), 100);
+      v_coverpoint_b.add_bins(bin(4), 100);
+      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
 
-      v_coverpoint_2.add_bins(bin(5), 100);
-      v_coverpoint_2.add_bins(bin(6), 200);
-      v_coverpoint_2.add_bins(bin(7), 300);
-      v_coverpoint_2.add_bins(bin(8), 400);
-      randomize_and_check_distribution(v_coverpoint_2, (1000,1000,1000,1000));
+      v_coverpoint_b.add_bins(bin(5), 100);
+      v_coverpoint_b.add_bins(bin(6), 200);
+      v_coverpoint_b.add_bins(bin(7), 300);
+      v_coverpoint_b.add_bins(bin(8), 400);
+      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
 
-      v_coverpoint_2.add_bins(bin(9), 500);
-      v_coverpoint_2.add_bins(bin(10), 50);
-      v_coverpoint_2.add_bins(bin(11), 50);
-      randomize_and_check_distribution(v_coverpoint_2, (600,600,600));
+      v_coverpoint_b.add_bins(bin(9), 500);
+      v_coverpoint_b.add_bins(bin(10), 50);
+      v_coverpoint_b.add_bins(bin(11), 50);
+      randomize_and_check_distribution(v_coverpoint_b, (600,600,600));
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Explicit");
@@ -928,42 +928,42 @@ begin
       -- Note that when a bin has been covered it will no longer be selected
       -- for randomization, so the probability for the other bins will change,
       -- which needs to be taken into account in the formula.
-      v_coverpoint_2.add_bins(bin(12), 100, 1);
-      v_coverpoint_2.add_bins(bin(13), 100, 1);
-      v_coverpoint_2.add_bins(bin(14), 100, 1);
-      v_coverpoint_2.add_bins(bin(15), 100, 1);
-      randomize_and_check_distribution(v_coverpoint_2, (400,400,400,400));
+      v_coverpoint_b.add_bins(bin(12), 100, 1);
+      v_coverpoint_b.add_bins(bin(13), 100, 1);
+      v_coverpoint_b.add_bins(bin(14), 100, 1);
+      v_coverpoint_b.add_bins(bin(15), 100, 1);
+      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
 
-      v_coverpoint_2.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
-      v_coverpoint_2.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
-      v_coverpoint_2.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
-      v_coverpoint_2.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
-      randomize_and_check_distribution(v_coverpoint_2, (400,350,300,250));
+      v_coverpoint_b.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
+      v_coverpoint_b.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
+      v_coverpoint_b.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
+      v_coverpoint_b.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      randomize_and_check_distribution(v_coverpoint_b, (400,350,300,250));
 
-      v_coverpoint_2.add_bins(bin(20), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
-      v_coverpoint_2.add_bins(bin(21), 100, 50);  -- prob=0.25               iteration = 300
-      v_coverpoint_2.add_bins(bin(22), 100, 50);  -- prob=0.25               iteration = 300
-      randomize_and_check_distribution(v_coverpoint_2, (200,300,300));
+      v_coverpoint_b.add_bins(bin(20), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
+      v_coverpoint_b.add_bins(bin(21), 100, 50);  -- prob=0.25               iteration = 300
+      v_coverpoint_b.add_bins(bin(22), 100, 50);  -- prob=0.25               iteration = 300
+      randomize_and_check_distribution(v_coverpoint_b, (200,300,300));
 
-      v_coverpoint_2.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
-      v_coverpoint_2.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
-      v_coverpoint_2.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
-      v_coverpoint_2.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
-      randomize_and_check_distribution(v_coverpoint_2, (400,700,900,1000));
+      v_coverpoint_b.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
+      v_coverpoint_b.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
+      v_coverpoint_b.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
+      v_coverpoint_b.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
+      randomize_and_check_distribution(v_coverpoint_b, (400,700,900,1000));
 
-      v_coverpoint_2.add_bins(bin(27), 100, 1);
-      v_coverpoint_2.add_bins(bin(28), 200, 2);
-      v_coverpoint_2.add_bins(bin(29), 300, 3);
-      v_coverpoint_2.add_bins(bin(30), 400, 4);
-      randomize_and_check_distribution(v_coverpoint_2, (1000,1000,1000,1000));
+      v_coverpoint_b.add_bins(bin(27), 100, 1);
+      v_coverpoint_b.add_bins(bin(28), 200, 2);
+      v_coverpoint_b.add_bins(bin(29), 300, 3);
+      v_coverpoint_b.add_bins(bin(30), 400, 4);
+      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
 
-      v_coverpoint_2.add_bins(bin(27), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
-      v_coverpoint_2.add_bins(bin(28), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
-      v_coverpoint_2.add_bins(bin(29), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
-      v_coverpoint_2.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
-      randomize_and_check_distribution(v_coverpoint_2, (250,500,750,1000));
+      v_coverpoint_b.add_bins(bin(27), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      v_coverpoint_b.add_bins(bin(28), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
+      v_coverpoint_b.add_bins(bin(29), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
+      v_coverpoint_b.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
+      randomize_and_check_distribution(v_coverpoint_b, (250,500,750,1000));
 
-      v_coverpoint_2.print_summary(VERBOSE);
+      v_coverpoint_b.print_summary(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross" then

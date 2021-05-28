@@ -1232,6 +1232,23 @@ begin
 
       v_cross_x2_b.print_summary(VERBOSE);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin names");
+      ------------------------------------------------------------
+      v_cross_x2_b.add_cross(bin(1000), bin(2000));
+      v_cross_x2_b.add_cross(bin(1001), bin(2001), "my_bin_1");
+      v_cross_x2_b.add_cross(bin(1002), bin(2002), 5, "my_bin_2");
+      v_cross_x2_b.add_cross(bin(1003), bin(2003), 5, 1, "my_bin_3");
+      v_cross_x2_b.add_cross(bin(1004), bin(2004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1000),(0 => 2000)));
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1001),(0 => 2001)), name => "my_bin_1");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1002),(0 => 2002)), 5, name => "my_bin_2");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1003),(0 => 2003)), 5, 1, name => "my_bin_3");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1004),(0 => 2004)), 5, 1, name => "my_bin_long_name_abc");
+
+      v_cross_x2_b.print_summary(VERBOSE);
+
     end if;
 
     -----------------------------------------------------------------------------

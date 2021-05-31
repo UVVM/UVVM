@@ -744,19 +744,19 @@ package body funct_cov_pkg is
     -- Indicates an uninitialized natural value
     constant C_UNINITIALIZED       : integer := -1;
 
-    variable priv_id                            : integer                            := C_DEALLOCATED_ID;
+    variable priv_id                            : integer                                       := C_DEALLOCATED_ID;
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
-    variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH)     := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
+    variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH)                := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
     variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_bins_idx                      : natural                            := 0;
+    variable priv_bins_idx                      : natural                                       := 0;
     variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
-    variable priv_invalid_bins_idx              : natural                            := 0;
-    variable priv_num_bins_crossed              : integer                            := C_UNINITIALIZED;
+    variable priv_invalid_bins_idx              : natural                                       := 0;
+    variable priv_num_bins_crossed              : integer                                       := C_UNINITIALIZED;
     variable priv_rand_gen                      : t_rand;
-    variable priv_rand_transition_bin_idx       : integer                            := C_UNINITIALIZED;
-    variable priv_rand_transition_bin_value_idx : natural                            := 0;
-    variable priv_illegal_bin_alert_level       : t_alert_level                      := ERROR;
-    variable priv_detect_bin_overlap            : boolean                            := false;
+    variable priv_rand_transition_bin_idx       : integer                                       := C_UNINITIALIZED;
+    variable priv_rand_transition_bin_value_idx : t_natural_vector(0 to C_MAX_NUM_CROSS_BINS-1) := (others => 0);
+    variable priv_illegal_bin_alert_level       : t_alert_level                                 := ERROR;
+    variable priv_detect_bin_overlap            : boolean                                       := false;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1163,6 +1163,21 @@ package body funct_cov_pkg is
       bin_array := v_bin_array1 & v_bin_array2 & v_bin_array3;
     end procedure;
 
+    -- Checks that the number of transitions is the same for all elements in a cross
+    procedure check_cross_num_transitions(
+      variable num_transitions : inout integer;
+      constant contains        : in    t_cov_bin_type;
+      constant num_values      : in    natural) is
+    begin
+      if contains = TRN or contains = TRN_IGNORE or contains = TRN_ILLEGAL then
+        if num_transitions = C_UNINITIALIZED then
+          num_transitions := num_values;
+        else
+          check_value(num_values, num_transitions, TB_ERROR, "Number of transition values must be the same in all cross elements", priv_scope, ID_NEVER);
+        end if;
+      end if;
+    end procedure;
+
     -- Adds bins in a recursive way
     procedure add_bins_recursive(
       constant bin_array       : in    t_new_bin_array;
@@ -1172,9 +1187,10 @@ package body funct_cov_pkg is
       constant rand_weight     : in    natural;
       constant use_rand_weight : in    boolean;
       constant bin_name        : in    string) is
-      constant C_NUM_CROSS_BINS : natural := bin_array'length;
-      variable v_bin_is_valid   : boolean := true;
-      variable v_bin_is_illegal : boolean := false;
+      constant C_NUM_CROSS_BINS  : natural := bin_array'length;
+      variable v_bin_is_valid    : boolean := true;
+      variable v_bin_is_illegal  : boolean := false;
+      variable v_num_transitions : integer;
     begin
       check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER);
       -- Iterate through the bins in the current array element
@@ -1192,9 +1208,11 @@ package body funct_cov_pkg is
                                                      bin_array(j).bin_vector(idx_reg(j)).contains = RAN_ILLEGAL or
                                                      bin_array(j).bin_vector(idx_reg(j)).contains = TRN_ILLEGAL);
           end loop;
+          v_num_transitions := C_UNINITIALIZED;
           -- Store valid bins
           if v_bin_is_valid then
             for j in 0 to C_NUM_CROSS_BINS-1 loop
+              check_cross_num_transitions(v_num_transitions, bin_array(j).bin_vector(idx_reg(j)).contains, bin_array(j).bin_vector(idx_reg(j)).num_values);
               priv_bins(priv_bins_idx).cross_bins(j).contains       := bin_array(j).bin_vector(idx_reg(j)).contains;
               priv_bins(priv_bins_idx).cross_bins(j).values         := bin_array(j).bin_vector(idx_reg(j)).values;
               priv_bins(priv_bins_idx).cross_bins(j).num_values     := bin_array(j).bin_vector(idx_reg(j)).num_values;
@@ -1211,6 +1229,7 @@ package body funct_cov_pkg is
           -- Store ignore or illegal bins
           else
             for j in 0 to C_NUM_CROSS_BINS-1 loop
+              check_cross_num_transitions(v_num_transitions, bin_array(j).bin_vector(idx_reg(j)).contains, bin_array(j).bin_vector(idx_reg(j)).num_values);
               priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).contains       := bin_array(j).bin_vector(idx_reg(j)).contains;
               priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).values         := bin_array(j).bin_vector(idx_reg(j)).values;
               priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).num_values     := bin_array(j).bin_vector(idx_reg(j)).num_values;
@@ -1329,6 +1348,15 @@ package body funct_cov_pkg is
       end procedure;
 
       procedure write_value(
+        constant value : in t_natural_vector) is
+      begin
+        for i in value'range loop
+          write(v_line, value(i));
+          writeline(fileHandler, v_line);
+        end loop;
+      end procedure;
+
+      procedure write_value(
         constant value : in string) is
       begin
         write(v_line, value);
@@ -1418,6 +1446,15 @@ package body funct_cov_pkg is
       begin
         readline(fileHandler, v_line);
         read(v_line, value);
+      end procedure;
+
+      procedure read_value(
+        variable value : out t_natural_vector) is
+      begin
+        for i in value'range loop
+          readline(fileHandler, v_line);
+          read(v_line, value(i));
+        end loop;
       end procedure;
 
       procedure read_value(
@@ -1999,21 +2036,28 @@ package body funct_cov_pkg is
         elsif priv_bins(v_bin_idx).cross_bins(i).contains = RAN then
           v_ret(i) := priv_rand_gen.rand(priv_bins(v_bin_idx).cross_bins(i).values(0), priv_bins(v_bin_idx).cross_bins(i).values(1), NON_CYCLIC, msg_id_panel);
         elsif priv_bins(v_bin_idx).cross_bins(i).contains = TRN then
+          -- Store the bin index to return the next value in the following rand() call
           if priv_rand_transition_bin_idx = C_UNINITIALIZED then
-            v_ret(i) := priv_bins(v_bin_idx).cross_bins(i).values(0);
-            priv_rand_transition_bin_idx       := v_bin_idx;
-            priv_rand_transition_bin_value_idx := 1;
-          else
-            v_ret(i) := priv_bins(priv_rand_transition_bin_idx).cross_bins(i).values(priv_rand_transition_bin_value_idx);
-            if priv_rand_transition_bin_value_idx < priv_bins(priv_rand_transition_bin_idx).cross_bins(i).num_values-1 then
-              priv_rand_transition_bin_value_idx := priv_rand_transition_bin_value_idx + 1;
-            else
-              priv_rand_transition_bin_idx       := C_UNINITIALIZED;
-              priv_rand_transition_bin_value_idx := 0;
-            end if;
+            priv_rand_transition_bin_idx := v_bin_idx;
+          end if;
+          v_ret(i) := priv_bins(v_bin_idx).cross_bins(i).values(priv_rand_transition_bin_value_idx(i));
+          if priv_rand_transition_bin_value_idx(i) < priv_bins(v_bin_idx).cross_bins(i).num_values then
+            priv_rand_transition_bin_value_idx(i) := priv_rand_transition_bin_value_idx(i) + 1;
           end if;
         else
           alert(TB_FAILURE, C_LOCAL_CALL & "=> Unexpected error, bin contains " & to_upper(to_string(priv_bins(v_bin_idx).cross_bins(i).contains)), priv_scope);
+        end if;
+
+        -- Reset transition index variables when all the transitions in a bin have been generated
+        if i = priv_num_bins_crossed-1 and priv_rand_transition_bin_idx /= C_UNINITIALIZED then
+          for j in 0 to priv_num_bins_crossed-1 loop
+            if priv_bins(v_bin_idx).cross_bins(j).contains = TRN and priv_rand_transition_bin_value_idx(j) < priv_bins(v_bin_idx).cross_bins(j).num_values then
+              exit;
+            elsif j = priv_num_bins_crossed-1 then
+              priv_rand_transition_bin_idx       := C_UNINITIALIZED;
+              priv_rand_transition_bin_value_idx := (others => 0);
+            end if;
+          end loop;
         end if;
       end loop;
 

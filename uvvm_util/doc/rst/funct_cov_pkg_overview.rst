@@ -312,8 +312,13 @@ Another benefit of this alternative is that we can cross already crossed coverpo
     # UVVM:       (3)x(0 to 127)x(3000)       0          1          0.00%            1                   UNCOVERED   
     # UVVM:  ========================================================================================================
 
-* Note that once the number of crossed elements has been set it cannot be changed.
-* Crossing of valid, ignore, illegal and transition bins is supported.
+* Note that once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be changed 
+  anymore.
+* Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
+* When crossing several transition bins, they must have the same number of transitions, e.g. ::
+
+    my_cross.add_cross(bin_transition(0,7,15), bin_transition(64,128,256));
+    my_cross.add_cross(bin_transition(0,7,15,32), bin_transition(64,128,256,512), bin(16384));
 
 **********************************************************************************************************************************
 Sampling coverage

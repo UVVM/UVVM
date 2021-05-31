@@ -36,6 +36,8 @@ architecture func of funct_cov_tb is
   shared variable v_coverpoint   : t_coverpoint;
   shared variable v_coverpoint_b : t_coverpoint;
   shared variable v_cross_x2     : t_coverpoint;
+  shared variable v_cross_x2_b   : t_coverpoint;
+  shared variable v_cross_x3     : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
   constant C_NULL            : integer := integer'left;
@@ -816,8 +818,8 @@ begin
       v_coverpoint.add_bins(bin_transition((400,402,404,406,408)), v_min_hits);
       v_coverpoint.add_bins(bin_transition((410,412,414,416,418)), v_min_hits);
       v_coverpoint.add_bins(bin_transition((420,422,424,426,428)), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((430,432,434,436,438)), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((440,442,444,446,448)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((438,436,434,432,430)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((440,443,443,447,443)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*5*v_min_hits loop
@@ -828,8 +830,8 @@ begin
       check_bin(v_coverpoint, v_bin_idx, TRN, (400,402,404,406,408), v_min_hits, hits => v_min_hits);
       check_bin(v_coverpoint, v_bin_idx, TRN, (410,412,414,416,418), v_min_hits, hits => v_min_hits);
       check_bin(v_coverpoint, v_bin_idx, TRN, (420,422,424,426,428), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (430,432,434,436,438), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (440,442,444,446,448), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (438,436,434,432,430), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (440,443,443,447,443), v_min_hits, hits => v_min_hits);
       check_coverage(v_coverpoint, 100.0);
 
       ------------------------------------------------------------
@@ -839,10 +841,10 @@ begin
       v_coverpoint.add_bins(bin(60), v_min_hits);
       v_coverpoint.add_bins(bin((250,251,252,253,254)), v_min_hits);
       v_coverpoint.add_bins(bin_range(350,359,1), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((450,452,454,456,458)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((450,452,452,458,455)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
-      for i in 1 to (3+1*5)*v_min_hits loop
+      for i in 1 to (3+5)*v_min_hits loop
         v_value := v_coverpoint.rand(VOID);
         v_coverpoint.sample_coverage(v_value);
       end loop;
@@ -850,7 +852,7 @@ begin
       check_bin(v_coverpoint, v_bin_idx, VAL, 60,                    v_min_hits, hits => v_min_hits);
       check_bin(v_coverpoint, v_bin_idx, VAL, (250,251,252,253,254), v_min_hits, hits => v_min_hits);
       check_bin(v_coverpoint, v_bin_idx, RAN, (350,359),             v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (450,452,454,456,458), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (450,452,452,458,455), v_min_hits, hits => v_min_hits);
       check_coverage(v_coverpoint, 100.0);
 
       ------------------------------------------------------------
@@ -991,18 +993,18 @@ begin
       log(ID_LOG_HDR, "Testing cross with multiple values");
       ------------------------------------------------------------
       v_cross_x2.add_cross(bin((201,202)), bin((214,215)));
-      v_cross_x2.add_cross(bin((222,224,226)), bin((231,233,235)));
+      v_cross_x2.add_cross(bin((222,224,226)), bin((231,233,235,237)));
 
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((201,202),(214,215)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((222,224,226),(231,233,235)));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((222,224,226,C_NULL),(231,233,235,237)));
 
       sample_cross_bins(v_cross_x2, ((201,214),(201,215),(202,214),(202,215)), 1);
-      sample_cross_bins(v_cross_x2, ((222,231),(222,233),(222,235),(224,231),(224,233),(224,235),(226,231),(226,233),(226,235)), 1);
+      sample_cross_bins(v_cross_x2, ((222,231),(222,233),(222,235),(222,237),(224,231),(224,233),(224,235),(224,237),(226,231),(226,233),(226,235),(226,237)), 1);
       sample_cross_bins(v_cross_x2, ((201,213),(202,216),(223,231),(225,233),(227,235)), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-2;
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((201,202),(214,215)), hits => 4);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((222,224,226),(231,233,235)), hits => 9);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((222,224,226,C_NULL),(231,233,235,237)), hits => 12);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with ranges of values");
@@ -1040,19 +1042,21 @@ begin
       log(ID_LOG_HDR, "Testing cross with transitions of values");
       ------------------------------------------------------------
       v_cross_x2.add_cross(bin_transition((401,403,405)), bin_transition((416,417,418)));
-      v_cross_x2.add_cross(bin_transition((421,425,429,428)), bin_transition((439,438,437,436)));
+      v_cross_x2.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439)));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_cross_x3.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439,434)));
 
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((401,403,405),(416,417,418)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((421,425,429,428),(439,438,437,436)));
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((428,427,425,421),(431,434,434,439)));
 
       sample_cross_bins(v_cross_x2, ((401,416),(403,417),(405,418)), 3);
-      sample_cross_bins(v_cross_x2, ((421,439),(425,438),(429,437),(428,436)), 3);
+      sample_cross_bins(v_cross_x2, ((428,431),(427,434),(425,434),(421,439)), 3);
       sample_cross_bins(v_cross_x2, ((401,416),(403,417),(405,419)), 1);           -- Sample values outside bins
-      sample_cross_bins(v_cross_x2, ((421,439),(425,438),(429,437),(429,436)), 1); -- Sample values outside bins
+      sample_cross_bins(v_cross_x2, ((428,431),(427,434),(425,434),(420,439)), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-2;
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((401,403,405),(416,417,418)), hits => 3);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((421,425,429,428),(439,438,437,436)), hits => 3);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((428,427,425,421),(431,434,434,439)), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with single values");
@@ -1090,6 +1094,8 @@ begin
       log(ID_LOG_HDR, "Testing ignore cross with transitions of values");
       ------------------------------------------------------------
       v_cross_x2.add_cross(ignore_bin_transition((2201,2203,2205,2207)), ignore_bin_transition((2212,2214,2216,2218)));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_cross_x3.add_cross(ignore_bin_transition((2228,2227,2225,2221)), ignore_bin_transition((2231,2234,2234,2239,2234)));
 
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), ((2201,2203,2205,2207),(2212,2214,2216,2218)));
 
@@ -1138,6 +1144,8 @@ begin
       log(ID_LOG_HDR, "Testing illegal cross with transitions of values");
       ------------------------------------------------------------
       v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3205,3207)), illegal_bin_transition((3212,3214,3216,3218)));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_cross_x3.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239,3234)));
 
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), ((3201,3203,3205,3207),(3212,3214,3216,3218)));
 

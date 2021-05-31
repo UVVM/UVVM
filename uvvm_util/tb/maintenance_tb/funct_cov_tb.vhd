@@ -56,6 +56,7 @@ begin
     variable v_min_hits         : natural;
     variable v_prev_min_hits    : natural := 0;
     variable v_value            : integer;
+    variable v_values_x2        : integer_vector(0 to 1);
 
     ------------------------------------------------------------------------------
     -- Procedures and functions
@@ -275,8 +276,7 @@ begin
       variable v_bin       : t_cov_bin;
     begin
       v_bin := coverpoint.get_valid_bin(bin_idx);
-      check_value(v_bin.hits > min_hits, ERROR, "Checking bin " & to_upper(to_string(v_bin.cross_bins(0).contains)) & ":" &
-        to_string(v_bin.cross_bins(0).values(0 to v_bin.cross_bins(0).num_values-1)) & " was selected for randomization",
+      check_value(v_bin.hits > min_hits, ERROR, "Checking " & v_bin.name & " was selected for randomization",
         C_TB_SCOPE_DEFAULT, caller_name => C_PROC_NAME);
     end procedure;
 
@@ -299,6 +299,7 @@ begin
       variable v_idx              : natural := 0;
       variable v_total_iterations : natural := 0;
       variable v_margin           : natural;
+      variable v_rand_val         : integer_vector(0 to coverpoint.get_num_bins_crossed(VOID)-1);
     begin
       v_bin_vector := coverpoint.get_valid_bins(VOID);
 
@@ -307,7 +308,7 @@ begin
         -- We assume that only the new bins meant for the current test will have 0 hits
         if v_bin_vector(i).hits = 0 then
           check_value(v_idx < bin_covered_iteration'length, TB_ERROR, "bin_covered_iteration length must be the same size as the number of bins to randomize", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
-          v_test_bins(v_idx).value     := v_bin_vector(i).cross_bins(0).values(0);
+          v_test_bins(v_idx).value     := v_bin_vector(i).cross_bins(0).values(0); -- Only use the first value to simplify the check (we assume all bins first values are different)
           v_test_bins(v_idx).min_hits  := v_bin_vector(i).min_hits;
           v_test_bins(v_idx).iteration := bin_covered_iteration(v_idx);
           v_total_iterations := v_total_iterations + v_bin_vector(i).min_hits;
@@ -317,11 +318,11 @@ begin
 
       v_margin := integer(real(v_total_iterations)*0.15);
       for i in 1 to v_total_iterations loop
-        v_value := coverpoint.rand(VOID);
-        coverpoint.sample_coverage(v_value);
+        v_rand_val := coverpoint.rand(VOID);
+        coverpoint.sample_coverage(v_rand_val);
 
         for j in v_test_bins'range loop
-          if v_value = v_test_bins(j).value then
+          if v_rand_val(0) = v_test_bins(j).value then
             v_test_bins(j).counter := v_test_bins(j).counter + 1;
           end if;
           if v_test_bins(j).counter = v_test_bins(j).min_hits then
@@ -1254,6 +1255,240 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1002),(0 => 2002)), 5, name => "my_bin_2");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1003),(0 => 2003)), 5, 1, name => "my_bin_3");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1004),(0 => 2004)), 5, 1, name => "my_bin_long_name_abc");
+
+      v_cross_x2_b.print_summary(VERBOSE);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "fc_rand_cross" then
+    --===================================================================================
+      disable_log_msg(ID_FUNCT_COV_SAMPLE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");
+      ------------------------------------------------------------
+      v_cross_x2.add_cross(ignore_bin(2000), ignore_bin(2001), "bin_0");
+      v_cross_x2.add_cross(ignore_bin_range(2100,2109), ignore_bin_range(2110,2115), "bin_1");
+      v_cross_x2.add_cross(ignore_bin_transition((2201,2203,2205)), ignore_bin_transition((2212,2214,2216)), "bin_2");
+      v_cross_x2.add_cross(illegal_bin(3000), illegal_bin(3001), "bin_3");
+      v_cross_x2.add_cross(illegal_bin_range(3100,3109), illegal_bin_range(3110,3115), "bin_4");
+      v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3205)), illegal_bin_transition((3212,3214,3216)), "bin_5");
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with single values");
+      ------------------------------------------------------------
+      v_min_hits := 1;
+      v_cross_x2.add_cross(bin_range(1,50), bin(100));
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 50*v_min_hits loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+
+      for i in 1 to 50 loop
+        check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => i),(0 => 100)), v_min_hits, hits => v_min_hits);
+      end loop;
+      check_coverage(v_cross_x2, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with multiple values");
+      ------------------------------------------------------------
+      v_min_hits := 2;
+      v_cross_x2.add_cross(bin((200,201,202)), bin((205,206,207)), v_min_hits);
+      v_cross_x2.add_cross(bin((210,211,212)), bin((215,216,217)), v_min_hits);
+      v_cross_x2.add_cross(bin((220,221,222)), bin((225,226,227)), v_min_hits);
+      v_cross_x2.add_cross(bin((230,231,232)), bin((235,236,237)), v_min_hits);
+      v_cross_x2.add_cross(bin((240,241,242)), bin((245,246,247)), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 5*v_min_hits loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((200,201,202),(205,206,207)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((210,211,212),(215,216,217)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((220,221,222),(225,226,227)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((230,231,232),(235,236,237)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((240,241,242),(245,246,247)), v_min_hits, hits => v_min_hits);
+      check_coverage(v_cross_x2, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
+      ------------------------------------------------------------
+      v_min_hits := 3;
+      v_cross_x2.add_cross(bin_range(300,304,1), bin_range(305,309,1), v_min_hits);
+      v_cross_x2.add_cross(bin_range(310,314,1), bin_range(315,319,1), v_min_hits);
+      v_cross_x2.add_cross(bin_range(320,324,1), bin_range(325,329,1), v_min_hits);
+      v_cross_x2.add_cross(bin_range(330,334,1), bin_range(335,339,1), v_min_hits);
+      v_cross_x2.add_cross(bin_range(340,344,1), bin_range(345,349,1), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 5*v_min_hits loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((300,304),(305,309)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((310,314),(315,319)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((320,324),(325,329)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((330,334),(335,339)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((340,344),(345,349)), v_min_hits, hits => v_min_hits);
+      check_coverage(v_cross_x2, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with a transition of values");
+      ------------------------------------------------------------
+      v_min_hits := 4;
+      v_cross_x2.add_cross(bin_transition((400,402,404)), bin_transition((405,407,409)), v_min_hits);
+      v_cross_x2.add_cross(bin_transition((410,412,414)), bin_transition((415,417,419)), v_min_hits);
+      v_cross_x2.add_cross(bin_transition((420,422,424)), bin_transition((425,427,429)), v_min_hits);
+      v_cross_x2.add_cross(bin_transition((430,432,434)), bin_transition((439,437,435)), v_min_hits);
+      v_cross_x2.add_cross(bin_transition((440,442,442)), bin_transition((445,445,449)), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 3*5*v_min_hits loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((400,402,404),(405,407,409)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((410,412,414),(415,417,419)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((420,422,424),(425,427,429)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((430,432,434),(439,437,435)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((440,442,442),(445,445,449)), v_min_hits, hits => v_min_hits);
+      check_coverage(v_cross_x2, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among different types of bins");
+      ------------------------------------------------------------
+      v_min_hits := 5;
+      v_cross_x2.add_cross(bin(60), bin((250,251,252,253,254)), v_min_hits);
+      v_cross_x2.add_cross(bin(70), bin_range(352,355,1), v_min_hits);
+      v_cross_x2.add_cross(bin_transition((450,452,454,456,458)), bin(80), v_min_hits);
+      v_cross_x2.add_cross(bin_range(360,369,1), bin_transition((466,463,463,464,461)), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to (2+5*2)*v_min_hits loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((60,C_NULL,C_NULL,C_NULL,C_NULL),(250,251,252,253,254)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), ((70,C_NULL),(352,355)),                                  v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,VAL), ((450,452,454,456,458),(80,C_NULL,C_NULL,C_NULL,C_NULL)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), ((360,369,C_NULL,C_NULL,C_NULL),(466,463,463,464,461)),   v_min_hits, hits => v_min_hits);
+      check_coverage(v_cross_x2, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing all bins are selected for randomization when coverage is complete");
+      ------------------------------------------------------------
+      disable_log_msg(ID_FUNCT_COV_RAND);
+
+      log(ID_SEQUENCER, "Calling rand() 1000 times");
+      for i in 1 to 1000 loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+
+      -- By checking that the number of hits in the bins is greater than their minimum coverage,
+      -- we can assure that every bin was selected for randomization after the previous tests.
+      for i in 0 to v_bin_idx-1 loop
+        if i < 50 then
+          check_bin_hits_is_greater(v_cross_x2, i, 1);
+        elsif i < 55 then
+          check_bin_hits_is_greater(v_cross_x2, i, 2);
+        elsif i < 60 then
+          check_bin_hits_is_greater(v_cross_x2, i, 3);
+        elsif i < 65 then
+          check_bin_hits_is_greater(v_cross_x2, i, 4);
+        elsif i < 69 then
+          check_bin_hits_is_greater(v_cross_x2, i, 5);
+        else
+          alert(TB_ERROR, "check_bin_hits_is_greater() => Unexpected bin_idx: " & to_string(i));
+        end if;
+      end loop;
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Checking that ignore and invalid bins were never selected during randomization");
+      ------------------------------------------------------------
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => 2000),(0 => 2001)),             hits => 0, name => "bin_0");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), ((2100,2109),(2110,2115)),             hits => 0, name => "bin_1");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), ((2201,2203,2205),(2212,2214,2216)),   hits => 0, name => "bin_2");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => 3000),(0 => 3001)),           hits => 0, name => "bin_3");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), ((3100,3109),(3110,3115)),           hits => 0, name => "bin_4");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), ((3201,3203,3205),(3212,3214,3216)), hits => 0, name => "bin_5");
+
+      v_cross_x2.print_summary(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
+      ------------------------------------------------------------
+      disable_log_msg(ID_FUNCT_COV_RAND);
+
+      -- The adaptive randomization weight will ensure that all bins are covered
+      -- almost at the same time, i.e. around the same number of iterations.
+      v_cross_x2_b.add_cross(bin(1), bin(100), 100);
+      v_cross_x2_b.add_cross(bin(2), bin(100), 100);
+      v_cross_x2_b.add_cross(bin(3), bin(100), 100);
+      v_cross_x2_b.add_cross(bin(4), bin(100), 100);
+      randomize_and_check_distribution(v_cross_x2_b, (400,400,400,400));
+
+      v_cross_x2_b.add_cross(bin(5), bin(200), 100);
+      v_cross_x2_b.add_cross(bin(6), bin(200), 200);
+      v_cross_x2_b.add_cross(bin(7), bin(200), 300);
+      v_cross_x2_b.add_cross(bin(8), bin(200), 400);
+      randomize_and_check_distribution(v_cross_x2_b, (1000,1000,1000,1000));
+
+      v_cross_x2_b.add_cross(bin(9), bin(300), 500);
+      v_cross_x2_b.add_cross(bin(10), bin(300), 50);
+      v_cross_x2_b.add_cross(bin(11), bin(300), 50);
+      randomize_and_check_distribution(v_cross_x2_b, (600,600,600));
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization weight - Explicit");
+      ------------------------------------------------------------
+      -- When using explicit randomization weights the bins will be covered
+      -- at different times, depending also on the min_hits parameter.
+      -- The iteration number when the bin will be covered can be estimated by
+      -- using the formula: iteration = min_hits / probability
+      -- Note that when a bin has been covered it will no longer be selected
+      -- for randomization, so the probability for the other bins will change,
+      -- which needs to be taken into account in the formula.
+      v_cross_x2_b.add_cross(bin(12), bin(400), 100, 1);
+      v_cross_x2_b.add_cross(bin(13), bin(400), 100, 1);
+      v_cross_x2_b.add_cross(bin(14), bin(400), 100, 1);
+      v_cross_x2_b.add_cross(bin(15), bin(400), 100, 1);
+      randomize_and_check_distribution(v_cross_x2_b, (400,400,400,400));
+
+      v_cross_x2_b.add_cross(bin(16), bin(500), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
+      v_cross_x2_b.add_cross(bin(17), bin(500), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
+      v_cross_x2_b.add_cross(bin(18), bin(500), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
+      v_cross_x2_b.add_cross(bin(19), bin(500), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      randomize_and_check_distribution(v_cross_x2_b, (400,350,300,250));
+
+      v_cross_x2_b.add_cross(bin(20), bin(600), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
+      v_cross_x2_b.add_cross(bin(21), bin(600), 100, 50);  -- prob=0.25               iteration = 300
+      v_cross_x2_b.add_cross(bin(22), bin(600), 100, 50);  -- prob=0.25               iteration = 300
+      randomize_and_check_distribution(v_cross_x2_b, (200,300,300));
+
+      v_cross_x2_b.add_cross(bin(23), bin(700), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
+      v_cross_x2_b.add_cross(bin(24), bin(700), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
+      v_cross_x2_b.add_cross(bin(25), bin(700), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
+      v_cross_x2_b.add_cross(bin(26), bin(700), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
+      randomize_and_check_distribution(v_cross_x2_b, (400,700,900,1000));
+
+      v_cross_x2_b.add_cross(bin(27), bin(800), 100, 1);
+      v_cross_x2_b.add_cross(bin(28), bin(800), 200, 2);
+      v_cross_x2_b.add_cross(bin(29), bin(800), 300, 3);
+      v_cross_x2_b.add_cross(bin(30), bin(800), 400, 4);
+      randomize_and_check_distribution(v_cross_x2_b, (1000,1000,1000,1000));
+
+      v_cross_x2_b.add_cross(bin(27), bin(900), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      v_cross_x2_b.add_cross(bin(28), bin(900), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
+      v_cross_x2_b.add_cross(bin(29), bin(900), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
+      v_cross_x2_b.add_cross(bin(30), bin(900), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
+      randomize_and_check_distribution(v_cross_x2_b, (250,500,750,1000));
 
       v_cross_x2_b.print_summary(VERBOSE);
 

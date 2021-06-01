@@ -356,7 +356,7 @@ begin
     enable_log_msg(ID_FUNCT_COV_CONFIG);
 
     --===================================================================================
-    if GC_TESTCASE = "fc_basic" then
+    if GC_TESTCASE = "fc_bins" then
     --===================================================================================
       v_coverpoint.set_name("MY_COVERPOINT");
       check_value("MY_COVERPOINT", v_coverpoint.get_name(VOID), ERROR, "Checking name");
@@ -791,7 +791,7 @@ begin
       v_coverpoint_b.print_summary(VERBOSE);
 
     --===================================================================================
-    elsif GC_TESTCASE = "fc_rand" then
+    elsif GC_TESTCASE = "fc_rand_bin" then
     --===================================================================================
       disable_log_msg(ID_FUNCT_COV_SAMPLE);
 
@@ -1025,7 +1025,7 @@ begin
       v_coverpoint_b.print_summary(VERBOSE);
 
     --===================================================================================
-    elsif GC_TESTCASE = "fc_cross" then
+    elsif GC_TESTCASE = "fc_cross_bin" then
     --===================================================================================
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with single values");

@@ -1216,6 +1216,8 @@ begin
       v_cross_x2.add_cross(ignore_bin_transition((4701,4702,4703,4704)), bin((4715,4716)), "cross_7");
       v_cross_x2.add_cross(bin(4803), illegal_bin_range(4817,4819), "cross_8");
       v_cross_x2.add_cross(illegal_bin_transition((4901,4902,4903)), bin(4917), "cross_9");
+      v_cross_x2.add_cross(ignore_bin(5000), illegal_bin_range(5010,5050), "cross_10");
+      v_cross_x2.add_cross(illegal_bin_transition((5105,5110,5115)), ignore_bin(5150), "cross_11");
 
       -- Since all unconstrained vectors in an aggregate type need to have the same length, we use C_NULL to fill the vectors
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((4000,C_NULL,C_NULL),(4010,4015,4019)),                                  name => "cross_0");
@@ -1228,6 +1230,8 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), ((4701,4702,4703,4704),(4715,4716,C_NULL,C_NULL)), name => "cross_7");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL), ((4803,C_NULL),(4817,4819)),                      name => "cross_8");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL), ((4901,4902,4903),(4917,C_NULL,C_NULL)),          name => "cross_9");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL), ((5000,C_NULL),(5010,5050)),               name => "cross_10");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE), ((5105,5110,5115),(5150,C_NULL,C_NULL)),   name => "cross_11");
 
       sample_cross_bins(v_cross_x2, ((4000,4010),(4000,4015),(4000,4019)), 1);
       sample_cross_bins(v_cross_x2, ((4100,4111),(4101,4112),(4102,4115),(4103,4111),(4104,4112),(4105,4115)), 1);
@@ -1235,16 +1239,19 @@ begin
       sample_cross_bins(v_cross_x2, ((4302,4315),(4304,4315),(4306,4315)), 1);
       increment_expected_alerts(WARNING,3);
       sample_cross_bins(v_cross_x2, ((4402,4415),(4402,4416),(4402,4417)), 1);
-      increment_expected_alerts(WARNING,2);
+      increment_expected_alerts(WARNING,1);
       sample_cross_bins(v_cross_x2, ((4505,4516),(4506,4516)), 1);
       sample_cross_bins(v_cross_x2, ((4601,4611),(4601,4612),(4601,4613),(4609,4611),(4609,4612),(4609,4613)), 1);
       sample_cross_bins(v_cross_x2, ((4701,4715),(4702,4715),(4703,4715),(4704,4715),(4701,4716),(4702,4716),(4703,4716),(4704,4716)), 1);
-      increment_expected_alerts(WARNING,3);
+      increment_expected_alerts(WARNING,4);
       sample_cross_bins(v_cross_x2, ((4803,4817),(4803,4818),(4803,4819)), 1);
       sample_cross_bins(v_cross_x2, ((4901,4917),(4902,4917),(4903,4917)), 1);
+      increment_expected_alerts(WARNING,4);
+      sample_cross_bins(v_cross_x2, ((5000,5010),(5000,5025),(5000,5050)), 1);
+      sample_cross_bins(v_cross_x2, ((5105,5150),(5110,5150),(5115,5150)), 1);
 
       v_bin_idx := v_bin_idx-2;
-      v_invalid_bin_idx := v_invalid_bin_idx-8;
+      v_invalid_bin_idx := v_invalid_bin_idx-10;
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((4000,C_NULL,C_NULL),(4010,4015,4019)),                                  name => "cross_0", hits => 3);
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), ((4100,4107,C_NULL),(4111,4112,4115)),                                    name => "cross_1", hits => 2);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_IGNORE), ((4201,C_NULL),(4212,4215)),                name => "cross_2", hits => 4);
@@ -1255,6 +1262,8 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), ((4701,4702,4703,4704),(4715,4716,C_NULL,C_NULL)), name => "cross_7", hits => 2);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL), ((4803,C_NULL),(4817,4819)),                      name => "cross_8", hits => 3);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL), ((4901,4902,4903),(4917,C_NULL,C_NULL)),          name => "cross_9", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL), ((5000,C_NULL),(5010,5050)),               name => "cross_10", hits => 3);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE), ((5105,5110,5115),(5150,C_NULL,C_NULL)),   name => "cross_11", hits => 1);
 
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_cross_x2, 100.0);

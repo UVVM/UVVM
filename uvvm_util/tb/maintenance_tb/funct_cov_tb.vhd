@@ -152,14 +152,18 @@ begin
       variable coverpoint  : inout t_coverpoint;
       variable bin_idx     : inout natural;
       constant contains    : in    t_cov_bin_type_array;
-      constant values      : in    t_integer_array;
+      constant values_1    : in    integer_vector;
+      constant values_2    : in    integer_vector;
       constant min_hits    : in    natural := 1;
       constant rand_weight : in    integer := C_ADAPTIVE_WEIGHT;
       constant name        : in    string  := "";
       constant hits        : in    natural := 0) is
       constant C_PROC_NAME : string := "check_cross_bin";
+      variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
     begin
-      check_bin(coverpoint, bin_idx, contains, values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+      v_values(0)(0 to values_1'length-1) := values_1;
+      v_values(1)(0 to values_2'length-1) := values_2;
+      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
     end procedure;
 
     -- Overload for ignore and illegal bins
@@ -193,12 +197,16 @@ begin
       variable coverpoint  : inout t_coverpoint;
       variable bin_idx     : inout natural;
       constant contains    : in    t_cov_bin_type_array;
-      constant values      : in    t_integer_array;
+      constant values_1    : in    integer_vector;
+      constant values_2    : in    integer_vector;
       constant name        : in    string  := "";
       constant hits        : in    natural := 0) is
       constant C_PROC_NAME : string := "check_invalid_cross_bin";
+      variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
     begin
-      check_bin(coverpoint, bin_idx, contains, values, 0, 0, name, hits, true, C_PROC_NAME);
+      v_values(0)(0 to values_1'length-1) := values_1;
+      v_values(1)(0 to values_2'length-1) := values_2;
+      check_bin(coverpoint, bin_idx, contains, v_values, 0, 0, name, hits, true, C_PROC_NAME);
     end procedure;
 
     -- Checks the number of bins in the coverpoint
@@ -1024,17 +1032,17 @@ begin
       v_cross_x2.add_cross(bin(-101), bin(101));
       v_cross_x2.add_cross(bin(-102), bin(102));
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => -100),(0 => 100)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => -101),(0 => 101)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => -102),(0 => 102)));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -100), (0 => 100));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -101), (0 => 101));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -102), (0 => 102));
 
       sample_cross_bins(v_cross_x2, ((-100,100),(-101,101),(-102,102)), 1);
       sample_cross_bins(v_cross_x2, ((-100,105),(-105,101),(-105,105)), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-3;
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => -100),(0 => 100)), hits => 1);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => -101),(0 => 101)), hits => 1);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => -102),(0 => 102)), hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -100), (0 => 100), hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -101), (0 => 101), hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -102), (0 => 102), hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with multiple values");
@@ -1042,16 +1050,16 @@ begin
       v_cross_x2.add_cross(bin((201,202)), bin((214,215)));
       v_cross_x2.add_cross(bin((222,224,226)), bin((231,233,235,237)));
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((201,202),(214,215)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((222,224,226,C_NULL),(231,233,235,237)));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (201,202), (214,215));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (222,224,226), (231,233,235,237));
 
       sample_cross_bins(v_cross_x2, ((201,214),(201,215),(202,214),(202,215)), 1);
       sample_cross_bins(v_cross_x2, ((222,231),(222,233),(222,235),(222,237),(224,231),(224,233),(224,235),(224,237),(226,231),(226,233),(226,235),(226,237)), 1);
       sample_cross_bins(v_cross_x2, ((201,213),(202,216),(223,231),(225,233),(227,235)), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-2;
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((201,202),(214,215)), hits => 4);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((222,224,226,C_NULL),(231,233,235,237)), hits => 12);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (201,202), (214,215), hits => 4);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (222,224,226), (231,233,235,237), hits => 12);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with ranges of values");
@@ -1059,13 +1067,13 @@ begin
       v_cross_x2.add_cross(bin_range(300,307,1), bin_range(311,315,1));
       v_cross_x2.add_cross(bin_range(321,329,3), bin_range(331,335,2));
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((300,307),(311,315)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((321,323),(331,332)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((321,323),(333,335)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((324,326),(331,332)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((324,326),(333,335)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((327,329),(331,332)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((327,329),(333,335)));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (300,307), (311,315));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (321,323), (331,332));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (321,323), (333,335));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (324,326), (331,332));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (324,326), (333,335));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (327,329), (331,332));
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (327,329), (333,335));
 
       sample_cross_bins(v_cross_x2, ((300,311),(301,312),(302,313),(303,314),(304,315),(305,314),(306,313),(307,312)), 1);
       sample_cross_bins(v_cross_x2, ((321,331),(321,332),(322,331),(322,332),(323,331),(323,332)), 1);
@@ -1077,13 +1085,13 @@ begin
       sample_cross_bins(v_cross_x2, ((300,310),(307,316),(320,331),(330,335)), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-7;
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((300,307),(311,315)), hits => 8);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((321,323),(331,332)), hits => 6);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((321,323),(333,335)), hits => 9);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((324,326),(331,332)), hits => 6);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((324,326),(333,335)), hits => 9);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((327,329),(331,332)), hits => 6);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((327,329),(333,335)), hits => 9);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (300,307), (311,315), hits => 8);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (321,323), (331,332), hits => 6);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (321,323), (333,335), hits => 9);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (324,326), (331,332), hits => 6);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (324,326), (333,335), hits => 9);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (327,329), (331,332), hits => 6);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (327,329), (333,335), hits => 9);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with transitions of values");
@@ -1093,8 +1101,8 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x3.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439,434)));
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((401,403,405),(416,417,418)));
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((428,427,425,421),(431,434,434,439)));
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,405), (416,417,418));
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (428,427,425,421), (431,434,434,439));
 
       sample_cross_bins(v_cross_x2, ((401,416),(403,417),(405,418)), 3);
       sample_cross_bins(v_cross_x2, ((428,431),(427,434),(425,434),(421,439)), 3);
@@ -1102,8 +1110,8 @@ begin
       sample_cross_bins(v_cross_x2, ((428,431),(427,434),(425,434),(420,439)), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-2;
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((401,403,405),(416,417,418)), hits => 3);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((428,427,425,421),(431,434,434,439)), hits => 3);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,405), (416,417,418), hits => 3);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (428,427,425,421), (431,434,434,439), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with single values");
@@ -1112,30 +1120,30 @@ begin
       v_cross_x2.add_cross(ignore_bin(-2002), ignore_bin(2002));
       v_cross_x2.add_cross(ignore_bin(-2003), ignore_bin(2003));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => -2001),(0 => 2001)));
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => -2002),(0 => 2002)));
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => -2003),(0 => 2003)));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2001), (0 => 2001));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2002), (0 => 2002));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2003), (0 => 2003));
 
       sample_cross_bins(v_cross_x2, ((-2001,2001),(-2002,2002),(-2003,2003)), 1);
       sample_cross_bins(v_cross_x2, ((-2001,2005),(-2005,2002),(-2005,2005)), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-3;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => -2001),(0 => 2001)), hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => -2002),(0 => 2002)), hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => -2003),(0 => 2003)), hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2001), (0 => 2001), hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2002), (0 => 2002), hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2003), (0 => 2003), hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with ranges of values");
       ------------------------------------------------------------
       v_cross_x2.add_cross(ignore_bin_range(2100,2107), ignore_bin_range(2115,2119));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), ((2100,2107),(2115,2119)));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (2100,2107), (2115,2119));
 
       sample_cross_bins(v_cross_x2, ((2100,2115),(2101,2116),(2102,2117),(2103,2118),(2104,2119),(2105,2118),(2106,2117),(2107,2116)), 1);
       sample_cross_bins(v_cross_x2, ((2100,2114),(2107,2120),(2108,2115),(2109,2119)), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), ((2100,2107),(2115,2119)), hits => 8);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (2100,2107), (2115,2119), hits => 8);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with transitions of values");
@@ -1144,13 +1152,13 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x3.add_cross(ignore_bin_transition((2228,2227,2225,2221)), ignore_bin_transition((2231,2234,2234,2239,2234)));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), ((2201,2203,2205,2207),(2212,2214,2216,2218)));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2205,2207), (2212,2214,2216,2218));
 
       sample_cross_bins(v_cross_x2, ((2201,2212),(2203,2214),(2205,2216),(2207,2218)), 3);
       sample_cross_bins(v_cross_x2, ((2201,2212),(2203,2214),(2205,2216),(2207,2219)), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), ((2201,2203,2205,2207),(2212,2214,2216,2218)), hits => 3);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2205,2207), (2212,2214,2216,2218), hits => 3);
 
       v_cross_x2.set_illegal_bin_alert_level(WARNING);
       ------------------------------------------------------------
@@ -1160,32 +1168,32 @@ begin
       v_cross_x2.add_cross(illegal_bin(-3002), illegal_bin(3002));
       v_cross_x2.add_cross(illegal_bin(-3003), illegal_bin(3003));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => -3001),(0 => 3001)));
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => -3002),(0 => 3002)));
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => -3003),(0 => 3003)));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3001), (0 => 3001));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3002), (0 => 3002));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3003), (0 => 3003));
 
       increment_expected_alerts(WARNING,3);
       sample_cross_bins(v_cross_x2, ((-3001,3001),(-3002,3002),(-3003,3003)), 1);
       sample_cross_bins(v_cross_x2, ((-3001,3005),(-3005,3002),(-3005,3005)), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-3;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => -3001),(0 => 3001)), hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => -3002),(0 => 3002)), hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => -3003),(0 => 3003)), hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3001), (0 => 3001), hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3002), (0 => 3002), hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3003), (0 => 3003), hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with ranges of values");
       ------------------------------------------------------------
       v_cross_x2.add_cross(illegal_bin_range(3100,3107), illegal_bin_range(3115,3119));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), ((3100,3107),(3115,3119)));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (3100,3107), (3115,3119));
 
       increment_expected_alerts(WARNING,8);
       sample_cross_bins(v_cross_x2, ((3100,3115),(3101,3116),(3102,3117),(3103,3118),(3104,3119),(3105,3118),(3106,3117),(3107,3116)), 1);
       sample_cross_bins(v_cross_x2, ((3100,3114),(3107,3120),(3108,3115),(3109,3119)), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), ((3100,3107),(3115,3119)), hits => 8);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (3100,3107), (3115,3119), hits => 8);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with transitions of values");
@@ -1194,14 +1202,14 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x3.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239,3234)));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), ((3201,3203,3205,3207),(3212,3214,3216,3218)));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3205,3207), (3212,3214,3216,3218));
 
       increment_expected_alerts(WARNING,3);
       sample_cross_bins(v_cross_x2, ((3201,3212),(3203,3214),(3205,3216),(3207,3218)), 3);
       sample_cross_bins(v_cross_x2, ((3201,3212),(3203,3214),(3205,3216),(3207,3219)), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), ((3201,3203,3205,3207),(3212,3214,3216,3218)), hits => 3);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3205,3207), (3212,3214,3216,3218), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with different bins");
@@ -1219,19 +1227,18 @@ begin
       v_cross_x2.add_cross(ignore_bin(5000), illegal_bin_range(5010,5050), "cross_10");
       v_cross_x2.add_cross(illegal_bin_transition((5105,5110,5115)), ignore_bin(5150), "cross_11");
 
-      -- Since all unconstrained vectors in an aggregate type need to have the same length, we use C_NULL to fill the vectors
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((4000,C_NULL,C_NULL),(4010,4015,4019)),                                  name => "cross_0");
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), ((4100,4107,C_NULL),(4111,4112,4115)),                                    name => "cross_1");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_IGNORE), ((4201,C_NULL),(4212,4215)),                name => "cross_2");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL_IGNORE), ((4302,4304,4306),(4315,C_NULL,C_NULL)),    name => "cross_3");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,RAN_ILLEGAL), ((4402,C_NULL),(4415,4417)),              name => "cross_4");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_ILLEGAL), ((4505,4506),(4516,C_NULL)),              name => "cross_5");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_IGNORE), ((4601,4609),(4611,4613)),                         name => "cross_6");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), ((4701,4702,4703,4704),(4715,4716,C_NULL,C_NULL)), name => "cross_7");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL), ((4803,C_NULL),(4817,4819)),                      name => "cross_8");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL), ((4901,4902,4903),(4917,C_NULL,C_NULL)),          name => "cross_9");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL), ((5000,C_NULL),(5010,5050)),               name => "cross_10");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE), ((5105,5110,5115),(5150,C_NULL,C_NULL)),   name => "cross_11");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 4000), (4010,4015,4019),                                      name => "cross_0");
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), (4100,4107), (4111,4112,4115),                                      name => "cross_1");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_IGNORE),   (0 => 4201), (4212,4215),           name => "cross_2");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL_IGNORE),   (4302,4304,4306), (0 => 4315),      name => "cross_3");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,RAN_ILLEGAL), (0 => 4402), (4415,4417),           name => "cross_4");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_ILLEGAL), (4505,4506), (0 => 4516),           name => "cross_5");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_IGNORE),          (4601,4609), (4611,4613),           name => "cross_6");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL),          (4701,4702,4703,4704), (4715,4716), name => "cross_7");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL),         (0 => 4803), (4817,4819),           name => "cross_8");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL),         (4901,4902,4903), (0 => 4917),      name => "cross_9");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL),  (0 => 5000), (5010,5050),           name => "cross_10");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE),  (5105,5110,5115), (0 => 5150),      name => "cross_11");
 
       sample_cross_bins(v_cross_x2, ((4000,4010),(4000,4015),(4000,4019)), 1);
       sample_cross_bins(v_cross_x2, ((4100,4111),(4101,4112),(4102,4115),(4103,4111),(4104,4112),(4105,4115)), 1);
@@ -1252,18 +1259,18 @@ begin
 
       v_bin_idx := v_bin_idx-2;
       v_invalid_bin_idx := v_invalid_bin_idx-10;
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((4000,C_NULL,C_NULL),(4010,4015,4019)),                                  name => "cross_0", hits => 3);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), ((4100,4107,C_NULL),(4111,4112,4115)),                                    name => "cross_1", hits => 2);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_IGNORE), ((4201,C_NULL),(4212,4215)),                name => "cross_2", hits => 4);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL_IGNORE), ((4302,4304,4306),(4315,C_NULL,C_NULL)),    name => "cross_3", hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,RAN_ILLEGAL), ((4402,C_NULL),(4415,4417)),              name => "cross_4", hits => 3);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_ILLEGAL), ((4505,4506),(4516,C_NULL)),              name => "cross_5", hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_IGNORE), ((4601,4609),(4611,4613)),                         name => "cross_6", hits => 6);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), ((4701,4702,4703,4704),(4715,4716,C_NULL,C_NULL)), name => "cross_7", hits => 2);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL), ((4803,C_NULL),(4817,4819)),                      name => "cross_8", hits => 3);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL), ((4901,4902,4903),(4917,C_NULL,C_NULL)),          name => "cross_9", hits => 1);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL), ((5000,C_NULL),(5010,5050)),               name => "cross_10", hits => 3);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE), ((5105,5110,5115),(5150,C_NULL,C_NULL)),   name => "cross_11", hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 4000), (4010,4015,4019),                                      name => "cross_0", hits => 3);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), (4100,4107), (4111,4112,4115),                                      name => "cross_1", hits => 2);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_IGNORE),   (0 => 4201), (4212,4215),           name => "cross_2", hits => 4);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL_IGNORE),   (4302,4304,4306), (0 => 4315),      name => "cross_3", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,RAN_ILLEGAL), (0 => 4402), (4415,4417),           name => "cross_4", hits => 3);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_ILLEGAL), (4505,4506), (0 => 4516),           name => "cross_5", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_IGNORE),          (4601,4609), (4611,4613),           name => "cross_6", hits => 6);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL),          (4701,4702,4703,4704), (4715,4716), name => "cross_7", hits => 2);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL),         (0 => 4803), (4817,4819),           name => "cross_8", hits => 3);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL),         (4901,4902,4903), (0 => 4917),      name => "cross_9", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL),  (0 => 5000), (5010,5050),           name => "cross_10", hits => 3);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE),  (5105,5110,5115), (0 => 5150),      name => "cross_11", hits => 1);
 
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_cross_x2, 100.0);
@@ -1280,7 +1287,7 @@ begin
         v_min_hits := v_rand.rand(1,20);
         v_cross_x2_b.add_cross(bin(v_bin_val), bin(v_bin_val+100), v_min_hits);
 
-        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => v_bin_val),(0 => v_bin_val+100)), v_min_hits);
+        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => v_bin_val), (0 => v_bin_val+100), v_min_hits);
 
         -- Check the coverage increases when the bin is sampled until it is 100%
         for j in 0 to v_min_hits-1 loop
@@ -1290,7 +1297,7 @@ begin
         check_coverage(v_cross_x2_b, 100.0);
 
         v_bin_idx := v_bin_idx-1;
-        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => v_bin_val),(0 => v_bin_val+100)), v_min_hits, hits => v_min_hits);
+        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => v_bin_val), (0 => v_bin_val+100), v_min_hits, hits => v_min_hits);
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
@@ -1305,11 +1312,11 @@ begin
       v_cross_x2_b.add_cross(bin(1003), bin(2003), 5, 1, "my_bin_3");
       v_cross_x2_b.add_cross(bin(1004), bin(2004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
 
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1000),(0 => 2000)));
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1001),(0 => 2001)), name => "my_bin_1");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1002),(0 => 2002)), 5, name => "my_bin_2");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1003),(0 => 2003)), 5, 1, name => "my_bin_3");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), ((0 => 1004),(0 => 2004)), 5, 1, name => "my_bin_long_name_abc");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1000), (0 => 2000));
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1001), (0 => 2001), name => "my_bin_1");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1002), (0 => 2002), 5, name => "my_bin_2");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1004), (0 => 2004), 5, 1, name => "my_bin_long_name_abc");
 
       v_cross_x2_b.print_summary(VERBOSE);
 
@@ -1341,7 +1348,7 @@ begin
       end loop;
 
       for i in 1 to 50 loop
-        check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((0 => i),(0 => 100)), v_min_hits, hits => v_min_hits);
+        check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => i), (0 => 100), v_min_hits, hits => v_min_hits);
       end loop;
       check_coverage(v_cross_x2, 100.0);
 
@@ -1361,11 +1368,11 @@ begin
         v_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((200,201,202),(205,206,207)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((210,211,212),(215,216,217)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((220,221,222),(225,226,227)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((230,231,232),(235,236,237)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((240,241,242),(245,246,247)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (200,201,202), (205,206,207), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (210,211,212), (215,216,217), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (220,221,222), (225,226,227), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (230,231,232), (235,236,237), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (240,241,242), (245,246,247), v_min_hits, hits => v_min_hits);
       check_coverage(v_cross_x2, 100.0);
 
       ------------------------------------------------------------
@@ -1384,11 +1391,11 @@ begin
         v_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((300,304),(305,309)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((310,314),(315,319)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((320,324),(325,329)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((330,334),(335,339)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), ((340,344),(345,349)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (300,304), (305,309), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (310,314), (315,319), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (320,324), (325,329), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (330,334), (335,339), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (340,344), (345,349), v_min_hits, hits => v_min_hits);
       check_coverage(v_cross_x2, 100.0);
 
       ------------------------------------------------------------
@@ -1407,11 +1414,11 @@ begin
         v_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((400,402,404),(405,407,409)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((410,412,414),(415,417,419)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((420,422,424),(425,427,429)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((430,432,434),(439,437,435)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), ((440,442,442),(445,445,449)), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (400,402,404), (405,407,409), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (410,412,414), (415,417,419), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (420,422,424), (425,427,429), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (430,432,434), (439,437,435), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (440,442,442), (445,445,449), v_min_hits, hits => v_min_hits);
       check_coverage(v_cross_x2, 100.0);
 
       ------------------------------------------------------------
@@ -1429,10 +1436,10 @@ begin
         v_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), ((60,C_NULL,C_NULL,C_NULL,C_NULL),(250,251,252,253,254)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), ((70,C_NULL),(352,355)),                                  v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,VAL), ((450,452,454,456,458),(80,C_NULL,C_NULL,C_NULL,C_NULL)), v_min_hits, hits => v_min_hits);
-      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), ((360,369,C_NULL,C_NULL,C_NULL),(466,463,463,464,461)),   v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 60), (250,251,252,253,254), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 70), (352,355),             v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,VAL), (450,452,454,456,458), (0 => 80), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,TRN), (360,369), (466,463,463,464,461), v_min_hits, hits => v_min_hits);
       check_coverage(v_cross_x2, 100.0);
 
       ------------------------------------------------------------
@@ -1467,12 +1474,12 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Checking that ignore and invalid bins were never selected during randomization");
       ------------------------------------------------------------
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), ((0 => 2000),(0 => 2001)),             hits => 0, name => "bin_0");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), ((2100,2109),(2110,2115)),             hits => 0, name => "bin_1");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), ((2201,2203,2205),(2212,2214,2216)),   hits => 0, name => "bin_2");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), ((0 => 3000),(0 => 3001)),           hits => 0, name => "bin_3");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), ((3100,3109),(3110,3115)),           hits => 0, name => "bin_4");
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), ((3201,3203,3205),(3212,3214,3216)), hits => 0, name => "bin_5");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 2000), (0 => 2001),             hits => 0, name => "bin_0");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (2100,2109), (2110,2115),             hits => 0, name => "bin_1");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2205), (2212,2214,2216),   hits => 0, name => "bin_2");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => 3000), (0 => 3001),           hits => 0, name => "bin_3");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (3100,3109), (3110,3115),           hits => 0, name => "bin_4");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3205), (3212,3214,3216), hits => 0, name => "bin_5");
 
       v_cross_x2.print_summary(VERBOSE);
 

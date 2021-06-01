@@ -698,14 +698,6 @@ begin
       v_coverpoint_b.print_summary(VERBOSE);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing coverpoint name and scope");
-      ------------------------------------------------------------
-      v_coverpoint_b.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
-      check_value("MY_COVERPOINT_2_abcd", v_coverpoint_b.get_name(VOID), ERROR, "Checking name");
-      v_coverpoint_b.set_scope("MY_SCOPE_2");
-      check_value("MY_SCOPE_2", v_coverpoint_b.get_scope(VOID), ERROR, "Checking scope");
-
-      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
       ------------------------------------------------------------
       v_coverpoint_b.add_bins(bin(1000));
@@ -790,239 +782,13 @@ begin
 
       v_coverpoint_b.print_summary(VERBOSE);
 
-    --===================================================================================
-    elsif GC_TESTCASE = "fc_rand_bin" then
-    --===================================================================================
-      disable_log_msg(ID_FUNCT_COV_SAMPLE);
-
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");
+      log(ID_LOG_HDR, "Testing coverpoint name and scope");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(ignore_bin(2000), "bin_0");
-      v_coverpoint.add_bins(ignore_bin_range(2100,2109), "bin_1");
-      v_coverpoint.add_bins(ignore_bin_transition((2201,2203,2205,2209)), "bin_2");
-      v_coverpoint.add_bins(illegal_bin(3000), "bin_3");
-      v_coverpoint.add_bins(illegal_bin_range(3100,3109), "bin_4");
-      v_coverpoint.add_bins(illegal_bin_transition((3201,3203,3205,3209)), "bin_5");
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization among bins with single values");
-      ------------------------------------------------------------
-      v_min_hits := 1;
-      v_coverpoint.add_bins(bin_range(1,50));
-
-      -- Randomize and sample the exact number of times to cover all bins
-      for i in 1 to 50*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
-      end loop;
-
-      for i in 1 to 50 loop
-        check_bin(v_coverpoint, v_bin_idx, VAL, i, v_min_hits, hits => v_min_hits);
-      end loop;
-      check_coverage(v_coverpoint, 100.0);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization among bins with multiple values");
-      ------------------------------------------------------------
-      v_min_hits := 2;
-      v_coverpoint.add_bins(bin((200,201,202,203,204)), v_min_hits);
-      v_coverpoint.add_bins(bin((210,211,212,213,214)), v_min_hits);
-      v_coverpoint.add_bins(bin((220,221,222,223,224)), v_min_hits);
-      v_coverpoint.add_bins(bin((230,231,232,233,234)), v_min_hits);
-      v_coverpoint.add_bins(bin((240,241,242,243,244)), v_min_hits);
-
-      -- Randomize and sample the exact number of times to cover all bins
-      for i in 1 to 5*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
-      end loop;
-
-      check_bin(v_coverpoint, v_bin_idx, VAL, (200,201,202,203,204), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, VAL, (210,211,212,213,214), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, VAL, (220,221,222,223,224), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, VAL, (230,231,232,233,234), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, VAL, (240,241,242,243,244), v_min_hits, hits => v_min_hits);
-      check_coverage(v_coverpoint, 100.0);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
-      ------------------------------------------------------------
-      v_min_hits := 3;
-      v_coverpoint.add_bins(bin_range(300,309,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(310,319,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(320,329,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(330,339,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(340,349,1), v_min_hits);
-
-      -- Randomize and sample the exact number of times to cover all bins
-      for i in 1 to 5*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
-      end loop;
-
-      check_bin(v_coverpoint, v_bin_idx, RAN, (300,309), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, RAN, (310,319), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, RAN, (320,329), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, RAN, (330,339), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, RAN, (340,349), v_min_hits, hits => v_min_hits);
-      check_coverage(v_coverpoint, 100.0);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization among bins with a transition of values");
-      ------------------------------------------------------------
-      v_min_hits := 4;
-      v_coverpoint.add_bins(bin_transition((400,402,404,406,408)), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((410,412,414,416,418)), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((420,422,424,426,428)), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((438,436,434,432,430)), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((440,443,443,447,443)), v_min_hits);
-
-      -- Randomize and sample the exact number of times to cover all bins
-      for i in 1 to 5*5*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
-      end loop;
-
-      check_bin(v_coverpoint, v_bin_idx, TRN, (400,402,404,406,408), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (410,412,414,416,418), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (420,422,424,426,428), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (438,436,434,432,430), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (440,443,443,447,443), v_min_hits, hits => v_min_hits);
-      check_coverage(v_coverpoint, 100.0);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization among different types of bins");
-      ------------------------------------------------------------
-      v_min_hits := 5;
-      v_coverpoint.add_bins(bin(60), v_min_hits);
-      v_coverpoint.add_bins(bin((250,251,252,253,254)), v_min_hits);
-      v_coverpoint.add_bins(bin_range(350,359,1), v_min_hits);
-      v_coverpoint.add_bins(bin_transition((450,452,452,458,455)), v_min_hits);
-
-      -- Randomize and sample the exact number of times to cover all bins
-      for i in 1 to (3+5)*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
-      end loop;
-
-      check_bin(v_coverpoint, v_bin_idx, VAL, 60,                    v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, VAL, (250,251,252,253,254), v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, RAN, (350,359),             v_min_hits, hits => v_min_hits);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (450,452,452,458,455), v_min_hits, hits => v_min_hits);
-      check_coverage(v_coverpoint, 100.0);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing all bins are selected for randomization when coverage is complete");
-      ------------------------------------------------------------
-      disable_log_msg(ID_FUNCT_COV_RAND);
-
-      log(ID_SEQUENCER, "Calling rand() 1000 times");
-      for i in 1 to 1000 loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
-      end loop;
-
-      -- By checking that the number of hits in the bins is greater than their minimum coverage,
-      -- we can assure that every bin was selected for randomization after the previous tests.
-      for i in 0 to v_bin_idx-1 loop
-        if i < 50 then
-          check_bin_hits_is_greater(v_coverpoint, i, 1);
-        elsif i < 55 then
-          check_bin_hits_is_greater(v_coverpoint, i, 2);
-        elsif i < 60 then
-          check_bin_hits_is_greater(v_coverpoint, i, 3);
-        elsif i < 65 then
-          check_bin_hits_is_greater(v_coverpoint, i, 4);
-        elsif i < 69 then
-          check_bin_hits_is_greater(v_coverpoint, i, 5);
-        else
-          alert(TB_ERROR, "check_bin_hits_is_greater() => Unexpected bin_idx: " & to_string(i));
-        end if;
-      end loop;
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Checking that ignore and invalid bins were never selected during randomization");
-      ------------------------------------------------------------
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 2000,                   hits => 0, name => "bin_0");
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (2100,2109),            hits => 0, name => "bin_1");
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2205,2209),  hits => 0, name => "bin_2");
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 3000,                  hits => 0, name => "bin_3");
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109),           hits => 0, name => "bin_4");
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 0, name => "bin_5");
-
-      v_coverpoint.print_summary(VERBOSE);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
-      ------------------------------------------------------------
-      disable_log_msg(ID_FUNCT_COV_RAND);
-
-      -- The adaptive randomization weight will ensure that all bins are covered
-      -- almost at the same time, i.e. around the same number of iterations.
-      v_coverpoint_b.add_bins(bin(1), 100);
-      v_coverpoint_b.add_bins(bin(2), 100);
-      v_coverpoint_b.add_bins(bin(3), 100);
-      v_coverpoint_b.add_bins(bin(4), 100);
-      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
-
-      v_coverpoint_b.add_bins(bin(5), 100);
-      v_coverpoint_b.add_bins(bin(6), 200);
-      v_coverpoint_b.add_bins(bin(7), 300);
-      v_coverpoint_b.add_bins(bin(8), 400);
-      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
-
-      v_coverpoint_b.add_bins(bin(9), 500);
-      v_coverpoint_b.add_bins(bin(10), 50);
-      v_coverpoint_b.add_bins(bin(11), 50);
-      randomize_and_check_distribution(v_coverpoint_b, (600,600,600));
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing randomization weight - Explicit");
-      ------------------------------------------------------------
-      -- When using explicit randomization weights the bins will be covered
-      -- at different times, depending also on the min_hits parameter.
-      -- The iteration number when the bin will be covered can be estimated by
-      -- using the formula: iteration = min_hits / probability
-      -- Note that when a bin has been covered it will no longer be selected
-      -- for randomization, so the probability for the other bins will change,
-      -- which needs to be taken into account in the formula.
-      v_coverpoint_b.add_bins(bin(12), 100, 1);
-      v_coverpoint_b.add_bins(bin(13), 100, 1);
-      v_coverpoint_b.add_bins(bin(14), 100, 1);
-      v_coverpoint_b.add_bins(bin(15), 100, 1);
-      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
-
-      v_coverpoint_b.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
-      v_coverpoint_b.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
-      v_coverpoint_b.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
-      v_coverpoint_b.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
-      randomize_and_check_distribution(v_coverpoint_b, (400,350,300,250));
-
-      v_coverpoint_b.add_bins(bin(20), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
-      v_coverpoint_b.add_bins(bin(21), 100, 50);  -- prob=0.25               iteration = 300
-      v_coverpoint_b.add_bins(bin(22), 100, 50);  -- prob=0.25               iteration = 300
-      randomize_and_check_distribution(v_coverpoint_b, (200,300,300));
-
-      v_coverpoint_b.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
-      v_coverpoint_b.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
-      v_coverpoint_b.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
-      v_coverpoint_b.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
-      randomize_and_check_distribution(v_coverpoint_b, (400,700,900,1000));
-
-      v_coverpoint_b.add_bins(bin(27), 100, 1);
-      v_coverpoint_b.add_bins(bin(28), 200, 2);
-      v_coverpoint_b.add_bins(bin(29), 300, 3);
-      v_coverpoint_b.add_bins(bin(30), 400, 4);
-      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
-
-      v_coverpoint_b.add_bins(bin(27), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
-      v_coverpoint_b.add_bins(bin(28), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
-      v_coverpoint_b.add_bins(bin(29), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
-      v_coverpoint_b.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
-      randomize_and_check_distribution(v_coverpoint_b, (250,500,750,1000));
-
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+      check_value("MY_COVERPOINT_2_abcd", v_coverpoint_b.get_name(VOID), ERROR, "Checking name");
+      v_coverpoint_b.set_scope("MY_SCOPE_2");
+      check_value("MY_SCOPE_2", v_coverpoint_b.get_scope(VOID), ERROR, "Checking scope");
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then
@@ -1312,13 +1078,11 @@ begin
       v_cross_x2_b.add_cross(bin(1001), bin(2001), "my_bin_1");
       v_cross_x2_b.add_cross(bin(1002), bin(2002), 5, "my_bin_2");
       v_cross_x2_b.add_cross(bin(1003), bin(2003), 5, 1, "my_bin_3");
-      v_cross_x2_b.add_cross(bin(1004), bin(2004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
 
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1000), (0 => 2000));
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1001), (0 => 2001), name => "my_bin_1");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1002), (0 => 2002), 5, name => "my_bin_2");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1004), (0 => 2004), 5, 1, name => "my_bin_long_name_abc");
 
       v_cross_x2_b.print_summary(VERBOSE);
 
@@ -1448,6 +1212,240 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, 1, name => "my_bin_3");
 
       v_cross_x2_b.print_summary(VERBOSE);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "fc_rand_bin" then
+    --===================================================================================
+      disable_log_msg(ID_FUNCT_COV_SAMPLE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(ignore_bin(2000), "bin_0");
+      v_coverpoint.add_bins(ignore_bin_range(2100,2109), "bin_1");
+      v_coverpoint.add_bins(ignore_bin_transition((2201,2203,2205,2209)), "bin_2");
+      v_coverpoint.add_bins(illegal_bin(3000), "bin_3");
+      v_coverpoint.add_bins(illegal_bin_range(3100,3109), "bin_4");
+      v_coverpoint.add_bins(illegal_bin_transition((3201,3203,3205,3209)), "bin_5");
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with single values");
+      ------------------------------------------------------------
+      v_min_hits := 1;
+      v_coverpoint.add_bins(bin_range(1,50));
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 50*v_min_hits loop
+        v_value := v_coverpoint.rand(VOID);
+        v_coverpoint.sample_coverage(v_value);
+      end loop;
+
+      for i in 1 to 50 loop
+        check_bin(v_coverpoint, v_bin_idx, VAL, i, v_min_hits, hits => v_min_hits);
+      end loop;
+      check_coverage(v_coverpoint, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with multiple values");
+      ------------------------------------------------------------
+      v_min_hits := 2;
+      v_coverpoint.add_bins(bin((200,201,202,203,204)), v_min_hits);
+      v_coverpoint.add_bins(bin((210,211,212,213,214)), v_min_hits);
+      v_coverpoint.add_bins(bin((220,221,222,223,224)), v_min_hits);
+      v_coverpoint.add_bins(bin((230,231,232,233,234)), v_min_hits);
+      v_coverpoint.add_bins(bin((240,241,242,243,244)), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 5*v_min_hits loop
+        v_value := v_coverpoint.rand(VOID);
+        v_coverpoint.sample_coverage(v_value);
+      end loop;
+
+      check_bin(v_coverpoint, v_bin_idx, VAL, (200,201,202,203,204), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, VAL, (210,211,212,213,214), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, VAL, (220,221,222,223,224), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, VAL, (230,231,232,233,234), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, VAL, (240,241,242,243,244), v_min_hits, hits => v_min_hits);
+      check_coverage(v_coverpoint, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
+      ------------------------------------------------------------
+      v_min_hits := 3;
+      v_coverpoint.add_bins(bin_range(300,309,1), v_min_hits);
+      v_coverpoint.add_bins(bin_range(310,319,1), v_min_hits);
+      v_coverpoint.add_bins(bin_range(320,329,1), v_min_hits);
+      v_coverpoint.add_bins(bin_range(330,339,1), v_min_hits);
+      v_coverpoint.add_bins(bin_range(340,349,1), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 5*v_min_hits loop
+        v_value := v_coverpoint.rand(VOID);
+        v_coverpoint.sample_coverage(v_value);
+      end loop;
+
+      check_bin(v_coverpoint, v_bin_idx, RAN, (300,309), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, RAN, (310,319), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, RAN, (320,329), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, RAN, (330,339), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, RAN, (340,349), v_min_hits, hits => v_min_hits);
+      check_coverage(v_coverpoint, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among bins with a transition of values");
+      ------------------------------------------------------------
+      v_min_hits := 4;
+      v_coverpoint.add_bins(bin_transition((400,402,404,406,408)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((410,412,414,416,418)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((420,422,424,426,428)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((438,436,434,432,430)), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((440,443,443,447,443)), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to 5*5*v_min_hits loop
+        v_value := v_coverpoint.rand(VOID);
+        v_coverpoint.sample_coverage(v_value);
+      end loop;
+
+      check_bin(v_coverpoint, v_bin_idx, TRN, (400,402,404,406,408), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (410,412,414,416,418), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (420,422,424,426,428), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (438,436,434,432,430), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (440,443,443,447,443), v_min_hits, hits => v_min_hits);
+      check_coverage(v_coverpoint, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization among different types of bins");
+      ------------------------------------------------------------
+      v_min_hits := 5;
+      v_coverpoint.add_bins(bin(60), v_min_hits);
+      v_coverpoint.add_bins(bin((250,251,252,253,254)), v_min_hits);
+      v_coverpoint.add_bins(bin_range(350,359,1), v_min_hits);
+      v_coverpoint.add_bins(bin_transition((450,452,452,458,455)), v_min_hits);
+
+      -- Randomize and sample the exact number of times to cover all bins
+      for i in 1 to (3+5)*v_min_hits loop
+        v_value := v_coverpoint.rand(VOID);
+        v_coverpoint.sample_coverage(v_value);
+      end loop;
+
+      check_bin(v_coverpoint, v_bin_idx, VAL, 60,                    v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, VAL, (250,251,252,253,254), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, RAN, (350,359),             v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (450,452,452,458,455), v_min_hits, hits => v_min_hits);
+      check_coverage(v_coverpoint, 100.0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing all bins are selected for randomization when coverage is complete");
+      ------------------------------------------------------------
+      disable_log_msg(ID_FUNCT_COV_RAND);
+
+      log(ID_SEQUENCER, "Calling rand() 1000 times");
+      for i in 1 to 1000 loop
+        v_value := v_coverpoint.rand(VOID);
+        v_coverpoint.sample_coverage(v_value);
+      end loop;
+
+      -- By checking that the number of hits in the bins is greater than their minimum coverage,
+      -- we can assure that every bin was selected for randomization after the previous tests.
+      for i in 0 to v_bin_idx-1 loop
+        if i < 50 then
+          check_bin_hits_is_greater(v_coverpoint, i, 1);
+        elsif i < 55 then
+          check_bin_hits_is_greater(v_coverpoint, i, 2);
+        elsif i < 60 then
+          check_bin_hits_is_greater(v_coverpoint, i, 3);
+        elsif i < 65 then
+          check_bin_hits_is_greater(v_coverpoint, i, 4);
+        elsif i < 69 then
+          check_bin_hits_is_greater(v_coverpoint, i, 5);
+        else
+          alert(TB_ERROR, "check_bin_hits_is_greater() => Unexpected bin_idx: " & to_string(i));
+        end if;
+      end loop;
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Checking that ignore and invalid bins were never selected during randomization");
+      ------------------------------------------------------------
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 2000,                   hits => 0, name => "bin_0");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (2100,2109),            hits => 0, name => "bin_1");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2205,2209),  hits => 0, name => "bin_2");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 3000,                  hits => 0, name => "bin_3");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109),           hits => 0, name => "bin_4");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 0, name => "bin_5");
+
+      v_coverpoint.print_summary(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
+      ------------------------------------------------------------
+      disable_log_msg(ID_FUNCT_COV_RAND);
+
+      -- The adaptive randomization weight will ensure that all bins are covered
+      -- almost at the same time, i.e. around the same number of iterations.
+      v_coverpoint_b.add_bins(bin(1), 100);
+      v_coverpoint_b.add_bins(bin(2), 100);
+      v_coverpoint_b.add_bins(bin(3), 100);
+      v_coverpoint_b.add_bins(bin(4), 100);
+      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
+
+      v_coverpoint_b.add_bins(bin(5), 100);
+      v_coverpoint_b.add_bins(bin(6), 200);
+      v_coverpoint_b.add_bins(bin(7), 300);
+      v_coverpoint_b.add_bins(bin(8), 400);
+      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
+
+      v_coverpoint_b.add_bins(bin(9), 500);
+      v_coverpoint_b.add_bins(bin(10), 50);
+      v_coverpoint_b.add_bins(bin(11), 50);
+      randomize_and_check_distribution(v_coverpoint_b, (600,600,600));
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing randomization weight - Explicit");
+      ------------------------------------------------------------
+      -- When using explicit randomization weights the bins will be covered
+      -- at different times, depending also on the min_hits parameter.
+      -- The iteration number when the bin will be covered can be estimated by
+      -- using the formula: iteration = min_hits / probability
+      -- Note that when a bin has been covered it will no longer be selected
+      -- for randomization, so the probability for the other bins will change,
+      -- which needs to be taken into account in the formula.
+      v_coverpoint_b.add_bins(bin(12), 100, 1);
+      v_coverpoint_b.add_bins(bin(13), 100, 1);
+      v_coverpoint_b.add_bins(bin(14), 100, 1);
+      v_coverpoint_b.add_bins(bin(15), 100, 1);
+      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
+
+      v_coverpoint_b.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
+      v_coverpoint_b.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
+      v_coverpoint_b.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
+      v_coverpoint_b.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      randomize_and_check_distribution(v_coverpoint_b, (400,350,300,250));
+
+      v_coverpoint_b.add_bins(bin(20), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
+      v_coverpoint_b.add_bins(bin(21), 100, 50);  -- prob=0.25               iteration = 300
+      v_coverpoint_b.add_bins(bin(22), 100, 50);  -- prob=0.25               iteration = 300
+      randomize_and_check_distribution(v_coverpoint_b, (200,300,300));
+
+      v_coverpoint_b.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
+      v_coverpoint_b.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
+      v_coverpoint_b.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
+      v_coverpoint_b.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
+      randomize_and_check_distribution(v_coverpoint_b, (400,700,900,1000));
+
+      v_coverpoint_b.add_bins(bin(27), 100, 1);
+      v_coverpoint_b.add_bins(bin(28), 200, 2);
+      v_coverpoint_b.add_bins(bin(29), 300, 3);
+      v_coverpoint_b.add_bins(bin(30), 400, 4);
+      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
+
+      v_coverpoint_b.add_bins(bin(27), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      v_coverpoint_b.add_bins(bin(28), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
+      v_coverpoint_b.add_bins(bin(29), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
+      v_coverpoint_b.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
+      randomize_and_check_distribution(v_coverpoint_b, (250,500,750,1000));
+
+      v_coverpoint_b.print_summary(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_cross" then

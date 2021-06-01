@@ -2107,7 +2107,7 @@ package body funct_cov_pkg is
       end if;
 
       -- Check if the values should be ignored or are illegal
-      l_bin_loop : for i in 0 to priv_invalid_bins_idx-1 loop
+      for i in 0 to priv_invalid_bins_idx-1 loop
         for j in 0 to priv_num_bins_crossed-1 loop
           case priv_invalid_bins(i).cross_bins(j).contains is
             when VAL | VAL_IGNORE | VAL_ILLEGAL =>
@@ -2144,7 +2144,6 @@ package body funct_cov_pkg is
           priv_invalid_bins(i).hits := priv_invalid_bins(i).hits + 1;
           if v_illegal_match_idx /= -1 then
             alert(priv_illegal_bin_alert_level, get_name_prefix(VOID) & v_proc_call.all & "=> Sampled " & get_bin_info(priv_invalid_bins(i).cross_bins(v_illegal_match_idx)), priv_scope);
-            exit l_bin_loop;
           end if;
         end if;
         v_value_match       := (others => '0');

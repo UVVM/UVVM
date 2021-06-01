@@ -713,7 +713,7 @@ begin
       v_coverpoint_b.print_summary(VERBOSE);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing bin overlap");
+      log(ID_LOG_HDR, "Testing bin overlap - valid bins");
       ------------------------------------------------------------
       v_coverpoint_b.add_bins(bin(2000));
       v_coverpoint_b.add_bins(bin(2000));
@@ -722,6 +722,7 @@ begin
       v_coverpoint_b.add_bins(bin((2114,2115,2116,2117)));
       v_coverpoint_b.add_bins(bin_range(2200,2250,1));
       v_coverpoint_b.add_bins(bin_range(2249,2299,1));
+
       sample_bins(v_coverpoint_b, (2000,2001), 1);
       sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
       sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
@@ -731,6 +732,51 @@ begin
       sample_bins(v_coverpoint_b, (2000,2001), 1);
       sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
       sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
+
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2000, hits => 2);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2000, hits => 2);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2000, hits => 2);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, (2100,2101,2102,2113,2114), hits => 4);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, (2114,2115,2116,2117), hits => 4);
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (2200,2250), hits => 6);
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (2249,2299), hits => 6);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin overlap - valid and ignore bins");
+      ------------------------------------------------------------
+      v_coverpoint_b.add_bins(bin_range(3000,3020,1), "bin");
+      v_coverpoint_b.add_bins(ignore_bin_range(3005,3015));
+
+      sample_bins(v_coverpoint_b, (3000,3004,3005,3006,3014,3015,3016,3020), 1);
+
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3000,3020), hits => 4, name => "bin");
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (3005,3015), hits => 4);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin overlap - valid and illegal bins");
+      ------------------------------------------------------------
+      v_coverpoint_b.add_bins(bin_range(3100,3120,1), "bin");
+      v_coverpoint_b.add_bins(illegal_bin_range(3105,3115));
+
+      v_coverpoint_b.set_illegal_bin_alert_level(WARNING);
+      increment_expected_alerts(WARNING,4);
+      sample_bins(v_coverpoint_b, (3100,3104,3105,3106,3114,3115,3116,3120), 1);
+
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3100,3120), hits => 4, name => "bin");
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (3105,3115), hits => 4);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin overlap - ignore and illegal bins");
+      ------------------------------------------------------------
+      v_coverpoint_b.add_bins(ignore_bin_range(3200,3220));
+      v_coverpoint_b.add_bins(illegal_bin_range(3205,3215));
+
+      increment_expected_alerts(WARNING,4);
+      sample_bins(v_coverpoint_b, (3200,3204,3205,3206,3214,3215,3216,3220), 1);
+
+      -- Illegal bin takes precedence over ignore bin, even though both are counted
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (3200,3220), hits => 8);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (3205,3215), hits => 4);
 
       v_coverpoint_b.print_summary(VERBOSE);
 

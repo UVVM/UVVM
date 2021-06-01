@@ -35,6 +35,8 @@ architecture func of funct_cov_tb is
 
   shared variable v_coverpoint   : t_coverpoint;
   shared variable v_coverpoint_b : t_coverpoint;
+  shared variable v_coverpoint_c : t_coverpoint;
+  shared variable v_coverpoint_d : t_coverpoint;
   shared variable v_cross_x2     : t_coverpoint;
   shared variable v_cross_x2_b   : t_coverpoint;
   shared variable v_cross_x3     : t_coverpoint;
@@ -1317,6 +1319,133 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1002), (0 => 2002), 5, name => "my_bin_2");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1004), (0 => 2004), 5, 1, name => "my_bin_long_name_abc");
+
+      v_cross_x2_b.print_summary(VERBOSE);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "fc_cross_covpt" then
+    --===================================================================================
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of coverpoints with different bins");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(bin(100));
+      v_coverpoint.add_bins(bin_range(200,207,1));
+      v_coverpoint.add_bins(ignore_bin(300));
+      v_coverpoint.add_bins(ignore_bin_range(400,407));
+      v_coverpoint.add_bins(illegal_bin_transition((501,503,505)));
+
+      v_coverpoint_b.add_bins(bin((1002,1004,1006)));
+      v_coverpoint_b.add_bins(bin_transition((1116,1117,1118)));
+      v_coverpoint_b.add_bins(ignore_bin_transition((1212,1214,1216)));
+      v_coverpoint_b.add_bins(illegal_bin(1310));
+      v_coverpoint_b.add_bins(illegal_bin_range(1415,1419));
+
+      v_cross_x2.add_cross(v_coverpoint, v_coverpoint_b);
+
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (VAL,VAL),                 (0 => 100), (1002,1004,1006),    name => "bin_0");
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (VAL,TRN),                 (0 => 100), (1116,1117,1118),    name => "bin_1");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,TRN_IGNORE),          (0 => 100), (1212,1214,1216),    name => "bin_2");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,VAL_ILLEGAL),         (0 => 100), (0 => 1310),         name => "bin_3");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL),         (0 => 100), (1415,1419),         name => "bin_4");
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (RAN,VAL),                 (200,207), (1002,1004,1006),     name => "bin_5");
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (RAN,TRN),                 (200,207), (1116,1117,1118),     name => "bin_6");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,TRN_IGNORE),          (200,207), (1212,1214,1216),     name => "bin_7");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,VAL_ILLEGAL),         (200,207), (0 => 1310),          name => "bin_8");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,RAN_ILLEGAL),         (200,207), (1415,1419),          name => "bin_9");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL),          (0 => 300), (1002,1004,1006),    name => "bin_10");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,TRN),          (0 => 300), (1116,1117,1118),    name => "bin_11");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,TRN_IGNORE),   (0 => 300), (1212,1214,1216),    name => "bin_12");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_ILLEGAL),  (0 => 300), (0 => 1310),         name => "bin_13");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL),  (0 => 300), (1415,1419),         name => "bin_14");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,VAL),          (400,407), (1002,1004,1006),     name => "bin_15");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,TRN),          (400,407), (1116,1117,1118),     name => "bin_16");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,TRN_IGNORE),   (400,407), (1212,1214,1216),     name => "bin_17");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,VAL_ILLEGAL),  (400,407), (0 => 1310),          name => "bin_18");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_ILLEGAL),  (400,407), (1415,1419),          name => "bin_19");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL),         (501,503,505), (1002,1004,1006), name => "bin_20");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN),         (501,503,505), (1116,1117,1118), name => "bin_21");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_IGNORE),  (501,503,505), (1212,1214,1216), name => "bin_22");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_ILLEGAL), (501,503,505), (0 => 1310),      name => "bin_23");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,RAN_ILLEGAL), (501,503,505), (1415,1419),      name => "bin_24");
+
+      v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      increment_expected_alerts(WARNING,13);
+      sample_cross_bins(v_cross_x2, ((100,1004),(100,1116),(100,1117),(100,1118),(100,1212),(100,1214),(100,1216),(100,1310),(100,1419)), 1);
+      sample_cross_bins(v_cross_x2, ((200,1004),(201,1116),(202,1117),(203,1118),(204,1212),(205,1214),(206,1216),(207,1310),(206,1419)), 1);
+      sample_cross_bins(v_cross_x2, ((300,1004),(300,1116),(300,1117),(300,1118),(300,1212),(300,1214),(300,1216),(300,1310),(300,1419)), 1);
+      sample_cross_bins(v_cross_x2, ((400,1004),(401,1116),(402,1117),(403,1118),(404,1212),(405,1214),(406,1216),(407,1310),(406,1419)), 1);
+      sample_cross_bins(v_cross_x2, ((501,1004),(503,1004),(505,1004),(501,1116),(503,1117),(505,1118),(501,1212),(503,1214),(505,1216),
+                                     (501,1310),(503,1310),(505,1310),(501,1419),(503,1419),(505,1419)), 1);
+
+      v_bin_idx := v_bin_idx-4;
+      v_invalid_bin_idx := v_invalid_bin_idx-21;
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (VAL,VAL),                 (0 => 100), (1002,1004,1006),    name => "bin_0", hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (VAL,TRN),                 (0 => 100), (1116,1117,1118),    name => "bin_1", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,TRN_IGNORE),          (0 => 100), (1212,1214,1216),    name => "bin_2", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,VAL_ILLEGAL),         (0 => 100), (0 => 1310),         name => "bin_3", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL,RAN_ILLEGAL),         (0 => 100), (1415,1419),         name => "bin_4", hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (RAN,VAL),                 (200,207), (1002,1004,1006),     name => "bin_5", hits => 1);
+      check_cross_bin(v_cross_x2, v_bin_idx,                 (RAN,TRN),                 (200,207), (1116,1117,1118),     name => "bin_6", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,TRN_IGNORE),          (200,207), (1212,1214,1216),     name => "bin_7", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,VAL_ILLEGAL),         (200,207), (0 => 1310),          name => "bin_8", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,RAN_ILLEGAL),         (200,207), (1415,1419),          name => "bin_9", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL),          (0 => 300), (1002,1004,1006),    name => "bin_10", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,TRN),          (0 => 300), (1116,1117,1118),    name => "bin_11", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,TRN_IGNORE),   (0 => 300), (1212,1214,1216),    name => "bin_12", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_ILLEGAL),  (0 => 300), (0 => 1310),         name => "bin_13", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL),  (0 => 300), (1415,1419),         name => "bin_14", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,VAL),          (400,407), (1002,1004,1006),     name => "bin_15", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,TRN),          (400,407), (1116,1117,1118),     name => "bin_16", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,TRN_IGNORE),   (400,407), (1212,1214,1216),     name => "bin_17", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,VAL_ILLEGAL),  (400,407), (0 => 1310),          name => "bin_18", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_ILLEGAL),  (400,407), (1415,1419),          name => "bin_19", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL),         (501,503,505), (1002,1004,1006), name => "bin_20", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN),         (501,503,505), (1116,1117,1118), name => "bin_21", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_IGNORE),  (501,503,505), (1212,1214,1216), name => "bin_22", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_ILLEGAL), (501,503,505), (0 => 1310),      name => "bin_23", hits => 1);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,RAN_ILLEGAL), (501,503,505), (1415,1419),      name => "bin_24", hits => 1);
+
+      check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
+      check_coverage(v_cross_x2, 100.0);
+      v_cross_x2.print_summary(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing minimum coverage");
+      ------------------------------------------------------------
+      v_bin_idx         := 0;
+      v_invalid_bin_idx := 0;
+
+      v_min_hits := v_rand.rand(1,20);
+      v_coverpoint_c.add_bins(bin(100), v_min_hits + 10, "bin_a");
+      v_coverpoint_d.add_bins(bin(200), v_min_hits + 20, "bin_b");
+      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, v_min_hits);
+
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits);
+
+      -- Check the coverage increases when the bin is sampled until it is 100%
+      for j in 0 to v_min_hits-1 loop
+        check_coverage(v_cross_x2_b, 100.0*real(j)/real(v_min_hits));
+        sample_cross_bins(v_cross_x2_b, (0 => (100,200)), 1);
+      end loop;
+      check_coverage(v_cross_x2_b, 100.0);
+
+      v_bin_idx := v_bin_idx-1;
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits, hits => v_min_hits);
+
+      v_cross_x2_b.print_summary(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing bin names");
+      ------------------------------------------------------------
+      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d);
+      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, "my_bin_1");
+      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, 5, "my_bin_2");
+      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, 5, 1, "my_bin_3");
+
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200));
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), name => "my_bin_1");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, name => "my_bin_2");
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, 1, name => "my_bin_3");
 
       v_cross_x2_b.print_summary(VERBOSE);
 

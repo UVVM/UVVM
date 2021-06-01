@@ -1652,10 +1652,10 @@ package body funct_cov_pkg is
           end if;
         end loop;
         for i in 0 to priv_invalid_bins_idx-1 loop
-          if not find_duplicate_bin(priv_bins, i, cross) then
-            v_new_bin_array(cross).bin_vector(v_num_bins).contains   := priv_bins(i).cross_bins(cross).contains;
-            v_new_bin_array(cross).bin_vector(v_num_bins).values     := priv_bins(i).cross_bins(cross).values;
-            v_new_bin_array(cross).bin_vector(v_num_bins).num_values := priv_bins(i).cross_bins(cross).num_values;
+          if not find_duplicate_bin(priv_invalid_bins, i, cross) then
+            v_new_bin_array(cross).bin_vector(v_num_bins).contains   := priv_invalid_bins(i).cross_bins(cross).contains;
+            v_new_bin_array(cross).bin_vector(v_num_bins).values     := priv_invalid_bins(i).cross_bins(cross).values;
+            v_new_bin_array(cross).bin_vector(v_num_bins).num_values := priv_invalid_bins(i).cross_bins(cross).num_values;
             v_num_bins := v_num_bins + 1;
           end if;
         end loop;

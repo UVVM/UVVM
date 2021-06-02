@@ -69,16 +69,17 @@ begin
     -- ignore/illegal bins. The bin_idx will be incremented at the end of the procedure
     -- so that the bins can be checked sequentially.
     procedure check_bin(
-      variable coverpoint  : inout t_coverpoint;
-      variable bin_idx     : inout natural;
-      constant contains    : in    t_cov_bin_type_array;
-      constant values      : in    t_integer_array;
-      constant min_hits    : in    natural;
-      constant rand_weight : in    integer;
-      constant name        : in    string;
-      constant hits        : in    natural;
-      constant ign_or_ill  : in    boolean;
-      constant proc_call   : in    string) is
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type_array;
+      constant values         : in    t_integer_array;
+      constant min_hits       : in    natural;
+      constant rand_weight    : in    integer;
+      constant name           : in    string;
+      constant hits           : in    natural;
+      constant transition_idx : in    natural;
+      constant ign_or_ill     : in    boolean;
+      constant proc_call      : in    string) is
       variable v_bin          : t_cov_bin;
       variable v_bin_name_idx : natural;
       variable v_num_values   : natural;
@@ -94,26 +95,26 @@ begin
       end if;
 
       for i in 0 to values'length-1 loop
-        check_value(v_bin.cross_bins(i).contains = contains(i),       ERROR, "Checking bin type. Was: " & to_upper(to_string(v_bin.cross_bins(i).contains)) &
+        check_value(v_bin.cross_bins(i).contains = contains(i),         ERROR, "Checking bin type. Was: " & to_upper(to_string(v_bin.cross_bins(i).contains)) &
           ". Expected: " & to_upper(to_string(contains(i))), C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
         v_num_values := 0;
         for j in 0 to values(i)'length-1 loop
           if values(i)(j) /= C_NULL then
-            check_value(v_bin.cross_bins(i).values(j), values(i)(j),  ERROR, "Checking bin values", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+            check_value(v_bin.cross_bins(i).values(j), values(i)(j),    ERROR, "Checking bin values", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
             v_num_values := v_num_values + 1;
           end if;
         end loop;
-        check_value(v_bin.cross_bins(i).num_values, v_num_values,     ERROR, "Checking bin number of values", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
-        check_value(v_bin.cross_bins(i).transition_idx, 0,            ERROR, "Checking bin transition index", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+        check_value(v_bin.cross_bins(i).num_values, v_num_values,       ERROR, "Checking bin number of values", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+        check_value(v_bin.cross_bins(i).transition_idx, transition_idx, ERROR, "Checking bin transition index", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
       end loop;
-      check_value(v_bin.min_hits, min_hits,                           ERROR, "Checking bin minimum hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
-      check_value(v_bin.rand_weight, rand_weight,                     ERROR, "Checking bin randomization weight", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+      check_value(v_bin.min_hits, min_hits,                             ERROR, "Checking bin minimum hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+      check_value(v_bin.rand_weight, rand_weight,                       ERROR, "Checking bin randomization weight", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
       if name = "" then
         check_value(to_string(v_bin.name), "bin_" & to_string(v_bin_name_idx), ERROR, "Checking bin name", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
       else
-        check_value(to_string(v_bin.name), name,                      ERROR, "Checking bin name", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+        check_value(to_string(v_bin.name), name,                        ERROR, "Checking bin name", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
       end if;
-      check_value(v_bin.hits, hits,                                   ERROR, "Checking bin hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
+      check_value(v_bin.hits, hits,                                     ERROR, "Checking bin hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
 
       bin_idx := bin_idx + 1;
       log(ID_POS_ACK, proc_call & " => OK, for " & v_bin.name);
@@ -121,18 +122,19 @@ begin
 
     -- Overload
     procedure check_bin(
-      variable coverpoint  : inout t_coverpoint;
-      variable bin_idx     : inout natural;
-      constant contains    : in    t_cov_bin_type;
-      constant values      : in    integer_vector;
-      constant min_hits    : in    natural := 1;
-      constant rand_weight : in    integer := C_ADAPTIVE_WEIGHT;
-      constant name        : in    string  := "";
-      constant hits        : in    natural := 0) is
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type;
+      constant values         : in    integer_vector;
+      constant min_hits       : in    natural := 1;
+      constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0;
+      constant transition_idx : in    natural := 0) is
       constant C_PROC_NAME : string := "check_bin";
       variable v_values    : t_integer_array(0 to 0)(values'range) := (0 => values);
     begin
-      check_bin(coverpoint, bin_idx, (0 => contains), v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, (0 => contains), v_values, min_hits, rand_weight, name, hits, transition_idx, false, C_PROC_NAME);
     end procedure;
 
     -- Overload
@@ -151,35 +153,37 @@ begin
 
     -- Overload for crossed bins
     procedure check_cross_bin(
-      variable coverpoint  : inout t_coverpoint;
-      variable bin_idx     : inout natural;
-      constant contains    : in    t_cov_bin_type_array;
-      constant values_1    : in    integer_vector;
-      constant values_2    : in    integer_vector;
-      constant min_hits    : in    natural := 1;
-      constant rand_weight : in    integer := C_ADAPTIVE_WEIGHT;
-      constant name        : in    string  := "";
-      constant hits        : in    natural := 0) is
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type_array;
+      constant values_1       : in    integer_vector;
+      constant values_2       : in    integer_vector;
+      constant min_hits       : in    natural := 1;
+      constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0;
+      constant transition_idx : in    natural := 0) is
       constant C_PROC_NAME : string := "check_cross_bin";
       variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
     begin
       v_values(0)(0 to values_1'length-1) := values_1;
       v_values(1)(0 to values_2'length-1) := values_2;
-      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, transition_idx, false, C_PROC_NAME);
     end procedure;
 
     -- Overload for ignore and illegal bins
     procedure check_invalid_bin(
-      variable coverpoint  : inout t_coverpoint;
-      variable bin_idx     : inout natural;
-      constant contains    : in    t_cov_bin_type;
-      constant values      : in    integer_vector;
-      constant name        : in    string  := "";
-      constant hits        : in    natural := 0) is
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type;
+      constant values         : in    integer_vector;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0;
+      constant transition_idx : in    natural := 0) is
       constant C_PROC_NAME : string := "check_invalid_bin";
       variable v_values    : t_integer_array(0 to 0)(values'range) := (0 => values);
     begin
-      check_bin(coverpoint, bin_idx, (0 => contains), v_values, 0, 0, name, hits, true, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, (0 => contains), v_values, 0, 0, name, hits, transition_idx, true, C_PROC_NAME);
     end procedure;
 
     -- Overload for ignore and illegal bins
@@ -196,19 +200,20 @@ begin
 
     -- Overload for ignore and illegal crossed bins
     procedure check_invalid_cross_bin(
-      variable coverpoint  : inout t_coverpoint;
-      variable bin_idx     : inout natural;
-      constant contains    : in    t_cov_bin_type_array;
-      constant values_1    : in    integer_vector;
-      constant values_2    : in    integer_vector;
-      constant name        : in    string  := "";
-      constant hits        : in    natural := 0) is
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type_array;
+      constant values_1       : in    integer_vector;
+      constant values_2       : in    integer_vector;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0;
+      constant transition_idx : in    natural := 0) is
       constant C_PROC_NAME : string := "check_invalid_cross_bin";
       variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
     begin
       v_values(0)(0 to values_1'length-1) := values_1;
       v_values(1)(0 to values_2'length-1) := values_2;
-      check_bin(coverpoint, bin_idx, contains, v_values, 0, 0, name, hits, true, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, contains, v_values, 0, 0, name, hits, transition_idx, true, C_PROC_NAME);
     end procedure;
 
     -- Checks the number of bins in the coverpoint
@@ -359,9 +364,9 @@ begin
     if GC_TESTCASE = "fc_bins" then
     --===================================================================================
       v_coverpoint.set_name("MY_COVERPOINT");
-      check_value("MY_COVERPOINT", v_coverpoint.get_name(VOID), ERROR, "Checking name");
+      check_value(v_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
       v_coverpoint.set_scope("MY_SCOPE");
-      check_value("MY_SCOPE", v_coverpoint.get_scope(VOID), ERROR, "Checking scope");
+      check_value(v_coverpoint.get_scope(VOID), "MY_SCOPE", ERROR, "Checking scope");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with single values");
@@ -671,6 +676,107 @@ begin
       v_coverpoint.print_summary(VERBOSE);
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing transition bin index");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(bin_transition((4001,4003,4005,4009)), "bin");
+      v_coverpoint.add_bins(bin(4100));
+      v_coverpoint.add_bins(ignore_bin(4200));
+      v_invalid_bin_idx := v_invalid_bin_idx+1;
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 0, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample the complete transition");
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001,4003,4005,4009), 2);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 2, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample the complete transition with an incorrect value");
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001,4003,4005,4010), 2);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 2, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a partial transition, then sample the complete transition from the start");
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001,4003), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 2, transition_idx => 2);
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001,4003,4005,4009), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a transition value, then sample a bin value and check index is reset");
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 1);
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4100), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a transition value, then sample an ignore bin value and check index is reset");
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001,4003), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 2);
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4200), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a transition value, then sample a random value and check index is reset");
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4001,4003,4005), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 3);
+      v_bin_idx := v_bin_idx-1;
+      sample_bins(v_coverpoint, (4300), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing ignore transition bin index");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(ignore_bin_transition((4501,4503,4505,4509)), "bin");
+      v_coverpoint.add_bins(bin(4600));
+      v_coverpoint.add_bins(ignore_bin(4700));
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 0, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample the complete transition");
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501,4503,4505,4509), 2);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 2, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample the complete transition with an incorrect value");
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501,4503,4505,4510), 2);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 2, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a partial transition, then sample the complete transition from the start");
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501,4503), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 2, transition_idx => 2);
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501,4503,4505,4509), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a transition value, then sample a bin value and check index is reset");
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 1);
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4600), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a transition value, then sample an ignore bin value and check index is reset");
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501,4503), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 2);
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4700), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+
+      log(ID_SEQUENCER, "Sample a transition value, then sample a random value and check index is reset");
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4501,4503,4505), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 3);
+      v_invalid_bin_idx := v_invalid_bin_idx-1;
+      sample_bins(v_coverpoint, (4800), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
       ------------------------------------------------------------
       v_bin_idx         := 0;
@@ -786,9 +892,9 @@ begin
       log(ID_LOG_HDR, "Testing coverpoint name and scope");
       ------------------------------------------------------------
       v_coverpoint_b.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
-      check_value("MY_COVERPOINT_2_abcd", v_coverpoint_b.get_name(VOID), ERROR, "Checking name");
+      check_value(v_coverpoint_b.get_name(VOID), "MY_COVERPOINT_2_abcd", ERROR, "Checking name");
       v_coverpoint_b.set_scope("MY_SCOPE_2");
-      check_value("MY_SCOPE_2", v_coverpoint_b.get_scope(VOID), ERROR, "Checking scope");
+      check_value(v_coverpoint_b.get_scope(VOID), "MY_SCOPE_2", ERROR, "Checking scope");
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then

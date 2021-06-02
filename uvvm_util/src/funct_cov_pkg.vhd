@@ -2131,6 +2131,9 @@ package body funct_cov_pkg is
                   v_value_match(j)    := '1';
                   v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = TRN_ILLEGAL;
                 end if;
+              -- If the sequence is interrupted by the first value of the transitions, restart the sequence
+              elsif values(j) = priv_invalid_bins(i).cross_bins(j).values(0) then
+                priv_invalid_bins(i).cross_bins(j).transition_idx := 1;
               else
                 priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
               end if;
@@ -2173,6 +2176,9 @@ package body funct_cov_pkg is
                     priv_bins(i).cross_bins(j).transition_idx := 0;
                     v_value_match(j) := '1';
                   end if;
+                -- If the sequence is interrupted by the first value of the transitions, restart the sequence
+                elsif values(j) = priv_bins(i).cross_bins(j).values(0) then
+                  priv_bins(i).cross_bins(j).transition_idx := 1;
                 else
                   priv_bins(i).cross_bins(j).transition_idx := 0;
                 end if;
@@ -2199,6 +2205,15 @@ package body funct_cov_pkg is
         if priv_detect_bin_overlap and v_num_occurrences > 1 then
           alert(TB_WARNING, get_name_prefix(VOID) & "There is an overlap between " & to_string(v_num_occurrences) & " bins.", priv_scope);
         end if;
+      else
+        -- When an ignore or illegal bin is sampled, valid bins won't be sampled so we need to clear all transition indexes in the valid bins
+        for i in 0 to priv_bins_idx-1 loop
+          for j in 0 to priv_num_bins_crossed-1 loop
+            if priv_bins(i).cross_bins(j).contains = TRN then
+              priv_bins(i).cross_bins(j).transition_idx := 0;
+            end if;
+          end loop;
+        end loop;
       end if;
       DEALLOCATE(v_proc_call);
     end procedure;

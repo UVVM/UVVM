@@ -83,6 +83,8 @@ begin
     enable_log_msg(ID_RAND_GEN);
     enable_log_msg(ID_RAND_CONF);
 
+    v_rand.report_config(VOID);
+
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
     --===================================================================================

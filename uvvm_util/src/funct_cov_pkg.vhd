@@ -423,6 +423,9 @@ package funct_cov_pkg is
     procedure print_summary(
       constant verbosity : in t_report_verbosity := NON_VERBOSE);
 
+    procedure report_config(
+      constant VOID : in t_void);
+
   end protected t_coverpoint;
 
 end package funct_cov_pkg;
@@ -2378,6 +2381,49 @@ package body funct_cov_pkg is
           write(v_line, to_string(priv_bins(i).name) & ": " & get_bin_values(priv_bins(i)) & LF);
         end if;
       end loop;
+
+      -- Print report bottom line
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+
+      -- Write the info string to transcript
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
+      write_line_to_log_destination(v_line);
+      DEALLOCATE(v_line);
+    end procedure;
+
+    procedure report_config(
+      constant VOID : in t_void) is
+      constant C_PREFIX        : string := C_LOG_PREFIX & "     ";
+      constant C_COLUMN1_WIDTH : positive := 24;
+      constant C_COLUMN2_WIDTH : positive := MAXIMUM(C_FC_MAX_NAME_LENGTH, C_LOG_SCOPE_WIDTH);
+      variable v_line          : line;
+    begin
+      -- Print report header
+      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+                    "***  REPORT OF COVERPOINT CONFIGURATION ***" & LF &
+                    fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+
+      -- Print report config
+      write(v_line, "          " & justify("INDEX", left, C_COLUMN1_WIDTH)                    & ": " & justify(to_string(priv_id), right, C_COLUMN2_WIDTH) & LF);
+      if priv_id /= C_DEALLOCATED_ID then
+        write(v_line, "          " & justify("NAME", left, C_COLUMN1_WIDTH)                   & ": " & justify(to_string(priv_name), right, C_COLUMN2_WIDTH) & LF);
+      else
+        write(v_line, "          " & justify("NAME", left, C_COLUMN1_WIDTH)                   & ": " & justify("**uninitialized**", right, C_COLUMN2_WIDTH) & LF);
+      end if;
+      write(v_line, "          " & justify("SCOPE", left, C_COLUMN1_WIDTH)                    & ": " & justify(to_string(priv_scope), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("ILLEGAL BIN ALERT LEVEL", left, C_COLUMN1_WIDTH)  & ": " & justify(to_upper(to_string(priv_illegal_bin_alert_level)), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("DETECT BIN OVERLAP", left, C_COLUMN1_WIDTH)       & ": " & justify(to_string(priv_detect_bin_overlap), right, C_COLUMN2_WIDTH) & LF);
+      if priv_id /= C_DEALLOCATED_ID then
+        write(v_line, "          " & justify("COVERAGE WEIGHT", left, C_COLUMN1_WIDTH)        & ": " & justify(to_string(protected_covergroup_status.get_coverage_weight(priv_id)), right, C_COLUMN2_WIDTH) & LF);
+        write(v_line, "          " & justify("COVERAGE GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(protected_covergroup_status.get_coverage_goal(priv_id)), right, C_COLUMN2_WIDTH) & LF);
+      else
+        write(v_line, "          " & justify("COVERAGE WEIGHT", left, C_COLUMN1_WIDTH)        & ": " & justify(to_string(1), right, C_COLUMN2_WIDTH) & LF);
+        write(v_line, "          " & justify("COVERAGE GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
+      end if;
+      write(v_line, "          " & justify("SIMULATION GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("NUMBER OF BINS", left, C_COLUMN1_WIDTH)           & ": " & justify(to_string(priv_bins_idx+priv_invalid_bins_idx), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("CROSS DIMENSIONS", left, C_COLUMN1_WIDTH)         & ": " & justify(to_string(priv_num_bins_crossed), right, C_COLUMN2_WIDTH) & LF);
 
       -- Print report bottom line
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);

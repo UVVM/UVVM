@@ -363,6 +363,9 @@ begin
     --===================================================================================
     if GC_TESTCASE = "fc_bins" then
     --===================================================================================
+      v_coverpoint.report_config(VOID);
+      v_coverpoint_b.report_config(VOID);
+
       v_coverpoint.set_name("MY_COVERPOINT");
       check_value(v_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
       v_coverpoint.set_scope("MY_SCOPE");
@@ -896,9 +899,15 @@ begin
       v_coverpoint_b.set_scope("MY_SCOPE_2");
       check_value(v_coverpoint_b.get_scope(VOID), "MY_SCOPE_2", ERROR, "Checking scope");
 
+      v_coverpoint.report_config(VOID);
+      v_coverpoint_b.report_config(VOID);
+
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then
     --===================================================================================
+      v_cross_x2.report_config(VOID);
+      v_cross_x2_b.report_config(VOID);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with single values");
       ------------------------------------------------------------
@@ -1191,6 +1200,9 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
 
       v_cross_x2_b.print_summary(VERBOSE);
+
+      v_cross_x2.report_config(VOID);
+      v_cross_x2_b.report_config(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_covpt" then

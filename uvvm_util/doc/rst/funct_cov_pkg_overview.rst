@@ -459,6 +459,32 @@ A summary report for the covergroup can be printed using the ``print_sim_coverag
     # UVVM:  =================================================================================================================
 
 **********************************************************************************************************************************
+Configuration report
+**********************************************************************************************************************************
+A report containing all the configuration parameters can be printed using the ``report_config()`` procedure.
+
+.. code-block::
+
+    my_coverpoint.report_config(VOID);
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  ***  REPORT OF COVERPOINT CONFIGURATION ***
+    # UVVM:  =================================================================================================================
+    # UVVM:            INDEX                   :                              0
+    # UVVM:            NAME                    :                        Covpt_1
+    # UVVM:            SCOPE                   :                        TB seq.
+    # UVVM:            ILLEGAL BIN ALERT LEVEL :                        WARNING
+    # UVVM:            DETECT BIN OVERLAP      :                          false
+    # UVVM:            COVERAGE WEIGHT         :                              1
+    # UVVM:            COVERAGE GOAL           :                            100
+    # UVVM:            SIMULATION GOAL         :                            100
+    # UVVM:            NUMBER OF BINS          :                             36
+    # UVVM:            CROSS DIMENSIONS        :                              2
+    # UVVM:  =================================================================================================================
+
+**********************************************************************************************************************************
 Coverage database
 **********************************************************************************************************************************
 In order to accumulate coverage by running several testcases we need to store the coverpoint model at the end of one testcase and 

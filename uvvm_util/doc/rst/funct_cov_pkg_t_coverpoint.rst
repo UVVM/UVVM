@@ -36,7 +36,7 @@ Returns the coverpoint's name. ::
 .. code-block::
 
     Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_name(VOID)));
+    log(ID_SEQUENCER, my_coverpoint.get_name(VOID));
 
 
 set_scope()
@@ -453,3 +453,21 @@ The printing destination can be log and/or console and is defined by shared_defa
     Examples:
     my_coverpoint.print_summary(VOID);
     my_coverpoint.print_summary(VERBOSE);
+
+
+report_config()
+----------------------------------------------------------------------------------------------------------------------------------
+Prints a report containing the coverpoints's configuration parameters. ::
+
+    report_config(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.report_config(VOID);

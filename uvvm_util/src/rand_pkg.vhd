@@ -209,6 +209,9 @@ package rand_pkg is
     procedure clear_rand_cyclic(
       constant msg_id_panel : in t_msg_id_panel);
 
+    procedure report_config(
+      constant VOID : in t_void);
+
     ------------------------------------------------------------
     -- Randomization seeds
     ------------------------------------------------------------
@@ -1681,6 +1684,40 @@ package body rand_pkg is
       priv_cyclic_current_function := new string'("");
       DEALLOCATE(priv_cyclic_list);
       priv_cyclic_queue.reset(VOID);
+    end procedure;
+
+    procedure report_config(
+      constant VOID : in t_void) is
+      constant C_PREFIX        : string := C_LOG_PREFIX & "     ";
+      constant C_COLUMN1_WIDTH : positive := 19;
+      constant C_COLUMN2_WIDTH : positive := C_LOG_SCOPE_WIDTH;
+      variable v_line          : line;
+    begin
+      -- Print report header
+      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+                    "***  REPORT OF RANDOM GENERATOR CONFIGURATION ***" & LF &
+                    fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+
+      -- Print report config
+      write(v_line, "          " & justify("NAME", left, C_COLUMN1_WIDTH)               & ": " & justify(to_string(priv_name), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("SCOPE", left, C_COLUMN1_WIDTH)              & ": " & justify(to_string(priv_scope), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("SEED 1", left, C_COLUMN1_WIDTH)             & ": " & justify(to_string(priv_seed1), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("SEED 2", left, C_COLUMN1_WIDTH)             & ": " & justify(to_string(priv_seed2), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("DISTRIBUTION", left, C_COLUMN1_WIDTH)       & ": " & justify(to_upper(to_string(priv_rand_dist)), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("WEIGHT MODE", left, C_COLUMN1_WIDTH)        & ": " & justify(to_upper(to_string(priv_weight_mode)), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("MEAN CONFIGURED", left, C_COLUMN1_WIDTH)    & ": " & justify(to_string(priv_mean_configured), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("MEAN", left, C_COLUMN1_WIDTH)               & ": " & justify(to_string(priv_mean,2), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("STD_DEV CONFIGURED", left, C_COLUMN1_WIDTH) & ": " & justify(to_string(priv_std_dev_configured), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("STD_DEV", left, C_COLUMN1_WIDTH)            & ": " & justify(to_string(priv_std_dev,2), right, C_COLUMN2_WIDTH) & LF);
+
+      -- Print report bottom line
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+
+      -- Write the info string to transcript
+      wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
+      prefix_lines(v_line, C_PREFIX);
+      write_line_to_log_destination(v_line);
+      DEALLOCATE(v_line);
     end procedure;
 
     ------------------------------------------------------------

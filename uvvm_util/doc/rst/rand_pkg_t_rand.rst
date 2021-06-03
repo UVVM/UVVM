@@ -299,6 +299,24 @@ Clears the state of the cyclic generation. Deallocates the list/queue used to st
     my_rand.clear_rand_cyclic(my_msg_id_panel);
 
 
+report_config()
+----------------------------------------------------------------------------------------------------------------------------------
+Prints a report containing the random generator's configuration parameters. ::
+
+    report_config(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_rand.report_config(VOID);
+
+
 set_rand_seeds()
 ----------------------------------------------------------------------------------------------------------------------------------
 Configures the randomization seeds by using a string or the actual seed values. Default values are defined by C_RAND_INIT_SEED_1 

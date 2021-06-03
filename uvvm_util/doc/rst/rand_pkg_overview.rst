@@ -195,15 +195,41 @@ it is possible to explicitly define the mode in the ``rand_range_weight_mode()``
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 
 **********************************************************************************************************************************
+Configuration report
+**********************************************************************************************************************************
+A report containing all the configuration parameters can be printed using the ``report_config()`` procedure.
+
+A name can be given to the random generator by calling the ``set_name()`` procedure. This is useful when printing several reports.
+The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined in adaptations_pkg.
+
+.. code-block::
+
+    my_rand.report_config(VOID);
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+    # UVVM:  =================================================================================================================
+    # UVVM:            NAME               :                    MY_RAND_GEN
+    # UVVM:            SCOPE              :                       MY SCOPE
+    # UVVM:            SEED 1             :                     1969513907
+    # UVVM:            SEED 2             :                     1510976018
+    # UVVM:            DISTRIBUTION       :                        UNIFORM
+    # UVVM:            WEIGHT MODE        :                COMBINED_WEIGHT
+    # UVVM:            MEAN CONFIGURED    :                          false
+    # UVVM:            MEAN               :                           0.00
+    # UVVM:            STD_DEV CONFIGURED :                          false
+    # UVVM:            STD_DEV            :                           0.00
+    # UVVM:  =================================================================================================================
+
+**********************************************************************************************************************************
 Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
 * ID_RAND_GEN: Used for logging random generated values
 * ID_RAND_CONF: Used for logging randomization configuration
-
-A name can be given to the random generator by calling the ``set_name()`` procedure. This is useful when printing reports.
-The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined in adaptations_pkg.
 
 The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``. 
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.

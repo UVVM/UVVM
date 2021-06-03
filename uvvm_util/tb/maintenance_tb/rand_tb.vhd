@@ -2932,6 +2932,7 @@ begin
 
     end if;
 
+    v_rand.report_config(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

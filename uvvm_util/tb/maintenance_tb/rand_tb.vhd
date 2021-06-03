@@ -88,8 +88,15 @@ begin
     --===================================================================================
       increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
 
+      v_rand.set_name("long_string_abcdefghijklmnopqrstuvwxyz");
+      check_value(v_rand.get_name(VOID), "long_string_abcdefgh", ERROR, "Checking name"); -- C_RAND_MAX_NAME_LENGTH = 20
+      v_rand.set_scope("long_string_abcdefghijklmnopqrstuvwxyz");
+      check_value(v_rand.get_scope(VOID), "long_string_abcdefghijklmnopqr", ERROR, "Checking scope"); -- C_LOG_SCOPE_WIDTH = 30
+
+      v_rand.set_name("MY_RAND_GEN");
+      check_value(v_rand.get_name(VOID), "MY_RAND_GEN", ERROR, "Checking name");
       v_rand.set_scope("MY SCOPE");
-      check_value("MY SCOPE", v_rand.get_scope(VOID), ERROR, "Checking scope");
+      check_value(v_rand.get_scope(VOID), "MY SCOPE", ERROR, "Checking scope");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing seeds");
@@ -1446,7 +1453,7 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted integer (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_int := v_rand.rand_range_weight(((-5,-3,30),(0,0,20),(9,10,50)));
         count_rand_value(v_value_cnt, v_int);
@@ -1458,7 +1465,7 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
-      check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_int := v_rand.rand_range_weight(((-5,-3,30),(0,0,20),(9,10,50)));
         count_rand_value(v_value_cnt, v_int);
@@ -1518,7 +1525,7 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted real (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_real := v_rand.rand_range_weight(((-5.0,-3.0,30),(0.0,0.0,20),(9.3,10.1,50)));
         count_rand_value(v_value_cnt, v_real);
@@ -1530,7 +1537,7 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
-      check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_real := v_rand.rand_range_weight(((-5.0,-3.0,30),(0.0,0.0,20),(9.3,10.1,50)));
 
@@ -1583,7 +1590,7 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted time (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.rand_range_weight(((-5 ps,-3 ps,30),(0 ps,0 ps,20),(9 ps,10 ps,50)));
         count_rand_value(v_value_cnt, v_time);
@@ -1595,7 +1602,7 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
-      check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_time := v_rand.rand_range_weight(((-5 ps,-3 ps,30),(0 ps,0 ps,20),(9 ps,10 ps,50)));
 
@@ -1648,7 +1655,7 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted unsigned (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_uns := v_rand.rand_range_weight(v_uns'length,((0,2,30),(5,5,20),(9,10,50)));
         count_rand_value(v_value_cnt, v_uns);
@@ -1660,7 +1667,7 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
-      check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_uns := v_rand.rand_range_weight(v_uns'length,((0,2,30),(5,5,20),(9,10,50)));
         count_rand_value(v_value_cnt, v_uns);
@@ -1720,7 +1727,7 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted signed (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(6,7,50)));
         count_rand_value(v_value_cnt, v_sig);
@@ -1732,7 +1739,7 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
-      check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_sig := v_rand.rand_range_weight(v_sig'length,((-5,-3,30),(0,0,20),(6,7,50)));
         count_rand_value(v_value_cnt, v_sig);
@@ -1792,7 +1799,7 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted std_logic_vector (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(COMBINED_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_slv := v_rand.rand_range_weight(v_slv'length,((0,2,30),(5,5,20),(9,10,50)));
         count_rand_value(v_value_cnt, v_slv);
@@ -1804,7 +1811,7 @@ begin
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
-      check_value(INDIVIDUAL_WEIGHT = v_rand.get_range_weight_default_mode(VOID), ERROR, "Checking range_weight_default_mode");
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_slv := v_rand.rand_range_weight(v_slv'length,((0,2,30),(5,5,20),(9,10,50)));
         count_rand_value(v_value_cnt, v_slv);
@@ -2454,17 +2461,17 @@ begin
       log(ID_LOG_HDR, "Testing Gaussian distribution config");
       ------------------------------------------------------------
       v_rand.set_rand_dist(GAUSSIAN);
-      check_value(GAUSSIAN = v_rand.get_rand_dist(VOID), ERROR, "Checking distribution");
+      check_value(v_rand.get_rand_dist(VOID) = GAUSSIAN, ERROR, "Checking distribution");
       v_rand.set_rand_dist_mean(5.0);
-      check_value(5.0, v_rand.get_rand_dist_mean(VOID), ERROR, "Checking mean");
+      check_value(v_rand.get_rand_dist_mean(VOID), 5.0, ERROR, "Checking mean");
       v_rand.set_rand_dist_std_deviation(1.0);
-      check_value(1.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
+      check_value(v_rand.get_rand_dist_std_deviation(VOID), 1.0, ERROR, "Checking std_deviation");
 
       increment_expected_alerts(TB_NOTE, 2);
       v_rand.clear_rand_dist_mean(VOID);
-      check_value(0.0, v_rand.get_rand_dist_mean(VOID), ERROR, "Checking mean config was cleared");
+      check_value(v_rand.get_rand_dist_mean(VOID), 0.0, ERROR, "Checking mean config was cleared");
       v_rand.clear_rand_dist_std_deviation(VOID);
-      check_value(0.0, v_rand.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation config was cleared");
+      check_value(v_rand.get_rand_dist_std_deviation(VOID), 0.0, ERROR, "Checking std_deviation config was cleared");
 
       disable_log_msg(ID_POS_ACK);
       disable_log_msg(ID_RAND_GEN);

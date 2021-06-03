@@ -248,6 +248,7 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Randomization adaptations
   --------------------------------------------------------------------------------------------------------------------------------
+  constant C_RAND_MAX_NAME_LENGTH                : positive := 20;  -- Maximum length used for random generator names
   constant C_RAND_INIT_SEED_1                    : positive := 10;  -- Initial randomizaton seed 1
   constant C_RAND_INIT_SEED_2                    : positive := 100; -- Initial randomizaton seed 2
   constant C_RAND_REAL_NUM_DECIMAL_DIGITS        : positive := 2;   -- Number of decimal digits displayed in randomization logs

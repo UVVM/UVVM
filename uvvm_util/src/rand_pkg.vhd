@@ -145,6 +145,20 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
+    procedure set_name(
+      constant name : in string);
+
+    impure function get_name(
+      constant VOID : t_void)
+    return string;
+
+    procedure set_scope(
+      constant scope : in string);
+
+    impure function get_scope(
+      constant VOID : t_void)
+    return string;
+
     procedure set_rand_dist(
       constant rand_dist    : in t_rand_dist;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -188,13 +202,6 @@ package rand_pkg is
     impure function get_range_weight_default_mode(
       constant VOID : t_void)
     return t_weight_mode;
-
-    procedure set_scope(
-      constant scope : in string);
-
-    impure function get_scope(
-      constant VOID : t_void)
-    return string;
 
     procedure clear_rand_cyclic(
       constant VOID : in t_void);
@@ -1178,22 +1185,23 @@ package body rand_pkg is
   -- Protected type
   ------------------------------------------------------------
   type t_rand is protected body
-    variable priv_scope                   : string(1 to C_LOG_SCOPE_WIDTH) := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
-    variable priv_seed1                   : positive                       := C_RAND_INIT_SEED_1;
-    variable priv_seed2                   : positive                       := C_RAND_INIT_SEED_2;
-    variable priv_rand_dist               : t_rand_dist                    := UNIFORM;
-    variable priv_weight_mode             : t_weight_mode                  := COMBINED_WEIGHT;
-    variable priv_warned_same_set_type    : boolean                        := false;
-    variable priv_warned_simulation_slow  : boolean                        := false;
-    variable priv_cyclic_current_function : line                           := new string'("");
-    variable priv_cyclic_list             : t_cyclic_list_ptr              := NULL;
-    variable priv_cyclic_list_num_items   : natural                        := 0;
+    variable priv_name                    : string(1 to C_RAND_MAX_NAME_LENGTH) := "**unnamed**" & fill_string(NUL, C_RAND_MAX_NAME_LENGTH-11);
+    variable priv_scope                   : string(1 to C_LOG_SCOPE_WIDTH)      := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
+    variable priv_seed1                   : positive                            := C_RAND_INIT_SEED_1;
+    variable priv_seed2                   : positive                            := C_RAND_INIT_SEED_2;
+    variable priv_rand_dist               : t_rand_dist                         := UNIFORM;
+    variable priv_weight_mode             : t_weight_mode                       := COMBINED_WEIGHT;
+    variable priv_warned_same_set_type    : boolean                             := false;
+    variable priv_warned_simulation_slow  : boolean                             := false;
+    variable priv_cyclic_current_function : line                                := new string'("");
+    variable priv_cyclic_list             : t_cyclic_list_ptr                   := NULL;
+    variable priv_cyclic_list_num_items   : natural                             := 0;
     variable priv_cyclic_queue            : t_generic_queue;
-    variable priv_mean_configured         : boolean                        := false;
-    variable priv_std_dev_configured      : boolean                        := false;
+    variable priv_mean_configured         : boolean                             := false;
+    variable priv_std_dev_configured      : boolean                             := false;
     -- Default values for the mean and standard deviation are relative to the given range, i.e. default values below are ignored
-    variable priv_mean                    : real                           := 0.0;
-    variable priv_std_dev                 : real                           := 0.0;
+    variable priv_mean                    : real                                := 0.0;
+    variable priv_std_dev                 : real                                := 0.0;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1514,6 +1522,40 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
+    procedure set_name(
+      constant name : in string) is
+    begin
+      if name'length > C_RAND_MAX_NAME_LENGTH then
+        priv_name := name(1 to C_RAND_MAX_NAME_LENGTH);
+      else
+        priv_name := name & fill_string(NUL, C_RAND_MAX_NAME_LENGTH-name'length);
+      end if;
+    end procedure;
+
+    impure function get_name(
+      constant VOID : t_void)
+    return string is
+    begin
+      return to_string(priv_name);
+    end function;
+
+    procedure set_scope(
+      constant scope : in string) is
+    begin
+      if scope'length > C_LOG_SCOPE_WIDTH then
+        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
+      else
+        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
+      end if;
+    end procedure;
+
+    impure function get_scope(
+      constant VOID : t_void)
+    return string is
+    begin
+      return to_string(priv_scope);
+    end function;
+
     procedure set_rand_dist(
       constant rand_dist    : in t_rand_dist;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -1622,23 +1664,6 @@ package body rand_pkg is
     return t_weight_mode is
     begin
       return priv_weight_mode;
-    end function;
-
-    procedure set_scope(
-      constant scope : in string) is
-    begin
-      if scope'length > C_LOG_SCOPE_WIDTH then
-        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
-      else
-        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
-      end if;
-    end procedure;
-
-    impure function get_scope(
-      constant VOID : t_void)
-    return string is
-    begin
-      return to_string(priv_scope);
     end function;
 
     procedure clear_rand_cyclic(

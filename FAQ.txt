@@ -55,7 +55,7 @@ A: If you have a look inside the axilite_bfm_QuickRef.pdf on page two, you will 
    Then you could try to change your code to something like:
     signal axi_ctrl : t_axilite_if(write_address_channel( awaddr(GC_ADDR_WIDTH-1 downto 0)),
                                    write_data_channel( wdata(GC_DATA_WIDTH-1 downto 0),
-                                   wstrb( GC_STR_WIDTH-1 downto 0)),
+                                   wstrb((GC_DATA_WIDTH/8)-1 downto 0)),
                                    read_address_channel( araddr(GC_ADDR_WIDTH-1 downto 0)),
                                    read_data_channel( rdata(GC_DATA_WIDTH-1 downto 0)) ) := init_axilite_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH);
 

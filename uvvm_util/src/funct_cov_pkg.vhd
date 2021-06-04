@@ -143,6 +143,10 @@ package funct_cov_pkg is
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
+  impure function get_sim_coverage_goal(
+    constant VOID : t_void)
+  return positive;
+
   impure function get_sim_coverage(
     constant VOID : t_void)
   return real;
@@ -183,17 +187,33 @@ package funct_cov_pkg is
       constant weight       : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
+    impure function get_coverage_weight(
+      constant VOID : t_void)
+    return positive;
+
     procedure set_coverage_goal(
       constant percentage   : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    impure function get_coverage_goal(
+      constant VOID : t_void)
+    return positive;
 
     procedure set_illegal_bin_alert_level(
       constant alert_level  : in t_alert_level;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-    procedure detect_bin_overlap(
+    impure function get_illegal_bin_alert_level(
+      constant VOID : t_void)
+    return t_alert_level;
+
+    procedure set_bin_overlap_detection(
       constant enable       : in boolean;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    impure function get_bin_overlap_detection(
+      constant VOID : t_void)
+    return boolean;
 
     procedure write_coverage_db(
       constant file_name    : in string;
@@ -678,6 +698,13 @@ package body funct_cov_pkg is
     log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, scope, msg_id_panel);
     protected_covergroup_status.set_covergroup_coverage_goal(percentage);
   end procedure;
+
+  impure function get_sim_coverage_goal(
+    constant VOID : t_void)
+  return positive is
+  begin
+    return protected_covergroup_status.get_covergroup_coverage_goal(VOID);
+  end function;
 
   impure function get_sim_coverage(
     constant VOID : t_void)
@@ -1307,6 +1334,15 @@ package body funct_cov_pkg is
       protected_covergroup_status.set_coverage_weight(priv_id, weight);
     end procedure;
 
+    impure function get_coverage_weight(
+      constant VOID : t_void)
+    return positive is
+      constant C_LOCAL_CALL : string := "get_coverage_weight(VOID)";
+    begin
+      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      return protected_covergroup_status.get_coverage_weight(priv_id);
+    end function;
+
     procedure set_coverage_goal(
       constant percentage   : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -1317,6 +1353,15 @@ package body funct_cov_pkg is
       protected_covergroup_status.set_coverage_goal(priv_id, percentage);
     end procedure;
 
+    impure function get_coverage_goal(
+      constant VOID : t_void)
+    return positive is
+      constant C_LOCAL_CALL : string := "get_coverage_goal(VOID)";
+    begin
+      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      return protected_covergroup_status.get_coverage_goal(priv_id);
+    end function;
+
     procedure set_illegal_bin_alert_level(
       constant alert_level  : in t_alert_level;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -1326,14 +1371,28 @@ package body funct_cov_pkg is
       priv_illegal_bin_alert_level := alert_level;
     end procedure;
 
-    procedure detect_bin_overlap(
+    impure function get_illegal_bin_alert_level(
+      constant VOID : t_void)
+    return t_alert_level is
+    begin
+      return priv_illegal_bin_alert_level;
+    end function;
+
+    procedure set_bin_overlap_detection(
       constant enable       : in boolean;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "detect_bin_overlap(" & to_string(enable) & ")";
+      constant C_LOCAL_CALL : string := "set_bin_overlap_detection(" & to_string(enable) & ")";
     begin
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_detect_bin_overlap := enable;
     end procedure;
+
+    impure function get_bin_overlap_detection(
+      constant VOID : t_void)
+    return boolean is
+    begin
+      return priv_detect_bin_overlap;
+    end function;
 
     procedure write_coverage_db(
       constant file_name    : in string;

@@ -333,11 +333,11 @@ If a sampled value is contained in more than one valid bin (not ignore or illega
 i.e. increment number of hits.
 
 In case this in unintended behaviour in the testbench, a TB_WARNING alert can be generated when overlapping valid bins are sampled 
-by using the procedure ``detect_bin_overlap()``.
+by using the procedure ``set_bin_overlap_detection()``.
 
 .. code-block::
 
-    my_coverpoint.detect_bin_overlap(true);
+    my_coverpoint.set_bin_overlap_detection(true);
     my_coverpoint.add_bins(bin_range(1, 16, 1), "valid_sizes");
     my_coverpoint.add_bins(bin_range(15, 20, 1), "big_sizes");
     my_coverpoint.sample_coverage(15);

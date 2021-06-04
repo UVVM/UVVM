@@ -96,9 +96,27 @@ Configures the weight of the coverpoint used for calculating the simulation cove
     my_coverpoint.set_coverage_weight(3);
 
 
+get_coverage_weight()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the coverpoint's coverage weight. ::
+
+    positive := get_coverage_weight(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    log(ID_SEQUENCER, to_string(my_coverpoint.get_coverage_weight(VOID)));
+
+
 set_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the coverpoint coverage goal. Default value is 100. ::
+Configures the coverpoint's coverage goal. Default value is 100. ::
 
     set_coverage_goal(percentage, [msg_id_panel])
 
@@ -114,6 +132,24 @@ Configures the coverpoint coverage goal. Default value is 100. ::
 
     Examples:
     my_coverpoint.set_coverage_goal(150);
+
+
+get_coverage_goal()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the coverpoint's coverage goal. ::
+
+    positive := get_coverage_goal(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    log(ID_SEQUENCER, to_string(my_coverpoint.get_coverage_goal(VOID)));
 
 
 set_illegal_bin_alert_level()
@@ -136,11 +172,29 @@ Configures the alert level when an illegal bin is sampled. ::
     my_coverpoint.set_illegal_bin_alert_level(WARNING);
 
 
-detect_bin_overlap()
+get_illegal_bin_alert_level()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the alert level when an illegal bin is sampled. ::
+
+    t_alert_level := get_illegal_bin_alert_level(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    log(ID_SEQUENCER, to_string(my_coverpoint.get_illegal_bin_alert_level(VOID)));
+
+
+set_bin_overlap_detection()
 ----------------------------------------------------------------------------------------------------------------------------------
 Configures if a TB_WARNING alert should be generated when overlapping bins are sampled (not including ignore or invalid bins). ::
 
-    detect_bin_overlap(enable, [msg_id_panel])
+    set_bin_overlap_detection(enable, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
@@ -153,7 +207,25 @@ Configures if a TB_WARNING alert should be generated when overlapping bins are s
 .. code-block::
 
     Examples:
-    my_coverpoint.detect_bin_overlap(true);
+    my_coverpoint.set_bin_overlap_detection(true);
+
+
+get_bin_overlap_detection()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns true when the alert for overlapping bins is enabled otherwise returns false. ::
+
+    boolean := get_bin_overlap_detection(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    log(ID_SEQUENCER, to_string(my_coverpoint.get_bin_overlap_detection(VOID)));
 
 
 write_coverage_db()

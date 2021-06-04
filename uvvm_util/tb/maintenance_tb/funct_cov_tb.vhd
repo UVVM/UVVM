@@ -606,6 +606,7 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), hits => 3);
 
       v_coverpoint.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with single values");
       ------------------------------------------------------------
@@ -838,7 +839,8 @@ begin
       sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
       sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
 
-      v_coverpoint_b.detect_bin_overlap(true);
+      v_coverpoint_b.set_bin_overlap_detection(true);
+      check_value(v_coverpoint_b.get_bin_overlap_detection(VOID), true, ERROR, "Checking bin overlap detection");
       increment_expected_alerts(TB_WARNING, 4);
       sample_bins(v_coverpoint_b, (2000,2001), 1);
       sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
@@ -870,6 +872,7 @@ begin
       v_coverpoint_b.add_bins(illegal_bin_range(3105,3115));
 
       v_coverpoint_b.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_b.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       increment_expected_alerts(WARNING,4);
       sample_bins(v_coverpoint_b, (3100,3104,3105,3106,3114,3115,3116,3120), 1);
 
@@ -1044,6 +1047,7 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2205,2207), (2212,2214,2216,2218), hits => 3);
 
       v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with single values");
       ------------------------------------------------------------
@@ -1251,6 +1255,7 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,RAN_ILLEGAL), (501,503,505), (1415,1419),      name => "bin_24");
 
       v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       increment_expected_alerts(WARNING,13);
       sample_cross_bins(v_cross_x2, ((100,1004),(100,1116),(100,1117),(100,1118),(100,1212),(100,1214),(100,1216),(100,1310),(100,1419)), 1);
       sample_cross_bins(v_cross_x2, ((200,1004),(201,1116),(202,1117),(203,1118),(204,1212),(205,1214),(206,1216),(207,1310),(206,1419)), 1);

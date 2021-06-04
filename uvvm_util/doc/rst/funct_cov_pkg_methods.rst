@@ -212,7 +212,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
 set_sim_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the simulation coverage goal. This is an easy way to apply the same goal to all the coverpoints. If a coverpoint's goal 
+Configures the simulation's coverage goal. This is an easy way to apply the same goal to all the coverpoints. If a coverpoint's goal 
 has also been modified by ``set_coverage_goal()``, they will be multiplied for the given coverpoint. Default value is 100. ::
 
     set_sim_coverage_goal(percentage, [scope, [msg_id_panel]])
@@ -231,6 +231,24 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
 
     Examples:
     set_sim_coverage_goal(200);
+
+
+get_sim_coverage_goal()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the simulation's coverage goal. ::
+
+    positive := get_sim_coverage_goal(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    log(ID_SEQUENCER, to_string(get_sim_coverage_goal(VOID)));
 
 
 get_sim_coverage()

@@ -89,7 +89,7 @@ architecture behave of axi_vvc is
   signal write_response_channel_queue_is_increasing : boolean := false;
   signal read_address_channel_queue_is_increasing   : boolean := false;
   signal read_data_channel_queue_is_increasing      : boolean := false;
-  signal last_cmd_idx_executed                      : natural := 0;
+  signal last_cmd_idx_executed                      : natural := natural'high;
   signal last_write_response_channel_idx_executed   : natural := 0;
   signal last_read_data_channel_idx_executed        : natural := 0;
   signal terminate_current_cmd                      : t_flag_record;
@@ -465,8 +465,6 @@ begin
         log(ID_CMD_EXECUTOR, "Termination request received", C_SCOPE, v_msg_id_panel);
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
-
-      last_cmd_idx_executed <= v_cmd.cmd_idx;
 
     end loop;
   end process cmd_executor;

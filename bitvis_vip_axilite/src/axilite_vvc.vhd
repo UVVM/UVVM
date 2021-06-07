@@ -425,6 +425,16 @@ begin
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 
+      -- In case we only allow a single pending transaction, wait here until every channel is finished. 
+      -- Even though this wait doesn't have a timeout, each of the executors have timeouts.
+      if vvc_config.force_single_pending_transaction and v_command_is_bfm_access then
+        wait until not write_address_channel_executor_is_busy and
+                   not write_data_channel_executor_is_busy and
+                   not write_response_channel_executor_is_busy and
+                   not read_address_channel_executor_is_busy and
+                   not read_data_channel_executor_is_busy;
+      end if;
+
     end loop;
   end process;
 --===============================================================================================

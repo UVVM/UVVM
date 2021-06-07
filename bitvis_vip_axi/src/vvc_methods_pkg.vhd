@@ -70,12 +70,13 @@ package vvc_methods_pkg is
     cmd_queue_count_max                   : natural;              -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;              -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if command queue is almost full. Will be ignored if set to 0.
     cmd_queue_count_threshold_severity    : t_alert_level;        -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
-    result_queue_count_max                : natural;        -- Maximum number of unfetched results before result_queue is full. 
-    result_queue_count_threshold_severity : t_alert_level;  -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
-    result_queue_count_threshold          : natural;        -- Severity of alert to be initiated if exceeding result_queue_count_threshold
-    bfm_config                            : t_axi_bfm_config; -- Configuration for AXI4 BFM. See quick reference for AXI4 BFM
+    result_queue_count_max                : natural;              -- Maximum number of unfetched results before result_queue is full. 
+    result_queue_count_threshold_severity : t_alert_level;        -- An alert with severity 'result_queue_count_threshold_severity' will be issued if command queue exceeds this count. Used for early warning if result queue is almost full. Will be ignored if set to 0.
+    result_queue_count_threshold          : natural;              -- Severity of alert to be initiated if exceeding result_queue_count_threshold
+    bfm_config                            : t_axi_bfm_config;     -- Configuration for AXI4 BFM. See quick reference for AXI4 BFM
     msg_id_panel                          : t_msg_id_panel;       -- VVC dedicated message ID panel
-    parent_msg_id_panel                   : t_msg_id_panel;       --UVVM: temporary fix for HVVC, remove in v3.0
+    parent_msg_id_panel                   : t_msg_id_panel;       -- UVVM: temporary fix for HVVC, remove in v3.0
+    force_single_pending_transaction      : boolean;              -- Waits until the previous transaction is completed before starting the next one
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -90,8 +91,9 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_AXI_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
-    );
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
+    force_single_pending_transaction      => false
+  );
     
   type t_vvc_status is
   record

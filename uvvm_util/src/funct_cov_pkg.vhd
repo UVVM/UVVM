@@ -1287,16 +1287,14 @@ package body funct_cov_pkg is
     ------------------------------------------------------------
     procedure set_name(
       constant name : in string) is
+      constant C_LOCAL_CALL : string := "set_name(" & name & ")";
     begin
       if name'length > C_FC_MAX_NAME_LENGTH then
         priv_name := name(1 to C_FC_MAX_NAME_LENGTH);
       else
         priv_name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
       end if;
-      -- Update covergroup status register
-      if priv_id /= C_DEALLOCATED_ID then
-        protected_covergroup_status.set_name(priv_id, name);
-      end if;
+      initialize_coverpoint(C_LOCAL_CALL);
     end procedure;
 
     impure function get_name(
@@ -1308,12 +1306,14 @@ package body funct_cov_pkg is
 
     procedure set_scope(
       constant scope : in string) is
+      constant C_LOCAL_CALL : string := "set_scope(" & scope & ")";
     begin
       if scope'length > C_LOG_SCOPE_WIDTH then
         priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
       else
         priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
       end if;
+      initialize_coverpoint(C_LOCAL_CALL);
     end procedure;
 
     impure function get_scope(
@@ -1328,19 +1328,20 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
-      -- Update covergroup status register
       protected_covergroup_status.set_coverage_weight(priv_id, weight);
     end procedure;
 
     impure function get_coverage_weight(
       constant VOID : t_void)
     return positive is
-      constant C_LOCAL_CALL : string := "get_coverage_weight(VOID)";
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      return protected_covergroup_status.get_coverage_weight(priv_id);
+      if priv_id /= C_DEALLOCATED_ID then
+        return protected_covergroup_status.get_coverage_weight(priv_id);
+      else
+        return 1;
+      end if;
     end function;
 
     procedure set_coverage_goal(
@@ -1348,7 +1349,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       protected_covergroup_status.set_coverage_goal(priv_id, percentage);
     end procedure;
@@ -1356,10 +1357,12 @@ package body funct_cov_pkg is
     impure function get_coverage_goal(
       constant VOID : t_void)
     return positive is
-      constant C_LOCAL_CALL : string := "get_coverage_goal(VOID)";
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      return protected_covergroup_status.get_coverage_goal(priv_id);
+      if priv_id /= C_DEALLOCATED_ID then
+        return protected_covergroup_status.get_coverage_goal(priv_id);
+      else
+        return 100;
+      end if;
     end function;
 
     procedure set_illegal_bin_alert_level(
@@ -1367,6 +1370,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_illegal_bin_alert_level(" & to_upper(to_string(alert_level)) & ")";
     begin
+      initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_illegal_bin_alert_level := alert_level;
     end procedure;
@@ -1383,6 +1387,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_bin_overlap_detection(" & to_string(enable) & ")";
     begin
+      initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_detect_bin_overlap := enable;
     end procedure;
@@ -1463,33 +1468,34 @@ package body funct_cov_pkg is
       end procedure;
 
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
-
-      -- Coverpoint config
-      write_value(priv_name);
-      write_value(priv_scope);
-      write_value(priv_num_bins_crossed);
-      v_rand_seeds := priv_rand_gen.get_rand_seeds(VOID);
-      write_value(v_rand_seeds(0));
-      write_value(v_rand_seeds(1));
-      write_value(priv_rand_transition_bin_idx);
-      write_value(priv_rand_transition_bin_value_idx);
-      write_value(t_alert_level'pos(priv_illegal_bin_alert_level));
-      write_value(priv_detect_bin_overlap);
-      -- Covergroup config
-      write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
-      write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
-      write_value(protected_covergroup_status.get_num_uncovered_bins(priv_id));
-      write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
-      write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
-      write_value(protected_covergroup_status.get_coverage_weight(priv_id));
-      write_value(protected_covergroup_status.get_coverage_goal(priv_id));
-      write_value(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
-      -- Bin structure
-      write_bins(priv_bins_idx, priv_bins);
-      write_bins(priv_invalid_bins_idx, priv_invalid_bins);
-
+      if priv_id /= C_DEALLOCATED_ID then
+        log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+        -- Coverpoint config
+        write_value(priv_name);
+        write_value(priv_scope);
+        write_value(priv_num_bins_crossed);
+        v_rand_seeds := priv_rand_gen.get_rand_seeds(VOID);
+        write_value(v_rand_seeds(0));
+        write_value(v_rand_seeds(1));
+        write_value(priv_rand_transition_bin_idx);
+        write_value(priv_rand_transition_bin_value_idx);
+        write_value(t_alert_level'pos(priv_illegal_bin_alert_level));
+        write_value(priv_detect_bin_overlap);
+        -- Covergroup config
+        write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
+        write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
+        write_value(protected_covergroup_status.get_num_uncovered_bins(priv_id));
+        write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
+        write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
+        write_value(protected_covergroup_status.get_coverage_weight(priv_id));
+        write_value(protected_covergroup_status.get_coverage_goal(priv_id));
+        write_value(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
+        -- Bin structure
+        write_bins(priv_bins_idx, priv_bins);
+        write_bins(priv_invalid_bins_idx, priv_invalid_bins);
+      else
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Coverpoint has not been initialized", priv_scope);
+      end if;
       file_close(fileHandler);
       DEALLOCATE(v_line);
     end procedure;
@@ -2030,14 +2036,16 @@ package body funct_cov_pkg is
       variable v_ret         : integer_vector(0 to 0);
     begin
       v_ret := rand(msg_id_panel, C_LOCAL_CALL);
-      log(ID_FUNCT_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
+      if priv_num_bins_crossed /= C_UNINITIALIZED then
+        log(ID_FUNCT_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
+      end if;
       return v_ret(0);
     end function;
 
     impure function rand(
       constant VOID : t_void)
     return integer_vector is
-      variable v_ret : integer_vector(0 to priv_num_bins_crossed-1);
+      variable v_ret : integer_vector(0 to MAXIMUM(priv_num_bins_crossed,1)-1);
     begin
       v_ret := rand(shared_msg_id_panel);
       return v_ret;
@@ -2052,9 +2060,12 @@ package body funct_cov_pkg is
       variable v_acc_weight      : integer := 0;
       variable v_values_vec      : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
       variable v_bin_idx         : integer;
-      variable v_ret             : integer_vector(0 to priv_num_bins_crossed-1);
+      variable v_ret             : integer_vector(0 to MAXIMUM(priv_num_bins_crossed,1)-1);
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      if priv_num_bins_crossed = C_UNINITIALIZED then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Coverpoint does not contain any bins", priv_scope);
+        return v_ret;
+      end if;
 
       -- A transition bin returns all the transition values before allowing to select a different bin value
       if priv_rand_transition_bin_idx /= C_UNINITIALIZED then
@@ -2137,7 +2148,7 @@ package body funct_cov_pkg is
       constant VOID : t_void)
     return boolean is
     begin
-      return priv_id /= C_DEALLOCATED_ID;
+      return priv_num_bins_crossed /= C_UNINITIALIZED;
     end function;
 
     procedure sample_coverage(
@@ -2161,7 +2172,11 @@ package body funct_cov_pkg is
       variable v_num_occurrences   : natural := 0;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => v_proc_call.all);
+      if priv_num_bins_crossed = C_UNINITIALIZED then
+        alert(TB_ERROR, v_proc_call.all & "=> Coverpoint does not contain any bins", priv_scope);
+        DEALLOCATE(v_proc_call);
+        return;
+      end if;
       log(ID_FUNCT_COV_SAMPLE, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
 
       if priv_num_bins_crossed /= values'length then
@@ -2283,19 +2298,23 @@ package body funct_cov_pkg is
     impure function get_coverage(
       constant VOID : t_void)
     return real is
-      constant C_LOCAL_CALL : string := "get_coverage(VOID)";
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      return protected_covergroup_status.get_hits_coverage(priv_id);
+      if priv_id /= C_DEALLOCATED_ID then
+        return protected_covergroup_status.get_hits_coverage(priv_id);
+      else
+        return 0.0;
+      end if;
     end function;
 
     impure function coverage_completed(
       constant VOID : t_void)
     return boolean is
-      constant C_LOCAL_CALL : string := "coverage_completed(VOID)";
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_coverage_goal(priv_id));
+      if priv_id /= C_DEALLOCATED_ID then
+        return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_coverage_goal(priv_id));
+      else
+        return false;
+      end if;
     end function;
 
     procedure print_summary(
@@ -2315,8 +2334,6 @@ package body funct_cov_pkg is
       variable v_log_extra_space  : integer := 0;
       variable v_rand_weight      : natural;
     begin
-      check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-
       -- Calculate how much space we can insert between the columns of the report
       v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_FC_MAX_NAME_LENGTH - 20)/6;
       if v_log_extra_space < 1 then
@@ -2330,13 +2347,21 @@ package body funct_cov_pkg is
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print summary
-      write(v_line, "Coverpoint:     " & priv_name & LF &
-                    "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & LF &
-                    "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
-                    "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2)
-                      & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2)
-                      & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(priv_id)) & "%)" & LF &
-                    fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      if priv_id /= C_DEALLOCATED_ID then
+        write(v_line, "Coverpoint:     " & priv_name & LF &
+                      "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & LF &
+                      "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
+                      "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2)
+                        & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2)
+                        & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(priv_id)) & "%)" & LF &
+                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      else
+        write(v_line, "Coverpoint:     " & priv_name & LF &
+                      "Uncovered bins: 0" & LF &
+                      "Illegal bins:   0" & LF &
+                      "Coverage:       bins: 0.0% hits: 0.0% (goal: 0.0%)" & LF &
+                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      end if;
 
       -- Print column headers
       write(v_line, justify(

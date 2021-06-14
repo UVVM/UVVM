@@ -24,7 +24,8 @@ context uvvm_util.uvvm_util_context;
 --HDLUnit:TB
 entity funct_cov_tb is
   generic(
-    GC_TESTCASE : string
+    GC_TESTCASE  : string;
+    GC_FILE_PATH : string := ""
   );
 end entity;
 
@@ -2023,7 +2024,7 @@ begin
       end loop;
 
       v_coverpoint.print_summary(VERBOSE);
-      v_coverpoint.write_coverage_db("coverpoint.txt");
+      v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - cross");
@@ -2076,7 +2077,7 @@ begin
       end loop;
 
       v_cross_x2.print_summary(VERBOSE);
-      v_cross_x2.write_coverage_db("cross.txt");
+      v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - max data");
@@ -2090,7 +2091,7 @@ begin
       end loop;
 
       v_cross_x3.print_summary(VERBOSE);
-      v_cross_x3.write_coverage_db("cross_max.txt");
+      v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
       print_sim_coverage_summary(VOID);
 
@@ -2101,7 +2102,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint.load_coverage_db("coverpoint.txt");
+      v_coverpoint.load_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2163,12 +2164,12 @@ begin
       sample_bins(v_coverpoint, (50,51,52,53), 1); -- To check transition_idx
 
       v_coverpoint.print_summary(VERBOSE);
-      v_coverpoint.write_coverage_db("coverpoint.txt");
+      v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2.load_coverage_db("cross.txt");
+      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2235,12 +2236,12 @@ begin
       sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053)), 1); -- To check transition_idx
 
       v_cross_x2.print_summary(VERBOSE);
-      v_cross_x2.write_coverage_db("cross.txt");
+      v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - max data");
       ------------------------------------------------------------
-      v_cross_x3.load_coverage_db("cross_max.txt");
+      v_cross_x3.load_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2262,14 +2263,14 @@ begin
       end loop;
 
       v_cross_x3.print_summary(VERBOSE);
-      v_cross_x3.write_coverage_db("cross_max.txt");
+      v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
       print_sim_coverage_summary(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint_b.load_coverage_db("coverpoint.txt");
+      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2307,7 +2308,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2_b.load_coverage_db("cross.txt");
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "cross.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2345,7 +2346,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - max data");
       ------------------------------------------------------------
-      v_cross_x3_b.load_coverage_db("cross_max.txt");
+      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;

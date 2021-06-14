@@ -692,6 +692,41 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210), hits => 3);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), hits => 3);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing concatenation of bins");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(bin(4000) & bin((4100,4110,4120)) & bin_range(4200,4209,2) & bin_transition((4300,4302,4304,4305)), "concatenated");
+      v_coverpoint.add_bins(bin_range(4400,4450,1) & ignore_bin(4401) & ignore_bin_range(4410,4420) & ignore_bin_transition((4400,4425,4450)), "concatenated");
+
+      check_bin(v_coverpoint, v_bin_idx, VAL, 4000,                  name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, VAL, (4100,4110,4120),      name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, RAN, (4200,4204),           name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, RAN, (4205,4209),           name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4300,4302,4304,4305), name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, RAN, (4400,4450),           name => "concatenated");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 4401,             name => "concatenated");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (4410,4420),      name => "concatenated");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4400,4425,4450), name => "concatenated");
+
+      sample_bins(v_coverpoint, (4000), 1);
+      sample_bins(v_coverpoint, (4100,4110,4120), 1);
+      sample_bins(v_coverpoint, (4200,4201,4202,4203,4204,4205,4206,4207,4208,4209), 1);
+      sample_bins(v_coverpoint, (4300,4302,4304,4305), 1);
+      sample_bins(v_coverpoint, (4400,4402,4449,4450), 1);
+      sample_bins(v_coverpoint, (4401,4410,4420,4400,4425,4450), 1); -- Sample ignore bins (note that first 2 values of transition are valid bins)
+
+      v_bin_idx := v_bin_idx-6;
+      v_invalid_bin_idx := v_invalid_bin_idx-3;
+      check_bin(v_coverpoint, v_bin_idx, VAL, 4000, hits => 1,                  name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, VAL, (4100,4110,4120), hits => 3,      name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, RAN, (4200,4204), hits => 5,           name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, RAN, (4205,4209), hits => 5,           name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (4300,4302,4304,4305), hits => 1, name => "concatenated");
+      check_bin(v_coverpoint, v_bin_idx, RAN, (4400,4450), hits => 6,           name => "concatenated");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 4401, hits => 1,             name => "concatenated");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (4410,4420), hits => 2,      name => "concatenated");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4400,4425,4450), hits => 1, name => "concatenated");
+
       check_num_bins(v_coverpoint, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_coverpoint, 100.0);
       v_coverpoint.print_summary(VERBOSE);
@@ -1175,6 +1210,44 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL),         (4901,4902,4903), (0 => 4917),      name => "cross_9", hits => 1);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL),  (0 => 5000), (5010,5050),           name => "cross_10", hits => 3);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE),  (5105,5110,5115), (0 => 5150),      name => "cross_11", hits => 1);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross using concatenation of bins");
+      ------------------------------------------------------------
+      v_cross_x2.add_cross(bin(6000) & bin(6005) & bin(6010), bin_range(6100,6150,2), "concatenated");
+      v_cross_x2.add_cross(bin_range(6200,6250,1) & ignore_bin_range(6220,6240), bin_range(6350,6399,1) & illegal_bin(6375), "concatenated");
+
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6000), (6100,6124), name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6000), (6125,6150), name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6005), (6100,6124), name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6005), (6125,6150), name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6010), (6100,6124), name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6010), (6125,6150), name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN),                                (6200,6250), (6350,6399), name => "concatenated");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,VAL_ILLEGAL),        (6200,6250), (0 => 6375), name => "concatenated");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN),         (6220,6240), (6350,6399), name => "concatenated");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,VAL_ILLEGAL), (6220,6240), (0 => 6375), name => "concatenated");
+
+      sample_cross_bins(v_cross_x2, ((6000,6100),(6000,6124),(6000,6125),(6000,6150)), 1);
+      sample_cross_bins(v_cross_x2, ((6005,6100),(6005,6124),(6005,6125),(6005,6150)), 1);
+      sample_cross_bins(v_cross_x2, ((6010,6100),(6010,6124),(6010,6125),(6010,6150)), 1);
+      increment_expected_alerts(WARNING,2);
+      sample_cross_bins(v_cross_x2, ((6200,6350),(6219,6374),(6241,6376),(6250,6399)), 1);
+      sample_cross_bins(v_cross_x2, ((6200,6375),(6250,6375)), 1); -- Sample illegal bins
+      sample_cross_bins(v_cross_x2, ((6220,6350),(6240,6399)), 1); -- Sample ignore bins
+
+      v_bin_idx := v_bin_idx-7;
+      v_invalid_bin_idx := v_invalid_bin_idx-3;
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6000), (6100,6124), hits => 2, name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6000), (6125,6150), hits => 2, name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6005), (6100,6124), hits => 2, name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6005), (6125,6150), hits => 2, name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6010), (6100,6124), hits => 2, name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6010), (6125,6150), hits => 2, name => "concatenated");
+      check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN),                                (6200,6250), (6350,6399), hits => 4, name => "concatenated");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN,VAL_ILLEGAL),        (6200,6250), (0 => 6375), hits => 2, name => "concatenated");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN),         (6220,6240), (6350,6399), hits => 2, name => "concatenated");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,VAL_ILLEGAL), (6220,6240), (0 => 6375), hits => 0, name => "concatenated");
 
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_cross_x2, 100.0);

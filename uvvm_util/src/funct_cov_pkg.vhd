@@ -1403,7 +1403,7 @@ package body funct_cov_pkg is
       constant file_name    : in string;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "write_coverage_db(" & file_name & ")";
-      file fileHandler      : text open write_mode is file_name;
+      file file_handler     : text open write_mode is file_name;
       variable v_line       : line;
       variable v_rand_seeds : t_positive_vector(0 to 1);
 
@@ -1411,7 +1411,7 @@ package body funct_cov_pkg is
         constant value : in integer) is
       begin
         write(v_line, value);
-        writeline(fileHandler, v_line);
+        writeline(file_handler, v_line);
       end procedure;
 
       procedure write_value(
@@ -1419,7 +1419,7 @@ package body funct_cov_pkg is
       begin
         for i in value'range loop
           write(v_line, value(i));
-          writeline(fileHandler, v_line);
+          writeline(file_handler, v_line);
         end loop;
       end procedure;
 
@@ -1427,14 +1427,14 @@ package body funct_cov_pkg is
         constant value : in string) is
       begin
         write(v_line, value);
-        writeline(fileHandler, v_line);
+        writeline(file_handler, v_line);
       end procedure;
 
       procedure write_value(
         constant value : in boolean) is
       begin
         write(v_line, value);
-        writeline(fileHandler, v_line);
+        writeline(file_handler, v_line);
       end procedure;
 
       procedure write_bins(
@@ -1442,26 +1442,26 @@ package body funct_cov_pkg is
         constant bin_vector : in t_cov_bin_vector) is
       begin
         write(v_line, bin_idx);
-        writeline(fileHandler, v_line);
+        writeline(file_handler, v_line);
         for i in 0 to bin_idx-1 loop
           write(v_line, bin_vector(i).hits);
-          writeline(fileHandler, v_line);
+          writeline(file_handler, v_line);
           write(v_line, bin_vector(i).min_hits);
-          writeline(fileHandler, v_line);
+          writeline(file_handler, v_line);
           write(v_line, bin_vector(i).rand_weight);
-          writeline(fileHandler, v_line);
+          writeline(file_handler, v_line);
           write(v_line, bin_vector(i).name);
-          writeline(fileHandler, v_line);
+          writeline(file_handler, v_line);
           for j in 0 to priv_num_bins_crossed-1 loop
             write(v_line, t_cov_bin_type'pos(bin_vector(i).cross_bins(j).contains));
-            writeline(fileHandler, v_line);
+            writeline(file_handler, v_line);
             write(v_line, bin_vector(i).cross_bins(j).num_values);
-            writeline(fileHandler, v_line);
+            writeline(file_handler, v_line);
             write(v_line, bin_vector(i).cross_bins(j).transition_idx);
-            writeline(fileHandler, v_line);
+            writeline(file_handler, v_line);
             for k in 0 to bin_vector(i).cross_bins(j).num_values-1 loop
               write(v_line, bin_vector(i).cross_bins(j).values(k));
-              writeline(fileHandler, v_line);
+              writeline(file_handler, v_line);
             end loop;
           end loop;
         end loop;
@@ -1496,23 +1496,24 @@ package body funct_cov_pkg is
       else
         alert(TB_ERROR, C_LOCAL_CALL & "=> Coverpoint has not been initialized", priv_scope);
       end if;
-      file_close(fileHandler);
+      file_close(file_handler);
       DEALLOCATE(v_line);
     end procedure;
 
     procedure load_coverage_db(
       constant file_name    : in string;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "load_coverage_db(" & file_name & ")";
-      file fileHandler      : text open read_mode is file_name;
-      variable v_line       : line;
-      variable v_rand_seeds : t_positive_vector(0 to 1);
-      variable v_value      : integer;
+      constant C_LOCAL_CALL  : string := "load_coverage_db(" & file_name & ")";
+      file file_handler      : text;
+      variable v_open_status : file_open_status;
+      variable v_line        : line;
+      variable v_rand_seeds  : t_positive_vector(0 to 1);
+      variable v_value       : integer;
 
       procedure read_value(
         variable value : out integer) is
       begin
-        readline(fileHandler, v_line);
+        readline(file_handler, v_line);
         read(v_line, value);
       end procedure;
 
@@ -1520,7 +1521,7 @@ package body funct_cov_pkg is
         variable value : out t_natural_vector) is
       begin
         for i in value'range loop
-          readline(fileHandler, v_line);
+          readline(file_handler, v_line);
           read(v_line, value(i));
         end loop;
       end procedure;
@@ -1528,14 +1529,14 @@ package body funct_cov_pkg is
       procedure read_value(
         variable value : out string) is
       begin
-        readline(fileHandler, v_line);
+        readline(file_handler, v_line);
         read(v_line, value);
       end procedure;
 
       procedure read_value(
         variable value : out boolean) is
       begin
-        readline(fileHandler, v_line);
+        readline(file_handler, v_line);
         read(v_line, value);
       end procedure;
 
@@ -1546,27 +1547,27 @@ package body funct_cov_pkg is
         variable v_num_values : integer;
       begin
         for i in 0 to bin_idx-1 loop
-          readline(fileHandler, v_line);
+          readline(file_handler, v_line);
           read(v_line, bin_vector(i).hits);
-          readline(fileHandler, v_line);
+          readline(file_handler, v_line);
           read(v_line, bin_vector(i).min_hits);
-          readline(fileHandler, v_line);
+          readline(file_handler, v_line);
           read(v_line, bin_vector(i).rand_weight);
-          readline(fileHandler, v_line);
+          readline(file_handler, v_line);
           read(v_line, bin_vector(i).name);  -- read() crops the string
           for j in 0 to priv_num_bins_crossed-1 loop
-            readline(fileHandler, v_line);
+            readline(file_handler, v_line);
             read(v_line, v_contains);
             bin_vector(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
-            readline(fileHandler, v_line);
+            readline(file_handler, v_line);
             read(v_line, v_num_values);
             bin_vector(i).cross_bins(j).num_values := v_num_values;
             check_value(v_num_values <= C_FC_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_FC_MAX_NUM_BIN_VALUES",
               priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-            readline(fileHandler, v_line);
+            readline(file_handler, v_line);
             read(v_line, bin_vector(i).cross_bins(j).transition_idx);
             for k in 0 to v_num_values-1 loop
-              readline(fileHandler, v_line);
+              readline(file_handler, v_line);
               read(v_line, bin_vector(i).cross_bins(j).values(k));
             end loop;
           end loop;
@@ -1576,13 +1577,19 @@ package body funct_cov_pkg is
     begin
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
 
+      file_open(v_open_status, file_handler, file_name, read_mode);
+      if v_open_status /= open_ok then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Cannot open file: " & file_name, priv_scope);
+        return;
+      end if;
+
       -- Add coverpoint to covergroup status
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
         check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       else
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Coverpoint model will be overwritten.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_string(priv_name) & " will be overwritten.", priv_scope);
       end if;
       -- Coverpoint config
       read_value(priv_name);  -- read() crops the string
@@ -1627,7 +1634,7 @@ package body funct_cov_pkg is
         priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       read_bins(priv_invalid_bins_idx, priv_invalid_bins);
 
-      file_close(fileHandler);
+      file_close(file_handler);
       DEALLOCATE(v_line);
     end procedure;
 

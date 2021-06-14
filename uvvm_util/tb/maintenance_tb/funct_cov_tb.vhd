@@ -699,103 +699,103 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing transition bin index");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin_transition((4001,4003,4005,4009)), "bin");
-      v_coverpoint.add_bins(bin(4100));
-      v_coverpoint.add_bins(ignore_bin(4200));
+      v_coverpoint.add_bins(bin_transition((5001,5003,5005,5009)), "transition");
+      v_coverpoint.add_bins(bin(5100));
+      v_coverpoint.add_bins(ignore_bin(5200));
       v_invalid_bin_idx := v_invalid_bin_idx+1;
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 0, transition_idx => 0);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 0, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample the complete transition");
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001,4003,4005,4009), 2);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 2, transition_idx => 0);
+      sample_bins(v_coverpoint, (5001,5003,5005,5009), 2);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 2, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample the complete transition with an incorrect value");
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001,4003,4005,4010), 2);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 2, transition_idx => 0);
+      sample_bins(v_coverpoint, (5001,5003,5005,5010), 2);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 2, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a partial transition, then sample the complete transition from the start");
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001,4003), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 2, transition_idx => 2);
+      sample_bins(v_coverpoint, (5001,5003), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 2, transition_idx => 2);
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001,4003,4005,4009), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5001,5003,5005,5009), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a transition value, then sample a bin value and check index is reset");
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 1);
+      sample_bins(v_coverpoint, (5001), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 1);
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4100), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5100), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a transition value, then sample an ignore bin value and check index is reset");
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001,4003), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 2);
+      sample_bins(v_coverpoint, (5001,5003), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 2);
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4200), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5200), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a transition value, then sample a random value and check index is reset");
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4001,4003,4005), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 3);
+      sample_bins(v_coverpoint, (5001,5003,5005), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 3);
       v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (4300), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (4001,4003,4005,4009), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5300), 1);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore transition bin index");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(ignore_bin_transition((4501,4503,4505,4509)), "bin");
-      v_coverpoint.add_bins(bin(4600));
-      v_coverpoint.add_bins(ignore_bin(4700));
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 0, transition_idx => 0);
+      v_coverpoint.add_bins(ignore_bin_transition((5501,5503,5505,5509)), "transition");
+      v_coverpoint.add_bins(bin(5600));
+      v_coverpoint.add_bins(ignore_bin(5700));
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 0, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample the complete transition");
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501,4503,4505,4509), 2);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 2, transition_idx => 0);
+      sample_bins(v_coverpoint, (5501,5503,5505,5509), 2);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 2, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample the complete transition with an incorrect value");
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501,4503,4505,4510), 2);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 2, transition_idx => 0);
+      sample_bins(v_coverpoint, (5501,5503,5505,5510), 2);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 2, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a partial transition, then sample the complete transition from the start");
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501,4503), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 2, transition_idx => 2);
+      sample_bins(v_coverpoint, (5501,5503), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 2, transition_idx => 2);
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501,4503,4505,4509), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5501,5503,5505,5509), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a transition value, then sample a bin value and check index is reset");
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 1);
+      sample_bins(v_coverpoint, (5501), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 1);
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4600), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5600), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a transition value, then sample an ignore bin value and check index is reset");
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501,4503), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 2);
+      sample_bins(v_coverpoint, (5501,5503), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 2);
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4700), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5700), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
 
       log(ID_SEQUENCER, "Sample a transition value, then sample a random value and check index is reset");
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4501,4503,4505), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 3);
+      sample_bins(v_coverpoint, (5501,5503,5505), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 3);
       v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (4800), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4501,4503,4505,4509), name => "bin", hits => 3, transition_idx => 0);
+      sample_bins(v_coverpoint, (5800), 1);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -874,18 +874,18 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid and ignore bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin_range(3000,3020,1), "bin");
+      v_coverpoint_b.add_bins(bin_range(3000,3020,1), "overlap");
       v_coverpoint_b.add_bins(ignore_bin_range(3005,3015));
 
       sample_bins(v_coverpoint_b, (3000,3004,3005,3006,3014,3015,3016,3020), 1);
 
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3000,3020), hits => 4, name => "bin");
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3000,3020), hits => 4, name => "overlap");
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (3005,3015), hits => 4);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid and illegal bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin_range(3100,3120,1), "bin");
+      v_coverpoint_b.add_bins(bin_range(3100,3120,1), "overlap");
       v_coverpoint_b.add_bins(illegal_bin_range(3105,3115));
 
       v_coverpoint_b.set_illegal_bin_alert_level(WARNING);
@@ -893,7 +893,7 @@ begin
       increment_expected_alerts(WARNING,4);
       sample_bins(v_coverpoint_b, (3100,3104,3105,3106,3114,3115,3116,3120), 1);
 
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3100,3120), hits => 4, name => "bin");
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3100,3120), hits => 4, name => "overlap");
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (3105,3115), hits => 4);
 
       ------------------------------------------------------------

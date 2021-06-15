@@ -1405,7 +1405,6 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "write_coverage_db(" & file_name & ")";
       file file_handler     : text open write_mode is file_name;
       variable v_line       : line;
-      variable v_rand_seeds : t_positive_vector(0 to 1);
 
       procedure write_value(
         constant value : in integer) is
@@ -1415,12 +1414,15 @@ package body funct_cov_pkg is
       end procedure;
 
       procedure write_value(
-        constant value : in t_natural_vector) is
+        constant value : in integer_vector) is
       begin
-        for i in value'range loop
+        for i in 0 to value'length-1 loop
           write(v_line, value(i));
-          writeline(file_handler, v_line);
+          if i < value'length-1 then
+            write(v_line, ' ');
+          end if;
         end loop;
+        writeline(file_handler, v_line);
       end procedure;
 
       procedure write_value(
@@ -1444,25 +1446,26 @@ package body funct_cov_pkg is
         write(v_line, bin_idx);
         writeline(file_handler, v_line);
         for i in 0 to bin_idx-1 loop
-          write(v_line, bin_vector(i).hits);
-          writeline(file_handler, v_line);
-          write(v_line, bin_vector(i).min_hits);
-          writeline(file_handler, v_line);
-          write(v_line, bin_vector(i).rand_weight);
-          writeline(file_handler, v_line);
           write(v_line, bin_vector(i).name);
+          writeline(file_handler, v_line);
+          write(v_line, bin_vector(i).hits);
+          write(v_line, ' ');
+          write(v_line, bin_vector(i).min_hits);
+          write(v_line, ' ');
+          write(v_line, bin_vector(i).rand_weight);
           writeline(file_handler, v_line);
           for j in 0 to priv_num_bins_crossed-1 loop
             write(v_line, t_cov_bin_type'pos(bin_vector(i).cross_bins(j).contains));
-            writeline(file_handler, v_line);
+            write(v_line, ' ');
             write(v_line, bin_vector(i).cross_bins(j).num_values);
-            writeline(file_handler, v_line);
+            write(v_line, ' ');
             write(v_line, bin_vector(i).cross_bins(j).transition_idx);
-            writeline(file_handler, v_line);
+            write(v_line, ' ');
             for k in 0 to bin_vector(i).cross_bins(j).num_values-1 loop
               write(v_line, bin_vector(i).cross_bins(j).values(k));
-              writeline(file_handler, v_line);
+              write(v_line, ' ');
             end loop;
+            writeline(file_handler, v_line);
           end loop;
         end loop;
       end procedure;
@@ -1474,11 +1477,9 @@ package body funct_cov_pkg is
         write_value(priv_name);
         write_value(priv_scope);
         write_value(priv_num_bins_crossed);
-        v_rand_seeds := priv_rand_gen.get_rand_seeds(VOID);
-        write_value(v_rand_seeds(0));
-        write_value(v_rand_seeds(1));
+        write_value(integer_vector(priv_rand_gen.get_rand_seeds(VOID)));
         write_value(priv_rand_transition_bin_idx);
-        write_value(priv_rand_transition_bin_value_idx);
+        write_value(integer_vector(priv_rand_transition_bin_value_idx));
         write_value(t_alert_level'pos(priv_illegal_bin_alert_level));
         write_value(priv_detect_bin_overlap);
         -- Covergroup config
@@ -1507,7 +1508,7 @@ package body funct_cov_pkg is
       file file_handler      : text;
       variable v_open_status : file_open_status;
       variable v_line        : line;
-      variable v_rand_seeds  : t_positive_vector(0 to 1);
+      variable v_rand_seeds  : t_natural_vector(0 to 1);
       variable v_value       : integer;
 
       procedure read_value(
@@ -1519,10 +1520,13 @@ package body funct_cov_pkg is
 
       procedure read_value(
         variable value : out t_natural_vector) is
+        variable v_idx : natural := 0;
       begin
-        for i in value'range loop
-          readline(file_handler, v_line);
-          read(v_line, value(i));
+        readline(file_handler, v_line);
+        while v_line.all'length > 0 loop
+          read(v_line, value(v_idx));
+          v_idx := v_idx + 1;
+          exit when v_idx > value'length-1;
         end loop;
       end procedure;
 
@@ -1548,26 +1552,21 @@ package body funct_cov_pkg is
       begin
         for i in 0 to bin_idx-1 loop
           readline(file_handler, v_line);
-          read(v_line, bin_vector(i).hits);
-          readline(file_handler, v_line);
-          read(v_line, bin_vector(i).min_hits);
-          readline(file_handler, v_line);
-          read(v_line, bin_vector(i).rand_weight);
-          readline(file_handler, v_line);
           read(v_line, bin_vector(i).name);  -- read() crops the string
+          readline(file_handler, v_line);
+          read(v_line, bin_vector(i).hits);
+          read(v_line, bin_vector(i).min_hits);
+          read(v_line, bin_vector(i).rand_weight);
           for j in 0 to priv_num_bins_crossed-1 loop
             readline(file_handler, v_line);
             read(v_line, v_contains);
             bin_vector(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
-            readline(file_handler, v_line);
             read(v_line, v_num_values);
-            bin_vector(i).cross_bins(j).num_values := v_num_values;
             check_value(v_num_values <= C_FC_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_FC_MAX_NUM_BIN_VALUES",
               priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-            readline(file_handler, v_line);
+            bin_vector(i).cross_bins(j).num_values := v_num_values;
             read(v_line, bin_vector(i).cross_bins(j).transition_idx);
             for k in 0 to v_num_values-1 loop
-              readline(file_handler, v_line);
               read(v_line, bin_vector(i).cross_bins(j).values(k));
             end loop;
           end loop;
@@ -1591,6 +1590,7 @@ package body funct_cov_pkg is
       else
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_string(priv_name) & " will be overwritten.", priv_scope);
       end if;
+
       -- Coverpoint config
       read_value(priv_name);  -- read() crops the string
       set_name(priv_name);
@@ -1599,9 +1599,8 @@ package body funct_cov_pkg is
       read_value(priv_num_bins_crossed);
       check_value(priv_num_bins_crossed <= C_MAX_NUM_CROSS_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_num_bins_crossed) & " crossed bins. Increase C_MAX_NUM_CROSS_BINS",
         priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      read_value(v_rand_seeds(0));
-      read_value(v_rand_seeds(1));
-      priv_rand_gen.set_rand_seeds(v_rand_seeds);
+      read_value(v_rand_seeds);
+      priv_rand_gen.set_rand_seeds(t_positive_vector(v_rand_seeds));
       read_value(priv_rand_transition_bin_idx);
       read_value(priv_rand_transition_bin_value_idx);
       read_value(v_value);

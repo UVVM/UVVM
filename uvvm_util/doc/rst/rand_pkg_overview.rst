@@ -109,7 +109,7 @@ by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function.
 
     addr_vec := my_rand.rand(addr_vec'length, 0, 50, UNIQUE);
 
-Note that if the constraints are not enough to generate unique values for the whole vector, an error will be reported.
+If the constraints are not enough to generate unique values for the whole vector, an error will be reported.
 
 **********************************************************************************************************************************
 Cyclic generation
@@ -124,15 +124,19 @@ not repeat until all the values within the constraints have been generated. Once
 * The supported types are integer, integer_vector, unsigned, signed and std_logic_vector. Note that unsigned, signed and 
   std_logic_vector lengths bigger than 32 bits are not supported however.
 * Cyclic generation cannot be combined with the uniqueness parameter in the vector types.
-* Note that the state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function 
-  with different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
+* The state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function with 
+  different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
 * By default, a list is created to store the state of all the possible values to be generated. This list can require a lot of memory 
   for big ranges or even cause problems for the simulator. To avoid this, a different implementation using a dynamic queue will be 
   used instead when the range of values is greater than C_RAND_CYCLIC_LIST_MAX_NUM_VALUES defined in adaptations_pkg.
-* Note that when using the dynamic queue implementation, the simulation might slow down after a few thousand iterations due to the 
-  parsing of the growing queue.
-* IMPORTANT: It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to deallocate 
-  the list/queue.
+
+.. caution::
+    When using the dynamic queue implementation, the simulation might slow down after a few thousand iterations due to the 
+    parsing of the growing queue.
+
+.. important::
+    It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to deallocate the
+    list/queue.
 
 **********************************************************************************************************************************
 Distributions
@@ -169,7 +173,8 @@ of (value + weight) or (range of values + weight). The function names contain th
     * :ref:`rand_range_weight`
     * :ref:`rand_range_weight_mode`
 
-Note that the sum of all weights need not be 100 since the probability is equal to weight/sum_of_weights.
+.. note::
+    The sum of all weights need not be 100 since the probability is equal to weight/sum_of_weights.
 
 When specifying a weight for a range of values there are two possible scenarios:
 

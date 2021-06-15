@@ -245,7 +245,7 @@ Writes the coverpoint model to a file. ::
 .. code-block::
 
     Examples:
-    my_coverpoint.write_coverage_db("coverage_db.txt");
+    my_coverpoint.write_coverage_db("my_coverpoint_db.txt");
 
 
 load_coverage_db()
@@ -265,7 +265,7 @@ Loads the coverpoint model from a file. ::
 .. code-block::
 
     Examples:
-    my_coverpoint.load_coverage_db("coverage_db.txt");
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
 
 
 add_bins()

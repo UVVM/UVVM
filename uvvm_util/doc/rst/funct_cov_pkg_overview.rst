@@ -489,7 +489,38 @@ Coverage database
 **********************************************************************************************************************************
 In order to accumulate coverage by running several testcases we need to store the coverpoint model at the end of one testcase and 
 load it at the beginning of the next. This can be done with ``write_coverage_db()`` which writes all the necessary information to 
-a file and ``load_coverage_db()`` which reads it back into a new coverpoint.
+a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note that this must be done for each coverpoint in 
+the covergroup and they must be written to separate files.
+
+*Example 1: The testcases are in different files and are run in a specified order.*
+
+#. TC_1 adds bins to a coverpoint, samples coverage and writes the database to "coverpoint_1.txt".
+#. TC_2 loads the database from "coverpoint_1.txt", samples coverage and writes the updated database to "coverpoint_1.txt", which 
+   overwrites the content of the file.
+#. TC_3 does the same as TC_2.
+
+.. note::
+
+    * Loading a database into a coverpoint will overwrite all its information, therefore it is suggested to always load before 
+      sampling coverage or adding any extra bins.
+    * If a database is loaded into a coverpoint which is already initialized, a TB_WARNING will be generated.
+
+*Example 2: There is a single testcase file which is run using different generics in a specified order.*
+
+* Same as Example 1, but using the generics to identify the first TC and avoid loading the database.
+
+.. note::
+
+    If a file is not found when trying to load, a TB_WARNING will be generated.
+
+*Example 3: The testcases are run in parallel.*
+
+#. Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.
+#. After all simulations are done, use a script to merge the database files.
+
+.. note::
+
+    The downside of this approach is that the accumulated coverage will not be visible in simulation.
 
 **********************************************************************************************************************************
 Additional info

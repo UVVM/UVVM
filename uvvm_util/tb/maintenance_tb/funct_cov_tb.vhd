@@ -1974,6 +1974,12 @@ begin
     elsif GC_TESTCASE = "fc_database" then
     --===================================================================================
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing load database from a non-existing file");
+      ------------------------------------------------------------
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint.load_coverage_db("dummy.txt");
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - coverpoint");
       ------------------------------------------------------------
       -- Add bins
@@ -2372,6 +2378,16 @@ begin
 
       print_sim_coverage_summary(VOID);
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing load DB to an already initialized coverpoint - overwrite");
+      ------------------------------------------------------------
+      check_value(v_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
+      check_value(v_coverpoint.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
+
+      increment_expected_alerts(TB_WARNING, 1);
+      v_coverpoint.load_coverage_db(GC_FILE_PATH & "cross.txt");
+      check_value(v_coverpoint.get_name(VOID), "MY_CROSS", ERROR, "Checking name");
+      check_value(v_coverpoint.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
 
     end if;
 

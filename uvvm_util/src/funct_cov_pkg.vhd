@@ -1608,6 +1608,7 @@ package body funct_cov_pkg is
       priv_illegal_bin_alert_level := t_alert_level'val(v_value);
       read_value(priv_detect_bin_overlap);
       -- Covergroup config
+      protected_covergroup_status.set_name(priv_id, priv_name); -- Previously read from the file
       read_value(v_value);
       protected_covergroup_status.set_num_valid_bins(priv_id, v_value);
       read_value(v_value);

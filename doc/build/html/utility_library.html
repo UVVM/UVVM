@@ -38,7 +38,9 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UVVM VVC Framework" href="vvc_framework.html" />
+    <link rel="prev" title="Indices and tables" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,11 +88,33 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">UVVM Utility Library</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Utility Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-reference">Quick Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#checks-and-awaits">Checks and awaits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging-and-verbosity-control">Logging and verbosity control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#alert-handling">Alert handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reporting">Reporting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#randomization">Randomization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-handling">String handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#signal-generators">Signal generators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#synchronisation">Synchronisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bfm-common-package">BFM common package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#watchdog">Watchdog</a></li>
 </ul>
-</div>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#methods-description-checks-and-awaits">Methods description - Checks and awaits</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Checks and awaits</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">UVVM VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sbi_vip.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart_vip.html">Bitvis VIP UART</a></li>
+</ul>
+
             
           
         </div>
@@ -158,6 +182,295 @@
             
   <div class="section" id="uvvm-utility-library">
 <h1>UVVM Utility Library<a class="headerlink" href="#uvvm-utility-library" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="quick-reference">
+<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="checks-and-awaits">
+<h3>Checks and awaits<a class="headerlink" href="#checks-and-awaits" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>[v_bool :=] <strong>check_value</strong> (value, [exp], [alert_level], msg, […])</p></td>
+</tr>
+<tr class="row-even"><td><p>[v_bool :=] <strong>check_value_in_range</strong> (value, min_value, max_value, [alert_level], msg, […])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>check_stable</strong> (target, stable_req, [alert_level], msg, […])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>await_change</strong> (target, min_time, max_time, [alert_level], msg, […])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>await_value</strong> (target, exp, min_time, max_time, [alert_level], msg, […])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>await_stable</strong> (target, stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, […])</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="logging-and-verbosity-control">
+<h3>Logging and verbosity control<a class="headerlink" href="#logging-and-verbosity-control" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>set_log_file_name</strong> (file_name)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>log</strong> ([msg_id], msg, […])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>log_text_block</strong> (msg_id, text_block, formatting, […])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>enable_log_msg</strong> (msg_id, […])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>disable_log_msg</strong> (msg_id, […])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>is_log_msg_enabled</strong> (msg_id, [msg_id_panel])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_log_destination</strong> (log_destination, [quietness])</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="alert-handling">
+<h3>Alert handling<a class="headerlink" href="#alert-handling" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>set_alert_file_name</strong> (file_name)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>alert</strong> (alert_level, msg, scope)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[tb_]note</strong> (msg, [scope])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[tb_]warning</strong> (msg, [scope])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>manual_check</strong> (msg, [scope])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[tb_]error</strong> (msg, [scope])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[tb_]failure</strong> (msg, [scope])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_alert_stop_limit</strong> (alert_level, limit)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_int := <strong>get_alert_stop_limit</strong> (alert_level)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_alert_attention</strong> (alert_level, attention, [msg])</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_attention := <strong>get_alert_attention</strong> (alert_level)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>increment_expected_alerts</strong> (alert_level, number)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>increment_expected_alerts_and_stop_limit</strong> (alert_level, [number, [msg, [scope]]])</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="reporting">
+<h3>Reporting<a class="headerlink" href="#reporting" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>report_global_ctrl</strong> (VOID)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>report_msg_id_panel</strong> (VOID)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>report_alert_counters</strong> (VOID)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>report_alert_counters</strong> (order)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_natural := <strong>shared_uvvm_status.found_unexpected_simulation_warnings_or_worse</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>v_natural := <strong>shared_uvvm_status.found_unexpected_simulation_errors_or_worse</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>v_natural := <strong>shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>v_natural := <strong>shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="randomization">
+<h3>Randomization<a class="headerlink" href="#randomization" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>v_slv  := <strong>random</strong> (length)</p></td>
+</tr>
+<tr class="row-even"><td><p>v_sl    := <strong>random</strong> (VOID)</p></td>
+</tr>
+<tr class="row-odd"><td><p>{v_int, v_real, v_time}  := <strong>random</strong> (min_value, max_value)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>random</strong> ([min_value, [max_val]], v_seed1, v_seed2, v_target)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>randomize</strong> (seed1, seed2)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="string-handling">
+<h3>String handling<a class="headerlink" href="#string-handling" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>v_string       := <strong>to_string</strong> (val, […])</p></td>
+</tr>
+<tr class="row-even"><td><p>v_string       := <strong>justify</strong> (val, justified, width, format_spaces, truncate)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_string       := <strong>fill_string</strong> (val, width)</p></td>
+</tr>
+<tr class="row-even"><td><p>v_string       := <strong>to_upper</strong> (val)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_character := <strong>ascii_to_char</strong> (ascii_pos, [ascii_allow])</p></td>
+</tr>
+<tr class="row-even"><td><p>v_int            := <strong>char_to_ascii</strong> (character)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_natural     := <strong>pos_of_leftmost</strong> (character, string, [result_if_not_found])</p></td>
+</tr>
+<tr class="row-even"><td><p>v_natural     := <strong>pos_of_rightmost</strong> (character, string, [result_if_not_found])</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_string       := <strong>remove_initial_chars</strong> (string, number of chars(natural))</p></td>
+</tr>
+<tr class="row-even"><td><p>v_string       := <strong>get_procedure_name_from_instance_name</strong> (string)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_string       := <strong>get_process_name_from_instance_name</strong> (string)</p></td>
+</tr>
+<tr class="row-even"><td><p>v_string       := <strong>get_entity_name_from_instance_name</strong> (string)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_string       := <strong>replace</strong> (string, target_character, exchange_character)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>replace</strong> (inout line, target_character, exchange_character)</p></td>
+</tr>
+<tr class="row-odd"><td><p>v_string       := <strong>pad_string</strong> (val, char, width, [side])</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="signal-generators">
+<h3>Signal generators<a class="headerlink" href="#signal-generators" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>clock_generator</strong> (clock, [clock_count], clock_period, [clock_high_percentage] / [clock_high_time])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>clock_generator</strong> (clock, clock_ena, [clock_count], clock_period, clock_name, [clock_high…])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>adjustable_clock_generator</strong> (clock_signal, clock_ena, clock_period, clock_high_percentage)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>adjustable_clock_generator</strong> (clock_signal, clock_ena, clock_period, clock_name, clock_high_percentage)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>adjustable_clock_generator</strong> (clock_signal, clock_ena, clock_count, clock_period, clock_name, clock_high_percentage)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>gen_pulse</strong> (target, [pulse_value] pulse_duration, [blocking_mode], msg) or (target, [pulse_value], clock_signal, num_periods, msg)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="synchronisation">
+<h3>Synchronisation<a class="headerlink" href="#synchronisation" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>block_flag</strong> (flag_name, msg, [already_blocked_severity, [scope]])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>unblock_flag</strong> (flag_name, msg, trigger, [scope])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>await_unblock_flag</strong> (flag_name, timeout, msg, [flag_returning, [timeout_severity, [scope]]]</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>await_barrier</strong> (barrier_signal, timeout, msg, [timeout_severity, [scope]]</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bfm-common-package">
+<h3>BFM common package<a class="headerlink" href="#bfm-common-package" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>normalize_and_check</strong> (value, target, mode, value_name, target_name, msg)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>wait_until_given_time_after_rising_edge</strong> (clk, wait_time)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>wait_until_given_time_before_rising_edge</strong> (clk, time_to_edge, clk_period)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>wait_num_rising_edge</strong> (clk, num_rising_edge)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>wait_num_rising_edge_plus_margin</strong> (clk, num_rising_edge, margin)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>wait_on_bfm_sync_start</strong> (clk, bfm_sync, setup_time, config_clock_period, time_of_falling_edge, time_of_rising_edge)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>wait_on_bfm_exit</strong> (clk, bfm_sync, hold_time, time_of_falling_edge, time_of_rising_edge)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>check_clock_period_margin</strong> (clock, bfm_sync, time_of_falling_edge, time_of_rising_edge, config_clock_period, config_clock_period_margin, config_clock_margin_severity)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="watchdog">
+<h3>Watchdog<a class="headerlink" href="#watchdog" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>watchdog_timer</strong> (watchdog_ctrl, timeout, [alert_level, [msg]])</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>extend_watchdog</strong> (watchdog_ctrl, [time_extend])</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>reinitialize_watchdog</strong> (watchdog_ctrl, timeout)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>terminate_watchdog</strong> (watchdog_ctrl)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="methods-description-checks-and-awaits">
+<h2>Methods description - Checks and awaits<a class="headerlink" href="#methods-description-checks-and-awaits" title="Permalink to this headline">¶</a></h2>
+<p>Note 1: Arguments common for most methods (green text) are described in chapter 1.12.
+Note 2: All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl class="simple">
+<dt>Legend: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer</dt><dd><p><code class="docutils literal notranslate"><span class="pre">*</span></code> IEEE=Method is native for VHDL2008 (Method is listed here for completeness.)</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id1">
+<h3>Checks and awaits<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 43%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Parameters and Examples</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>[v_bool :=] check_value()</p></td>
+<td><p>–help</p></td>
+<td><p>Help screen</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 
 
@@ -165,6 +478,10 @@
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="vvc_framework.html" class="btn btn-neutral float-right" title="UVVM VVC Framework" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Indices and tables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

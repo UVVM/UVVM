@@ -5,10 +5,14 @@
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Contents:
 
    utility_library.rst
+   vvc_framework.rst
+   sbi_vip.rst
+   uart_vip.rst
+
 
 Indices and tables
 ==================

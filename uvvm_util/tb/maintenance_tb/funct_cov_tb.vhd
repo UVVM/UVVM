@@ -2389,6 +2389,32 @@ begin
       check_value(v_coverpoint.get_name(VOID), "MY_CROSS", ERROR, "Checking name");
       check_value(v_coverpoint.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
 
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing clearing a coverpoint's coverage");
+      ------------------------------------------------------------
+      sample_bins(v_coverpoint_b, (50,51,52), 1); -- To test transition_idx
+      v_coverpoint_b.clear_coverage(VOID);
+
+      -- Check bins and coverage
+      v_bin_idx := 0;
+      v_invalid_bin_idx := 0;
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 20, 8, 20, "single", hits => 0);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 0);
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 0);
+      check_bin(v_coverpoint_b, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 0);
+      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 0, transition_idx => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_IGNORE, (132,134,136,138), "ignore_transition", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_ILLEGAL, 200, "bin_10", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_ILLEGAL, 210, "illegal_single", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 0);
+      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 0);
+      check_coverage(v_coverpoint_b, 0.0);
+      v_coverpoint_b.print_summary(VERBOSE);
+
     end if;
 
     -----------------------------------------------------------------------------

@@ -223,6 +223,12 @@ package funct_cov_pkg is
       constant file_name    : in string;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
+    procedure clear_coverage(
+      constant VOID : in t_void);
+
+    procedure clear_coverage(
+      constant msg_id_panel : in t_msg_id_panel);
+
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
       constant VOID : t_void)
@@ -1485,7 +1491,7 @@ package body funct_cov_pkg is
         -- Covergroup config
         write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
         write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
-        write_value(protected_covergroup_status.get_num_uncovered_bins(priv_id));
+        write_value(protected_covergroup_status.get_num_covered_bins(priv_id));
         write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
         write_value(protected_covergroup_status.get_coverage_weight(priv_id));
@@ -1613,7 +1619,7 @@ package body funct_cov_pkg is
       read_value(v_value);
       protected_covergroup_status.set_num_illegal_bins(priv_id, v_value);
       read_value(v_value);
-      protected_covergroup_status.set_num_uncovered_bins(priv_id, v_value);
+      protected_covergroup_status.set_num_covered_bins(priv_id, v_value);
       read_value(v_value);
       protected_covergroup_status.set_total_bin_hits(priv_id, v_value);
       read_value(v_value);
@@ -1636,6 +1642,39 @@ package body funct_cov_pkg is
 
       file_close(file_handler);
       DEALLOCATE(v_line);
+    end procedure;
+
+    procedure clear_coverage(
+      constant VOID : in t_void) is
+    begin
+      clear_coverage(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_coverage(
+      constant msg_id_panel : in t_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_coverage()";
+    begin
+      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+
+      for i in 0 to priv_bins_idx-1 loop
+        priv_bins(i).hits := 0;
+        for j in 0 to C_MAX_NUM_CROSS_BINS-1 loop
+          priv_bins(i).cross_bins(j).transition_idx := 0;
+        end loop;
+      end loop;
+
+      for i in 0 to priv_invalid_bins_idx-1 loop
+        priv_invalid_bins(i).hits := 0;
+        for j in 0 to C_MAX_NUM_CROSS_BINS-1 loop
+          priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
+        end loop;
+      end loop;
+
+      priv_rand_transition_bin_idx       := C_UNINITIALIZED;
+      priv_rand_transition_bin_value_idx := (others => 0);
+
+      protected_covergroup_status.set_num_covered_bins(priv_id, 0);
+      protected_covergroup_status.set_total_bin_hits(priv_id, 0);
     end procedure;
 
     -- Returns the number of bins crossed in the coverpoint

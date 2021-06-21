@@ -268,6 +268,28 @@ Loads the coverpoint model from a file. ::
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
 
 
+clear_coverage()
+----------------------------------------------------------------------------------------------------------------------------------
+Resets the coverpoint's coverage by clearing all the bin hit counters. ::
+
+    clear_coverage(VOID)
+    clear_coverage(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.clear_coverage(VOID);
+    my_coverpoint.clear_coverage(my_msg_id_panel);
+
+
 add_bins()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds bins to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` which return a t_new_bin_array. 

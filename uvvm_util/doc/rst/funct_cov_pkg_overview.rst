@@ -526,6 +526,12 @@ the covergroup and they must be written to separate files.
 
     The downside of this approach is that the accumulated coverage will not be visible in simulation.
 
+Clearing coverage
+==================================================================================================================================
+A coverpoint's coverage status can be reset with ``clear_coverage()``. This might be useful for example when running several 
+testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint model 
+and only want to keep the bin structure.
+
 **********************************************************************************************************************************
 Additional info
 **********************************************************************************************************************************

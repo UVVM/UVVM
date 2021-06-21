@@ -79,7 +79,7 @@ package protected_types_pkg is
     procedure set_name(coverpoint_idx : in integer; name : in string);
     procedure set_num_valid_bins(coverpoint_idx : in integer; num_bins : in natural);
     procedure set_num_illegal_bins(coverpoint_idx : in integer; num_bins : in natural);
-    procedure set_num_uncovered_bins(coverpoint_idx : in integer; num_bins : in natural);
+    procedure set_num_covered_bins(coverpoint_idx : in integer; num_bins : in natural);
     procedure set_total_bin_hits(coverpoint_idx : in integer; hits : in natural);
     procedure set_total_bin_min_hits(coverpoint_idx : in integer; min_hits : in natural);
     procedure set_coverage_weight(coverpoint_idx : in integer; weight : in positive);
@@ -94,6 +94,7 @@ package protected_types_pkg is
     impure function get_name(coverpoint_idx : in integer) return string;
     impure function get_num_valid_bins(coverpoint_idx : in integer) return natural;
     impure function get_num_illegal_bins(coverpoint_idx : in integer) return natural;
+    impure function get_num_covered_bins(coverpoint_idx : in integer) return natural;
     impure function get_num_uncovered_bins(coverpoint_idx : in integer) return natural;
     impure function get_total_bin_hits(coverpoint_idx : in integer) return natural;
     impure function get_total_bin_min_hits(coverpoint_idx : in integer) return natural;
@@ -298,11 +299,11 @@ package body protected_types_pkg is
       priv_coverpoint_status_list(coverpoint_idx).num_illegal_bins := num_bins;
     end procedure;
 
-    procedure set_num_uncovered_bins(
+    procedure set_num_covered_bins(
       constant coverpoint_idx : in integer;
       constant num_bins       : in natural) is
     begin
-      priv_coverpoint_status_list(coverpoint_idx).num_covered_bins := priv_coverpoint_status_list(coverpoint_idx).num_valid_bins - num_bins;
+      priv_coverpoint_status_list(coverpoint_idx).num_covered_bins := num_bins;
     end procedure;
 
     procedure set_total_bin_hits(
@@ -396,6 +397,13 @@ package body protected_types_pkg is
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).num_illegal_bins;
+    end function;
+
+    impure function get_num_covered_bins(
+      constant coverpoint_idx : in integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
     end function;
 
     impure function get_num_uncovered_bins(

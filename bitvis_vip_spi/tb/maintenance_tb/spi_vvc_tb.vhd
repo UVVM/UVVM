@@ -1281,9 +1281,6 @@ begin  -- architecture behav
       await_master_rx_completion(50 ms);
 
       SPI_VVC_SB.report_counters(ALL_INSTANCES);
-
-    else
-      alert(tb_error, "Unsupported test");
     end if;
 
 

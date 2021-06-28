@@ -393,12 +393,6 @@ begin
       tick_off_req_cov("REQ_4");
       -- End testcase
       finalize_req_cov(VOID);
-
-    else
-      --
-      -- The Generic Test is unknown.
-      --
-      alert(tb_error, "Unsupported test");
     end if;
 
 

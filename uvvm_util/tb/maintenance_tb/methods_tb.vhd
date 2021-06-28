@@ -4592,10 +4592,6 @@ begin
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
-
-      
-    else
-      alert(tb_error, "Unsupported test");
     end if;
 
     -----------------------------------------------------------------------------

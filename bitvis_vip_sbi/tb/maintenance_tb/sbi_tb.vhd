@@ -498,8 +498,6 @@ begin
       check_value(clk'last_event, 3 ns, ERROR, "Check hold time", C_SCOPE, ID_SEQUENCER);
 
       shared_sbi_vvc_config(1).bfm_config.bfm_sync := SYNC_ON_CLOCK_ONLY;
-    else
-      alert(tb_error, "Unsupported test");
     end if;
 
 

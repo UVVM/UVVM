@@ -29,8 +29,7 @@ use work.rand_pkg.all;
 package funct_cov_pkg is
 
   constant C_MAX_NUM_CROSS_BINS   : positive := 16;
-  --TODO: move to adaptations_pkg?
-  constant C_MAX_NUM_BINS         : positive := 100; --Q: make it possible to grow?
+  constant C_MAX_NEW_NUM_BINS     : positive := 100; -- TODO: choose a value or use unconstrained type
 
   ------------------------------------------------------------
   -- Types
@@ -46,12 +45,12 @@ package funct_cov_pkg is
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
   type t_new_cov_bin is record
-    bin_vector : t_new_bin_vector(0 to C_MAX_NUM_BINS-1);
-    num_bins   : natural range 0 to C_MAX_NUM_BINS;
+    bin_vector : t_new_bin_vector(0 to C_MAX_NEW_NUM_BINS-1);
+    num_bins   : natural range 0 to C_MAX_NEW_NUM_BINS;
     proc_call  : string(1 to C_FC_MAX_PROC_CALL_LENGTH);
   end record;
   type t_new_bin_array is array (natural range <>) of t_new_cov_bin;
-  constant C_EMPTY_NEW_BIN_ARRAY : t_new_bin_array(0 to 0) := (0 => ((0 to C_MAX_NUM_BINS-1 => (VAL, (others => 0), 0)),
+  constant C_EMPTY_NEW_BIN_ARRAY : t_new_bin_array(0 to 0) := (0 => ((0 to C_MAX_NEW_NUM_BINS-1 => (VAL, (others => 0), 0)),
                                                                      0,
                                                                      (1 to C_FC_MAX_PROC_CALL_LENGTH => NUL)));
 
@@ -71,6 +70,7 @@ package funct_cov_pkg is
     name           : string(1 to C_FC_MAX_NAME_LENGTH);
   end record;
   type t_cov_bin_vector is array (natural range <>) of t_cov_bin;
+  type t_cov_bin_vector_ptr is access t_cov_bin_vector;
 
   ------------------------------------------------------------
   -- Bin functions
@@ -228,6 +228,13 @@ package funct_cov_pkg is
 
     procedure clear_coverage(
       constant msg_id_panel : in t_msg_id_panel);
+
+    procedure set_num_bins_allocated(
+      constant value        : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure set_num_bins_allocated_increment(
+      constant value : in positive);
 
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
@@ -783,9 +790,9 @@ package body funct_cov_pkg is
     variable priv_id                            : integer                                       := C_DEALLOCATED_ID;
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
     variable priv_scope                         : string(1 to C_LOG_SCOPE_WIDTH)                := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
-    variable priv_bins                          : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
+    variable priv_bins                          : t_cov_bin_vector_ptr                          := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
     variable priv_bins_idx                      : natural                                       := 0;
-    variable priv_invalid_bins                  : t_cov_bin_vector(0 to C_MAX_NUM_BINS-1);
+    variable priv_invalid_bins                  : t_cov_bin_vector_ptr                          := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
     variable priv_invalid_bins_idx              : natural                                       := 0;
     variable priv_num_bins_crossed              : integer                                       := C_UNINITIALIZED;
     variable priv_rand_gen                      : t_rand;
@@ -793,6 +800,7 @@ package body funct_cov_pkg is
     variable priv_rand_transition_bin_value_idx : t_natural_vector(0 to C_MAX_NUM_CROSS_BINS-1) := (others => 0);
     variable priv_illegal_bin_alert_level       : t_alert_level                                 := ERROR;
     variable priv_detect_bin_overlap            : boolean                                       := false;
+    variable priv_num_bins_allocated_increment  : positive                                      := C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1060,11 +1068,6 @@ package body funct_cov_pkg is
       check_value(coverpoint2_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 2 is empty", priv_scope, ID_NEVER, caller_name => local_call);
       check_value(coverpoint3_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 3 is empty", priv_scope, ID_NEVER, caller_name => local_call);
 
-      check_value(priv_bins_idx < C_MAX_NUM_BINS-1, TB_FAILURE, "Cannot add more bins. Number of bins in the coverpoint has reached C_MAX_NUM_BINS",
-        priv_scope, ID_NEVER, caller_name => local_call);
-      check_value(priv_invalid_bins_idx < C_MAX_NUM_BINS-1, TB_FAILURE, "Cannot add more bins. Number of bins in the coverpoint has reached C_MAX_NUM_BINS",
-        priv_scope, ID_NEVER, caller_name => local_call);
-
       -- The number of bins crossed is set on the first call and can't be changed
       if priv_num_bins_crossed = C_UNINITIALIZED and num_bins_crossed > 0 then
         priv_num_bins_crossed := num_bins_crossed;
@@ -1214,6 +1217,22 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
+    -- Resizes the bin vector by creating a new memory structure and deallocating the old one
+    procedure resize_bin_vector(
+      variable bin_vector : inout t_cov_bin_vector_ptr;
+      constant size       : in    natural := 0) is
+      variable v_copy_ptr : t_cov_bin_vector_ptr;
+    begin
+      v_copy_ptr := bin_vector;
+      if size = 0 then
+        bin_vector := new t_cov_bin_vector(0 to v_copy_ptr'length + priv_num_bins_allocated_increment);
+      else
+        bin_vector := new t_cov_bin_vector(0 to size-1);
+      end if;
+      bin_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
     -- Adds bins in a recursive way
     procedure add_bins_recursive(
       constant bin_array       : in    t_new_bin_array;
@@ -1245,8 +1264,13 @@ package body funct_cov_pkg is
                                                      bin_array(j).bin_vector(idx_reg(j)).contains = TRN_ILLEGAL);
           end loop;
           v_num_transitions := C_UNINITIALIZED;
+
           -- Store valid bins
           if v_bin_is_valid then
+            -- Resize if there's no space in the list
+            if priv_bins_idx = priv_bins'length then
+              resize_bin_vector(priv_bins);
+            end if;
             for j in 0 to C_NUM_CROSS_BINS-1 loop
               check_cross_num_transitions(v_num_transitions, bin_array(j).bin_vector(idx_reg(j)).contains, bin_array(j).bin_vector(idx_reg(j)).num_values);
               priv_bins(priv_bins_idx).cross_bins(j).contains       := bin_array(j).bin_vector(idx_reg(j)).contains;
@@ -1262,8 +1286,13 @@ package body funct_cov_pkg is
             -- Update covergroup status register
             protected_covergroup_status.increment_valid_bin_count(priv_id);
             protected_covergroup_status.increment_min_hits_count(priv_id, min_hits);
+
           -- Store ignore or illegal bins
           else
+            -- Check if there's space in the list
+            if priv_invalid_bins_idx = priv_invalid_bins'length then
+              resize_bin_vector(priv_invalid_bins);
+            end if;
             for j in 0 to C_NUM_CROSS_BINS-1 loop
               check_cross_num_transitions(v_num_transitions, bin_array(j).bin_vector(idx_reg(j)).contains, bin_array(j).bin_vector(idx_reg(j)).num_values);
               priv_invalid_bins(priv_invalid_bins_idx).cross_bins(j).contains       := bin_array(j).bin_vector(idx_reg(j)).contains;
@@ -1281,6 +1310,7 @@ package body funct_cov_pkg is
               protected_covergroup_status.increment_illegal_bin_count(priv_id);
             end if;
           end if;
+
         -- Go to the next element of the array
         else
           add_bins_recursive(bin_array, bin_array_idx+1, idx_reg, min_hits, rand_weight, use_rand_weight, bin_name);
@@ -1447,7 +1477,7 @@ package body funct_cov_pkg is
 
       procedure write_bins(
         constant bin_idx    : in natural;
-        constant bin_vector : in t_cov_bin_vector) is
+        variable bin_vector : in t_cov_bin_vector_ptr) is
       begin
         write(v_line, bin_idx);
         writeline(file_handler, v_line);
@@ -1551,11 +1581,14 @@ package body funct_cov_pkg is
       end procedure;
 
       procedure read_bins(
-        constant bin_idx    : in  natural;
-        variable bin_vector : out t_cov_bin_vector) is
+        constant bin_idx    : in    natural;
+        variable bin_vector : inout t_cov_bin_vector_ptr) is
         variable v_contains   : integer;
         variable v_num_values : integer;
       begin
+        if bin_idx > bin_vector'length-1 then
+          resize_bin_vector(bin_vector, bin_idx);
+        end if;
         for i in 0 to bin_idx-1 loop
           readline(file_handler, v_line);
           read(v_line, bin_vector(i).name);  -- read() crops the string
@@ -1632,12 +1665,8 @@ package body funct_cov_pkg is
       protected_covergroup_status.set_covergroup_coverage_goal(v_value);
       -- Bin structure
       read_value(priv_bins_idx);
-      check_value(priv_bins_idx <= C_MAX_NUM_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_bins_idx) & " bins. Increase C_MAX_NUM_BINS",
-        priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       read_bins(priv_bins_idx, priv_bins);
       read_value(priv_invalid_bins_idx);
-      check_value(priv_invalid_bins_idx <= C_MAX_NUM_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_invalid_bins_idx) & " bins. Increase C_MAX_NUM_BINS",
-        priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       read_bins(priv_invalid_bins_idx, priv_invalid_bins);
 
       file_close(file_handler);
@@ -1677,6 +1706,26 @@ package body funct_cov_pkg is
       protected_covergroup_status.set_total_bin_hits(priv_id, 0);
     end procedure;
 
+    procedure set_num_bins_allocated(
+      constant value        : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_num_bins_allocated(" & to_string(value) & ")";
+    begin
+      initialize_coverpoint(C_LOCAL_CALL);
+      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      if value >= priv_bins_idx then
+        resize_bin_vector(priv_bins, value);
+      else
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Cannot set the allocated size to a value smaller than the actual number of bins", priv_scope);
+      end if;
+    end procedure;
+
+    procedure set_num_bins_allocated_increment(
+      constant value : in positive) is
+    begin
+      priv_num_bins_allocated_increment := value;
+    end procedure;
+
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
       constant VOID : t_void)
@@ -1707,7 +1756,7 @@ package body funct_cov_pkg is
     return t_cov_bin is
       constant C_LOCAL_CALL : string := "get_valid_bin(" & to_string(bin_idx) & ")";
     begin
-      check_value(bin_idx < C_MAX_NUM_BINS, TB_ERROR, "bin_idx is out of range", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      check_value(bin_idx < priv_bins'length, TB_ERROR, "bin_idx is out of range", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       return priv_bins(bin_idx);
     end function;
 
@@ -1717,7 +1766,7 @@ package body funct_cov_pkg is
     return t_cov_bin is
       constant C_LOCAL_CALL : string := "get_invalid_bin(" & to_string(bin_idx) & ")";
     begin
-      check_value(bin_idx < C_MAX_NUM_BINS, TB_ERROR, "bin_idx is out of range", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      check_value(bin_idx < priv_invalid_bins'length, TB_ERROR, "bin_idx is out of range", priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       return priv_invalid_bins(bin_idx);
     end function;
 
@@ -1758,7 +1807,7 @@ package body funct_cov_pkg is
 
       for cross in v_new_bin_array'range loop
         for i in 0 to priv_bins_idx-1 loop
-          if not find_duplicate_bin(priv_bins, i, cross) then
+          if not find_duplicate_bin(priv_bins.all, i, cross) then
             v_new_bin_array(cross).bin_vector(v_num_bins).contains   := priv_bins(i).cross_bins(cross).contains;
             v_new_bin_array(cross).bin_vector(v_num_bins).values     := priv_bins(i).cross_bins(cross).values;
             v_new_bin_array(cross).bin_vector(v_num_bins).num_values := priv_bins(i).cross_bins(cross).num_values;
@@ -1766,7 +1815,7 @@ package body funct_cov_pkg is
           end if;
         end loop;
         for i in 0 to priv_invalid_bins_idx-1 loop
-          if not find_duplicate_bin(priv_invalid_bins, i, cross) then
+          if not find_duplicate_bin(priv_invalid_bins.all, i, cross) then
             v_new_bin_array(cross).bin_vector(v_num_bins).contains   := priv_invalid_bins(i).cross_bins(cross).contains;
             v_new_bin_array(cross).bin_vector(v_num_bins).values     := priv_invalid_bins(i).cross_bins(cross).values;
             v_new_bin_array(cross).bin_vector(v_num_bins).num_values := priv_invalid_bins(i).cross_bins(cross).num_values;

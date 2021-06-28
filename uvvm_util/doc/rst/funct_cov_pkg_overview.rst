@@ -137,6 +137,15 @@ adds the bins to the coverpoint and a VVC samples the data from the DUT. If for 
 sequencer has added the bins, the testbench will fail. In cases like this we can use the function ``is_defined()`` to check if the 
 coverpoint has any bins before sampling the data.
 
+Bin memory allocation
+==================================================================================================================================
+For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is and 
+how much the size increments when the list becomes full, by using the constants C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED and 
+C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg.
+
+Moreover, the procedures ``set_num_bins_allocated()`` and ``set_num_bins_allocated_increment()`` can be used to reconfigure a 
+coverpoint's respective values.
+
 **********************************************************************************************************************************
 Bin name
 **********************************************************************************************************************************

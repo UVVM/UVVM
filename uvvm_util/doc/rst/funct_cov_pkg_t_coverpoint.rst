@@ -290,6 +290,45 @@ Resets the coverpoint's coverage by clearing all the bin hit counters. ::
     my_coverpoint.clear_coverage(my_msg_id_panel);
 
 
+set_num_bins_allocated()
+----------------------------------------------------------------------------------------------------------------------------------
+Defines the size of the memory allocated for the list of bins in the coverpoint. It cannot be smaller than the actual number of 
+bins. ::
+
+    set_num_bins_allocated(value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | value              | in     | positive                     | New size of the bin list                              |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.set_num_bins_allocated(60);
+
+
+set_num_bins_allocated_increment()
+----------------------------------------------------------------------------------------------------------------------------------
+Defines how much the list of bins will be increased in size when it is full and a new bin is added. ::
+
+    set_num_bins_allocated_increment(value)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | value              | in     | positive                     | Size increment of the bin list                        |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.set_num_bins_allocated_increment(3);
+
+
 add_bins()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds bins to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` which return a t_new_bin_array. 

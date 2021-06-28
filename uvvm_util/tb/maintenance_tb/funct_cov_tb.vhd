@@ -389,6 +389,9 @@ begin
       v_coverpoint.set_scope("MY_SCOPE");
       check_value(v_coverpoint.get_scope(VOID), "MY_SCOPE", ERROR, "Checking scope");
 
+      v_coverpoint.set_num_bins_allocated(40);
+      v_coverpoint.set_num_bins_allocated_increment(5);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with single values");
       ------------------------------------------------------------
@@ -957,6 +960,12 @@ begin
 
       v_coverpoint.report_config(VOID);
       v_coverpoint_b.report_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverpoint num bins allocation error");
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_coverpoint_b.set_num_bins_allocated(10);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then

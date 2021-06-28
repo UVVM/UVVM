@@ -390,7 +390,7 @@ of the simulation, before sampling any coverage. Default is 1.
     my_coverpoint_2.set_coverage_weight(1);  -- If only this coverpoint is covered, total coverage will be 25%
 
 **********************************************************************************************************************************
-Get coverage
+Coverage status
 **********************************************************************************************************************************
 It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()`` and also determine if the 
 coverage is completed with ``coverage_completed()``.
@@ -540,6 +540,11 @@ Clearing coverage
 A coverpoint's coverage status can be reset with ``clear_coverage()``. This might be useful for example when running several 
 testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint model 
 and only want to keep the bin structure.
+
+**********************************************************************************************************************************
+Clearing a coverpoint
+**********************************************************************************************************************************
+A coverpoint's complete configuration and content (bins, coverage, etc.) can be reset with ``clear_coverpoint()``.
 
 **********************************************************************************************************************************
 Additional info

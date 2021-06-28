@@ -329,6 +329,28 @@ Defines how much the list of bins will be increased in size when it is full and 
     my_coverpoint.set_num_bins_allocated_increment(3);
 
 
+clear_coverpoint()
+----------------------------------------------------------------------------------------------------------------------------------
+Deallocates the list of bins and resets all configuration settings to their default values. ::
+
+    clear_coverpoint(VOID)
+    clear_coverpoint(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    Examples:
+    my_coverpoint.clear_coverpoint(VOID);
+    my_coverpoint.clear_coverpoint(my_msg_id_panel);
+
+
 add_bins()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds bins to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` which return a t_new_bin_array. 

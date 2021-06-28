@@ -76,6 +76,7 @@ package protected_types_pkg is
 
   type t_protected_covergroup_status is protected
     impure function add_coverpoint(VOID : in t_void) return integer;
+    procedure remove_coverpoint(coverpoint_idx : in integer);
     procedure set_name(coverpoint_idx : in integer; name : in string);
     procedure set_num_valid_bins(coverpoint_idx : in integer; num_bins : in natural);
     procedure set_num_illegal_bins(coverpoint_idx : in integer; num_bins : in natural);
@@ -90,7 +91,7 @@ package protected_types_pkg is
     procedure increment_covered_bin_count(coverpoint_idx : in integer);
     procedure increment_hits_count(coverpoint_idx : in integer);
     procedure increment_min_hits_count(coverpoint_idx : in integer; min_hits : in natural);
-    impure function get_num_coverpoints(VOID : in t_void) return natural;
+    impure function is_initialized(coverpoint_idx : in integer) return boolean;
     impure function get_name(coverpoint_idx : in integer) return string;
     impure function get_num_valid_bins(coverpoint_idx : in integer) return natural;
     impure function get_num_illegal_bins(coverpoint_idx : in integer) return natural;
@@ -235,6 +236,7 @@ package body protected_types_pkg is
   --------------------------------------------------------------------------------
   type t_protected_covergroup_status is protected body
     type t_coverpoint_status is record
+      initialized        : boolean;
       name               : string(1 to C_FC_MAX_NAME_LENGTH);
       num_valid_bins     : natural;
       num_illegal_bins   : natural;
@@ -245,6 +247,7 @@ package body protected_types_pkg is
       coverage_goal      : positive;
     end record;
     constant C_COVERPOINT_STATUS_DEFAULT : t_coverpoint_status := (
+      initialized        => false,
       name               => (others => NUL),
       num_valid_bins     => 0,
       num_illegal_bins   => 0,
@@ -256,23 +259,38 @@ package body protected_types_pkg is
     );
     type t_coverpoint_status_array is array (natural range <>) of t_coverpoint_status;
 
-    variable priv_coverpoint_status_list    : t_coverpoint_status_array(0 to C_FC_MAX_NUM_COVERPOINTS-1) := (others => C_COVERPOINT_STATUS_DEFAULT);
-    variable priv_last_added_coverpoint_idx : integer  := -1;
-    variable priv_coverage_goal             : positive := 100;
+    variable priv_coverpoint_status_list : t_coverpoint_status_array(0 to C_FC_MAX_NUM_COVERPOINTS-1) := (others => C_COVERPOINT_STATUS_DEFAULT);
+    variable priv_coverpoint_name_idx    : natural  := 1;
+    variable priv_coverage_goal          : positive := 100;
 
     impure function add_coverpoint(
       constant VOID : in t_void)
     return integer is
-      constant C_COVERPOINT_NUM : string := to_string(priv_last_added_coverpoint_idx + 2);
+      constant C_COVERPOINT_NUM      : string  := to_string(priv_coverpoint_name_idx);
+      variable v_next_coverpoint_idx : natural := 0;
     begin
-      if priv_last_added_coverpoint_idx < C_FC_MAX_NUM_COVERPOINTS-1 then
-        priv_last_added_coverpoint_idx := priv_last_added_coverpoint_idx + 1;
-        priv_coverpoint_status_list(priv_last_added_coverpoint_idx).name := "Covpt_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-6-C_COVERPOINT_NUM'length);
-        return priv_last_added_coverpoint_idx;
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if not(priv_coverpoint_status_list(v_next_coverpoint_idx).initialized) then
+          exit;
+        end if;
+        v_next_coverpoint_idx := v_next_coverpoint_idx + 1;
+      end loop;
+
+      if v_next_coverpoint_idx < C_FC_MAX_NUM_COVERPOINTS then
+        priv_coverpoint_status_list(v_next_coverpoint_idx).name := "Covpt_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-6-C_COVERPOINT_NUM'length);
+        priv_coverpoint_status_list(v_next_coverpoint_idx).initialized := true;
+        priv_coverpoint_name_idx := priv_coverpoint_name_idx + 1;
+        return v_next_coverpoint_idx;
       else
         return -1; -- Error: no more space in the list
       end if;
     end function;
+
+    procedure remove_coverpoint(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx) := C_COVERPOINT_STATUS_DEFAULT;
+    end procedure;
 
     procedure set_name(
       constant coverpoint_idx : in integer;
@@ -371,11 +389,11 @@ package body protected_types_pkg is
       priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits + min_hits;
     end procedure;
 
-    impure function get_num_coverpoints(
-      constant VOID : t_void)
-    return natural is
+    impure function is_initialized(
+      constant coverpoint_idx : in integer)
+    return boolean is
     begin
-      return priv_last_added_coverpoint_idx+1;
+      return priv_coverpoint_status_list(coverpoint_idx).initialized;
     end function;
 
     impure function get_name(
@@ -487,9 +505,11 @@ package body protected_types_pkg is
       variable v_tot_bin_min_hits : natural := 0;
       variable v_coverage         : real;
     begin
-      for i in 0 to priv_last_added_coverpoint_idx loop
-        v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
-        v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight * priv_coverpoint_status_list(i).coverage_goal/100;
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if priv_coverpoint_status_list(i).initialized then
+          v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
+          v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight * priv_coverpoint_status_list(i).coverage_goal/100;
+        end if;
       end loop;
       v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
       return v_coverage;

@@ -236,6 +236,12 @@ package funct_cov_pkg is
     procedure set_num_bins_allocated_increment(
       constant value : in positive);
 
+    procedure clear_coverpoint(
+      constant VOID : in t_void);
+
+    procedure clear_coverpoint(
+      constant msg_id_panel : in t_msg_id_panel);
+
     -- Returns the number of bins crossed in the coverpoint
     impure function get_num_bins_crossed(
       constant VOID : t_void)
@@ -752,14 +758,16 @@ package body funct_cov_pkg is
                   fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
 
     -- Print coverpoints summaries
-    for i in 0 to protected_covergroup_status.get_num_coverpoints(VOID)-1 loop
-      write(v_line, "Coverpoint:      " & protected_covergroup_status.get_name(i) & LF &
-                    "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & LF &
-                    "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
-                    "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2)
-                      & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(i)) & "%)" & LF &
-                    "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
-                    fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+      if protected_covergroup_status.is_initialized(i) then
+        write(v_line, "Coverpoint:      " & protected_covergroup_status.get_name(i) & LF &
+                      "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & LF &
+                      "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
+                      "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2)
+                        & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(i)) & "%)" & LF &
+                      "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
+                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      end if;
     end loop;
 
     -- Print report bottom line
@@ -1722,6 +1730,37 @@ package body funct_cov_pkg is
       constant value : in positive) is
     begin
       priv_num_bins_allocated_increment := value;
+    end procedure;
+
+    procedure clear_coverpoint(
+      constant VOID : in t_void) is
+    begin
+      clear_coverpoint(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_coverpoint(
+      constant msg_id_panel : in t_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_coverpoint()";
+    begin
+      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      if priv_id /= C_DEALLOCATED_ID then
+        protected_covergroup_status.remove_coverpoint(priv_id);
+      end if;
+      priv_id                            := C_DEALLOCATED_ID;
+      priv_name                          := fill_string(NUL, C_FC_MAX_NAME_LENGTH);
+      priv_scope                         := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
+      DEALLOCATE(priv_bins);
+      priv_bins                          := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
+      priv_bins_idx                      := 0;
+      DEALLOCATE(priv_invalid_bins);
+      priv_invalid_bins                  := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
+      priv_invalid_bins_idx              := 0;
+      priv_num_bins_crossed              := C_UNINITIALIZED;
+      priv_rand_transition_bin_idx       := C_UNINITIALIZED;
+      priv_rand_transition_bin_value_idx := (others => 0);
+      priv_illegal_bin_alert_level       := ERROR;
+      priv_detect_bin_overlap            := false;
+      priv_num_bins_allocated_increment  := C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT;
     end procedure;
 
     -- Returns the number of bins crossed in the coverpoint

@@ -1042,12 +1042,9 @@ package body funct_cov_pkg is
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
         check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
           priv_scope, ID_NEVER, caller_name => local_call);
-        -- Only set the default name and scope if none have been given
+        -- Only set the default name if it hasn't been given
         if priv_name = fill_string(NUL, priv_name'length) then
           set_name(protected_covergroup_status.get_name(priv_id));
-        else
-          -- In case the name was set before the coverpoint was registered, we need to update the name in the covergroup
-          protected_covergroup_status.set_name(priv_id, priv_name);
         end if;
         priv_rand_gen.set_rand_seeds(priv_name);
       end if;
@@ -1331,6 +1328,7 @@ package body funct_cov_pkg is
         priv_name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
       end if;
       initialize_coverpoint(C_LOCAL_CALL);
+      protected_covergroup_status.set_name(priv_id, priv_name);
     end procedure;
 
     impure function get_name(
@@ -1344,12 +1342,12 @@ package body funct_cov_pkg is
       constant scope : in string) is
       constant C_LOCAL_CALL : string := "set_scope(" & scope & ")";
     begin
+      initialize_coverpoint(C_LOCAL_CALL);
       if scope'length > C_LOG_SCOPE_WIDTH then
         priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
       else
         priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH-scope'length);
       end if;
-      initialize_coverpoint(C_LOCAL_CALL);
     end procedure;
 
     impure function get_scope(
@@ -2420,7 +2418,6 @@ package body funct_cov_pkg is
 
     procedure print_summary(
       constant verbosity : in t_report_verbosity := NON_VERBOSE) is
-      constant C_LOCAL_CALL       : string := "print_summary(" & to_upper(to_string(verbosity)) & ")";
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
       constant C_HEADER           : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope) & " ***";
       constant C_BIN_COLUMN_WIDTH : positive := 40;

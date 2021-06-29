@@ -1044,7 +1044,7 @@ package body funct_cov_pkg is
       return v_coverage;
     end function;
 
-    -- Initializes a new coverpoint by registering it in the covergroup, setting its name and randomization seeds.
+    -- Initializes a new coverpoint by registering it in the covergroup status register, setting its name and randomization seeds.
     procedure initialize_coverpoint(
       constant local_call : in string) is
     begin
@@ -1633,7 +1633,7 @@ package body funct_cov_pkg is
         return;
       end if;
 
-      -- Add coverpoint to covergroup status
+      -- Add coverpoint to covergroup status register
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
         check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",

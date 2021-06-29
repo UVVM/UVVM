@@ -366,22 +366,22 @@ Coverage goal
 Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum 
 coverage for each bin. It must be set at the beginning of the simulation, before sampling any coverage. Default is 100.
 
-It can be set for a single coverpoint/cross or all coverpoints/crosses in the covergroup (simulation).
+It can be set for a single coverpoint/cross or all coverpoints/crosses in the simulation.
 
 .. code-block::
 
     -- Set the coverpoint coverage goal to 200%
     my_coverpoint.set_coverage_goal(200);
 
-    -- Set the covergroup coverage goal to 150%
+    -- Set the simulation coverage goal to 150%
     set_sim_coverage_goal(150);
 
-If both coverpoint and covergroup goals are set, they will be multiplied, e.g. coverage goal for my_coverpoint = 200*150/100=300.
+If both coverpoint and simulation goals are set, they will be multiplied, e.g. coverage goal for my_coverpoint = 200*150/100=300.
 
 **********************************************************************************************************************************
 Coverage weight
 **********************************************************************************************************************************
-It specifies the weight of a coverpoint/cross for computing the total coverage of the covergroup. It must be set at the beginning 
+It specifies the weight of a coverpoint/cross for computing the total coverage of the simulation. It must be set at the beginning 
 of the simulation, before sampling any coverage. Default is 1.
 
 .. code-block::
@@ -395,7 +395,7 @@ Coverage status
 It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()`` and also determine if the 
 coverage is completed with ``coverage_completed()``.
 
-Similar functions for the covergroup are ``get_sim_coverage()`` and ``sim_coverage_completed()``.
+Similar functions for the simulation are ``get_sim_coverage()`` and ``sim_coverage_completed()``.
 
 **********************************************************************************************************************************
 Coverpoint name
@@ -444,7 +444,7 @@ A detailed report for the coverage and the bins in the coverpoint/cross can be p
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
-A summary report for the covergroup can be printed using the ``report_sim_coverage()`` procedure.
+A summary report for the simulation can be printed using the ``report_sim_coverage()`` procedure.
 
 * *total hits coverage* = tot_hits_across_covpoints/tot_min_hits_across_covpoints (this value increments gradually and has a maximum equal to the coverage goal)
 

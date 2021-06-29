@@ -28,8 +28,8 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
         my_coverpoint.sample_coverage(dut_size);
       end loop;
       
-      -- Print the summary report
-      my_coverpoint.print_summary(VOID);
+      -- Print the coverage report
+      my_coverpoint.report_coverage(VOID);
       ...
 
 **********************************************************************************************************************************
@@ -408,18 +408,19 @@ The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in 
 **********************************************************************************************************************************
 Coverage report
 **********************************************************************************************************************************
-A detailed report for the coverage and the bins in the coverpoint/cross can be printed using the ``print_summary()`` procedure.
+A detailed report for the coverage and the bins in the coverpoint/cross can be printed using the ``report_coverage()`` procedure.
 
 * *bins coverage* = bins_covered/num_bins (this value has a maximum of 100%)
 * *hits coverage* = tot_hits/tot_min_hits (this value increments gradually and has a maximum equal to the coverage goal)
 * When using NON_VERBOSE (default), the bins are printed in the following order: illegal (only when hits > 0), uncovered, covered.
 * When using VERBOSE, the bins are printed in the following order: illegal, ignore, uncovered, covered.
+* When using PRINT_HOLES, only the uncovered bins are printed.
 * When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom of 
   the report.
 
 .. code-block::
 
-    my_coverpoint.print_summary(VOID);
+    my_coverpoint.report_coverage(VOID);
 
 .. code-block:: none
 
@@ -443,13 +444,13 @@ A detailed report for the coverage and the bins in the coverpoint/cross can be p
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
-A summary report for the covergroup can be printed using the ``print_sim_coverage_summary()`` procedure.
+A summary report for the covergroup can be printed using the ``report_sim_coverage()`` procedure.
 
 * *total hits coverage* = tot_hits_across_covpoints/tot_min_hits_across_covpoints (this value increments gradually and has a maximum equal to the coverage goal)
 
 .. code-block::
 
-    print_sim_coverage_summary;
+    report_sim_coverage(VOID);
 
 .. code-block:: none
 
@@ -568,5 +569,6 @@ funct_cov_pkg
 .. toctree::
    :maxdepth: 1
 
+   funct_cov_pkg_types.rst
    funct_cov_pkg_methods.rst
    funct_cov_pkg_t_coverpoint.rst

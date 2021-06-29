@@ -34,7 +34,8 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
-  type t_report_verbosity is (NON_VERBOSE, VERBOSE);
+  type t_report_verbosity is (NON_VERBOSE, VERBOSE, PRINT_HOLES);
+  type t_rand_weight_visibility is (SHOW_RAND_WEIGHT, HIDE_RAND_WEIGHT);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
   type t_new_bin is record
@@ -155,10 +156,10 @@ package funct_cov_pkg is
     constant VOID : t_void)
   return boolean;
 
-  procedure print_sim_coverage_summary(
+  procedure report_sim_coverage(
     constant VOID : in t_void);
 
-  procedure print_sim_coverage_summary(
+  procedure report_sim_coverage(
     constant scope : in string);
 
   ------------------------------------------------------------
@@ -456,11 +457,12 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return boolean;
 
-    procedure print_summary(
-      constant VOID      : in t_void);
+    procedure report_coverage(
+      constant VOID : in t_void);
 
-    procedure print_summary(
-      constant verbosity : in t_report_verbosity := NON_VERBOSE);
+    procedure report_coverage(
+      constant verbosity       : in t_report_verbosity;
+      constant rand_weight_col : in t_rand_weight_visibility := HIDE_RAND_WEIGHT);
 
     procedure report_config(
       constant VOID : in t_void);
@@ -739,16 +741,16 @@ package body funct_cov_pkg is
     return protected_covergroup_status.get_total_hits_coverage(VOID) >= real(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
   end function;
 
-  procedure print_sim_coverage_summary(
+  procedure report_sim_coverage(
     constant VOID : in t_void) is
   begin
-    print_sim_coverage_summary(C_TB_SCOPE_DEFAULT);
+    report_sim_coverage(C_TB_SCOPE_DEFAULT);
   end procedure;
 
-  procedure print_sim_coverage_summary(
+  procedure report_sim_coverage(
     constant scope : in string) is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
-    constant C_HEADER : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(scope) & " ***";
+    constant C_HEADER : string := "*** SIMULATION COVERAGE REPORT: " & to_string(scope) & " ***";
     variable v_line   : line;
   begin
     -- Print report header
@@ -1102,7 +1104,11 @@ package body funct_cov_pkg is
       return false;
     end function;
 
-    -- Copies all the bins in a bin array to a bin vector
+    -- Copies all the bins in a bin array to a bin vector.
+    -- The bin array can contain several bin_vector elements depending on the
+    -- number of bins created by a single bin function. It can also contain
+    -- several array elements depending on the number of concatenated bin
+    -- functions used.
     procedure copy_bins_in_bin_array(
       constant bin_array : in  t_new_bin_array;
       variable cov_bin   : out t_new_cov_bin) is
@@ -2449,16 +2455,19 @@ package body funct_cov_pkg is
       end if;
     end function;
 
-    procedure print_summary(
-      constant VOID      : in t_void) is
+    procedure report_coverage(
+      constant VOID : in t_void) is
     begin
-      print_summary(NON_VERBOSE);
+      report_coverage(NON_VERBOSE, HIDE_RAND_WEIGHT);
     end procedure;
 
-    procedure print_summary(
-      constant verbosity : in t_report_verbosity := NON_VERBOSE) is
+    procedure report_coverage(
+      constant verbosity       : in t_report_verbosity;
+      constant rand_weight_col : in t_rand_weight_visibility := HIDE_RAND_WEIGHT) is
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
-      constant C_HEADER           : string := "*** FUNCTIONAL COVERAGE SUMMARY: " & to_string(priv_scope) & " ***";
+      constant C_HEADER_1         : string := "*** COVERAGE SUMMARY REPORT (VERBOSE): " & to_string(priv_scope) & " ***";
+      constant C_HEADER_2         : string := "*** COVERAGE SUMMARY REPORT (NON VERBOSE): " & to_string(priv_scope) & " ***";
+      constant C_HEADER_3         : string := "*** COVERAGE HOLES REPORT: " & to_string(priv_scope) & " ***";
       constant C_BIN_COLUMN_WIDTH : positive := 40;
       constant C_COLUMN_WIDTH     : positive := 15;
       variable v_line             : line;
@@ -2466,16 +2475,26 @@ package body funct_cov_pkg is
       variable v_rand_weight      : natural;
     begin
       -- Calculate how much space we can insert between the columns of the report
-      v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_FC_MAX_NAME_LENGTH - 20)/6;
+      if rand_weight_col = SHOW_RAND_WEIGHT then
+        v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*5 - C_FC_MAX_NAME_LENGTH - 20)/6;
+      else
+        v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_BIN_COLUMN_WIDTH - C_COLUMN_WIDTH*4 - C_FC_MAX_NAME_LENGTH - 20)/5;
+      end if;
       if v_log_extra_space < 1 then
         alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_FC_MAX_NAME_LENGTH is too big, the report will not be properly aligned.", priv_scope);
         v_log_extra_space := 1;
       end if;
 
       -- Print report header
-      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-                    timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                    fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      if verbosity = VERBOSE then
+        write(v_line, timestamp_header(now, justify(C_HEADER_1, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+      elsif verbosity = NON_VERBOSE then
+        write(v_line, timestamp_header(now, justify(C_HEADER_2, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+      elsif verbosity = PRINT_HOLES then
+        write(v_line, timestamp_header(now, justify(C_HEADER_3, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+      end if;
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print summary
       if priv_id /= C_DEALLOCATED_ID then
@@ -2501,7 +2520,7 @@ package body funct_cov_pkg is
         justify("HITS"       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("MIN_HITS"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("COVERAGE"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("RAND_WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        return_string_if_true(justify("RAND_WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
         justify("NAME"       , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("STATUS"     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
@@ -2515,15 +2534,15 @@ package body funct_cov_pkg is
             justify(to_string(priv_invalid_bins(i).hits)                    , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            return_string_if_true(justify("N/A"                             , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
             justify(to_string(priv_invalid_bins(i).name)                    , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify("ILLEGAL"                                               , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
 
+      -- Print ignore bins
       if verbosity = VERBOSE then
-        -- Print ignore bins
         for i in 0 to priv_invalid_bins_idx-1 loop
           if is_bin_ignore(priv_invalid_bins(i)) then
             write(v_line, justify(
@@ -2532,7 +2551,7 @@ package body funct_cov_pkg is
               justify(to_string(priv_invalid_bins(i).hits)                    , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("N/A"                                                   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              return_string_if_true(justify("N/A"                             , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
               justify(to_string(priv_invalid_bins(i).name)                    , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify("IGNORE"                                                , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
               left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
@@ -2550,7 +2569,7 @@ package body funct_cov_pkg is
             justify(to_string(priv_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_rand_weight)                         , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            return_string_if_true(justify(to_string(v_rand_weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
             justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
             justify("UNCOVERED"                                      , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
@@ -2558,42 +2577,48 @@ package body funct_cov_pkg is
       end loop;
 
       -- Print covered bins
-      for i in 0 to priv_bins_idx-1 loop
-        if priv_bins(i).hits >= priv_bins(i).min_hits then
-          v_rand_weight := priv_bins(i).min_hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else priv_bins(i).rand_weight;
-          write(v_line, justify(
-            fill_string(' ', 5) &
-            justify(get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(v_rand_weight)                         , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify("COVERED"                                        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-        end if;
-      end loop;
+      if verbosity = VERBOSE or verbosity = NON_VERBOSE then
+        for i in 0 to priv_bins_idx-1 loop
+          if priv_bins(i).hits >= priv_bins(i).min_hits then
+            v_rand_weight := priv_bins(i).min_hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else priv_bins(i).rand_weight;
+            write(v_line, justify(
+              fill_string(' ', 5) &
+              justify(get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(priv_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              return_string_if_true(justify(to_string(v_rand_weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
+              justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("COVERED"                                        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          end if;
+        end loop;
+      end if;
 
       write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print bin values that didn't fit in section above
       for i in 0 to priv_invalid_bins_idx-1 loop
-        if is_bin_illegal(priv_invalid_bins(i)) then
+        if is_bin_illegal(priv_invalid_bins(i)) and (verbosity = VERBOSE or (verbosity = NON_VERBOSE and priv_invalid_bins(i).hits > 0)) then
           if get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_invalid_bins(i).name) then
             write(v_line, to_string(priv_invalid_bins(i).name) & ": " & get_bin_values(priv_invalid_bins(i)) & LF);
           end if;
         end if;
       end loop;
-      for i in 0 to priv_invalid_bins_idx-1 loop
-        if is_bin_ignore(priv_invalid_bins(i)) then
-          if get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_invalid_bins(i).name) then
-            write(v_line, to_string(priv_invalid_bins(i).name) & ": " & get_bin_values(priv_invalid_bins(i)) & LF);
+      if verbosity = VERBOSE then
+        for i in 0 to priv_invalid_bins_idx-1 loop
+          if is_bin_ignore(priv_invalid_bins(i)) then
+            if get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_invalid_bins(i).name) then
+              write(v_line, to_string(priv_invalid_bins(i).name) & ": " & get_bin_values(priv_invalid_bins(i)) & LF);
+            end if;
           end if;
-        end if;
-      end loop;
+        end loop;
+      end if;
       for i in 0 to priv_bins_idx-1 loop
-        if get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_bins(i).name) then
-          write(v_line, to_string(priv_bins(i).name) & ": " & get_bin_values(priv_bins(i)) & LF);
+        if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = PRINT_HOLES and priv_bins(i).hits < priv_bins(i).min_hits) then
+          if get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_bins(i).name) then
+            write(v_line, to_string(priv_bins(i).name) & ": " & get_bin_values(priv_bins(i)) & LF);
+          end if;
         end if;
       end loop;
 
@@ -2616,7 +2641,7 @@ package body funct_cov_pkg is
     begin
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-                    "***  REPORT OF COVERPOINT CONFIGURATION ***" & LF &
+                    "***  COVERPOINT CONFIGURATION REPORT ***" & LF &
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print report config

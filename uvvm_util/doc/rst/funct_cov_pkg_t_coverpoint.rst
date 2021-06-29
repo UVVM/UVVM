@@ -586,28 +586,32 @@ Returns true if the accumulated coverage for all the bins in the coverpoint has 
     end if;
 
 
-print_summary()
+report_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the coverpoint coverage summary containing all the bins. By default, illegal and ignore bins are not printed out, with the 
-exception of illegal bins that have at least one hit. Using the parameter verbosity, all illegal and ignore bins can be printed. 
-The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg. ::
+exception of illegal bins that have at least one hit. Using the parameter verbosity, all illegal and ignore bins can be printed, 
+alternatively only the coverage holes can be printed as well. The printing destination can be log and/or console and is defined by 
+shared_default_log_destination in adaptations_pkg. ::
 
-    print_summary(VOID)
-    print_summary(verbosity)
+    report_coverage(VOID)
+    report_coverage(verbosity, [rand_weight_col])
 
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | verbosity          | in     | t_report_verbosity           | Controls verbosity of the report                      |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| Type     | Name               | Dir.   | Type                            | Description                                           |
++==========+====================+========+=================================+=======================================================+
+| constant | VOID               | in     | t_void                          | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report           |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| constant | rand_weight_col    | in     | :ref:`t_rand_weight_visibility` | Shows or hides the rand_weight column of the report   |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     Examples:
-    my_coverpoint.print_summary(VOID);
-    my_coverpoint.print_summary(VERBOSE);
+    my_coverpoint.report_coverage(VOID);
+    my_coverpoint.report_coverage(PRINT_HOLES);
+    my_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
 
 
 report_config()

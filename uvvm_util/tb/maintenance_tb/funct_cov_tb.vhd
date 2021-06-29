@@ -733,7 +733,7 @@ begin
 
       check_num_bins(v_coverpoint, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_coverpoint, 100.0);
-      v_coverpoint.print_summary(VERBOSE);
+      v_coverpoint.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing transition bin index");
@@ -861,7 +861,7 @@ begin
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
@@ -878,7 +878,7 @@ begin
       check_bin(v_coverpoint_b, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
       check_bin(v_coverpoint_b, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
 
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid bins");
@@ -948,7 +948,7 @@ begin
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (3200,3220), hits => 8);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (3205,3215), hits => 4);
 
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint name and scope");
@@ -1261,7 +1261,7 @@ begin
 
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_cross_x2, 100.0);
-      v_cross_x2.print_summary(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -1288,7 +1288,7 @@ begin
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
-      v_cross_x2_b.print_summary(VERBOSE);
+      v_cross_x2_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
@@ -1303,7 +1303,7 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1002), (0 => 2002), 5, name => "my_bin_2");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
 
-      v_cross_x2_b.print_summary(VERBOSE);
+      v_cross_x2_b.report_coverage(VERBOSE);
 
       v_cross_x2.report_config(VOID);
       v_cross_x2_b.report_config(VOID);
@@ -1394,7 +1394,7 @@ begin
 
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage(v_cross_x2, 100.0);
-      v_cross_x2.print_summary(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -1419,7 +1419,7 @@ begin
       v_bin_idx := v_bin_idx-1;
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits, hits => v_min_hits);
 
-      v_cross_x2_b.print_summary(VERBOSE);
+      v_cross_x2_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
@@ -1434,7 +1434,7 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, name => "my_bin_2");
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, 1, name => "my_bin_3");
 
-      v_cross_x2_b.print_summary(VERBOSE);
+      v_cross_x2_b.report_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_bin" then
@@ -1597,7 +1597,7 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109),           hits => 0, name => "bin_4");
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 0, name => "bin_5");
 
-      v_coverpoint.print_summary(VERBOSE);
+      v_coverpoint.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
@@ -1668,7 +1668,7 @@ begin
       v_coverpoint_b.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
       randomize_and_check_distribution(v_coverpoint_b, (250,500,750,1000));
 
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.report_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_cross" then
@@ -1831,7 +1831,7 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (3100,3109), (3110,3115),           hits => 0, name => "bin_4");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3205), (3212,3214,3216), hits => 0, name => "bin_5");
 
-      v_cross_x2.print_summary(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
@@ -1902,7 +1902,7 @@ begin
       v_cross_x2_b.add_cross(bin(30), bin(900), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
       randomize_and_check_distribution(v_cross_x2_b, (250,500,750,1000));
 
-      v_cross_x2_b.print_summary(VERBOSE);
+      v_cross_x2_b.report_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_reset_init" then
@@ -1941,9 +1941,9 @@ begin
       check_value(v_coverpoint.get_num_invalid_bins(VOID), 1, ERROR, "Checking num_invalid_bins");
       check_value(v_coverpoint.get_coverage(VOID), 50.0, ERROR, "Checking coverage");
       check_value(get_sim_coverage(VOID), 25.0, ERROR, "Checking sim coverage");
-      v_coverpoint.print_summary(VOID);
+      v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       log(ID_SEQUENCER, "Clear and check the coverpoint has default values");
       v_coverpoint.clear_coverpoint(VOID);
@@ -1959,9 +1959,9 @@ begin
       check_value(v_coverpoint.get_num_invalid_bins(VOID), 0, ERROR, "Checking num_invalid_bins");
       check_value(v_coverpoint.get_coverage(VOID), 0.0, ERROR, "Checking coverage");
       check_value(get_sim_coverage(VOID), 0.0, ERROR, "Checking sim coverage");
-      v_coverpoint.print_summary(VOID);
+      v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing clearing several coverpoints");
@@ -1970,17 +1970,17 @@ begin
       v_coverpoint_b.add_bins(bin(2));
       v_coverpoint_c.add_bins(bin(3));
       v_coverpoint_d.add_bins(bin(4));
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       v_coverpoint.clear_coverpoint(VOID);   -- 1st
       v_coverpoint_c.clear_coverpoint(VOID); -- 3rd
       v_coverpoint_d.clear_coverpoint(VOID); -- 4th
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       v_coverpoint.add_cross(bin(1000), bin(2000));
       v_coverpoint_c.add_cross(bin(1001), bin(2001));
       v_coverpoint_d.add_cross(bin(1002), bin(2002));
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       v_coverpoint.clear_coverpoint(VOID);
       v_coverpoint_b.clear_coverpoint(VOID);
@@ -1993,7 +1993,7 @@ begin
       check_value(get_sim_coverage_goal(VOID), 100, ERROR, "get_sim_coverage_goal(VOID)");
       check_value(get_sim_coverage(VOID), 0.0, ERROR, "get_sim_coverage(VOID)");
       check_value(sim_coverage_completed(VOID), false, ERROR, "sim_coverage_completed(VOID)");
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "get_illegal_bin_alert_level(VOID)");
       check_value(v_coverpoint.get_bin_overlap_detection(VOID), false, ERROR, "get_bin_overlap_detection(VOID)");
@@ -2004,7 +2004,7 @@ begin
       check_value(v_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
       check_value(v_coverpoint.get_coverage(VOID), 0.0, ERROR, "get_coverage(VOID)");
       check_value(v_coverpoint.coverage_completed(VOID), false, ERROR, "coverage_completed(VOID)");
-      v_coverpoint.print_summary(VOID);
+      v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
 
       ------------------------------------------------------------
@@ -2049,7 +2049,7 @@ begin
       check_value(v_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
       check_value(v_coverpoint.get_coverage(VOID), 0.0, ERROR, "get_coverage(VOID)");
       check_value(v_coverpoint.coverage_completed(VOID), false, ERROR, "coverage_completed(VOID)");
-      v_coverpoint.print_summary(VOID);
+      v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
       v_coverpoint.write_coverage_db("file.txt");
 
@@ -2118,7 +2118,7 @@ begin
         v_value := v_coverpoint.rand(VOID);
       end loop;
 
-      v_coverpoint.print_summary(VERBOSE);
+      v_coverpoint.report_coverage(VERBOSE);
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2171,7 +2171,7 @@ begin
         v_values_x2 := v_cross_x2.rand(VOID);
       end loop;
 
-      v_cross_x2.print_summary(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2185,10 +2185,10 @@ begin
         v_cross_x3.sample_coverage((i, 200, 300));
       end loop;
 
-      v_cross_x3.print_summary(VERBOSE);
+      v_cross_x3.report_coverage(VERBOSE);
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_database_2" then
@@ -2258,7 +2258,7 @@ begin
       sample_bins(v_coverpoint, (231,237,237,238,235,231), 1);
       sample_bins(v_coverpoint, (50,51,52,53), 1); -- To check transition_idx
 
-      v_coverpoint.print_summary(VERBOSE);
+      v_coverpoint.report_coverage(VERBOSE);
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2330,7 +2330,7 @@ begin
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
       sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053)), 1); -- To check transition_idx
 
-      v_cross_x2.print_summary(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2357,10 +2357,10 @@ begin
         v_cross_x3.sample_coverage((i, 200, 300));
       end loop;
 
-      v_cross_x3.print_summary(VERBOSE);
+      v_cross_x3.report_coverage(VERBOSE);
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - coverpoint");
@@ -2398,7 +2398,7 @@ begin
       sample_bins(v_coverpoint_b, (1000), 1);
       --check_coverage(v_coverpoint_b, 100.0); -- TODO: wait until coverage discussion is resolved
 
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - cross");
@@ -2436,7 +2436,7 @@ begin
       sample_cross_bins(v_cross_x2_b, (0 => (1000,2000)), 1);
       --check_coverage(v_cross_x2_b, 100.0); -- TODO: wait until coverage discussion is resolved
 
-      v_cross_x2_b.print_summary(VERBOSE);
+      v_cross_x2_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - max data");
@@ -2463,9 +2463,9 @@ begin
       end loop;
       check_coverage(v_cross_x3_b, 100.0);
 
-      v_cross_x3_b.print_summary(VERBOSE);
+      v_cross_x3_b.report_coverage(VERBOSE);
 
-      print_sim_coverage_summary(VOID);
+      report_sim_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load DB to an already initialized coverpoint - overwrite");
@@ -2502,7 +2502,7 @@ begin
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 0);
       check_coverage(v_coverpoint_b, 0.0);
-      v_coverpoint_b.print_summary(VERBOSE);
+      v_coverpoint_b.report_coverage(VERBOSE);
 
     end if;
 

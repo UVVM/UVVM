@@ -289,13 +289,13 @@ Returns true if the accumulated coverage for all the coverpoints in the simulati
     end if;
 
 
-print_sim_coverage_summary()
+report_sim_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the simulation coverage summary containing the main information of all the coverpoints, however it does not print the bins. 
 The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg.::
 
-    print_sim_coverage_summary(VOID)
-    print_sim_coverage_summary(scope)
+    report_sim_coverage(VOID)
+    report_sim_coverage(scope)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                             |
@@ -308,5 +308,5 @@ The printing destination can be log and/or console and is defined by shared_defa
 .. code-block::
 
     Examples:
-    print_sim_coverage_summary(VOID);
-    print_sim_coverage_summary(my_scope);
+    report_sim_coverage(VOID);
+    report_sim_coverage(my_scope);

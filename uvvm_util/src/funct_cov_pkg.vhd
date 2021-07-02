@@ -28,8 +28,7 @@ use work.rand_pkg.all;
 
 package funct_cov_pkg is
 
-  constant C_MAX_NUM_CROSS_BINS   : positive := 16;
-  constant C_MAX_NEW_NUM_BINS     : positive := 100; -- TODO: choose a value or use unconstrained type
+  constant C_MAX_NUM_CROSS_BINS : positive := 16;
 
   ------------------------------------------------------------
   -- Types
@@ -46,12 +45,12 @@ package funct_cov_pkg is
   type t_new_bin_vector is array (natural range <>) of t_new_bin;
 
   type t_new_cov_bin is record
-    bin_vector : t_new_bin_vector(0 to C_MAX_NEW_NUM_BINS-1);
-    num_bins   : natural range 0 to C_MAX_NEW_NUM_BINS;
+    bin_vector : t_new_bin_vector(0 to C_FC_MAX_NUM_NEW_BINS-1);
+    num_bins   : natural range 0 to C_FC_MAX_NUM_NEW_BINS;
     proc_call  : string(1 to C_FC_MAX_PROC_CALL_LENGTH);
   end record;
   type t_new_bin_array is array (natural range <>) of t_new_cov_bin;
-  constant C_EMPTY_NEW_BIN_ARRAY : t_new_bin_array(0 to 0) := (0 => ((0 to C_MAX_NEW_NUM_BINS-1 => (VAL, (others => 0), 0)),
+  constant C_EMPTY_NEW_BIN_ARRAY : t_new_bin_array(0 to 0) := (0 => ((0 to C_FC_MAX_NUM_NEW_BINS-1 => (VAL, (others => 0), 0)),
                                                                      0,
                                                                      (1 to C_FC_MAX_PROC_CALL_LENGTH => NUL)));
 
@@ -520,7 +519,7 @@ package body funct_cov_pkg is
       v_ret(0).bin_vector(0).values                           := set_values(0 to C_FC_MAX_NUM_BIN_VALUES-1);
       v_ret(0).bin_vector(0).num_values                       := C_FC_MAX_NUM_BIN_VALUES;
       alert(TB_WARNING, proc_call & "=> Number of values (" & to_string(set_values'length) &
-        ") exceed C_FC_MAX_NUM_BIN_VALUES.\n Increase C_FC_MAX_NUM_BIN_VALUES in adaptations package.", C_TB_SCOPE_DEFAULT);
+        ") exceeds C_FC_MAX_NUM_BIN_VALUES.\n Increase C_FC_MAX_NUM_BIN_VALUES in adaptations package.", C_TB_SCOPE_DEFAULT);
     end if;
     v_ret(0).num_bins := 1;
     v_ret(0).proc_call(1 to proc_call'length) := proc_call;
@@ -547,8 +546,13 @@ package body funct_cov_pkg is
       C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => "create_bin_range()");
 
     if min_value <= max_value then
-      -- Create a bin for each value in the range
-      if num_bins = 0 then
+      -- Create a bin for each value in the range (when num_bins is not defined or range is smaller than the number of bins)
+      if num_bins = 0 or C_RANGE_WIDTH <= num_bins then
+        if C_RANGE_WIDTH > C_FC_MAX_NUM_NEW_BINS then
+          alert(TB_ERROR, proc_call & "=> Failed. Number of bins (" & to_string(C_RANGE_WIDTH) &
+            ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          return C_EMPTY_NEW_BIN_ARRAY;
+        end if;
         for i in min_value to max_value loop
           v_ret(0).bin_vector(i-min_value).contains   := VAL when contains = RAN else
                                                          VAL_IGNORE when contains = RAN_IGNORE else
@@ -557,43 +561,35 @@ package body funct_cov_pkg is
           v_ret(0).bin_vector(i-min_value).num_values := 1;
         end loop;
         v_num_bins := C_RANGE_WIDTH;
-      -- Create several bins
+      -- Create several bins by diving the range
       else
-        -- Range is divided into a number of bins
-        if C_RANGE_WIDTH > num_bins then
-          v_div_residue := C_RANGE_WIDTH mod num_bins;
-          v_div_range   := C_RANGE_WIDTH / num_bins;
-          v_num_bins    := num_bins;
-          for i in 0 to v_num_bins-1 loop
-            -- Add the residue values to the last bins
-            if v_div_residue /= 0 and i = v_num_bins-v_div_residue then
-              v_div_residue_max := v_div_residue_max + 1;
-            elsif v_div_residue /= 0 and i > v_num_bins-v_div_residue then
-              v_div_residue_min := v_div_residue_min + 1;
-              v_div_residue_max := v_div_residue_max + 1;
-            end if;
-            v_ret(0).bin_vector(i).contains   := contains;
-            v_ret(0).bin_vector(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
-            v_ret(0).bin_vector(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
-            v_ret(0).bin_vector(i).num_values := 2;
-          end loop;
-        -- Range is smaller than the number of bins, create a bin for each value in the range
-        else
-          for i in min_value to max_value loop
-            v_ret(0).bin_vector(i-min_value).contains   := VAL when contains = RAN else
-                                                           VAL_IGNORE when contains = RAN_IGNORE else
-                                                           VAL_ILLEGAL when contains = RAN_ILLEGAL;
-            v_ret(0).bin_vector(i-min_value).values(0)  := i;
-            v_ret(0).bin_vector(i-min_value).num_values := 1;
-          end loop;
-          v_num_bins := C_RANGE_WIDTH;
+        if num_bins > C_FC_MAX_NUM_NEW_BINS then
+          alert(TB_ERROR, proc_call & "=> Failed. Number of bins (" & to_string(num_bins) &
+            ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          return C_EMPTY_NEW_BIN_ARRAY;
         end if;
+        v_div_residue := C_RANGE_WIDTH mod num_bins;
+        v_div_range   := C_RANGE_WIDTH / num_bins;
+        v_num_bins    := num_bins;
+        for i in 0 to v_num_bins-1 loop
+          -- Add the residue values to the last bins
+          if v_div_residue /= 0 and i = v_num_bins-v_div_residue then
+            v_div_residue_max := v_div_residue_max + 1;
+          elsif v_div_residue /= 0 and i > v_num_bins-v_div_residue then
+            v_div_residue_min := v_div_residue_min + 1;
+            v_div_residue_max := v_div_residue_max + 1;
+          end if;
+          v_ret(0).bin_vector(i).contains   := contains;
+          v_ret(0).bin_vector(i).values(0)  := min_value + v_div_range*i + v_div_residue_min;
+          v_ret(0).bin_vector(i).values(1)  := min_value + v_div_range*(i+1)-1 + v_div_residue_max;
+          v_ret(0).bin_vector(i).num_values := 2;
+        end loop;
       end if;
       v_ret(0).num_bins := v_num_bins;
       v_ret(0).proc_call(1 to proc_call'length) := proc_call;
     else
       alert(TB_ERROR, proc_call & "=> Failed. min_value must be less or equal than max_value", C_TB_SCOPE_DEFAULT);
-      v_ret := C_EMPTY_NEW_BIN_ARRAY;
+      return C_EMPTY_NEW_BIN_ARRAY;
     end if;
     return v_ret;
   end function;
@@ -1050,7 +1046,7 @@ package body funct_cov_pkg is
     begin
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
-        check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
+        check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
           priv_scope, ID_NEVER, caller_name => local_call);
         -- Only set the default name if it hasn't been given
         if priv_name = fill_string(NUL, priv_name'length) then
@@ -1636,7 +1632,7 @@ package body funct_cov_pkg is
       -- Add coverpoint to covergroup status register
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
-        check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceed C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
+        check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
       else
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_string(priv_name) & " will be overwritten.", priv_scope);

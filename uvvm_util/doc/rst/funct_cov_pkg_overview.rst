@@ -108,6 +108,11 @@ The bin functions may be concatenated to add several bins at once.
 
     my_coverpoint.add_bins(bin(0) & bin((2,4,6,8)) & bin_range(50, 100, 2));
 
+.. note::
+
+    The maximum number of bins which can be added at once using a single ``add_bins()`` call is limited by C_FC_MAX_NUM_NEW_BINS 
+    defined in adaptations_pkg.
+
 Ignore bins
 ==================================================================================================================================
 Specific values or transitions can be excluded from the coverage by using ignore bins. This can be useful when creating a big range 

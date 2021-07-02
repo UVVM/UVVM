@@ -1111,6 +1111,10 @@ package body funct_cov_pkg is
       variable v_num_bins : natural := 0;
     begin
       for i in bin_array'range loop
+        if v_num_bins + bin_array(i).num_bins > C_FC_MAX_NUM_NEW_BINS then
+          alert(TB_ERROR, "Number of bins added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          return;
+        end if;
         cov_bin.bin_vector(v_num_bins to v_num_bins+bin_array(i).num_bins-1) := bin_array(i).bin_vector(0 to bin_array(i).num_bins-1);
         v_num_bins := v_num_bins + bin_array(i).num_bins;
       end loop;

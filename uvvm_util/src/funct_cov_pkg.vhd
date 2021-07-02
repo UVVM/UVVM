@@ -34,7 +34,7 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Types
   ------------------------------------------------------------
-  type t_report_verbosity is (NON_VERBOSE, VERBOSE, PRINT_HOLES);
+  type t_report_verbosity is (NON_VERBOSE, VERBOSE, HOLES_ONLY);
   type t_rand_weight_visibility is (SHOW_RAND_WEIGHT, HIDE_RAND_WEIGHT);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
@@ -2491,7 +2491,7 @@ package body funct_cov_pkg is
         write(v_line, timestamp_header(now, justify(C_HEADER_1, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
       elsif verbosity = NON_VERBOSE then
         write(v_line, timestamp_header(now, justify(C_HEADER_2, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
-      elsif verbosity = PRINT_HOLES then
+      elsif verbosity = HOLES_ONLY then
         write(v_line, timestamp_header(now, justify(C_HEADER_3, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
       end if;
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
@@ -2615,7 +2615,7 @@ package body funct_cov_pkg is
         end loop;
       end if;
       for i in 0 to priv_bins_idx-1 loop
-        if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = PRINT_HOLES and priv_bins(i).hits < priv_bins(i).min_hits) then
+        if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = HOLES_ONLY and priv_bins(i).hits < priv_bins(i).min_hits) then
           if get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_bins(i).name) then
             write(v_line, to_string(priv_bins(i).name) & ": " & get_bin_values(priv_bins(i)) & LF);
           end if;

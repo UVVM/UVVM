@@ -6,7 +6,7 @@ Types
 
 t_report_verbosity
 ----------------------------------------------------------------------------------------------------------------------------------
-NON_VERBOSE, VERBOSE, PRINT_HOLES
+NON_VERBOSE, VERBOSE, HOLES_ONLY
 
 
 .. _t_rand_weight_visibility:

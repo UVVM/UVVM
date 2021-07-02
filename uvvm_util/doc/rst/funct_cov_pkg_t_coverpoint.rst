@@ -610,7 +610,7 @@ shared_default_log_destination in adaptations_pkg. ::
 
     Examples:
     my_coverpoint.report_coverage(VOID);
-    my_coverpoint.report_coverage(PRINT_HOLES);
+    my_coverpoint.report_coverage(HOLES_ONLY);
     my_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
 
 

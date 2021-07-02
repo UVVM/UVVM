@@ -557,8 +557,9 @@ Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *funct_cov_pkg* use the following message IDs (disabled by default):
 
-* ID_FUNCT_COV: Used for logging functional coverage add_bins and add_cross
-* ID_FUNCT_COV_BINS:  Used for logging functional coverage add_bins and add_cross detailed information
+* ID_FUNCT_COV: Used for logging functional coverage ``add_bins()`` and ``add_cross()``. Note that each bin function within the 
+  ``add_bins()`` and ``add_cross()`` log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.
+* ID_FUNCT_COV_BINS:  Used for logging functional coverage ``add_bins()`` and ``add_cross()`` detailed information
 * ID_FUNCT_COV_RAND:  Used for logging functional coverage randomization
 * ID_FUNCT_COV_SAMPLE: Used for logging functional coverage sampling
 * ID_FUNCT_COV_CONFIG: Used for logging functional coverage configuration

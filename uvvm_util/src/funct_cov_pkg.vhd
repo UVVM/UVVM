@@ -499,7 +499,11 @@ package body funct_cov_pkg is
     v_ret(0).bin_vector(0).values(0)  := value;
     v_ret(0).bin_vector(0).num_values := 1;
     v_ret(0).num_bins := 1;
-    v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+    if proc_call'length > C_FC_MAX_PROC_CALL_LENGTH then
+      v_ret(0).proc_call := proc_call(1 to C_FC_MAX_PROC_CALL_LENGTH-3) & "...";
+    else
+      v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+    end if;
     return v_ret;
   end function;
 
@@ -522,7 +526,11 @@ package body funct_cov_pkg is
         ") exceeds C_FC_MAX_NUM_BIN_VALUES.\n Increase C_FC_MAX_NUM_BIN_VALUES in adaptations package.", C_TB_SCOPE_DEFAULT);
     end if;
     v_ret(0).num_bins := 1;
-    v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+    if proc_call'length > C_FC_MAX_PROC_CALL_LENGTH then
+      v_ret(0).proc_call := proc_call(1 to C_FC_MAX_PROC_CALL_LENGTH-3) & "...";
+    else
+      v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+    end if;
     return v_ret;
   end function;
 
@@ -586,7 +594,11 @@ package body funct_cov_pkg is
         end loop;
       end if;
       v_ret(0).num_bins := v_num_bins;
-      v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+      if proc_call'length > C_FC_MAX_PROC_CALL_LENGTH then
+        v_ret(0).proc_call := proc_call(1 to C_FC_MAX_PROC_CALL_LENGTH-3) & "...";
+      else
+        v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+      end if;
     else
       alert(TB_ERROR, proc_call & "=> Failed. min_value must be less or equal than max_value", C_TB_SCOPE_DEFAULT);
       return C_EMPTY_NEW_BIN_ARRAY;

@@ -230,11 +230,11 @@ package funct_cov_pkg is
     procedure clear_coverage(
       constant msg_id_panel : in t_msg_id_panel);
 
-    procedure set_num_bins_allocated(
+    procedure set_num_allocated_bins(
       constant value        : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-    procedure set_num_bins_allocated_increment(
+    procedure set_num_allocated_bins_increment(
       constant value : in positive);
 
     procedure clear_coverpoint(
@@ -1718,10 +1718,10 @@ package body funct_cov_pkg is
       protected_covergroup_status.set_total_bin_hits(priv_id, 0);
     end procedure;
 
-    procedure set_num_bins_allocated(
+    procedure set_num_allocated_bins(
       constant value        : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "set_num_bins_allocated(" & to_string(value) & ")";
+      constant C_LOCAL_CALL : string := "set_num_allocated_bins(" & to_string(value) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
@@ -1732,7 +1732,7 @@ package body funct_cov_pkg is
       end if;
     end procedure;
 
-    procedure set_num_bins_allocated_increment(
+    procedure set_num_allocated_bins_increment(
       constant value : in positive) is
     begin
       priv_num_bins_allocated_increment := value;

@@ -143,7 +143,7 @@ For users who want more control over the memory usage during simulation, it is p
 how much the size increments when the list becomes full, by using the constants C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED and 
 C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg.
 
-Moreover, the procedures ``set_num_bins_allocated()`` and ``set_num_bins_allocated_increment()`` can be used to reconfigure a 
+Moreover, the procedures ``set_num_allocated_bins()`` and ``set_num_allocated_bins_increment()`` can be used to reconfigure a 
 coverpoint's respective values.
 
 **********************************************************************************************************************************

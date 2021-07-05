@@ -178,7 +178,8 @@ of (value + weight) or (range of values + weight). The function names contain th
 
 When specifying a weight for a range of values there are two possible scenarios:
 
-#. Combined weight: The given weight is divided into the number of values within the range and each value is assigned a fraction of it.
+#. Combined weight: The given weight is assigned to the range as a whole, i.e. each value within the range has a fraction of the 
+   given weight.
 #. Individual weight: The given weight is assigned equally to each value within the range.
 
 The default mode is COMBINED_WEIGHT, however this can be changed using the ``set_range_weight_default_mode()`` procedure. Alternatively,
@@ -198,6 +199,10 @@ it is possible to explicitly define the mode in the ``rand_range_weight_mode()``
                                                                                                          -- 1 and 5 with their corresponding weights and explicit modes
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
+
+.. note::
+    The real and time weighted randomization functions only support the COMBINED_WEIGHT mode due to the very large number of values 
+    within a real/time range.
 
 **********************************************************************************************************************************
 Configuration report

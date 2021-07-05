@@ -966,9 +966,9 @@ rand_range_weight()
 Returns a random value using a weighted distribution. Each given range (min/max) has a weight which determines how often it is 
 chosen during randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. 
 
-The given weight is divided into the number of values within the range and each value is assigned a fraction of it. The behavior 
-can be changed to assigning the given weight equally to each value within the range by using 
-``set_range_weight_default_mode(INDIVIDUAL_WEIGHT)``. ::
+The given weight is assigned to the range as a whole, i.e. each value within the range has a fraction of the given weight. This 
+behavior can be changed to assigning the given weight equally to each value within the range by using 
+``set_range_weight_default_mode(INDIVIDUAL_WEIGHT)`` (EXCEPT for the real and time types). ::
 
     integer          := rand_range_weight(weight_vector, [msg_id_panel])
     real             := rand_range_weight(weight_vector, [msg_id_panel])
@@ -1009,10 +1009,12 @@ chosen during randomization. The sum of all weights need not be 100 since the pr
 
 The given weight can have two possible interpretations:
 
-#. COMBINED_WEIGHT: The given weight is divided into the number of values within the range and each value is assigned a fraction of it.
+#. COMBINED_WEIGHT: The given weight is assigned to the range as a whole, i.e. each value within the range has a fraction of the 
+   given weight.
 #. INDIVIDUAL_WEIGHT: The given weight is assigned equally to each value within the range.
 
-::
+Note that the real and time weighted randomization functions only support the COMBINED_WEIGHT mode due to the very large number of 
+values within a real/time range. ::
 
     integer          := rand_range_weight_mode(weight_vector, [msg_id_panel])
     real             := rand_range_weight_mode(weight_vector, [msg_id_panel])
@@ -1037,8 +1039,8 @@ The given weight can have two possible interpretations:
 
     Examples:
     rand_int  := my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT)));
-    rand_real := my_rand.rand_range_weight_mode(((-5.0,-3.0,10,INDIVIDUAL_WEIGHT),(0.0,0.0,30,NA),(1.0,5.0,60,COMBINED_WEIGHT)));
-    rand_time := my_rand.rand_range_weight_mode(((1 ns,5 ns,10,INDIVIDUAL_WEIGHT),(10 ns,10 ns,30,NA),(25 ns,50 ns,60,COMBINED_WEIGHT)));
+    rand_real := my_rand.rand_range_weight_mode(((-5.0,-3.0,10,COMBINED_WEIGHT),(0.0,0.0,30,NA),(1.0,5.0,60,COMBINED_WEIGHT)));
+    rand_time := my_rand.rand_range_weight_mode(((1 ns,5 ns,10,COMBINED_WEIGHT),(10 ns,10 ns,30,NA),(25 ns,50 ns,60,COMBINED_WEIGHT)));
     rand_uns  := my_rand.rand_range_weight_mode(rand_uns'length, ((10,15,1,INDIVIDUAL_WEIGHT),(20,20,3,NA),(30,35,6,COMBINED_WEIGHT)));
     rand_sig  := my_rand.rand_range_weight_mode(rand_sig'length, ((-5,-3,1,INDIVIDUAL_WEIGHT),(0,0,2,NA),(5,10,2,COMBINED_WEIGHT)));
     rand_slv  := my_rand.rand_range_weight_mode(rand_slv'length, ((10,15,5,INDIVIDUAL_WEIGHT),(20,20,1,NA),(30,35,1,COMBINED_WEIGHT)));

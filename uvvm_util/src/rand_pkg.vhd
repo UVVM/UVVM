@@ -4209,7 +4209,6 @@ package body rand_pkg is
       variable v_acc_weight        : natural := 0;
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
-      variable v_values_in_range   : natural := 0;
       variable v_ret               : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -4316,7 +4315,6 @@ package body rand_pkg is
       variable v_acc_weight        : natural := 0;
       variable v_acc_weight_vector : t_natural_vector(0 to weight_vector'length-1);
       variable v_weight_idx        : natural := 0;
-      variable v_values_in_range   : natural := 0;
       variable v_ret               : time;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);

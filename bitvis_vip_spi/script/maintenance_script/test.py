@@ -44,7 +44,8 @@ hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreb
 # Add testcase configurations
 configs = create_config(spi_modes=range(0,4), data_widths=[8, 14, 23, 32], data_array_widths=[2, 4, 6, 8])
 for config in configs:
-    hdlunit.add_generics("spi_vvc_tb", ["GC_SPI_MODE", config[0],"GC_DATA_WIDTH", config[1], "GC_DATA_ARRAY_WIDTH", config[2]])
+    hdlunit.add_generics(entity="spi_vvc_tb",
+                         generics=["GC_SPI_MODE", config[0],"GC_DATA_WIDTH", config[1], "GC_DATA_ARRAY_WIDTH", config[2]])
 
 # Add SPI VIP
 hdlunit.add_files("../../src/*.vhd", "bitvis_vip_spi")

@@ -36,10 +36,14 @@ hdlunit.add_files("../../src/*.vhd", "uvvm_util")
 hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util")
 
 # Define testcase names with generics for GC_TESTCASE
-hdlunit.add_generics("generic_queue_array_tb", ["GC_TESTCASE", "generic_queue_array_tb"])
-hdlunit.add_generics("generic_queue_record_tb", ["GC_TESTCASE", "generic_queue_record_tb"])
-hdlunit.add_generics("generic_queue_tb", ["GC_TESTCASE", "generic_queue_tb"])
-hdlunit.add_generics("simplified_data_queue_tb", ["GC_TESTCASE", "simplified_data_queue_tb"])
+hdlunit.add_generics(entity="generic_queue_array_tb",
+                     architecture=["GC_TESTCASE", "generic_queue_array_tb"])
+hdlunit.add_generics(entity="generic_queue_record_tb",
+                     architecture=["GC_TESTCASE", "generic_queue_record_tb"])
+hdlunit.add_generics(entity="generic_queue_tb",
+                     architecture=["GC_TESTCASE", "generic_queue_tb"])
+hdlunit.add_generics(entity="simplified_data_queue_tb",
+                     architecture=["GC_TESTCASE", "simplified_data_queue_tb"])
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

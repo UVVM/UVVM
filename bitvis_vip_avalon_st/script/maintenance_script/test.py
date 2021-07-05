@@ -48,18 +48,25 @@ hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreb
 
 # Setup BFM TB test generics
 for config in create_config(channel_widths=[7], data_widths=[8], error_widths=[1]):
-    hdlunit.add_generics("avalon_st_bfm_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])        
+    hdlunit.add_generics(entity="avalon_st_bfm_tb",
+                         generics=["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])        
 for config in create_config(channel_widths=[8], data_widths=[16], error_widths=[1]):
-    hdlunit.add_generics("avalon_st_bfm_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
+    hdlunit.add_generics(entity="avalon_st_bfm_tb",
+                         generics=["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
 for config in create_config(channel_widths=[8], data_widths=[32], error_widths=[1]):
-    hdlunit.add_generics("avalon_st_bfm_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
+    hdlunit.add_generics(entity="avalon_st_bfm_tb",
+                         generics=["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
+
 # Setup VVC TB test generics
 for config in create_config(channel_widths=[7], data_widths=[8], error_widths=[1]):
-    hdlunit.add_generics("avalon_st_vvc_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
+    hdlunit.add_generics(entity="avalon_st_vvc_tb",
+                         generics=["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
 for config in create_config(channel_widths=[8], data_widths=[16], error_widths=[1]):
-    hdlunit.add_generics("avalon_st_vvc_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
+    hdlunit.add_generics(entity="avalon_st_vvc_tb",
+                         generics=["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
 for config in create_config(channel_widths=[8], data_widths=[32], error_widths=[1]):
-    hdlunit.add_generics("avalon_st_vvc_tb", ["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
+    hdlunit.add_generics(entity="avalon_st_vvc_tb",
+                         generics=["GC_CHANNEL_WIDTH", config[0], "GC_DATA_WIDTH", config[1], "GC_ERROR_WIDTH", config[2]])
 
 # Add Avalon ST VIP
 hdlunit.add_files("../../src/*.vhd", "bitvis_vip_avalon_st")

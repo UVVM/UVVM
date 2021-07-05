@@ -43,10 +43,11 @@ hdlunit.add_files("../../src/*.vhd", "bitvis_vip_spec_cov")
 hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
 hdlunit.add_files("../../tb/*.vhd", "bitvis_vip_spec_cov")
 
-hdlunit.add_generics("spec_cov_tb", ["GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
-                                     "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                                     "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                                     "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
+hdlunit.add_generics(entity="spec_cov_tb",
+                     architecture=["GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
+                                   "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                                   "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                                   "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

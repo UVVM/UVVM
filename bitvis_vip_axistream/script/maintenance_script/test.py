@@ -25,13 +25,22 @@ def cleanup(msg='Cleaning up...'):
 
 def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuser=False, use_setup_and_hold=False):
     config = []
-    if any(include_tuser): include_tuser = 1
-    else: include_tuser = 0
-    if any(use_setup_and_hold): use_setup_and_hold = 1
-    else: use_setup_and_hold = 0
 
-    for data_width, user_width, id_width, dest_width in product(data_widths, user_widths, id_widths, dest_widths):
-      config.append([str(data_width), str(user_width), str(id_width), str(dest_width), str(include_tuser), str(use_setup_and_hold)])
+    # Need to convert boolean to int - and handle lists
+    if isinstance(include_tuser, list):
+        for idx, item in enumerate(include_tuser):
+            include_tuser[idx] = 1 if item is True else 0
+    else:
+        include_tuser = 1 if include_tuser is True else 0
+    # Need to convert boolean to int - and handle lists
+    if isinstance(use_setup_and_hold, list):
+        for idx, item in enumerate(use_setup_and_hold):
+            use_setup_and_hold[idx] = 1 if item is True else 0
+    else:
+        use_setup_and_hold = 1 if use_setup_and_hold is True else 0
+    
+    for data_width, user_width, id_width, dest_width, tuser, setup_and_hold in product(data_widths, user_widths, id_widths, dest_widths, include_tuser, use_setup_and_hold):
+      config.append([str(data_width), str(user_width), str(id_width), str(dest_width), str(tuser), str(setup_and_hold)])
     return config
 
 
@@ -89,6 +98,7 @@ hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bit
 
 # Add TB/TH
 hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_axistream")
+
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

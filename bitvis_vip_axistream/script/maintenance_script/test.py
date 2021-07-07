@@ -52,6 +52,7 @@ for config in configs:
     hdlunit.add_generics(entity="axistream_simple_tb",
                          generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])  
 
+
 configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8], id_widths=[8], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[True])
 for config in configs:
     hdlunit.add_generics(entity="axistream_vvc_simple_tb",
@@ -62,40 +63,25 @@ for config in configs:
     hdlunit.add_generics(entity="axistream_vvc_simple_tb",
                          generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
 
-configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[False], use_setup_and_hold=[True])
-for config in configs:
-    hdlunit.add_generics(entity="axistream_vvc_simple_tb",
-                         generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
+hdlunit.add_generics(entity="axistream_vvc_simple_tb",
+                     generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 1, "GC_ID_WIDTH", 1, "GC_DEST_WIDTH", 1, "GC_INCLUDE_TUSER", False, "GC_USE_SETUP_AND_HOLD", True])
 
-configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[True])
+
+configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[False, True])
 for config in configs:
     hdlunit.add_generics(entity="axistream_bfm_slv_array_tb",
                          generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
 
-configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[False])
-for config in configs:
-    hdlunit.add_generics(entity="axistream_bfm_slv_array_tb",
-                         generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
-
-configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[True])
+configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[False, True])
 for config in configs:
     hdlunit.add_generics(entity="axistream_vvc_slv_array_tb",
                          generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
 
-configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[False])
-for config in configs:
-    hdlunit.add_generics(entity="axistream_vvc_slv_array_tb",
-                         generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
+hdlunit.add_generics(entity="axistream_multiple_vvc_tb",
+                     generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 1, "GC_ID_WIDTH", 1, "GC_DEST_WIDTH", 1, "GC_INCLUDE_TUSER", True, "GC_USE_SETUP_AND_HOLD", True])
 
-configs = create_config(data_widths=[32], user_widths=[1], id_widths=[1], dest_widths=[1], include_tuser=[True], use_setup_and_hold=[True])
-for config in configs:
-    hdlunit.add_generics(entity="axistream_multiple_vvc_tb",
-                         generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
-
-configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[False])
-for config in configs:
-    hdlunit.add_generics(entity="axistream_multiple_vvc_tb",
-                         generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
+hdlunit.add_generics(entity="axistream_multiple_vvc_tb",
+                     generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 8, "GC_ID_WIDTH", 7, "GC_DEST_WIDTH", 4, "GC_INCLUDE_TUSER", True, "GC_USE_SETUP_AND_HOLD", False])
 
 # Add src files
 hdlunit.add_files("../../src/*.vhd", "bitvis_vip_axistream")

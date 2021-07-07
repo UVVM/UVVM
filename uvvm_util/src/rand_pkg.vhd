@@ -1783,7 +1783,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(cyclic_mode)) & ")";
       constant C_NUM_VALUES    : unsigned(32 downto 0) := unsigned(to_signed(max_value,33) - to_signed(min_value,33) + to_signed(1,33));
       constant C_USE_LIST      : boolean := C_NUM_VALUES <= C_RAND_CYCLIC_LIST_MAX_NUM_VALUES;
@@ -1941,7 +1941,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
@@ -2032,7 +2032,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_proc_call           : line;
@@ -2116,7 +2116,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ")";
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "])";
       variable v_proc_call : line;
       variable v_mean      : real;
       variable v_std_dev   : real;
@@ -2201,7 +2201,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & format_real(set_values) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
@@ -2279,7 +2279,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & format_real(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & format_real(set_values2) & ")";
       variable v_proc_call           : line;
@@ -2343,7 +2343,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return time is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ")";
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "])";
       variable v_proc_call : line;
       variable v_ret       : time;
     begin
@@ -2416,7 +2416,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return time is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_proc_call        : line;
@@ -2486,7 +2486,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return time is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
@@ -2553,8 +2553,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
@@ -2684,7 +2684,7 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
@@ -2782,7 +2782,7 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " &
         to_upper(to_string(uniqueness)) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
@@ -2845,8 +2845,8 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) &
-        ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
+        to_upper(to_string(uniqueness)) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
@@ -2958,7 +2958,7 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & format_real(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
@@ -3041,7 +3041,7 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & format_real(min_value) & ", MAX:" & format_real(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & format_real(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & format_real(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
@@ -3091,8 +3091,8 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(uniqueness)) & ")";
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(uniqueness)) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
@@ -3190,7 +3190,7 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(uniqueness)) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_set_values_len  : integer := 0;
@@ -3271,7 +3271,7 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) & ", " &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(uniqueness)) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
@@ -3361,8 +3361,8 @@ package body rand_pkg is
       constant max_value     : unsigned;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       variable v_ret : unsigned(max_value'length-1 downto 0);
     begin
       -- Generate a random value in the range [min_value:max_value]
@@ -3379,8 +3379,8 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
       constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1');
       variable v_proc_call     : line;
@@ -3423,8 +3423,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(cyclic_mode)) & ")";
       variable v_ret_int   : integer;
       variable v_ret       : unsigned(length-1 downto 0);
     begin
@@ -3508,8 +3508,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_ret_int   : integer;
       variable v_ret       : unsigned(length-1 downto 0);
     begin
@@ -3567,9 +3567,9 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(set_type1)) & ":" & to_string(set_values1) &
-        ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
+        to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_ret_int : integer;
       variable v_ret     : unsigned(length-1 downto 0);
     begin
@@ -3622,8 +3622,8 @@ package body rand_pkg is
       constant max_value     : signed;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string := "rand(MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       variable v_ret : signed(max_value'length-1 downto 0);
     begin
       -- Generate a random value in the range [min_value:max_value]
@@ -3640,8 +3640,8 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return signed is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
-        ", MAX:" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
+        ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
       constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1');
       variable v_proc_call     : line;
@@ -3684,8 +3684,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(cyclic_mode)) & ")";
       variable v_ret : integer;
     begin
       -- Generate a random value in the range [min_value:max_value]
@@ -3767,8 +3767,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(set_type)) & ":" & to_string(set_values) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_ret : integer;
     begin
       -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
@@ -3824,9 +3824,9 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", MIN:" & to_string(min_value) & ", MAX:" & to_string(max_value) &
-        ", " & to_upper(to_string(set_type1)) & ":" & to_string(set_values1) &
-        ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(cyclic_mode)) & ")";
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
+        to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & ", " & to_upper(to_string(cyclic_mode)) & ")";
       variable v_ret : integer;
     begin
       -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values

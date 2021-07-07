@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.17.1
+----------
+Released: 2021-XX-XX
+- Fixed generic_queue deleting wrong element when position is different from entry_num.
+- Fixed generic_queue print_queue() crashing when queue is empty.
 
 v2.17.0
 ----------

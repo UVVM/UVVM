@@ -45,11 +45,11 @@ There are different ways of constraining the random value in a clear and consist
     addr := my_rand.rand(ONLY,(0,5,10)); -- Generates a value which is either 0, 5 or 10
 
     -- 3. min & max + set of values
-    addr := my_rand.rand(0, 50, INCL,(60,70,80)); -- Generates a value between 0 and 50 and either 60, 70 or 80
-    addr := my_rand.rand(0, 50, EXCL,(25));       -- Generates a value between 0 and 50 except for 25
+    addr := my_rand.rand(0, 50, ADD,(60,70,80)); -- Generates a value between 0 and 50 and either 60, 70 or 80
+    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value between 0 and 50 except for 25
 
     -- 4. min & max + two sets of values
-    addr := my_rand.rand(0, 50, INCL,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
+    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
 
 **********************************************************************************************************************************
 Types
@@ -76,9 +76,9 @@ The ``rand()`` function can return the following types:
     rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99);
     rand_time     := my_rand.rand(0 ps, 100 ps);
     rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
-    rand_uns      := my_rand.rand(rand_uns'length, 0, 50, INCL,(60));
+    rand_uns      := my_rand.rand(rand_uns'length, 0, 50, ADD,(60));
     rand_sig      := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
-    rand_slv      := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25,35));
+    rand_slv      := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25,35));
     rand_sl       := my_rand.rand(VOID);
     rand_bool     := my_rand.rand(VOID);
 

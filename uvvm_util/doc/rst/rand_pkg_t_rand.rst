@@ -410,11 +410,11 @@ Returns a random integer value. ::
     Examples:
     rand_int := my_rand.rand(-50, 50);
     rand_int := my_rand.rand(ONLY, (-20,-10,0,10,20));
-    rand_int := my_rand.rand(-50, 50, INCL,(60));
+    rand_int := my_rand.rand(-50, 50, ADD,(60));
     rand_int := my_rand.rand(-50, 50, EXCL,(-25,25));
-    rand_int := my_rand.rand(-50, 50, INCL,(60), EXCL,(25));
-    rand_int := my_rand.rand(-50, 50, INCL,(60), EXCL,(-25,25));
-    rand_int := my_rand.rand(-50, 50, INCL,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
+    rand_int := my_rand.rand(-50, 50, ADD,(60), EXCL,(25));
+    rand_int := my_rand.rand(-50, 50, ADD,(60), EXCL,(-25,25));
+    rand_int := my_rand.rand(-50, 50, ADD,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
 
 
 .. _rand_real:
@@ -452,11 +452,11 @@ Returns a random real value. ::
     Examples:
     rand_real := my_rand.rand(0.0, 9.99);
     rand_real := my_rand.rand(ONLY, (0.5,1.0,1.5,2.0));
-    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0));
+    rand_real := my_rand.rand(0.0, 9.99, ADD,(20.0));
     rand_real := my_rand.rand(0.0, 9.99, EXCL,(5.0,6.0));
-    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0), EXCL,(5.0));
-    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0), EXCL,(5.0,6.0));
-    rand_real := my_rand.rand(0.0, 9.99, INCL,(20.0,30.0,40.0), EXCL,(5.0,6.0));
+    rand_real := my_rand.rand(0.0, 9.99, ADD,(20.0), EXCL,(5.0));
+    rand_real := my_rand.rand(0.0, 9.99, ADD,(20.0), EXCL,(5.0,6.0));
+    rand_real := my_rand.rand(0.0, 9.99, ADD,(20.0,30.0,40.0), EXCL,(5.0,6.0));
 
 
 .. _rand_time:
@@ -494,11 +494,11 @@ Returns a random time value. ::
     Examples:
     rand_time := my_rand.rand(0 ps, 100 ps);
     rand_time := my_rand.rand(ONLY, (5 us, 10 us, 15 us, 20 us));
-    rand_time := my_rand.rand(1 ns, 10 ns, INCL,(20 ns));
+    rand_time := my_rand.rand(1 ns, 10 ns, ADD,(20 ns));
     rand_time := my_rand.rand(1 ns, 10 ns, EXCL,(5 ns, 6 ns));
-    rand_time := my_rand.rand(1 ns, 10 ns, INCL,(20 ns), EXCL,(5 ns));
-    rand_time := my_rand.rand(1 ns, 10 ns, INCL,(20 ns), EXCL,(5 ns, 6 ns));
-    rand_time := my_rand.rand(1 ns, 10 ns, INCL,(20 ns, 30 ns, 40 ns), EXCL,(5 ns, 6 ns));
+    rand_time := my_rand.rand(1 ns, 10 ns, ADD,(20 ns), EXCL,(5 ns));
+    rand_time := my_rand.rand(1 ns, 10 ns, ADD,(20 ns), EXCL,(5 ns, 6 ns));
+    rand_time := my_rand.rand(1 ns, 10 ns, ADD,(20 ns, 30 ns, 40 ns), EXCL,(5 ns, 6 ns));
 
 
 .. _rand_int_vec:
@@ -542,11 +542,11 @@ Returns a vector of random integer values. ::
     Examples:
     rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50);
     rand_int_vec := my_rand.rand(rand_int_vec'length, ONLY, (-20,-10,0,10,20));
-    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, INCL,(60));
+    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, ADD,(60));
     rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, EXCL,(-25,25));
-    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, INCL,(60), EXCL,(25));
-    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, INCL,(60), EXCL,(-25,25), UNIQUE);
-    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, INCL,(-60,60,70,80), EXCL,(-25,25), NON_UNIQUE, CYCLIC);
+    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, ADD,(60), EXCL,(25));
+    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, ADD,(60), EXCL,(-25,25), UNIQUE);
+    rand_int_vec := my_rand.rand(rand_int_vec'length, -50, 50, ADD,(-60,60,70,80), EXCL,(-25,25), NON_UNIQUE, CYCLIC);
 
 
 .. _rand_real_vec:
@@ -588,11 +588,11 @@ Returns a vector of random real values. ::
     Examples:
     rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99);
     rand_real_vec := my_rand.rand(rand_real_vec'length, ONLY, (0.5,1.0,1.5,2.0,2.5,3.0));
-    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, INCL,(20.0));
+    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, ADD,(20.0));
     rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, EXCL,(5.0,6.0));
-    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, INCL,(20.0), EXCL,(5.0));
-    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, INCL,(20.0), EXCL,(5.0,6.0));
-    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, INCL,(20.0,30.0,40.0), EXCL,(5.0,6.0), UNIQUE);
+    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, ADD,(20.0), EXCL,(5.0));
+    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, ADD,(20.0), EXCL,(5.0,6.0));
+    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99, ADD,(20.0,30.0,40.0), EXCL,(5.0,6.0), UNIQUE);
 
 
 .. _rand_time_vec:
@@ -634,11 +634,11 @@ Returns a vector of random time values. ::
     Examples:
     rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
     rand_time_vec := my_rand.rand(rand_time_vec'length, ONLY, (5 us, 10 us, 15 us, 20 us, 25 us, 30 us));
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, INCL,(20 ns));
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, ADD,(20 ns));
     rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, EXCL,(5 ns, 6 ns));
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, INCL,(20 ns), EXCL,(5 ns));
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, INCL,(20 ns), EXCL,(5 ns, 6 ns));
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, INCL,(20 ns, 30 ns, 40 ns), EXCL,(5 ns, 6 ns), UNIQUE);
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, ADD,(20 ns), EXCL,(5 ns));
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, ADD,(20 ns), EXCL,(5 ns, 6 ns));
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, ADD,(20 ns, 30 ns, 40 ns), EXCL,(5 ns, 6 ns), UNIQUE);
 
 
 .. _rand_uns:
@@ -682,11 +682,11 @@ Returns a random unsigned value. ::
     rand_uns := my_rand.rand(rand_uns'length);
     rand_uns := my_rand.rand(rand_uns'length, 0, 50);
     rand_uns := my_rand.rand(rand_uns'length, ONLY, (0,10,40,50));
-    rand_uns := my_rand.rand(rand_uns'length, 0, 50, INCL,(60));
+    rand_uns := my_rand.rand(rand_uns'length, 0, 50, ADD,(60));
     rand_uns := my_rand.rand(rand_uns'length, 0, 50, EXCL,(25,35));
-    rand_uns := my_rand.rand(rand_uns'length, 0, 50, INCL,(60), EXCL,(25));
-    rand_uns := my_rand.rand(rand_uns'length, 0, 50, INCL,(60), EXCL,(25,35));
-    rand_uns := my_rand.rand(rand_uns'length, 0, 50, INCL,(60,70,80), EXCL,(25,35), CYCLIC);
+    rand_uns := my_rand.rand(rand_uns'length, 0, 50, ADD,(60), EXCL,(25));
+    rand_uns := my_rand.rand(rand_uns'length, 0, 50, ADD,(60), EXCL,(25,35));
+    rand_uns := my_rand.rand(rand_uns'length, 0, 50, ADD,(60,70,80), EXCL,(25,35), CYCLIC);
 
 
 .. _rand_uns_long:
@@ -759,11 +759,11 @@ Returns a random signed value. ::
     rand_sig := my_rand.rand(rand_sig'length);
     rand_sig := my_rand.rand(rand_sig'length, -50, 50);
     rand_sig := my_rand.rand(rand_sig'length, ONLY, (-20,-10,0,10,20));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, INCL,(60));
+    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(60));
     rand_sig := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, INCL,(60), EXCL,(25));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, INCL,(60), EXCL,(-25,25));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, INCL,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
+    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(60), EXCL,(25));
+    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(60), EXCL,(-25,25));
+    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
 
 
 .. _rand_sig_long:
@@ -836,11 +836,11 @@ Returns a random std_logic_vector value. Values are interpreted as unsigned and 
     rand_slv := my_rand.rand(rand_slv'length);
     rand_slv := my_rand.rand(rand_slv'length, 0, 50);
     rand_slv := my_rand.rand(rand_slv'length, ONLY, (0,10,40,50));
-    rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60));
+    rand_slv := my_rand.rand(rand_slv'length, 0, 50, ADD,(60));
     rand_slv := my_rand.rand(rand_slv'length, 0, 50, EXCL,(25,35));
-    rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25));
-    rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60), EXCL,(25,35));
-    rand_slv := my_rand.rand(rand_slv'length, 0, 50, INCL,(60,70,80), EXCL,(25,35), CYCLIC);
+    rand_slv := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25));
+    rand_slv := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25,35));
+    rand_slv := my_rand.rand(rand_slv'length, 0, 50, ADD,(60,70,80), EXCL,(25,35), CYCLIC);
 
 
 .. _rand_slv_long:

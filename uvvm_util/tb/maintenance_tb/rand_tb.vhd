@@ -154,8 +154,8 @@ begin
       log(ID_LOG_HDR, "Testing integer (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(-1, 1, INCL,(-10));
-        check_rand_value(v_int, -1, 1, INCL,(-10,-10)); -- use vector to save overload
+        v_int := v_rand.rand(-1, 1, ADD,(-10));
+        check_rand_value(v_int, -1, 1, ADD,(-10,-10)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -171,24 +171,24 @@ begin
       log(ID_LOG_HDR, "Testing integer (min/max + 2 sets of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(-2, 2, INCL,(-10,15,16), EXCL,(1,15));
-        check_rand_value(v_int, -2, 2, INCL,(-10,15,16), EXCL,(1,15));
+        v_int := v_rand.rand(-2, 2, ADD,(-10,15,16), EXCL,(1,15));
+        check_rand_value(v_int, -2, 2, ADD,(-10,15,16), EXCL,(1,15));
         count_rand_value(v_value_cnt, v_int);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(-2, 2, EXCL,(1,15), INCL,(-10,15,16));
-        check_rand_value(v_int, -2, 2, EXCL,(1,15), INCL,(-10,15,16));
+        v_int := v_rand.rand(-2, 2, EXCL,(1,15), ADD,(-10,15,16));
+        check_rand_value(v_int, -2, 2, EXCL,(1,15), ADD,(-10,15,16));
         count_rand_value(v_value_cnt, v_int);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(-1, 1, INCL,(-10), INCL,(15,16));
-        check_rand_value(v_int, -1, 1, INCL, (-10,15,16));
+        v_int := v_rand.rand(-1, 1, ADD,(-10), ADD,(15,16));
+        check_rand_value(v_int, -1, 1, ADD, (-10,15,16));
         count_rand_value(v_value_cnt, v_int);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -212,58 +212,58 @@ begin
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'right-1, integer'right, INCL,(-10));
-        check_rand_value(v_int, integer'right-1, integer'right, INCL,(-10,-10)); -- use vector to save overload
+        v_int := v_rand.rand(integer'right-1, integer'right, ADD,(-10));
+        check_rand_value(v_int, integer'right-1, integer'right, ADD,(-10,-10)); -- use vector to save overload
         v_found := true when v_int = -10;
       end loop;
-      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'left, integer'left+1, INCL,(10));
-        check_rand_value(v_int, integer'left, integer'left+1, INCL,(10,10)); -- use vector to save overload
+        v_int := v_rand.rand(integer'left, integer'left+1, ADD,(10));
+        check_rand_value(v_int, integer'left, integer'left+1, ADD,(10,10)); -- use vector to save overload
         v_found := true when v_int = 10;
       end loop;
-      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'right-1, integer'right, INCL,(-10), EXCL,(integer'right));
-        check_rand_value(v_int, integer'right-1, integer'right, INCL,(-10,-10), EXCL,(integer'right,0)); -- use vector to save overload
+        v_int := v_rand.rand(integer'right-1, integer'right, ADD,(-10), EXCL,(integer'right));
+        check_rand_value(v_int, integer'right-1, integer'right, ADD,(-10,-10), EXCL,(integer'right,0)); -- use vector to save overload
         v_found := true when v_int = -10;
       end loop;
-      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'left, integer'left+1, INCL,(10), EXCL,(integer'left));
-        check_rand_value(v_int, integer'left, integer'left+1, INCL,(10,10), EXCL,(integer'left,0)); -- use vector to save overload
+        v_int := v_rand.rand(integer'left, integer'left+1, ADD,(10), EXCL,(integer'left));
+        check_rand_value(v_int, integer'left, integer'left+1, ADD,(10,10), EXCL,(integer'left,0)); -- use vector to save overload
         v_found := true when v_int = 10;
       end loop;
-      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'right-1, integer'right, EXCL,(integer'right), INCL,(-10));
-        check_rand_value(v_int, integer'right-1, integer'right, EXCL,(integer'right,0), INCL,(-10,-10)); -- use vector to save overload
+        v_int := v_rand.rand(integer'right-1, integer'right, EXCL,(integer'right), ADD,(-10));
+        check_rand_value(v_int, integer'right-1, integer'right, EXCL,(integer'right,0), ADD,(-10,-10)); -- use vector to save overload
         v_found := true when v_int = -10;
       end loop;
-      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'left, integer'left+1, EXCL,(integer'left), INCL,(10));
-        check_rand_value(v_int, integer'left, integer'left+1, EXCL,(integer'left,0), INCL,(10,10)); -- use vector to save overload
+        v_int := v_rand.rand(integer'left, integer'left+1, EXCL,(integer'left), ADD,(10));
+        check_rand_value(v_int, integer'left, integer'left+1, EXCL,(integer'left,0), ADD,(10,10)); -- use vector to save overload
         v_found := true when v_int = 10;
       end loop;
-      check_value(v_found, TB_ERROR, "Checking INCL value is generated");
+      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       log(ID_LOG_HDR, "Testing integer (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 4);
       v_int := v_rand.rand(10, 0);
-      v_int := v_rand.rand(integer'left, integer'right, INCL,(0));
-      v_int := v_rand.rand(integer'left, integer'right, INCL,(0), EXCL,(1));
-      v_int := v_rand.rand(integer'left, integer'right, EXCL,(-1), INCL,(0));
+      v_int := v_rand.rand(integer'left, integer'right, ADD,(0));
+      v_int := v_rand.rand(integer'left, integer'right, ADD,(0), EXCL,(1));
+      v_int := v_rand.rand(integer'left, integer'right, EXCL,(-1), ADD,(0));
 
       ------------------------------------------------------------
       -- Integer Vector
@@ -307,16 +307,16 @@ begin
       log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10));
-        check_rand_value(v_int_vec, -1, 1, INCL,(-10,-10)); -- use vector to save overload
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10));
+        check_rand_value(v_int_vec, -1, 1, ADD,(-10,-10)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10,15), UNIQUE);
-        check_rand_value(v_int_vec, -1, 1, INCL,(-10,15));
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10,15), UNIQUE);
+        check_rand_value(v_int_vec, -1, 1, ADD,(-10,15));
         check_uniqueness(v_int_vec);
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
@@ -334,16 +334,16 @@ begin
       log(ID_LOG_HDR, "Testing integer_vector (min/max + 2 sets of values)");
       v_num_values := 6;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-10,15,16), EXCL,(1,15));
-        check_rand_value(v_int_vec, -2, 2, INCL,(-10,15,16), EXCL,(1,15));
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10,15,16), EXCL,(1,15));
+        check_rand_value(v_int_vec, -2, 2, ADD,(-10,15,16), EXCL,(1,15));
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-10,15,16), EXCL,(1,15,16), UNIQUE);
-        check_rand_value(v_int_vec, -2, 2, INCL,(-10,15,16), EXCL,(1,15,16));
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10,15,16), EXCL,(1,15,16), UNIQUE);
+        check_rand_value(v_int_vec, -2, 2, ADD,(-10,15,16), EXCL,(1,15,16));
         check_uniqueness(v_int_vec);
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
@@ -351,8 +351,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, EXCL,(-1,15,16), INCL,(-10,15,16), UNIQUE);
-        check_rand_value(v_int_vec, -2, 2, EXCL,(-1,15,16), INCL,(-10,15,16));
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, EXCL,(-1,15,16), ADD,(-10,15,16), UNIQUE);
+        check_rand_value(v_int_vec, -2, 2, EXCL,(-1,15,16), ADD,(-10,15,16));
         check_uniqueness(v_int_vec);
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
@@ -360,8 +360,8 @@ begin
 
       v_num_values := 6;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10), INCL,(15,16), UNIQUE);
-        check_rand_value(v_int_vec, -1, 1, INCL,(-10,15,16));
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10), ADD,(15,16), UNIQUE);
+        check_rand_value(v_int_vec, -1, 1, ADD,(-10,15,16));
         check_uniqueness(v_int_vec);
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
@@ -403,8 +403,8 @@ begin
       log(ID_LOG_HDR, "Testing real (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
-        v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5));
-        check_rand_value(v_real, -1.0, 1.0, INCL,(15.5,15.5)); -- use vector to save overload
+        v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5));
+        check_rand_value(v_real, -1.0, 1.0, ADD,(15.5,15.5)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_real);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -420,24 +420,24 @@ begin
       log(ID_LOG_HDR, "Testing real (min/max + 2 sets of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*3 loop
-        v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,16.6));
-        check_rand_value(v_real, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,16.6));
+        v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
+        check_rand_value(v_real, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
         count_rand_value(v_value_cnt, v_real);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
-        v_real := v_rand.rand(-1.0, 1.0, EXCL,(-1.0,16.6), INCL,(15.5,16.6));
-        check_rand_value(v_real, -1.0, 1.0, EXCL,(-1.0,16.6), INCL,(15.5,16.6));
+        v_real := v_rand.rand(-1.0, 1.0, EXCL,(-1.0,16.6), ADD,(15.5,16.6));
+        check_rand_value(v_real, -1.0, 1.0, EXCL,(-1.0,16.6), ADD,(15.5,16.6));
         count_rand_value(v_value_cnt, v_real);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
-        v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5), INCL,(16.6,17.7));
-        check_rand_value(v_real, -1.0, 1.0, INCL,(15.5,16.6,17.7));
+        v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5), ADD,(16.6,17.7));
+        check_rand_value(v_real, -1.0, 1.0, ADD,(15.5,16.6,17.7));
         count_rand_value(v_value_cnt, v_real);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -496,16 +496,16 @@ begin
       log(ID_LOG_HDR, "Testing real_vector (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
-        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5));
-        check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,15.5)); -- use vector to save overload
+        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5));
+        check_rand_value(v_real_vec, -1.0, 1.0, ADD,(15.5,15.5)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
-        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), UNIQUE);
-        check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6));
+        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), UNIQUE);
+        check_rand_value(v_real_vec, -1.0, 1.0, ADD,(15.5,16.6));
         check_uniqueness(v_real_vec);
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
@@ -523,16 +523,16 @@ begin
       log(ID_LOG_HDR, "Testing real_vector (min/max + 2 sets of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
-        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,16.6));
-        check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,16.6));
+        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
+        check_rand_value(v_real_vec, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
-        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,16.6), UNIQUE);
-        check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,16.6));
+        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6), UNIQUE);
+        check_rand_value(v_real_vec, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
         check_uniqueness(v_real_vec);
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
@@ -540,8 +540,8 @@ begin
 
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
-        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,16.6), INCL,(15.5,16.6), UNIQUE);
-        check_rand_value(v_real_vec, -1.0, 1.0, EXCL,(-1.0,16.6), INCL,(15.5,16.6));
+        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,16.6), ADD,(15.5,16.6), UNIQUE);
+        check_rand_value(v_real_vec, -1.0, 1.0, EXCL,(-1.0,16.6), ADD,(15.5,16.6));
         check_uniqueness(v_real_vec);
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
@@ -549,8 +549,8 @@ begin
 
       v_num_values := 6;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
-        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5), INCL,(16.6,17.7), UNIQUE);
-        check_rand_value(v_real_vec, -1.0, 1.0, INCL,(15.5,16.6,17.7));
+        v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5), ADD,(16.6,17.7), UNIQUE);
+        check_rand_value(v_real_vec, -1.0, 1.0, ADD,(15.5,16.6,17.7));
         check_uniqueness(v_real_vec);
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
@@ -594,8 +594,8 @@ begin
       log(ID_LOG_HDR, "Testing time (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_time := v_rand.rand(-1 ps, 1 ps, INCL,(-15 ps));
-        check_rand_value(v_time, -1 ps, 1 ps, INCL,(-15 ps,-15 ps)); -- use vector to save overload
+        v_time := v_rand.rand(-1 ps, 1 ps, ADD,(-15 ps));
+        check_rand_value(v_time, -1 ps, 1 ps, ADD,(-15 ps,-15 ps)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -611,24 +611,24 @@ begin
       log(ID_LOG_HDR, "Testing time (min/max + 2 sets of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_time := v_rand.rand(-2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(1 ps,16 ps));
-        check_rand_value(v_time, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(1 ps,16 ps));
+        v_time := v_rand.rand(-2 ps, 2 ps, ADD,(-15 ps,16 ps,17 ps), EXCL,(1 ps,16 ps));
+        check_rand_value(v_time, -2 ps, 2 ps, ADD,(-15 ps,16 ps,17 ps), EXCL,(1 ps,16 ps));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_time := v_rand.rand(-2 ps, 2 ps, EXCL,(1 ps,16 ps), INCL,(-15 ps,16 ps,17 ps));
-        check_rand_value(v_time, -2 ps, 2 ps, EXCL,(1 ps,16 ps), INCL,(-15 ps,16 ps,17 ps));
+        v_time := v_rand.rand(-2 ps, 2 ps, EXCL,(1 ps,16 ps), ADD,(-15 ps,16 ps,17 ps));
+        check_rand_value(v_time, -2 ps, 2 ps, EXCL,(1 ps,16 ps), ADD,(-15 ps,16 ps,17 ps));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_time := v_rand.rand(-1 ps, 1 ps, INCL,(-15 ps), INCL,(17 ps,18 ps));
-        check_rand_value(v_time, -1 ps, 1 ps, INCL,(-15 ps,17 ps,18 ps));
+        v_time := v_rand.rand(-1 ps, 1 ps, ADD,(-15 ps), ADD,(17 ps,18 ps));
+        check_rand_value(v_time, -1 ps, 1 ps, ADD,(-15 ps,17 ps,18 ps));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -692,16 +692,16 @@ begin
       log(ID_LOG_HDR, "Testing time_vector (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps));
-        check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,-15 ps)); -- use vector to save overload
+        v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, ADD,(-15 ps));
+        check_rand_value(v_time_vec, -1 ps, 1 ps, ADD,(-15 ps,-15 ps)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps,16 ps), UNIQUE);
-        check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,16 ps));
+        v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, ADD,(-15 ps,16 ps), UNIQUE);
+        check_rand_value(v_time_vec, -1 ps, 1 ps, ADD,(-15 ps,16 ps));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -719,16 +719,16 @@ begin
       log(ID_LOG_HDR, "Testing time_vector (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-15 ps,16 ps), EXCL,(1 ps,16 ps));
-        check_rand_value(v_time_vec, -2 ps, 2 ps, INCL,(-15 ps,16 ps), EXCL,(1 ps,16 ps));
+        v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, ADD,(-15 ps,16 ps), EXCL,(1 ps,16 ps));
+        check_rand_value(v_time_vec, -2 ps, 2 ps, ADD,(-15 ps,16 ps), EXCL,(1 ps,16 ps));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,16 ps), UNIQUE);
-        check_rand_value(v_time_vec, -2 ps, 2 ps, INCL,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,16 ps));
+        v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, ADD,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,16 ps), UNIQUE);
+        check_rand_value(v_time_vec, -2 ps, 2 ps, ADD,(-15 ps,16 ps,17 ps), EXCL,(-1 ps,0 ps,16 ps));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -736,8 +736,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,16 ps), INCL,(-15 ps,16 ps,17 ps), UNIQUE);
-        check_rand_value(v_time_vec, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,16 ps), INCL,(-15 ps,16 ps,17 ps));
+        v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,16 ps), ADD,(-15 ps,16 ps,17 ps), UNIQUE);
+        check_rand_value(v_time_vec, -2 ps, 2 ps, EXCL,(-1 ps,0 ps,16 ps), ADD,(-15 ps,16 ps,17 ps));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -745,8 +745,8 @@ begin
 
       v_num_values := 6;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, INCL,(-15 ps), INCL,(17 ps,18 ps), UNIQUE);
-        check_rand_value(v_time_vec, -1 ps, 1 ps, INCL,(-15 ps,17 ps,18 ps));
+        v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, ADD,(-15 ps), ADD,(17 ps,18 ps), UNIQUE);
+        check_rand_value(v_time_vec, -1 ps, 1 ps, ADD,(-15 ps,17 ps,18 ps));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -802,8 +802,8 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7));
-        check_rand_value(v_uns, 0, 2, INCL,(7,7)); -- use vector to save overload
+        v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7));
+        check_rand_value(v_uns, 0, 2, ADD,(7,7)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_uns);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -819,24 +819,24 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7,8), EXCL,(1,8));
-        check_rand_value(v_uns, 0, 2, INCL,(7,8), EXCL,(1,8));
+        v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7,8), EXCL,(1,8));
+        check_rand_value(v_uns, 0, 2, ADD,(7,8), EXCL,(1,8));
         count_rand_value(v_value_cnt, v_uns);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
-        check_rand_value(v_uns, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
+        v_uns := v_rand.rand(v_uns'length, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
+        check_rand_value(v_uns, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
         count_rand_value(v_value_cnt, v_uns);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7), INCL,(8,9));
-        check_rand_value(v_uns, 0, 2, INCL,(7,8,9));
+        v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7), ADD,(8,9));
+        check_rand_value(v_uns, 0, 2, ADD,(7,8,9));
         count_rand_value(v_value_cnt, v_uns);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -920,8 +920,8 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, INCL,(7));
-        check_rand_value(v_uns_long, 0, 2, INCL,(7,7)); -- use vector to save overload
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, ADD,(7));
+        check_rand_value(v_uns_long, 0, 2, ADD,(7,7)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_uns_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -937,24 +937,24 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, INCL,(7,8), EXCL,(1,8));
-        check_rand_value(v_uns_long, 0, 2, INCL,(7,8), EXCL,(1,8));
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, ADD,(7,8), EXCL,(1,8));
+        check_rand_value(v_uns_long, 0, 2, ADD,(7,8), EXCL,(1,8));
         count_rand_value(v_value_cnt, v_uns_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
-        check_rand_value(v_uns_long, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
+        check_rand_value(v_uns_long, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
         count_rand_value(v_value_cnt, v_uns_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, INCL,(7), INCL,(8,9));
-        check_rand_value(v_uns_long, 0, 2, INCL,(7,8,9));
+        v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, ADD,(7), ADD,(8,9));
+        check_rand_value(v_uns_long, 0, 2, ADD,(7,8,9));
         count_rand_value(v_value_cnt, v_uns_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1013,8 +1013,8 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -1, 1, INCL,(-8));
-        check_rand_value(v_sig, -1, 1, INCL,(-8,-8)); -- use vector to save overload
+        v_sig := v_rand.rand(v_sig'length, -1, 1, ADD,(-8));
+        check_rand_value(v_sig, -1, 1, ADD,(-8,-8)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_sig);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1030,24 +1030,24 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8,7), EXCL,(1,7));
-        check_rand_value(v_sig, -2, 2, INCL,(-8,7), EXCL,(1,7));
+        v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8,7), EXCL,(1,7));
+        check_rand_value(v_sig, -2, 2, ADD,(-8,7), EXCL,(1,7));
         count_rand_value(v_value_cnt, v_sig);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(1,7), INCL,(-8,7));
-        check_rand_value(v_sig, -2, 2, EXCL,(1,7), INCL,(-8,7));
+        v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(1,7), ADD,(-8,7));
+        check_rand_value(v_sig, -2, 2, EXCL,(1,7), ADD,(-8,7));
         count_rand_value(v_value_cnt, v_sig);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -1, 1, INCL,(-8), INCL,(6,7));
-        check_rand_value(v_sig, -1, 1, INCL,(-8,6,7));
+        v_sig := v_rand.rand(v_sig'length, -1, 1, ADD,(-8), ADD,(6,7));
+        check_rand_value(v_sig, -1, 1, ADD,(-8,6,7));
         count_rand_value(v_value_cnt, v_sig);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1131,8 +1131,8 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, INCL,(-8));
-        check_rand_value(v_sig_long, -1, 1, INCL,(-8,-8)); -- use vector to save overload
+        v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, ADD,(-8));
+        check_rand_value(v_sig_long, -1, 1, ADD,(-8,-8)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_sig_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1148,24 +1148,24 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, INCL,(-8,7), EXCL,(1,7));
-        check_rand_value(v_sig_long, -2, 2, INCL,(-8,7), EXCL,(1,7));
+        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, ADD,(-8,7), EXCL,(1,7));
+        check_rand_value(v_sig_long, -2, 2, ADD,(-8,7), EXCL,(1,7));
         count_rand_value(v_value_cnt, v_sig_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, EXCL,(1,7), INCL,(-8,7));
-        check_rand_value(v_sig_long, -2, 2, EXCL,(1,7), INCL,(-8,7));
+        v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, EXCL,(1,7), ADD,(-8,7));
+        check_rand_value(v_sig_long, -2, 2, EXCL,(1,7), ADD,(-8,7));
         count_rand_value(v_value_cnt, v_sig_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, INCL,(-8), INCL,(6,7));
-        check_rand_value(v_sig_long, -1, 1, INCL,(-8,6,7));
+        v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, ADD,(-8), ADD,(6,7));
+        check_rand_value(v_sig_long, -1, 1, ADD,(-8,6,7));
         count_rand_value(v_value_cnt, v_sig_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1224,8 +1224,8 @@ begin
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7));
-        check_rand_value(v_slv, 0, 2, INCL,(7,7)); -- use vector to save overload
+        v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7));
+        check_rand_value(v_slv, 0, 2, ADD,(7,7)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_slv);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1241,24 +1241,24 @@ begin
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7,8), EXCL,(1,8));
-        check_rand_value(v_slv, 0, 2, INCL,(7,8), EXCL,(1,8));
+        v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7,8), EXCL,(1,8));
+        check_rand_value(v_slv, 0, 2, ADD,(7,8), EXCL,(1,8));
         count_rand_value(v_value_cnt, v_slv);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
-        check_rand_value(v_slv, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
+        v_slv := v_rand.rand(v_slv'length, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
+        check_rand_value(v_slv, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
         count_rand_value(v_value_cnt, v_slv);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7), INCL,(9,10));
-        check_rand_value(v_slv, 0, 2, INCL,(7,9,10));
+        v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7), ADD,(9,10));
+        check_rand_value(v_slv, 0, 2, ADD,(7,9,10));
         count_rand_value(v_value_cnt, v_slv);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1342,8 +1342,8 @@ begin
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, INCL,(7));
-        check_rand_value(v_slv_long, 0, 2, INCL,(7,7)); -- use vector to save overload
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, ADD,(7));
+        check_rand_value(v_slv_long, 0, 2, ADD,(7,7)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_slv_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1359,24 +1359,24 @@ begin
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, INCL,(7,8), EXCL,(1,8));
-        check_rand_value(v_slv_long, 0, 2, INCL,(7,8), EXCL,(1,8));
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, ADD,(7,8), EXCL,(1,8));
+        check_rand_value(v_slv_long, 0, 2, ADD,(7,8), EXCL,(1,8));
         count_rand_value(v_value_cnt, v_slv_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
-        check_rand_value(v_slv_long, 0, 2, EXCL,(1,2,8), INCL,(7,8,9));
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
+        check_rand_value(v_slv_long, 0, 2, EXCL,(1,2,8), ADD,(7,8,9));
         count_rand_value(v_value_cnt, v_slv_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
-        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, INCL,(7), INCL,(9,10));
-        check_rand_value(v_slv_long, 0, 2, INCL,(7,9,10));
+        v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, ADD,(7), ADD,(9,10));
+        check_rand_value(v_slv_long, 0, 2, ADD,(7,9,10));
         count_rand_value(v_value_cnt, v_slv_long);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1874,8 +1874,8 @@ begin
       log(ID_LOG_HDR, "Testing integer (min/max + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_int := v_rand.rand(-1, 1, INCL,(3), CYCLIC);
-        check_rand_value(v_int, -1, 1, INCL,(3,3)); -- use vector to save overload
+        v_int := v_rand.rand(-1, 1, ADD,(3), CYCLIC);
+        check_rand_value(v_int, -1, 1, ADD,(3,3)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1895,8 +1895,8 @@ begin
       log(ID_LOG_HDR, "Testing integer (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_int := v_rand.rand(-2, 2, INCL,(-5), EXCL,(1), CYCLIC);
-        check_rand_value(v_int, -2, 2, INCL,(-5,-5), EXCL,(1,1)); -- use vector to save overload
+        v_int := v_rand.rand(-2, 2, ADD,(-5), EXCL,(1), CYCLIC);
+        check_rand_value(v_int, -2, 2, ADD,(-5,-5), EXCL,(1,1)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1905,8 +1905,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_int := v_rand.rand(-2, 2, INCL,(-5,5,6), EXCL,(-1,0,1), CYCLIC);
-        check_rand_value(v_int, -2, 2, INCL,(-5,5,6), EXCL,(-1,0,1));
+        v_int := v_rand.rand(-2, 2, ADD,(-5,5,6), EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_int, -2, 2, ADD,(-5,5,6), EXCL,(-1,0,1));
         count_rand_value(v_value_cnt, v_int);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1915,8 +1915,8 @@ begin
 
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_int := v_rand.rand(-2, 2, EXCL,(0), INCL,(6,7), CYCLIC);
-        check_rand_value(v_int, -2, 2, EXCL,(0,0), INCL,(6,7)); -- use vector to save overload
+        v_int := v_rand.rand(-2, 2, EXCL,(0), ADD,(6,7), CYCLIC);
+        check_rand_value(v_int, -2, 2, EXCL,(0,0), ADD,(6,7)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -1961,16 +1961,16 @@ begin
       log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -1, 2, INCL,(-5), NON_UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -1, 2, INCL,(-5,-5)); -- use vector to save overload
+        v_int_vec := v_rand.rand(v_int_vec'length, -1, 2, ADD,(-5), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -1, 2, ADD,(-5,-5)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int_vec);
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-5,6), UNIQUE, CYCLIC);
-      check_rand_value(v_int_vec, -1, 1, INCL,(-5,6));
+      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-5,6), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -1, 1, ADD,(-5,6));
       count_rand_value(v_value_cnt, v_int_vec);
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
@@ -1992,23 +1992,23 @@ begin
       log(ID_LOG_HDR, "Testing integer_vector (min/max + 2 sets of values)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
-        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5), EXCL,(1), NON_UNIQUE, CYCLIC);
-        check_rand_value(v_int_vec, -2, 2, INCL,(-5,-5), EXCL,(1,1)); -- use vector to save overload
+        v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-5), EXCL,(1), NON_UNIQUE, CYCLIC);
+        check_rand_value(v_int_vec, -2, 2, ADD,(-5,-5), EXCL,(1,1)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_int_vec);
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
       increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1), UNIQUE, CYCLIC);
-      check_rand_value(v_int_vec, -2, 2, INCL,(-5,6,8), EXCL,(-1,0,1));
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-5,6,8), EXCL,(-1,0,1), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -2, 2, ADD,(-5,6,8), EXCL,(-1,0,1));
       count_rand_value(v_value_cnt, v_int_vec);
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
       increment_expected_alerts(TB_WARNING, 1);
       v_num_values := 5; -- same as v_int_vec'length
-      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, EXCL,(-1), INCL,(-5,6,8), UNIQUE, CYCLIC);
-      check_rand_value(v_int_vec, -1, 1, EXCL,(-1,-1), INCL,(-5,6,8)); -- use vector to save overload
+      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, EXCL,(-1), ADD,(-5,6,8), UNIQUE, CYCLIC);
+      check_rand_value(v_int_vec, -1, 1, EXCL,(-1,-1), ADD,(-5,6,8)); -- use vector to save overload
       count_rand_value(v_value_cnt, v_int_vec);
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
@@ -2061,8 +2061,8 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5), CYCLIC);
-        check_rand_value(v_uns, 0, 4, INCL,(5,5)); -- use vector to save overload
+        v_uns := v_rand.rand(v_uns'length, 0, 4, ADD,(5), CYCLIC);
+        check_rand_value(v_uns, 0, 4, ADD,(5,5)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_uns);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2082,8 +2082,8 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5), EXCL,(0), CYCLIC);
-        check_rand_value(v_uns, 0, 4, INCL,(5,5), EXCL,(0,0)); -- use vector to save overload
+        v_uns := v_rand.rand(v_uns'length, 0, 4, ADD,(5), EXCL,(0), CYCLIC);
+        check_rand_value(v_uns, 0, 4, ADD,(5,5), EXCL,(0,0)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_uns);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2092,8 +2092,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 4, INCL,(5,8,9), EXCL,(0,1,2), CYCLIC);
-        check_rand_value(v_uns, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
+        v_uns := v_rand.rand(v_uns'length, 0, 4, ADD,(5,8,9), EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_uns, 0, 4, ADD,(5,8,9), EXCL,(0,1,2));
         count_rand_value(v_value_cnt, v_uns);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2102,8 +2102,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_uns := v_rand.rand(v_uns'length, 0, 2, EXCL,(0), INCL,(5,8,9), CYCLIC);
-        check_rand_value(v_uns, 0, 2, EXCL,(0,0), INCL,(5,8,9)); -- use vector to save overload
+        v_uns := v_rand.rand(v_uns'length, 0, 2, EXCL,(0), ADD,(5,8,9), CYCLIC);
+        check_rand_value(v_uns, 0, 2, EXCL,(0,0), ADD,(5,8,9)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_uns);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2183,8 +2183,8 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8), CYCLIC);
-        check_rand_value(v_sig, -2, 2, INCL,(-8,-8)); -- use vector to save overload
+        v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8), CYCLIC);
+        check_rand_value(v_sig, -2, 2, ADD,(-8,-8)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_sig);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2204,8 +2204,8 @@ begin
       log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8), EXCL,(1), CYCLIC);
-        check_rand_value(v_sig, -2, 2, INCL,(-8,-8), EXCL,(1,1)); -- use vector to save overload
+        v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8), EXCL,(1), CYCLIC);
+        check_rand_value(v_sig, -2, 2, ADD,(-8,-8), EXCL,(1,1)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_sig);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2214,8 +2214,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8,6,7), EXCL,(-1,0,1), CYCLIC);
-        check_rand_value(v_sig, -2, 2, INCL,(-8,6,7), EXCL,(-1,0,1));
+        v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8,6,7), EXCL,(-1,0,1), CYCLIC);
+        check_rand_value(v_sig, -2, 2, ADD,(-8,6,7), EXCL,(-1,0,1));
         count_rand_value(v_value_cnt, v_sig);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2224,8 +2224,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_sig := v_rand.rand(v_sig'length, -1, 1, EXCL,(0), INCL,(-8,6,7), CYCLIC);
-        check_rand_value(v_sig, -1, 1, EXCL,(0,0), INCL,(-8,6,7)); -- use vector to save overload
+        v_sig := v_rand.rand(v_sig'length, -1, 1, EXCL,(0), ADD,(-8,6,7), CYCLIC);
+        check_rand_value(v_sig, -1, 1, EXCL,(0,0), ADD,(-8,6,7)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_sig);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2305,8 +2305,8 @@ begin
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(8), CYCLIC);
-        check_rand_value(v_slv, 0, 4, INCL,(8,8)); -- use vector to save overload
+        v_slv := v_rand.rand(v_slv'length, 0, 4, ADD,(8), CYCLIC);
+        check_rand_value(v_slv, 0, 4, ADD,(8,8)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_slv);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2326,8 +2326,8 @@ begin
       log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5), EXCL,(0), CYCLIC);
-        check_rand_value(v_slv, 0, 4, INCL,(5,5), EXCL,(0,0)); -- use vector to save overload
+        v_slv := v_rand.rand(v_slv'length, 0, 4, ADD,(5), EXCL,(0), CYCLIC);
+        check_rand_value(v_slv, 0, 4, ADD,(5,5), EXCL,(0,0)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_slv);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2336,8 +2336,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 4, INCL,(5,8,9), EXCL,(0,1,2), CYCLIC);
-        check_rand_value(v_slv, 0, 4, INCL,(5,8,9), EXCL,(0,1,2));
+        v_slv := v_rand.rand(v_slv'length, 0, 4, ADD,(5,8,9), EXCL,(0,1,2), CYCLIC);
+        check_rand_value(v_slv, 0, 4, ADD,(5,8,9), EXCL,(0,1,2));
         count_rand_value(v_value_cnt, v_slv);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2346,8 +2346,8 @@ begin
 
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
-        v_slv := v_rand.rand(v_slv'length, 0, 2, EXCL,(0), INCL,(5,8,9), CYCLIC);
-        check_rand_value(v_slv, 0, 2, EXCL,(0,0), INCL,(5,8,9)); -- use vector to save overload
+        v_slv := v_rand.rand(v_slv'length, 0, 2, EXCL,(0), ADD,(5,8,9), CYCLIC);
+        check_rand_value(v_slv, 0, 2, EXCL,(0,0), ADD,(5,8,9)); -- use vector to save overload
         count_rand_value(v_value_cnt, v_slv);
         if i mod v_num_values = 0 then
           check_cyclic_distribution(v_value_cnt, v_num_values);
@@ -2842,45 +2842,45 @@ begin
       increment_expected_alerts(TB_WARNING, 5);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_int := v_rand.rand(ONLY,(-2,0,2));
-      v_int := v_rand.rand(-1, 1, INCL,(-10));
+      v_int := v_rand.rand(-1, 1, ADD,(-10));
       v_int := v_rand.rand(-2, 2, EXCL,(-1,0,1));
-      v_int := v_rand.rand(-2, 2, INCL,(-10), EXCL,(1));
+      v_int := v_rand.rand(-2, 2, ADD,(-10), EXCL,(1));
       v_int := v_rand.rand(-2, 2, CYCLIC);
       v_int := v_rand.rand(1000, 2000);
 
       increment_expected_alerts(TB_WARNING, 10);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_int_vec(0 to 0) := v_rand.rand(1, ONLY,(-2,-1,0,1,2));
-      v_int_vec(0 to 0) := v_rand.rand(1, -1, 1, INCL,(-10));
+      v_int_vec(0 to 0) := v_rand.rand(1, -1, 1, ADD,(-10));
       v_int_vec(0 to 0) := v_rand.rand(1, -3, 4, EXCL,(-1,0,1));
-      v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, INCL,(-10), EXCL,(1));
+      v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, ADD,(-10), EXCL,(1));
       v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, NON_UNIQUE, CYCLIC);
       v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE);
       v_int_vec         := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE);
-      v_int_vec         := v_rand.rand(v_int_vec'length, -1, 1, INCL,(-10,15), UNIQUE);
+      v_int_vec         := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10,15), UNIQUE);
       v_int_vec         := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE);
-      v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, INCL,(-10,15,16), EXCL,(-1,0,1), UNIQUE);
+      v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10,15,16), EXCL,(-1,0,1), UNIQUE);
       v_int_vec(0 to 0) := v_rand.rand(1, 1000, 2000);
 
       increment_expected_alerts(TB_WARNING, 4);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_real := v_rand.rand(ONLY,(-2.0,0.555,2.0));
-      v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5));
+      v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5));
       v_real := v_rand.rand(-1.0, 1.0, EXCL,(-1.0,0.0,1.0));
-      v_real := v_rand.rand(-1.0, 1.0, INCL,(15.5), EXCL,(-1.0));
+      v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5), EXCL,(-1.0));
       v_real := v_rand.rand(1000.0, 2000.0);
 
       increment_expected_alerts(TB_WARNING, 9);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_real_vec(0 to 0) := v_rand.rand(1, ONLY,(-2.0,-1.1,0.25,1.1,2.0));
-      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, INCL,(15.5));
+      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, ADD,(15.5));
       v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, EXCL,(-1.0,0.0,1.0));
-      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, INCL,(15.5), EXCL,(-1.0));
+      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, ADD,(15.5), EXCL,(-1.0));
       v_real_vec         := v_rand.rand(v_real_vec'length, -2.0, 2.0, UNIQUE);
       v_real_vec         := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.1,0.25,1.1,2.0), UNIQUE);
-      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), UNIQUE);
+      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), UNIQUE);
       v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), UNIQUE);
-      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, INCL,(15.5,16.6), EXCL,(-1.0,0.0,1.0), UNIQUE);
+      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,0.0,1.0), UNIQUE);
       v_real_vec(0 to 0) := v_rand.rand(1, 1000.0, 2000.0);
 
       -- Gaussian distribution does not support time
@@ -2896,9 +2896,9 @@ begin
       v_uns_long := v_rand.rand(v_uns_long_min, v_uns_long_max);
       v_uns := v_rand.rand(v_uns'length, ONLY,(0,1,2));
       v_uns := v_rand.rand(v_uns'length, EXCL,(0,1));
-      v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7));
       v_uns := v_rand.rand(v_uns'length, 0, 3, EXCL,(1,2));
-      v_uns := v_rand.rand(v_uns'length, 0, 2, INCL,(7), EXCL,(1));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7), EXCL,(1));
       v_uns := v_rand.rand(v_uns'length, 0, 3, CYCLIC);
       v_uns := v_rand.rand(v_uns'length, 10, 15);
 
@@ -2911,9 +2911,9 @@ begin
       v_sig_long := v_rand.rand(v_sig_long_min, v_sig_long_max);
       v_sig := v_rand.rand(v_sig'length, ONLY,(-2,0,2));
       v_sig := v_rand.rand(v_sig'length, EXCL,(0,1));
-      v_sig := v_rand.rand(v_sig'length, -1, 1, INCL,(-8));
+      v_sig := v_rand.rand(v_sig'length, -1, 1, ADD,(-8));
       v_sig := v_rand.rand(v_sig'length, -2, 2, EXCL,(-1,0,1));
-      v_sig := v_rand.rand(v_sig'length, -2, 2, INCL,(-8), EXCL,(1));
+      v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8), EXCL,(1));
       v_sig := v_rand.rand(v_sig'length, -2, 2, CYCLIC);
       v_sig := v_rand.rand(v_sig'length, 6, 7);
 
@@ -2926,9 +2926,9 @@ begin
       v_slv_long := v_rand.rand(v_slv_long_min, v_slv_long_max);
       v_slv := v_rand.rand(v_slv'length, ONLY,(0,1,2));
       v_slv := v_rand.rand(v_slv'length, EXCL,(0,1));
-      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7));
       v_slv := v_rand.rand(v_slv'length, 0, 3, EXCL,(1,2));
-      v_slv := v_rand.rand(v_slv'length, 0, 2, INCL,(7), EXCL,(1));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7), EXCL,(1));
       v_slv := v_rand.rand(v_slv'length, 0, 3, CYCLIC);
       v_slv := v_rand.rand(v_slv'length, 10, 15);
 

@@ -32,7 +32,7 @@ package rand_pkg is
   -- Types
   ------------------------------------------------------------
   type t_rand_dist is (UNIFORM, GAUSSIAN);
-  type t_set_type is (ONLY, INCL, EXCL);
+  type t_set_type is (ONLY, ADD, EXCL);
   type t_uniqueness is (UNIQUE, NON_UNIQUE);
   type t_weight_mode is (NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT);
   type t_cyclic is (CYCLIC, NON_CYCLIC);
@@ -1957,7 +1957,7 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
-      if set_type = INCL then
+      if set_type = ADD then
         -- Avoid an integer overflow by adding the set_values to the max_value or subtracting them from the min_value
         if max_value <= integer'right-set_values'length then
           v_ret := rand(min_value, max_value+set_values'length, cyclic_mode, msg_id_panel, v_proc_call.all);
@@ -2043,7 +2043,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
-      if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
+      if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
         for i in v_combined_set_values'range loop
           if i < set_values1'length then
             v_combined_set_values(i) := set_values1(i);
@@ -2054,27 +2054,27 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
-      if set_type1 = INCL and set_type2 = INCL then
+      if set_type1 = ADD and set_type2 = ADD then
         alert_same_set_type(set_type1, v_proc_call.all);
-        v_ret := rand(min_value, max_value, INCL, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value, ADD, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
       elsif set_type1 = EXCL and set_type2 = EXCL then
         alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
-      elsif set_type1 = INCL and set_type2 = EXCL then
+      elsif set_type1 = ADD and set_type2 = EXCL then
         while v_gen_new_random loop
-          v_ret := rand(min_value, max_value, INCL, set_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret := rand(min_value, max_value, ADD, set_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_values2);
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
-      elsif set_type1 = EXCL and set_type2 = INCL then
+      elsif set_type1 = EXCL and set_type2 = ADD then
         while v_gen_new_random loop
-          v_ret := rand(min_value, max_value, INCL, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
+          v_ret := rand(min_value, max_value, ADD, set_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_values1);
         end loop;
       else
-        if not(set_type1 = INCL or set_type1 = EXCL) then
+        if not(set_type1 = ADD or set_type1 = EXCL) then
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
@@ -2196,7 +2196,7 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
-      if set_type = INCL then
+      if set_type = ADD then
         v_ret := rand(min_value, max_value+real(set_values'length), msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := normalized_set_values(integer(ceil(v_ret-max_value)-1.0));
@@ -2269,7 +2269,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
-      if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
+      if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
         for i in v_combined_set_values'range loop
           if i < set_values1'length then
             v_combined_set_values(i) := set_values1(i);
@@ -2280,27 +2280,27 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
-      if set_type1 = INCL and set_type2 = INCL then
+      if set_type1 = ADD and set_type2 = ADD then
         alert_same_set_type(set_type1, v_proc_call.all);
-        v_ret := rand(min_value, max_value, INCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value, ADD, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
       elsif set_type1 = EXCL and set_type2 = EXCL then
         alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
-      elsif set_type1 = INCL and set_type2 = EXCL then
+      elsif set_type1 = ADD and set_type2 = EXCL then
         while v_gen_new_random loop
-          v_ret := rand(min_value, max_value, INCL, set_values1, msg_id_panel, v_proc_call.all);
+          v_ret := rand(min_value, max_value, ADD, set_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_values2);
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
-      elsif set_type1 = EXCL and set_type2 = INCL then
+      elsif set_type1 = EXCL and set_type2 = ADD then
         while v_gen_new_random loop
-          v_ret := rand(min_value, max_value, INCL, set_values2, msg_id_panel, v_proc_call.all);
+          v_ret := rand(min_value, max_value, ADD, set_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_values1);
         end loop;
       else
-        if not(set_type1 = INCL or set_type1 = EXCL) then
+        if not(set_type1 = ADD or set_type1 = EXCL) then
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
@@ -2405,7 +2405,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
-      if set_type = INCL then
+      if set_type = ADD then
         v_ret := rand(min_value, max_value+(set_values'length*C_TIME_UNIT), msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := normalized_set_values((v_ret-max_value)/C_TIME_UNIT-1);
@@ -2476,7 +2476,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
-      if (set_type1 = INCL and set_type2 = INCL) or (set_type1 = EXCL and set_type2 = EXCL) then
+      if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
         for i in v_combined_set_values'range loop
           if i < set_values1'length then
             v_combined_set_values(i) := set_values1(i);
@@ -2487,27 +2487,27 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
-      if set_type1 = INCL and set_type2 = INCL then
+      if set_type1 = ADD and set_type2 = ADD then
         alert_same_set_type(set_type1, v_proc_call.all);
-        v_ret := rand(min_value, max_value, INCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value, ADD, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
       elsif set_type1 = EXCL and set_type2 = EXCL then
         alert_same_set_type(set_type1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
-      elsif set_type1 = INCL and set_type2 = EXCL then
+      elsif set_type1 = ADD and set_type2 = EXCL then
         while v_gen_new_random loop
-          v_ret := rand(min_value, max_value, INCL, set_values1, msg_id_panel, v_proc_call.all);
+          v_ret := rand(min_value, max_value, ADD, set_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_values2);
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
-      elsif set_type1 = EXCL and set_type2 = INCL then
+      elsif set_type1 = EXCL and set_type2 = ADD then
         while v_gen_new_random loop
-          v_ret := rand(min_value, max_value, INCL, set_values2, msg_id_panel, v_proc_call.all);
+          v_ret := rand(min_value, max_value, ADD, set_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_values1);
         end loop;
       else
-        if not(set_type1 = INCL or set_type1 = EXCL) then
+        if not(set_type1 = ADD or set_type1 = EXCL) then
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
         else
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);

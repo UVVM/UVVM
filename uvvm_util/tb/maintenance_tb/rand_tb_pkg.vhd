@@ -842,7 +842,7 @@ package body rand_tb_pkg is
   return boolean is
   begin
     -- Check in range plus a set of values
-    if set_type = INCL then
+    if set_type = ADD then
       if check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values) then
         return true;
       end if;
@@ -865,7 +865,7 @@ package body rand_tb_pkg is
   return boolean is
   begin
     -- Check in range plus a set of values
-    if set_type = INCL then
+    if set_type = ADD then
       if check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values) then
         return true;
       end if;
@@ -888,7 +888,7 @@ package body rand_tb_pkg is
   return boolean is
   begin
     -- Check in range plus a set of values
-    if set_type = INCL then
+    if set_type = ADD then
       if check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values) then
         return true;
       end if;
@@ -1064,7 +1064,7 @@ package body rand_tb_pkg is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
     check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
-    if set_type1 = INCL then
+    if set_type1 = ADD then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
       end if;
@@ -1089,7 +1089,7 @@ package body rand_tb_pkg is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
     check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
-    if set_type1 = INCL then
+    if set_type1 = ADD then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
       end if;
@@ -1114,7 +1114,7 @@ package body rand_tb_pkg is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
     check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
-    if set_type1 = INCL then
+    if set_type1 = ADD then
       if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
       end if;

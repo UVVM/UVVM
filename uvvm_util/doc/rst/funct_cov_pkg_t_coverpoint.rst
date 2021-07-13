@@ -78,7 +78,7 @@ Returns the configured scope. ::
 
 set_coverage_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the weight of the coverpoint used for calculating the simulation coverage. Default value is 1. ::
+Configures the weight of the coverpoint used when calculating the overall coverage. Default value is 1. ::
 
     set_coverage_weight(weight, [msg_id_panel])
 

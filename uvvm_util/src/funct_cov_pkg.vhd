@@ -136,7 +136,7 @@ package funct_cov_pkg is
   return t_new_bin_array;
 
   ------------------------------------------------------------
-  -- Simulation coverage
+  -- Overall coverage
   ------------------------------------------------------------
   procedure fc_set_overall_coverage_goal(
     constant percentage   : in positive;
@@ -716,7 +716,7 @@ package body funct_cov_pkg is
   end function;
 
   ------------------------------------------------------------
-  -- Simulation coverage
+  -- Overall coverage
   ------------------------------------------------------------
   procedure fc_set_overall_coverage_goal(
     constant percentage   : in positive;
@@ -2672,7 +2672,7 @@ package body funct_cov_pkg is
         write(v_line, "          " & justify("COVERAGE WEIGHT", left, C_COLUMN1_WIDTH)        & ": " & justify(to_string(1), right, C_COLUMN2_WIDTH) & LF);
         write(v_line, "          " & justify("COVERAGE GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
       end if;
-      write(v_line, "          " & justify("SIMULATION GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("OVERALL GOAL", left, C_COLUMN1_WIDTH)             & ": " & justify(to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("NUMBER OF BINS", left, C_COLUMN1_WIDTH)           & ": " & justify(to_string(priv_bins_idx+priv_invalid_bins_idx), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("CROSS DIMENSIONS", left, C_COLUMN1_WIDTH)         & ": " & justify(to_string(priv_num_bins_crossed), right, C_COLUMN2_WIDTH) & LF);
 

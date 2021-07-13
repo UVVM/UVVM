@@ -411,8 +411,8 @@ my_coverpoint = 200*150/100=300.
 **********************************************************************************************************************************
 Coverage weight
 **********************************************************************************************************************************
-It specifies the weight of a coverpoint/cross for computing the total coverage of the simulation. It must be set at the beginning 
-of the simulation, before sampling any coverage. Default is 1.
+It specifies the weight of a coverpoint/cross used when calculating the overall coverage. It must be set at the beginning of the 
+testbench, before sampling any coverage. Default is 1.
 
 .. code-block::
 
@@ -589,7 +589,7 @@ A report containing all the configuration parameters can be printed using the ``
     # UVVM:            DETECT BIN OVERLAP      :                          false
     # UVVM:            COVERAGE WEIGHT         :                              1
     # UVVM:            COVERAGE GOAL           :                            100
-    # UVVM:            SIMULATION GOAL         :                            100
+    # UVVM:            OVERALL GOAL            :                            100
     # UVVM:            NUMBER OF BINS          :                             36
     # UVVM:            CROSS DIMENSIONS        :                              2
     # UVVM:  =================================================================================================================
@@ -600,7 +600,7 @@ Coverage database
 In order to accumulate coverage by running several testcases we need to store the coverpoint model at the end of one testcase and 
 load it at the beginning of the next. This can be done with ``write_coverage_db()`` which writes all the necessary information to 
 a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note that this must be done for every coverpoint in 
-the simulation and they must be written to separate files.
+the testbench and they must be written to separate files.
 
 *Example 1: The testcases are in different files and are run in a specified order.*
 

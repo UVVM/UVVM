@@ -6,7 +6,7 @@ information on protected types see **link**.
 
 For more simple functionality, not using protected types, the **Basic Randomization** can be found in *uvvm_util/src/methods_pkg.vhd*.
 
-For a more balanced randomization between small and large ranges/sets, the **Optimized Randomization** under *uvvm_util/src/func_cov_pkg.vhd* 
+For a more balanced randomization between small and large ranges/sets, the :ref:`optimized_randomization` under *uvvm_util/src/func_cov_pkg.vhd* 
 may be used.
 
 To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the 

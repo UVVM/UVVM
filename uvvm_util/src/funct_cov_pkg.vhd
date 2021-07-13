@@ -2657,7 +2657,6 @@ package body funct_cov_pkg is
                     fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print report config
-      write(v_line, "          " & justify("INDEX", left, C_COLUMN1_WIDTH)                    & ": " & justify(to_string(priv_id), right, C_COLUMN2_WIDTH) & LF);
       if priv_id /= C_DEALLOCATED_ID then
         write(v_line, "          " & justify("NAME", left, C_COLUMN1_WIDTH)                   & ": " & justify(to_string(priv_name), right, C_COLUMN2_WIDTH) & LF);
       else

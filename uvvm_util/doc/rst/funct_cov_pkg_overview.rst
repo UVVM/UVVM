@@ -32,6 +32,10 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
       my_coverpoint.report_coverage(VOID);
       ...
 
+.. note::
+
+    The syntax for all methods is given in :ref:`funct_cov_pkg`.
+
 **********************************************************************************************************************************
 Concepts
 **********************************************************************************************************************************
@@ -568,6 +572,8 @@ The default scope for log messages in the *funct_cov_pkg* is C_TB_SCOPE_DEFAULT 
 ``set_scope()``. The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
 
 The maximum number of coverpoints that can be created is determined by C_FC_MAX_NUM_COVERPOINTS defined in adaptations_pkg.
+
+.. _funct_cov_pkg:
 
 **********************************************************************************************************************************
 funct_cov_pkg

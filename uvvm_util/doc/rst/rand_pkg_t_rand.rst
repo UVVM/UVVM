@@ -41,8 +41,8 @@ Returns the random generator's name. ::
 
 set_scope()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the scope used in the log messages. Default is C_TB_SCOPE_DEFAULT and maximum length is C_LOG_SCOPE_WIDTH defined in 
-adaptations_pkg. ::
+Configures the scope used in the log messages. Default value is C_TB_SCOPE_DEFAULT and maximum length is C_LOG_SCOPE_WIDTH defined 
+in adaptations_pkg. ::
 
     set_scope(scope)
 
@@ -78,7 +78,7 @@ Returns the configured scope. ::
 
 set_rand_dist()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the randomization distribution to be used with the rand() functions. Default value is UNIFORM. ::
+Configures the randomization distribution to be used with the ``rand()`` functions. Default value is UNIFORM. ::
 
     set_rand_dist(rand_dist, [msg_id_panel])
 
@@ -116,8 +116,8 @@ Returns the configured randomization distribution. ::
 
 set_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the mean value for the randomization distribution. Default value depends on the parameters of each rand() call: 
-(max_range-min_range)/2 ::
+Configures the mean value for the randomization distribution. Default value depends on the parameters of each ``rand()`` call: 
+**(max_range-min_range)/2** (note that the default value has no special meaning other than giving a fair distribution curve). ::
 
     set_rand_dist_mean(mean, [msg_id_panel])
 
@@ -138,7 +138,7 @@ Configures the mean value for the randomization distribution. Default value depe
 get_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured mean value. If a value hasn't been configured it will return 0.0 and print a TB_NOTE mentioning that the 
-default value is being used. ::
+default value is being used (since it depends on the parameters of each ``rand()`` call). ::
 
     real := get_rand_dist_mean(VOID)
 
@@ -156,7 +156,8 @@ default value is being used. ::
 
 clear_rand_dist_mean()
 ----------------------------------------------------------------------------------------------------------------------------------
-Clears the configured mean value. Default value will be (max_range-min_range)/2 ::
+Clears the configured mean value. Default value will be **(max_range-min_range)/2** (note that this value has no special meaning 
+other than giving a fair distribution curve). ::
 
     clear_rand_dist_mean(VOID)
     clear_rand_dist_mean(msg_id_panel)
@@ -178,8 +179,8 @@ Clears the configured mean value. Default value will be (max_range-min_range)/2 
 
 set_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the standard deviation value for the randomization distribution. Default value depends on the parameters of each rand() 
-call: (max_range-min_range)/6 ::
+Configures the standard deviation value for the randomization distribution. Default value depends on the parameters of each ``rand()`` 
+call: **(max_range-min_range)/6** (note that the default value has no special meaning other than giving a fair distribution curve). ::
 
     set_rand_dist_std_deviation(std_deviation, [msg_id_panel])
 
@@ -201,7 +202,7 @@ call: (max_range-min_range)/6 ::
 get_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns the configured standard deviation value. If a value hasn't been configured it will return 0.0 and print a TB_NOTE mentioning 
-that the default value is being used. ::
+that the default value is being used (since it depends on the parameters of each ``rand()`` call). ::
 
     real := get_rand_dist_std_deviation(VOID)
 
@@ -219,7 +220,8 @@ that the default value is being used. ::
 
 clear_rand_dist_std_deviation()
 ----------------------------------------------------------------------------------------------------------------------------------
-Clears the configured standard deviation value. Default value will be (max_range-min_range)/6 ::
+Clears the configured standard deviation value. Default value will be **(max_range-min_range)/6** (note that this value has 
+no special meaning other than giving a fair distribution curve). ::
 
     clear_rand_dist_std_deviation(VOID)
     clear_rand_dist_std_deviation(msg_id_panel)
@@ -241,7 +243,7 @@ Clears the configured standard deviation value. Default value will be (max_range
 
 set_range_weight_default_mode()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the default range weight mode for the weighted randomization distribution. ::
+Configures the default range weight mode for the weighted randomization distribution. Default value is COMBINED_WEIGHT. ::
 
     set_range_weight_default_mode(mode, [msg_id_panel])
 
@@ -341,7 +343,7 @@ and C_RAND_INIT_SEED_2 in adaptations_pkg. ::
 .. code-block::
 
     Examples:
-    my_rand.set_rand_seeds("my_rand");
+    my_rand.set_rand_seeds(my_rand'instance_name);
     my_rand.set_rand_seeds(10, 100);
     my_rand.set_rand_seeds(seed_vector);
 
@@ -756,14 +758,14 @@ Returns a random signed value. ::
 .. code-block::
 
     Examples:
-    rand_sig := my_rand.rand(rand_sig'length);
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50);
-    rand_sig := my_rand.rand(rand_sig'length, ONLY, (-20,-10,0,10,20));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(60));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(60), EXCL,(25));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(60), EXCL,(-25,25));
-    rand_sig := my_rand.rand(rand_sig'length, -50, 50, ADD,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
+    rand_sign := my_rand.rand(rand_sign'length);
+    rand_sign := my_rand.rand(rand_sign'length, -50, 50);
+    rand_sign := my_rand.rand(rand_sign'length, ONLY, (-20,-10,0,10,20));
+    rand_sign := my_rand.rand(rand_sign'length, -50, 50, ADD,(60));
+    rand_sign := my_rand.rand(rand_sign'length, -50, 50, EXCL,(-25,25));
+    rand_sign := my_rand.rand(rand_sign'length, -50, 50, ADD,(60), EXCL,(25));
+    rand_sign := my_rand.rand(rand_sign'length, -50, 50, ADD,(60), EXCL,(-25,25));
+    rand_sign := my_rand.rand(rand_sign'length, -50, 50, ADD,(-60,60,70,80), EXCL,(-25,25), CYCLIC);
 
 
 .. _rand_sig_long:
@@ -791,15 +793,15 @@ The overload without the length parameter uses the max_value length for the retu
 .. code-block::
 
     Examples:
-    rand_sig := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sig := my_rand.rand(rand_sig'length, C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
 
 
 .. _rand_slv:
 
 return std_logic_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random std_logic_vector value. Values are interpreted as unsigned and therefore constrained by the natural type. ::
+Returns a random std_logic_vector value (interpreted as unsigned). ::
 
     std_logic_vector := rand(length, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
@@ -847,8 +849,9 @@ Returns a random std_logic_vector value. Values are interpreted as unsigned and 
 
 return std_logic_vector (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random std_logic_vector value. The std_logic_vector constraints can be used for min and max values bigger than the integer's 
-32-bit range. The overload without the length parameter uses the max_value length for the return value. ::
+Returns a random std_logic_vector value (interpreted as unsigned). The std_logic_vector constraints can be used for min and max 
+values bigger than the integer's 32-bit range. The overload without the length parameter uses the max_value length for the return 
+value. ::
 
     std_logic_vector := rand(min_value, max_value, [msg_id_panel])
     std_logic_vector := rand(length, min_value, max_value, [msg_id_panel])
@@ -925,7 +928,7 @@ Returns a random boolean value. ::
 rand_val_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value using a weighted distribution. Each given value has a weight which determines how often it is chosen during 
-randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. ::
+randomization. The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights. ::
 
     integer          := rand_val_weight(weight_vector, [msg_id_panel])
     real             := rand_val_weight(weight_vector, [msg_id_panel])
@@ -955,8 +958,8 @@ randomization. The sum of all weights need not be 100 since the probability is w
     rand_real := my_rand.rand_val_weight(((-5.0,10),(0.0,30),(5.0,60)));
     rand_time := my_rand.rand_val_weight(((1 ns,10),(10 ns,30),(25 ns,60)));
     rand_uns  := my_rand.rand_val_weight(rand_uns'length, ((10,1),(20,3),(30,6)));
-    rand_sig  := my_rand.rand_val_weight(rand_sig'length, ((-5,1),(0,2),(5,2)));
-    rand_slv  := my_rand.rand_val_weight(rand_slv'length, ((10,5),(20,1),(30,1)));
+    rand_sign := my_rand.rand_val_weight(rand_sign'length, ((-5,1),(0,2),(5,2)));
+    rand_slv  := my_rand.rand_val_weight(rand_slv'length, ((10,5),(20,1),(30,1))); -- SLV is interpreted as unsigned
 
 
 .. _rand_range_weight:
@@ -964,7 +967,8 @@ randomization. The sum of all weights need not be 100 since the probability is w
 rand_range_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value using a weighted distribution. Each given range (min/max) has a weight which determines how often it is 
-chosen during randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. 
+chosen during randomization. The sum of all weights could be any value since each individual probability is equal to 
+individual_weight/sum_of_weights. 
 
 The given weight is assigned to the range as a whole, i.e. each value within the range has a fraction of the given weight. This 
 behavior can be changed to assigning the given weight equally to each value within the range by using 
@@ -996,8 +1000,8 @@ behavior can be changed to assigning the given weight equally to each value with
     rand_real := my_rand.rand_range_weight(((-5.0,-3.0,10),(0.0,0.0,30),(1.0,5.0,60)));
     rand_time := my_rand.rand_range_weight(((1 ns,5 ns,10),(10 ns,10 ns,30),(25 ns,50 ns,60)));
     rand_uns  := my_rand.rand_range_weight(rand_uns'length, ((10,15,1),(20,25,3),(30,35,6)));
-    rand_sig  := my_rand.rand_range_weight(rand_sig'length, ((-5,-3,1),(0,0,2),(5,10,2)));
-    rand_slv  := my_rand.rand_range_weight(rand_slv'length, ((10,15,5),(20,25,1),(30,35,1)));
+    rand_sign := my_rand.rand_range_weight(rand_sign'length, ((-5,-3,1),(0,0,2),(5,10,2)));
+    rand_slv  := my_rand.rand_range_weight(rand_slv'length, ((10,15,5),(20,25,1),(30,35,1))); -- SLV is interpreted as unsigned
 
 
 .. _rand_range_weight_mode:
@@ -1005,7 +1009,8 @@ behavior can be changed to assigning the given weight equally to each value with
 rand_range_weight_mode()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value using a weighted distribution. Each given range (min/max) has a weight which determines how often it is 
-chosen during randomization. The sum of all weights need not be 100 since the probability is weight/sum_of_weights. 
+chosen during randomization. The sum of all weights could be any value since each individual probability is equal to 
+individual_weight/sum_of_weights. 
 
 The given weight can have two possible interpretations:
 
@@ -1042,5 +1047,5 @@ values within a real/time range. ::
     rand_real := my_rand.rand_range_weight_mode(((-5.0,-3.0,10,COMBINED_WEIGHT),(0.0,0.0,30,NA),(1.0,5.0,60,COMBINED_WEIGHT)));
     rand_time := my_rand.rand_range_weight_mode(((1 ns,5 ns,10,COMBINED_WEIGHT),(10 ns,10 ns,30,NA),(25 ns,50 ns,60,COMBINED_WEIGHT)));
     rand_uns  := my_rand.rand_range_weight_mode(rand_uns'length, ((10,15,1,INDIVIDUAL_WEIGHT),(20,20,3,NA),(30,35,6,COMBINED_WEIGHT)));
-    rand_sig  := my_rand.rand_range_weight_mode(rand_sig'length, ((-5,-3,1,INDIVIDUAL_WEIGHT),(0,0,2,NA),(5,10,2,COMBINED_WEIGHT)));
-    rand_slv  := my_rand.rand_range_weight_mode(rand_slv'length, ((10,15,5,INDIVIDUAL_WEIGHT),(20,20,1,NA),(30,35,1,COMBINED_WEIGHT)));
+    rand_sign := my_rand.rand_range_weight_mode(rand_sign'length, ((-5,-3,1,INDIVIDUAL_WEIGHT),(0,0,2,NA),(5,10,2,COMBINED_WEIGHT)));
+    rand_slv  := my_rand.rand_range_weight_mode(rand_slv'length, ((10,15,5,INDIVIDUAL_WEIGHT),(20,20,1,NA),(30,35,1,COMBINED_WEIGHT))); -- SLV is interpreted as unsigned

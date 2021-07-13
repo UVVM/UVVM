@@ -1,10 +1,16 @@
 ##################################################################################################################################
-Advanced randomization
+General Randomization
 ##################################################################################################################################
-All the functionality for advanced randomization can be found in *uvvm_util/src/rand_pkg.vhd*.
+All the functionality for **General Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For more 
+information on protected types see **link**.
 
-To generate a random value using this package it is necessary to import the utility library, create a variable with the protected 
-type *t_rand* and call the ``rand()`` function from the variable.
+For more simple functionality, not using protected types, the **Basic Randomization** can be found in *uvvm_util/src/methods_pkg.vhd*.
+
+For a more balanced randomization between small and large ranges/sets, the **Optimized Randomization** under *uvvm_util/src/func_cov_pkg.vhd* 
+may be used.
+
+To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the 
+protected type *t_rand* and call the ``rand()`` function from the variable.
 
 .. code-block::
 
@@ -14,27 +20,47 @@ type *t_rand* and call the ``rand()`` function from the variable.
     p_main : process
       variable my_rand : t_rand;
     begin
-      -- Generate a random value between 0 and 255
+      -- Generate a random value in the range [0:255]
       addr := my_rand.rand(0, 255);
       ...
+
+.. note::
+
+    The syntax for all methods is given in :ref:`rand_pkg`.
 
 **********************************************************************************************************************************
 Seeds
 **********************************************************************************************************************************
 Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They 
-can be initialized using any string or two positive values.
+can be initialized using any string or two positive integers (when using a string, it will be converted into two positive integers).
+
+.. hint::
+
+    It is recommended to set the seed to the path of the actual variable in order to ensure uniqueness throughout the testbench.
 
 .. code-block::
 
-    my_rand.set_rand_seeds("my_rand");
+    -- Example 1
+    my_rand.set_rand_seeds(my_rand'instance_name);
+
+    -- Example 2
     my_rand.set_rand_seeds(10, 100);
 
-The current seeds can be printed out, in case there is a need to recreate a certain random sequence, by using ``get_rand_seeds()``.
+The current seeds can be printed out, for instance when needing to recreate a certain random sequence, by using ``get_rand_seeds()``. 
+This method will return the seeds as two positive integers or a positive integer vector.
+
+.. code-block::
+
+    -- Example 1
+    my_rand.get_rand_seeds(seed1, seed2);
+
+    -- Example 2
+    seed_vector := my_rand.get_rand_seeds(VOID);
 
 **********************************************************************************************************************************
 Constraints
 **********************************************************************************************************************************
-There are different ways of constraining the random value in a clear and consistent manner.
+There are different ways of constraining the random value in a clear and consistent manner when using the ``rand()`` function.
 
 .. code-block::
 
@@ -52,7 +78,7 @@ There are different ways of constraining the random value in a clear and consist
     addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
 
 **********************************************************************************************************************************
-Types
+Return types
 **********************************************************************************************************************************
 The ``rand()`` function can return the following types:
 
@@ -77,8 +103,8 @@ The ``rand()`` function can return the following types:
     rand_time     := my_rand.rand(0 ps, 100 ps);
     rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
     rand_uns      := my_rand.rand(rand_uns'length, 0, 50, ADD,(60));
-    rand_sig      := my_rand.rand(rand_sig'length, -50, 50, EXCL,(-25,25));
-    rand_slv      := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25,35));
+    rand_sign     := my_rand.rand(rand_sign'length, -50, 50, EXCL,(-25,25));
+    rand_slv      := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25,35)); -- SLV is interpreted as unsigned
     rand_sl       := my_rand.rand(VOID);
     rand_bool     := my_rand.rand(VOID);
 
@@ -92,24 +118,29 @@ max constraints are provided as well.
 
 .. code-block::
 
-    rand_uns := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_uns := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
-    rand_sig := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sig := my_rand.rand(rand_sig'length, C_MIN_RANGE, v_max_range);
-    rand_slv := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_slv := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);
+    rand_uns  := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
+    rand_slv  := my_rand.rand(C_MIN_RANGE, v_max_range);                   -- SLV is interpreted as unsigned
+    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);  -- SLV is interpreted as unsigned
 
 **********************************************************************************************************************************
 Uniqueness
 **********************************************************************************************************************************
-When returning a vector type (integer, real or time) it is possible to generate unique random values for each element of the vector 
-by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function.
+When returning a vector type (integer_vector, real_vector or time_vector) it is possible to generate unique random values for each 
+element of the vector by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function. The uniqueness applies only within 
+the values returned from a single ``rand()`` call, i.e. unique values may not generated across two or more ``rand()`` calls.
 
 .. code-block::
 
-    addr_vec := my_rand.rand(addr_vec'length, 0, 50, UNIQUE);
+    unique_addresses := my_rand.rand(unique_addresses'length, 0, 50, UNIQUE);
 
 If the constraints are not enough to generate unique values for the whole vector, an error will be reported.
+
+.. code-block::
+
+    unique_addresses := my_rand.rand(63, 0, 50, UNIQUE);
 
 **********************************************************************************************************************************
 Cyclic generation
@@ -119,13 +150,16 @@ not repeat until all the values within the constraints have been generated. Once
 
 .. code-block::
 
-    addr := my_rand.rand(0, 63, CYCLIC);
+    for i in 0 to num_addr-1 loop
+      addr := my_rand.rand(0, 63, CYCLIC);
+      ...
+    end loop;
 
 * The supported types are integer, integer_vector, unsigned, signed and std_logic_vector. Note that unsigned, signed and 
   std_logic_vector lengths bigger than 32 bits are not supported however.
 * Cyclic generation cannot be combined with the uniqueness parameter in the vector types.
 * The state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function with 
-  different constraints is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
+  a different signature is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
 * By default, a list is created to store the state of all the possible values to be generated. This list can require a lot of memory 
   for big ranges or even cause problems for the simulator. To avoid this, a different implementation using a dynamic queue will be 
   used instead when the range of values is greater than C_RAND_CYCLIC_LIST_MAX_NUM_VALUES defined in adaptations_pkg.
@@ -144,6 +178,13 @@ Distributions
 By default, the Uniform distribution is used with the ``rand()`` function, however it is also possible to select other distributions
 with the procedure ``set_rand_dist()``.
 
+Uniform
+==================================================================================================================================
+* Default distribution.
+* The supported types are integer, integer_vector, real, real_vector, time, time_vector, unsigned, signed, std_logic_vector, std_logic 
+  and boolean.
+* No restrictions on configuration parameters.
+
 Gaussian (Normal)
 ==================================================================================================================================
 * The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
@@ -153,7 +194,8 @@ Gaussian (Normal)
 * Cannot be combined with cyclic or uniqueness parameters.
 * Cannot be combined with weighted randomization functions.
 * To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures respectively.
-* If not configured, the default mean will be (max-min)/2 and the default std_deviation will be (max-min)/6.
+* If not configured, the default mean will be (max-min)/2 and the default std_deviation will be (max-min)/6. These two default values 
+  have no special meaning other than giving a fair distribution curve.
 * To clear the configured mean and std_deviation and go back to the default, use ``clear_rand_dist_mean()`` and ``clear_rand_dist_std_deviation()`` 
   procedures respectively.
 
@@ -174,7 +216,7 @@ of (value + weight) or (range of values + weight). The function names contain th
     * :ref:`rand_range_weight_mode`
 
 .. note::
-    The sum of all weights need not be 100 since the probability is equal to weight/sum_of_weights.
+    The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
 
 When specifying a weight for a range of values there are two possible scenarios:
 
@@ -183,12 +225,12 @@ When specifying a weight for a range of values there are two possible scenarios:
 #. Individual weight: The given weight is assigned equally to each value within the range.
 
 The default mode is COMBINED_WEIGHT, however this can be changed using the ``set_range_weight_default_mode()`` procedure. Alternatively,
-it is possible to explicitly define the mode in the ``rand_range_weight_mode()`` function.
+it is possible to explicitly define the mode while generating the random number in the ``rand_range_weight_mode()`` function.
 
 .. code-block::
 
     -- 1. value, weight
-    my_rand.rand_val_weight(((-5,10),(0,30),(5,60))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
+    my_rand.rand_val_weight(((-5,1),(0,3),(5,1))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
 
     -- 2. range(min/max), weight
     my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with 
@@ -209,7 +251,8 @@ Configuration report
 **********************************************************************************************************************************
 A report containing all the configuration parameters can be printed using the ``report_config()`` procedure.
 
-A name can be given to the random generator by calling the ``set_name()`` procedure. This is useful when printing several reports.
+A name can be given to the random generator by calling the ``set_name()`` procedure. This is useful when printing reports for several 
+random generator instances.
 The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined in adaptations_pkg.
 
 .. code-block::
@@ -245,6 +288,8 @@ The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and i
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
 
 The number of decimal digits displayed in the real values logs can be adjusted with C_RAND_REAL_NUM_DECIMAL_DIGITS in adaptations_pkg.
+
+.. _rand_pkg:
 
 **********************************************************************************************************************************
 rand_pkg

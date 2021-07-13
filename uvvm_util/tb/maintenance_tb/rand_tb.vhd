@@ -125,7 +125,7 @@ begin
       check_value(v_seeds(1), 8000, ERROR, "Checking seed 2");
 
       log(ID_SEQUENCER, "Set seeds with string value");
-      v_rand.set_rand_seeds("test_string");
+      v_rand.set_rand_seeds(v_rand'instance_name);
       v_seeds := v_rand.get_rand_seeds(VOID);
       check_value(v_seeds(0) /= 800, ERROR, "Checking initial seed 1");
       check_value(v_seeds(1) /= 8000, ERROR, "Checking initial seed 2");
@@ -376,6 +376,10 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
+      log(ID_LOG_HDR, "Testing integer_vector (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(0,1), UNIQUE);
+
       ------------------------------------------------------------
       -- Real
       -- It is impossible to verify every value within a real range
@@ -564,6 +568,10 @@ begin
         count_rand_value(v_value_cnt, v_real_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing real_vector (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(0.0,1.0), UNIQUE);
 
       ------------------------------------------------------------
       -- Time
@@ -760,6 +768,10 @@ begin
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing time_vector (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(0 ps,1 ps), UNIQUE);
 
       ------------------------------------------------------------
       -- Unsigned

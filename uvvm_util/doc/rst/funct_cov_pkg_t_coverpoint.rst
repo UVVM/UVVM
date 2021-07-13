@@ -41,8 +41,8 @@ Returns the coverpoint's name. ::
 
 set_scope()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the scope used in the log messages. Default is C_TB_SCOPE_DEFAULT and maximum length is C_LOG_SCOPE_WIDTH defined in 
-adaptations_pkg. ::
+Configures the scope used in the log messages. Default value is C_TB_SCOPE_DEFAULT and maximum length is C_LOG_SCOPE_WIDTH defined 
+in adaptations_pkg. ::
 
     set_scope(scope)
 
@@ -154,7 +154,7 @@ Returns the coverpoint's coverage goal. ::
 
 set_illegal_bin_alert_level()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the alert level when an illegal bin is sampled. ::
+Configures the alert level when an illegal bin is sampled. Default value is ERROR. ::
 
     set_illegal_bin_alert_level(alert_level, [msg_id_panel])
 

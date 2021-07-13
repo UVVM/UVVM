@@ -167,7 +167,7 @@ package ti_protected_types_pkg is
       constant vvc_idx  : in natural
     ) return string;
 
-    impure function priv_get_vvc_info_list return string;
+    impure function priv_get_vvc_info_list (idx : natural := natural'low) return string;
 
     impure function priv_get_num_vvc_in_list return natural;
 
@@ -571,25 +571,16 @@ package body ti_protected_types_pkg is
       end if;
     end function;
 
-    impure function priv_get_vvc_info_list return string is
-      variable v_line     : line;
-      variable v_line_len : integer := 1;
-      variable v_string   : string(1 to 500);
+    impure function priv_get_vvc_info_list (idx : natural := natural'low) return string is
     begin
       if priv_last_added_vvc_idx = -1 then
         alert(TB_ERROR, "priv_get_vvc_info_list() => vvc_info_list is empty!");
+        return " ";
+      elsif idx < priv_last_added_vvc_idx then
+        return "(" & priv_get_vvc_info(idx) & ")" & priv_get_vvc_info_list(idx+1);
       else
-        for idx in 0 to priv_last_added_vvc_idx loop
-          write(v_line, "(" & priv_get_vvc_info(idx) & ")");
-          if idx < priv_last_added_vvc_idx then
-            write(v_line, ',');
-          end if;
-        end loop;
-        v_line_len := v_line'length;
-        v_string(1 to v_line_len) := v_line.all;
-        deallocate(v_line);
+        return "(" & priv_get_vvc_info(idx) & ")";
       end if;
-      return v_string(1 to v_line_len);
     end function;
 
     impure function priv_get_num_vvc_in_list return natural is

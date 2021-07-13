@@ -210,17 +210,17 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
     my_coverpoint.add_bins(illegal_bin_transition(30,10,0));
 
 
-set_sim_coverage_goal()
+fc_set_overall_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the simulation's coverage goal. This is an easy way to apply the same goal to all the coverpoints. If a coverpoint's goal 
+Configures the overall coverage goal. This is an easy way to apply the same goal to all the coverpoints. If a coverpoint's goal 
 has also been modified by ``set_coverage_goal()``, they will be multiplied for the given coverpoint. Default value is 100. ::
 
-    set_sim_coverage_goal(percentage, [scope, [msg_id_panel]])
+    fc_set_overall_coverage_goal(percentage, [scope, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | percentage         | in     | positive                     | Goal percentage of the simulation to cover              |
+| constant | percentage         | in     | positive                     | Goal percentage of each coverpoint to cover             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -230,14 +230,14 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
 .. code-block::
 
     Examples:
-    set_sim_coverage_goal(200);
+    fc_set_overall_coverage_goal(200);
 
 
-get_sim_coverage_goal()
+fc_get_overall_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the simulation's coverage goal. ::
+Returns the overall coverage goal. ::
 
-    positive := get_sim_coverage_goal(VOID)
+    positive := fc_get_overall_coverage_goal(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
@@ -248,14 +248,14 @@ Returns the simulation's coverage goal. ::
 .. code-block::
 
     Examples:
-    log(ID_SEQUENCER, to_string(get_sim_coverage_goal(VOID)));
+    log(ID_SEQUENCER, to_string(fc_get_overall_coverage_goal(VOID)));
 
 
-get_sim_coverage()
+fc_get_overall_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the accumulated coverage for all the coverpoints in the simulation. ::
+Returns the accumulated coverage for all the coverpoints in the testbench. ::
 
-    real := get_sim_coverage(VOID)
+    real := fc_get_overall_coverage(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
@@ -266,14 +266,14 @@ Returns the accumulated coverage for all the coverpoints in the simulation. ::
 .. code-block::
 
     Examples:
-    log(ID_SEQUENCER, to_string(get_sim_coverage(VOID)));
+    log(ID_SEQUENCER, to_string(fc_get_overall_coverage(VOID)));
 
 
-sim_coverage_completed()
+fc_overall_coverage_completed()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns true if the accumulated coverage for all the coverpoints in the simulation has reached the goal. Default goal is 100. ::
+Returns true if the accumulated coverage for all the coverpoints in the testbench has reached the goal. Default goal is 100. ::
 
-    boolean := sim_coverage_completed(VOID)
+    boolean := fc_overall_coverage_completed(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
@@ -284,18 +284,18 @@ Returns true if the accumulated coverage for all the coverpoints in the simulati
 .. code-block::
 
     Examples:
-    if sim_coverage_completed(VOID) then
+    if fc_overall_coverage_completed(VOID) then
     ...
     end if;
 
 
-report_sim_coverage()
+fc_report_overall_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints the simulation coverage summary containing the main information of all the coverpoints, however it does not print the bins. 
+Prints the overall coverage summary containing the main information of all the coverpoints, however it does not print the bins. 
 The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg.::
 
-    report_sim_coverage(VOID)
-    report_sim_coverage(scope)
+    fc_report_overall_coverage(VOID)
+    fc_report_overall_coverage(scope)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                             |
@@ -308,5 +308,5 @@ The printing destination can be log and/or console and is defined by shared_defa
 .. code-block::
 
     Examples:
-    report_sim_coverage(VOID);
-    report_sim_coverage(my_scope);
+    fc_report_overall_coverage(VOID);
+    fc_report_overall_coverage(my_scope);

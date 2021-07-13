@@ -138,27 +138,27 @@ package funct_cov_pkg is
   ------------------------------------------------------------
   -- Simulation coverage
   ------------------------------------------------------------
-  procedure set_sim_coverage_goal(
+  procedure fc_set_overall_coverage_goal(
     constant percentage   : in positive;
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-  impure function get_sim_coverage_goal(
+  impure function fc_get_overall_coverage_goal(
     constant VOID : t_void)
   return positive;
 
-  impure function get_sim_coverage(
+  impure function fc_get_overall_coverage(
     constant VOID : t_void)
   return real;
 
-  impure function sim_coverage_completed(
+  impure function fc_overall_coverage_completed(
     constant VOID : t_void)
   return boolean;
 
-  procedure report_sim_coverage(
+  procedure fc_report_overall_coverage(
     constant VOID : in t_void);
 
-  procedure report_sim_coverage(
+  procedure fc_report_overall_coverage(
     constant scope : in string);
 
   ------------------------------------------------------------
@@ -718,47 +718,47 @@ package body funct_cov_pkg is
   ------------------------------------------------------------
   -- Simulation coverage
   ------------------------------------------------------------
-  procedure set_sim_coverage_goal(
+  procedure fc_set_overall_coverage_goal(
     constant percentage   : in positive;
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-    constant C_LOCAL_CALL : string := "set_sim_coverage_goal(" & to_string(percentage) & ")";
+    constant C_LOCAL_CALL : string := "fc_set_overall_coverage_goal(" & to_string(percentage) & ")";
   begin
     log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, scope, msg_id_panel);
     protected_covergroup_status.set_covergroup_coverage_goal(percentage);
   end procedure;
 
-  impure function get_sim_coverage_goal(
+  impure function fc_get_overall_coverage_goal(
     constant VOID : t_void)
   return positive is
   begin
     return protected_covergroup_status.get_covergroup_coverage_goal(VOID);
   end function;
 
-  impure function get_sim_coverage(
+  impure function fc_get_overall_coverage(
     constant VOID : t_void)
   return real is
   begin
     return protected_covergroup_status.get_total_hits_coverage(VOID);
   end function;
 
-  impure function sim_coverage_completed(
+  impure function fc_overall_coverage_completed(
     constant VOID : t_void)
   return boolean is
   begin
     return protected_covergroup_status.get_total_hits_coverage(VOID) >= real(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
   end function;
 
-  procedure report_sim_coverage(
+  procedure fc_report_overall_coverage(
     constant VOID : in t_void) is
   begin
-    report_sim_coverage(C_TB_SCOPE_DEFAULT);
+    fc_report_overall_coverage(C_TB_SCOPE_DEFAULT);
   end procedure;
 
-  procedure report_sim_coverage(
+  procedure fc_report_overall_coverage(
     constant scope : in string) is
     constant C_PREFIX : string := C_LOG_PREFIX & "     ";
-    constant C_HEADER : string := "*** SIMULATION COVERAGE REPORT: " & to_string(scope) & " ***";
+    constant C_HEADER : string := "*** OVERALL COVERAGE REPORT: " & to_string(scope) & " ***";
     variable v_line   : line;
   begin
     -- Print report header

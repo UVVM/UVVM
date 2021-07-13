@@ -1940,10 +1940,10 @@ begin
       check_value(v_coverpoint.get_num_valid_bins(VOID), 100, ERROR, "Checking num_valid_bins");
       check_value(v_coverpoint.get_num_invalid_bins(VOID), 1, ERROR, "Checking num_invalid_bins");
       check_value(v_coverpoint.get_coverage(VOID), 50.0, ERROR, "Checking coverage");
-      check_value(get_sim_coverage(VOID), 25.0, ERROR, "Checking sim coverage");
+      check_value(fc_get_overall_coverage(VOID), 25.0, ERROR, "Checking overall coverage");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       log(ID_SEQUENCER, "Clear and check the coverpoint has default values");
       v_coverpoint.clear_coverpoint(VOID);
@@ -1958,10 +1958,10 @@ begin
       check_value(v_coverpoint.get_num_valid_bins(VOID), 0, ERROR, "Checking num_valid_bins");
       check_value(v_coverpoint.get_num_invalid_bins(VOID), 0, ERROR, "Checking num_invalid_bins");
       check_value(v_coverpoint.get_coverage(VOID), 0.0, ERROR, "Checking coverage");
-      check_value(get_sim_coverage(VOID), 0.0, ERROR, "Checking sim coverage");
+      check_value(fc_get_overall_coverage(VOID), 0.0, ERROR, "Checking overall coverage");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing clearing several coverpoints");
@@ -1970,17 +1970,17 @@ begin
       v_coverpoint_b.add_bins(bin(2));
       v_coverpoint_c.add_bins(bin(3));
       v_coverpoint_d.add_bins(bin(4));
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       v_coverpoint.clear_coverpoint(VOID);   -- 1st
       v_coverpoint_c.clear_coverpoint(VOID); -- 3rd
       v_coverpoint_d.clear_coverpoint(VOID); -- 4th
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       v_coverpoint.add_cross(bin(1000), bin(2000));
       v_coverpoint_c.add_cross(bin(1001), bin(2001));
       v_coverpoint_d.add_cross(bin(1002), bin(2002));
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       v_coverpoint.clear_coverpoint(VOID);
       v_coverpoint_b.clear_coverpoint(VOID);
@@ -1990,10 +1990,10 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing default configuration values");
       ------------------------------------------------------------
-      check_value(get_sim_coverage_goal(VOID), 100, ERROR, "get_sim_coverage_goal(VOID)");
-      check_value(get_sim_coverage(VOID), 0.0, ERROR, "get_sim_coverage(VOID)");
-      check_value(sim_coverage_completed(VOID), false, ERROR, "sim_coverage_completed(VOID)");
-      report_sim_coverage(VOID);
+      check_value(fc_get_overall_coverage_goal(VOID), 100, ERROR, "fc_get_overall_coverage_goal(VOID)");
+      check_value(fc_get_overall_coverage(VOID), 0.0, ERROR, "fc_get_overall_coverage(VOID)");
+      check_value(fc_overall_coverage_completed(VOID), false, ERROR, "fc_overall_coverage_completed(VOID)");
+      fc_report_overall_coverage(VOID);
 
       check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "get_illegal_bin_alert_level(VOID)");
       check_value(v_coverpoint.get_bin_overlap_detection(VOID), false, ERROR, "get_bin_overlap_detection(VOID)");
@@ -2093,7 +2093,7 @@ begin
       v_coverpoint.set_bin_overlap_detection(true);
       v_coverpoint.set_coverage_weight(5);
       v_coverpoint.set_coverage_goal(200);
-      set_sim_coverage_goal(150);
+      fc_set_overall_coverage_goal(150);
 
       -- Sample coverage
       increment_expected_alerts(TB_NOTE, 6);
@@ -2146,7 +2146,7 @@ begin
       v_cross_x2.set_bin_overlap_detection(false);
       v_cross_x2.set_coverage_weight(8);
       v_cross_x2.set_coverage_goal(75);
-      set_sim_coverage_goal(125);
+      fc_set_overall_coverage_goal(125);
 
       -- Sample coverage
       increment_expected_alerts(TB_WARNING, 6);
@@ -2188,7 +2188,7 @@ begin
       v_cross_x3.report_coverage(VERBOSE);
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_database_2" then
@@ -2227,7 +2227,7 @@ begin
       check_value(v_coverpoint.get_bin_overlap_detection(VOID), true, ERROR, "Checking bin overlap detection");
       check_value(v_coverpoint.get_coverage_weight(VOID), 5, ERROR, "Checking coverage weight");
       check_value(v_coverpoint.get_coverage_goal(VOID), 200, ERROR, "Checking coverage goal");
-      check_value(get_sim_coverage_goal(VOID), 150, ERROR, "Checking simulation coverage goal");
+      check_value(fc_get_overall_coverage_goal(VOID), 150, ERROR, "Checking overall coverage goal");
 
       -- Check randomization state
       check_value(v_coverpoint.rand(VOID), 56, ERROR, "Checking rand transition");
@@ -2294,7 +2294,7 @@ begin
       check_value(v_cross_x2.get_bin_overlap_detection(VOID), false, ERROR, "Checking bin overlap detection");
       check_value(v_cross_x2.get_coverage_weight(VOID), 8, ERROR, "Checking coverage weight");
       check_value(v_cross_x2.get_coverage_goal(VOID), 75, ERROR, "Checking coverage goal");
-      check_value(get_sim_coverage_goal(VOID), 125, ERROR, "Checking simulation coverage goal");
+      check_value(fc_get_overall_coverage_goal(VOID), 125, ERROR, "Checking overall coverage goal");
 
       -- Check randomization state
       v_values_x2 := v_cross_x2.rand(VOID);
@@ -2360,7 +2360,7 @@ begin
       v_cross_x3.report_coverage(VERBOSE);
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - coverpoint");
@@ -2465,7 +2465,7 @@ begin
 
       v_cross_x3_b.report_coverage(VERBOSE);
 
-      report_sim_coverage(VOID);
+      fc_report_overall_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load DB to an already initialized coverpoint - overwrite");

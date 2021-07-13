@@ -393,19 +393,20 @@ Also, if a sampled value is contained in both ignore and illegal bins, then the 
 Coverage goal
 **********************************************************************************************************************************
 Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum 
-coverage for each bin. It must be set at the beginning of the simulation, before sampling any coverage. Default is 100.
+coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. Default is 100.
 
-It can be set for a single coverpoint/cross or all coverpoints/crosses in the simulation.
+It can be set for a single coverpoint/cross or all the coverpoints/crosses in the testbench.
 
 .. code-block::
 
     -- Set the coverpoint coverage goal to 200%
     my_coverpoint.set_coverage_goal(200);
 
-    -- Set the simulation coverage goal to 150%
-    set_sim_coverage_goal(150);
+    -- Set the overall coverage goal to 150%
+    fc_set_overall_coverage_goal(150);
 
-If both coverpoint and simulation goals are set, they will be multiplied, e.g. coverage goal for my_coverpoint = 200*150/100=300.
+If both coverpoint and overall goals are set, they will be multiplied for that given coverpoint, e.g. coverage goal for 
+my_coverpoint = 200*150/100=300.
 
 **********************************************************************************************************************************
 Coverage weight
@@ -424,21 +425,21 @@ Coverage status
 It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns the 
 percentage in a real number, and also determine if the coverage is completed with ``coverage_completed()``.
 
-Similar functions for the overall simulation are ``get_sim_coverage()`` and ``sim_coverage_completed()``.
+Similar functions for the overall status are ``fc_get_overall_coverage()`` and ``fc_overall_coverage_completed()``.
 
 .. code-block::
 
     log(ID_SEQUENCER, "My Coverpoint Coverage: " & to_string(my_coverpoint.get_coverage(VOID)));
-    log(ID_SEQUENCER, "Total Coverage: " & to_string(get_sim_coverage(VOID)));
+    log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID)));
 
     -- Do something while the coverpoint's coverage is incomplete
     while not(my_coverpoint.coverage_completed(VOID)) loop
-      ...
+    ...
     end loop;
 
     -- Do something while the overall coverage is incomplete
-    while not(sim_coverage_completed(VOID)) loop
-      ...
+    while not(fc_overall_coverage_completed(VOID)) loop
+    ...
     end loop;
 
 **********************************************************************************************************************************
@@ -538,19 +539,20 @@ By using the parameter verbosity, different types of bins can be printed out.
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
 
-A summary report for all the coverpoints in the simulation can be printed using the ``report_sim_coverage()`` procedure. Only the 
-main information is contained in the report, i.e. bins are not included.
+A summary report for all the coverpoints in the testbench can be printed using the ``fc_report_overall_coverage()`` procedure. 
+Only the main information is contained in the report, i.e. bins are not included.
 
-* *total hits coverage* = tot_hits_across_covpoints/tot_min_hits_across_covpoints (this value increments gradually and has a maximum equal to the coverage goal)
+* *total hits coverage* = tot_hits_across_covpoints/tot_min_hits_across_covpoints (this value increments gradually and has a maximum 
+  equal to the coverage goal)
 
 .. code-block::
 
-    report_sim_coverage(VOID);
+    fc_report_overall_coverage(VOID);
 
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** FUNCTIONAL COVERAGE SUMMARY: TB seq. ***                                                          
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                          
     # UVVM:  Total Hits Coverage: 44.44% (goal: 100%)
     # UVVM:  =================================================================================================================
     # UVVM:  Coverpoint:      Covpt_1

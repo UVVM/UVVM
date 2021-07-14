@@ -26,7 +26,7 @@ use work.global_signals_and_shared_variables_pkg.all;
 use work.methods_pkg.all;
 use work.rand_pkg.all;
 
-package funct_cov_pkg is
+package func_cov_pkg is
 
   constant C_MAX_NUM_CROSS_BINS : positive := 16;
 
@@ -468,9 +468,9 @@ package funct_cov_pkg is
 
   end protected t_coverpoint;
 
-end package funct_cov_pkg;
+end package func_cov_pkg;
 
-package body funct_cov_pkg is
+package body func_cov_pkg is
 
   -- Generates the correct procedure call to be used for logging or alerts
   procedure create_proc_call(
@@ -724,7 +724,7 @@ package body funct_cov_pkg is
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     constant C_LOCAL_CALL : string := "fc_set_overall_coverage_goal(" & to_string(percentage) & ")";
   begin
-    log(ID_FUNCT_COV_CONFIG, C_LOCAL_CALL, scope, msg_id_panel);
+    log(ID_FUNC_COV_CONFIG, C_LOCAL_CALL, scope, msg_id_panel);
     protected_covergroup_status.set_covergroup_coverage_goal(percentage);
   end procedure;
 
@@ -1389,7 +1389,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       protected_covergroup_status.set_coverage_weight(priv_id, weight);
     end procedure;
 
@@ -1410,7 +1410,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       protected_covergroup_status.set_coverage_goal(priv_id, percentage);
     end procedure;
 
@@ -1431,7 +1431,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_illegal_bin_alert_level(" & to_upper(to_string(alert_level)) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_illegal_bin_alert_level := alert_level;
     end procedure;
 
@@ -1448,7 +1448,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_bin_overlap_alert_level(" & to_upper(to_string(alert_level)) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_bin_overlap_alert_level := alert_level;
     end procedure;
 
@@ -1532,7 +1532,7 @@ package body funct_cov_pkg is
 
     begin
       if priv_id /= C_DEALLOCATED_ID then
-        log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+        log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
         -- Coverpoint config
         write_value(priv_name);
         write_value(priv_scope);
@@ -1637,7 +1637,7 @@ package body funct_cov_pkg is
       end procedure;
 
     begin
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
 
       file_open(v_open_status, file_handler, file_name, read_mode);
       if v_open_status /= open_ok then
@@ -1708,7 +1708,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel) is
       constant C_LOCAL_CALL : string := "clear_coverage()";
     begin
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
 
       for i in 0 to priv_bins_idx-1 loop
         priv_bins(i).hits := 0;
@@ -1737,7 +1737,7 @@ package body funct_cov_pkg is
       constant C_LOCAL_CALL : string := "set_num_allocated_bins(" & to_string(value) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       if value >= priv_bins_idx then
         resize_bin_vector(priv_bins, value);
       else
@@ -1761,7 +1761,7 @@ package body funct_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel) is
       constant C_LOCAL_CALL : string := "clear_coverpoint()";
     begin
-      log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       if priv_id /= C_DEALLOCATED_ID then
         protected_covergroup_status.remove_coverpoint(priv_id);
       end if;
@@ -1908,8 +1908,8 @@ package body funct_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
-      log(ID_FUNCT_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNCT_COV_BINS, get_name_prefix(VOID) & "Adding bins: " &  get_bin_array_values(bin) & ", min_hits:" & to_string(min_hits) &
+      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding bins: " &  get_bin_array_values(bin) & ", min_hits:" & to_string(min_hits) &
         ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -1960,8 +1960,8 @@ package body funct_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
-      log(ID_FUNCT_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNCT_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) &
+      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2016,8 +2016,8 @@ package body funct_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
-      log(ID_FUNCT_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNCT_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
+      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2073,8 +2073,8 @@ package body funct_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID));
-      log(ID_FUNCT_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNCT_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
+      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2131,8 +2131,8 @@ package body funct_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID),
         coverpoint3.get_num_bins_crossed(VOID));
-      log(ID_FUNCT_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNCT_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
+      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
         " x "  &  coverpoint3.get_all_bins_string(VOID) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
@@ -2188,7 +2188,7 @@ package body funct_cov_pkg is
     begin
       v_ret := rand(msg_id_panel, C_LOCAL_CALL);
       if priv_num_bins_crossed /= C_UNINITIALIZED then
-        log(ID_FUNCT_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
+        log(ID_FUNC_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
       end if;
       return v_ret(0);
     end function;
@@ -2287,7 +2287,7 @@ package body funct_cov_pkg is
 
       -- Do not print log message when being called from another function
       if ext_proc_call = "" then
-        log(ID_FUNCT_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        log(ID_FUNC_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       end if;
       return v_ret;
     end function;
@@ -2328,7 +2328,7 @@ package body funct_cov_pkg is
         DEALLOCATE(v_proc_call);
         return;
       end if;
-      log(ID_FUNCT_COV_SAMPLE, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_SAMPLE, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
 
       if priv_num_bins_crossed /= values'length then
         alert(TB_FAILURE, v_proc_call.all & "=> Number of values does not match the number of crossed bins", priv_scope);
@@ -2689,4 +2689,4 @@ package body funct_cov_pkg is
 
   end protected body t_coverpoint;
 
-end package body funct_cov_pkg;
+end package body func_cov_pkg;

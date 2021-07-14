@@ -1,7 +1,7 @@
 ##################################################################################################################################
 Functional Coverage
 ##################################################################################################################################
-All the functionality for coverage can be found in *uvvm_util/src/funct_cov_pkg.vhd*.
+All the functionality for coverage can be found in *uvvm_util/src/func_cov_pkg.vhd*.
 
 To start using functional coverage it is necessary to import the utility library, create a variable with the protected 
 type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
@@ -34,7 +34,7 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
 
 .. note::
 
-    The syntax for all methods is given in :ref:`funct_cov_pkg`.
+    The syntax for all methods is given in :ref:`func_cov_pkg`.
 
 **********************************************************************************************************************************
 Concepts
@@ -646,28 +646,28 @@ A coverpoint's complete configuration and content (bins, coverage, etc.) can be 
 **********************************************************************************************************************************
 Additional info
 **********************************************************************************************************************************
-Log messages within the procedures and functions in the *funct_cov_pkg* use the following message IDs (disabled by default):
+Log messages within the procedures and functions in the *func_cov_pkg* use the following message IDs (disabled by default):
 
-* ID_FUNCT_COV: Used for logging functional coverage ``add_bins()`` and ``add_cross()``. Note that each bin function within the 
+* ID_FUNC_COV: Used for logging functional coverage ``add_bins()`` and ``add_cross()``. Note that each bin function within the 
   ``add_bins()`` and ``add_cross()`` log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.
-* ID_FUNCT_COV_BINS:  Used for logging functional coverage ``add_bins()`` and ``add_cross()`` detailed information
-* ID_FUNCT_COV_RAND:  Used for logging functional coverage randomization
-* ID_FUNCT_COV_SAMPLE: Used for logging functional coverage sampling
-* ID_FUNCT_COV_CONFIG: Used for logging functional coverage configuration
+* ID_FUNC_COV_BINS:  Used for logging functional coverage ``add_bins()`` and ``add_cross()`` detailed information
+* ID_FUNC_COV_RAND:  Used for logging functional coverage randomization
+* ID_FUNC_COV_SAMPLE: Used for logging functional coverage sampling
+* ID_FUNC_COV_CONFIG: Used for logging functional coverage configuration
 
-The default scope for log messages in the *funct_cov_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure 
+The default scope for log messages in the *func_cov_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure 
 ``set_scope()``. The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
 
 The maximum number of coverpoints that can be created is determined by C_FC_MAX_NUM_COVERPOINTS defined in adaptations_pkg.
 
-.. _funct_cov_pkg:
+.. _func_cov_pkg:
 
 **********************************************************************************************************************************
-funct_cov_pkg
+func_cov_pkg
 **********************************************************************************************************************************
 .. toctree::
    :maxdepth: 1
 
-   funct_cov_pkg_types.rst
-   funct_cov_pkg_methods.rst
-   funct_cov_pkg_t_coverpoint.rst
+   func_cov_pkg_types.rst
+   func_cov_pkg_methods.rst
+   func_cov_pkg_t_coverpoint.rst

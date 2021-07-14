@@ -22,14 +22,14 @@ library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 --HDLUnit:TB
-entity funct_cov_tb is
+entity func_cov_tb is
   generic(
     GC_TESTCASE  : string;
     GC_FILE_PATH : string := ""
   );
 end entity;
 
-architecture func of funct_cov_tb is
+architecture func of func_cov_tb is
 
   type t_integer_array is array (natural range <>) of integer_vector;
   type t_cov_bin_type_array is array (natural range <>) of t_cov_bin_type;
@@ -372,11 +372,11 @@ begin
     -------------------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Functional Coverage package - " & GC_TESTCASE);
     -------------------------------------------------------------------------------------------
-    enable_log_msg(ID_FUNCT_COV);
-    enable_log_msg(ID_FUNCT_COV_BINS);
-    enable_log_msg(ID_FUNCT_COV_RAND);
-    enable_log_msg(ID_FUNCT_COV_SAMPLE);
-    enable_log_msg(ID_FUNCT_COV_CONFIG);
+    enable_log_msg(ID_FUNC_COV);
+    enable_log_msg(ID_FUNC_COV_BINS);
+    enable_log_msg(ID_FUNC_COV_RAND);
+    enable_log_msg(ID_FUNC_COV_SAMPLE);
+    enable_log_msg(ID_FUNC_COV_CONFIG);
 
     --===================================================================================
     if GC_TESTCASE = "fc_bins" then
@@ -1439,7 +1439,7 @@ begin
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_bin" then
     --===================================================================================
-      disable_log_msg(ID_FUNCT_COV_SAMPLE);
+      disable_log_msg(ID_FUNC_COV_SAMPLE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");
@@ -1561,7 +1561,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing all bins are selected for randomization when coverage is complete");
       ------------------------------------------------------------
-      disable_log_msg(ID_FUNCT_COV_RAND);
+      disable_log_msg(ID_FUNC_COV_RAND);
 
       log(ID_SEQUENCER, "Calling rand() 1000 times");
       for i in 1 to 1000 loop
@@ -1602,7 +1602,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
       ------------------------------------------------------------
-      disable_log_msg(ID_FUNCT_COV_RAND);
+      disable_log_msg(ID_FUNC_COV_RAND);
 
       -- The adaptive randomization weight will ensure that all bins are covered
       -- almost at the same time, i.e. around the same number of iterations.
@@ -1673,7 +1673,7 @@ begin
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_cross" then
     --===================================================================================
-      disable_log_msg(ID_FUNCT_COV_SAMPLE);
+      disable_log_msg(ID_FUNC_COV_SAMPLE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");
@@ -1795,7 +1795,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing all bins are selected for randomization when coverage is complete");
       ------------------------------------------------------------
-      disable_log_msg(ID_FUNCT_COV_RAND);
+      disable_log_msg(ID_FUNC_COV_RAND);
 
       log(ID_SEQUENCER, "Calling rand() 1000 times");
       for i in 1 to 1000 loop
@@ -1836,7 +1836,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
       ------------------------------------------------------------
-      disable_log_msg(ID_FUNCT_COV_RAND);
+      disable_log_msg(ID_FUNC_COV_RAND);
 
       -- The adaptive randomization weight will ensure that all bins are covered
       -- almost at the same time, i.e. around the same number of iterations.

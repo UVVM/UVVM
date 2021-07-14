@@ -372,14 +372,14 @@ in a bin has reached the minimum coverage, the bin will be marked as covered.
 Overlapping bins
 ==================================================================================================================================
 If a sampled value is contained in more than one valid bin (not ignore or illegal), all the valid bins will collect the coverage, 
-i.e. increment number of hits.
+i.e. increment the number of hits.
 
-In case this in unintended behaviour in the testbench, a TB_WARNING alert can be generated when overlapping valid bins are sampled 
-by using the procedure ``set_bin_overlap_detection()``.
+In case this in unintended behaviour in the testbench, an alert can be generated when overlapping valid bins are sampled by using 
+the procedure ``set_bin_overlap_alert_level()`` to select the severity of the alert.
 
 .. code-block::
 
-    my_coverpoint.set_bin_overlap_detection(true);
+    my_coverpoint.set_bin_overlap_alert_level(TB_WARNING);
     my_coverpoint.add_bins(bin_range(1, 16, 1), "valid_sizes");
     my_coverpoint.add_bins(bin_range(15, 20, 1), "big_sizes");
     my_coverpoint.sample_coverage(15);

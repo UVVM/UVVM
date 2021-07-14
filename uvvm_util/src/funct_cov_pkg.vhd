@@ -207,13 +207,13 @@ package funct_cov_pkg is
       constant VOID : t_void)
     return t_alert_level;
 
-    procedure set_bin_overlap_detection(
-      constant enable       : in boolean;
+    procedure set_bin_overlap_alert_level(
+      constant alert_level  : in t_alert_level;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-    impure function get_bin_overlap_detection(
+    impure function get_bin_overlap_alert_level(
       constant VOID : t_void)
-    return boolean;
+    return t_alert_level;
 
     procedure write_coverage_db(
       constant file_name    : in string;
@@ -817,7 +817,7 @@ package body funct_cov_pkg is
     variable priv_rand_transition_bin_idx       : integer                                       := C_UNINITIALIZED;
     variable priv_rand_transition_bin_value_idx : t_natural_vector(0 to C_MAX_NUM_CROSS_BINS-1) := (others => 0);
     variable priv_illegal_bin_alert_level       : t_alert_level                                 := ERROR;
-    variable priv_detect_bin_overlap            : boolean                                       := false;
+    variable priv_bin_overlap_alert_level       : t_alert_level                                 := NO_ALERT;
     variable priv_num_bins_allocated_increment  : positive                                      := C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT;
 
     ------------------------------------------------------------
@@ -1442,21 +1442,21 @@ package body funct_cov_pkg is
       return priv_illegal_bin_alert_level;
     end function;
 
-    procedure set_bin_overlap_detection(
-      constant enable       : in boolean;
+    procedure set_bin_overlap_alert_level(
+      constant alert_level  : in t_alert_level;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "set_bin_overlap_detection(" & to_string(enable) & ")";
+      constant C_LOCAL_CALL : string := "set_bin_overlap_alert_level(" & to_upper(to_string(alert_level)) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNCT_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
-      priv_detect_bin_overlap := enable;
+      priv_bin_overlap_alert_level := alert_level;
     end procedure;
 
-    impure function get_bin_overlap_detection(
+    impure function get_bin_overlap_alert_level(
       constant VOID : t_void)
-    return boolean is
+    return t_alert_level is
     begin
-      return priv_detect_bin_overlap;
+      return priv_bin_overlap_alert_level;
     end function;
 
     procedure write_coverage_db(
@@ -1541,7 +1541,7 @@ package body funct_cov_pkg is
         write_value(priv_rand_transition_bin_idx);
         write_value(integer_vector(priv_rand_transition_bin_value_idx));
         write_value(t_alert_level'pos(priv_illegal_bin_alert_level));
-        write_value(priv_detect_bin_overlap);
+        write_value(t_alert_level'pos(priv_bin_overlap_alert_level));
         -- Covergroup config
         write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
         write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
@@ -1668,7 +1668,8 @@ package body funct_cov_pkg is
       read_value(priv_rand_transition_bin_value_idx);
       read_value(v_value);
       priv_illegal_bin_alert_level := t_alert_level'val(v_value);
-      read_value(priv_detect_bin_overlap);
+      read_value(v_value);
+      priv_bin_overlap_alert_level := t_alert_level'val(v_value);
       -- Covergroup config
       protected_covergroup_status.set_name(priv_id, priv_name); -- Previously read from the file
       read_value(v_value);
@@ -1777,7 +1778,7 @@ package body funct_cov_pkg is
       priv_rand_transition_bin_idx       := C_UNINITIALIZED;
       priv_rand_transition_bin_value_idx := (others => 0);
       priv_illegal_bin_alert_level       := ERROR;
-      priv_detect_bin_overlap            := false;
+      priv_bin_overlap_alert_level       := NO_ALERT;
       priv_num_bins_allocated_increment  := C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT;
     end procedure;
 
@@ -2429,8 +2430,8 @@ package body funct_cov_pkg is
           v_value_match := (others => '0');
         end loop;
 
-        if priv_detect_bin_overlap and v_num_occurrences > 1 then
-          alert(TB_WARNING, get_name_prefix(VOID) & "There is an overlap between " & to_string(v_num_occurrences) & " bins.", priv_scope);
+        if v_num_occurrences > 1 then
+          alert(priv_bin_overlap_alert_level, get_name_prefix(VOID) & "There is an overlap between " & to_string(v_num_occurrences) & " bins.", priv_scope);
         end if;
       else
         -- When an ignore or illegal bin is sampled, valid bins won't be sampled so we need to clear all transition indexes in the valid bins
@@ -2664,7 +2665,7 @@ package body funct_cov_pkg is
       end if;
       write(v_line, "          " & justify("SCOPE", left, C_COLUMN1_WIDTH)                    & ": " & justify(to_string(priv_scope), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("ILLEGAL BIN ALERT LEVEL", left, C_COLUMN1_WIDTH)  & ": " & justify(to_upper(to_string(priv_illegal_bin_alert_level)), right, C_COLUMN2_WIDTH) & LF);
-      write(v_line, "          " & justify("DETECT BIN OVERLAP", left, C_COLUMN1_WIDTH)       & ": " & justify(to_string(priv_detect_bin_overlap), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("BIN OVERLAP ALERT LEVEL", left, C_COLUMN1_WIDTH)  & ": " & justify(to_upper(to_string(priv_bin_overlap_alert_level)), right, C_COLUMN2_WIDTH) & LF);
       if priv_id /= C_DEALLOCATED_ID then
         write(v_line, "          " & justify("COVERAGE WEIGHT", left, C_COLUMN1_WIDTH)        & ": " & justify(to_string(protected_covergroup_status.get_coverage_weight(priv_id)), right, C_COLUMN2_WIDTH) & LF);
         write(v_line, "          " & justify("COVERAGE GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(protected_covergroup_status.get_coverage_goal(priv_id)), right, C_COLUMN2_WIDTH) & LF);

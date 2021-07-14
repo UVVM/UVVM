@@ -190,16 +190,16 @@ Returns the alert level when an illegal bin is sampled. ::
     log(ID_SEQUENCER, to_string(my_coverpoint.get_illegal_bin_alert_level(VOID)));
 
 
-set_bin_overlap_detection()
+set_bin_overlap_alert_level()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures if a TB_WARNING alert should be generated when overlapping bins are sampled (not including ignore or invalid bins). ::
+Configures the alert level when overlapping bins are sampled (not including ignore or invalid bins). Default value is NO_ALERT. ::
 
-    set_bin_overlap_detection(enable, [msg_id_panel])
+    set_bin_overlap_alert_level(alert_level, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | enable             | in     | boolean                      | Enables/disables the alert                            |
+| constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -207,14 +207,14 @@ Configures if a TB_WARNING alert should be generated when overlapping bins are s
 .. code-block::
 
     Examples:
-    my_coverpoint.set_bin_overlap_detection(true);
+    my_coverpoint.set_bin_overlap_alert_level(TB_WARNING);
 
 
-get_bin_overlap_detection()
+get_bin_overlap_alert_level()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns true when the alert for overlapping bins is enabled otherwise returns false. ::
+Returns the alert level when overlapping bins are sampled. ::
 
-    boolean := get_bin_overlap_detection(VOID)
+    t_alert_level := get_bin_overlap_alert_level(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Type     | Name               | Dir.   | Type                         | Description                                           |
@@ -225,7 +225,7 @@ Returns true when the alert for overlapping bins is enabled otherwise returns fa
 .. code-block::
 
     Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_bin_overlap_detection(VOID)));
+    log(ID_SEQUENCER, to_string(my_coverpoint.get_bin_overlap_alert_level(VOID)));
 
 
 write_coverage_db()

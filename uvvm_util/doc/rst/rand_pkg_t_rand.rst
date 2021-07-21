@@ -15,7 +15,7 @@ adaptations_pkg. ::
     set_name(name)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                             |
+| Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | name               | in     | string                       | Name of the random generator used in the reports        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -33,7 +33,7 @@ Returns the random :ref:`random generator's <random_generator>` name. ::
     string := get_name(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -52,7 +52,7 @@ in adaptations_pkg. ::
     set_scope(scope)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                             |
+| Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -77,7 +77,7 @@ Returns the configured scope. ::
     string := get_scope(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -96,7 +96,7 @@ distributions click :ref:`here <rand_pkg_distributions>`. ::
     set_rand_dist(rand_dist, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | rand_dist          | in     | :ref:`t_rand_dist`           | Randomization distribution, e.g. UNIFORM, GAUSSIAN    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -116,7 +116,7 @@ Returns the configured randomization distribution. ::
     t_rand_dist := get_rand_dist(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -136,7 +136,7 @@ distribution curve). ::
     set_rand_dist_mean(mean, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | mean               | in     | real                         | Mean value for the distribution                       |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -157,7 +157,7 @@ being used (since it depends on the parameters of each ``rand()`` call). ::
     real := get_rand_dist_mean(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -177,7 +177,7 @@ Clears the configured mean value. A value depending on the parameters of each ``
     clear_rand_dist_mean(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -200,7 +200,7 @@ distribution curve). ::
     set_rand_dist_std_deviation(std_deviation, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | std_deviation      | in     | real                         | Standard deviation value for the distribution.        |
 |          |                    |        |                              | Must be a positive value                              |
@@ -222,7 +222,7 @@ default value is being used (since it depends on the parameters of each ``rand()
     real := get_rand_dist_std_deviation(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -242,7 +242,7 @@ Clears the configured standard deviation value. A value depending on the paramet
     clear_rand_dist_std_deviation(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -264,7 +264,7 @@ overview on weighted randomization click :ref:`here <rand_pkg_weighted>`. ::
     set_range_weight_default_mode(mode, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | mode               | in     | :ref:`t_weight_mode`         | How to divide the weight among a range of values      |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -284,7 +284,7 @@ Returns the default range weight mode. ::
     t_weight_mode := get_range_weight_default_mode(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -304,7 +304,7 @@ on cyclic randomization click :ref:`here <rand_pkg_cyclic>`. ::
     clear_rand_cyclic(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -326,7 +326,7 @@ generated report click :ref:`here <rand_pkg_config_report>`. ::
     report_config(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -347,7 +347,7 @@ and C_RAND_INIT_SEED_2 in adaptations_pkg. ::
     set_rand_seeds(seeds)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | str                | in     | string                       | A string from which the seeds will be generated       |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -374,7 +374,7 @@ Returns the randomization seeds. ::
     t_positive_vector(0 to 1) := get_rand_seeds(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | variable | seed1              | out    | positive                     | A positive number representing seed 1                 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -408,7 +408,7 @@ Returns a random integer value. ::
     integer := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | min_value          | in     | integer                      | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -452,7 +452,7 @@ Returns a random real value. ::
     real := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | min_value          | in     | real                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -494,7 +494,7 @@ Returns a random time value. ::
     time := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -536,7 +536,7 @@ Returns a vector of random integer values. ::
     integer_vector := rand(size, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | size               | in     | positive                     | The size of the vector to be returned                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -584,7 +584,7 @@ Returns a vector of random real values. ::
     real_vector := rand(size, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | size               | in     | positive                     | The size of the vector to be returned                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -630,7 +630,7 @@ Returns a vector of random time values. ::
     time_vector := rand(size, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | size               | in     | positive                     | The size of the vector to be returned                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -677,7 +677,7 @@ Returns a random unsigned value. ::
     unsigned := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -720,7 +720,7 @@ The overload without the length parameter uses the max_value length for the retu
     unsigned := rand(length, min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -754,7 +754,7 @@ Returns a random signed value. ::
     signed := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -797,7 +797,7 @@ The overload without the length parameter uses the max_value length for the retu
     signed := rand(length, min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -831,7 +831,7 @@ Returns a random std_logic_vector value (interpreted as unsigned). ::
     std_logic_vector := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -875,7 +875,7 @@ value. ::
     std_logic_vector := rand(length, min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -903,7 +903,7 @@ Returns a random std_logic value. ::
     std_logic := rand(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -927,7 +927,7 @@ Returns a random boolean value. ::
     boolean := rand(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -956,7 +956,7 @@ randomization. The sum of all weights could be any value since each individual p
     std_logic_vector := rand_val_weight(length, weight_vector, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                                   |
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -1000,7 +1000,7 @@ This mode can be changed to assigning the given weight equally to each value wit
     std_logic_vector := rand_range_weight(length, weight_vector, [msg_id_panel])
 
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                          | Description                                                   |
+| Object   | Name               | Dir.   | Type                          | Description                                                   |
 +==========+====================+========+===============================+===============================================================+
 | constant | weight_vector      | in     | :ref:`t_range_weight_int_vec` | A vector containing sets of (min, max, weight). To specify a  |
 |          |                    |        |                               | single value, it needs to be set equally for min and max.     |
@@ -1051,7 +1051,7 @@ values within a real/time range. ::
     std_logic_vector := rand_range_weight_mode(length, weight_vector, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                               | Description                                                    |
+| Object   | Name               | Dir.   | Type                               | Description                                                    |
 +==========+====================+========+====================================+================================================================+
 | constant | weight_vector      | in     | :ref:`t_range_weight_mode_int_vec` | A vector containing sets of (min, max, weight, mode). To       |
 |          |                    |        |                                    | specify a single value, it needs to be set equally for min and |

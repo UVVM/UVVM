@@ -15,7 +15,7 @@ defined in adaptations_pkg. ::
     t_new_bin_array := bin(set_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | integer                      | Single value contained in the bin                     |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -37,7 +37,7 @@ created for each value. If the division has a residue, it is spread equally star
     t_new_bin_array := bin_range(min_value, max_value, [num_bins])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | min_value          | in     | integer                      | Minimum value in the range to create the bins         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -62,7 +62,7 @@ created for each value. If the division has a residue, it is spread equally star
     t_new_bin_array := bin_vector(vector, [num_bins])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | vector             | in     | std_logic_vector             | Vector used to create the bins                        |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -85,7 +85,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
     t_new_bin_array := bin_transition(set_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | set_values         | in     | integer_vector               | Transition of values contained in the bin             |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -103,7 +103,7 @@ Returns a t_new_bin_array containing an ignore bin with a single value. ::
     t_new_bin_array := ignore_bin(value)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | integer                      | Single value contained in the bin                     |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -121,7 +121,7 @@ Returns a t_new_bin_array containing an ignore bin with a range of values. ::
     t_new_bin_array := ignore_bin_range(min_value, max_value)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | min_value          | in     | integer                      | Minimum value in the range to create the bin          |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -142,7 +142,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
     t_new_bin_array := ignore_bin_transition(set_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | set_values         | in     | integer_vector               | Transition of values contained in the bin             |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -160,7 +160,7 @@ Returns a t_new_bin_array containing an illegal bin with a single value. ::
     t_new_bin_array := illegal_bin(value)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | integer                      | Single value contained in the bin                     |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -178,7 +178,7 @@ Returns a t_new_bin_array containing an illegal bin with a range of values. ::
     t_new_bin_array := illegal_bin_range(min_value, max_value)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | min_value          | in     | integer                      | Minimum value in the range to create the bin          |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -199,7 +199,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
     t_new_bin_array := illegal_bin_transition(set_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | set_values         | in     | integer_vector               | Transition of values contained in the bin             |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -218,7 +218,7 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
     fc_set_overall_coverage_goal(percentage, [scope, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                             |
+| Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | percentage         | in     | positive                     | Goal percentage of each coverpoint to cover             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -240,7 +240,7 @@ Returns the overall coverage goal. ::
     positive := fc_get_overall_coverage_goal(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -258,7 +258,7 @@ Returns the accumulated coverage for all the coverpoints in the testbench. ::
     real := fc_get_overall_coverage(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -276,7 +276,7 @@ Returns true if the accumulated coverage for all the coverpoints in the testbenc
     boolean := fc_overall_coverage_completed(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -298,7 +298,7 @@ The printing destination can be log and/or console and is defined by shared_defa
     fc_report_overall_coverage(scope)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                             |
+| Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+

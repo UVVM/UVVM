@@ -10,7 +10,7 @@ Configures the name of the coverpoint. The maximum length is C_FC_MAX_NAME_LENGT
     set_name(name)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                             |
+| Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | name               | in     | string                       | Name of the coverpoint used in logs and reports         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -28,7 +28,7 @@ Returns the coverpoint's name. ::
     string := get_name(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -47,7 +47,7 @@ in adaptations_pkg. ::
     set_scope(scope)
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                             |
+| Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -65,7 +65,7 @@ Returns the configured scope. ::
     string := get_scope(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -83,7 +83,7 @@ Configures the weight of the coverpoint used when calculating the overall covera
     set_coverage_weight(weight, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | weight             | in     | positive                     | Weight of the coverpoint                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -103,7 +103,7 @@ Returns the coverpoint's coverage weight. ::
     positive := get_coverage_weight(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -121,7 +121,7 @@ Configures the coverpoint's coverage goal. Default value is 100. ::
     set_coverage_goal(percentage, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | percentage         | in     | positive                     | Goal percentage of the coverpoint to cover            |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -141,7 +141,7 @@ Returns the coverpoint's coverage goal. ::
     positive := get_coverage_goal(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -159,7 +159,7 @@ Configures the alert level when an illegal bin is sampled. Default value is ERRO
     set_illegal_bin_alert_level(alert_level, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -179,7 +179,7 @@ Returns the alert level when an illegal bin is sampled. ::
     t_alert_level := get_illegal_bin_alert_level(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -197,7 +197,7 @@ Configures the alert level when overlapping bins are sampled (not including igno
     set_bin_overlap_alert_level(alert_level, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -217,7 +217,7 @@ Returns the alert level when overlapping bins are sampled. ::
     t_alert_level := get_bin_overlap_alert_level(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -235,7 +235,7 @@ Writes the coverpoint model to a file. ::
     write_coverage_db(file_name, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | file_name          | in     | string                       | Name of the file where to store the coverpoint model  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -255,7 +255,7 @@ Loads the coverpoint model from a file. ::
     load_coverage_db(file_name, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | file_name          | in     | string                       | Name of the file where the coverpoint model is stored |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -276,7 +276,7 @@ Resets the coverpoint's coverage by clearing all the bin hit counters. ::
     clear_coverage(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -298,7 +298,7 @@ bins. ::
     set_num_allocated_bins(value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | positive                     | New size of the bin list                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -318,7 +318,7 @@ Defines how much the list of bins will be increased in size when it is full and 
     set_num_allocated_bins_increment(value)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | positive                     | Size increment of the bin list                        |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -337,7 +337,7 @@ Deallocates the list of bins and resets all configuration settings to their defa
     clear_coverpoint(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -361,7 +361,7 @@ Bin functions may be concatenated to add several bins at once. Default values fo
     add_bins(bin, [bin_name, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | bin                | in     | t_new_bin_array              | Array containing one or several bins                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -393,7 +393,7 @@ rand_weight are both 1. ::
     add_cross(bin1, bin2, [bin_name, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | bin(n)             | in     | t_new_bin_array              | Array containing one or several bins                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -439,7 +439,7 @@ Default values for min_hits and rand_weight are both 1. ::
     add_cross(coverpoint1, coverpoint2, [bin_name, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | variable | coverpoint(n)      | inout  | t_coverpoint                 | Protected type containing a coverpoint                |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -487,7 +487,7 @@ it will return a random value among all the valid bins. Note that ignore and ill
     integer_vector := rand(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -510,7 +510,7 @@ Returns true if the coverpoint contains at least one bin. ::
     boolean := is_defined(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -532,7 +532,7 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
     sample_coverage(values, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | integer                      | Value to be sampled                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -555,7 +555,7 @@ Returns the accumulated coverage for all the bins in the coverpoint. ::
     real := get_coverage(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -573,7 +573,7 @@ Returns true if the accumulated coverage for all the bins in the coverpoint has 
     boolean := coverage_completed(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
@@ -596,7 +596,7 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
     report_coverage(verbosity, [rand_weight_col])
 
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                            | Description                                           |
+| Object   | Name               | Dir.   | Type                            | Description                                           |
 +==========+====================+========+=================================+=======================================================+
 | constant | VOID               | in     | t_void                          | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
@@ -621,7 +621,7 @@ Prints a report containing the coverpoints's configuration parameters. To see an
     report_config(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Type     | Name               | Dir.   | Type                         | Description                                           |
+| Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+

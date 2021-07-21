@@ -429,8 +429,8 @@ Similar functions for the overall status are ``fc_get_overall_coverage()`` and `
 
 .. code-block::
 
-    log(ID_SEQUENCER, "My Coverpoint Coverage: " & to_string(my_coverpoint.get_coverage(VOID)));
-    log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID)));
+    log(ID_SEQUENCER, "My Coverpoint Coverage: " & to_string(my_coverpoint.get_coverage(VOID),2) & "%");
+    log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
 
     -- Do something while the coverpoint's coverage is incomplete
     while not(my_coverpoint.coverage_completed(VOID)) loop
@@ -449,6 +449,8 @@ A default name is automatically given to the coverpoint when it is configured or
 the ``set_name()`` procedure.
 
 The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
+
+.. _func_cov_pkg_coverage_report:
 
 **********************************************************************************************************************************
 Coverage report
@@ -569,6 +571,8 @@ Only the main information is contained in the report, i.e. bins are not included
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
 
+.. _func_cov_pkg_config_report:
+
 **********************************************************************************************************************************
 Configuration report
 **********************************************************************************************************************************
@@ -648,12 +652,12 @@ Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *func_cov_pkg* use the following message IDs (disabled by default):
 
-* ID_FUNC_COV: Used for logging functional coverage ``add_bins()`` and ``add_cross()``. Note that each bin function within the 
-  ``add_bins()`` and ``add_cross()`` log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.
-* ID_FUNC_COV_BINS:  Used for logging functional coverage ``add_bins()`` and ``add_cross()`` detailed information
-* ID_FUNC_COV_RAND:  Used for logging functional coverage randomization
-* ID_FUNC_COV_SAMPLE: Used for logging functional coverage sampling
-* ID_FUNC_COV_CONFIG: Used for logging functional coverage configuration
+* ID_FUNC_COV: Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods. Note that each bin function within 
+  the ``add_bins()`` and ``add_cross()`` log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.
+* ID_FUNC_COV_BINS:  Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods detailed information.
+* ID_FUNC_COV_RAND:  Used for logging functional coverage "optimized randomization" values returned by rand().
+* ID_FUNC_COV_SAMPLE: Used for logging functional coverage sampling.
+* ID_FUNC_COV_CONFIG: Used for logging functional coverage configuration changes.
 
 The default scope for log messages in the *func_cov_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure 
 ``set_scope()``. The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
@@ -665,9 +669,12 @@ The maximum number of coverpoints that can be created is determined by C_FC_MAX_
 **********************************************************************************************************************************
 func_cov_pkg
 **********************************************************************************************************************************
+The following links contain information regarding the API of the protected type *t_coverpoint*, the API for the general methods and 
+all the type definitions inside *func_cov_pkg*.
+
 .. toctree::
    :maxdepth: 1
 
-   func_cov_pkg_types.rst
-   func_cov_pkg_methods.rst
    func_cov_pkg_t_coverpoint.rst
+   func_cov_pkg_methods.rst
+   func_cov_pkg_types.rst

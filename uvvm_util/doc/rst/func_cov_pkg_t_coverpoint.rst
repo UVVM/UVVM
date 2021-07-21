@@ -1,7 +1,7 @@
 **********************************************************************************************************************************
 t_coverpoint (protected)
 **********************************************************************************************************************************
-Protected type containing all the coverage functionality.
+Protected type containing the Functional Coverage functionality.
 
 set_name()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ Configures the name of the coverpoint. The maximum length is C_FC_MAX_NAME_LENGT
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_name("ADDR_COVPT");
 
 
@@ -35,8 +35,8 @@ Returns the coverpoint's name. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, my_coverpoint.get_name(VOID));
+    -- Example:
+    log(ID_SEQUENCER, "Coverpoint: " & my_coverpoint.get_name(VOID));
 
 
 set_scope()
@@ -54,7 +54,7 @@ in adaptations_pkg. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_scope("MY_SCOPE");
 
 
@@ -72,7 +72,7 @@ Returns the configured scope. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     scope := my_coverpoint.get_scope(VOID);
 
 
@@ -92,7 +92,7 @@ Configures the weight of the coverpoint used when calculating the overall covera
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_coverage_weight(3);
 
 
@@ -110,8 +110,8 @@ Returns the coverpoint's coverage weight. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_coverage_weight(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Weight: " & to_string(my_coverpoint.get_coverage_weight(VOID)));
 
 
 set_coverage_goal()
@@ -130,7 +130,7 @@ Configures the coverpoint's coverage goal. Default value is 100. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_coverage_goal(150);
 
 
@@ -148,8 +148,8 @@ Returns the coverpoint's coverage goal. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_coverage_goal(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Goal: " & to_string(my_coverpoint.get_coverage_goal(VOID)));
 
 
 set_illegal_bin_alert_level()
@@ -168,7 +168,7 @@ Configures the alert level when an illegal bin is sampled. Default value is ERRO
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_illegal_bin_alert_level(WARNING);
 
 
@@ -186,8 +186,8 @@ Returns the alert level when an illegal bin is sampled. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_illegal_bin_alert_level(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Illegal bin alert level: " & to_upper(to_string(my_coverpoint.get_illegal_bin_alert_level(VOID))));
 
 
 set_bin_overlap_alert_level()
@@ -206,7 +206,7 @@ Configures the alert level when overlapping bins are sampled (not including igno
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_bin_overlap_alert_level(TB_WARNING);
 
 
@@ -224,8 +224,8 @@ Returns the alert level when overlapping bins are sampled. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_bin_overlap_alert_level(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Bin overlap alert level: " & to_upper(to_string(my_coverpoint.get_bin_overlap_alert_level(VOID))));
 
 
 write_coverage_db()
@@ -244,7 +244,7 @@ Writes the coverpoint model to a file. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.write_coverage_db("my_coverpoint_db.txt");
 
 
@@ -264,7 +264,7 @@ Loads the coverpoint model from a file. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
 
 
@@ -285,7 +285,7 @@ Resets the coverpoint's coverage by clearing all the bin hit counters. ::
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.clear_coverage(VOID);
     my_coverpoint.clear_coverage(my_msg_id_panel);
 
@@ -307,7 +307,7 @@ bins. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_num_allocated_bins(60);
 
 
@@ -325,7 +325,7 @@ Defines how much the list of bins will be increased in size when it is full and 
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.set_num_allocated_bins_increment(3);
 
 
@@ -346,7 +346,7 @@ Deallocates the list of bins and resets all configuration settings to their defa
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.clear_coverpoint(VOID);
     my_coverpoint.clear_coverpoint(my_msg_id_panel);
 
@@ -376,7 +376,7 @@ Bin functions may be concatenated to add several bins at once. Default values fo
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.add_bins(bin(10), 5, 3, "low_value");
     my_coverpoint.add_bins(bin(20), 5, "middle_value");
     my_coverpoint.add_bins(bin(30) & bin(40) & bin(50), "high_values");
@@ -408,7 +408,7 @@ rand_weight are both 1. ::
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_cross.add_cross(bin(10), bin_range(0,15,1), 5, 3, "low_values");
     my_cross.add_cross(bin(20), bin_range(16,31,1), 5, "middle_values");
     my_cross.add_cross(bin(30), bin_range(32,63,1), "high_values");
@@ -454,7 +454,7 @@ Default values for min_hits and rand_weight are both 1. ::
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint_addr.add_bins(bin_vector(addr));
     my_coverpoint_size.add_bins(bin_range(0,127,1));
     my_cross.add_cross(my_coverpoint_addr, my_coverpoint_size, 5, 3, "cross_addr_size");
@@ -496,7 +496,7 @@ it will return a random value among all the valid bins. Note that ignore and ill
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     addr := my_coverpoint.rand(VOID);
     addr := my_coverpoint.rand(my_msg_id_panel);
     addr_vec := my_coverpoint.rand(VOID);
@@ -517,7 +517,7 @@ Returns true if the coverpoint contains at least one bin. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     if my_coverpoint.is_defined(VOID) then
     ...
     end if;
@@ -543,7 +543,7 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.sample_coverage(10);
     my_coverpoint.sample_coverage((10,50));
 
@@ -562,8 +562,8 @@ Returns the accumulated coverage for all the bins in the coverpoint. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(my_coverpoint.get_coverage(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Coverage: " & to_string(my_coverpoint.get_coverage(VOID),2) & "%");
 
 
 coverage_completed()
@@ -580,7 +580,7 @@ Returns true if the accumulated coverage for all the bins in the coverpoint has 
 
 .. code-block::
 
-    Examples:
+    -- Example:
     if my_coverpoint.coverage_completed(VOID) then
     ...
     end if;
@@ -588,10 +588,9 @@ Returns true if the accumulated coverage for all the bins in the coverpoint has 
 
 report_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints the coverpoint coverage summary containing all the bins. By default, illegal and ignore bins are not printed out, with the 
-exception of illegal bins that have at least one hit. Using the parameter verbosity, all illegal and ignore bins can be printed, 
-alternatively only the coverage holes can be printed as well. The printing destination can be log and/or console and is defined by 
-shared_default_log_destination in adaptations_pkg. ::
+Prints the coverpoint coverage summary containing all the bins. The printing destination can be log and/or console and is defined 
+by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click 
+:ref:`here <func_cov_pkg_coverage_report>`. ::
 
     report_coverage(VOID)
     report_coverage(verbosity, [rand_weight_col])
@@ -608,7 +607,7 @@ shared_default_log_destination in adaptations_pkg. ::
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.report_coverage(VOID);
     my_coverpoint.report_coverage(HOLES_ONLY);
     my_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
@@ -616,7 +615,8 @@ shared_default_log_destination in adaptations_pkg. ::
 
 report_config()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints a report containing the coverpoints's configuration parameters. ::
+Prints a report containing the coverpoints's configuration parameters. To see an example of the generated report click 
+:ref:`here <func_cov_pkg_config_report>`. ::
 
     report_config(VOID)
 
@@ -628,5 +628,5 @@ Prints a report containing the coverpoints's configuration parameters. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.report_config(VOID);

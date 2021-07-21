@@ -24,7 +24,7 @@ defined in adaptations_pkg. ::
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.add_bins(bin(10));
     my_coverpoint.add_bins(bin((5,10,15,20)));
 
@@ -48,7 +48,7 @@ created for each value. If the division has a residue, it is spread equally star
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.add_bins(bin_range(10,20));   -- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20
     my_coverpoint.add_bins(bin_range(10,20,1)); -- creates 1 bin:   10 to 20
     my_coverpoint.add_bins(bin_range(10,20,4)); -- creates 4 bins:  10 to 11, 12 to 14, 15 to 17, 18 to 20
@@ -71,7 +71,7 @@ created for each value. If the division has a residue, it is spread equally star
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     my_coverpoint.add_bins(bin_vector(address));   -- creates 2**(address'length) bins: address[0], address[1], ...
     my_coverpoint.add_bins(bin_vector(address,1)); -- creates 1 bin
     my_coverpoint.add_bins(bin_vector(address,4)); -- creates 4 bins
@@ -92,7 +92,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(bin_transition(1,2,9,10));
 
 
@@ -110,7 +110,7 @@ Returns a t_new_bin_array containing an ignore bin with a single value. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(ignore_bin(50));
 
 
@@ -130,7 +130,7 @@ Returns a t_new_bin_array containing an ignore bin with a range of values. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(ignore_bin_range(50,60));
 
 
@@ -149,7 +149,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(ignore_bin_transition(20,21,22,30));
 
 
@@ -167,7 +167,7 @@ Returns a t_new_bin_array containing an illegal bin with a single value. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(illegal_bin(100));
 
 
@@ -187,7 +187,7 @@ Returns a t_new_bin_array containing an illegal bin with a range of values. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(illegal_bin_range(100,200));
 
 
@@ -206,7 +206,7 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
 .. code-block::
 
-    Examples:
+    -- Example:
     my_coverpoint.add_bins(illegal_bin_transition(30,10,0));
 
 
@@ -229,7 +229,7 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
 
 .. code-block::
 
-    Examples:
+    -- Example:
     fc_set_overall_coverage_goal(200);
 
 
@@ -247,8 +247,8 @@ Returns the overall coverage goal. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(fc_get_overall_coverage_goal(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Overall goal: " & to_string(fc_get_overall_coverage_goal(VOID)));
 
 
 fc_get_overall_coverage()
@@ -265,8 +265,8 @@ Returns the accumulated coverage for all the coverpoints in the testbench. ::
 
 .. code-block::
 
-    Examples:
-    log(ID_SEQUENCER, to_string(fc_get_overall_coverage(VOID)));
+    -- Example:
+    log(ID_SEQUENCER, "Overall coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
 
 
 fc_overall_coverage_completed()
@@ -283,7 +283,7 @@ Returns true if the accumulated coverage for all the coverpoints in the testbenc
 
 .. code-block::
 
-    Examples:
+    -- Example:
     if fc_overall_coverage_completed(VOID) then
     ...
     end if;
@@ -307,6 +307,6 @@ The printing destination can be log and/or console and is defined by shared_defa
 
 .. code-block::
 
-    Examples:
+    -- Examples:
     fc_report_overall_coverage(VOID);
     fc_report_overall_coverage(my_scope);

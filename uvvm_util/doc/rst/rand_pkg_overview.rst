@@ -142,6 +142,8 @@ If the constraints are not enough to generate unique values for the whole vector
 
     unique_addresses := my_rand.rand(63, 0, 50, UNIQUE);
 
+.. _rand_pkg_cyclic:
+
 **********************************************************************************************************************************
 Cyclic generation
 **********************************************************************************************************************************
@@ -171,6 +173,8 @@ not repeat until all the values within the constraints have been generated. Once
 .. important::
     It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to deallocate the
     list/queue.
+
+.. _rand_pkg_distributions:
 
 **********************************************************************************************************************************
 Distributions
@@ -206,6 +210,8 @@ Gaussian (Normal)
       addr := my_rand.rand(-10, 10);
     end loop;
 
+.. _rand_pkg_weighted:
+
 Weighted
 ==================================================================================================================================
 This distribution does NOT use the ``set_rand_dist()`` procedure, but instead uses different randomization functions with parameters
@@ -215,36 +221,43 @@ of (value + weight) or (range of values + weight). The function names contain th
     * :ref:`rand_range_weight`
     * :ref:`rand_range_weight_mode`
 
-.. note::
-    The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
+When specifying a weight for a range of values there are two possible interpretations:
 
-When specifying a weight for a range of values there are two possible scenarios:
-
-#. Combined weight: The given weight is assigned to the range as a whole, i.e. each value within the range has a fraction of the 
-   given weight.
-#. Individual weight: The given weight is assigned equally to each value within the range.
+#. COMBINED_WEIGHT: The given weight is assigned to the range as a whole, i.e. each value within the range has an equal fraction 
+   of the given weight.
+#. INDIVIDUAL_WEIGHT: The given weight is assigned equally to each value within the range, hence the range will have a total weight 
+   higher than the given weight.
 
 The default mode is COMBINED_WEIGHT, however this can be changed using the ``set_range_weight_default_mode()`` procedure. Alternatively,
 it is possible to explicitly define the mode while generating the random number in the ``rand_range_weight_mode()`` function.
 
 .. code-block::
 
-    -- 1. value, weight
-    my_rand.rand_val_weight(((-5,1),(0,3),(5,1))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
+    -- Example 1: value, weight
+    addr := my_rand.rand_val_weight(((-5,1),(0,3),(5,1))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
 
-    -- 2. range(min/max), weight
-    my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with 
-                                                               -- their corresponding weights and default mode
+    -- Example 2: range(min/max), weight
+    addr := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with 
+                                                                       -- their corresponding weights and default mode
 
-    -- 3. range(min/max), weight, weight mode
-    my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value between -5 and -3, 0 and between 
-                                                                                                         -- 1 and 5 with their corresponding weights and explicit modes
+    -- Example 3: range(min/max), weight, weight mode
+    addr := my_rand.rand_range_weight_mode(((-5,-3,30,COMBINED_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value between -5 and -3, 0 and between 
+                                                                                                               -- 1 and 5 with their corresponding weights and explicit modes
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 
 .. note::
+    The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
+
+.. note::
+    While it is possible to use different weight modes on each range in a single procedure call, it is recommended to use the same 
+    ones to avoid confusion regarding the distribution of the weights.
+
+.. note::
     The real and time weighted randomization functions only support the COMBINED_WEIGHT mode due to the very large number of values 
     within a real/time range.
+
+.. _rand_pkg_config_report:
 
 **********************************************************************************************************************************
 Configuration report
@@ -281,8 +294,8 @@ Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
-* ID_RAND_GEN: Used for logging random generated values
-* ID_RAND_CONF: Used for logging randomization configuration
+* ID_RAND_GEN: Used for logging general randomization values returned by rand().
+* ID_RAND_CONF: Used for logging general randomization configuration changes, except from name and scope.
 
 The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``. 
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.
@@ -294,8 +307,11 @@ The number of decimal digits displayed in the real values logs can be adjusted w
 **********************************************************************************************************************************
 rand_pkg
 **********************************************************************************************************************************
+The following links contain information regarding the API of the protected type *t_rand* and all the type definitions inside 
+*rand_pkg*.
+
 .. toctree::
    :maxdepth: 1
 
-   rand_pkg_types.rst
    rand_pkg_t_rand.rst
+   rand_pkg_types.rst

@@ -90,13 +90,13 @@ package adaptations_pkg is
     ID_GEN_PULSE,             -- Used for logging when a gen_pulse procedure starts pulsing a signal
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
-    ID_RAND_GEN,              -- Used for logging random generated values
-    ID_RAND_CONF,             -- Used for logging randomization configuration
-    ID_FUNC_COV,              -- Used for logging functional coverage add_bins and add_cross
-    ID_FUNC_COV_BINS,         -- Used for logging functional coverage add_bins and add_cross detailed information
-    ID_FUNC_COV_RAND,         -- Used for logging functional coverage randomization
+    ID_RAND_GEN,              -- Used for logging general randomization values returned by rand()
+    ID_RAND_CONF,             -- Used for logging general randomization configuration changes, except from name and scope
+    ID_FUNC_COV,              -- Used for logging functional coverage add_bins() and add_cross() methods
+    ID_FUNC_COV_BINS,         -- Used for logging functional coverage add_bins() and add_cross() methods detailed information
+    ID_FUNC_COV_RAND,         -- Used for logging functional coverage "optimized randomization" values returned by rand()
     ID_FUNC_COV_SAMPLE,       -- Used for logging functional coverage sampling
-    ID_FUNC_COV_CONFIG,       -- Used for logging functional coverage configuration
+    ID_FUNC_COV_CONFIG,       -- Used for logging functional coverage configuration changes
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
     -- Directly inside test sequencers

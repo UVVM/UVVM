@@ -77,6 +77,8 @@ There are different ways of constraining the random value in a clear and consist
     -- 4. min & max + two sets of values
     addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
 
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
+
 **********************************************************************************************************************************
 Return types
 **********************************************************************************************************************************
@@ -188,13 +190,18 @@ Uniform
 * The supported types are integer, integer_vector, real, real_vector, time, time_vector, unsigned, signed, std_logic_vector, std_logic 
   and boolean.
 * No restrictions on configuration parameters.
+* When combining a range with a set of values, the probability of generating any legal number is 1/(number of legal numbers). The 
+  only exception to this rule is for real numbers.
+* When combining a real range with a set of values, the probability will be 50% for the range and 50% for the set of values, hence 
+  any number in the set of values will have a higher probability than any single number within the range, otherwise the set of values 
+  would be rarely generated due to the large number of values within a real range.
 
 Gaussian (Normal)
 ==================================================================================================================================
 * The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
   signed and std_logic_vector lengths bigger than 32 bits are not supported however.
 * The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
-* Only the min/max constraints are supported when using this distribution, i.e. no set_of_values are supported.
+* Only the min/max constraints are supported when using this distribution, i.e. no set of values are supported.
 * Cannot be combined with cyclic or uniqueness parameters.
 * Cannot be combined with weighted randomization functions.
 * To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures respectively.
@@ -221,6 +228,9 @@ of (value + weight) or (range of values + weight). The function names contain th
     * :ref:`rand_range_weight`
     * :ref:`rand_range_weight_mode`
 
+.. important::
+    The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
+
 When specifying a weight for a range of values there are two possible interpretations:
 
 #. COMBINED_WEIGHT: The given weight is assigned to the range as a whole, i.e. each value within the range has an equal fraction 
@@ -245,9 +255,6 @@ it is possible to explicitly define the mode while generating the random number 
                                                                                                                -- 1 and 5 with their corresponding weights and explicit modes
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
-
-.. note::
-    The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
 
 .. note::
     While it is possible to use different weight modes on each range in a single procedure call, it is recommended to use the same 

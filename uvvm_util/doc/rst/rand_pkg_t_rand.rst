@@ -397,7 +397,7 @@ rand()
 
 return integer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random integer value. ::
+Returns a random integer value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     integer := rand(min_value, max_value, [cyclic_mode, [msg_id_panel]])
     integer := rand(set_type, set_values, [cyclic_mode, [msg_id_panel]])
@@ -441,7 +441,7 @@ Returns a random integer value. ::
 
 return real
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random real value. ::
+Returns a random real value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     real := rand(min_value, max_value, [msg_id_panel])
     real := rand(set_type, set_values, [msg_id_panel])
@@ -483,7 +483,7 @@ Returns a random real value. ::
 
 return time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random time value. ::
+Returns a random time value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     time := rand(min_value, max_value, [msg_id_panel])
     time := rand(set_type, set_values, [msg_id_panel])
@@ -525,7 +525,7 @@ Returns a random time value. ::
 
 return integer_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a vector of random integer values. ::
+Returns a vector of random integer values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     integer_vector := rand(size, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
     integer_vector := rand(size, set_type, set_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
@@ -573,7 +573,7 @@ Returns a vector of random integer values. ::
 
 return real_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a vector of random real values. ::
+Returns a vector of random real values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     real_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
     real_vector := rand(size, set_type, set_values, [uniqueness, [msg_id_panel]])
@@ -619,7 +619,7 @@ Returns a vector of random real values. ::
 
 return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a vector of random time values. ::
+Returns a vector of random time values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     time_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
     time_vector := rand(size, set_type, set_values, [uniqueness, [msg_id_panel]])
@@ -665,7 +665,7 @@ Returns a vector of random time values. ::
 
 return unsigned
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random unsigned value. ::
+Returns a random unsigned value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     unsigned := rand(length, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
@@ -714,7 +714,8 @@ Returns a random unsigned value. ::
 return unsigned (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random unsigned value. The unsigned constraints can be used for min and max values bigger than the integer's 32-bit range. 
-The overload without the length parameter uses the max_value length for the return value. ::
+The overload without the length parameter uses the max_value length for the return value. For more information on the probability 
+distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     unsigned := rand(min_value, max_value, [msg_id_panel])
     unsigned := rand(length, min_value, max_value, [msg_id_panel])
@@ -742,7 +743,7 @@ The overload without the length parameter uses the max_value length for the retu
 
 return signed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random signed value. ::
+Returns a random signed value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     signed := rand(length, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
@@ -791,7 +792,8 @@ Returns a random signed value. ::
 return signed (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value. The signed constraints can be used for min and max values bigger than the integer's 32-bit range. 
-The overload without the length parameter uses the max_value length for the return value. ::
+The overload without the length parameter uses the max_value length for the return value. For more information on the probability 
+distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     signed := rand(min_value, max_value, [msg_id_panel])
     signed := rand(length, min_value, max_value, [msg_id_panel])
@@ -819,7 +821,8 @@ The overload without the length parameter uses the max_value length for the retu
 
 return std_logic_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Returns a random std_logic_vector value (interpreted as unsigned). ::
+Returns a random std_logic_vector value (interpreted as unsigned). For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
 
     std_logic_vector := rand(length, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
@@ -869,7 +872,7 @@ return std_logic_vector (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value (interpreted as unsigned). The std_logic_vector constraints can be used for min and max 
 values bigger than the integer's 32-bit range. The overload without the length parameter uses the max_value length for the return 
-value. ::
+value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     std_logic_vector := rand(min_value, max_value, [msg_id_panel])
     std_logic_vector := rand(length, min_value, max_value, [msg_id_panel])

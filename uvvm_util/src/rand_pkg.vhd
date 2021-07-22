@@ -2184,7 +2184,6 @@ package body rand_pkg is
         to_upper(to_string(set_type)) & ":" & format_real(set_values) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
-      alias normalized_set_values : real_vector(0 to set_values'length-1) is set_values;
       variable v_gen_new_random   : boolean := true;
       variable v_ret              : real;
     begin
@@ -2196,10 +2195,12 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
+      -- It is impossible to give the same weight to an added value than to a single value in the real range,
+      -- therefore we split the probability to 50% range and 50% added values.
       if set_type = ADD then
-        v_ret := rand(min_value, max_value+real(set_values'length), msg_id_panel, v_proc_call.all);
+        v_ret := rand(min_value, max_value + (max_value-min_value), msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
-          v_ret := normalized_set_values(integer(ceil(v_ret-max_value)-1.0));
+          v_ret := rand(ONLY, set_values, msg_id_panel, v_proc_call.all);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif set_type = EXCL then

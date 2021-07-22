@@ -948,19 +948,19 @@ rand_val_weight()
 Returns a random value using a weighted distribution. Each given value has a weight which determines how often it is chosen during 
 randomization. The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights. ::
 
-    integer          := rand_val_weight(weight_vector, [msg_id_panel])
-    real             := rand_val_weight(weight_vector, [msg_id_panel])
-    time             := rand_val_weight(weight_vector, [msg_id_panel])
-    unsigned         := rand_val_weight(length, weight_vector, [msg_id_panel])
-    signed           := rand_val_weight(length, weight_vector, [msg_id_panel])
-    std_logic_vector := rand_val_weight(length, weight_vector, [msg_id_panel])
+    integer          := rand_val_weight(weighted_vector, [msg_id_panel])
+    real             := rand_val_weight(weighted_vector, [msg_id_panel])
+    time             := rand_val_weight(weighted_vector, [msg_id_panel])
+    unsigned         := rand_val_weight(length, weighted_vector, [msg_id_panel])
+    signed           := rand_val_weight(length, weighted_vector, [msg_id_panel])
+    std_logic_vector := rand_val_weight(length, weighted_vector, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
 | constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | weight_vector      | in     | :ref:`t_val_weight_int_vec`  | A vector containing pairs of (value, weight)                  |
+| constant | weighted_vector    | in     | :ref:`t_val_weight_int_vec`  | A vector containing pairs of (value, weight)                  |
 |          |                    |        |                              |                                                               |
 |          |                    |        | :ref:`t_val_weight_real_vec` |                                                               |
 |          |                    |        |                              |                                                               |
@@ -992,17 +992,17 @@ The given weight is assigned to the range as a whole, i.e. each value within the
 This mode can be changed to assigning the given weight equally to each value within the range by using 
 ``set_range_weight_default_mode(INDIVIDUAL_WEIGHT)`` (EXCEPT for the real and time types). ::
 
-    integer          := rand_range_weight(weight_vector, [msg_id_panel])
-    real             := rand_range_weight(weight_vector, [msg_id_panel])
-    time             := rand_range_weight(weight_vector, [msg_id_panel])
-    unsigned         := rand_range_weight(length, weight_vector, [msg_id_panel])
-    signed           := rand_range_weight(length, weight_vector, [msg_id_panel])
-    std_logic_vector := rand_range_weight(length, weight_vector, [msg_id_panel])
+    integer          := rand_range_weight(weighted_vector, [msg_id_panel])
+    real             := rand_range_weight(weighted_vector, [msg_id_panel])
+    time             := rand_range_weight(weighted_vector, [msg_id_panel])
+    unsigned         := rand_range_weight(length, weighted_vector, [msg_id_panel])
+    signed           := rand_range_weight(length, weighted_vector, [msg_id_panel])
+    std_logic_vector := rand_range_weight(length, weighted_vector, [msg_id_panel])
 
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                          | Description                                                   |
 +==========+====================+========+===============================+===============================================================+
-| constant | weight_vector      | in     | :ref:`t_range_weight_int_vec` | A vector containing sets of (min, max, weight). To specify a  |
+| constant | weighted_vector    | in     | :ref:`t_range_weight_int_vec` | A vector containing sets of (min, max, weight). To specify a  |
 |          |                    |        |                               | single value, it needs to be set equally for min and max.     |
 |          |                    |        | :ref:`t_range_weight_real_vec`|                                                               |
 |          |                    |        |                               |                                                               |
@@ -1043,17 +1043,17 @@ to avoid confusion regarding the distribution of the weights.
 Note that the real and time weighted randomization functions only support the COMBINED_WEIGHT mode due to the very large number of 
 values within a real/time range. ::
 
-    integer          := rand_range_weight_mode(weight_vector, [msg_id_panel])
-    real             := rand_range_weight_mode(weight_vector, [msg_id_panel])
-    time             := rand_range_weight_mode(weight_vector, [msg_id_panel])
-    unsigned         := rand_range_weight_mode(length, weight_vector, [msg_id_panel])
-    signed           := rand_range_weight_mode(length, weight_vector, [msg_id_panel])
-    std_logic_vector := rand_range_weight_mode(length, weight_vector, [msg_id_panel])
+    integer          := rand_range_weight_mode(weighted_vector, [msg_id_panel])
+    real             := rand_range_weight_mode(weighted_vector, [msg_id_panel])
+    time             := rand_range_weight_mode(weighted_vector, [msg_id_panel])
+    unsigned         := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
+    signed           := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
+    std_logic_vector := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                               | Description                                                    |
 +==========+====================+========+====================================+================================================================+
-| constant | weight_vector      | in     | :ref:`t_range_weight_mode_int_vec` | A vector containing sets of (min, max, weight, mode). To       |
+| constant | weighted_vector    | in     | :ref:`t_range_weight_mode_int_vec` | A vector containing sets of (min, max, weight, mode). To       |
 |          |                    |        |                                    | specify a single value, it needs to be set equally for min and |
 |          |                    |        | :ref:`t_range_weight_mode_real_vec`| max, and the mode to NA since it doesn't have any meaning.     |
 |          |                    |        |                                    |                                                                |

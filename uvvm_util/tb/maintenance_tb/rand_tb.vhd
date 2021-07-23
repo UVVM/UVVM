@@ -133,7 +133,7 @@ begin
       ------------------------------------------------------------
       -- Integer
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing integer (min/max)");
+      log(ID_LOG_HDR, "Testing integer (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(-2, 2);
@@ -151,7 +151,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing integer (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing integer (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(-1, 1, ADD,(-10));
@@ -168,7 +168,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing integer (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing integer (range + 2 sets of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(-2, 2, ADD,(-10,15,16), EXCL,(1,15));
@@ -268,7 +268,7 @@ begin
       ------------------------------------------------------------
       -- Integer Vector
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing integer_vector (min/max)");
+      log(ID_LOG_HDR, "Testing integer_vector (range)");
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2);
@@ -304,7 +304,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing integer_vector (range + set of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10));
@@ -331,7 +331,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing integer_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing integer_vector (range + 2 sets of values)");
       v_num_values := 6;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10,15,16), EXCL,(1,15));
@@ -386,7 +386,7 @@ begin
       -- is generated, so instead only the rounded values are verified.
       -- There is twice as many repetitions since the values are discrete.
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing real (min/max)");
+      log(ID_LOG_HDR, "Testing real (range)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.rand(-1.0, 1.0);
@@ -404,7 +404,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing real (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing real (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5));
@@ -421,7 +421,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing real (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing real (range + 2 sets of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*3 loop
         v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
@@ -461,7 +461,7 @@ begin
       ------------------------------------------------------------
       -- Real Vector
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing real_vector (min/max)");
+      log(ID_LOG_HDR, "Testing real_vector (range)");
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0);
@@ -497,7 +497,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing real_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing real_vector (range + set of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5));
@@ -524,7 +524,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing real_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing real_vector (range + 2 sets of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
@@ -576,7 +576,7 @@ begin
       ------------------------------------------------------------
       -- Time
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing time (min/max)");
+      log(ID_LOG_HDR, "Testing time (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.rand(-2 ps, 2 ps);
@@ -599,7 +599,7 @@ begin
         check_rand_value(v_time, ONLY,(-2 us,1 ns,2 ps));
       end loop;
 
-      log(ID_LOG_HDR, "Testing time (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing time (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.rand(-1 ps, 1 ps, ADD,(-15 ps));
@@ -616,7 +616,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing time (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing time (range + 2 sets of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.rand(-2 ps, 2 ps, ADD,(-15 ps,16 ps,17 ps), EXCL,(1 ps,16 ps));
@@ -656,7 +656,7 @@ begin
       ------------------------------------------------------------
       -- Time Vector
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing time_vector (min/max)");
+      log(ID_LOG_HDR, "Testing time_vector (range)");
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps);
@@ -697,7 +697,7 @@ begin
         check_rand_value(v_time_vec, ONLY,(-2 us,-1 us,0 ns,1 ps,2 ps));
       end loop;
 
-      log(ID_LOG_HDR, "Testing time_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing time_vector (range + set of values)");
       v_num_values := 4;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -1 ps, 1 ps, ADD,(-15 ps));
@@ -724,7 +724,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing time_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing time_vector (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps, ADD,(-15 ps,16 ps), EXCL,(1 ps,16 ps));
@@ -785,7 +785,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max)");
+      log(ID_LOG_HDR, "Testing unsigned (range)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 3);
@@ -811,7 +811,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing unsigned (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7));
@@ -828,7 +828,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing unsigned (range + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(7,8), EXCL,(1,8));
@@ -880,7 +880,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max long vectors)");
+      log(ID_LOG_HDR, "Testing unsigned (range long vectors)");
       v_uns_long_min := x"0F000000000000000000000000000000";
       v_uns_long_max := x"0F0000000000000000000000000000FF";
       for i in 1 to C_NUM_RAND_REPETITIONS loop
@@ -897,7 +897,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max)");
+      log(ID_LOG_HDR, "Testing unsigned (range)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.rand(v_uns_long'length, 0, 3);
@@ -929,7 +929,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing unsigned (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, ADD,(7));
@@ -946,7 +946,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing unsigned (range + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.rand(v_uns_long'length, 0, 2, ADD,(7,8), EXCL,(1,8));
@@ -996,7 +996,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing signed (min/max)");
+      log(ID_LOG_HDR, "Testing signed (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -2, 2);
@@ -1022,7 +1022,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing signed (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -1, 1, ADD,(-8));
@@ -1039,7 +1039,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing signed (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8,7), EXCL,(1,7));
@@ -1091,7 +1091,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing signed (min/max long vectors)");
+      log(ID_LOG_HDR, "Testing signed (range long vectors)");
       v_sig_long_min := x"8F000000000000000000000000000000";
       v_sig_long_max := x"8F0000000000000000000000000000FF";
       for i in 1 to C_NUM_RAND_REPETITIONS loop
@@ -1108,7 +1108,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing signed (min/max)");
+      log(ID_LOG_HDR, "Testing signed (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig_long := v_rand.rand(v_sig_long'length, -2, 2);
@@ -1140,7 +1140,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing signed (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig_long := v_rand.rand(v_sig_long'length, -1, 1, ADD,(-8));
@@ -1157,7 +1157,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing signed (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig_long := v_rand.rand(v_sig_long'length, -2, 2, ADD,(-8,7), EXCL,(1,7));
@@ -1207,7 +1207,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 3);
@@ -1233,7 +1233,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7));
@@ -1250,7 +1250,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7,8), EXCL,(1,8));
@@ -1302,7 +1302,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max long vectors)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range long vectors)");
       v_slv_long_min := x"0F000000000000000000000000000000";
       v_slv_long_max := x"0F0000000000000000000000000000FF";
       for i in 1 to C_NUM_RAND_REPETITIONS loop
@@ -1319,7 +1319,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long'length, 0, 3);
@@ -1351,7 +1351,7 @@ begin
       end loop;
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, ADD,(7));
@@ -1368,7 +1368,7 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + 2 sets of values)");
       v_num_values := 3;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long'length, 0, 2, ADD,(7,8), EXCL,(1,8));
@@ -1861,7 +1861,7 @@ begin
       ------------------------------------------------------------
       -- Random cyclic integer
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing integer (min/max)");
+      log(ID_LOG_HDR, "Testing integer (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_int := v_rand.rand(-2, 2, CYCLIC);
@@ -1883,7 +1883,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing integer (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing integer (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_int := v_rand.rand(-1, 1, ADD,(3), CYCLIC);
@@ -1904,7 +1904,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing integer (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing integer (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_int := v_rand.rand(-2, 2, ADD,(-5), EXCL,(1), CYCLIC);
@@ -1938,7 +1938,7 @@ begin
       ------------------------------------------------------------
       -- Random cyclic integer vector
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing integer_vector (min/max)");
+      log(ID_LOG_HDR, "Testing integer_vector (range)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, NON_UNIQUE, CYCLIC);
@@ -1970,7 +1970,7 @@ begin
       count_rand_value(v_value_cnt, v_int_vec);
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing integer_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing integer_vector (range + set of values)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -1, 2, ADD,(-5), NON_UNIQUE, CYCLIC);
@@ -2001,7 +2001,7 @@ begin
       count_rand_value(v_value_cnt, v_int_vec);
       check_cyclic_distribution(v_value_cnt, v_num_values);
 
-      log(ID_LOG_HDR, "Testing integer_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing integer_vector (range + 2 sets of values)");
       v_num_values := 5; -- same as v_int_vec'length
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-5), EXCL,(1), NON_UNIQUE, CYCLIC);
@@ -2038,7 +2038,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max)");
+      log(ID_LOG_HDR, "Testing unsigned (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 4, CYCLIC);
@@ -2070,7 +2070,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing unsigned (range + set of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 4, ADD,(5), CYCLIC);
@@ -2091,7 +2091,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing unsigned (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing unsigned (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_uns := v_rand.rand(v_uns'length, 0, 4, ADD,(5), EXCL,(0), CYCLIC);
@@ -2160,7 +2160,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing signed (min/max)");
+      log(ID_LOG_HDR, "Testing signed (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -2, 2, CYCLIC);
@@ -2192,7 +2192,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing signed (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing signed (range + set of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8), CYCLIC);
@@ -2213,7 +2213,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing signed (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing signed (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_sig := v_rand.rand(v_sig'length, -2, 2, ADD,(-8), EXCL,(1), CYCLIC);
@@ -2282,7 +2282,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 4, CYCLIC);
@@ -2314,7 +2314,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + set of values)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values)");
       v_num_values := 6;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 4, ADD,(8), CYCLIC);
@@ -2335,7 +2335,7 @@ begin
         end if;
       end loop;
 
-      log(ID_LOG_HDR, "Testing std_logic_vector (min/max + 2 sets of values)");
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + 2 sets of values)");
       v_num_values := 5;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
         v_slv := v_rand.rand(v_slv'length, 0, 4, ADD,(5), EXCL,(0), CYCLIC);
@@ -2846,9 +2846,9 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_rand.set_rand_dist_std_deviation(-1.0);
 
-      -- Gaussian distribution can only be used with min/max
+      -- Gaussian distribution can only be used with range
       -- constraints and cannot be combined with cyclic or unique
-      -- parameters. The mean must be inside the min/max range.
+      -- parameters. The mean must be inside the range.
       v_rand.set_rand_dist_mean(5.0);
 
       increment_expected_alerts(TB_WARNING, 5);

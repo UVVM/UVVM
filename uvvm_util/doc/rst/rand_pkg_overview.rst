@@ -201,7 +201,7 @@ Gaussian (Normal)
 * The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
   signed and std_logic_vector lengths bigger than 32 bits are not supported however.
 * The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
-* Only the min/max constraints are supported when using this distribution, i.e. no set of values are supported.
+* Only the range (min/max) constraints are supported when using this distribution, i.e. no set of values are supported.
 * Cannot be combined with cyclic or uniqueness parameters.
 * Cannot be combined with weighted randomization functions.
 * To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures respectively.

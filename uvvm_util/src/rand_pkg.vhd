@@ -1904,7 +1904,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -1952,7 +1952,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2145,7 +2145,7 @@ package body rand_pkg is
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2190,7 +2190,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for min/max constraints. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 

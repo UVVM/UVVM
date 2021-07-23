@@ -72,19 +72,19 @@ package rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant min_range   : in integer;
     constant max_range   : in integer);
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant min_range   : in real;
     constant max_range   : in real);
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant min_range   : in time;
     constant max_range   : in time);
 
@@ -147,19 +147,19 @@ package rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector);
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector);
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector);
 
@@ -237,7 +237,7 @@ package rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant min_range   : in integer;
     constant max_range   : in integer;
     constant set_type    : in t_set_type;
@@ -245,7 +245,7 @@ package rand_tb_pkg is
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant min_range   : in real;
     constant max_range   : in real;
     constant set_type    : in t_set_type;
@@ -253,7 +253,7 @@ package rand_tb_pkg is
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant min_range   : in time;
     constant max_range   : in time;
     constant set_type    : in t_set_type;
@@ -351,7 +351,7 @@ package rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant min_range   : in integer;
     constant max_range   : in integer;
     constant set_type1   : in t_set_type;
@@ -361,7 +361,7 @@ package rand_tb_pkg is
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant min_range   : in real;
     constant max_range   : in real;
     constant set_type1   : in t_set_type;
@@ -371,7 +371,7 @@ package rand_tb_pkg is
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant min_range   : in time;
     constant max_range   : in time;
     constant set_type1   : in t_set_type;
@@ -585,52 +585,52 @@ package body rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant min_range   : in integer;
     constant max_range   : in integer) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant min_range   : in real;
     constant max_range   : in real) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant min_range   : in time;
     constant max_range   : in time) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
@@ -762,55 +762,55 @@ package body rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
     check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), set_values);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), set_values);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
     check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), set_values);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), set_values);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
     check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), set_values);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), set_values);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
@@ -975,58 +975,58 @@ package body rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant min_range   : in integer;
     constant max_range   : in integer;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range, set_type, set_values);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type, set_values);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant min_range   : in real;
     constant max_range   : in real;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range, set_type, set_values);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type, set_values);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant min_range   : in time;
     constant max_range   : in time;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range, set_type, set_values);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type, set_values);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
@@ -1206,7 +1206,7 @@ package body rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant value_vec   : in integer_vector;
+    constant values      : in integer_vector;
     constant min_range   : in integer;
     constant max_range   : in integer;
     constant set_type1   : in t_set_type;
@@ -1215,19 +1215,19 @@ package body rand_tb_pkg is
     constant set_values2 : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant value_vec   : in real_vector;
+    constant values      : in real_vector;
     constant min_range   : in real;
     constant max_range   : in real;
     constant set_type1   : in t_set_type;
@@ -1236,19 +1236,19 @@ package body rand_tb_pkg is
     constant set_values2 : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant value_vec   : in time_vector;
+    constant values      : in time_vector;
     constant min_range   : in time;
     constant max_range   : in time;
     constant set_type1   : in t_set_type;
@@ -1257,13 +1257,13 @@ package body rand_tb_pkg is
     constant set_values2 : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    for i in value_vec'range loop
-      v_check_ok := v_check_ok and check_rand_value(value_vec(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
+    for i in values'range loop
+      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
     end loop;
     if v_check_ok then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value_vec) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value_vec) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(values) & ".");
     end if;
   end procedure;
 
